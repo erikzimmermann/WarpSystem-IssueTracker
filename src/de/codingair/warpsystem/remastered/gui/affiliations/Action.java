@@ -1,7 +1,6 @@
-package de.codingair.warpsystem.remastered.actions;
+package de.codingair.warpsystem.remastered.gui.affiliations;
 
 import de.CodingAir.v1_6.CodingAPI.Tools.Location;
-import de.codingair.warpsystem.remastered.utils.Category;
 
 public enum Action {
     RUN_COMMAND(String.class),

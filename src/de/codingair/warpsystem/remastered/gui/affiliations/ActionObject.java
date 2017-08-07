@@ -1,8 +1,13 @@
-package de.codingair.warpsystem.remastered.actions;
+package de.codingair.warpsystem.remastered.gui.affiliations;
 
-public class ActionObject {
-    private Action action;
-    private Object value;
+import java.io.Serializable;
+
+public class ActionObject implements Serializable {
+    Action action;
+    Object value;
+
+    public ActionObject() {
+    }
 
     public ActionObject(Action action, Object value) {
         this.action = action;
