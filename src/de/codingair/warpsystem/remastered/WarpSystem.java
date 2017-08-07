@@ -17,6 +17,7 @@ public class WarpSystem extends JavaPlugin {
         API.getInstance().onEnable(this);
 
         this.fileManager.loadFile("ActionIcons", "/Memory/");
+        this.fileManager.loadFile("Language", "/");
         this.iconManager.load(true);
     }
 
