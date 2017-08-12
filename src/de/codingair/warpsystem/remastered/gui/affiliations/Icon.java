@@ -6,6 +6,8 @@ import org.bukkit.inventory.ItemStack;
 import java.io.Serializable;
 
 public class Icon implements Serializable {
+    static final long serialVersionUID = 1L;
+
     String name;
     SerializableItemStack item;
     int slot;
@@ -17,6 +19,10 @@ public class Icon implements Serializable {
         this.name = name;
         this.item = new SerializableItemStack(item);
         this.slot = slot;
+    }
+
+    public void setItem(ItemStack item) {
+        this.item = new SerializableItemStack(item);;
     }
 
     public String getName() {

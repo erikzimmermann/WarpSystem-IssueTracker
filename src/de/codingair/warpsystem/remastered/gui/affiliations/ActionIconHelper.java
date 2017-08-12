@@ -4,11 +4,11 @@ import java.io.*;
 import java.util.Base64;
 
 public class ActionIconHelper {
-    public static String toString(ActionIcon icon) {
+    public static String toString(Serializable serializable) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(icon);
+            oos.writeObject(serializable);
             oos.close();
 
             return Base64.getEncoder().encodeToString(baos.toByteArray());
@@ -18,16 +18,14 @@ public class ActionIconHelper {
         }
     }
 
-    public static ActionIcon fromString(String s) {
+    public static <T> T fromString(String s) {
         try {
             byte[] data = Base64.getDecoder().decode(s);
-
-            System.out.println(new String(data));
 
             ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
             Object o = ois.readObject();
             ois.close();
-            return (ActionIcon) o;
+            return (T) o;
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return null;

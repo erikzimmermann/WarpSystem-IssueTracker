@@ -3,3 +3,9 @@ author: AirTriX
 version: 1.2.0
 description: WarpSystem Remastered
 main: de.codingair.warpsystem.remastered.WarpSystem
+
+commands:
+  warp:
+    usuage: /Warp
+    description: Warp-System-CMD
+    aliases: [warps]

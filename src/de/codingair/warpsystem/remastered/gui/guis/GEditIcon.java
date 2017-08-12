@@ -23,12 +23,11 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GAddIcon extends GUI {
+public class GEditIcon extends GUI {
     private ItemStack item;
     private String name;
     private String permission;
@@ -42,7 +41,7 @@ public class GAddIcon extends GUI {
 
     private boolean quit = true;
 
-    public GAddIcon(Player p, Category category, ItemStack item, String name, int slot, boolean isCategory) {
+    public GEditIcon(Player p, Category category, ItemStack item, String name, int slot, boolean isCategory) {
         super(p, "§c§l§n" + Lang.get("Item_Editing", new Example("ENG", "Item-Editing"), new Example("GER", "Item-Bearbeitung")), 45, WarpSystem.getInstance(), false);
 
         this.item = item;
@@ -55,33 +54,28 @@ public class GAddIcon extends GUI {
 
         addListener(new InterfaceListener() {
             @Override
-            public void onInvClickEvent(InventoryClickEvent e) {
-
-            }
+            public void onInvClickEvent(InventoryClickEvent e) {}
 
             @Override
-            public void onInvOpenEvent(InventoryOpenEvent e) {
-
-            }
+            public void onInvOpenEvent(InventoryOpenEvent e) {}
 
             @Override
             public void onInvCloseEvent(InventoryCloseEvent e) {
                 if(!quit) return;
 
-                p.playSound(p.getLocation(), Sound.ITEM_BREAK.bukkitSound(), 1, 1);
+                System.out.println("ItemBreak");
+                Sound.ITEM_BREAK.playSound(p);
                 new GWarps(p, category, true).open();
             }
 
             @Override
-            public void onInvDragEvent(InventoryDragEvent e) {
-
-            }
+            public void onInvDragEvent(InventoryDragEvent e) {}
         });
 
         initialize(p);
     }
 
-    public GAddIcon(Player p, Category category, ActionIcon editing) {
+    public GEditIcon(Player p, Category category, ActionIcon editing) {
         super(p, "§c§l§n" + Lang.get("Item_Editing", new Example("ENG", "Item-Editing"), new Example("GER", "Item-Bearbeitung")), 45, WarpSystem.getInstance(), false);
         this.editing = editing;
 
@@ -99,7 +93,7 @@ public class GAddIcon extends GUI {
     @Override
     public void initialize(Player p) {
         this.item = new ItemBuilder(this.item.getType()).setName("§b" + (isCategory ? "§n" : "") + name).setData(this.item.getData().getData()).setHideStandardLore(true)
-                .setLore("", Lang.get("Change_Name", new Example("ENG", "&8»Click here to change the name."), new Example("GER", "&8»Klicke hier um den Namen zu ändern.")))
+                .setLore("§8------------", "", Lang.get("Change_Name", new Example("ENG", "&8»Click here to change the name."), new Example("GER", "&8»Klicke hier um den Namen zu ändern.")))
                 .getItem();
 
         ItemStack leaves = new ItemBuilder(Material.LEAVES).setName("§0").getItem();
@@ -169,8 +163,9 @@ public class GAddIcon extends GUI {
         final ItemButton iconButton = new ItemButton(4, 0, item) {
             @Override
             public void onClick(InventoryClickEvent e) {
-
                 quit = false;
+                p.closeInventory();
+
                 AnvilGUI.openAnvil(WarpSystem.getInstance(), p, new AnvilListener() {
                     private String input;
 
@@ -210,14 +205,15 @@ public class GAddIcon extends GUI {
                             name = input;
                             item = new ItemBuilder(item).setName("§b" + (isCategory ? "§n" : "") + name).getItem();
                             setItem(item);
-                        }
+                        } else Sound.ITEM_BREAK.playSound(p);
 
-                        e.setPost(GAddIcon.this::open);
+
+                        e.setPost(GEditIcon.this::open);
                         quit = true;
                     }
                 }, new ItemBuilder(item).setHideStandardLore(true).removeEnchantments().setName(name).getItem());
             }
-        }.setOption(option).setOnlyLeftClick(true).setCloseOnClick(true);
+        }.setOption(option).setOnlyLeftClick(true);
 
         addButton(iconButton);
 
@@ -236,26 +232,30 @@ public class GAddIcon extends GUI {
             public void onClick(InventoryClickEvent e) {
                 quit = false;
 
+                ItemBuilder builder = new ItemBuilder(item);
+                builder.removeLore(builder.getLore().size() - 3, builder.getLore().size());
+                item = builder.getItem();
+
                 if(editing != null) {
                     editing.setName(name);
                     editing.setItem(item);
                     editing.setPermission(permission);
 
-                    p.sendMessage(Lang.getPrefix() + Lang.get("Success_Configured", new Example("ENG", "&aYou have successfully configured the icon."), new Example("GER", "&aDu hast das Symbol erfolgreich bearbeitet")));
+                    p.sendMessage(Lang.getPrefix() + Lang.get("Success_Configured", new Example("ENG", "&aYou have configured the icon successfully."), new Example("GER", "&aDu hast das Symbol erfolgreich bearbeitet")));
                 } else {
                     if(isCategory) {
                         Category category = new Category(name, item, slot, permission);
                         category.addAllActions(actionList);
                         WarpSystem.getInstance().getIconManager().getCategories().add(category);
 
-                        p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Category", new Example("ENG", "&aYou have successfully created a &bcategory&a."), new Example("GER", "&aDu hast erfolgreich eine &bKategorie &aerstellt.")));
+                        p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Category", new Example("ENG", "&aYou have created a &bcategory &asuccessfully."), new Example("GER", "&aDu hast erfolgreich eine &bKategorie &aerstellt.")));
                     } else {
                         actionList.add(new ActionObject(Action.TELEPORT_TO_WARP, new SerializableLocation(p.getLocation())));
 
                         Warp warp = new Warp(name, item, slot, permission, category, actionList);
                         WarpSystem.getInstance().getIconManager().getWarps().add(warp);
 
-                        p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Warp", new Example("ENG", "&aYou have successfully created a &bwarp&a."), new Example("GER", "&aDu hast erfolgreich ein &bWarp &aerstellt.")));
+                        p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Warp", new Example("ENG", "&aYou have created a &bwarp &asuccessfully."), new Example("GER", "&aDu hast erfolgreich ein &bWarp &aerstellt.")));
                     }
 
                     Environment.playRandomFireworkEffect(p.getLocation());
@@ -295,8 +295,9 @@ public class GAddIcon extends GUI {
             @Override
             public void onClick(InventoryClickEvent e) {
                 if(e.isLeftClick()) {
-
                     quit = false;
+                    p.closeInventory();
+
                     AnvilGUI.openAnvil(WarpSystem.getInstance(), p, new AnvilListener() {
                         @Override
                         public void onClick(AnvilClickEvent e) {
@@ -316,7 +317,7 @@ public class GAddIcon extends GUI {
                             playSound(p);
 
                             ItemBuilder builder = new ItemBuilder(item).setHideStandardLore(true).setHideEnchantments(true);
-                            builder.addLore(builder.getLore().size() - 2, ChatColor.translateAlternateColorCodes('&', input));
+                            builder.addLore(builder.getLore().size() - 3, ChatColor.translateAlternateColorCodes('&', input));
 
                             item = builder.getItem();
                             iconButton.setItem(item);
@@ -324,13 +325,15 @@ public class GAddIcon extends GUI {
 
                         @Override
                         public void onClose(AnvilCloseEvent e) {
-                            e.setPost(GAddIcon.this::open);
+                            if(!e.isSubmitted()) Sound.ITEM_BREAK.playSound(p);
+
+                            e.setPost(GEditIcon.this::open);
                             quit = true;
                         }
                     }, new ItemBuilder(Material.PAPER).setName(Lang.get("Line", new Example("ENG", "Line"), new Example("GER", "Linie")) + "...").getItem());
                 } else {
                     item = new ItemBuilder(item).setHideStandardLore(true).setHideEnchantments(true).removeLore()
-                            .setLore("", Lang.get("Change_Name", new Example("ENG", "&8»Click here to change the name."), new Example("GER", "&8»Klicke hier um den Namen zu ändern.")))
+                            .setLore("§8------------", "", Lang.get("Change_Name", new Example("ENG", "&8»Click here to change the name."), new Example("GER", "&8»Klicke hier um den Namen zu ändern.")))
                             .getItem();
                     iconButton.setItem(item);
                 }
@@ -357,8 +360,9 @@ public class GAddIcon extends GUI {
                     ItemStack command = commandBuilder.getItem();
                     setItem(command);
                 } else {
-
                     quit = false;
+                    p.closeInventory();
+
                     AnvilGUI.openAnvil(WarpSystem.getInstance(), p, new AnvilListener() {
                         @Override
                         public void onClick(AnvilClickEvent e) {
@@ -388,7 +392,9 @@ public class GAddIcon extends GUI {
 
                         @Override
                         public void onClose(AnvilCloseEvent e) {
-                            e.setPost(GAddIcon.this::open);
+                            if(!e.isSubmitted()) Sound.ITEM_BREAK.playSound(p);
+
+                            e.setPost(GEditIcon.this::open);
                             quit = true;
                         }
                     }, new ItemBuilder(Material.REDSTONE).setName(Lang.get("Command", new Example("ENG", "Command"), new Example("GER", "Befehl")) + "...").getItem());
@@ -410,8 +416,9 @@ public class GAddIcon extends GUI {
                     ItemStack permissionIcon = permissionIconBuilder.getItem();
                     setItem(permissionIcon);
                 } else {
-
                     quit = false;
+                    p.closeInventory();
+
                     AnvilGUI.openAnvil(WarpSystem.getInstance(), p, new AnvilListener() {
                         @Override
                         public void onClick(AnvilClickEvent e) {
@@ -441,7 +448,9 @@ public class GAddIcon extends GUI {
 
                         @Override
                         public void onClose(AnvilCloseEvent e) {
-                            e.setPost(GAddIcon.this::open);
+                            if(!e.isSubmitted()) Sound.ITEM_BREAK.playSound(p);
+
+                            e.setPost(GEditIcon.this::open);
                             quit = true;
                         }
                     }, new ItemBuilder(Material.EYE_OF_ENDER).setName(Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")) + "...").getItem());

@@ -3,7 +3,9 @@ package de.codingair.warpsystem.remastered.managers;
 import de.CodingAir.v1_6.CodingAPI.Files.ConfigFile;
 import de.codingair.warpsystem.remastered.WarpSystem;
 import de.codingair.warpsystem.remastered.gui.affiliations.ActionIcon;
+import de.codingair.warpsystem.remastered.gui.affiliations.Warp;
 import de.codingair.warpsystem.remastered.gui.affiliations.ActionIconHelper;
+import de.codingair.warpsystem.remastered.gui.affiliations.Category;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -11,10 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IconManager {
-    private List<ActionIcon> actionIcons = new ArrayList<>();
+    private List<Warp> warps = new ArrayList<>();
+    private List<Category> categories = new ArrayList<>();
 
     public void load(boolean sync) {
-        if(!sync) {
+        if (!sync) {
             Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), new Runnable() {
                 @Override
                 public void run() {
@@ -23,20 +26,29 @@ public class IconManager {
             });
         } else {
             //Load
-            this.actionIcons = new ArrayList<>();
+            this.warps = new ArrayList<>();
 
             ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
             FileConfiguration config = file.getConfig();
 
-            List<String> data = config.getStringList("Data");
-            for (String s : data) {
-                this.actionIcons.add(ActionIconHelper.fromString(s));
+            List<String> warps = config.getStringList("Warps");
+            for (String s : warps) {
+                Warp warp = ActionIconHelper.fromString(s);
+
+                if (warp != null) this.warps.add(warp);
+            }
+
+            List<String> categories = config.getStringList("Categories");
+            for (String s : categories) {
+                Category category = ActionIconHelper.fromString(s);
+
+                if (category != null) this.categories.add(category);
             }
         }
     }
 
     public void save(boolean sync) {
-        if(!sync) {
+        if (!sync) {
             Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), new Runnable() {
                 @Override
                 public void run() {
@@ -48,25 +60,66 @@ public class IconManager {
             ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
             FileConfiguration config = file.getConfig();
 
-            List<String> data = new ArrayList<>();
-            for (ActionIcon icon : this.actionIcons) {
-                data.add(ActionIconHelper.toString(icon));
+            List<String> warps = new ArrayList<>();
+            for (Warp warp : this.warps) {
+                warps.add(ActionIconHelper.toString(warp));
             }
 
-            config.set("Data", data);
+            List<String> categories = new ArrayList<>();
+            for (Category category : this.categories) {
+                categories.add(ActionIconHelper.toString(category));
+            }
+
+            config.set("Warps", warps);
+            config.set("Categories", categories);
             file.saveConfig();
         }
     }
 
-    public void addActionIcon(ActionIcon icon) {
-        this.actionIcons.add(icon);
+    public boolean existsWarp(String name, Category category) {
+        return getWarp(name, category) != null;
     }
 
-    public void removeActionIcon(ActionIcon icon) {
-        this.actionIcons.remove(icon);
+    public Warp getWarp(String name, Category category) {
+        for (Warp warp : getWarps(category)) {
+            if (warp.getName().equalsIgnoreCase(name)) return warp;
+        }
+
+        return null;
     }
 
-    public List<ActionIcon> getActionIcons() {
-        return actionIcons;
+    public boolean existsCategory(String name) {
+        return getCategory(name) != null;
+    }
+
+    public Category getCategory(String name) {
+        for (Category c : this.categories) {
+            if (c.getName().equalsIgnoreCase(name)) return c;
+        }
+
+        return null;
+    }
+
+    public List<Warp> getWarps() {
+        return warps;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public List<Warp> getWarps(Category category) {
+        List<Warp> icons = new ArrayList<>();
+
+        for (Warp icon : this.warps) {
+            if (icon.getCategory() == category) icons.add(icon);
+        }
+
+        return icons;
+    }
+
+    public void remove(ActionIcon icon) {
+        if(icon instanceof Category) this.categories.remove(icon);
+        else if(icon instanceof Warp) this.warps.remove(icon);
     }
 }

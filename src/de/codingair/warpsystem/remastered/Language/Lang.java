@@ -11,6 +11,13 @@ public class Lang {
         return getConfig().getString("Default_Language", "ENG");
     }
 
+    public static String getPrefix() {
+        String prefix = getConfig().getString("Prefix", "&8» &r");
+        prefix = ChatColor.translateAlternateColorCodes('&', prefix);
+
+        return prefix;
+    }
+
     public static String get(String key, Example... examples) {
         for (Example example : examples) {
             if(getConfig().getString(example.getLanguage() + "." + key, null) == null) {
