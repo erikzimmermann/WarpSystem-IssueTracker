@@ -1,11 +1,11 @@
-package de.codingair.warpsystem.remastered.managers;
+package de.codingair.warpsystem.managers;
 
 import de.CodingAir.v1_6.CodingAPI.Files.ConfigFile;
-import de.codingair.warpsystem.remastered.WarpSystem;
-import de.codingair.warpsystem.remastered.gui.affiliations.ActionIcon;
-import de.codingair.warpsystem.remastered.gui.affiliations.Warp;
-import de.codingair.warpsystem.remastered.gui.affiliations.ActionIconHelper;
-import de.codingair.warpsystem.remastered.gui.affiliations.Category;
+import de.codingair.warpsystem.gui.affiliations.Warp;
+import de.codingair.warpsystem.WarpSystem;
+import de.codingair.warpsystem.gui.affiliations.ActionIcon;
+import de.codingair.warpsystem.gui.affiliations.ActionIconHelper;
+import de.codingair.warpsystem.gui.affiliations.Category;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 

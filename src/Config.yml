@@ -1,0 +1,6 @@
+WarpSystem:
+  Maintenance: false
+  Teleport:
+    Delay: 5
+    Animation: 17
+    Allow_Move: false

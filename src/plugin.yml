@@ -1,8 +1,8 @@
-name: WarpSystem_Re
+name: WarpSystem
 author: AirTriX
 version: 1.2.0
-description: WarpSystem Remastered
-main: de.codingair.warpsystem.remastered.WarpSystem
+description: WarpSystem
+main: de.codingair.warpsystem.WarpSystem
 
 commands:
   warp:

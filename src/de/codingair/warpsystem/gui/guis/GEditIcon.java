@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.remastered.gui.guis;
+package de.codingair.warpsystem.gui.guis;
 
 import de.CodingAir.v1_6.CodingAPI.Player.GUI.Anvil.*;
 import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.GUI;
@@ -9,10 +9,10 @@ import de.CodingAir.v1_6.CodingAPI.Serializable.SerializableLocation;
 import de.CodingAir.v1_6.CodingAPI.Server.Environment;
 import de.CodingAir.v1_6.CodingAPI.Server.Sound;
 import de.CodingAir.v1_6.CodingAPI.Tools.ItemBuilder;
-import de.codingair.warpsystem.remastered.Language.Example;
-import de.codingair.warpsystem.remastered.Language.Lang;
-import de.codingair.warpsystem.remastered.WarpSystem;
-import de.codingair.warpsystem.remastered.gui.affiliations.*;
+import de.codingair.warpsystem.Language.Example;
+import de.codingair.warpsystem.Language.Lang;
+import de.codingair.warpsystem.WarpSystem;
+import de.codingair.warpsystem.gui.affiliations.*;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -63,7 +63,6 @@ public class GEditIcon extends GUI {
             public void onInvCloseEvent(InventoryCloseEvent e) {
                 if(!quit) return;
 
-                System.out.println("ItemBreak");
                 Sound.ITEM_BREAK.playSound(p);
                 new GWarps(p, category, true).open();
             }
