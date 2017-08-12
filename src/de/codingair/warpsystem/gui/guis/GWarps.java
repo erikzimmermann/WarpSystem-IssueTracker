@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.remastered.gui.guis;
+package de.codingair.warpsystem.gui.guis;
 
 import de.CodingAir.v1_6.CodingAPI.Player.GUI.Anvil.*;
 import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.GUIs.ConfirmGUI;
@@ -9,10 +9,13 @@ import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.Skull;
 import de.CodingAir.v1_6.CodingAPI.Server.Sound;
 import de.CodingAir.v1_6.CodingAPI.Tools.Callback;
 import de.CodingAir.v1_6.CodingAPI.Tools.ItemBuilder;
-import de.codingair.warpsystem.remastered.Language.Example;
-import de.codingair.warpsystem.remastered.Language.Lang;
-import de.codingair.warpsystem.remastered.WarpSystem;
-import de.codingair.warpsystem.remastered.gui.affiliations.*;
+import de.codingair.warpsystem.Language.Example;
+import de.codingair.warpsystem.Language.Lang;
+import de.codingair.warpsystem.WarpSystem;
+import de.codingair.warpsystem.gui.affiliations.Action;
+import de.codingair.warpsystem.gui.affiliations.ActionIcon;
+import de.codingair.warpsystem.gui.affiliations.Category;
+import de.codingair.warpsystem.gui.affiliations.Warp;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -72,13 +75,14 @@ public class GWarps extends GUI {
                 @Override
                 public void onClick(InventoryClickEvent e) {
                     if(e.isLeftClick()) {
-                        new GWarps(p, category, !editing).open();
+                        editing = !editing;
+                        reinitialize();
                     } else {
-                        //TODO: Rightclick --> Config (Teleport-Animation, Teleport-Delay, Teleport-Delay-ByPass-Permission, Language, Plugin in edit mode [Player without perm cannot open the GUI])
-                        p.sendMessage("Config");
+                        p.closeInventory();
+                        new GConfig(p, category, editing).open();
                     }
                 }
-            }.setOption(option).setOnlyLeftClick(false).setCloseOnClick(true));
+            }.setOption(option).setOnlyLeftClick(false));
 
         } else {
             setItem(0, edge);
@@ -88,9 +92,10 @@ public class GWarps extends GUI {
             addButton(new ItemButton(0, 5, new ItemBuilder(Skull.ArrowLeft).setName("§c" + Lang.get("Back", new Example("ENG", "Back"), new Example("GER", "Zurück"))).getItem()) {
                 @Override
                 public void onClick(InventoryClickEvent e) {
-                    new GWarps(p, null, editing).open();
+                    GWarps.this.category = null;
+                    reinitialize();
                 }
-            }.setOption(option).setCloseOnClick(true));
+            }.setOption(option));
         }
 
         setItem(8, edge);
@@ -226,7 +231,14 @@ public class GWarps extends GUI {
                                 }
                             }).open();
                         }
-                    } else if(e.isLeftClick()) icon.perform(p, editing);
+                    } else if(e.isLeftClick()) {
+                        if(icon instanceof Category) {
+                            icon.perform(p, editing, Action.OPEN_CATEGORY);
+
+                            GWarps.this.category = (Category) icon;
+                            reinitialize();
+                        } else icon.perform(p, editing);
+                    }
                 }
             }.setOption(option).setOnlyLeftClick(false));
         }

@@ -1,10 +1,10 @@
-package de.codingair.warpsystem.remastered.gui.affiliations;
+package de.codingair.warpsystem.gui.affiliations;
 
 import de.CodingAir.v1_6.CodingAPI.BungeeCord.BungeeCordHelper;
 import de.CodingAir.v1_6.CodingAPI.Serializable.SerializableLocation;
 import de.CodingAir.v1_6.CodingAPI.Tools.Location;
-import de.codingair.warpsystem.remastered.WarpSystem;
-import de.codingair.warpsystem.remastered.gui.guis.GWarps;
+import de.codingair.warpsystem.WarpSystem;
+import de.codingair.warpsystem.gui.guis.GWarps;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -50,12 +50,15 @@ public class ActionIcon extends Icon implements Serializable {
         this(name, item, slot, permission, Arrays.asList(actions));
     }
 
-    public void perform(Player p, boolean editor) {
+    public void perform(Player p, boolean editor, Action... without) {
+        List<Action> withouts = Arrays.asList(without);
+
         for (ActionObject action : this.actions) {
+            if(withouts.contains(action.getAction())) continue;
+
             switch (action.getAction()) {
                 case OPEN_CATEGORY: {
                     Category category = action.getValue();
-
                     new GWarps(p, category, editor).open();
                     break;
                 }
@@ -73,10 +76,9 @@ public class ActionIcon extends Icon implements Serializable {
                 }
 
                 case TELEPORT_TO_WARP: {
-                    //TODO: Teleport-Animation
                     SerializableLocation sLoc = action.getValue();
                     Location loc = Location.getByLocation(sLoc.getLocation());
-                    p.teleport(loc);
+                    WarpSystem.getInstance().getTeleportManager().teleport(p, loc);
                     break;
                 }
             }

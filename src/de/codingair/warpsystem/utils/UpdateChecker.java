@@ -1,6 +1,6 @@
-package de.codingair.warpsystem.remastered.utils;
+package de.codingair.warpsystem.utils;
 
-import de.codingair.warpsystem.remastered.WarpSystem;
+import de.codingair.warpsystem.WarpSystem;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

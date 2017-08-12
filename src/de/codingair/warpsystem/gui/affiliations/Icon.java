@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.remastered.gui.affiliations;
+package de.codingair.warpsystem.gui.affiliations;
 
 import de.CodingAir.v1_6.CodingAPI.Serializable.SerializableItemStack;
 import org.bukkit.inventory.ItemStack;
