@@ -1,9 +1,8 @@
-package de.codingair.warpsystem.remastered.gui.affiliations;
+package de.codingair.warpsystem.gui.affiliations;
 
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

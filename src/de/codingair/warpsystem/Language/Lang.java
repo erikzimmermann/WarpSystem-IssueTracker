@@ -1,14 +1,51 @@
-package de.codingair.warpsystem.remastered.Language;
+package de.codingair.warpsystem.Language;
 
 import de.CodingAir.v1_6.CodingAPI.Files.ConfigFile;
-import de.codingair.warpsystem.remastered.Language.placeholder.Placeholder;
-import de.codingair.warpsystem.remastered.WarpSystem;
+import de.codingair.warpsystem.WarpSystem;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Lang {
     public static String getCurrentLanguage() {
         return getConfig().getString("Default_Language", "ENG");
+    }
+
+    public static boolean isAvailable(String lang) {
+        return getConfig().getString(lang.toUpperCase() + ".Menu_Help", null) != null;
+    }
+
+    public static void setCurrentLanguage(String lang) {
+        getConfig().set("Default_Language", lang.toUpperCase());
+        saveConfig();
+    }
+
+    public static int getLanguageId(String lang) {
+        int id = 0;
+
+        for(String key : getLanguages()) {
+            if(key.equalsIgnoreCase(lang)) return id;
+            id++;
+        }
+
+        return -999;
+    }
+
+    public static List<String> getLanguages() {
+        List<String> languages = new ArrayList<>();
+
+        for(String key : getConfig().getKeys(false)) {
+            if(key.equalsIgnoreCase("Default_Language") || key.equalsIgnoreCase("Prefix")) continue;
+            languages.add(key);
+        }
+
+        return languages;
+    }
+
+    public static String getLanguage(int id) {
+        return getLanguages().toArray(new String[getLanguages().size()])[id];
     }
 
     public static String getPrefix() {
@@ -19,7 +56,7 @@ public class Lang {
     }
 
     public static String get(String key, Example... examples) {
-        for (Example example : examples) {
+        for(Example example : examples) {
             if(getConfig().getString(example.getLanguage() + "." + key, null) == null) {
                 getConfig().set(example.getLanguage() + "." + key, example.getText());
                 saveConfig();
@@ -31,14 +68,6 @@ public class Lang {
         if(text == null) return null;
 
         text = ChatColor.translateAlternateColorCodes('&', text);
-        return text;
-    }
-
-    public static String get(String key, Placeholder placeholder, Example... examples) {
-        String text = get(key, examples);
-
-        text.replace(placeholder.getReplace(), placeholder.getData());
-
         return text;
     }
 

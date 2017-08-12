@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.remastered.gui.affiliations;
+package de.codingair.warpsystem.gui.affiliations;
 
 import java.io.Serializable;
 
