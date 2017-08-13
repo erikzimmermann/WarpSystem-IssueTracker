@@ -11,7 +11,7 @@ public class TeleportListener implements Listener {
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
         Player p = e.getPlayer();
-        if(!WarpSystem.getInstance().getTeleportManager().isTeleporting(p)) return;
+        if(!WarpSystem.getInstance().getTeleportManager().isTeleporting(p) || WarpSystem.getInstance().getTeleportManager().isCanMove()) return;
 
         double x = e.getFrom().getX() - e.getTo().getX();
         double y = e.getFrom().getY() - e.getTo().getY();
