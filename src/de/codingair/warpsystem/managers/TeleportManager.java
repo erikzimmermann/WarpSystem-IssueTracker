@@ -51,6 +51,7 @@ public class TeleportManager {
     public void load() {
         this.particleId = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Animation", 17);
         this.seconds = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Delay", 5);
+        this.canMove = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Teleport.Allow_Move", false);
     }
 
     public void save() {
@@ -58,6 +59,9 @@ public class TeleportManager {
 
         config.set("WarpSystem.Teleport.Animation", this.particleId);
         config.set("WarpSystem.Teleport.Delay", this.seconds);
+        config.set("WarpSystem.Teleport.Allow_Move", this.canMove);
+
+        WarpSystem.getInstance().getFileManager().getFile("Config").saveConfig();
     }
 
     public void teleport(Player player, Location to) {
@@ -104,6 +108,10 @@ public class TeleportManager {
 
     public int getParticleId() {
         return particleId;
+    }
+
+    public Particle getParticle() {
+        return particles.get(particleId);
     }
 
     public void setParticleId(int particleId) {
