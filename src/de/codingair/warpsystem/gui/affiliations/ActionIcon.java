@@ -76,9 +76,9 @@ public class ActionIcon extends Icon implements Serializable {
                 }
 
                 case TELEPORT_TO_WARP: {
-                    SerializableLocation sLoc = action.getValue();
-                    Location loc = Location.getByLocation(sLoc.getLocation());
-                    WarpSystem.getInstance().getTeleportManager().teleport(p, loc);
+                    if(!(this instanceof Warp)) return;
+
+                    WarpSystem.getInstance().getTeleportManager().teleport(p, (Warp) this);
                     break;
                 }
             }
