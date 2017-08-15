@@ -1,5 +1,7 @@
 package de.codingair.warpsystem.gui.affiliations;
 
+import de.CodingAir.v1_6.CodingAPI.Serializable.SerializableLocation;
+import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
@@ -37,5 +39,10 @@ public class Warp extends ActionIcon implements Serializable {
 
     public Category getCategory() {
         return category;
+    }
+
+    public Location getLocation() {
+        SerializableLocation sLoc = getAction(Action.TELEPORT_TO_WARP).getValue();
+        return sLoc.getLocation();
     }
 }

@@ -2,8 +2,12 @@ package de.codingair.warpsystem.managers;
 
 import de.CodingAir.v1_6.CodingAPI.Particles.Animations.CircleAnimation;
 import de.CodingAir.v1_6.CodingAPI.Particles.Particle;
+import de.CodingAir.v1_6.CodingAPI.Player.MessageAPI;
 import de.CodingAir.v1_6.CodingAPI.Server.Sound;
+import de.codingair.warpsystem.Language.Example;
+import de.codingair.warpsystem.Language.Lang;
 import de.codingair.warpsystem.WarpSystem;
+import de.codingair.warpsystem.gui.affiliations.Warp;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -64,8 +68,12 @@ public class TeleportManager {
         WarpSystem.getInstance().getFileManager().getFile("Config").saveConfig();
     }
 
-    public void teleport(Player player, Location to) {
-        Teleport teleport = new Teleport(player, to);
+    public void teleport(Player player, Warp warp) {
+        player.closeInventory();
+
+        Teleport teleport = new Teleport(player, warp);
+        this.teleports.add(teleport);
+
         if(seconds == 0 || player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) teleport.teleport();
         else teleport.start();
     }
@@ -136,15 +144,15 @@ public class TeleportManager {
 
     public class Teleport {
         private Player player;
-        private Location to;
+        private Warp warp;
         private CircleAnimation animation;
         private BukkitRunnable runnable;
         private Sound finishSound = Sound.ENDERMAN_TELEPORT;
         private Sound cancelSound = Sound.ITEM_BREAK;
 
-        public Teleport(Player player, Location to) {
+        public Teleport(Player player, Warp warp) {
             this.player = player;
-            this.to = to;
+            this.warp = warp;
             this.animation = new CircleAnimation(particles.get(particleId), player, WarpSystem.getInstance(), radius);
             this.runnable = new BukkitRunnable() {
                 private int left = seconds;
@@ -153,17 +161,22 @@ public class TeleportManager {
                 public void run() {
                     if(left == 0) {
                         teleport();
+                        MessageAPI.sendActionBar(player, null);
                         return;
                     }
 
-                    left--;
                     player.playSound(player.getLocation(), Sound.NOTE_PIANO.bukkitSound(), 1.5F, 0.5F);
+
+                    String msg = Lang.get("Teleporting_Info", new Example("ENG", "&cTeleport in §l§n%seconds%"), new Example("GER", "&cTeleport in &l&n%seconds%")).replace("%seconds%", left + "");
+
+                    MessageAPI.sendActionBar(player, msg);
+
+                    left--;
                 }
             };
         }
 
         public void start() {
-            //TODO: Send teleport message
             this.animation.setRunning(true);
             this.runnable.runTaskTimer(WarpSystem.getInstance(), 0L, 20L);
         }
@@ -178,16 +191,20 @@ public class TeleportManager {
 
         public void teleport() {
             cancel(false);
-            player.teleport(to);
+            player.teleport(warp.getLocation());
             finishSound.playSound(player);
+
+            teleports.remove(this);
+
+            player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To", new Example("ENG", "§7You was teleported to '§b%warp%&7'."), new Example("GER", "§7Du wurdest zu '§b%warp%&7' teleportiert.")).replace("%warp%", warp.getName()));
         }
 
         public Player getPlayer() {
             return player;
         }
 
-        public Location getTo() {
-            return to;
+        public Warp getTo() {
+            return warp;
         }
 
         public CircleAnimation getAnimation() {

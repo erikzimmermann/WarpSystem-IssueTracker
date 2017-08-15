@@ -3,6 +3,7 @@ package de.codingair.warpsystem.gui.guis;
 import de.CodingAir.v1_6.CodingAPI.Player.GUI.Anvil.*;
 import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.GUIs.ConfirmGUI;
 import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.GUI;
+import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.InterfaceListener;
 import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.ItemButton.ItemButton;
 import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.ItemButton.ItemButtonOption;
 import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.Skull;
@@ -16,21 +17,74 @@ import de.codingair.warpsystem.gui.affiliations.Action;
 import de.codingair.warpsystem.gui.affiliations.ActionIcon;
 import de.codingair.warpsystem.gui.affiliations.Category;
 import de.codingair.warpsystem.gui.affiliations.Warp;
+import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class GWarps extends GUI {
     private Category category;
     private boolean editing;
 
+    private boolean moving = false;
+    private ItemStack cursor = null;
+    private int oldSlot = -999;
+    private ActionIcon cursorIcon = null;
+
     public GWarps(Player p, Category category, boolean editing) {
         super(p, "§c§l§nWarps§r" + (category != null ? " §8@" + category.getName() : ""), 54, WarpSystem.getInstance(), false);
         this.category = category;
         this.editing = editing;
+
+        Listener listener;
+        Bukkit.getPluginManager().registerEvents(listener = new Listener() {
+
+            @EventHandler
+            public void onDrop(PlayerDropItemEvent e) {
+                Player p = e.getPlayer();
+
+                if(!p.getName().equals(getPlayer().getName()) || !moving) return;
+
+                if(cursor != null && !cursor.getType().equals(Material.AIR) && cursor.getType().equals(e.getItemDrop().getItemStack().getType())) {
+                    e.getItemDrop().remove();
+                    HandlerList.unregisterAll(this);
+                    cursor = null;
+                }
+            }
+
+        }, WarpSystem.getInstance());
+
+        addListener(new InterfaceListener() {
+            @Override
+            public void onInvClickEvent(InventoryClickEvent e) {
+
+            }
+
+            @Override
+            public void onInvOpenEvent(InventoryOpenEvent e) {
+
+            }
+
+            @Override
+            public void onInvCloseEvent(InventoryCloseEvent e) {
+                if(cursor == null) HandlerList.unregisterAll(listener);
+            }
+
+            @Override
+            public void onInvDragEvent(InventoryDragEvent e) {
+
+            }
+        });
 
         initialize(p);
     }
@@ -74,6 +128,8 @@ public class GWarps extends GUI {
             addButton(new ItemButton(0, builder.getItem()) {
                 @Override
                 public void onClick(InventoryClickEvent e) {
+                    if(moving) return;
+
                     if(e.isLeftClick()) {
                         editing = !editing;
                         reinitialize();
@@ -124,6 +180,16 @@ public class GWarps extends GUI {
                     addButton(new ItemButton(i, none.clone()) {
                         @Override
                         public void onClick(InventoryClickEvent clickEvent) {
+                            if(moving) {
+                                if(clickEvent.isLeftClick()) {
+                                    cursorIcon.setSlot(clickEvent.getSlot());
+                                    clickEvent.setCursor(new ItemStack(Material.AIR));
+                                    setMoving(false, clickEvent.getSlot());
+                                }
+
+                                return;
+                            }
+
                             ItemStack item = p.getItemInHand();
 
                             if(item == null || item.getType().equals(Material.AIR)) {
@@ -182,7 +248,7 @@ public class GWarps extends GUI {
             }
         }
     }
-    
+
     private void addToGUI(Player p, ActionIcon icon) {
         ItemButtonOption option = new ItemButtonOption();
         option.setClickSound(Sound.CLICK.bukkitSound());
@@ -199,6 +265,7 @@ public class GWarps extends GUI {
                 iconBuilder.addLore("§7" + Lang.get("Command", new Example("ENG", "Command"), new Example("GER", "Befehl")) + ": " + command);
                 iconBuilder.addLore("§7" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")) + ": " + permission);
                 iconBuilder.addLore("§8------------");
+                iconBuilder.addLore(Lang.get("Shift_Leftclick_Edit", new Example("ENG", "&7Shift-Leftclick: Move"), new Example("GER", "&7Shift-Linksklick: Bewegen")));
                 iconBuilder.addLore(Lang.get("Leftclick_Edit", new Example("ENG", "&7Leftclick: Configure"), new Example("GER", "&7Linksklick: Bearbeiten")));
                 iconBuilder.addLore(Lang.get("Rightclick_Delete", new Example("ENG", "&7Rightclick: Delete"), new Example("GER", "&7Rechtsklick: Löschen")));
             }
@@ -207,10 +274,24 @@ public class GWarps extends GUI {
                 @Override
                 public void onClick(InventoryClickEvent e) {
                     if(editing) {
-                        //TODO: Shift-Leftclick » Move icon
 
                         if(e.isLeftClick()) {
-                            new GEditIcon(p, category, icon).open();
+                            if(moving) {
+                                icon.setSlot(oldSlot);
+                                cursorIcon.setSlot(e.getSlot());
+                                e.setCursor(new ItemStack(Material.AIR));
+                                setMoving(false, e.getSlot());
+                            } else {
+                                if(e.isShiftClick()) {
+                                    cursorIcon = icon;
+                                    cursor = e.getCurrentItem().clone();
+                                    e.setCursor(cursor.clone());
+                                    e.setCurrentItem(new ItemStack(Material.AIR));
+                                    setMoving(true, e.getSlot());
+                                } else {
+                                    new GEditIcon(p, category, icon).open();
+                                }
+                            }
                         } else {
                             new ConfirmGUI(p,
                                     Lang.get("Delete", new Example("ENG", "&cDelete"), new Example("GER", "&cLöschen")),
@@ -241,6 +322,30 @@ public class GWarps extends GUI {
                     }
                 }
             }.setOption(option).setOnlyLeftClick(false));
+        }
+    }
+
+    private void setMoving(boolean moving, int slot) {
+        if(!moving) {
+
+            if(oldSlot != slot) {
+                getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Success_Icon_Moved", new Example("ENG", "&aThe icon was moved successfully."), new Example("GER", "&aDas Symbol wurde erfolgreich bewegt.")));
+            }
+
+            cursor = null;
+            cursorIcon = null;
+            reinitialize();
+        }
+
+        this.moving = moving;
+        this.oldSlot = slot;
+
+        if(moving) {
+            for(int i = 0; i < getSize(); i++) {
+                if(i == slot || getItem(i) == null || getItem(i).getType().equals(Material.AIR)) continue;
+
+                setItem(i, new ItemBuilder(getItem(i)).setLore("", Lang.get("Leftclick_Move_Icon", new Example("ENG", "&3Leftclick: &bMove icon"), new Example("GER", "&3Linksklick: &bSymbol bewegen"))).getItem());
+            }
         }
     }
 }

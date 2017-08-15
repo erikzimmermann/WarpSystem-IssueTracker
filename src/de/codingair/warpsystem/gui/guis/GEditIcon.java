@@ -13,6 +13,7 @@ import de.codingair.warpsystem.Language.Example;
 import de.codingair.warpsystem.Language.Lang;
 import de.codingair.warpsystem.WarpSystem;
 import de.codingair.warpsystem.gui.affiliations.*;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -64,7 +65,7 @@ public class GEditIcon extends GUI {
                 if(!quit) return;
 
                 Sound.ITEM_BREAK.playSound(p);
-                new GWarps(p, category, true).open();
+                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> new GWarps(p, category, true).open(), 1L);
             }
 
             @Override
@@ -91,7 +92,7 @@ public class GEditIcon extends GUI {
 
     @Override
     public void initialize(Player p) {
-        this.item = new ItemBuilder(this.item.getType()).setName("§b" + (isCategory ? "§n" : "") + name).setData(this.item.getData().getData()).setHideStandardLore(true)
+        this.item = new ItemBuilder(this.item).setName("§b" + (isCategory ? "§n" : "") + name).setHideStandardLore(true)
                 .setLore("§8------------", "", Lang.get("Change_Name", new Example("ENG", "&8»Click here to change the name."), new Example("GER", "&8»Klicke hier um den Namen zu ändern.")))
                 .getItem();
 
