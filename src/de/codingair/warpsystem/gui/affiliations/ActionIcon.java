@@ -105,8 +105,17 @@ public class ActionIcon extends Icon implements Serializable {
         this.actions.add(action);
     }
 
-    public void removeAction(ActionObject action) {
-        this.actions.remove(action);
+    public void removeAction(Action action) {
+        ActionObject object = null;
+
+        for(ActionObject actionObject : this.actions) {
+            if(actionObject.getAction().equals(action)) {
+                object = actionObject;
+                break;
+            }
+        }
+
+        if(object != null) this.actions.remove(object);
     }
 
     public void addAllActions(Collection<ActionObject> actions) {
