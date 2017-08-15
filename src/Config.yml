@@ -1,6 +1,7 @@
 WarpSystem:
   Maintenance: false
   Teleport:
+    Op_Can_Skip_Delay: false
     Delay: 5
     Animation: 17
     Allow_Move: false

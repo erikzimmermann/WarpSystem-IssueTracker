@@ -74,7 +74,7 @@ public class TeleportManager {
         Teleport teleport = new Teleport(player, warp);
         this.teleports.add(teleport);
 
-        if(seconds == 0 || player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) teleport.teleport();
+        if(seconds == 0 || (WarpSystem.OP_CAN_SKIP_DELAY && player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay))) teleport.teleport();
         else teleport.start();
     }
 
@@ -185,6 +185,7 @@ public class TeleportManager {
             if(animation.isRunning()) {
                 this.animation.setRunning(false);
                 this.runnable.cancel();
+                MessageAPI.sendActionBar(player, null);
             }
             if(sound) cancelSound.playSound(player);
         }
