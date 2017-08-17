@@ -8,6 +8,7 @@ import de.codingair.warpsystem.Language.Example;
 import de.codingair.warpsystem.Language.Lang;
 import de.codingair.warpsystem.WarpSystem;
 import de.codingair.warpsystem.gui.affiliations.Warp;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -197,7 +198,7 @@ public class TeleportManager {
 
             teleports.remove(this);
 
-            player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To", new Example("ENG", "§7You was teleported to '§b%warp%&7'."), new Example("GER", "§7Du wurdest zu '§b%warp%&7' teleportiert.")).replace("%warp%", warp.getName()));
+            player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To", new Example("ENG", "&7You was teleported to '&b%warp%&7'."), new Example("GER", "&7Du wurdest zu '&b%warp%&7' teleportiert.")).replace("%warp%", ChatColor.translateAlternateColorCodes('&', warp.getName())));
         }
 
         public Player getPlayer() {

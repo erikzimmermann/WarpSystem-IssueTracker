@@ -1,2 +1,127 @@
 Default_Language: ENG
-Prefix: "&8[&6Warps&8] &r"
+Prefix: '&8[&6Warps&8] &r'
+
+ENG:
+  Menu_Help: '&c&nHelp'
+  Menu_Help_Leftclick: '&3Leftclick: &bEdit-Mode'
+  Menu_Help_Rightclick: '&3Rightclick: &bOptions'
+  Back: Back
+  Edit_Mode_Set_ActionIcon: '&3Leftclick: &bSet Warp'
+  Edit_Mode_Set_Category: '&3Rightclick: &bSet Category'
+  Menu_Help_Leftclick_Edit_Mode: '&3Leftclick: &bQuit Edit-Mode'
+  Command: Command
+  Permission: Permission
+  Shift_Leftclick_Edit: '&7Shift-Leftclick: Move'
+  Leftclick_Edit: '&7Leftclick: Configure'
+  Rightclick_Delete: '&7Rightclick: Delete'
+  Item_Editing: Item-Editing
+  Change_Name: '&8> Click here to change the name.'
+  Cancel: Cancel
+  Ready: Ready
+  Sparkle: Sparkle
+  Leftclick_Enable: '&3Leftclick: &aEnable'
+  Description: Description
+  Leftclick_Add_Line: '&3Leftclick: &aAdd line'
+  Rightclick_Reset_Lines: '&3Rightclick: &cReset lines'
+  Current: Current
+  Leftclick_Add: '&3Leftclick: &aAdd'
+  Leftclick_Disable: '&3Leftclick: &cDisable'
+  Leftclick_Remove: '&3Leftclick: &cRemove'
+  Line: Line
+  Name: Name
+  Success_Create_Warp: '&aYou have created a &bwarp &asuccessfully.'
+  Teleporting_Info: '&cTeleport in §l§n%seconds%'
+  Teleported_To: '&7You was teleported to ''§b%warp%&7''.'
+  Config: Config
+  Maintenance: Maintenance
+  Language: Language
+  Leftclick_Prev_Lang: '&3Leftclick: &bPrevious language'
+  Rightclick_Next_Lang: '&3Rightclick: &bNext language'
+  Animation: Animation
+  Shift_Leftclick_Show_Animation: '&3Shift-Leftclick: &bShow'
+  Leftclick_Prev_Animation: '&3Leftclick: &bPrevious animation'
+  Rightclick_Next_Animation: '&3Rightclick: &bNext animation'
+  Walking_During_Teleports: Walking in teleports
+  Teleport_Delay: Teleport delay
+  Leftclick_Reduce: '&3Leftclick: &bReduce'
+  Rightclick_Enlarge: '&3Rightclick: &bEnlarge'
+  Success_Changed_Lang: '&aThe language was changed to ''%lang%''.'
+  Success_Maintenance_Enabled: '&4The Maintenance-Mode was enabled.'
+  Leftclick_Maintenance_Off: '&3Leftclick: &cDisable'
+  Success_Maintenance_Disabled: '&4The Maintenance-Mode was disabled.'
+  Leftclick_Maintenance_On: '&3Leftclick: &bEnable'
+  Success_Changed_Animation: '&aThe animation was changed to ''%anim%''.'
+  Success_Walking_Enabled: '&7Walking during a teleport is &aallowed &7now.'
+  Success_Walking_Disabled: '&7Walking during a teleport is &cdisallowed &7now.'
+  Success_Changed_Teleport_Delay: '&aThe teleport delay was changed to ''%delay%''.'
+  Success_Configured: '&aYou have configured the icon successfully.'
+  Delete: '&cDelete'
+  'Yes': 'Yes'
+  Confirm_Delete: '&7Are you sure you want to &cdelete &7this icon?'
+  'No': 'No'
+  Icon_Not_Deleted: '&7The icon was &cnot &7deleted.'
+  Icon_Deleted: '&cThe icon was deleted successfully.'
+  Leftclick_Move_Icon: '&3Leftclick: &bMove icon'
+  Success_Icon_Moved: '&aThe icon was moved successfully.'
+GER:
+  Menu_Help: '&c&nHilfe'
+  Menu_Help_Leftclick: '&3Linksklick: &bBearbeitungs-Modus'
+  Menu_Help_Rightclick: '&3Rechtsklick: &bOptionen'
+  Back: Zurück
+  Edit_Mode_Set_ActionIcon: '&3Linksklick: &bWarp setzen'
+  Edit_Mode_Set_Category: '&3Rechtsklick: &bKategorie setzen'
+  Menu_Help_Leftclick_Edit_Mode: '&3Linksklick: &bBearbeitungs-Modus verlassen'
+  Command: Befehl
+  Permission: Berechtigung
+  Shift_Leftclick_Edit: '&7Shift-Linksklick: Bewegen'
+  Leftclick_Edit: '&7Linksklick: Bearbeiten'
+  Rightclick_Delete: '&7Rechtsklick: Löschen'
+  Item_Editing: Item-Bearbeitung
+  Change_Name: '&8> Klicke hier um den Namen zu ändern.'
+  Cancel: Abbrechen
+  Ready: Fertig
+  Sparkle: Funkeln
+  Leftclick_Enable: '&3Linksklick: &aAktivieren'
+  Description: Beschreibung
+  Leftclick_Add_Line: '&3Linksklick: &aZeile hinzufügen'
+  Rightclick_Reset_Lines: '&3Rechtsklick: &cZeilen zurücksetzen'
+  Current: Aktuell
+  Leftclick_Add: '&3Linksklick: &aHinzufügen'
+  Leftclick_Disable: '&3Linksklick: &cDeaktivieren'
+  Leftclick_Remove: '&3Linksklick: &cEntfernen'
+  Line: Linie
+  Name: Name
+  Success_Create_Warp: '&aDu hast erfolgreich ein &bWarp &aerstellt.'
+  Teleporting_Info: '&cTeleport in &l&n%seconds%'
+  Teleported_To: '&7Du wurdest zu ''§b%warp%&7'' teleportiert.'
+  Config: Config
+  Maintenance: Wartung
+  Language: Sprache
+  Leftclick_Prev_Lang: '&3Linksklick: &bVorherige Sprache'
+  Rightclick_Next_Lang: '&3Rechtsklick: &bNächste Sprache'
+  Animation: Animation
+  Shift_Leftclick_Show_Animation: '&3Shift-Linksklick: &bZeigen'
+  Leftclick_Prev_Animation: '&3Linksklick: &bVorherige Animation'
+  Rightclick_Next_Animation: '&3Rechtsklick: &bNächste Animation'
+  Walking_During_Teleports: Laufen beim Teleport
+  Teleport_Delay: Teleport-Zeit
+  Leftclick_Reduce: '&3Linksklick: &bVerringern'
+  Rightclick_Enlarge: '&3Rechtsklick: &bVergrößern'
+  Success_Changed_Lang: '&aDie Sprache wurde auf ''%lang%'' geändert.'
+  Success_Maintenance_Enabled: '&4Der Wartungs-Modus wurde aktiviert.'
+  Leftclick_Maintenance_Off: '&3Linksklick: &cDeaktivieren'
+  Success_Maintenance_Disabled: '&4Der Wartungs-Modus wurde deaktiviert.'
+  Leftclick_Maintenance_On: '&3Linksklick: &bAktivieren'
+  Success_Changed_Animation: '&aDie Animation wurde auf ''%anim%'' geändert.'
+  Success_Walking_Enabled: '&7Laufen beim Teleport ist nun &aerlaubt&7.'
+  Success_Walking_Disabled: '&7Laufen beim Teleport ist nun &cnicht mehr erlaubt&7.'
+  Success_Changed_Teleport_Delay: '&aDie Teleport-Zeit wurde auf ''%delay%'' geändert.'
+  Success_Configured: '&aDu hast das Symbol erfolgreich bearbeitet'
+  Delete: '&cLöschen'
+  'Yes': Ja
+  Confirm_Delete: '&7Möchten Sie dieses Symbol wirklich löschen?'
+  'No': Nein
+  Icon_Not_Deleted: '&7Das Symbol wurde &cnicht &7gelöscht.'
+  Icon_Deleted: '&cDas Symbol wurde erfolgreich gelöscht.'
+  Leftclick_Move_Icon: '&3Linksklick: &bSymbol bewegen'
+  Success_Icon_Moved: '&aDas Symbol wurde erfolgreich bewegt.'
