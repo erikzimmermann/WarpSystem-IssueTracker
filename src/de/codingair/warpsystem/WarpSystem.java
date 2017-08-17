@@ -3,18 +3,17 @@ package de.codingair.warpsystem;
 import de.CodingAir.v1_6.CodingAPI.API;
 import de.CodingAir.v1_6.CodingAPI.BungeeCord.BungeeCordHelper;
 import de.CodingAir.v1_6.CodingAPI.Files.FileManager;
-import de.CodingAir.v1_6.CodingAPI.Player.Data.PacketReader;
 import de.CodingAir.v1_6.CodingAPI.Server.Version;
 import de.CodingAir.v1_6.CodingAPI.Time.Timer;
 import de.CodingAir.v1_6.CodingAPI.Tools.Callback;
 import de.codingair.warpsystem.Language.Lang;
+import de.codingair.warpsystem.commands.CWarpSystem;
 import de.codingair.warpsystem.commands.CWarps;
 import de.codingair.warpsystem.listeners.NotifyListener;
 import de.codingair.warpsystem.listeners.TeleportListener;
 import de.codingair.warpsystem.managers.IconManager;
 import de.codingair.warpsystem.managers.TeleportManager;
 import de.codingair.warpsystem.utils.UpdateChecker;
-import net.minecraft.server.v1_8_R3.PacketPlayInWindowClick;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -87,7 +86,11 @@ public class WarpSystem extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new TeleportListener(), this);
         Bukkit.getPluginManager().registerEvents(new NotifyListener(), this);
+
         getCommand("warp").setExecutor(new CWarps());
+        getCommand("warp").setTabCompleter(new CWarps());
+        getCommand("warpsystem").setExecutor(new CWarpSystem());
+        getCommand("warpsystem").setTabCompleter(new CWarpSystem());
 
         this.startAutoSaver();
 

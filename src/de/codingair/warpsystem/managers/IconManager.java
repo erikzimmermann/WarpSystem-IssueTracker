@@ -2,6 +2,7 @@ package de.codingair.warpsystem.managers;
 
 import de.CodingAir.v1_6.CodingAPI.Files.ConfigFile;
 import de.CodingAir.v1_6.CodingAPI.Serializable.SerializableLocation;
+import de.CodingAir.v1_6.CodingAPI.Server.Color;
 import de.CodingAir.v1_6.CodingAPI.Tools.ItemBuilder;
 import de.codingair.warpsystem.gui.affiliations.*;
 import de.codingair.warpsystem.WarpSystem;
@@ -113,26 +114,36 @@ public class IconManager {
     }
 
     public boolean existsWarp(String name, Category category) {
+        if(name == null) return false;
+        name = Color.removeColor(name);
+
         return getWarp(name, category) != null;
     }
 
     public Warp getWarp(String name, Category category) {
+        if(name == null) return null;
+        name = Color.removeColor(name);
+
         for (Warp warp : getWarps(category)) {
-            if (warp.getName().equalsIgnoreCase(name)) return warp;
+            if (warp.getNameWithoutColor().equalsIgnoreCase(name)) return warp;
         }
 
         return null;
     }
 
     public boolean existsCategory(String name) {
+        if(name == null) return false;
+        name = Color.removeColor(name);
+
         return getCategory(name) != null;
     }
 
     public Category getCategory(String name) {
         if(name == null) return null;
+        name = Color.removeColor(name);
 
         for (Category c : this.categories) {
-            if (c.getName().equalsIgnoreCase(name)) return c;
+            if (c.getNameWithoutColor().equalsIgnoreCase(name)) return c;
         }
 
         return null;
