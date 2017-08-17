@@ -94,8 +94,8 @@ public class GEditIcon extends GUI {
 
     @Override
     public void initialize(Player p) {
-        this.item = new ItemBuilder(this.item).setName("§b" + (isCategory ? "§n" : "") + name).setHideStandardLore(true)
-                .setLore("§8------------", "", Lang.get("Change_Name", new Example("ENG", "&8»Click here to change the name."), new Example("GER", "&8»Klicke hier um den Namen zu ändern.")))
+        this.item = new ItemBuilder(this.item).setName("§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).setHideStandardLore(true)
+                .setLore("§8------------", "", Lang.get("Change_Name", new Example("ENG", "&8> Click here to change the name."), new Example("GER", "&8> Klicke hier um den Namen zu ändern.")))
                 .getItem();
 
         ItemStack leaves = new ItemBuilder(Material.LEAVES).setName("§0").getItem();
@@ -199,6 +199,27 @@ public class GEditIcon extends GUI {
                                 }
                             }
 
+                            input = ChatColor.translateAlternateColorCodes('&', input);
+
+                            if(isCategory) {
+                                StringBuilder builder = new StringBuilder();
+
+                                boolean color = false;
+                                for(char c : input.toCharArray()) {
+                                    builder.append(c);
+
+                                    if(c == '§') color = true;
+                                    else if(color) {
+                                        builder.append("§n");
+                                        color = false;
+                                    }
+                                }
+
+                                input = builder.toString();
+                            }
+
+                            input = input.replace("§", "&");
+
                             e.setClose(true);
                             playSound(p);
                         }
@@ -208,7 +229,7 @@ public class GEditIcon extends GUI {
                     public void onClose(AnvilCloseEvent e) {
                         if(e.isSubmitted()) {
                             name = input;
-                            item = new ItemBuilder(item).setName("§b" + (isCategory ? "§n" : "") + name).getItem();
+                            item = new ItemBuilder(item).setName("§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).getItem();
                             setItem(item);
                         } else Sound.ITEM_BREAK.playSound(p);
 
@@ -229,7 +250,7 @@ public class GEditIcon extends GUI {
             public void onClick(InventoryClickEvent e) {
                 new GWarps(p, category, true).open();
             }
-        }.setOption(option.clone()).setOnlyLeftClick(true).setCloseOnClick(true).setClickSound(Sound.ITEM_BREAK.bukkitSound()));
+        }.setOption(option.clone()).setOnlyLeftClick(true).setCloseOnClick(true).setClickSound(null));
 
         //ready
         addButton(new ItemButton(8, 2, ready) {
@@ -245,13 +266,16 @@ public class GEditIcon extends GUI {
                     editing.setName(name);
                     editing.setItem(item);
                     editing.setPermission(permission);
+                    editing.removeAction(Action.RUN_COMMAND);
+
+                    if(GEditIcon.this.command != null) editing.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
 
                     p.sendMessage(Lang.getPrefix() + Lang.get("Success_Configured", new Example("ENG", "&aYou have configured the icon successfully."), new Example("GER", "&aDu hast das Symbol erfolgreich bearbeitet")));
                 } else {
                     if(isCategory) {
                         Category category = new Category(name, item, slot, permission);
 
-                        if(command != null) category.addAction(new ActionObject(Action.RUN_COMMAND, command));
+                        if(GEditIcon.this.command != null) category.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
 
                         WarpSystem.getInstance().getIconManager().getCategories().add(category);
 

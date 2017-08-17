@@ -3,6 +3,7 @@ package de.codingair.warpsystem;
 import de.CodingAir.v1_6.CodingAPI.API;
 import de.CodingAir.v1_6.CodingAPI.BungeeCord.BungeeCordHelper;
 import de.CodingAir.v1_6.CodingAPI.Files.FileManager;
+import de.CodingAir.v1_6.CodingAPI.Player.Data.PacketReader;
 import de.CodingAir.v1_6.CodingAPI.Server.Version;
 import de.CodingAir.v1_6.CodingAPI.Time.Timer;
 import de.CodingAir.v1_6.CodingAPI.Tools.Callback;
@@ -13,10 +14,13 @@ import de.codingair.warpsystem.listeners.TeleportListener;
 import de.codingair.warpsystem.managers.IconManager;
 import de.codingair.warpsystem.managers.TeleportManager;
 import de.codingair.warpsystem.utils.UpdateChecker;
+import net.minecraft.server.v1_8_R3.PacketPlayInWindowClick;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.io.File;
 
 public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_NOTIFY = "WarpSystem.Notify";
@@ -35,13 +39,16 @@ public class WarpSystem extends JavaPlugin {
     private TeleportManager teleportManager = new TeleportManager();
     private FileManager fileManager = new FileManager(this);
 
-    public UpdateChecker updateChecker = new UpdateChecker("https://www.spigotmc.org/resources/warpsystem-gui.29595/history");
+    private UpdateChecker updateChecker = new UpdateChecker("https://www.spigotmc.org/resources/warpsystem-gui.29595/history");
     private Timer timer = new Timer();
 
-    public static boolean updateAvailable = false;
+    private static boolean updateAvailable = false;
+    private boolean old = false;
 
     @Override
     public void onEnable() {
+        checkOldDirectory();
+
         instance = this;
         API.getInstance().onEnable(this);
 
@@ -151,6 +158,26 @@ public class WarpSystem extends JavaPlugin {
         log(" ");
     }
 
+    private void checkOldDirectory() {
+        File file = getDataFolder();
+
+        if(file.exists()) {
+            File warps = new File(file, "Memory/Warps.yml");
+
+            if(warps.exists()) {
+                old = true;
+                renameUnnecessaryFiles();
+            }
+        }
+    }
+
+    private void renameUnnecessaryFiles() {
+        File file = getDataFolder();
+
+        new File(file, "Config.yml").renameTo(new File(file, "OldConfig_Update_2.0.yml"));
+        new File(file, "Language.yml").renameTo(new File(file, "OldLanguage_Update_2.0.yml"));
+    }
+
     public void notifyPlayers(Player player) {
         if(player == null) {
             for(Player p : Bukkit.getOnlinePlayers()) {
@@ -189,5 +216,9 @@ public class WarpSystem extends JavaPlugin {
 
     public static void log(String message) {
         System.out.println(message);
+    }
+
+    public boolean isOld() {
+        return old;
     }
 }
