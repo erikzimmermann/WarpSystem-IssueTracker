@@ -1,6 +1,5 @@
-Default_Language: ENG
+Default_Language: GER
 Prefix: '&8[&6Warps&8] &r'
-
 ENG:
   Menu_Help: '&c&nHelp'
   Menu_Help_Leftclick: '&3Leftclick: &bEdit-Mode'
@@ -63,8 +62,78 @@ ENG:
   Icon_Deleted: '&cThe icon was deleted successfully.'
   Leftclick_Move_Icon: '&3Leftclick: &bMove icon'
   Success_Icon_Moved: '&aThe icon was moved successfully.'
+  Name_Already_Exists: '&cThis name already exists.'
+  Only_For_Players: '&cThis is only for players!'
+  Use: Use
+  Success_Files_Reloaded: '&aAll files are reloaded.'
 GER:
   Menu_Help: '&c&nHilfe'
+  Menu_Help_Leftclick: '&3Linksklick: &bBearbeitungs-Modus'
+  Menu_Help_Rightclick: '&3Rechtsklick: &bOptionen'
+  Back: Zurück
+  Edit_Mode_Set_ActionIcon: '&3Linksklick: &bWarp setzen'
+  Edit_Mode_Set_Category: '&3Rechtsklick: &bKategorie setzen'
+  Menu_Help_Leftclick_Edit_Mode: '&3Linksklick: &bBearbeitungs-Modus verlassen'
+  Command: Befehl
+  Permission: Berechtigung
+  Shift_Leftclick_Edit: '&7Shift-Linksklick: Bewegen'
+  Leftclick_Edit: '&7Linksklick: Bearbeiten'
+  Rightclick_Delete: '&7Rechtsklick: Löschen'
+  Item_Editing: Item-Bearbeitung
+  Change_Name: '&8> Klicke hier um den Namen zu ändern.'
+  Cancel: Abbrechen
+  Ready: Fertig
+  Sparkle: Funkeln
+  Leftclick_Enable: '&3Linksklick: &aAktivieren'
+  Description: Beschreibung
+  Leftclick_Add_Line: '&3Linksklick: &aZeile hinzufügen'
+  Rightclick_Reset_Lines: '&3Rechtsklick: &cZeilen zurücksetzen'
+  Current: Aktuell
+  Leftclick_Add: '&3Linksklick: &aHinzufügen'
+  Leftclick_Disable: '&3Linksklick: &cDeaktivieren'
+  Leftclick_Remove: '&3Linksklick: &cEntfernen'
+  Line: Linie
+  Name: Name
+  Success_Create_Warp: '&aDu hast erfolgreich ein &bWarp &aerstellt.'
+  Teleporting_Info: '&cTeleport in &l&n%seconds%'
+  Teleported_To: '&7Du wurdest zu ''§b%warp%&7'' teleportiert.'
+  Config: Config
+  Maintenance: Wartung
+  Language: Sprache
+  Leftclick_Prev_Lang: '&3Linksklick: &bVorherige Sprache'
+  Rightclick_Next_Lang: '&3Rechtsklick: &bNächste Sprache'
+  Animation: Animation
+  Shift_Leftclick_Show_Animation: '&3Shift-Linksklick: &bZeigen'
+  Leftclick_Prev_Animation: '&3Linksklick: &bVorherige Animation'
+  Rightclick_Next_Animation: '&3Rechtsklick: &bNächste Animation'
+  Walking_During_Teleports: Laufen beim Teleport
+  Teleport_Delay: Teleport-Zeit
+  Leftclick_Reduce: '&3Linksklick: &bVerringern'
+  Rightclick_Enlarge: '&3Rechtsklick: &bVergrößern'
+  Success_Changed_Lang: '&aDie Sprache wurde auf ''%lang%'' geändert.'
+  Success_Maintenance_Enabled: '&4Der Wartungs-Modus wurde aktiviert.'
+  Leftclick_Maintenance_Off: '&3Linksklick: &cDeaktivieren'
+  Success_Maintenance_Disabled: '&4Der Wartungs-Modus wurde deaktiviert.'
+  Leftclick_Maintenance_On: '&3Linksklick: &bAktivieren'
+  Success_Changed_Animation: '&aDie Animation wurde auf ''%anim%'' geändert.'
+  Success_Walking_Enabled: '&7Laufen beim Teleport ist nun &aerlaubt&7.'
+  Success_Walking_Disabled: '&7Laufen beim Teleport ist nun &cnicht mehr erlaubt&7.'
+  Success_Changed_Teleport_Delay: '&aDie Teleport-Zeit wurde auf ''%delay%'' geändert.'
+  Success_Configured: '&aDu hast das Symbol erfolgreich bearbeitet'
+  Delete: '&cLöschen'
+  'Yes': Ja
+  Confirm_Delete: '&7Möchten Sie dieses Symbol wirklich löschen?'
+  'No': Nein
+  Icon_Not_Deleted: '&7Das Symbol wurde &cnicht &7gelöscht.'
+  Icon_Deleted: '&cDas Symbol wurde erfolgreich gelöscht.'
+  Leftclick_Move_Icon: '&3Linksklick: &bSymbol bewegen'
+  Success_Icon_Moved: '&aDas Symbol wurde erfolgreich bewegt.'
+  Name_Already_Exists: '&cDieser Name existiert bereits.'
+  Only_For_Players: '&cDies ist nur für Spieler!'
+  Use: Benutze
+  Success_Files_Reloaded: '&aAlle Dateien wurden neu geladen.'
+DUMM:
+  Menu_Help: '&c&nPenis'
   Menu_Help_Leftclick: '&3Linksklick: &bBearbeitungs-Modus'
   Menu_Help_Rightclick: '&3Rechtsklick: &bOptionen'
   Back: Zurück
