@@ -187,18 +187,6 @@ public class GEditIcon extends GUI {
                                 return;
                             }
 
-                            if(!isCategory) {
-                                if(WarpSystem.getInstance().getIconManager().existsWarp(input, category)) {
-                                    p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
-                                    return;
-                                }
-                            } else {
-                                if(WarpSystem.getInstance().getIconManager().existsCategory(input)) {
-                                    p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
-                                    return;
-                                }
-                            }
-
                             input = ChatColor.translateAlternateColorCodes('&', input);
 
                             if(isCategory) {
@@ -216,6 +204,18 @@ public class GEditIcon extends GUI {
                                 }
 
                                 input = builder.toString();
+                            }
+
+                            if(!isCategory) {
+                                if(WarpSystem.getInstance().getIconManager().existsWarp(input, category)) {
+                                    p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                    return;
+                                }
+                            } else {
+                                if(WarpSystem.getInstance().getIconManager().existsCategory(input)) {
+                                    p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                    return;
+                                }
                             }
 
                             input = input.replace("§", "&");

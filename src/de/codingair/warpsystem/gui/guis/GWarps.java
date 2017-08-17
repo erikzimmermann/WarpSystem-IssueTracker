@@ -43,7 +43,7 @@ public class GWarps extends GUI {
     private ActionIcon cursorIcon = null;
 
     public GWarps(Player p, Category category, boolean editing) {
-        super(p, "§c§l§nWarps§r" + (category != null ? " §8@" + category.getName() : ""), 54, WarpSystem.getInstance(), false);
+        super(p, "§c§l§nWarps§r" + (category != null ? " §8@" + category.getNameWithoutColor() : ""), 54, WarpSystem.getInstance(), false);
         this.category = category;
         this.editing = editing;
 
@@ -150,7 +150,7 @@ public class GWarps extends GUI {
                 @Override
                 public void onClick(InventoryClickEvent e) {
                     GWarps.this.category = null;
-                    setTitle("§c§l§nWarps§r" + (category != null ? " §8@" + category.getName() : ""));
+                    setTitle("§c§l§nWarps§r" + (category != null ? " §8@" + category.getNameWithoutColor() : ""));
                     reinitialize();
                 }
             }.setOption(option));
@@ -218,18 +218,6 @@ public class GWarps extends GUI {
                                             return;
                                         }
 
-                                        if(clickEvent.isLeftClick()) {
-                                            if(WarpSystem.getInstance().getIconManager().existsWarp(input, category)) {
-                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
-                                                return;
-                                            }
-                                        } else {
-                                            if(WarpSystem.getInstance().getIconManager().existsCategory(input)) {
-                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
-                                                return;
-                                            }
-                                        }
-
                                         input = ChatColor.translateAlternateColorCodes('&', input);
 
                                         if(clickEvent.isRightClick()) {
@@ -247,6 +235,18 @@ public class GWarps extends GUI {
                                             }
 
                                             input = builder.toString();
+                                        }
+
+                                        if(clickEvent.isLeftClick()) {
+                                            if(WarpSystem.getInstance().getIconManager().existsWarp(input, category)) {
+                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                                return;
+                                            }
+                                        } else {
+                                            if(WarpSystem.getInstance().getIconManager().existsCategory(input)) {
+                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                                return;
+                                            }
                                         }
 
                                         input = input.replace("§", "&");
