@@ -6,6 +6,7 @@ import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.InterfaceListe
 import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.ItemButton.ItemButton;
 import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.ItemButton.ItemButtonOption;
 import de.CodingAir.v1_6.CodingAPI.Serializable.SerializableLocation;
+import de.CodingAir.v1_6.CodingAPI.Server.Color;
 import de.CodingAir.v1_6.CodingAPI.Server.Environment;
 import de.CodingAir.v1_6.CodingAPI.Server.Sound;
 import de.CodingAir.v1_6.CodingAPI.Tools.ItemBuilder;
@@ -208,13 +209,17 @@ public class GEditIcon extends GUI {
 
                             if(!isCategory) {
                                 if(WarpSystem.getInstance().getIconManager().existsWarp(input, category)) {
-                                    p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
-                                    return;
+                                    if(editing == null || !editing.getNameWithoutColor().equals(Color.removeColor(input))) {
+                                        p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                        return;
+                                    }
                                 }
                             } else {
                                 if(WarpSystem.getInstance().getIconManager().existsCategory(input)) {
-                                    p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
-                                    return;
+                                    if(editing == null || !editing.getNameWithoutColor().equals(Color.removeColor(input))) {
+                                        p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                        return;
+                                    }
                                 }
                             }
 

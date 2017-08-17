@@ -90,7 +90,7 @@ public class GConfig extends GUI {
         ItemBuilder maintenance = new ItemBuilder(Material.BEACON).setName("§c§l§n" + Lang.get("Maintenance", new Example("ENG", "Maintenance"), new Example("GER", "Wartung")));
 
         if(!WarpSystem.maintenance)
-            maintenance.setLore("", Lang.get("Leftclick_Enable", new Example("ENG", "&3Leftclick: &bEnable"), new Example("GER", "&3Linksklick: &bAktivieren")));
+            maintenance.setLore("", Lang.get("Leftclick_Enable", new Example("ENG", "&3Leftclick: &aEnable"), new Example("GER", "&3Linksklick: &aAktivieren")));
         else
             maintenance.setLore("", Lang.get("Leftclick_Disable", new Example("ENG", "&3Leftclick: &cDisable"), new Example("GER", "&3Linksklick: &cDeaktivieren")));
 
@@ -108,7 +108,7 @@ public class GConfig extends GUI {
                 ItemBuilder maintenance = new ItemBuilder(Material.BEACON).setName("§c§l§n" + Lang.get("Maintenance", new Example("ENG", "Maintenance"), new Example("GER", "Wartung")));
 
                 if(!WarpSystem.maintenance)
-                    maintenance.setLore("", Lang.get("Leftclick_Maintenance_On", new Example("ENG", "&3Leftclick: &bEnable"), new Example("GER", "&3Linksklick: &bAktivieren")));
+                    maintenance.setLore("", Lang.get("Leftclick_Maintenance_On", new Example("ENG", "&3Leftclick: &bEnable"), new Example("GER", "&3Linksklick: &aAktivieren")));
                 else
                     maintenance.setLore("", Lang.get("Leftclick_Maintenance_Off", new Example("ENG", "&3Leftclick: &cDisable"), new Example("GER", "&3Linksklick: &cDeaktivieren")));
 
@@ -216,7 +216,7 @@ public class GConfig extends GUI {
         ItemBuilder movingAllowed = new ItemBuilder(Material.LEATHER_BOOTS).setHideStandardLore(true).setName("§c§n" + Lang.get("Walking_During_Teleports", new Example("ENG", "Walking in teleports"), new Example("GER", "Laufen beim Teleport")));
 
         if(!WarpSystem.getInstance().getTeleportManager().isCanMove())
-            movingAllowed.setLore("", Lang.get("Leftclick_Enable", new Example("ENG", "&3Leftclick: &bEnable"), new Example("GER", "&3Linksklick: &bAktivieren")));
+            movingAllowed.setLore("", Lang.get("Leftclick_Enable", new Example("ENG", "&3Leftclick: &aEnable"), new Example("GER", "&3Linksklick: &aAktivieren")));
         else
             movingAllowed.setLore("", Lang.get("Leftclick_Disable", new Example("ENG", "&3Leftclick: &cDisable"), new Example("GER", "&3Linksklick: &cDeaktivieren")));
 
@@ -234,7 +234,7 @@ public class GConfig extends GUI {
                 ItemBuilder movingAllowed = new ItemBuilder(Material.LEATHER_BOOTS).setHideStandardLore(true).setName("§c§n" + Lang.get("Walking_During_Teleports", new Example("ENG", "Walking in teleports"), new Example("GER", "Laufen beim Teleport")));
 
                 if(!WarpSystem.getInstance().getTeleportManager().isCanMove())
-                    movingAllowed.setLore("", Lang.get("Leftclick_Enable", new Example("ENG", "&3Leftclick: &bEnable"), new Example("GER", "&3Linksklick: &bAktivieren")));
+                    movingAllowed.setLore("", Lang.get("Leftclick_Enable", new Example("ENG", "&3Leftclick: &aEnable"), new Example("GER", "&3Linksklick: &aAktivieren")));
                 else
                     movingAllowed.setLore("", Lang.get("Leftclick_Disable", new Example("ENG", "&3Leftclick: &cDisable"), new Example("GER", "&3Linksklick: &cDeaktivieren")));
 
