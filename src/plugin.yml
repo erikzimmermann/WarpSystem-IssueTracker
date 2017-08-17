@@ -1,8 +1,9 @@
 name: WarpSystem
 author: AirTriX
-version: 1.2.0
+version: 2.0.0
 description: WarpSystem
 main: de.codingair.warpsystem.WarpSystem
+softdepend: [Multiverse-Core]
 
 commands:
   warp:

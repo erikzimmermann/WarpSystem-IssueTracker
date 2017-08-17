@@ -13,6 +13,7 @@ import de.codingair.warpsystem.Language.Example;
 import de.codingair.warpsystem.Language.Lang;
 import de.codingair.warpsystem.WarpSystem;
 import de.codingair.warpsystem.gui.affiliations.*;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -24,20 +25,17 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class GEditIcon extends GUI {
     private ItemStack item;
     private String name;
-    private String permission;
+    private String permission = null;
+    private String command = null;
 
     private int slot;
     private Category category;
 
     private boolean isCategory;
     private ActionIcon editing;
-    private List<ActionObject> actionList = new ArrayList<>();
 
     private boolean quit = true;
 
@@ -54,21 +52,24 @@ public class GEditIcon extends GUI {
 
         addListener(new InterfaceListener() {
             @Override
-            public void onInvClickEvent(InventoryClickEvent e) {}
+            public void onInvClickEvent(InventoryClickEvent e) {
+            }
 
             @Override
-            public void onInvOpenEvent(InventoryOpenEvent e) {}
+            public void onInvOpenEvent(InventoryOpenEvent e) {
+            }
 
             @Override
             public void onInvCloseEvent(InventoryCloseEvent e) {
                 if(!quit) return;
 
                 Sound.ITEM_BREAK.playSound(p);
-                new GWarps(p, category, true).open();
+                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> new GWarps(p, category, true).open(), 1L);
             }
 
             @Override
-            public void onInvDragEvent(InventoryDragEvent e) {}
+            public void onInvDragEvent(InventoryDragEvent e) {
+            }
         });
 
         initialize(p);
@@ -83,6 +84,8 @@ public class GEditIcon extends GUI {
 
         this.slot = editing.getSlot();
         this.category = category;
+        this.command = editing.getAction(Action.RUN_COMMAND) == null ? null : editing.getAction(Action.RUN_COMMAND).getValue();
+        this.permission = editing.getPermission();
 
         this.isCategory = editing instanceof Category;
 
@@ -91,8 +94,8 @@ public class GEditIcon extends GUI {
 
     @Override
     public void initialize(Player p) {
-        this.item = new ItemBuilder(this.item.getType()).setName("§b" + (isCategory ? "§n" : "") + name).setData(this.item.getData().getData()).setHideStandardLore(true)
-                .setLore("§8------------", "", Lang.get("Change_Name", new Example("ENG", "&8»Click here to change the name."), new Example("GER", "&8»Klicke hier um den Namen zu ändern.")))
+        this.item = new ItemBuilder(this.item).setName("§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).setHideStandardLore(true)
+                .setLore("§8------------", "", Lang.get("Change_Name", new Example("ENG", "&8> Click here to change the name."), new Example("GER", "&8> Klicke hier um den Namen zu ändern.")))
                 .getItem();
 
         ItemStack leaves = new ItemBuilder(Material.LEAVES).setName("§0").getItem();
@@ -112,13 +115,16 @@ public class GEditIcon extends GUI {
                 .getItem();
 
         ItemStack command = new ItemBuilder(Material.REDSTONE).setName("§6§n" + Lang.get("Command", new Example("ENG", "Command"), new Example("GER", "Befehl")))
-                .setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7-", "", Lang.get("Leftclick_Add", new Example("ENG", "&3Leftclick: &aAdd"), new Example("GER", "&3Linksklick: &aHinzufügen")))
+                .setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + (this.command == null ? "-" : this.command), "",
+                        this.command == null ? Lang.get("Leftclick_Add", new Example("ENG", "&3Leftclick: &aAdd"), new Example("GER", "&3Linksklick: &aHinzufügen"))
+                                : Lang.get("Leftclick_Remove", new Example("ENG", "&3Leftclick: &cRemove"), new Example("GER", "&3Linksklick: &cEntfernen")))
                 .getItem();
 
         ItemStack permissionIcon = new ItemBuilder(Material.EYE_OF_ENDER).setName("§6§n" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")))
-                .setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7-", "", Lang.get("Leftclick_Add", new Example("ENG", "&3Leftclick: &aAdd"), new Example("GER", "&3Linksklick: &aHinzufügen")))
+                .setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + (this.permission == null ? "-" : this.permission), "",
+                        this.permission == null ? Lang.get("Leftclick_Add", new Example("ENG", "&3Leftclick: &aAdd"), new Example("GER", "&3Linksklick: &aHinzufügen"))
+                                : Lang.get("Leftclick_Remove", new Example("ENG", "&3Leftclick: &cRemove"), new Example("GER", "&3Linksklick: &cEntfernen")))
                 .getItem();
-
 
         //decoration
 
@@ -193,6 +199,27 @@ public class GEditIcon extends GUI {
                                 }
                             }
 
+                            input = ChatColor.translateAlternateColorCodes('&', input);
+
+                            if(isCategory) {
+                                StringBuilder builder = new StringBuilder();
+
+                                boolean color = false;
+                                for(char c : input.toCharArray()) {
+                                    builder.append(c);
+
+                                    if(c == '§') color = true;
+                                    else if(color) {
+                                        builder.append("§n");
+                                        color = false;
+                                    }
+                                }
+
+                                input = builder.toString();
+                            }
+
+                            input = input.replace("§", "&");
+
                             e.setClose(true);
                             playSound(p);
                         }
@@ -202,7 +229,7 @@ public class GEditIcon extends GUI {
                     public void onClose(AnvilCloseEvent e) {
                         if(e.isSubmitted()) {
                             name = input;
-                            item = new ItemBuilder(item).setName("§b" + (isCategory ? "§n" : "") + name).getItem();
+                            item = new ItemBuilder(item).setName("§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).getItem();
                             setItem(item);
                         } else Sound.ITEM_BREAK.playSound(p);
 
@@ -223,7 +250,7 @@ public class GEditIcon extends GUI {
             public void onClick(InventoryClickEvent e) {
                 new GWarps(p, category, true).open();
             }
-        }.setOption(option.clone()).setOnlyLeftClick(true).setCloseOnClick(true).setClickSound(Sound.ITEM_BREAK.bukkitSound()));
+        }.setOption(option.clone()).setOnlyLeftClick(true).setCloseOnClick(true).setClickSound(null));
 
         //ready
         addButton(new ItemButton(8, 2, ready) {
@@ -239,19 +266,22 @@ public class GEditIcon extends GUI {
                     editing.setName(name);
                     editing.setItem(item);
                     editing.setPermission(permission);
+                    editing.removeAction(Action.RUN_COMMAND);
+
+                    if(GEditIcon.this.command != null) editing.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
 
                     p.sendMessage(Lang.getPrefix() + Lang.get("Success_Configured", new Example("ENG", "&aYou have configured the icon successfully."), new Example("GER", "&aDu hast das Symbol erfolgreich bearbeitet")));
                 } else {
                     if(isCategory) {
                         Category category = new Category(name, item, slot, permission);
-                        category.addAllActions(actionList);
+
+                        if(GEditIcon.this.command != null) category.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
+
                         WarpSystem.getInstance().getIconManager().getCategories().add(category);
 
                         p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Category", new Example("ENG", "&aYou have created a &bcategory &asuccessfully."), new Example("GER", "&aDu hast erfolgreich eine &bKategorie &aerstellt.")));
                     } else {
-                        actionList.add(new ActionObject(Action.TELEPORT_TO_WARP, new SerializableLocation(p.getLocation())));
-
-                        Warp warp = new Warp(name, item, slot, permission, category, actionList);
+                        Warp warp = new Warp(name, item, slot, permission, category, new ActionObject(Action.TELEPORT_TO_WARP, new SerializableLocation(p.getLocation())));
                         WarpSystem.getInstance().getIconManager().getWarps().add(warp);
 
                         p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Warp", new Example("ENG", "&aYou have created a &bwarp &asuccessfully."), new Example("GER", "&aDu hast erfolgreich ein &bWarp &aerstellt.")));
@@ -343,14 +373,9 @@ public class GEditIcon extends GUI {
         addButton(new ItemButton(5, 2, command) {
             @Override
             public void onClick(InventoryClickEvent e) {
-                ActionObject actionObject = null;
 
-                for(ActionObject action : actionList) {
-                    if(action.getAction().equals(Action.RUN_COMMAND)) actionObject = action;
-                }
-
-                if(actionObject != null) {
-                    actionList.remove(actionObject);
+                if(GEditIcon.this.command != null) {
+                    GEditIcon.this.command = null;
 
                     ItemBuilder commandBuilder = new ItemBuilder(Material.REDSTONE).setName("§6§n" + Lang.get("Command", new Example("ENG", "Command"), new Example("GER", "Befehl")));
                     commandBuilder.setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7-");
@@ -384,7 +409,8 @@ public class GEditIcon extends GUI {
                             ItemStack command = commandBuilder.getItem();
                             setItem(command);
 
-                            actionList.add(new ActionObject(Action.RUN_COMMAND, input));
+                            GEditIcon.this.command = input;
+
                             e.setClose(true);
                             playSound(p);
                         }
@@ -475,10 +501,6 @@ public class GEditIcon extends GUI {
         return category;
     }
 
-    public List<ActionObject> getActionList() {
-        return actionList;
-    }
-
     public int getSlot() {
         return slot;
     }
@@ -489,5 +511,9 @@ public class GEditIcon extends GUI {
 
     public ActionIcon getEditing() {
         return editing;
+    }
+
+    public String getCommand() {
+        return command;
     }
 }

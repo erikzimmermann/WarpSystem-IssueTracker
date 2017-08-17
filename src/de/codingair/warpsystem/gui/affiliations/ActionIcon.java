@@ -76,9 +76,9 @@ public class ActionIcon extends Icon implements Serializable {
                 }
 
                 case TELEPORT_TO_WARP: {
-                    SerializableLocation sLoc = action.getValue();
-                    Location loc = Location.getByLocation(sLoc.getLocation());
-                    WarpSystem.getInstance().getTeleportManager().teleport(p, loc);
+                    if(!(this instanceof Warp)) return;
+
+                    WarpSystem.getInstance().getTeleportManager().teleport(p, (Warp) this);
                     break;
                 }
             }
@@ -101,15 +101,35 @@ public class ActionIcon extends Icon implements Serializable {
         return null;
     }
 
+    private void checkList() {
+        if(!(this.actions instanceof ArrayList)) {
+            List<ActionObject> actionObjects = new ArrayList<>();
+            actionObjects.addAll(this.actions);
+            this.actions = actionObjects;
+        }
+    }
+
     public void addAction(ActionObject action) {
+        checkList();
         this.actions.add(action);
     }
 
-    public void removeAction(ActionObject action) {
-        this.actions.remove(action);
+    public void removeAction(Action action) {
+        checkList();
+        ActionObject object = null;
+
+        for(ActionObject actionObject : actions) {
+            if(actionObject.getAction().equals(action)) {
+                object = actionObject;
+                break;
+            }
+        }
+
+        if(object != null) actions.remove(object);
     }
 
     public void addAllActions(Collection<ActionObject> actions) {
+        checkList();
         this.actions.addAll(actions);
     }
 

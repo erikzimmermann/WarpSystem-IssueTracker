@@ -1,14 +1,14 @@
 package de.codingair.warpsystem.managers;
 
 import de.CodingAir.v1_6.CodingAPI.Files.ConfigFile;
-import de.codingair.warpsystem.gui.affiliations.Warp;
+import de.CodingAir.v1_6.CodingAPI.Serializable.SerializableLocation;
+import de.CodingAir.v1_6.CodingAPI.Tools.ItemBuilder;
+import de.codingair.warpsystem.gui.affiliations.*;
 import de.codingair.warpsystem.WarpSystem;
-import de.codingair.warpsystem.gui.affiliations.ActionIcon;
-import de.codingair.warpsystem.gui.affiliations.ActionIconHelper;
-import de.codingair.warpsystem.gui.affiliations.Category;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,14 +18,10 @@ public class IconManager {
 
     public void load(boolean sync) {
         if (!sync) {
-            Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), new Runnable() {
-                @Override
-                public void run() {
-                    load(true);
-                }
-            });
+            Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), () -> load(true));
         } else {
             //Load
+
             this.warps = new ArrayList<>();
 
             ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
@@ -44,17 +40,57 @@ public class IconManager {
 
                 if (category != null) this.categories.add(category);
             }
+
+            //Import old
+            if(WarpSystem.getInstance().isOld()) {
+                WarpSystem.log("Import old icons.");
+
+                WarpSystem.getInstance().getFileManager().loadFile("Categories", "Memory/");
+                WarpSystem.getInstance().getFileManager().loadFile("Warps", "Memory/");
+
+                ConfigFile oldFile = WarpSystem.getInstance().getFileManager().getFile("Categories");
+                FileConfiguration oldConfig = oldFile.getConfig();
+
+                for(String key : oldConfig.getKeys(false)) {
+                    Category category = new Category(key, ImportHelper.getItem(oldConfig.getString(key + ".Item")), oldConfig.getInt(key + ".Slot"), oldConfig.getString(key + ".Permission", null));
+
+                    category.setItem(new ItemBuilder(category.getItem()).setHideStandardLore(true).setAmount(1).setName("§b§n" + category.getName()).setLore(oldConfig.getStringList(key + ".Lore")).getItem());
+
+                    this.categories.add(category);
+                }
+
+                oldFile = WarpSystem.getInstance().getFileManager().getFile("Warps");
+                oldConfig = oldFile.getConfig();
+
+                for(String key : oldConfig.getKeys(false)) {
+                    Warp warp = new Warp(key, ImportHelper.getItem(oldConfig.getString(key + ".Item")), oldConfig.getInt(key + ".Slot"), oldConfig.getString(key + ".Permission", null), getCategory(oldConfig.getString(key + ".Category", null))
+                            , new ActionObject(Action.TELEPORT_TO_WARP, new SerializableLocation(ImportHelper.stringToLoc(oldConfig.getString(key + ".Location")))));
+
+                    warp.setItem(new ItemBuilder(warp.getItem()).setHideStandardLore(true).setAmount(1).setName("§b" + warp.getName()).setLore(oldConfig.getStringList(key + ".Lore")).getItem());
+
+                    this.warps.add(warp);
+                }
+
+                oldFile = WarpSystem.getInstance().getFileManager().getFile("Categories");
+                oldConfig = oldFile.getConfig();
+
+                for(String key : oldConfig.getKeys(false)) {
+                    Category category = getCategory(key);
+
+                    for(String name : oldConfig.getStringList(key + ".Warps")) {
+                        if(this.existsWarp(name, category)) category.addWarp(getWarp(name, category));
+                    }
+                }
+
+                WarpSystem.getInstance().getFileManager().getFile("Categories").delete();
+                WarpSystem.getInstance().getFileManager().getFile("Warps").delete();
+            }
         }
     }
 
     public void save(boolean sync) {
         if (!sync) {
-            Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), new Runnable() {
-                @Override
-                public void run() {
-                    save(true);
-                }
-            });
+            Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), () -> save(true));
         } else {
             //Save
             ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
@@ -93,6 +129,8 @@ public class IconManager {
     }
 
     public Category getCategory(String name) {
+        if(name == null) return null;
+
         for (Category c : this.categories) {
             if (c.getName().equalsIgnoreCase(name)) return c;
         }
@@ -119,7 +157,21 @@ public class IconManager {
     }
 
     public void remove(ActionIcon icon) {
-        if(icon instanceof Category) this.categories.remove(icon);
-        else if(icon instanceof Warp) this.warps.remove(icon);
+        if(icon instanceof Category) {
+            Category category = (Category) icon;
+            List<Warp> warps = new ArrayList<>();
+            warps.addAll(category.getWarps());
+
+            for(Warp warp : warps) {
+                remove(warp);
+            }
+
+            this.categories.remove(icon);
+        } else if(icon instanceof Warp) {
+            Category category = ((Warp) icon).getCategory();
+            if(category != null) category.removeWarp((Warp) icon);
+
+            this.warps.remove(icon);
+        }
     }
 }
