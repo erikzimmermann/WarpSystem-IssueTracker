@@ -96,7 +96,7 @@ public class GEditIcon extends GUI {
     @Override
     public void initialize(Player p) {
         this.item = new ItemBuilder(this.item).setName("§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).setHideStandardLore(true)
-                .setLore("§8------------", "", Lang.get("Change_Name", new Example("ENG", "&8> Click here to change the name."), new Example("GER", "&8> Klicke hier um den Namen zu ändern.")))
+                .addLore("§8------------", "", Lang.get("Change_Name", new Example("ENG", "&8> Click here to change the name."), new Example("GER", "&8> Klicke hier um den Namen zu ändern.")))
                 .getItem();
 
         ItemStack leaves = new ItemBuilder(Material.LEAVES).setName("§0").getItem();
