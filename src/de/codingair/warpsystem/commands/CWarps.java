@@ -6,18 +6,24 @@ import de.codingair.warpsystem.gui.guis.GWarps;
 import de.codingair.warpsystem.Language.Example;
 import de.codingair.warpsystem.WarpSystem;
 import de.codingair.warpsystem.gui.affiliations.Category;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-public class CWarps implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+
+public class CWarps implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player)) {
             sender.sendMessage(Lang.getPrefix() + Lang.get("Only_For_Players", new Example("ENG", "This action is only for players!"), new Example("GER", "Diese Aktion ist nur für Spieler!")));
             return false;
         }
+
         Player p = (Player) sender;
 
         if(!WarpSystem.activated) return false;
@@ -38,5 +44,20 @@ public class CWarps implements CommandExecutor {
         new GWarps(p, category, false).open();
         Sound.LEVEL_UP.playSound(p);
         return false;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        if(args.length == 1) {
+            List<String> list = new ArrayList<>();
+
+            for(Category c : WarpSystem.getInstance().getIconManager().getCategories()) {
+                list.add(c.getNameWithoutColor());
+            }
+
+            return list;
+        }
+
+        return null;
     }
 }
