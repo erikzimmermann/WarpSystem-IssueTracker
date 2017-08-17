@@ -1,8 +1,11 @@
 package de.codingair.warpsystem.gui.affiliations;
 
+import com.mysql.fabric.xmlrpc.base.Array;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,11 +42,25 @@ public class Category extends ActionIcon implements Serializable {
         this(name, item, slot, permission, Arrays.asList(warps));
     }
 
-    public void addActionIcon(Warp icon) {
-        this.warps.add(icon);
+    public void addWarp(Warp warp) {
+        checkList();
+        this.warps.add(warp);
     }
 
-    public void removeActionIcon(Warp icon) {
-        this.warps.remove(icon);
+    public void removeWarp(Warp warp) {
+        checkList();
+        this.warps.remove(warp);
+    }
+
+    public List<Warp> getWarps() {
+        return warps;
+    }
+
+    private void checkList() {
+        if(!(this.warps instanceof ArrayList)) {
+            List<Warp> warps = new ArrayList<>();
+            warps.addAll(this.warps);
+            this.warps = warps;
+        }
     }
 }

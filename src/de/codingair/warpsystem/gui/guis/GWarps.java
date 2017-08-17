@@ -18,6 +18,7 @@ import de.codingair.warpsystem.gui.affiliations.ActionIcon;
 import de.codingair.warpsystem.gui.affiliations.Category;
 import de.codingair.warpsystem.gui.affiliations.Warp;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -149,6 +150,7 @@ public class GWarps extends GUI {
                 @Override
                 public void onClick(InventoryClickEvent e) {
                     GWarps.this.category = null;
+                    setTitle("§c§l§nWarps§r" + (category != null ? " §8@" + category.getName() : ""));
                     reinitialize();
                 }
             }.setOption(option));
@@ -197,6 +199,8 @@ public class GWarps extends GUI {
                                 return;
                             }
 
+                            p.closeInventory();
+
                             AnvilGUI.openAnvil(WarpSystem.getInstance(), p, new AnvilListener() {
                                 private String input;
 
@@ -206,6 +210,7 @@ public class GWarps extends GUI {
                                     e.setClose(false);
 
                                     if(e.getSlot().equals(AnvilSlot.OUTPUT)) {
+                                        playSound(p);
                                         input = e.getInput();
 
                                         if(input == null) {
@@ -225,8 +230,28 @@ public class GWarps extends GUI {
                                             }
                                         }
 
+                                        input = ChatColor.translateAlternateColorCodes('&', input);
+
+                                        if(clickEvent.isRightClick()) {
+                                            StringBuilder builder = new StringBuilder();
+
+                                            boolean color = false;
+                                            for(char c : input.toCharArray()) {
+                                                builder.append(c);
+
+                                                if(c == '§') color = true;
+                                                else if(color) {
+                                                    builder.append("§n");
+                                                    color = false;
+                                                }
+                                            }
+
+                                            input = builder.toString();
+                                        }
+
+                                        input = input.replace("§", "&");
+
                                         e.setClose(true);
-                                        playSound(p);
                                     }
                                 }
 
@@ -255,7 +280,7 @@ public class GWarps extends GUI {
         option.setOnlyLeftClick(true);
 
         if(editing || (!icon.hasPermission() || p.hasPermission(icon.getPermission()))) {
-            ItemBuilder iconBuilder = new ItemBuilder(icon.getItem());
+            ItemBuilder iconBuilder = new ItemBuilder(icon.getItem()).setName("§b" + (icon instanceof Category ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', icon.getName()));
 
             if(editing) {
                 String command = icon.getAction(Action.RUN_COMMAND) == null ? "-" : icon.getAction(Action.RUN_COMMAND).getValue();
@@ -289,10 +314,13 @@ public class GWarps extends GUI {
                                     e.setCurrentItem(new ItemStack(Material.AIR));
                                     setMoving(true, e.getSlot());
                                 } else {
+                                    p.closeInventory();
                                     new GEditIcon(p, category, icon).open();
                                 }
                             }
                         } else {
+                            p.closeInventory();
+
                             new ConfirmGUI(p,
                                     Lang.get("Delete", new Example("ENG", "&cDelete"), new Example("GER", "&cLöschen")),
                                     "§a" + Lang.get("Yes", new Example("ENG", "Yes"), new Example("GER", "Ja")),
@@ -310,7 +338,7 @@ public class GWarps extends GUI {
 
                                     new GWarps(p, category, editing).open();
                                 }
-                            }).open();
+                            }, () -> new GWarps(p, category, editing).open()).open();
                         }
                     } else if(e.isLeftClick()) {
                         if(icon instanceof Category) {
@@ -321,7 +349,7 @@ public class GWarps extends GUI {
                         } else icon.perform(p, editing);
                     }
                 }
-            }.setOption(option).setOnlyLeftClick(false));
+            }.setOption(option).setOnlyLeftClick(!editing));
         }
     }
 
