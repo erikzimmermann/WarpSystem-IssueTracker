@@ -10,3 +10,7 @@ commands:
     usuage: /Warp
     description: Warp-System-CMD
     aliases: [warps]
+  warpsystem:
+    usuage: /WarpSystem
+    description: Warp-System-CMD
+    aliases: [ws]
