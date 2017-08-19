@@ -122,8 +122,6 @@ public class WarpSystem extends JavaPlugin {
 //                }
 //            }
 //        }.runTaskTimerAsynchronously(this, 0, 20);
-
-        System.out.println(IReflection.ServerPacket.CRAFTBUKKIT_PACKAGE);
     }
 
     @Override
