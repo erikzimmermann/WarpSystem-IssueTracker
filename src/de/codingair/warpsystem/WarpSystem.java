@@ -3,10 +3,11 @@ package de.codingair.warpsystem;
 import de.CodingAir.v1_6.CodingAPI.API;
 import de.CodingAir.v1_6.CodingAPI.BungeeCord.BungeeCordHelper;
 import de.CodingAir.v1_6.CodingAPI.Files.FileManager;
+import de.CodingAir.v1_6.CodingAPI.Server.Reflections.IReflection;
 import de.CodingAir.v1_6.CodingAPI.Server.Version;
 import de.CodingAir.v1_6.CodingAPI.Time.Timer;
 import de.CodingAir.v1_6.CodingAPI.Tools.Callback;
-import de.codingair.warpsystem.Language.Lang;
+import de.codingair.warpsystem.language.Lang;
 import de.codingair.warpsystem.commands.CWarpSystem;
 import de.codingair.warpsystem.commands.CWarps;
 import de.codingair.warpsystem.listeners.NotifyListener;
@@ -55,30 +56,30 @@ public class WarpSystem extends JavaPlugin {
 
         updateAvailable = WarpSystem.this.updateChecker.needsUpdate();
 
-        WarpSystem.log(" ");
-        WarpSystem.log("__________________________________________________________");
-        WarpSystem.log(" ");
-        WarpSystem.log("                       WarpSystem [" + getDescription().getVersion() + "]");
+        log(" ");
+        log("__________________________________________________________");
+        log(" ");
+        log("                       WarpSystem [" + getDescription().getVersion() + "]");
         if(updateAvailable) {
-            WarpSystem.log(" ");
-            WarpSystem.log("New update available [v" + updateChecker.getVersion() + " - "+WarpSystem.this.updateChecker.getUpdateInfo()+"].");
-            WarpSystem.log("Download it on\n\n" + updateChecker.getDownload() + "\n");
+            log(" ");
+            log("New update available [v" + updateChecker.getVersion() + " - " + WarpSystem.this.updateChecker.getUpdateInfo() + "].");
+            log("Download it on\n\n" + updateChecker.getDownload() + "\n");
         }
-        WarpSystem.log(" ");
-        WarpSystem.log("Status:");
-        WarpSystem.log(" ");
-        WarpSystem.log("MC-Version: " + Version.getVersion().getVersionName());
-        WarpSystem.log("CodingAPI-Version: " + API.VERSION);
-        WarpSystem.log(" ");
+        log(" ");
+        log("Status:");
+        log(" ");
+        log("MC-Version: " + Version.getVersion().getVersionName());
+        log("CodingAPI-Version: " + API.VERSION);
+        log(" ");
 
-        WarpSystem.log("Loading files.");
+        log("Loading files.");
         this.fileManager.loadFile("ActionIcons", "/Memory/");
         this.fileManager.loadFile("Language", "/");
         this.fileManager.loadFile("Config", "/");
 
-        WarpSystem.log("Loading icons.");
+        log("Loading icons.");
         this.iconManager.load(true);
-        WarpSystem.log("Loading TeleportManager.");
+        log("Loading TeleportManager.");
         this.teleportManager.load();
 
         maintenance = fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Maintenance", false);
@@ -96,66 +97,73 @@ public class WarpSystem extends JavaPlugin {
 
         timer.stop();
 
-        WarpSystem.log(" ");
-        WarpSystem.log("Done (" + timer.getLastStoppedTime() + "s)");
-        WarpSystem.log(" ");
-        WarpSystem.log("__________________________________________________________");
-        WarpSystem.log(" ");
+        log(" ");
+        log("Done (" + timer.getLastStoppedTime() + "s)");
+        log(" ");
+        log("__________________________________________________________");
+        log(" ");
 
         activated = true;
         notifyPlayers(null);
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!Bukkit.getOnlinePlayers().isEmpty()) {
-                    BungeeCordHelper.runningOnBungeeCord(WarpSystem.this, 2 * 20, new Callback<Boolean>() {
-                        @Override
-                        public void accept(Boolean onBungee) {
-                            onBungeeCord = onBungee;
-                        }
-                    });
+        //TODO: Unnecessary in this version
+//        new BukkitRunnable() {
+//            @Override
+//            public void run() {
+//                if(!Bukkit.getOnlinePlayers().isEmpty()) {
+//                    BungeeCordHelper.runningOnBungeeCord(WarpSystem.this, 2 * 20, new Callback<Boolean>() {
+//                        @Override
+//                        public void accept(Boolean onBungee) {
+//                            onBungeeCord = onBungee;
+//                        }
+//                    });
+//
+//                    this.cancel();
+//                }
+//            }
+//        }.runTaskTimerAsynchronously(this, 0, 20);
 
-                    this.cancel();
-                }
-            }
-        }.runTaskTimerAsynchronously(this, 0, 20);
+        System.out.println(IReflection.ServerPacket.CRAFTBUKKIT_PACKAGE);
     }
 
     @Override
     public void onDisable() {
         API.getInstance().onDisable();
-        save();
+        save(false);
     }
 
     private void startAutoSaver() {
         WarpSystem.log("Starting AutoSaver.");
-        Bukkit.getScheduler().scheduleAsyncRepeatingTask(WarpSystem.getInstance(), this::save, 20 * 60 * 20, 20 * 60 * 20);
+        Bukkit.getScheduler().scheduleAsyncRepeatingTask(WarpSystem.getInstance(), () -> save(true), 20 * 60 * 20, 20 * 60 * 20);
     }
 
-    private void save() {
+    private void save(boolean saver) {
         timer.start();
 
         log(" ");
         log("__________________________________________________________");
         log(" ");
-        log("           AutoSaver - WarpSystem [" + getDescription().getVersion() + "]");
+        if(saver)
+            log("           AutoSaver - WarpSystem [" + getDescription().getVersion() + "]");
+        else
+            log("                       WarpSystem [" + getDescription().getVersion() + "]");
         if(updateAvailable) {
-            WarpSystem.log(" ");
-            WarpSystem.log("New update available [v" + updateChecker.getVersion() + " - "+WarpSystem.this.updateChecker.getUpdateInfo()+"]. Download it on \n\n" + updateChecker.getDownload() + "\n");
+            log(" ");
+            log("New update available [v" + updateChecker.getVersion() + " - " + WarpSystem.this.updateChecker.getUpdateInfo() + "]. Download it on \n\n" + updateChecker.getDownload() + "\n");
         }
         log(" ");
-        WarpSystem.log("Status:");
+        log("Status:");
         log(" ");
-        WarpSystem.log("MC-Version: " + Version.getVersion().name());
-        WarpSystem.log("CodingAPI-Version: " + API.VERSION);
-        WarpSystem.log(" ");
+        log("MC-Version: " + Version.getVersion().name());
+        log("CodingAPI-Version: " + API.VERSION);
+        log(" ");
 
+        log("Saving icons.");
         iconManager.save(true);
         timer.stop();
 
         log(" ");
-        WarpSystem.log("Done (" + timer.getLastStoppedTime() + "s)");
+        log("Done (" + timer.getLastStoppedTime() + "s)");
         log(" ");
         log("__________________________________________________________");
         log(" ");

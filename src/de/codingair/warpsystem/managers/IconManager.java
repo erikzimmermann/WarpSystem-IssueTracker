@@ -18,7 +18,7 @@ public class IconManager {
     private List<Category> categories = new ArrayList<>();
 
     public void load(boolean sync) {
-        if (!sync) {
+        if(!sync) {
             Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), () -> load(true));
         } else {
             //Load
@@ -29,17 +29,21 @@ public class IconManager {
             FileConfiguration config = file.getConfig();
 
             List<String> warps = config.getStringList("Warps");
-            for (String s : warps) {
+            for(String s : warps) {
                 Warp warp = ActionIconHelper.fromString(s);
 
-                if (warp != null) this.warps.add(warp);
+                if(warp != null) {
+                    this.warps.add(warp);
+                }
             }
 
             List<String> categories = config.getStringList("Categories");
-            for (String s : categories) {
+            for(String s : categories) {
                 Category category = ActionIconHelper.fromString(s);
 
-                if (category != null) this.categories.add(category);
+                if(category != null) {
+                    this.categories.add(category);
+                }
             }
 
             //Import old
@@ -72,17 +76,6 @@ public class IconManager {
                     this.warps.add(warp);
                 }
 
-                oldFile = WarpSystem.getInstance().getFileManager().getFile("Categories");
-                oldConfig = oldFile.getConfig();
-
-                for(String key : oldConfig.getKeys(false)) {
-                    Category category = getCategory(key);
-
-                    for(String name : oldConfig.getStringList(key + ".Warps")) {
-                        if(this.existsWarp(name, category)) category.addWarp(getWarp(name, category));
-                    }
-                }
-
                 WarpSystem.getInstance().getFileManager().getFile("Categories").delete();
                 WarpSystem.getInstance().getFileManager().getFile("Warps").delete();
             }
@@ -90,7 +83,7 @@ public class IconManager {
     }
 
     public void save(boolean sync) {
-        if (!sync) {
+        if(!sync) {
             Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), () -> save(true));
         } else {
             //Save
@@ -98,12 +91,12 @@ public class IconManager {
             FileConfiguration config = file.getConfig();
 
             List<String> warps = new ArrayList<>();
-            for (Warp warp : this.warps) {
+            for(Warp warp : this.warps) {
                 warps.add(ActionIconHelper.toString(warp));
             }
 
             List<String> categories = new ArrayList<>();
-            for (Category category : this.categories) {
+            for(Category category : this.categories) {
                 categories.add(ActionIconHelper.toString(category));
             }
 
@@ -124,8 +117,8 @@ public class IconManager {
         if(name == null) return null;
         name = Color.removeColor(name);
 
-        for (Warp warp : getWarps(category)) {
-            if (warp.getNameWithoutColor().equalsIgnoreCase(name)) return warp;
+        for(Warp warp : getWarps(category)) {
+            if(warp.getNameWithoutColor().equalsIgnoreCase(name)) return warp;
         }
 
         return null;
@@ -142,8 +135,8 @@ public class IconManager {
         if(name == null) return null;
         name = Color.removeColor(name);
 
-        for (Category c : this.categories) {
-            if (c.getNameWithoutColor().equalsIgnoreCase(name)) return c;
+        for(Category c : this.categories) {
+            if(c.getNameWithoutColor().equalsIgnoreCase(name)) return c;
         }
 
         return null;
@@ -160,8 +153,8 @@ public class IconManager {
     public List<Warp> getWarps(Category category) {
         List<Warp> icons = new ArrayList<>();
 
-        for (Warp icon : this.warps) {
-            if (icon.getCategory() == category) icons.add(icon);
+        for(Warp icon : this.warps) {
+            if((icon.getCategory() == null && category == null) || ((icon.getCategory() != null && category != null) && icon.getCategory().getName().equals(category.getName()))) icons.add(icon);
         }
 
         return icons;
@@ -170,8 +163,7 @@ public class IconManager {
     public void remove(ActionIcon icon) {
         if(icon instanceof Category) {
             Category category = (Category) icon;
-            List<Warp> warps = new ArrayList<>();
-            warps.addAll(category.getWarps());
+            List<Warp> warps = getWarps(category);
 
             for(Warp warp : warps) {
                 remove(warp);
@@ -179,9 +171,6 @@ public class IconManager {
 
             this.categories.remove(icon);
         } else if(icon instanceof Warp) {
-            Category category = ((Warp) icon).getCategory();
-            if(category != null) category.removeWarp((Warp) icon);
-
             this.warps.remove(icon);
         }
     }

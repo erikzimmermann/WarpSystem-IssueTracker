@@ -37,6 +37,10 @@ public class Warp extends ActionIcon implements Serializable {
         return category != null;
     }
 
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     public Category getCategory() {
         return category;
     }
