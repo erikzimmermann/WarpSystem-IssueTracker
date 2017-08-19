@@ -1,12 +1,11 @@
 package de.codingair.warpsystem.commands;
 
 import de.CodingAir.v1_6.CodingAPI.Server.Sound;
-import de.codingair.warpsystem.Language.Lang;
+import de.codingair.warpsystem.language.Lang;
 import de.codingair.warpsystem.gui.guis.GWarps;
-import de.codingair.warpsystem.Language.Example;
+import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.WarpSystem;
 import de.codingair.warpsystem.gui.affiliations.Category;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.Language;
+package de.codingair.warpsystem.language;
 
 public class Example {
     private String language;
