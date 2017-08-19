@@ -118,7 +118,7 @@ GER:
   Success_Walking_Enabled: '&7Laufen beim Teleport ist nun &aerlaubt&7.'
   Success_Walking_Disabled: '&7Laufen beim Teleport ist nun &cnicht mehr erlaubt&7.'
   Success_Changed_Teleport_Delay: '&aDie Teleport-Zeit wurde auf ''%delay%'' geändert.'
-  Success_Configured: '&aDu hast das Symbol erfolgreich bearbeitet'
+  Success_Configured: '&aDu hast das Symbol erfolgreich bearbeitet.'
   Delete: '&cLöschen'
   'Yes': Ja
   Confirm_Delete: '&7Möchten Sie dieses Symbol wirklich löschen?'

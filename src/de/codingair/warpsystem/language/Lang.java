@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.Language;
+package de.codingair.warpsystem.language;
 
 import de.CodingAir.v1_6.CodingAPI.Files.ConfigFile;
 import de.codingair.warpsystem.WarpSystem;
