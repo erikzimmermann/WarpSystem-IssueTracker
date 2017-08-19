@@ -28,8 +28,8 @@ ENG:
   Line: Line
   Name: Name
   Success_Create_Warp: '&aYou have created a &bwarp &asuccessfully.'
-  Teleporting_Info: '&cTeleport in §l§n%seconds%'
-  Teleported_To: '&7You was teleported to ''§b%warp%&7''.'
+  Teleporting_Info: '&cTeleport in &l&n%seconds%'
+  Teleported_To: '&7You was teleported to ''&b%warp%&7''.'
   Config: Config
   Maintenance: Maintenance
   Language: Language
@@ -66,6 +66,7 @@ ENG:
   Use: Use
   Success_Files_Reloaded: '&aAll files are reloaded.'
   Leftclick_Enable: '&3Leftclick: &aEnable'
+  Success_Create_Category: '&aYou have created a &bcategory &asuccessfully.'
 GER:
   Menu_Help: '&c&nHilfe'
   Menu_Help_Leftclick: '&3Linksklick: &bBearbeitungs-Modus'
@@ -95,7 +96,7 @@ GER:
   Name: Name
   Success_Create_Warp: '&aDu hast erfolgreich ein &bWarp &aerstellt.'
   Teleporting_Info: '&cTeleport in &l&n%seconds%'
-  Teleported_To: '&7Du wurdest zu ''§b%warp%&7'' teleportiert.'
+  Teleported_To: '&7Du wurdest zu ''&b%warp%&7'' teleportiert.'
   Config: Config
   Maintenance: Wartung
   Language: Sprache
@@ -132,3 +133,71 @@ GER:
   Use: Benutze
   Success_Files_Reloaded: '&aAlle Dateien wurden neu geladen.'
   Leftclick_Enable: '&3Linksklick: &aAktivieren'
+  Success_Create_Category: '&aDu hast erfolgreich eine &bKategorie &aerstellt.'
+FRA:
+  Menu_Help: '&c&nAide'
+  Menu_Help_Leftclick: '&3CliqueGauche: &bMode-Edition'
+  Menu_Help_Rightclick: '&3CliqueDroit: &bOptions'
+  Back: Retour
+  Edit_Mode_Set_ActionIcon: '&3CliqueGauche: &bCrée warp'
+  Edit_Mode_Set_Category: '&3CliqueDroit: &bCrée la catégorie'
+  Menu_Help_Leftclick_Edit_Mode: '&3CliqueGauche: &bQuitée le Mode-Edition'
+  Command: Commande
+  Permission: Permission
+  Shift_Leftclick_Edit: '&7Shift-CliqueGauche: Déplacer'
+  Leftclick_Edit: '&7CliqueGauche: Configurer'
+  Rightclick_Delete: '&7CliqueDroit: Supprimée'
+  Item_Editing: Edition-Item
+  Change_Name: '&8> Clique ici pour changer le nom.'
+  Cancel: Annuler
+  Ready: Prêt
+  Sparkle: Briller
+  Description: Description
+  Leftclick_Add_Line: '&3CliqueGauche: &aAjouter une ligne'
+  Rightclick_Reset_Lines: '&3CliqueDroit: &cRéinitialiser les lignes'
+  Current: Existant
+  Leftclick_Add: '&3CliqueGauche: &aAjouter'
+  Leftclick_Disable: '&3CliqueGauche: &cDésactiver'
+  Leftclick_Remove: '&3CliqueGauche: &cSupprimée'
+  Line: Ligne
+  Name: Nom
+  Success_Create_Warp: '&aVous avez crée le &bwarp &aavec succès.'
+  Teleporting_Info: '&cTeleportation dans &l&n%seconds%'
+  Teleported_To: '&7Tu as été téléporter à''&b%warp%&7''.'
+  Config: Configuration
+  Maintenance: Maintenance
+  Language: Langue
+  Leftclick_Prev_Lang: '&3CliqueGauche: &bLangue Précédente'
+  Rightclick_Next_Lang: '&3CliqueDroit: &bLangue Suivante'
+  Animation: Animation
+  Shift_Leftclick_Show_Animation: '&3Shift-CliqueGauche: &bMontrer'
+  Leftclick_Prev_Animation: '&3CliqueGauche: &bAnimation Précédente'
+  Rightclick_Next_Animation: '&3CliqueDroit: &bAnimation Suivante'
+  Walking_During_Teleports: Marchez pendant la téléportation
+  Teleport_Delay: Temps de téléportation
+  Leftclick_Reduce: '&3CliqueGauche: &bRéduire'
+  Rightclick_Enlarge: '&3CliqueDroit: &bAugmenter'
+  Success_Changed_Lang: '&aLa langue a été changer en ''%lang%''.'
+  Success_Maintenance_Enabled: '&4Le Mode-Maintenance est activé.'
+  Leftclick_Maintenance_Off: '&3CliqueGauche: &cDésactivé'
+  Success_Maintenance_Disabled: '&4Le Mode-Maintenance est désactivé.'
+  Leftclick_Maintenance_On: '&3CliqueGauche: &aActivé'
+  Success_Changed_Animation: '&aL''animation a été changer en ''%anim%''.'
+  Success_Walking_Enabled: '&7Marcher pendant la téléportation est &aactivé &7maintenant.'
+  Success_Walking_Disabled: '&7Marcher pendant la téléportation est &cdésactivé &7maintenant.'
+  Success_Changed_Teleport_Delay: '&aLe temps de téléportation a été changer en ''%delay%''.'
+  Success_Configured: '&aVous avez configuré l''icône avec succès.'
+  Delete: '&cSupprimée'
+  'Yes': 'Oui'
+  Confirm_Delete: '&7Voulez vous vraiment &csupprimée &7cette icône?'
+  'No': 'Non'
+  Icon_Not_Deleted: '&7L''icône &cn''est pas &7supprimée.'
+  Icon_Deleted: '&cL''icône a été supprimée avec succès.'
+  Leftclick_Move_Icon: '&3CliqueGauche: &bDéplacer l''icône'
+  Success_Icon_Moved: '&aL''icône a été déplacée avec succès.'
+  Name_Already_Exists: '&cLe nom existe déjà.'
+  Only_For_Players: '&cC''est uniquement pour les joueurs!'
+  Use: Utiliser
+  Success_Files_Reloaded: '&aTous les fichiers ont été reload.'
+  Leftclick_Enable: '&3CliqueGauche: &aActivé'
+  No_Item_In_Hand: '&cVous devez tenir un item en main!'
