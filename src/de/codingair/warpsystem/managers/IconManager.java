@@ -33,7 +33,6 @@ public class IconManager {
                 Warp warp = ActionIconHelper.fromString(s);
 
                 if(warp != null) {
-                    System.out.println(warp.getCategory());
                     this.warps.add(warp);
                 }
             }
@@ -155,7 +154,6 @@ public class IconManager {
         List<Warp> icons = new ArrayList<>();
 
         for(Warp icon : this.warps) {
-            System.out.println();
             if((icon.getCategory() == null && category == null) || ((icon.getCategory() != null && category != null) && icon.getCategory().getName().equals(category.getName()))) icons.add(icon);
         }
 
