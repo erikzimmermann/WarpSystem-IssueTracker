@@ -1,13 +1,11 @@
 package de.codingair.warpsystem.commands;
 
-import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.commands.BaseComponent;
 import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.warpsystem.WarpSystem;
-import de.codingair.warpsystem.gui.affiliations.Category;
-import de.codingair.warpsystem.gui.guis.GWarps;
+import de.codingair.warpsystem.gui.affiliations.Warp;
 import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.language.Lang;
 import org.bukkit.command.CommandSender;
@@ -15,9 +13,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class CWarps extends CommandBuilder {
-    public CWarps() {
-        super("Warps", new BaseComponent() {
+public class CWarp extends CommandBuilder {
+    public CWarp() {
+        super("Warp", new BaseComponent() {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
 
@@ -30,12 +28,12 @@ public class CWarps extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                run(sender, null);
+
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                run(sender, null);
+                sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_HELP", new Example("ENG", "&7Use: &e" + label + " <Warp-Name>"), new Example("GER", "&7Benutze: &e/" + label + " <Warp-Name>")));
                 return false;
             }
         }.setOnlyPlayers(true), true);
@@ -43,32 +41,29 @@ public class CWarps extends CommandBuilder {
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, List<String> suggestions) {
-                for(Category c : WarpSystem.getInstance().getIconManager().getCategories()) {
-                    suggestions.add(c.getNameWithoutColor());
+                for(Warp warp : WarpSystem.getInstance().getIconManager().getWarps()) {
+                    if(!warp.getNameWithoutColor().isEmpty()) suggestions.add(warp.getNameWithoutColor().replace(" ", "_"));
                 }
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                run(sender, WarpSystem.getInstance().getIconManager().getCategory(argument));
+                argument = argument.replace("_", "");
+                Warp warp = null;
+                for(Warp w : WarpSystem.getInstance().getIconManager().getWarps()) {
+                    if(w.getNameWithoutColor().equalsIgnoreCase(argument)) warp = w;
+
+                    if(warp != null) break;
+                }
+
+                if(warp == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS", new Example("ENG", "&cThis warp does not exist."), new Example("GER", "&cDieser Warp existiert nicht.")));
+                    return false;
+                }
+
+                WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, warp);
                 return false;
             }
         });
-    }
-
-    private static void run(CommandSender sender, Category category) {
-        Player p = (Player) sender;
-
-        if(!WarpSystem.activated) return;
-
-        if(WarpSystem.maintenance && !p.hasPermission(WarpSystem.PERMISSION_ByPass_Maintenance)) {
-            p.sendMessage(Lang.getPrefix() + Lang.get("Warning_Maintenance",
-                    new Example("ENG", "&cThe WarpSystem is currently in maintenance mode, please try it later again."),
-                    new Example("GER", "&cDas WarpSystem ist momentan im Wartungs-Modus, bitte versuche es später erneut.")));
-            return;
-        }
-
-        new GWarps(p, category, false).open();
-        Sound.LEVEL_UP.playSound(p);
     }
 }

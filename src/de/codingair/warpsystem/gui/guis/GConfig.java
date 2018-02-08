@@ -1,14 +1,14 @@
 package de.codingair.warpsystem.gui.guis;
 
-import de.CodingAir.v1_6.CodingAPI.Particles.Animations.CircleAnimation;
-import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.GUI;
-import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.InterfaceListener;
-import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.ItemButton.ItemButton;
-import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.ItemButton.ItemButtonOption;
-import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.Skull;
-import de.CodingAir.v1_6.CodingAPI.Player.MessageAPI;
-import de.CodingAir.v1_6.CodingAPI.Server.Sound;
-import de.CodingAir.v1_6.CodingAPI.Tools.ItemBuilder;
+import de.codingair.codingapi.particles.animations.playeranimations.CircleAnimation;
+import de.codingair.codingapi.player.MessageAPI;
+import de.codingair.codingapi.player.gui.inventory.gui.GUI;
+import de.codingair.codingapi.player.gui.inventory.gui.InterfaceListener;
+import de.codingair.codingapi.player.gui.inventory.gui.Skull;
+import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
+import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
+import de.codingair.codingapi.server.Sound;
+import de.codingair.codingapi.tools.ItemBuilder;
 import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.language.Lang;
 import de.codingair.warpsystem.WarpSystem;
@@ -144,7 +144,7 @@ public class GConfig extends GUI {
             }
         }.setOption(option).setOnlyLeftClick(false));
 
-        ItemBuilder anim = new ItemBuilder(Material.GLOWSTONE_DUST).setName("§c§n" + Lang.get("Animation", new Example("ENG", "Animation"), new Example("GER", "Animation")));
+        ItemBuilder anim = new ItemBuilder(Material.GLOWSTONE_DUST).setName("§c§n" + Lang.get("Animation", new Example("ENG", "PlayerAnimation"), new Example("GER", "PlayerAnimation")));
         anim.setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + WarpSystem.getInstance().getTeleportManager().getParticle().name());
         anim.addLore("", Lang.get("Shift_Leftclick_Show_Animation", new Example("ENG", "&3Shift-Leftclick: &bShow"), new Example("GER", "&3Shift-Linksklick: &bZeigen")));
         anim.addLore(Lang.get("Leftclick_Prev_Animation", new Example("ENG", "&3Leftclick: &bPrevious animation"), new Example("GER", "&3Linksklick: &bVorherige Animation")));

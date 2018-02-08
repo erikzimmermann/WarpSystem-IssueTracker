@@ -1,6 +1,6 @@
 package de.codingair.warpsystem.gui.affiliations;
 
-import de.CodingAir.v1_6.CodingAPI.Serializable.SerializableLocation;
+import de.codingair.codingapi.serializable.SerializableLocation;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 

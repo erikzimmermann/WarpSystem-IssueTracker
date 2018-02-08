@@ -1,16 +1,16 @@
 package de.codingair.warpsystem;
 
-import de.CodingAir.v1_6.CodingAPI.API;
-import de.CodingAir.v1_6.CodingAPI.BungeeCord.BungeeCordHelper;
-import de.CodingAir.v1_6.CodingAPI.Files.FileManager;
-import de.CodingAir.v1_6.CodingAPI.Server.Reflections.IReflection;
-import de.CodingAir.v1_6.CodingAPI.Server.Version;
-import de.CodingAir.v1_6.CodingAPI.Time.Timer;
-import de.CodingAir.v1_6.CodingAPI.Tools.Callback;
-import de.codingair.warpsystem.language.Lang;
+import de.codingair.codingapi.API;
+import de.codingair.codingapi.files.FileManager;
+import de.codingair.codingapi.server.Version;
+import de.codingair.codingapi.time.Timer;
+import de.codingair.warpsystem.commands.CPortal;
+import de.codingair.warpsystem.commands.CWarp;
 import de.codingair.warpsystem.commands.CWarpSystem;
 import de.codingair.warpsystem.commands.CWarps;
+import de.codingair.warpsystem.language.Lang;
 import de.codingair.warpsystem.listeners.NotifyListener;
+import de.codingair.warpsystem.listeners.PortalListener;
 import de.codingair.warpsystem.listeners.TeleportListener;
 import de.codingair.warpsystem.managers.IconManager;
 import de.codingair.warpsystem.managers.TeleportManager;
@@ -18,9 +18,9 @@ import de.codingair.warpsystem.utils.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
+import java.util.logging.Level;
 
 public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_NOTIFY = "WarpSystem.Notify";
@@ -69,11 +69,11 @@ public class WarpSystem extends JavaPlugin {
         log("Status:");
         log(" ");
         log("MC-Version: " + Version.getVersion().getVersionName());
-        log("CodingAPI-Version: " + API.VERSION);
         log(" ");
 
         log("Loading files.");
         this.fileManager.loadFile("ActionIcons", "/Memory/");
+        this.fileManager.loadFile("Teleporters", "/Memory/");
         this.fileManager.loadFile("Language", "/");
         this.fileManager.loadFile("Config", "/");
 
@@ -87,11 +87,15 @@ public class WarpSystem extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new TeleportListener(), this);
         Bukkit.getPluginManager().registerEvents(new NotifyListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PortalListener(), this);
 
-        getCommand("warp").setExecutor(new CWarps());
-        getCommand("warp").setTabCompleter(new CWarps());
+        new CWarp().register(this);
+        new CWarps().register(this);
+//        getCommand("warps").setExecutor(new CWarps());
+//        getCommand("warps").setTabCompleter(new CWarps());
         getCommand("warpsystem").setExecutor(new CWarpSystem());
         getCommand("warpsystem").setTabCompleter(new CWarpSystem());
+        new CPortal().register(this);
 
         this.startAutoSaver();
 
@@ -136,35 +140,47 @@ public class WarpSystem extends JavaPlugin {
     }
 
     private void save(boolean saver) {
-        timer.start();
+        try {
+            if(!saver) {
+                timer.start();
 
-        log(" ");
-        log("__________________________________________________________");
-        log(" ");
-        if(saver)
-            log("           AutoSaver - WarpSystem [" + getDescription().getVersion() + "]");
-        else
-            log("                       WarpSystem [" + getDescription().getVersion() + "]");
-        if(updateAvailable) {
-            log(" ");
-            log("New update available [v" + updateChecker.getVersion() + " - " + WarpSystem.this.updateChecker.getUpdateInfo() + "]. Download it on \n\n" + updateChecker.getDownload() + "\n");
+                log(" ");
+                log("__________________________________________________________");
+                log(" ");
+                if(saver)
+                    log("           AutoSaver - WarpSystem [" + getDescription().getVersion() + "]");
+                else
+                    log("                       WarpSystem [" + getDescription().getVersion() + "]");
+                if(updateAvailable) {
+                    log(" ");
+                    log("New update available [v" + updateChecker.getVersion() + " - " + WarpSystem.this.updateChecker.getUpdateInfo() + "]. Download it on \n\n" + updateChecker.getDownload() + "\n");
+                }
+                log(" ");
+                log("Status:");
+                log(" ");
+                log("MC-Version: " + Version.getVersion().name());
+                log(" ");
+                log("Saving icons.");
+            }
+
+            iconManager.save(true);
+            if(!saver) log("Saving options.");
+            fileManager.getFile("Config").getConfig().set("WarpSystem.Maintenance", maintenance);
+            fileManager.getFile("Config").getConfig().set("WarpSystem.Teleport.Op_Can_Skip_Delay", OP_CAN_SKIP_DELAY);
+            teleportManager.save();
+
+            if(!saver) {
+                timer.stop();
+
+                log(" ");
+                log("Done (" + timer.getLastStoppedTime() + "s)");
+                log(" ");
+                log("__________________________________________________________");
+                log(" ");
+            }
+        } catch(Exception ex) {
+            getLogger().log(Level.SEVERE, "Error at saving data! Exception: \n\n" + ex.toString() + "\n");
         }
-        log(" ");
-        log("Status:");
-        log(" ");
-        log("MC-Version: " + Version.getVersion().name());
-        log("CodingAPI-Version: " + API.VERSION);
-        log(" ");
-
-        log("Saving icons.");
-        iconManager.save(true);
-        timer.stop();
-
-        log(" ");
-        log("Done (" + timer.getLastStoppedTime() + "s)");
-        log(" ");
-        log("__________________________________________________________");
-        log(" ");
     }
 
     private void checkOldDirectory() {

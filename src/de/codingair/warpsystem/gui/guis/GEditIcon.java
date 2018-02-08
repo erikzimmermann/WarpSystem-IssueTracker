@@ -1,15 +1,15 @@
 package de.codingair.warpsystem.gui.guis;
 
-import de.CodingAir.v1_6.CodingAPI.Player.GUI.Anvil.*;
-import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.GUI;
-import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.InterfaceListener;
-import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.ItemButton.ItemButton;
-import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.ItemButton.ItemButtonOption;
-import de.CodingAir.v1_6.CodingAPI.Serializable.SerializableLocation;
-import de.CodingAir.v1_6.CodingAPI.Server.Color;
-import de.CodingAir.v1_6.CodingAPI.Server.Environment;
-import de.CodingAir.v1_6.CodingAPI.Server.Sound;
-import de.CodingAir.v1_6.CodingAPI.Tools.ItemBuilder;
+import de.codingair.codingapi.player.gui.anvil.*;
+import de.codingair.codingapi.player.gui.inventory.gui.GUI;
+import de.codingair.codingapi.player.gui.inventory.gui.InterfaceListener;
+import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
+import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
+import de.codingair.codingapi.serializable.SerializableLocation;
+import de.codingair.codingapi.server.Color;
+import de.codingair.codingapi.server.Environment;
+import de.codingair.codingapi.server.Sound;
+import de.codingair.codingapi.tools.ItemBuilder;
 import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.language.Lang;
 import de.codingair.warpsystem.WarpSystem;
@@ -96,7 +96,8 @@ public class GEditIcon extends GUI {
     @Override
     public void initialize(Player p) {
         this.item = new ItemBuilder(this.item).setName("§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).setHideStandardLore(true)
-                .addLore("§8------------", "", Lang.get("Change_Name", new Example("ENG", "&8> Click here to change the name."), new Example("GER", "&8> Klicke hier um den Namen zu ändern.")))
+                .addLore("§8------------", "", Lang.get("Change_Name_Leftclick", new Example("ENG", "&3Leftclick: &bChange name"), new Example("GER", "&3Linksklick: &bNamen ändern")),
+                        Lang.get("Change_Name_Rightclick", new Example("ENG", "&3Rightclick: &bChange item"), new Example("GER", "&3Rechtsklick: &bItem ändern")))
                 .getItem();
 
         ItemStack leaves = new ItemBuilder(Material.LEAVES).setName("§0").getItem();
@@ -169,82 +170,97 @@ public class GEditIcon extends GUI {
         final ItemButton iconButton = new ItemButton(4, 0, item) {
             @Override
             public void onClick(InventoryClickEvent e) {
-                quit = false;
-                p.closeInventory();
+                if(e.getClick().isLeftClick()) {
+                    quit = false;
+                    p.closeInventory();
 
-                AnvilGUI.openAnvil(WarpSystem.getInstance(), p, new AnvilListener() {
-                    private String input;
+                    AnvilGUI.openAnvil(WarpSystem.getInstance(), p, new AnvilListener() {
+                        private String input;
 
-                    @Override
-                    public void onClick(AnvilClickEvent e) {
-                        e.setCancelled(true);
-                        e.setClose(false);
+                        @Override
+                        public void onClick(AnvilClickEvent e) {
+                            e.setCancelled(true);
+                            e.setClose(false);
 
-                        if(e.getSlot().equals(AnvilSlot.OUTPUT)) {
-                            input = e.getInput();
+                            if(e.getSlot().equals(AnvilSlot.OUTPUT)) {
+                                input = e.getInput();
 
-                            if(input == null) {
-                                p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Name", new Example("ENG", "&cPlease enter a name."), new Example("GER", "&cBitte gib einen Namen ein.")));
-                                return;
-                            }
+                                if(input == null) {
+                                    p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Name", new Example("ENG", "&cPlease enter a name."), new Example("GER", "&cBitte gib einen Namen ein.")));
+                                    return;
+                                }
 
-                            input = ChatColor.translateAlternateColorCodes('&', input);
+                                input = ChatColor.translateAlternateColorCodes('&', input);
 
-                            if(isCategory) {
-                                StringBuilder builder = new StringBuilder();
+                                if(isCategory) {
+                                    StringBuilder builder = new StringBuilder();
 
-                                boolean color = false;
-                                for(char c : input.toCharArray()) {
-                                    builder.append(c);
+                                    boolean color = false;
+                                    for(char c : input.toCharArray()) {
+                                        builder.append(c);
 
-                                    if(c == '§') color = true;
-                                    else if(color) {
-                                        builder.append("§n");
-                                        color = false;
+                                        if(c == '§') color = true;
+                                        else if(color) {
+                                            builder.append("§n");
+                                            color = false;
+                                        }
+                                    }
+
+                                    input = builder.toString();
+                                }
+
+                                if(!isCategory) {
+                                    if(WarpSystem.getInstance().getIconManager().existsWarp(input, category)) {
+                                        if(editing == null || !editing.getNameWithoutColor().equals(Color.removeColor(input))) {
+                                            p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                            return;
+                                        }
+                                    }
+                                } else {
+                                    if(WarpSystem.getInstance().getIconManager().existsCategory(input)) {
+                                        if(editing == null || !editing.getNameWithoutColor().equals(Color.removeColor(input))) {
+                                            p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                            return;
+                                        }
                                     }
                                 }
 
-                                input = builder.toString();
+                                input = input.replace("§", "&");
+
+                                e.setClose(true);
+                                playSound(p);
                             }
-
-                            if(!isCategory) {
-                                if(WarpSystem.getInstance().getIconManager().existsWarp(input, category)) {
-                                    if(editing == null || !editing.getNameWithoutColor().equals(Color.removeColor(input))) {
-                                        p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
-                                        return;
-                                    }
-                                }
-                            } else {
-                                if(WarpSystem.getInstance().getIconManager().existsCategory(input)) {
-                                    if(editing == null || !editing.getNameWithoutColor().equals(Color.removeColor(input))) {
-                                        p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
-                                        return;
-                                    }
-                                }
-                            }
-
-                            input = input.replace("§", "&");
-
-                            e.setClose(true);
-                            playSound(p);
                         }
+
+                        @Override
+                        public void onClose(AnvilCloseEvent e) {
+                            if(e.isSubmitted()) {
+                                name = input;
+                                item = new ItemBuilder(item).setName("§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).getItem();
+                                setItem(item);
+                            } else Sound.ITEM_BREAK.playSound(p);
+
+
+                            e.setPost(GEditIcon.this::open);
+                            quit = true;
+                        }
+                    }, new ItemBuilder(item).setHideStandardLore(true).removeEnchantments().setName(name).getItem());
+                } else if(e.getClick().isRightClick()) {
+                    ItemStack item = p.getItemInHand();
+
+                    if(item == null || item.getType().equals(Material.AIR)) {
+                        p.sendMessage(Lang.getPrefix() + Lang.get("No_Item_In_Hand", new Example("ENG", "&cYou have to hold an item!"), new Example("GER", "&cDu musst ein Item halten!")));
+                        return;
                     }
 
-                    @Override
-                    public void onClose(AnvilCloseEvent e) {
-                        if(e.isSubmitted()) {
-                            name = input;
-                            item = new ItemBuilder(item).setName("§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).getItem();
-                            setItem(item);
-                        } else Sound.ITEM_BREAK.playSound(p);
+                    GEditIcon.this.item.setType(item.getType());
+                    GEditIcon.this.item.setData(item.getData());
 
-
-                        e.setPost(GEditIcon.this::open);
-                        quit = true;
-                    }
-                }, new ItemBuilder(item).setHideStandardLore(true).removeEnchantments().setName(name).getItem());
+                    setItem(GEditIcon.this.item);
+                    p.updateInventory();
+                }
             }
-        }.setOption(option).setOnlyLeftClick(true);
+        }.setOption(option);
 
         addButton(iconButton);
 
@@ -255,7 +271,7 @@ public class GEditIcon extends GUI {
             public void onClick(InventoryClickEvent e) {
                 new GWarps(p, category, true).open();
             }
-        }.setOption(option.clone()).setOnlyLeftClick(true).setCloseOnClick(true).setClickSound(null));
+        }.setOption(option.clone()).setOnlyLeftClick(true).setCloseOnClick(true).setClickSound(Sound.ITEM_BREAK.bukkitSound()));
 
         //ready
         addButton(new ItemButton(8, 2, ready) {
@@ -264,7 +280,7 @@ public class GEditIcon extends GUI {
                 quit = false;
 
                 ItemBuilder builder = new ItemBuilder(item);
-                builder.removeLore(builder.getLore().size() - 3, builder.getLore().size());
+                builder.removeLore(builder.getLore().size() - 4, builder.getLore().size());
                 item = builder.getItem();
 
                 if(editing != null) {
@@ -305,7 +321,7 @@ public class GEditIcon extends GUI {
         addButton(new ItemButton(2, 3, sparkle) {
             @Override
             public void onClick(InventoryClickEvent e) {
-                if(item.getEnchantments().size() == 0) {
+                if(iconButton.getItem().getEnchantments().size() == 0) {
                     item = new ItemBuilder(item).setHideStandardLore(true).addEnchantment(Enchantment.DAMAGE_ALL, 1).setHideEnchantments(true).getItem();
 
                     setItem(new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle", new Example("ENG", "Sparkle"), new Example("GER", "Funkeln")))
@@ -313,7 +329,7 @@ public class GEditIcon extends GUI {
                             .getItem());
                 } else {
                     ItemBuilder builder = new ItemBuilder(item).setHideStandardLore(true);
-                    builder.getEnchantments().clear();
+                    builder.removeEnchantments();
                     item = builder.getItem();
 
                     setItem(new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle", new Example("ENG", "Sparkle"), new Example("GER", "Funkeln")))
@@ -321,6 +337,7 @@ public class GEditIcon extends GUI {
                 }
 
                 iconButton.setItem(item);
+                p.updateInventory();
             }
         }.setOption(option).setOnlyLeftClick(true));
 
@@ -355,6 +372,7 @@ public class GEditIcon extends GUI {
 
                             item = builder.getItem();
                             iconButton.setItem(item);
+                            p.updateInventory();
                         }
 
                         @Override
@@ -366,10 +384,12 @@ public class GEditIcon extends GUI {
                         }
                     }, new ItemBuilder(Material.PAPER).setName(Lang.get("Line", new Example("ENG", "Line"), new Example("GER", "Linie")) + "...").getItem());
                 } else {
-                    item = new ItemBuilder(item).setHideStandardLore(true).setHideEnchantments(true).removeLore()
-                            .setLore("§8------------", "", Lang.get("Change_Name", new Example("ENG", "&8»Click here to change the name."), new Example("GER", "&8»Klicke hier um den Namen zu ändern.")))
+                    item = new ItemBuilder(item).removeLore().setName("§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).setHideStandardLore(true)
+                            .addLore("§8------------", "", Lang.get("Change_Name_Leftclick", new Example("ENG", "&3Leftclick: &bChange name"), new Example("GER", "&3Linksklick: &bNamen ändern")),
+                                    Lang.get("Change_Name_Rightclick", new Example("ENG", "&3Rightclick: &bChange item"), new Example("GER", "&3Rechtsklick: &bItem ändern")))
                             .getItem();
                     iconButton.setItem(item);
+                    p.updateInventory();
                 }
             }
         }.setOption(option));
@@ -388,6 +408,7 @@ public class GEditIcon extends GUI {
 
                     ItemStack command = commandBuilder.getItem();
                     setItem(command);
+                    p.updateInventory();
                 } else {
                     quit = false;
                     p.closeInventory();
@@ -445,6 +466,7 @@ public class GEditIcon extends GUI {
 
                     ItemStack permissionIcon = permissionIconBuilder.getItem();
                     setItem(permissionIcon);
+                    p.updateInventory();
                 } else {
                     quit = false;
                     p.closeInventory();

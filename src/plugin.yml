@@ -1,6 +1,6 @@
 name: WarpSystem
 author: AirTriX
-version: 2.0.2
+version: 2.0.5
 description: WarpSystem
 main: de.codingair.warpsystem.WarpSystem
 softdepend: [Multiverse-Core]
@@ -9,8 +9,13 @@ commands:
   warp:
     usuage: /Warp
     description: Warp-System-CMD
-    aliases: [warps]
+  warps:
+    usuage: /Warps
+    description: Warp-System-CMD
   warpsystem:
     usuage: /WarpSystem
     description: Warp-System-CMD
     aliases: [ws]
+  portal:
+    usuage: /Portal
+    description: Setup portals

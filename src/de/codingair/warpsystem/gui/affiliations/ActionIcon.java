@@ -1,8 +1,6 @@
 package de.codingair.warpsystem.gui.affiliations;
 
-import de.CodingAir.v1_6.CodingAPI.BungeeCord.BungeeCordHelper;
-import de.CodingAir.v1_6.CodingAPI.Serializable.SerializableLocation;
-import de.CodingAir.v1_6.CodingAPI.Tools.Location;
+import de.codingair.codingapi.bungeecord.BungeeCordHelper;
 import de.codingair.warpsystem.WarpSystem;
 import de.codingair.warpsystem.gui.guis.GWarps;
 import org.bukkit.entity.Player;

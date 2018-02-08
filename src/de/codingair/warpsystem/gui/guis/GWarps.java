@@ -1,15 +1,16 @@
 package de.codingair.warpsystem.gui.guis;
 
-import de.CodingAir.v1_6.CodingAPI.Player.GUI.Anvil.*;
-import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.GUIs.ConfirmGUI;
-import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.GUI;
-import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.InterfaceListener;
-import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.ItemButton.ItemButton;
-import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.ItemButton.ItemButtonOption;
-import de.CodingAir.v1_6.CodingAPI.Player.GUI.Inventory.Interface.Skull;
-import de.CodingAir.v1_6.CodingAPI.Server.Sound;
-import de.CodingAir.v1_6.CodingAPI.Tools.Callback;
-import de.CodingAir.v1_6.CodingAPI.Tools.ItemBuilder;
+import de.codingair.codingapi.player.gui.anvil.*;
+import de.codingair.codingapi.player.gui.inventory.gui.GUI;
+import de.codingair.codingapi.player.gui.inventory.gui.InterfaceListener;
+import de.codingair.codingapi.player.gui.inventory.gui.Skull;
+import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
+import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
+import de.codingair.codingapi.player.gui.inventory.guis.ConfirmGUI;
+import de.codingair.codingapi.server.Sound;
+import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.tools.ItemBuilder;
+import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.language.Lang;
 import de.codingair.warpsystem.WarpSystem;
@@ -33,6 +34,8 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class GWarps extends GUI {
     private Category category;
     private boolean editing;
@@ -42,8 +45,12 @@ public class GWarps extends GUI {
     private int oldSlot = -999;
     private ActionIcon cursorIcon = null;
 
+    private static String getTitle(Category category) {
+        return "§c§l§nWarps§r" + (category != null ? " §8@" + category.getNameWithoutColor() : "");
+    }
+
     public GWarps(Player p, Category category, boolean editing) {
-        super(p, "§c§l§nWarps§r" + (category != null ? " §8@" + category.getNameWithoutColor() : ""), 54, WarpSystem.getInstance(), false);
+        super(p, getTitle(category), 54, WarpSystem.getInstance(), false);
         this.category = category;
         this.editing = editing;
 
@@ -134,6 +141,7 @@ public class GWarps extends GUI {
                     if(e.isLeftClick()) {
                         editing = !editing;
                         reinitialize();
+                        setTitle(getTitle(GWarps.this.category));
                     } else {
                         p.closeInventory();
                         new GConfig(p, category, editing).open();
@@ -150,8 +158,8 @@ public class GWarps extends GUI {
                 @Override
                 public void onClick(InventoryClickEvent e) {
                     GWarps.this.category = null;
-                    setTitle("§c§l§nWarps§r" + (category != null ? " §8@" + category.getNameWithoutColor() : ""));
                     reinitialize();
+                    setTitle(getTitle(GWarps.this.category));
                 }
             }.setOption(option));
         }
@@ -161,7 +169,7 @@ public class GWarps extends GUI {
         setItem(53, edge);
 
         for(Warp warp : WarpSystem.getInstance().getIconManager().getWarps(category)) {
-            if(editing || (!warp.hasPermission() || p.hasPermission(warp.getPermission()))) {
+            if((editing || (!warp.hasPermission() || p.hasPermission(warp.getPermission()))) && this.cursorIcon != warp) {
                 addToGUI(p, warp);
             }
         }
@@ -177,6 +185,7 @@ public class GWarps extends GUI {
         for(int i = 0; i < 54; i++) {
             if(editing) {
                 final int slot = i;
+                if(slot == oldSlot && cursorIcon != null && cursorIcon instanceof Warp && ((Warp) cursorIcon).getCategory() == this.category) continue;
 
                 if(getItem(i) == null || getItem(i).getType().equals(Material.AIR)) {
                     addButton(new ItemButton(i, none.clone()) {
@@ -184,6 +193,11 @@ public class GWarps extends GUI {
                         public void onClick(InventoryClickEvent clickEvent) {
                             if(moving) {
                                 if(clickEvent.isLeftClick()) {
+                                    if(cursorIcon instanceof Warp) {
+                                        Warp icon = (Warp) cursorIcon;
+                                        icon.setCategory(GWarps.this.category);
+                                    }
+
                                     cursorIcon.setSlot(clickEvent.getSlot());
                                     clickEvent.setCursor(new ItemStack(Material.AIR));
                                     setMoving(false, clickEvent.getSlot());
@@ -272,6 +286,24 @@ public class GWarps extends GUI {
                 if(getItem(i) == null || getItem(i).getType().equals(Material.AIR)) setItem(i, none);
             }
         }
+
+        if(editing && cursorIcon != null && cursorIcon instanceof Warp && ((Warp) cursorIcon).getCategory() == this.category) {
+            addButton(new ItemButton(oldSlot, new ItemStack(Material.AIR)) {
+                @Override
+                public void onClick(InventoryClickEvent e) {
+                    if(e.isLeftClick()) {
+                        if(cursorIcon instanceof Warp) {
+                            Warp icon = (Warp) cursorIcon;
+                            icon.setCategory(GWarps.this.category);
+                        }
+
+                        cursorIcon.setSlot(e.getSlot());
+                        e.setCursor(new ItemStack(Material.AIR));
+                        setMoving(false, e.getSlot());
+                    }
+                }
+            }.setOption(option));
+        }
     }
 
     private void addToGUI(Player p, ActionIcon icon) {
@@ -290,18 +322,29 @@ public class GWarps extends GUI {
                 iconBuilder.addLore("§7" + Lang.get("Command", new Example("ENG", "Command"), new Example("GER", "Befehl")) + ": " + command);
                 iconBuilder.addLore("§7" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")) + ": " + permission);
                 iconBuilder.addLore("§8------------");
-                iconBuilder.addLore(Lang.get("Shift_Leftclick_Edit", new Example("ENG", "&7Shift-Leftclick: Move"), new Example("GER", "&7Shift-Linksklick: Bewegen")));
                 iconBuilder.addLore(Lang.get("Leftclick_Edit", new Example("ENG", "&7Leftclick: Configure"), new Example("GER", "&7Linksklick: Bearbeiten")));
                 iconBuilder.addLore(Lang.get("Rightclick_Delete", new Example("ENG", "&7Rightclick: Delete"), new Example("GER", "&7Rechtsklick: Löschen")));
+                iconBuilder.addLore(Lang.get("Shift_Leftclick_Edit", new Example("ENG", "&7Shift-Leftclick: Move"), new Example("GER", "&7Shift-Linksklick: Bewegen")));
+
+                if(icon instanceof Warp) {
+                    iconBuilder.addLore("§8------------");
+
+                    List<String> list = TextAlignment.lineBreak(Lang.get("Move_Help", new Example("ENG", "&7Moving: Rightclick on categories to switch to it."), new Example("GER", "&7Bewegen: Rechtsklick auf Kategorien um dort hin zu wechseln.")), 80);
+                    iconBuilder.addLore(list);
+                }
             }
 
             addButton(new ItemButton(icon.getSlot(), iconBuilder.getItem()) {
                 @Override
                 public void onClick(InventoryClickEvent e) {
                     if(editing) {
-
                         if(e.isLeftClick()) {
                             if(moving) {
+                                if(cursorIcon instanceof Warp) {
+                                    Warp icon = (Warp) cursorIcon;
+                                    icon.setCategory(GWarps.this.category);
+                                }
+
                                 icon.setSlot(oldSlot);
                                 cursorIcon.setSlot(e.getSlot());
                                 e.setCursor(new ItemStack(Material.AIR));
@@ -318,34 +361,41 @@ public class GWarps extends GUI {
                                     new GEditIcon(p, category, icon).open();
                                 }
                             }
-                        } else {
-                            p.closeInventory();
-
-                            new ConfirmGUI(p,
-                                    Lang.get("Delete", new Example("ENG", "&cDelete"), new Example("GER", "&cLöschen")),
-                                    "§a" + Lang.get("Yes", new Example("ENG", "Yes"), new Example("GER", "Ja")),
-                                    Lang.get("Confirm_Delete", new Example("ENG", "&7Are you sure you want to &cdelete &7this icon?"), new Example("GER", "&7Möchten Sie dieses Symbol wirklich löschen?")),
-                                    "§c" + Lang.get("No", new Example("ENG", "No"), new Example("GER", "Nein")),
-                                    WarpSystem.getInstance(), new Callback<Boolean>() {
-                                @Override
-                                public void accept(Boolean accepted) {
-                                    if(accepted) {
-                                        WarpSystem.getInstance().getIconManager().remove(icon);
-                                        p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Deleted", new Example("ENG", "&cThe icon was deleted successfully."), new Example("GER", "&cDas Symbol wurde erfolgreich gelöscht.")));
-                                    } else {
-                                        p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Not_Deleted", new Example("ENG", "&7The icon was &cnot &7deleted."), new Example("GER", "&7Das Symbol wurde &cnicht &7gelöscht.")));
-                                    }
-
-                                    new GWarps(p, category, editing).open();
+                        } else if(e.isRightClick()) {
+                            if(moving) {
+                                if(icon instanceof Category && cursorIcon instanceof Warp) {
+                                    GWarps.this.category = (Category) icon;
+                                    reinitialize();
+                                    setTitle(getTitle(GWarps.this.category));
                                 }
-                            }, () -> new GWarps(p, category, editing).open()).open();
+                            } else {
+                                p.closeInventory();
+
+                                new ConfirmGUI(p,
+                                        Lang.get("Delete", new Example("ENG", "&cDelete"), new Example("GER", "&cLöschen")),
+                                        "§a" + Lang.get("Yes", new Example("ENG", "Yes"), new Example("GER", "Ja")),
+                                        Lang.get("Confirm_Delete", new Example("ENG", "&7Are you sure you want to &cdelete &7this icon?"), new Example("GER", "&7Möchten Sie dieses Symbol wirklich löschen?")),
+                                        "§c" + Lang.get("No", new Example("ENG", "No"), new Example("GER", "Nein")),
+                                        WarpSystem.getInstance(), new Callback<Boolean>() {
+                                    @Override
+                                    public void accept(Boolean accepted) {
+                                        if(accepted) {
+                                            WarpSystem.getInstance().getIconManager().remove(icon);
+                                            p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Deleted", new Example("ENG", "&cThe icon was deleted successfully."), new Example("GER", "&cDas Symbol wurde erfolgreich gelöscht.")));
+                                        } else {
+                                            p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Not_Deleted", new Example("ENG", "&7The icon was &cnot &7deleted."), new Example("GER", "&7Das Symbol wurde &cnicht &7gelöscht.")));
+                                        }
+
+                                        new GWarps(p, category, editing).open();
+                                    }
+                                }, () -> new GWarps(p, category, editing).open()).open();
+                            }
                         }
                     } else if(e.isLeftClick()) {
                         if(icon instanceof Category) {
-                            icon.perform(p, editing, Action.OPEN_CATEGORY);
-
                             GWarps.this.category = (Category) icon;
                             reinitialize();
+                            setTitle(getTitle(GWarps.this.category));
                         } else icon.perform(p, editing);
                     }
                 }
@@ -363,6 +413,7 @@ public class GWarps extends GUI {
             cursor = null;
             cursorIcon = null;
             reinitialize();
+            setTitle(getTitle(GWarps.this.category));
         }
 
         this.moving = moving;
