@@ -19,3 +19,4 @@ commands:
   portal:
     usuage: /Portal
     description: Setup portals
+    aliases: [portals]
