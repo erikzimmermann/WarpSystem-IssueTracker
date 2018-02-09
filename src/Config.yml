@@ -17,6 +17,9 @@ WarpSystem:
     Delay: 5
     Animation: 17
     Allow_Move: false
+  Functions:
+    Warps: true
+    Portals: true
   Dominate_In_Commands:
     Highest_Priority:
       Warp: true

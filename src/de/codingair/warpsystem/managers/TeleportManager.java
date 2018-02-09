@@ -49,7 +49,7 @@ public class TeleportManager {
         particles.add(Particle.DAMAGE_INDICATOR);
     }
 
-    public void load() throws Exception {
+    public void load() {
         this.particleId = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Animation", 17);
         this.seconds = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Delay", 5);
         this.canMove = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Teleport.Allow_Move", false);
@@ -63,10 +63,12 @@ public class TeleportManager {
             this.portals.add(Portal.getByJSONString(s));
         }
 
-        this.portals.forEach(p -> p.setRunning(true));
+        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Portals", true)) {
+            this.portals.forEach(p -> p.setRunning(true));
+        }
     }
 
-    public void save() throws Exception {
+    public void save() {
         FileConfiguration config = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig();
 
         config.set("WarpSystem.Teleport.Animation", this.particleId);
