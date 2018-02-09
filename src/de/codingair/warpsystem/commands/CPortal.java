@@ -7,6 +7,7 @@ import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.TimeList;
 import de.codingair.codingapi.utils.Node;
+import de.codingair.warpsystem.WarpSystem;
 import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.language.Lang;
 import de.codingair.warpsystem.teleport.portals.PortalEditor;
@@ -45,6 +46,8 @@ public class CPortal extends CommandBuilder {
                 return false;
             }
         }.setOnlyPlayers(true), true);
+
+        setHighestPriority(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Dominate_In_Commands.Highest_Priority.Portal", true));
 
 
         //CREATE

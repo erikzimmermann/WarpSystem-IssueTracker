@@ -40,6 +40,8 @@ public class CWarps extends CommandBuilder {
             }
         }.setOnlyPlayers(true), true);
 
+        setHighestPriority(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Dominate_In_Commands.Highest_Priority.Warps", true));
+
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, List<String> suggestions) {

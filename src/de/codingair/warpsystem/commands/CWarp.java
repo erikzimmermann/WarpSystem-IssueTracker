@@ -38,6 +38,8 @@ public class CWarp extends CommandBuilder {
             }
         }.setOnlyPlayers(true), true);
 
+        setHighestPriority(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Dominate_In_Commands.Highest_Priority.Warp", true));
+
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, List<String> suggestions) {
@@ -48,6 +50,11 @@ public class CWarp extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                if(args.length == 0 || argument == null || argument.isEmpty()) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_HELP", new Example("ENG", "&7Use: &e" + label + " <Warp-Name>"), new Example("GER", "&7Benutze: &e/" + label + " <Warp-Name>")));
+                    return false;
+                }
+
                 argument = argument.replace("_", "");
                 Warp warp = null;
                 for(Warp w : WarpSystem.getInstance().getIconManager().getWarps()) {

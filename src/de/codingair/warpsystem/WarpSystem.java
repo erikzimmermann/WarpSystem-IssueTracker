@@ -91,10 +91,7 @@ public class WarpSystem extends JavaPlugin {
 
         new CWarp().register(this);
         new CWarps().register(this);
-//        getCommand("warps").setExecutor(new CWarps());
-//        getCommand("warps").setTabCompleter(new CWarps());
-        getCommand("warpsystem").setExecutor(new CWarpSystem());
-        getCommand("warpsystem").setTabCompleter(new CWarpSystem());
+        new CWarpSystem().register(this);
         new CPortal().register(this);
 
         this.startAutoSaver();
