@@ -91,10 +91,16 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new NotifyListener(), this);
             Bukkit.getPluginManager().registerEvents(new PortalListener(), this);
 
-            new CWarp().register(this);
-            new CWarps().register(this);
+            if(fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Warps", true)) {
+                new CWarp().register(this);
+                new CWarps().register(this);
+            }
+
             new CWarpSystem().register(this);
-            new CPortal().register(this);
+
+            if(fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Portals", true)) {
+                new CPortal().register(this);
+            }
 
             this.startAutoSaver();
 
