@@ -1,3 +1,15 @@
+# #####################################
+# # Help:
+# #   "Dominate_In_Commands" means the priority for one command.
+# #
+# #   For example: A player runs the "/warp"-command and your
+# #   server has Essentials activated and this System.
+# #   The server refer the command to the plugin, which was activated
+# #   first.
+# #   If you toggle the command "Warp" in this section to true, it
+# #   will be run in every case and will blocks all other system in
+# #   that moment.
+# #####################################
 WarpSystem:
   Maintenance: false
   Teleport:
@@ -5,3 +17,9 @@ WarpSystem:
     Delay: 5
     Animation: 17
     Allow_Move: false
+  Dominate_In_Commands:
+    Highest_Priority:
+      Warp: true
+      Warps: true
+      WarpSystem: true
+      Portal: true

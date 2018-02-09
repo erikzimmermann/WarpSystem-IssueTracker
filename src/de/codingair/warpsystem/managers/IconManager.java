@@ -1,19 +1,25 @@
 package de.codingair.warpsystem.managers;
 
-import de.CodingAir.v1_6.CodingAPI.Files.ConfigFile;
-import de.CodingAir.v1_6.CodingAPI.Serializable.SerializableLocation;
-import de.CodingAir.v1_6.CodingAPI.Server.Color;
-import de.CodingAir.v1_6.CodingAPI.Tools.ItemBuilder;
+import de.codingair.codingapi.files.ConfigFile;
+import de.codingair.codingapi.serializable.SerializableLocation;
+import de.codingair.codingapi.server.Color;
+import de.codingair.codingapi.tools.ItemBuilder;
+import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.gui.affiliations.*;
 import de.codingair.warpsystem.WarpSystem;
+import de.codingair.warpsystem.importfilter.CategoryData;
+import de.codingair.warpsystem.importfilter.WarpData;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class IconManager {
+    public static ItemBuilder STANDARD_ITEM() {return new ItemBuilder(Material.GRASS);}
+
     private List<Warp> warps = new ArrayList<>();
     private List<Category> categories = new ArrayList<>();
 
@@ -104,6 +110,91 @@ public class IconManager {
             config.set("Categories", categories);
             file.saveConfig();
         }
+    }
+
+    private int getNextFreeSlot(Category category) {
+        int slot = 0;
+        List<Integer> unavailable = new ArrayList<>();
+        unavailable.add(0);
+        unavailable.add(8);
+        unavailable.add(45);
+        unavailable.add(53);
+
+        boolean available;
+
+        do {
+            available = true;
+
+            if(slot > 53) break;
+
+            if(unavailable.contains(slot)) {
+                slot++;
+                available = false;
+            } else {
+                if(category == null) {
+                    for(Category c : this.categories) {
+                        if(c.getSlot() == slot) {
+                            slot++;
+                            available = false;
+                            break;
+                        }
+                    }
+
+                    for(Warp warp : getWarps(null)) {
+                        if(warp.getSlot() == slot) {
+                            slot++;
+                            available = false;
+                            break;
+                        }
+                    }
+                } else {
+                    for(Warp warp : getWarps(category)) {
+                        if(warp.getSlot() == slot) {
+                            slot++;
+                            available = false;
+                            break;
+                        }
+                    }
+                }
+            }
+        } while(!available);
+
+        if(available) return slot;
+        else return -999;
+    }
+
+    public boolean importCategoryData(CategoryData categoryData) {
+        int slot = getNextFreeSlot(null);
+
+        if(slot == -999) return false;
+        if(this.existsCategory(categoryData.getName())) return false;
+
+        Category c = new Category(categoryData.getName(), STANDARD_ITEM().setName(categoryData.getName()).getItem(), slot, categoryData.getPermission());
+        this.categories.add(c);
+
+        boolean result = true;
+
+        for(WarpData warpData : categoryData.getWarps()) {
+            if(!importWarpData(warpData)) result = false;
+        }
+
+        return result;
+    }
+
+    public boolean importWarpData(WarpData warpData) {
+        if(warpData.getCategory() != null && !existsCategory(warpData.getCategory())) return false;
+        Category category = warpData.getCategory() == null ? null : getCategory(warpData.getCategory());
+
+        int slot = getNextFreeSlot(category);
+
+        if(slot == -999) return false;
+        if(this.existsWarp(warpData.getName(), category)) return false;
+
+        Location loc = new Location(new org.bukkit.Location(Bukkit.getWorld(warpData.getWorld()), warpData.getX(), warpData.getY(), warpData.getZ(), warpData.getYaw(), warpData.getPitch()));
+
+        Warp warp = new Warp(warpData.getName(), STANDARD_ITEM().setName(warpData.getName()).getItem(), slot, warpData.getPermission(), category, new ActionObject(Action.TELEPORT_TO_WARP, new SerializableLocation(loc)));
+        this.warps.add(warp);
+        return true;
     }
 
     public boolean existsWarp(String name, Category category) {

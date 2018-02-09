@@ -1,12 +1,13 @@
 package de.codingair.warpsystem.language;
 
-import de.CodingAir.v1_6.CodingAPI.Files.ConfigFile;
+import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.warpsystem.WarpSystem;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 public class Lang {
     public static String getCurrentLanguage() {
@@ -65,7 +66,10 @@ public class Lang {
 
         String text = getConfig().getString(getCurrentLanguage() + "." + key, null);
 
-        if(text == null) return null;
+        if(text == null) {
+            WarpSystem.getInstance().getLogger().log(Level.WARNING, "Unknown translation key: '" + key + "@" + getCurrentLanguage() + "'");
+            return null;
+        }
 
         text = ChatColor.translateAlternateColorCodes('&', text);
         return text;
