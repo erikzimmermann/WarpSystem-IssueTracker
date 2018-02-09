@@ -5,6 +5,7 @@ import de.codingair.warpsystem.WarpSystem;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -76,8 +77,13 @@ public class Lang {
     }
 
     private static FileConfiguration getConfig() {
-        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Language");
-        return file.getConfig();
+        try {
+            ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Language");
+            return file.getConfig();
+        } catch(Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private static void saveConfig() {

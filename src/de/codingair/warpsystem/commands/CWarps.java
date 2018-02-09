@@ -13,6 +13,7 @@ import de.codingair.warpsystem.language.Lang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.io.IOException;
 import java.util.List;
 
 public class CWarps extends CommandBuilder {
@@ -40,7 +41,11 @@ public class CWarps extends CommandBuilder {
             }
         }.setOnlyPlayers(true), true);
 
-        setHighestPriority(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Dominate_In_Commands.Highest_Priority.Warps", true));
+        try {
+            setHighestPriority(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Dominate_In_Commands.Highest_Priority.Warps", true));
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
 
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override

@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,9 +24,15 @@ public class IconManager {
     private List<Warp> warps = new ArrayList<>();
     private List<Category> categories = new ArrayList<>();
 
-    public void load(boolean sync) {
+    public void load(boolean sync) throws Exception {
         if(!sync) {
-            Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), () -> load(true));
+            Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), () -> {
+                try {
+                    load(true);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            });
         } else {
             //Load
 
@@ -88,9 +95,15 @@ public class IconManager {
         }
     }
 
-    public void save(boolean sync) {
+    public void save(boolean sync) throws Exception {
         if(!sync) {
-            Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), () -> save(true));
+            Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), () -> {
+                try {
+                    save(true);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            });
         } else {
             //Save
             ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");

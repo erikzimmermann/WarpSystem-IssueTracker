@@ -19,7 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
+import java.io.*;
 import java.util.logging.Level;
 
 public class WarpSystem extends JavaPlugin {
@@ -44,85 +44,121 @@ public class WarpSystem extends JavaPlugin {
 
     private static boolean updateAvailable = false;
     private boolean old = false;
+    private boolean ERROR = true;
 
     @Override
     public void onEnable() {
-        checkOldDirectory();
+        try {
+            checkOldDirectory();
 
-        instance = this;
-        API.getInstance().onEnable(this);
+            instance = this;
+            API.getInstance().onEnable(this);
 
-        timer.start();
+            timer.start();
 
-        updateAvailable = WarpSystem.this.updateChecker.needsUpdate();
+            updateAvailable = WarpSystem.this.updateChecker.needsUpdate();
 
-        log(" ");
-        log("__________________________________________________________");
-        log(" ");
-        log("                       WarpSystem [" + getDescription().getVersion() + "]");
-        if(updateAvailable) {
             log(" ");
-            log("New update available [v" + updateChecker.getVersion() + " - " + WarpSystem.this.updateChecker.getUpdateInfo() + "].");
-            log("Download it on\n\n" + updateChecker.getDownload() + "\n");
+            log("__________________________________________________________");
+            log(" ");
+            log("                       WarpSystem [" + getDescription().getVersion() + "]");
+            if(updateAvailable) {
+                log(" ");
+                log("New update available [v" + updateChecker.getVersion() + " - " + WarpSystem.this.updateChecker.getUpdateInfo() + "].");
+                log("Download it on\n\n" + updateChecker.getDownload() + "\n");
+            }
+            log(" ");
+            log("Status:");
+            log(" ");
+            log("MC-Version: " + Version.getVersion().getVersionName());
+            log(" ");
+
+            log("Loading files.");
+            this.fileManager.loadFile("ActionIcons", "/Memory/");
+            this.fileManager.loadFile("Teleporters", "/Memory/");
+            this.fileManager.loadFile("Language", "/");
+            this.fileManager.loadFile("Config", "/");
+
+            log("Loading icons.");
+            this.iconManager.load(true);
+            log("Loading TeleportManager.");
+            this.teleportManager.load();
+
+            maintenance = fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Maintenance", false);
+            OP_CAN_SKIP_DELAY = fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Teleport.Op_Can_Skip_Delay", false);
+
+            Bukkit.getPluginManager().registerEvents(new TeleportListener(), this);
+            Bukkit.getPluginManager().registerEvents(new NotifyListener(), this);
+            Bukkit.getPluginManager().registerEvents(new PortalListener(), this);
+
+            new CWarp().register(this);
+            new CWarps().register(this);
+            new CWarpSystem().register(this);
+            new CPortal().register(this);
+
+            this.startAutoSaver();
+
+            timer.stop();
+
+            log(" ");
+            log("Done (" + timer.getLastStoppedTime() + "s)");
+            log(" ");
+            log("__________________________________________________________");
+            log(" ");
+
+            activated = true;
+            notifyPlayers(null);
+
+            this.ERROR = false;
+        } catch(Exception ex) {
+            //make error-report
+
+            if(!getDataFolder().exists()) {
+                try {
+                    getDataFolder().createNewFile();
+                } catch(IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            BufferedWriter writer = null;
+            try {
+                File log = new File(getDataFolder(), "ErrorReport.txt");
+                if(log.exists()) log.delete();
+
+                writer = new BufferedWriter(new FileWriter(log));
+
+                PrintWriter printWriter = new PrintWriter(writer);
+                ex.printStackTrace(printWriter);
+            } catch(IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    writer.close();
+                } catch(Exception ignored) {
+                }
+            }
+
+
+            log(" ");
+            log("__________________________________________________________");
+            log(" ");
+            log("                       WarpSystem [" + getDescription().getVersion() + "]");
+            log(" ");
+            log("       COULD NOT ENABLE CORRECTLY!!");
+            log(" ");
+            log("       Please contact the author with the ErrorReport.txt");
+            log("       file in the plugins/WarpSystem folder.");
+            log(" ");
+            log(" ");
+            log("       Thanks for supporting!");
+            log(" ");
+            log("__________________________________________________________");
+            log(" ");
+
+            this.ERROR = true;
+            Bukkit.getPluginManager().disablePlugin(this);
         }
-        log(" ");
-        log("Status:");
-        log(" ");
-        log("MC-Version: " + Version.getVersion().getVersionName());
-        log(" ");
-
-        log("Loading files.");
-        this.fileManager.loadFile("ActionIcons", "/Memory/");
-        this.fileManager.loadFile("Teleporters", "/Memory/");
-        this.fileManager.loadFile("Language", "/");
-        this.fileManager.loadFile("Config", "/");
-
-        log("Loading icons.");
-        this.iconManager.load(true);
-        log("Loading TeleportManager.");
-        this.teleportManager.load();
-
-        maintenance = fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Maintenance", false);
-        OP_CAN_SKIP_DELAY = fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Teleport.Op_Can_Skip_Delay", false);
-
-        Bukkit.getPluginManager().registerEvents(new TeleportListener(), this);
-        Bukkit.getPluginManager().registerEvents(new NotifyListener(), this);
-        Bukkit.getPluginManager().registerEvents(new PortalListener(), this);
-
-        new CWarp().register(this);
-        new CWarps().register(this);
-        new CWarpSystem().register(this);
-        new CPortal().register(this);
-
-        this.startAutoSaver();
-
-        timer.stop();
-
-        log(" ");
-        log("Done (" + timer.getLastStoppedTime() + "s)");
-        log(" ");
-        log("__________________________________________________________");
-        log(" ");
-
-        activated = true;
-        notifyPlayers(null);
-
-        //TODO: Unnecessary in this version
-//        new BukkitRunnable() {
-//            @Override
-//            public void run() {
-//                if(!Bukkit.getOnlinePlayers().isEmpty()) {
-//                    BungeeCordHelper.runningOnBungeeCord(WarpSystem.this, 2 * 20, new Callback<Boolean>() {
-//                        @Override
-//                        public void accept(Boolean onBungee) {
-//                            onBungeeCord = onBungee;
-//                        }
-//                    });
-//
-//                    this.cancel();
-//                }
-//            }
-//        }.runTaskTimerAsynchronously(this, 0, 20);
     }
 
     @Override
@@ -157,14 +193,22 @@ public class WarpSystem extends JavaPlugin {
                 log(" ");
                 log("MC-Version: " + Version.getVersion().name());
                 log(" ");
-                log("Saving icons.");
+
+                if(!this.ERROR) log("Saving icons.");
+                else {
+                    log("Does not save data, because of errors at enabling this plugin.");
+                    log(" ");
+                    log("Please submit the ErrorReport.txt file to CodingAir.");
+                }
             }
 
-            iconManager.save(true);
-            if(!saver) log("Saving options.");
-            fileManager.getFile("Config").getConfig().set("WarpSystem.Maintenance", maintenance);
-            fileManager.getFile("Config").getConfig().set("WarpSystem.Teleport.Op_Can_Skip_Delay", OP_CAN_SKIP_DELAY);
-            teleportManager.save();
+            if(!this.ERROR) {
+                iconManager.save(true);
+                if(!saver) log("Saving options.");
+                fileManager.getFile("Config").getConfig().set("WarpSystem.Maintenance", maintenance);
+                fileManager.getFile("Config").getConfig().set("WarpSystem.Teleport.Op_Can_Skip_Delay", OP_CAN_SKIP_DELAY);
+                teleportManager.save();
+            }
 
             if(!saver) {
                 timer.stop();
