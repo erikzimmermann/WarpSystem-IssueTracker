@@ -57,8 +57,12 @@ public class CWarpSystem extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("fileReload") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                WarpSystem.getInstance().getFileManager().reloadAll();
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Files_Reloaded", new Example("ENG", "&aAll files are reloaded."), new Example("GER", "&aAlle Dateien wurden neu geladen.")));
+                try {
+                    WarpSystem.getInstance().getFileManager().reloadAll();
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Files_Reloaded", new Example("ENG", "&aAll files are reloaded."), new Example("GER", "&aAlle Dateien wurden neu geladen.")));
+                } catch(Exception ex) {
+                    ex.printStackTrace();
+                }
                 return false;
             }
         });

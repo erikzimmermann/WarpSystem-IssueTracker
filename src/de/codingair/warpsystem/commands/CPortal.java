@@ -14,6 +14,7 @@ import de.codingair.warpsystem.teleport.portals.PortalEditor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -47,7 +48,11 @@ public class CPortal extends CommandBuilder {
             }
         }.setOnlyPlayers(true), true);
 
-        setHighestPriority(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Dominate_In_Commands.Highest_Priority.Portal", true));
+        try {
+            setHighestPriority(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Dominate_In_Commands.Highest_Priority.Portal", true));
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
 
 
         //CREATE

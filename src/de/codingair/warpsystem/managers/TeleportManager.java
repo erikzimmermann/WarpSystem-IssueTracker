@@ -8,6 +8,7 @@ import de.codingair.warpsystem.teleport.portals.Portal;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class TeleportManager {
         particles.add(Particle.DAMAGE_INDICATOR);
     }
 
-    public void load() {
+    public void load() throws Exception {
         this.particleId = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Animation", 17);
         this.seconds = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Delay", 5);
         this.canMove = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Teleport.Allow_Move", false);
@@ -65,7 +66,7 @@ public class TeleportManager {
         this.portals.forEach(p -> p.setRunning(true));
     }
 
-    public void save() {
+    public void save() throws Exception {
         FileConfiguration config = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig();
 
         config.set("WarpSystem.Teleport.Animation", this.particleId);
