@@ -105,8 +105,8 @@ public class Portal implements Removable {
             running = true;
         }
 
-        this.startHolo = new Hologram(this.start.clone().add(0, this.hologramHeight, 0), "§c" + ChatColor.translateAlternateColorCodes('&', startName));
-        this.destinationHolo = new Hologram(this.destination.clone().add(0, this.hologramHeight, 0), "§c" + ChatColor.translateAlternateColorCodes('&', destinationName));
+        this.startHolo = new Hologram(this.start.clone().add(0, this.hologramHeight, 0), ChatColor.translateAlternateColorCodes('&', startName));
+        this.destinationHolo = new Hologram(this.destination.clone().add(0, this.hologramHeight, 0), ChatColor.translateAlternateColorCodes('&', destinationName));
 
         if(running) {
             this.startHolo.show();
