@@ -312,7 +312,11 @@ public class Portal implements Removable {
 
         player.teleport(this.start);
         update(player);
-        player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", this.startName));
+
+        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message", true)) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", this.startName));
+        }
+        
         if(this.teleportSound != null) this.teleportSound.play(player);
     }
 
@@ -324,7 +328,11 @@ public class Portal implements Removable {
 
         player.teleport(this.destination);
         update(player);
-        player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", this.destinationName));
+
+        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message", true)) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", this.destinationName));
+        }
+
         if(this.teleportSound != null) this.teleportSound.play(player);
     }
 
