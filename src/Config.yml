@@ -17,8 +17,9 @@ WarpSystem:
     Delay: 5
     Animation: 17
     Allow_Move: false
-    Send:
-      Teleport_Cancel_Message: true
+  Send:
+    Teleport_Message: true
+    Teleport_Cancel_Message: true
   Functions:
     Warps: true
     Portals: true
