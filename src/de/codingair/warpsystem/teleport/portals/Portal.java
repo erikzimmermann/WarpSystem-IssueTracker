@@ -46,7 +46,7 @@ public class Portal implements Removable {
     private String permission;
 
     public Portal(Portal portal) {
-        this(portal.getStart(), portal.getDestination(), portal.getAnimationType(), 1,portal.getParticle(), portal.getTeleportRadius(), portal.getStartName(), portal.getDestinationName(), portal.getTeleportSound(), 2.2);
+        this(portal.getStart(), portal.getDestination(), portal.getAnimationType(), portal.getAnimationHeight(), portal.getParticle(), portal.getTeleportRadius(), portal.getStartName(), portal.getDestinationName(), portal.getTeleportSound(), 2.2);
 
         this.hologramHeight = portal.getHologramHeight();
         this.permission = portal.getPermission();
