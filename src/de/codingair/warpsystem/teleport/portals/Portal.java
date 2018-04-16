@@ -373,8 +373,8 @@ public class Portal implements Removable {
             Sound sound = Sound.valueOf((String) json.get("TeleportSound"));
             float soundVolume = Float.parseFloat(json.get("TeleportSoundVolume") + "");
             float soundPitch = Float.parseFloat(json.get("TeleportSoundPitch") + "");
-            boolean startHoloStatus = Boolean.parseBoolean(json.get("StartHoloStatus") + "");
-            boolean destinationHoloStatus = Boolean.parseBoolean(json.get("DestinationHoloStatus") + "");
+            boolean startHoloStatus = json.get("StartHoloStatus") == null || Boolean.parseBoolean(json.get("StartHoloStatus") + "");
+            boolean destinationHoloStatus = json.get("DestinationHoloStatus") == null || Boolean.parseBoolean(json.get("DestinationHoloStatus") + "");
 
             return new Portal(start, destination, animationType, animationHeight, particle, teleportDistance, messageToStart, messageToDestination, new SoundData(sound, soundVolume, soundPitch), hologramHeight, startHoloStatus, destinationHoloStatus);
         } catch(ParseException e) {
