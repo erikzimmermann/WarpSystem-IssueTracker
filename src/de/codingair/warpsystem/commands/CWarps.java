@@ -63,7 +63,7 @@ public class CWarps extends CommandBuilder {
         });
     }
 
-    private static void run(CommandSender sender, Category category) {
+    static void run(CommandSender sender, Category category) {
         Player p = (Player) sender;
 
         if(!WarpSystem.activated) return;

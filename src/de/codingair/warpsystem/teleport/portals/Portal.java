@@ -8,13 +8,16 @@ import de.codingair.codingapi.particles.animations.standalone.*;
 import de.codingair.codingapi.player.Hologram;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
+import de.codingair.codingapi.tools.ItemBuilder;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.WarpSystem;
 import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.language.Lang;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -32,6 +35,8 @@ public class Portal implements Removable {
     private Animation destinationAnim;
     private Hologram startHolo;
     private Hologram destinationHolo;
+    private boolean startHoloStatus;
+    private boolean destinationHoloStatus;
 
     private double teleportRadius;
     private double hologramHeight;
@@ -46,14 +51,14 @@ public class Portal implements Removable {
     private String permission;
 
     public Portal(Portal portal) {
-        this(portal.getStart(), portal.getDestination(), portal.getAnimationType(), portal.getAnimationHeight(), portal.getParticle(), portal.getTeleportRadius(), portal.getStartName(), portal.getDestinationName(), portal.getTeleportSound(), 2.2);
+        this(portal.getStart(), portal.getDestination(), portal.getAnimationType(), portal.getAnimationHeight(), portal.getParticle(), portal.getTeleportRadius(), portal.getStartName(), portal.getDestinationName(), portal.getTeleportSound(), 2.2, portal.isStartHoloStatus(), portal.isDestinationHoloStatus());
 
         this.hologramHeight = portal.getHologramHeight();
         this.permission = portal.getPermission();
     }
 
     public Portal(Location start, Location destination, AnimationType animationType, double animationHeight, Particle particle, double teleportRadius, String startName, String destinationName, SoundData teleportSound, double
-                   hologramHeight) {
+            hologramHeight, boolean startHoloStatus, boolean destinationHoloStatus) {
         this.start = start;
         this.destination = destination;
         this.animationType = animationType;
@@ -64,6 +69,9 @@ public class Portal implements Removable {
         this.destinationName = destinationName;
         this.teleportSound = teleportSound;
         this.hologramHeight = hologramHeight;
+
+        this.startHoloStatus = startHoloStatus;
+        this.destinationHoloStatus = destinationHoloStatus;
 
         update();
     }
@@ -85,6 +93,9 @@ public class Portal implements Removable {
         this.hologramHeight = portal.getHologramHeight();
         this.teleportSound = portal.getTeleportSound();
         this.permission = portal.getPermission();
+
+        this.startHoloStatus = portal.isStartHoloStatus();
+        this.destinationHoloStatus = portal.isDestinationHoloStatus();
     }
 
     public void update() {
@@ -93,39 +104,19 @@ public class Portal implements Removable {
     }
 
     public void updateHolograms() {
-        boolean running = false;
-
-        if(this.startHolo != null && this.startHolo.isVisible()) {
-            this.startHolo.hide();
-            running = true;
-        }
-
-        if(this.destinationHolo != null && this.destinationHolo.isVisible()) {
-            this.destinationHolo.hide();
-            running = true;
-        }
+        if(this.startHolo != null && this.startHolo.isVisible()) this.startHolo.hide();
+        if(this.destinationHolo != null && this.destinationHolo.isVisible()) this.destinationHolo.hide();
 
         this.startHolo = new Hologram(this.start.clone().add(0, this.hologramHeight, 0), ChatColor.translateAlternateColorCodes('&', startName));
         this.destinationHolo = new Hologram(this.destination.clone().add(0, this.hologramHeight, 0), ChatColor.translateAlternateColorCodes('&', destinationName));
 
-        if(running) {
-            this.startHolo.show();
-            this.destinationHolo.show();
-        }
+        if(this.startHoloStatus && running) this.startHolo.show();
+        if(this.destinationHoloStatus && running) this.destinationHolo.show();
     }
 
     public void updateAnimations() {
-        boolean running = false;
-
-        if(this.startAnim != null && this.startAnim.isRunning()) {
-            this.startAnim.setRunning(false);
-            running = true;
-        }
-
-        if(this.destinationAnim != null && this.destinationAnim.isRunning()) {
-            this.destinationAnim.setRunning(false);
-            running = true;
-        }
+        if(this.startAnim != null && this.startAnim.isRunning()) this.startAnim.setRunning(false);
+        if(this.destinationAnim != null && this.destinationAnim.isRunning()) this.destinationAnim.setRunning(false);
 
         switch(animationType) {
             case SINUS: {
@@ -198,9 +189,10 @@ public class Portal implements Removable {
             this.startAnim.setRunning(running);
             this.destinationAnim.setRunning(running);
 
+
             if(running) {
-                this.startHolo.show();
-                this.destinationHolo.show();
+                if(this.startHoloStatus) this.startHolo.show();
+                if(this.destinationHoloStatus) this.destinationHolo.show();
             } else {
                 this.startHolo.hide();
                 this.destinationHolo.hide();
@@ -316,7 +308,7 @@ public class Portal implements Removable {
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message", true)) {
             player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", this.startName));
         }
-        
+
         if(this.teleportSound != null) this.teleportSound.play(player);
     }
 
@@ -359,6 +351,8 @@ public class Portal implements Removable {
         json.put("TeleportSoundVolume", this.teleportSound.getVolume());
         json.put("TeleportSoundPitch", this.teleportSound.getPitch());
         json.put("HologramHeight", this.getHologramHeight());
+        json.put("StartHoloStatus", this.startHoloStatus);
+        json.put("DestinationHoloStatus", this.destinationHoloStatus);
 
         return json.toJSONString();
     }
@@ -379,8 +373,10 @@ public class Portal implements Removable {
             Sound sound = Sound.valueOf((String) json.get("TeleportSound"));
             float soundVolume = Float.parseFloat(json.get("TeleportSoundVolume") + "");
             float soundPitch = Float.parseFloat(json.get("TeleportSoundPitch") + "");
+            boolean startHoloStatus = Boolean.parseBoolean(json.get("StartHoloStatus") + "");
+            boolean destinationHoloStatus = Boolean.parseBoolean(json.get("DestinationHoloStatus") + "");
 
-            return new Portal(start, destination, animationType, animationHeight, particle, teleportDistance, messageToStart, messageToDestination, new SoundData(sound, soundVolume, soundPitch), hologramHeight);
+            return new Portal(start, destination, animationType, animationHeight, particle, teleportDistance, messageToStart, messageToDestination, new SoundData(sound, soundVolume, soundPitch), hologramHeight, startHoloStatus, destinationHoloStatus);
         } catch(ParseException e) {
             e.printStackTrace();
             return null;
@@ -393,5 +389,25 @@ public class Portal implements Removable {
 
     public void setPermission(String permission) {
         this.permission = permission;
+    }
+
+    public ItemStack getIcon() {
+        return new ItemBuilder(Material.ENDER_PEARL).setName(ChatColor.GRAY + "\"" + ChatColor.RESET + this.startName + ChatColor.GRAY + "\"" + ChatColor.GRAY + " » " + ChatColor.GRAY + "\"" + ChatColor.RESET + this.destinationName + ChatColor.GRAY + "\"").getItem();
+    }
+
+    public boolean isStartHoloStatus() {
+        return startHoloStatus;
+    }
+
+    public void setStartHoloStatus(boolean startHoloStatus) {
+        this.startHoloStatus = startHoloStatus;
+    }
+
+    public boolean isDestinationHoloStatus() {
+        return destinationHoloStatus;
+    }
+
+    public void setDestinationHoloStatus(boolean destinationHoloStatus) {
+        this.destinationHoloStatus = destinationHoloStatus;
     }
 }
