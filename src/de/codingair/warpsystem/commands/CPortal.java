@@ -8,6 +8,7 @@ import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.TimeList;
 import de.codingair.codingapi.utils.Node;
 import de.codingair.warpsystem.WarpSystem;
+import de.codingair.warpsystem.gui.guis.GPortalList;
 import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.language.Lang;
 import de.codingair.warpsystem.teleport.portals.PortalEditor;
@@ -37,12 +38,12 @@ public class CPortal extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_HELP", new Example("ENG", "&7Use: &e" + label + " <create, edit, delete>"), new Example("GER", "&7Benutze: &e/" + label + " <create, edit, delete>")));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_HELP", new Example("ENG", "&7Use: &e/" + label + " <create, edit, delete, list>"), new Example("GER", "&7Benutze: &e/" + label + " <create, edit, delete, list>")));
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_HELP", new Example("ENG", "&7Use: &e" + label + " <create, edit, delete>"), new Example("GER", "&7Benutze: &e/" + label + " <create, edit, delete>")));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_HELP", new Example("ENG", "&7Use: &e/" + label + " <create, edit, delete, list>"), new Example("GER", "&7Benutze: &e/" + label + " <create, edit, delete, list>")));
 
                 return false;
             }
@@ -53,6 +54,17 @@ public class CPortal extends CommandBuilder {
         } catch(Exception e) {
             e.printStackTrace();
         }
+
+
+        //LIST
+
+        getBaseComponent().addChild(new CommandComponent("list") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                new GPortalList((Player) sender).open();
+                return false;
+            }
+        });
 
 
         //CREATE
@@ -88,20 +100,6 @@ public class CPortal extends CommandBuilder {
         });
 
 
-        //DELETE
-
-        getBaseComponent().addChild(new CommandComponent("delete") {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                if(aboutToEdit.contains(sender.getName())) aboutToEdit.remove(sender.getName());
-
-                aboutToDelete.add(sender.getName(), 30);
-                sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_GO_TO_PORTAL", new Example("ENG", "&7You have 30 seconds to go into a portal."), new Example("GER", "&7Du hast nun 30 Sekunden Zeit, um in ein Portal zu gehen.")));
-                return false;
-            }
-        });
-
-
         //EDIT
 
         getBaseComponent().addChild(new CommandComponent("edit") {
@@ -110,6 +108,20 @@ public class CPortal extends CommandBuilder {
                 if(aboutToDelete.contains(sender.getName())) aboutToDelete.remove(sender.getName());
 
                 aboutToEdit.add(sender.getName(), 30);
+                sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_GO_TO_PORTAL", new Example("ENG", "&7You have 30 seconds to go into a portal."), new Example("GER", "&7Du hast nun 30 Sekunden Zeit, um in ein Portal zu gehen.")));
+                return false;
+            }
+        });
+
+
+        //DELETE
+
+        getBaseComponent().addChild(new CommandComponent("delete") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                if(aboutToEdit.contains(sender.getName())) aboutToEdit.remove(sender.getName());
+
+                aboutToDelete.add(sender.getName(), 30);
                 sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_GO_TO_PORTAL", new Example("ENG", "&7You have 30 seconds to go into a portal."), new Example("GER", "&7Du hast nun 30 Sekunden Zeit, um in ein Portal zu gehen.")));
                 return false;
             }

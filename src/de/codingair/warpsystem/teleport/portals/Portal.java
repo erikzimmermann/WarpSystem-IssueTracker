@@ -8,13 +8,16 @@ import de.codingair.codingapi.particles.animations.standalone.*;
 import de.codingair.codingapi.player.Hologram;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
+import de.codingair.codingapi.tools.ItemBuilder;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.WarpSystem;
 import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.language.Lang;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -53,7 +56,7 @@ public class Portal implements Removable {
     }
 
     public Portal(Location start, Location destination, AnimationType animationType, double animationHeight, Particle particle, double teleportRadius, String startName, String destinationName, SoundData teleportSound, double
-                   hologramHeight) {
+            hologramHeight) {
         this.start = start;
         this.destination = destination;
         this.animationType = animationType;
@@ -316,7 +319,7 @@ public class Portal implements Removable {
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message", true)) {
             player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", this.startName));
         }
-        
+
         if(this.teleportSound != null) this.teleportSound.play(player);
     }
 
@@ -393,5 +396,9 @@ public class Portal implements Removable {
 
     public void setPermission(String permission) {
         this.permission = permission;
+    }
+
+    public ItemStack getIcon() {
+        return new ItemBuilder(Material.ENDER_PEARL).setName(ChatColor.GRAY + "\"" + ChatColor.RESET + this.startName + ChatColor.GRAY + "\"" + ChatColor.GRAY + " » " + ChatColor.GRAY + "\"" + ChatColor.RESET + this.destinationName + ChatColor.GRAY + "\"").getItem();
     }
 }
