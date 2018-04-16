@@ -24,8 +24,16 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 public class PortalEditor implements Removable {
+    public static String PLUS_MINUS(String s) {
+        return ChatColor.YELLOW.toString() + "+ " + ChatColor.GRAY + Lang.get("Leftclick", new Example("ENG", "Leftclick"), new Example("GER", "Linksklick")) + " | " + ChatColor.RED + s + ChatColor.GRAY + " | " + ChatColor.GRAY + Lang.get("Rightclick", new Example("ENG", "Rightclick"), new Example("GER", "Rechtsklick")) + " " + ChatColor.YELLOW + "-";
+    }
+
+    public static String NEXT_PREVIOUS(String s) {
+        return ChatColor.YELLOW.toString() + "« " + ChatColor.GRAY + Lang.get("Leftclick", new Example("ENG", "Leftclick"), new Example("GER", "Linksklick")) + " | " + ChatColor.RED + s + ChatColor.GRAY + " | " + ChatColor.GRAY + Lang.get("Rightclick", new Example("ENG", "Rightclick"), new Example("GER", "Rechtsklick")) + " " + ChatColor.YELLOW + "»";
+    }
+
     private final UUID uniqueId = UUID.randomUUID();
-    private final AnimationType[] ANIMATION_TYPES = new AnimationType[] {AnimationType.CIRCLE, AnimationType.ROTATING_CIRCLE, AnimationType.PULSING_CIRCLE, AnimationType.SINUS};
+    public final AnimationType[] ANIMATION_TYPES = new AnimationType[] {AnimationType.CIRCLE, AnimationType.ROTATING_CIRCLE, AnimationType.PULSING_CIRCLE, AnimationType.SINUS};
     private Player player;
     private Portal portal;
     private Portal backupPortal;
@@ -73,7 +81,7 @@ public class PortalEditor implements Removable {
         return this.uniqueId;
     }
 
-    private int getCurrentAnimationTypeIndex() {
+    public int getCurrentAnimationTypeIndex() {
         int i = 0;
         for(AnimationType type : this.ANIMATION_TYPES) {
             if(this.portal.getAnimationType().equals(type)) return i;
@@ -83,7 +91,7 @@ public class PortalEditor implements Removable {
         return 0;
     }
 
-    private int getCurrentParticleIndex() {
+    public int getCurrentParticleIndex() {
         int i = 0;
         for(Particle particle : WarpSystem.getInstance().getTeleportManager().getParticles()) {
             if(this.portal.getParticle().equals(particle)) return i;
@@ -93,7 +101,7 @@ public class PortalEditor implements Removable {
         return 0;
     }
 
-    private int getCurrentSoundIndex() {
+    public int getCurrentSoundIndex() {
         int i = 0;
         for(Sound sound : Sound.values()) {
             if(this.portal.getTeleportSound().getSound().equals(sound)) return i;

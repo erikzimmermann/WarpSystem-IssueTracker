@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.teleport.portals.menu;
 
-import de.codingair.codingapi.player.gui.hotbar.ClickEvent;
+import de.codingair.codingapi.player.MessageAPI;
+import de.codingair.codingapi.player.gui.hotbar.ItemListener;
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
 import de.codingair.codingapi.player.gui.hotbar.ItemComponent;
@@ -31,23 +32,49 @@ public class Hologram extends HotbarGUI {
 
     public void init() {
 
-        setItem(0, new ItemComponent(new ItemBuilder(Skull.ArrowLeft).setName("§c" + Lang.get("Back")).getItem()).setLink(this.menu));
+        setItem(0, new ItemComponent(new ItemBuilder(Skull.ArrowLeft).setName("§7» §c" + Lang.get("Back") + "§7 «").getItem()).setLink(this.menu));
         setItem(1, new ItemComponent(new ItemBuilder(Material.STAINED_GLASS_PANE).setColor(DyeColor.BLACK).setHideName(true).getItem()));
 
-        setItem(2, new ItemComponent(new ItemBuilder(Material.STICK).setName("§7" + Lang.get("Hologram_Height", new Example("ENG", "Hologram-Height"), new Example("GER", "Hologram-Höhe"))+": §e" + menu.getEditor().getPortal().getHologramHeight()).getItem(), (gui, ic, player, clickType) -> {
-            //Hologram-Height
-            if(clickType.equals(ClickType.LEFT_CLICK) || clickType.equals(ClickType.SHIFT_LEFT_CLICK)) {
-                menu.getEditor().doAction(PortalEditor.Action.INCREASE_HOLOGRAM_HEIGHT);
-            } else if(clickType.equals(ClickType.RIGHT_CLICK) || clickType.equals(ClickType.SHIFT_RIGHT_CLICK)) {
-                menu.getEditor().doAction(PortalEditor.Action.DECREASE_HOLOGRAM_HEIGHT);
+        setItem(2, new ItemComponent(new ItemBuilder(Material.STICK).setName("§7" + Lang.get("Hologram_Height", new Example("ENG", "Hologram-Height"), new Example("GER", "Hologram-Höhe")) + ": §e" + menu.getEditor().getPortal().getHologramHeight()).getItem(), new ItemListener() {
+            @Override
+            public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
+                //Hologram-Height
+                if(clickType.equals(ClickType.LEFT_CLICK) || clickType.equals(ClickType.SHIFT_LEFT_CLICK)) {
+                    menu.getEditor().doAction(PortalEditor.Action.INCREASE_HOLOGRAM_HEIGHT);
+                } else if(clickType.equals(ClickType.RIGHT_CLICK) || clickType.equals(ClickType.SHIFT_RIGHT_CLICK)) {
+                    menu.getEditor().doAction(PortalEditor.Action.DECREASE_HOLOGRAM_HEIGHT);
+                }
+
+                updateDisplayName(getItem(2), "§7" + Lang.get("Hologram_Height")+": " + menu.getEditor().getPortal().getHologramHeight());
             }
 
-            updateDisplayName(getItem(2), "§7" + Lang.get("Hologram_Height")+": " + menu.getEditor().getPortal().getHologramHeight());
+            @Override
+            public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
+                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Hologram_Height")), Integer.MAX_VALUE);
+            }
+
+            @Override
+            public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
+                MessageAPI.stopSendingActionBar(getPlayer());
+            }
         }));
 
-        setItem(4, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7"+Lang.get("Start_Name", new Example("ENG", "Start-Name"), new Example("GER", "Start-Name"))+": '" + menu.getEditor().getPortal().getStartName()+"§7'").getItem(), (gui, ic, player, clickType) -> {
-            //Start-Name
-            menu.getEditor().doAction(PortalEditor.Action.CHANGE_START_NAME, () -> updateDisplayName(getItem(4), "§7"+Lang.get("Start_Name")+": '" + menu.getEditor().getPortal().getStartName()+"§7'"));
+        setItem(4, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Start_Name", new Example("ENG", "Start-Name"), new Example("GER", "Start-Name")) + ": '" + menu.getEditor().getPortal().getStartName() + "§7'").getItem(), new ItemListener() {
+            @Override
+            public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
+                //Start-Name
+                menu.getEditor().doAction(PortalEditor.Action.CHANGE_START_NAME, () -> updateDisplayName(getItem(4), "§7"+Lang.get("Start_Name")+": '" + menu.getEditor().getPortal().getStartName()+"§7'"));
+            }
+
+            @Override
+            public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
+                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Name", new Example("ENG", "&7Leftclick: Change name"), new Example("GER", "&7Linksklick: Name ändern")), Integer.MAX_VALUE);
+            }
+
+            @Override
+            public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
+                MessageAPI.stopSendingActionBar(getPlayer());
+            }
         }));
 
         ItemBuilder builder = new ItemBuilder(Material.STAINED_CLAY);
@@ -58,7 +85,7 @@ public class Hologram extends HotbarGUI {
         if(menu.getEditor().getPortal().isStartHoloStatus()) builder.setColor(DyeColor.LIME);
         else builder.setColor(DyeColor.RED);
 
-        setItem(5, new ItemComponent(builder.getItem(), new ClickEvent() {
+        setItem(5, new ItemComponent(builder.getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 menu.getEditor().getPortal().setStartHoloStatus(!menu.getEditor().getPortal().isStartHoloStatus());
@@ -75,13 +102,36 @@ public class Hologram extends HotbarGUI {
                 setItem(5, new ItemComponent(builder.getItem(), this), false);
                 updateSingle(5);
             }
+
+            @Override
+            public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
+                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Name", new Example("ENG", "&7Leftclick: &eChange name"), new Example("GER", "&7Linksklick: Name ändern")), Integer.MAX_VALUE);
+            }
+
+            @Override
+            public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
+                MessageAPI.stopSendingActionBar(getPlayer());
+            }
         }));
 
         setItem(6, new ItemComponent(new ItemBuilder(Material.STAINED_GLASS_PANE).setColor(DyeColor.BLACK).setHideName(true).getItem()));
 
-        setItem(7, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7"+Lang.get("Goal_Name", new Example("ENG", "Goal-Name"), new Example("GER", "Ziel-Name"))+": '" + menu.getEditor().getPortal().getDestinationName()+"§7'").getItem(), (gui, ic, player, clickType) -> {
-            //Goal-Name
-            menu.getEditor().doAction(PortalEditor.Action.CHANGE_DESTINATION_NAME, () -> updateDisplayName(getItem(5), "§7"+Lang.get("Goal_Name")+": '" + menu.getEditor().getPortal().getDestinationName()+"§7'"));
+        setItem(7, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Goal_Name", new Example("ENG", "Goal-Name"), new Example("GER", "Ziel-Name")) + ": '" + menu.getEditor().getPortal().getDestinationName() + "§7'").getItem(), new ItemListener() {
+            @Override
+            public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
+                //Goal-Name
+                menu.getEditor().doAction(PortalEditor.Action.CHANGE_DESTINATION_NAME, () -> updateDisplayName(getItem(5), "§7"+Lang.get("Goal_Name")+": '" + menu.getEditor().getPortal().getDestinationName()+"§7'"));
+            }
+
+            @Override
+            public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
+                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Name", new Example("ENG", "&7Leftclick: &eChange name")), Integer.MAX_VALUE);
+            }
+
+            @Override
+            public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
+                MessageAPI.stopSendingActionBar(getPlayer());
+            }
         }));
 
 
@@ -93,7 +143,7 @@ public class Hologram extends HotbarGUI {
         if(menu.getEditor().getPortal().isDestinationHoloStatus()) builder.setColor(DyeColor.LIME);
         else builder.setColor(DyeColor.RED);
 
-        setItem(8, new ItemComponent(builder.getItem(), new ClickEvent() {
+        setItem(8, new ItemComponent(builder.getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 menu.getEditor().getPortal().setDestinationHoloStatus(!menu.getEditor().getPortal().isDestinationHoloStatus());
@@ -109,6 +159,14 @@ public class Hologram extends HotbarGUI {
 
                 setItem(8, new ItemComponent(builder.getItem(), this), false);
                 updateSingle(8);
+            }
+
+            @Override
+            public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
+            }
+
+            @Override
+            public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
             }
         }));
     }
