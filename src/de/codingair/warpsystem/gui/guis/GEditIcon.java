@@ -368,7 +368,7 @@ public class GEditIcon extends GUI {
                             playSound(p);
 
                             ItemBuilder builder = new ItemBuilder(item).setHideStandardLore(true).setHideEnchantments(true);
-                            builder.addLore(builder.getLore().size() - 3, ChatColor.translateAlternateColorCodes('&', input));
+                            builder.addLore(builder.getLore().size() - 4, ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', input));
 
                             item = builder.getItem();
                             iconButton.setItem(item);
