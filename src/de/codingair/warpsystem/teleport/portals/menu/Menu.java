@@ -39,7 +39,7 @@ public class Menu extends HotbarGUI {
         setItem(2, new ItemComponent(new ItemBuilder(Material.SIGN).setName("§eHologram").getItem()).setLink(this.hologram));
         setItem(3, new ItemComponent(new ItemBuilder(Material.ENDER_PEARL).setName("§eTeleport").getItem()).setLink(this.teleport));
 
-        setItem(5, new ItemComponent(new ItemBuilder(Material.WOOL).setColor(DyeColor.LIME).setName("§aSave").getItem(), (gui, ic, player, clickType) -> {
+        setItem(5, new ItemComponent(new ItemBuilder(Material.STAINED_CLAY).setColor(DyeColor.LIME).setName("§aSave").getItem(), (gui, ic, player, clickType) -> {
             this.editor.finish();
 
             if(editor.getBackupPortal() == null) {
@@ -51,7 +51,7 @@ public class Menu extends HotbarGUI {
             }
         }).setCloseOnClick(true));
 
-        setItem(6, new ItemComponent(new ItemBuilder(Material.WOOL).setColor(DyeColor.RED).setName("§cCancel").getItem(), (gui, ic, player, clickType) -> {
+        setItem(6, new ItemComponent(new ItemBuilder(Material.STAINED_CLAY).setColor(DyeColor.RED).setName("§cCancel").getItem(), (gui, ic, player, clickType) -> {
             this.editor.exit();
 
             if(editor.getBackupPortal() == null) {

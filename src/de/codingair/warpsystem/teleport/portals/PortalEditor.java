@@ -31,7 +31,6 @@ public class PortalEditor implements Removable {
     private Portal backupPortal;
     private boolean finished = false;
     private Menu menu;
-//    private List<String> sending = new ArrayList<>();
 
     public enum Action {
         INCREASE_TELEPORT_RADIUS, DECREASE_TELEPORT_RADIUS,
@@ -43,7 +42,7 @@ public class PortalEditor implements Removable {
         NEXT_SOUND, PREVIOUS_SOUND,
         INCREASE_VOLUME, DECREASE_VOLUME,
         INCREASE_PITCH, DECREASE_PITCH, CANCEL, SAVE,
-        CHANGE_PERMISSION;
+        CHANGE_PERMISSION
     }
 
     public PortalEditor(Player player, Portal portal) {
@@ -55,7 +54,7 @@ public class PortalEditor implements Removable {
 
     public PortalEditor(Player player, Node<String, Location> first, Node<String, Location> second) {
         this.player = player;
-        this.portal = new Portal(first.getValue(), second.getValue(), AnimationType.CIRCLE, 1, WarpSystem.getInstance().getTeleportManager().getParticles().get(0), 1, first.getKey(), second.getKey(), new SoundData(Sound.ENDERMAN_TELEPORT, 1, 1), 2.2);
+        this.portal = new Portal(first.getValue(), second.getValue(), AnimationType.CIRCLE, 1, WarpSystem.getInstance().getTeleportManager().getParticles().get(0), 1, first.getKey(), second.getKey(), new SoundData(Sound.ENDERMAN_TELEPORT, 1, 1), 2.2, true, true);
         menu = new Menu(this.player, this);
     }
 
@@ -283,7 +282,6 @@ public class PortalEditor implements Removable {
 
             case CANCEL:
                 exit();
-                return;
         }
     }
 
@@ -335,9 +333,5 @@ public class PortalEditor implements Removable {
 
     public Portal getBackupPortal() {
         return backupPortal;
-    }
-
-    public Menu getMenu() {
-        return menu;
     }
 }
