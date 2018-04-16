@@ -27,14 +27,9 @@ import java.util.List;
 
 public class GPortalList extends GUI {
     private static int MAX_PAGE() {
-        int maxPage;
+        if(WarpSystem.getInstance().getTeleportManager().getPortals().isEmpty()) return 0;
 
-        double d = (double) WarpSystem.getInstance().getTeleportManager().getPortals().size() * 55 / 44.0;
-        maxPage = (int) Math.floor(d);
-        if(d - maxPage > 0) maxPage++;
-        maxPage--;
-
-        return maxPage;
+        return (int) (Math.ceil((double) WarpSystem.getInstance().getTeleportManager().getPortals().size() / 44.0) - 1);
     }
 
     private static String TITLE(int page) {
@@ -49,7 +44,7 @@ public class GPortalList extends GUI {
         int slot = gui.firstEmpty();
         if(slot < 0 || slot > 53) return;
 
-        ItemStack icon = portal.getIcon();
+        ItemStack icon;
         ItemBuilder builder = new ItemBuilder(portal.getIcon());
 
         if(underline != null) {
