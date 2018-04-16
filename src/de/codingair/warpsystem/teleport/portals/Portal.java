@@ -8,13 +8,16 @@ import de.codingair.codingapi.particles.animations.standalone.*;
 import de.codingair.codingapi.player.Hologram;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
+import de.codingair.codingapi.tools.ItemBuilder;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.WarpSystem;
 import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.language.Lang;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -46,14 +49,14 @@ public class Portal implements Removable {
     private String permission;
 
     public Portal(Portal portal) {
-        this(portal.getStart(), portal.getDestination(), portal.getAnimationType(), 1,portal.getParticle(), portal.getTeleportRadius(), portal.getStartName(), portal.getDestinationName(), portal.getTeleportSound(), 2.2);
+        this(portal.getStart(), portal.getDestination(), portal.getAnimationType(), portal.getAnimationHeight(), portal.getParticle(), portal.getTeleportRadius(), portal.getStartName(), portal.getDestinationName(), portal.getTeleportSound(), 2.2);
 
         this.hologramHeight = portal.getHologramHeight();
         this.permission = portal.getPermission();
     }
 
     public Portal(Location start, Location destination, AnimationType animationType, double animationHeight, Particle particle, double teleportRadius, String startName, String destinationName, SoundData teleportSound, double
-                   hologramHeight) {
+            hologramHeight) {
         this.start = start;
         this.destination = destination;
         this.animationType = animationType;
@@ -105,8 +108,8 @@ public class Portal implements Removable {
             running = true;
         }
 
-        this.startHolo = new Hologram(this.start.clone().add(0, this.hologramHeight, 0), "§c" + ChatColor.translateAlternateColorCodes('&', startName));
-        this.destinationHolo = new Hologram(this.destination.clone().add(0, this.hologramHeight, 0), "§c" + ChatColor.translateAlternateColorCodes('&', destinationName));
+        this.startHolo = new Hologram(this.start.clone().add(0, this.hologramHeight, 0), ChatColor.translateAlternateColorCodes('&', startName));
+        this.destinationHolo = new Hologram(this.destination.clone().add(0, this.hologramHeight, 0), ChatColor.translateAlternateColorCodes('&', destinationName));
 
         if(running) {
             this.startHolo.show();
@@ -312,7 +315,11 @@ public class Portal implements Removable {
 
         player.teleport(this.start);
         update(player);
-        player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", this.startName));
+
+        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message", true)) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", this.startName));
+        }
+
         if(this.teleportSound != null) this.teleportSound.play(player);
     }
 
@@ -324,7 +331,11 @@ public class Portal implements Removable {
 
         player.teleport(this.destination);
         update(player);
-        player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", this.destinationName));
+
+        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message", true)) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", this.destinationName));
+        }
+
         if(this.teleportSound != null) this.teleportSound.play(player);
     }
 
@@ -385,5 +396,9 @@ public class Portal implements Removable {
 
     public void setPermission(String permission) {
         this.permission = permission;
+    }
+
+    public ItemStack getIcon() {
+        return new ItemBuilder(Material.ENDER_PEARL).setName(ChatColor.GRAY + "\"" + ChatColor.RESET + this.startName + ChatColor.GRAY + "\"" + ChatColor.GRAY + " » " + ChatColor.GRAY + "\"" + ChatColor.RESET + this.destinationName + ChatColor.GRAY + "\"").getItem();
     }
 }

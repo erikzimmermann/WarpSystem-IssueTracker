@@ -58,7 +58,7 @@ public class CWarpSystem extends CommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 try {
-                    WarpSystem.getInstance().getFileManager().reloadAll();
+                    WarpSystem.getInstance().getFileManager().loadAll();
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Files_Reloaded", new Example("ENG", "&aAll files are reloaded."), new Example("GER", "&aAlle Dateien wurden neu geladen.")));
                 } catch(Exception ex) {
                     ex.printStackTrace();
@@ -116,8 +116,7 @@ public class CWarpSystem extends CommandBuilder {
     }
 
     private static FancyMessage getInfoMessage() {
-        FancyMessage fancyMessage = new FancyMessage(MessageTypes.INFO_MESSAGE, true, "§6§nWarpSystem", "", "§3Author: §bCodingAir", "§3Version: §b" + WarpSystem.getInstance().getDescription().getVersion(),
-                "", "§eAvailable on SpigotMc!");
+        FancyMessage fancyMessage = new FancyMessage(MessageTypes.INFO_MESSAGE, true, "§6§nWarpSystem", "", "§3Author: §bCodingAir", "§3Version: §b" + WarpSystem.getInstance().getDescription().getVersion(), "", "§eAvailable on SpigotMc!");
         fancyMessage.setAlignment(TextAlignment.CENTER);
         fancyMessage.setCentered(true);
         return fancyMessage;

@@ -43,14 +43,14 @@ public class Hologram extends HotbarGUI {
             updateDisplayName(getItem(2), "§7" + Lang.get("Hologram_Height")+": " + menu.getEditor().getPortal().getHologramHeight());
         }));
 
-        setItem(4, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7"+Lang.get("Start_Name", new Example("ENG", "Start-Name"), new Example("GER", "Start-Name"))+": '§e" + menu.getEditor().getPortal().getStartName()+"§7'").getItem(), (gui, ic, player, clickType) -> {
+        setItem(4, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7"+Lang.get("Start_Name", new Example("ENG", "Start-Name"), new Example("GER", "Start-Name"))+": '" + menu.getEditor().getPortal().getStartName()+"§7'").getItem(), (gui, ic, player, clickType) -> {
             //Start-Name
-            menu.getEditor().doAction(PortalEditor.Action.CHANGE_START_NAME, () -> updateDisplayName(getItem(4), "§7"+Lang.get("Start_Name")+": '§e" + menu.getEditor().getPortal().getStartName()+"§7'"));
+            menu.getEditor().doAction(PortalEditor.Action.CHANGE_START_NAME, () -> updateDisplayName(getItem(4), "§7"+Lang.get("Start_Name")+": '" + menu.getEditor().getPortal().getStartName()+"§7'"));
         }));
 
-        setItem(5, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7"+Lang.get("Goal_Name", new Example("ENG", "Goal-Name"), new Example("GER", "Ziel-Name"))+": '§e" + menu.getEditor().getPortal().getDestinationName()+"§7'").getItem(), (gui, ic, player, clickType) -> {
+        setItem(5, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7"+Lang.get("Goal_Name", new Example("ENG", "Goal-Name"), new Example("GER", "Ziel-Name"))+": '" + menu.getEditor().getPortal().getDestinationName()+"§7'").getItem(), (gui, ic, player, clickType) -> {
             //Goal-Name
-            menu.getEditor().doAction(PortalEditor.Action.CHANGE_DESTINATION_NAME, () -> updateDisplayName(getItem(5), "§7"+Lang.get("Goal_Name")+": '§e" + menu.getEditor().getPortal().getDestinationName()+"§7'"));
+            menu.getEditor().doAction(PortalEditor.Action.CHANGE_DESTINATION_NAME, () -> updateDisplayName(getItem(5), "§7"+Lang.get("Goal_Name")+": '" + menu.getEditor().getPortal().getDestinationName()+"§7'"));
         }));
     }
 }

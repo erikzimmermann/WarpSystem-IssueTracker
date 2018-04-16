@@ -1,8 +1,11 @@
 package de.codingair.warpsystem.managers;
 
 import de.codingair.codingapi.particles.Particle;
+import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.warpsystem.WarpSystem;
 import de.codingair.warpsystem.gui.affiliations.Warp;
+import de.codingair.warpsystem.language.Example;
+import de.codingair.warpsystem.language.Lang;
 import de.codingair.warpsystem.teleport.Teleport;
 import de.codingair.warpsystem.teleport.portals.Portal;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -107,6 +110,10 @@ public class TeleportManager {
         Teleport teleport = getTeleport(p);
         teleport.cancel(true);
         this.teleports.remove(teleport);
+
+        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Cancel_Message", true)) {
+            MessageAPI.sendActionBar(p, Lang.get("Teleport_Cancelled", new Example("ENG", "&cThe teleport was cancelled."), new Example("GER", "&cDer Teleport wurde abgebrochen.")));
+        }
     }
 
     public Teleport getTeleport(Player p) {
