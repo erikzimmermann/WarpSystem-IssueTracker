@@ -169,7 +169,7 @@ public class WarpSystem extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        API.getInstance().onDisable();
+        API.getInstance().onDisable(this);
         save(false);
     }
 

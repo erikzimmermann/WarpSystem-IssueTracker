@@ -9,6 +9,10 @@
 # #   If you toggle the command "Warp" in this section to true, it
 # #   will be run in every case and will blocks all other system in
 # #   that moment.
+# #
+# #
+# #
+# #   Commands.Warp.GUI: Turn this to false, if you want to use this command for teleports ("/warp spawn"). If you turn this to 'true', the gui opens by running this command
 # #####################################
 WarpSystem:
   Maintenance: false
@@ -17,6 +21,9 @@ WarpSystem:
     Delay: 5
     Animation: 17
     Allow_Move: false
+  Send:
+    Teleport_Message: true
+    Teleport_Cancel_Message: true
   Functions:
     Warps: true
     Portals: true
@@ -26,3 +33,6 @@ WarpSystem:
       Warps: true
       WarpSystem: true
       Portal: true
+  Commands:
+    Warp:
+      GUI: false

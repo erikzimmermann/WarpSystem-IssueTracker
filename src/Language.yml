@@ -96,7 +96,7 @@ GER:
   Menu_Help: '&c&nHilfe'
   Menu_Help_Leftclick: '&3Linksklick: &bBearbeitungs-Modus'
   Menu_Help_Rightclick: '&3Rechtsklick: &bOptionen'
-  Back: "Zur\xc3\xbcck"
+  Back: "Zurück"
   Edit_Mode_Set_ActionIcon: '&3Linksklick: &bWarp setzen'
   Edit_Mode_Set_Category: '&3Rechtsklick: &bKategorie setzen'
   Menu_Help_Leftclick_Edit_Mode: '&3Linksklick: &bBearbeitungs-Modus verlassen'
@@ -104,17 +104,17 @@ GER:
   Permission: Berechtigung
   Shift_Leftclick_Edit: '&7Shift-Linksklick: Bewegen'
   Leftclick_Edit: '&7Linksklick: Bearbeiten'
-  Rightclick_Delete: "&7Rechtsklick: L\xc3\xb6schen"
+  Rightclick_Delete: "&7Rechtsklick: Löschen"
   Item_Editing: Item-Bearbeitung
-  Change_Name: "&8> Klicke hier um den Namen zu \xc3\xa4ndern."
+  Change_Name: "&8> Klicke hier um den Namen zu ändern."
   Cancel: Abbrechen
   Ready: Fertig
   Sparkle: Funkeln
   Description: Beschreibung
-  Leftclick_Add_Line: "&3Linksklick: &aZeile hinzuf\xc3\xbcgen"
-  Rightclick_Reset_Lines: "&3Rechtsklick: &cZeilen zur\xc3\xbccksetzen"
+  Leftclick_Add_Line: "&3Linksklick: &aZeile hinzufügen"
+  Rightclick_Reset_Lines: "&3Rechtsklick: &cZeilen zurücksetzen"
   Current: Aktuell
-  Leftclick_Add: "&3Linksklick: &aHinzuf\xc3\xbcgen"
+  Leftclick_Add: "&3Linksklick: &aHinzufügen"
   Leftclick_Disable: '&3Linksklick: &cDeaktivieren'
   Leftclick_Remove: '&3Linksklick: &cEntfernen'
   Line: Linie
@@ -126,137 +126,61 @@ GER:
   Maintenance: Wartung
   Language: Sprache
   Leftclick_Prev_Lang: '&3Linksklick: &bVorherige Sprache'
-  Rightclick_Next_Lang: "&3Rechtsklick: &bN\xc3\xa4chste Sprache"
+  Rightclick_Next_Lang: "&3Rechtsklick: &bNächste Sprache"
   Animation: Animation
   Shift_Leftclick_Show_Animation: '&3Shift-Linksklick: &bZeigen'
   Leftclick_Prev_Animation: '&3Linksklick: &bVorherige Animation'
-  Rightclick_Next_Animation: "&3Rechtsklick: &bN\xc3\xa4chste Animation"
+  Rightclick_Next_Animation: "&3Rechtsklick: &bNächste Animation"
   Walking_During_Teleports: Laufen beim Teleport
   Teleport_Delay: Teleport-Zeit
   Leftclick_Reduce: '&3Linksklick: &bVerringern'
-  Rightclick_Enlarge: "&3Rechtsklick: &bVergr\xc3\xb6\xc3\u0178ern"
-  Success_Changed_Lang: "&aDie Sprache wurde auf '%lang%' ge\xc3\xa4ndert."
+  Rightclick_Enlarge: "&3Rechtsklick: &bVergrößern"
+  Success_Changed_Lang: "&aDie Sprache wurde auf '%lang%' geändert."
   Success_Maintenance_Enabled: '&4Der Wartungs-Modus wurde aktiviert.'
   Leftclick_Maintenance_Off: '&3Linksklick: &cDeaktivieren'
   Success_Maintenance_Disabled: '&4Der Wartungs-Modus wurde deaktiviert.'
   Leftclick_Maintenance_On: '&3Linksklick: &aAktivieren'
-  Success_Changed_Animation: "&aDie Animation wurde auf '%anim%' ge\xc3\xa4ndert."
+  Success_Changed_Animation: "&aDie Animation wurde auf '%anim%' geändert."
   Success_Walking_Enabled: '&7Laufen beim Teleport ist nun &aerlaubt&7.'
   Success_Walking_Disabled: '&7Laufen beim Teleport ist nun &cnicht mehr erlaubt&7.'
-  Success_Changed_Teleport_Delay: "&aDie Teleport-Zeit wurde auf '%delay%' ge\xc3\xa4\
-    ndert."
+  Success_Changed_Teleport_Delay: "&aDie Teleport-Zeit wurde auf '%delay%' geändert."
   Success_Configured: '&aDu hast das Symbol erfolgreich bearbeitet.'
-  Delete: "&cL\xc3\xb6schen"
+  Delete: "&cLöschen"
   'Yes': Ja
-  Confirm_Delete: "&7M\xc3\xb6chten Sie dieses Symbol wirklich l\xc3\xb6schen?"
+  Confirm_Delete: "&7Möchten Sie dieses Symbol wirklich löschen?"
   'No': Nein
-  Icon_Not_Deleted: "&7Das Symbol wurde &cnicht &7gel\xc3\xb6scht."
-  Icon_Deleted: "&cDas Symbol wurde erfolgreich gel\xc3\xb6scht."
+  Icon_Not_Deleted: "&7Das Symbol wurde &cnicht &7gelöscht."
+  Icon_Deleted: "&cDas Symbol wurde erfolgreich gelöscht."
   Leftclick_Move_Icon: '&3Linksklick: &bSymbol bewegen'
   Success_Icon_Moved: '&aDas Symbol wurde erfolgreich bewegt.'
   Name_Already_Exists: '&cDieser Name existiert bereits.'
-  Only_For_Players: "&cDies ist nur f\xc3\xbcr Spieler!"
+  Only_For_Players: "&cDies ist nur für Spieler!"
   Use: Benutze
   Success_Files_Reloaded: '&aAlle Dateien wurden neu geladen.'
   Leftclick_Enable: '&3Linksklick: &aAktivieren'
   Success_Create_Category: '&aDu hast erfolgreich eine &bKategorie &aerstellt.'
   PORTAL_GO_TO_PORTAL: '&7Du hast nun 30 Sekunden Zeit, um in ein Portal zu gehen.'
   Apply_Delete_No: '&7Nein, &abehalten&7.'
-  Question_Delete_Portal: "&7Willst du dieses Portal wirklich &cl\xf6schen&7?"
-  Apply_Delete_Yes: "&7Ja, &4l\xf6schen&7."
-  Delete_Portal_Successfully: "&7Das Portal wurde erfolgreich &cgel\xf6scht&7."
+  Question_Delete_Portal: "&7Willst du dieses Portal wirklich &clöschen&7?"
+  Apply_Delete_Yes: "&7Ja, &4löschen&7."
+  Delete_Portal_Successfully: "&7Das Portal wurde erfolgreich &cgelöscht&7."
   PORTAL_CREATE_HELP: '&7Benutze: &e/portal create <Position-Name>'
   PORTAL_CREATE_FIRST_SAVED: '&7Die erste Position wurde gespeichert.'
-  PORTAL_CREATE_NEXT: "&7F\xfchre diesen Befehl erneut an der gew\xfcnschten Zielposition\
-    \ aus."
+  PORTAL_CREATE_NEXT: "&7Führe diesen Befehl erneut an der gewünschten Zielposition aus."
   Teleport_Radius: Teleport-Radius
-  Animation_Height: "Animations-H\xf6he"
+  Animation_Height: "Animations-Höhe"
   Animation_Type: Animations-Typ
   Particle_Effect: Partikel-Effekt
-  Hologram_Height: "Hologram-H\xf6he"
+  Hologram_Height: "Hologram-Höhe"
   Start_Name: Start-Name
   Goal_Name: Ziel-Name
   Sound: Ton
-  Volume: "Lautst\xe4rke"
-  Pitch: "Tonh\xf6he"
+  Volume: "Lautstärke"
+  Pitch: "Tonhöhe"
   Entering_Portal_Editor: '&7Du bist nun im Portal-Editor.'
   Portal_Created: '&7Das Portal wurde erstellt.'
   Portal_Not_Created: '&7Das Portal wurde &cnicht &7erstellt.'
-  Portal_Save_Changes: "&7Die \xc4nderungen wurden gespeichert."
-  Portal_Delete_Changes: "&7Die \xc4nderungen wurden &cnicht &7gespeichert."
+  Portal_Save_Changes: "&7Die Änderungen wurden gespeichert."
+  Portal_Delete_Changes: "&7Die Änderungen wurden &cnicht &7gespeichert."
   PORTAL_HELP: '&7Benutze: &e/portal <create, edit, delete>'
-  Delete_Portal_Cancel: "&7Das Portal wurde &4nicht &cgel\xf6scht&7."
-FRE:
-  Menu_Help: '&c&nAide'
-  Menu_Help_Leftclick: '&3CliqueGauche: &bMode-Edition'
-  Menu_Help_Rightclick: '&3CliqueDroit: &bOptions'
-  Back: Retour
-  Edit_Mode_Set_ActionIcon: "&3CliqueGauche: &bCr\xc3\xa9e warp"
-  Edit_Mode_Set_Category: "&3CliqueDroit: &bCr\xc3\xa9e la cat\xc3\xa9gorie"
-  Menu_Help_Leftclick_Edit_Mode: "&3CliqueGauche: &bQuit\xc3\xa9e le Mode-Edition"
-  Command: Commande
-  Permission: Permission
-  Shift_Leftclick_Edit: "&7Shift-CliqueGauche: D\xc3\xa9placer"
-  Leftclick_Edit: '&7CliqueGauche: Configurer'
-  Rightclick_Delete: "&7CliqueDroit: Supprim\xc3\xa9e"
-  Item_Editing: Edition-Item
-  Change_Name: '&8> Clique ici pour changer le nom.'
-  Cancel: Annuler
-  Ready: "Pr\xc3\xaat"
-  Sparkle: Briller
-  Description: Description
-  Leftclick_Add_Line: '&3CliqueGauche: &aAjouter une ligne'
-  Rightclick_Reset_Lines: "&3CliqueDroit: &cR\xc3\xa9initialiser les lignes"
-  Current: Existant
-  Leftclick_Add: '&3CliqueGauche: &aAjouter'
-  Leftclick_Disable: "&3CliqueGauche: &cD\xc3\xa9sactiver"
-  Leftclick_Remove: "&3CliqueGauche: &cSupprim\xc3\xa9e"
-  Line: Ligne
-  Name: Nom
-  Success_Create_Warp: "&aVous avez cr\xc3\xa9e le &bwarp &aavec succ\xc3\xa8s."
-  Teleporting_Info: '&cTeleportation dans &l&n%seconds%'
-  Teleported_To: "&7Tu as \xc3\xa9t\xc3\xa9 t\xc3\xa9l\xc3\xa9porter \xc3\_'&b%warp%&7'."
-  Config: Configuration
-  Maintenance: Maintenance
-  Language: Langue
-  Leftclick_Prev_Lang: "&3CliqueGauche: &bLangue Pr\xc3\xa9c\xc3\xa9dente"
-  Rightclick_Next_Lang: '&3CliqueDroit: &bLangue Suivante'
-  Animation: Animation
-  Shift_Leftclick_Show_Animation: '&3Shift-CliqueGauche: &bMontrer'
-  Leftclick_Prev_Animation: "&3CliqueGauche: &bAnimation Pr\xc3\xa9c\xc3\xa9dente"
-  Rightclick_Next_Animation: '&3CliqueDroit: &bAnimation Suivante'
-  Walking_During_Teleports: "Marchez pendant la t\xc3\xa9l\xc3\xa9portation"
-  Teleport_Delay: "Temps de t\xc3\xa9l\xc3\xa9portation"
-  Leftclick_Reduce: "&3CliqueGauche: &bR\xc3\xa9duire"
-  Rightclick_Enlarge: '&3CliqueDroit: &bAugmenter'
-  Success_Changed_Lang: "&aLa langue a \xc3\xa9t\xc3\xa9 changer en '%lang%'."
-  Success_Maintenance_Enabled: "&4Le Mode-Maintenance est activ\xc3\xa9."
-  Leftclick_Maintenance_Off: "&3CliqueGauche: &cD\xc3\xa9sactiv\xc3\xa9"
-  Success_Maintenance_Disabled: "&4Le Mode-Maintenance est d\xc3\xa9sactiv\xc3\xa9\
-    ."
-  Leftclick_Maintenance_On: "&3CliqueGauche: &aActiv\xc3\xa9"
-  Success_Changed_Animation: "&aL'animation a \xc3\xa9t\xc3\xa9 changer en '%anim%'."
-  Success_Walking_Enabled: "&7Marcher pendant la t\xc3\xa9l\xc3\xa9portation est &aactiv\xc3\
-    \xa9 &7maintenant."
-  Success_Walking_Disabled: "&7Marcher pendant la t\xc3\xa9l\xc3\xa9portation est\
-    \ &cd\xc3\xa9sactiv\xc3\xa9 &7maintenant."
-  Success_Changed_Teleport_Delay: "&aLe temps de t\xc3\xa9l\xc3\xa9portation a \xc3\
-    \xa9t\xc3\xa9 changer en '%delay%'."
-  Success_Configured: "&aVous avez configur\xc3\xa9 l'ic\xc3\xb4ne avec succ\xc3\xa8\
-    s."
-  Delete: "&cSupprim\xc3\xa9e"
-  'Yes': Oui
-  Confirm_Delete: "&7Voulez vous vraiment &csupprim\xc3\xa9e &7cette ic\xc3\xb4ne?"
-  'No': Non
-  Icon_Not_Deleted: "&7L'ic\xc3\xb4ne &cn'est pas &7supprim\xc3\xa9e."
-  Icon_Deleted: "&cL'ic\xc3\xb4ne a \xc3\xa9t\xc3\xa9 supprim\xc3\xa9e avec succ\xc3\
-    \xa8s."
-  Leftclick_Move_Icon: "&3CliqueGauche: &bD\xc3\xa9placer l'ic\xc3\xb4ne"
-  Success_Icon_Moved: "&aL'ic\xc3\xb4ne a \xc3\xa9t\xc3\xa9 d\xc3\xa9plac\xc3\xa9\
-    e avec succ\xc3\xa8s."
-  Name_Already_Exists: "&cLe nom existe d\xc3\xa9j\xc3\_."
-  Only_For_Players: '&cC''est uniquement pour les joueurs!'
-  Use: Utiliser
-  Success_Files_Reloaded: "&aTous les fichiers ont \xc3\xa9t\xc3\xa9 reload."
-  Leftclick_Enable: "&3CliqueGauche: &aActiv\xc3\xa9"
-  No_Item_In_Hand: '&cVous devez tenir un item en main!'
+  Delete_Portal_Cancel: "&7Das Portal wurde &4nicht &cgelöscht&7."

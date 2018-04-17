@@ -24,14 +24,21 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 public class PortalEditor implements Removable {
+    public static String PLUS_MINUS(String s) {
+        return ChatColor.YELLOW.toString() + "+ " + ChatColor.GRAY + Lang.get("Leftclick", new Example("ENG", "Leftclick"), new Example("GER", "Linksklick")) + " | " + ChatColor.RED + s + ChatColor.GRAY + " | " + ChatColor.GRAY + Lang.get("Rightclick", new Example("ENG", "Rightclick"), new Example("GER", "Rechtsklick")) + " " + ChatColor.YELLOW + "-";
+    }
+
+    public static String NEXT_PREVIOUS(String s) {
+        return ChatColor.YELLOW.toString() + "« " + ChatColor.GRAY + Lang.get("Leftclick", new Example("ENG", "Leftclick"), new Example("GER", "Linksklick")) + " | " + ChatColor.RED + s + ChatColor.GRAY + " | " + ChatColor.GRAY + Lang.get("Rightclick", new Example("ENG", "Rightclick"), new Example("GER", "Rechtsklick")) + " " + ChatColor.YELLOW + "»";
+    }
+
     private final UUID uniqueId = UUID.randomUUID();
-    private final AnimationType[] ANIMATION_TYPES = new AnimationType[] {AnimationType.CIRCLE, AnimationType.ROTATING_CIRCLE, AnimationType.PULSING_CIRCLE, AnimationType.SINUS};
+    public final AnimationType[] ANIMATION_TYPES = new AnimationType[] {AnimationType.CIRCLE, AnimationType.ROTATING_CIRCLE, AnimationType.PULSING_CIRCLE, AnimationType.SINUS};
     private Player player;
     private Portal portal;
     private Portal backupPortal;
     private boolean finished = false;
     private Menu menu;
-//    private List<String> sending = new ArrayList<>();
 
     public enum Action {
         INCREASE_TELEPORT_RADIUS, DECREASE_TELEPORT_RADIUS,
@@ -43,7 +50,7 @@ public class PortalEditor implements Removable {
         NEXT_SOUND, PREVIOUS_SOUND,
         INCREASE_VOLUME, DECREASE_VOLUME,
         INCREASE_PITCH, DECREASE_PITCH, CANCEL, SAVE,
-        CHANGE_PERMISSION;
+        CHANGE_PERMISSION
     }
 
     public PortalEditor(Player player, Portal portal) {
@@ -55,7 +62,7 @@ public class PortalEditor implements Removable {
 
     public PortalEditor(Player player, Node<String, Location> first, Node<String, Location> second) {
         this.player = player;
-        this.portal = new Portal(first.getValue(), second.getValue(), AnimationType.CIRCLE, 1, WarpSystem.getInstance().getTeleportManager().getParticles().get(0), 1, first.getKey(), second.getKey(), new SoundData(Sound.ENDERMAN_TELEPORT, 1, 1), 2.2);
+        this.portal = new Portal(first.getValue(), second.getValue(), AnimationType.CIRCLE, 1, WarpSystem.getInstance().getTeleportManager().getParticles().get(0), 1, first.getKey(), second.getKey(), new SoundData(Sound.ENDERMAN_TELEPORT, 1, 1), 2.2, true, true);
         menu = new Menu(this.player, this);
     }
 
@@ -74,7 +81,7 @@ public class PortalEditor implements Removable {
         return this.uniqueId;
     }
 
-    private int getCurrentAnimationTypeIndex() {
+    public int getCurrentAnimationTypeIndex() {
         int i = 0;
         for(AnimationType type : this.ANIMATION_TYPES) {
             if(this.portal.getAnimationType().equals(type)) return i;
@@ -84,7 +91,7 @@ public class PortalEditor implements Removable {
         return 0;
     }
 
-    private int getCurrentParticleIndex() {
+    public int getCurrentParticleIndex() {
         int i = 0;
         for(Particle particle : WarpSystem.getInstance().getTeleportManager().getParticles()) {
             if(this.portal.getParticle().equals(particle)) return i;
@@ -94,7 +101,7 @@ public class PortalEditor implements Removable {
         return 0;
     }
 
-    private int getCurrentSoundIndex() {
+    public int getCurrentSoundIndex() {
         int i = 0;
         for(Sound sound : Sound.values()) {
             if(this.portal.getTeleportSound().getSound().equals(sound)) return i;
@@ -283,7 +290,6 @@ public class PortalEditor implements Removable {
 
             case CANCEL:
                 exit();
-                return;
         }
     }
 
@@ -335,9 +341,5 @@ public class PortalEditor implements Removable {
 
     public Portal getBackupPortal() {
         return backupPortal;
-    }
-
-    public Menu getMenu() {
-        return menu;
     }
 }
