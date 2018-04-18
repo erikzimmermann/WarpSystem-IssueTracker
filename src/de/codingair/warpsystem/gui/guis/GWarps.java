@@ -232,6 +232,11 @@ public class GWarps extends GUI {
                                             return;
                                         }
 
+                                        if(input.contains("@")) {
+                                            p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Correct_Name", new Example("ENG", "&cPlease don't use '@'-Symbols."), new Example("GER", "&cBitte benutze keine '@'-Zeichen.")));
+                                            return;
+                                        }
+
                                         input = ChatColor.translateAlternateColorCodes('&', input);
 
                                         if(clickEvent.isRightClick()) {
@@ -287,7 +292,7 @@ public class GWarps extends GUI {
             }
         }
 
-        if(editing && cursorIcon != null && cursorIcon instanceof Warp && ((Warp) cursorIcon).getCategory() == this.category) {
+        if(editing && cursorIcon instanceof Warp && ((Warp) cursorIcon).getCategory() == this.category) {
             addButton(new ItemButton(oldSlot, new ItemStack(Material.AIR)) {
                 @Override
                 public void onClick(InventoryClickEvent e) {

@@ -190,6 +190,11 @@ public class GEditIcon extends GUI {
                                     return;
                                 }
 
+                                if(input.contains("@")) {
+                                    p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Correct_Name", new Example("ENG", "&cPlease don't use '@'-Symbols."), new Example("GER", "&cBitte benutze keine '@'-Zeichen.")));
+                                    return;
+                                }
+
                                 input = ChatColor.translateAlternateColorCodes('&', input);
 
                                 if(isCategory) {

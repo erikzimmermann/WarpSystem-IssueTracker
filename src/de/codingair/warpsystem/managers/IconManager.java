@@ -48,6 +48,7 @@ public class IconManager {
                 Warp warp = ActionIconHelper.fromString(s);
 
                 if(warp != null) {
+                    if(warp.getName().contains("@")) warp.setName(warp.getName().replace("@", "(at)"));
                     this.warps.add(warp);
                 }
             }
@@ -57,6 +58,7 @@ public class IconManager {
                 Category category = ActionIconHelper.fromString(s);
 
                 if(category != null) {
+                    if(category.getName().contains("@")) category.setName(category.getName().replace("@", "(at)"));
                     this.categories.add(category);
                 }
             }
