@@ -36,6 +36,8 @@ public class IconManager {
         } else {
             //Load
 
+            ActionIconHelper.load = true;
+
             this.warps = new ArrayList<>();
 
             ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
@@ -58,6 +60,15 @@ public class IconManager {
                     this.categories.add(category);
                 }
             }
+
+            for(Warp warp : this.warps) {
+                if(warp.getCategory() == null) continue;
+                if(!existsCategory(warp.getCategory().getName())) {
+                    this.categories.add(warp.getCategory());
+                }
+            }
+
+            ActionIconHelper.load = false;
 
             //Import old
             if(WarpSystem.getInstance().isOld()) {
