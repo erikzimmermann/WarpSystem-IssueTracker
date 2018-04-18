@@ -45,7 +45,7 @@ public class Hologram extends HotbarGUI {
                     menu.getEditor().doAction(PortalEditor.Action.DECREASE_HOLOGRAM_HEIGHT);
                 }
 
-                updateDisplayName(getItem(2), "§7" + Lang.get("Hologram_Height")+": " + menu.getEditor().getPortal().getHologramHeight());
+                updateDisplayName(getItem(2), "§7" + Lang.get("Hologram_Height")+": §e" + menu.getEditor().getPortal().getHologramHeight());
             }
 
             @Override
@@ -59,11 +59,11 @@ public class Hologram extends HotbarGUI {
             }
         }));
 
-        setItem(4, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Start_Name", new Example("ENG", "Start-Name"), new Example("GER", "Start-Name")) + ": '" + menu.getEditor().getPortal().getStartName() + "§7'").getItem(), new ItemListener() {
+        setItem(4, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Start_Name", new Example("ENG", "Start-Name"), new Example("GER", "Start-Name")) + ": '§r" + menu.getEditor().getPortal().getStartName() + "§7'").getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 //Start-Name
-                menu.getEditor().doAction(PortalEditor.Action.CHANGE_START_NAME, () -> updateDisplayName(getItem(4), "§7"+Lang.get("Start_Name")+": '" + menu.getEditor().getPortal().getStartName()+"§7'"));
+                menu.getEditor().doAction(PortalEditor.Action.CHANGE_START_NAME, () -> updateDisplayName(getItem(4), "§7"+Lang.get("Start_Name")+": '§r" + menu.getEditor().getPortal().getStartName()+"§7'"));
             }
 
             @Override
@@ -116,11 +116,11 @@ public class Hologram extends HotbarGUI {
 
         setItem(6, new ItemComponent(new ItemBuilder(Material.STAINED_GLASS_PANE).setColor(DyeColor.BLACK).setHideName(true).getItem()));
 
-        setItem(7, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Goal_Name", new Example("ENG", "Goal-Name"), new Example("GER", "Ziel-Name")) + ": '" + menu.getEditor().getPortal().getDestinationName() + "§7'").getItem(), new ItemListener() {
+        setItem(7, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Goal_Name", new Example("ENG", "Destination-Name"), new Example("GER", "Ziel-Name")) + ": '§r" + menu.getEditor().getPortal().getDestinationName() + "§7'").getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 //Goal-Name
-                menu.getEditor().doAction(PortalEditor.Action.CHANGE_DESTINATION_NAME, () -> updateDisplayName(getItem(5), "§7"+Lang.get("Goal_Name")+": '" + menu.getEditor().getPortal().getDestinationName()+"§7'"));
+                menu.getEditor().doAction(PortalEditor.Action.CHANGE_DESTINATION_NAME, () -> updateDisplayName(getItem(7), "§7"+Lang.get("Goal_Name")+": '§r" + menu.getEditor().getPortal().getDestinationName()+"§7'"));
             }
 
             @Override
