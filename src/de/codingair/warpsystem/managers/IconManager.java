@@ -36,6 +36,8 @@ public class IconManager {
         } else {
             //Load
 
+            ActionIconHelper.load = true;
+
             this.warps = new ArrayList<>();
 
             ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
@@ -46,6 +48,7 @@ public class IconManager {
                 Warp warp = ActionIconHelper.fromString(s);
 
                 if(warp != null) {
+                    if(warp.getName().contains("@")) warp.setName(warp.getName().replace("@", "(at)"));
                     this.warps.add(warp);
                 }
             }
@@ -55,9 +58,19 @@ public class IconManager {
                 Category category = ActionIconHelper.fromString(s);
 
                 if(category != null) {
+                    if(category.getName().contains("@")) category.setName(category.getName().replace("@", "(at)"));
                     this.categories.add(category);
                 }
             }
+
+            for(Warp warp : this.warps) {
+                if(warp.getCategory() == null) continue;
+                if(!existsCategory(warp.getCategory().getName())) {
+                    this.categories.add(warp.getCategory());
+                }
+            }
+
+            ActionIconHelper.load = false;
 
             //Import old
             if(WarpSystem.getInstance().isOld()) {

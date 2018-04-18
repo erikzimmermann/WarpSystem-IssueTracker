@@ -66,7 +66,9 @@ public class CWarp extends CommandBuilder {
                     }
                 } else {
                     for(Warp warp : WarpSystem.getInstance().getIconManager().getWarps()) {
-                        if(!warp.getNameWithoutColor().isEmpty()) suggestions.add(warp.getNameWithoutColor().replace(" ", "_"));
+                        if(!warp.getNameWithoutColor().isEmpty()) {
+                            suggestions.add(warp.getNameWithoutColor().replace(" ", "_") + (warp.isInCategory() ? "@" + warp.getCategory().getName() : ""));
+                        }
                     }
                 }
             }
@@ -82,12 +84,15 @@ public class CWarp extends CommandBuilder {
                     }
 
                     argument = argument.replace("_", " ");
-                    Warp warp = null;
-                    for(Warp w : WarpSystem.getInstance().getIconManager().getWarps()) {
-                        if(w.getNameWithoutColor().equalsIgnoreCase(argument)) warp = w;
+                    Category category = null;
+                    if(argument.contains("@")) {
+                        String[] a = argument.split("@");
 
-                        if(warp != null) break;
+                        category = WarpSystem.getInstance().getIconManager().getCategory(a[1]);
+                        argument = a[0];
                     }
+
+                    Warp warp = WarpSystem.getInstance().getIconManager().getWarp(argument, category);
 
                     if(warp == null) {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS", new Example("ENG", "&cThis warp does not exist."), new Example("GER", "&cDieser Warp existiert nicht.")));
