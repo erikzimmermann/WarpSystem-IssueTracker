@@ -8,14 +8,13 @@ import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.TimeList;
 import de.codingair.codingapi.utils.Node;
 import de.codingair.warpsystem.WarpSystem;
+import de.codingair.warpsystem.features.portals.PortalEditor;
 import de.codingair.warpsystem.gui.guis.GPortalList;
 import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.language.Lang;
-import de.codingair.warpsystem.teleport.portals.PortalEditor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -105,7 +104,7 @@ public class CPortal extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("edit") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                if(aboutToDelete.contains(sender.getName())) aboutToDelete.remove(sender.getName());
+                aboutToDelete.remove(sender.getName());
 
                 aboutToEdit.add(sender.getName(), 30);
                 sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_GO_TO_PORTAL", new Example("ENG", "&7You have 30 seconds to go into a portal."), new Example("GER", "&7Du hast nun 30 Sekunden Zeit, um in ein Portal zu gehen.")));
@@ -119,7 +118,7 @@ public class CPortal extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("delete") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                if(aboutToEdit.contains(sender.getName())) aboutToEdit.remove(sender.getName());
+                aboutToEdit.remove(sender.getName());
 
                 aboutToDelete.add(sender.getName(), 30);
                 sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_GO_TO_PORTAL", new Example("ENG", "&7You have 30 seconds to go into a portal."), new Example("GER", "&7Du hast nun 30 Sekunden Zeit, um in ein Portal zu gehen.")));

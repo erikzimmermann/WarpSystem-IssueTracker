@@ -3,15 +3,14 @@ package de.codingair.warpsystem.managers;
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.warpsystem.WarpSystem;
+import de.codingair.warpsystem.features.portals.Portal;
 import de.codingair.warpsystem.gui.affiliations.Warp;
 import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.language.Lang;
-import de.codingair.warpsystem.teleport.Teleport;
-import de.codingair.warpsystem.teleport.portals.Portal;
+import de.codingair.warpsystem.utils.Teleport;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
