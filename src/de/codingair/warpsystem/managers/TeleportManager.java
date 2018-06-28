@@ -4,10 +4,12 @@ import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.warpsystem.WarpSystem;
 import de.codingair.warpsystem.features.portals.Portal;
+import de.codingair.warpsystem.features.signs.WarpSign;
 import de.codingair.warpsystem.gui.affiliations.Warp;
 import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.language.Lang;
 import de.codingair.warpsystem.utils.Teleport;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -16,6 +18,7 @@ import java.util.List;
 
 public class TeleportManager {
     private List<Portal> portals = new ArrayList<>();
+    private List<WarpSign> warpSigns = new ArrayList<>();
     private List<Particle> particles = new ArrayList<>();
     private List<Teleport> teleports = new ArrayList<>();
     private boolean canMove = false;
@@ -51,6 +54,9 @@ public class TeleportManager {
         particles.add(Particle.DAMAGE_INDICATOR);
     }
 
+    /**
+     * Have to be launched after the IconManager (see WarpSign.class - fromJSONString method - need warps and categories)
+     */
     public void load() {
         this.particleId = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Animation", 17);
         this.seconds = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Delay", 5);
@@ -61,16 +67,28 @@ public class TeleportManager {
         this.portals.forEach(Portal::destroy);
         this.portals.clear();
 
+        WarpSystem.log("  > Loading Portals (from Teleporters).");
         for(String s : WarpSystem.getInstance().getFileManager().getFile("Teleporters").getConfig().getStringList("Teleporters")) {
             this.portals.add(Portal.getByJSONString(s));
         }
 
+        WarpSystem.log("  > Loading Portals (from Portals).");
+        for(String s : WarpSystem.getInstance().getFileManager().getFile("Teleporters").getConfig().getStringList("Portals")) {
+            this.portals.add(Portal.getByJSONString(s));
+        }
+
+        WarpSystem.log("    > Verify that portals are enabled");
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Portals", true)) {
             this.portals.forEach(p -> p.setRunning(true));
         }
+
+        WarpSystem.log("  > Loading WarpSigns.");
+        for(String s : WarpSystem.getInstance().getFileManager().getFile("Teleporters").getConfig().getStringList("WarpSigns")) {
+            this.warpSigns.add(WarpSign.fromJSONString(s));
+        }
     }
 
-    public void save() {
+    public void save(boolean saver) {
         FileConfiguration config = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig();
 
         config.set("WarpSystem.Teleport.Animation", this.particleId);
@@ -83,17 +101,32 @@ public class TeleportManager {
         //Save teleporters
         config = WarpSystem.getInstance().getFileManager().getFile("Teleporters").getConfig();
 
+        if(!saver) WarpSystem.log("  > Saving Portals.");
         List<String> data = new ArrayList<>();
 
         for(Portal portal : this.portals) {
             data.add(portal.toJSONString());
         }
 
-        config.set("Teleporters", data);
+        config.set("Portals", data);
+
+        if(!saver) WarpSystem.log("  > Saving WarpSigns.");
+        data = new ArrayList<>();
+        for(WarpSign s : this.warpSigns) {
+            data.add(s.toJSONString());
+        }
+
+        config.set("WarpSigns", data);
+
         WarpSystem.getInstance().getFileManager().getFile("Teleporters").saveConfig();
     }
 
     public void teleport(Player player, Warp warp) {
+        if(isTeleporting(player)) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("Player_Is_Already_Teleporting", new Example("ENG", "&cYou are already teleporting!"), new Example("GER", "&cDu wirst bereits teleportiert!")));
+            return;
+        }
+
         player.closeInventory();
 
         Teleport teleport = new Teleport(player, warp);
@@ -125,6 +158,14 @@ public class TeleportManager {
 
     public boolean isTeleporting(Player p) {
         return getTeleport(p) != null;
+    }
+
+    public WarpSign getByLocation(Location location) {
+        for(WarpSign warpSign : this.warpSigns) {
+            if(warpSign.getLocation().getBlock().getLocation().equals(location.getBlock().getLocation())) return warpSign;
+        }
+
+        return null;
     }
 
     public boolean isCanMove() {
@@ -169,6 +210,10 @@ public class TeleportManager {
 
     public List<Portal> getPortals() {
         return portals;
+    }
+
+    public List<WarpSign> getWarpSigns() {
+        return warpSigns;
     }
 
     public List<Teleport> getTeleports() {

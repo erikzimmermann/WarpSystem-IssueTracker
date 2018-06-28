@@ -173,6 +173,7 @@ public class WarpSystem extends JavaPlugin {
     public void onDisable() {
         API.getInstance().onDisable(this);
         save(false);
+        teleportManager.getTeleports().forEach(t -> t.cancel(false));
     }
 
     private void startAutoSaver() {
@@ -215,7 +216,8 @@ public class WarpSystem extends JavaPlugin {
                 if(!saver) log("Saving options.");
                 fileManager.getFile("Config").getConfig().set("WarpSystem.Maintenance", maintenance);
                 fileManager.getFile("Config").getConfig().set("WarpSystem.Teleport.Op_Can_Skip_Delay", OP_CAN_SKIP_DELAY);
-                teleportManager.save();
+                if(!saver) log("Saving features.");
+                teleportManager.save(saver);
             }
 
             if(!saver) {
