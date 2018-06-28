@@ -11,6 +11,8 @@ import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.ItemBuilder;
 import de.codingair.codingapi.utils.TextAlignment;
+import de.codingair.warpsystem.gui.guis.utils.GUIListener;
+import de.codingair.warpsystem.gui.guis.utils.Task;
 import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.language.Lang;
 import de.codingair.warpsystem.WarpSystem;
@@ -45,12 +47,23 @@ public class GWarps extends GUI {
     private int oldSlot = -999;
     private ActionIcon cursorIcon = null;
 
+    private GUIListener listener = null;
+
     private static String getTitle(Category category) {
-        return "§c§l§nWarps§r" + (category != null ? " §8@" + category.getNameWithoutColor() : "");
+        return getTitle(category, null);
+    }
+
+    private static String getTitle(Category category, GUIListener listener) {
+        return listener == null || listener.getTitle() == null ? "§c§l§nWarps§r" + (category != null ? " §8@" + category.getNameWithoutColor() : "") : listener.getTitle();
     }
 
     public GWarps(Player p, Category category, boolean editing) {
-        super(p, getTitle(category), 54, WarpSystem.getInstance(), false);
+        this(p, category, editing, null);
+    }
+
+    public GWarps(Player p, Category category, boolean editing, GUIListener guiListener) {
+        super(p, getTitle(category, guiListener), 54, WarpSystem.getInstance(), false);
+        this.listener = guiListener;
         this.category = category;
         this.editing = editing;
 
@@ -401,7 +414,18 @@ public class GWarps extends GUI {
                             GWarps.this.category = (Category) icon;
                             reinitialize();
                             setTitle(getTitle(GWarps.this.category));
-                        } else icon.perform(p, editing);
+                        } else if(icon instanceof Warp) {
+                            if(listener != null) {
+                                Task task = listener.onClickOnWarp((Warp) icon, editing);
+
+                                if(task != null) {
+                                    task.runTask(p, editing);
+                                    return;
+                                }
+                            }
+
+                            icon.perform(p, editing);
+                        }
                     }
                 }
             }.setOption(option).setOnlyLeftClick(!editing));

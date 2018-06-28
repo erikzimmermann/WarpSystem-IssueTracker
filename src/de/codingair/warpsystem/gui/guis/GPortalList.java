@@ -11,10 +11,10 @@ import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOpti
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.ItemBuilder;
 import de.codingair.warpsystem.WarpSystem;
+import de.codingair.warpsystem.features.portals.Portal;
+import de.codingair.warpsystem.features.portals.PortalEditor;
 import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.language.Lang;
-import de.codingair.warpsystem.teleport.portals.Portal;
-import de.codingair.warpsystem.teleport.portals.PortalEditor;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;

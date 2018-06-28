@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.teleport.portals;
+package de.codingair.warpsystem.features.portals;
 
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.particles.Particle;
@@ -16,7 +16,7 @@ import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.WarpSystem;
 import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.language.Lang;
-import de.codingair.warpsystem.teleport.portals.menu.Menu;
+import de.codingair.warpsystem.features.portals.menu.Menu;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

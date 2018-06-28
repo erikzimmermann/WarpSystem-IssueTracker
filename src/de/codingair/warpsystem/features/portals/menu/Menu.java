@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.teleport.portals.menu;
+package de.codingair.warpsystem.features.portals.menu;
 
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
@@ -10,7 +10,7 @@ import de.codingair.codingapi.tools.ItemBuilder;
 import de.codingair.warpsystem.WarpSystem;
 import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.language.Lang;
-import de.codingair.warpsystem.teleport.portals.PortalEditor;
+import de.codingair.warpsystem.features.portals.PortalEditor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

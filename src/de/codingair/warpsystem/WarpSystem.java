@@ -8,6 +8,7 @@ import de.codingair.warpsystem.commands.CPortal;
 import de.codingair.warpsystem.commands.CWarp;
 import de.codingair.warpsystem.commands.CWarpSystem;
 import de.codingair.warpsystem.commands.CWarps;
+import de.codingair.warpsystem.features.signs.SignListener;
 import de.codingair.warpsystem.language.Lang;
 import de.codingair.warpsystem.listeners.NotifyListener;
 import de.codingair.warpsystem.listeners.PortalListener;
@@ -90,6 +91,7 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new TeleportListener(), this);
             Bukkit.getPluginManager().registerEvents(new NotifyListener(), this);
             Bukkit.getPluginManager().registerEvents(new PortalListener(), this);
+            Bukkit.getPluginManager().registerEvents(new SignListener(), this);
 
             if(fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Warps", true)) {
                 new CWarp().register(this);
@@ -171,6 +173,7 @@ public class WarpSystem extends JavaPlugin {
     public void onDisable() {
         API.getInstance().onDisable(this);
         save(false);
+        teleportManager.getTeleports().forEach(t -> t.cancel(false));
     }
 
     private void startAutoSaver() {
@@ -213,7 +216,8 @@ public class WarpSystem extends JavaPlugin {
                 if(!saver) log("Saving options.");
                 fileManager.getFile("Config").getConfig().set("WarpSystem.Maintenance", maintenance);
                 fileManager.getFile("Config").getConfig().set("WarpSystem.Teleport.Op_Can_Skip_Delay", OP_CAN_SKIP_DELAY);
-                teleportManager.save();
+                if(!saver) log("Saving features.");
+                teleportManager.save(saver);
             }
 
             if(!saver) {

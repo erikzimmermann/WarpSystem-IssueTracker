@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.teleport;
+package de.codingair.warpsystem.utils;
 
 import de.codingair.codingapi.particles.animations.Animation;
 import de.codingair.codingapi.particles.animations.playeranimations.CircleAnimation;

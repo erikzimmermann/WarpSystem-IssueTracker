@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.teleport.portals;
+package de.codingair.warpsystem.features.portals;
 
 
 import de.codingair.codingapi.API;

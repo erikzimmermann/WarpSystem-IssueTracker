@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.teleport.portals;
+package de.codingair.warpsystem.features.portals;
 
 import de.codingair.codingapi.player.gui.inventory.guis.ConfirmGUI;
 import de.codingair.codingapi.tools.Callback;
