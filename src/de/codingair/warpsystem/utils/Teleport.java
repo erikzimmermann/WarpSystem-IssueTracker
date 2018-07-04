@@ -19,6 +19,7 @@ public class Teleport {
     private BukkitRunnable runnable;
     private Sound finishSound = Sound.ENDERMAN_TELEPORT;
     private Sound cancelSound = Sound.ITEM_BREAK;
+    private long startTime = 0;
 
     public Teleport(Player player, Warp warp) {
         this.player = player;
@@ -47,12 +48,16 @@ public class Teleport {
     }
 
     public void start() {
-        this.animation.setRunning(true);
-        this.runnable.runTaskTimer(WarpSystem.getInstance(), 0L, 20L);
+        if(!animation.isRunning()) {
+            this.startTime = System.currentTimeMillis();
+            this.animation.setRunning(true);
+            this.runnable.runTaskTimer(WarpSystem.getInstance(), 0L, 20L);
+        }
     }
 
     public void cancel(boolean sound) {
         if(animation.isRunning()) {
+            this.startTime = 0;
             this.animation.setRunning(false);
             this.runnable.cancel();
             MessageAPI.sendActionBar(player, null);
@@ -102,5 +107,9 @@ public class Teleport {
 
     public void setCancelSound(Sound cancelSound) {
         this.cancelSound = cancelSound;
+    }
+
+    public long getStartTime() {
+        return startTime;
     }
 }
