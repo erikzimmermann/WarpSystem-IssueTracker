@@ -10,6 +10,8 @@ import de.codingair.warpsystem.language.Example;
 import de.codingair.warpsystem.language.Lang;
 import de.codingair.warpsystem.utils.Teleport;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -84,7 +86,16 @@ public class TeleportManager {
 
         WarpSystem.log("  > Loading WarpSigns.");
         for(String s : WarpSystem.getInstance().getFileManager().getFile("Teleporters").getConfig().getStringList("WarpSigns")) {
-            this.warpSigns.add(WarpSign.fromJSONString(s));
+            WarpSign warpSign = WarpSign.fromJSONString(s);
+
+            if(warpSign.getLocation().getBlock().getType().equals(Material.SIGN_POST) || warpSign.getLocation().getBlock().getType().equals(Material.WALL_SIGN)) {
+                ((Sign) warpSign.getLocation().getBlock().getState()).setLine(0, "AUTO");
+                warpSign.getLocation().getBlock().getState().update(true);
+                this.warpSigns.add(warpSign);
+            }
+            else {
+                WarpSystem.log("    > Loaded WarpSign at location without sign! (Skip)");
+            }
         }
     }
 
@@ -123,7 +134,9 @@ public class TeleportManager {
 
     public void teleport(Player player, Warp warp) {
         if(isTeleporting(player)) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("Player_Is_Already_Teleporting", new Example("ENG", "&cYou are already teleporting!"), new Example("GER", "&cDu wirst bereits teleportiert!")));
+            Teleport teleport = getTeleport(player);
+            long diff = System.currentTimeMillis() - teleport.getStartTime();
+            if(diff > 50) player.sendMessage(Lang.getPrefix() + Lang.get("Player_Is_Already_Teleporting", new Example("ENG", "&cYou are already teleporting!"), new Example("GER", "&cDu wirst bereits teleportiert!")));
             return;
         }
 
