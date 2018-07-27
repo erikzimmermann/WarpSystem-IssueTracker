@@ -1,6 +1,9 @@
 package de.codingair.warpsystem.gui.affiliations;
 
 import de.codingair.codingapi.serializable.SerializableLocation;
+import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.transfer.serializeable.icons.SIcon;
+import de.codingair.warpsystem.transfer.serializeable.icons.SWarp;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -33,6 +36,11 @@ public class Warp extends ActionIcon implements Serializable {
         this(name, item, slot, permission, category, Arrays.asList(actions));
     }
 
+    public Warp(SWarp s) {
+        super(s);
+        this.category = WarpSystem.getInstance().getIconManager().getCategory(s.getCategory());
+    }
+
     public boolean isInCategory() {
         return category != null;
     }
@@ -48,5 +56,12 @@ public class Warp extends ActionIcon implements Serializable {
     public Location getLocation() {
         SerializableLocation sLoc = getAction(Action.TELEPORT_TO_WARP).getValue();
         return sLoc.getLocation();
+    }
+
+    @Override
+    public SIcon getSerializable() {
+        SWarp s = new SWarp(super.getSerializable());
+        s.setCategory(this.category == null ? null : this.category.getName());
+        return s;
     }
 }
