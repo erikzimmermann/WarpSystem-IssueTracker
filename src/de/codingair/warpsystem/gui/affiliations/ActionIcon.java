@@ -1,13 +1,19 @@
 package de.codingair.warpsystem.gui.affiliations;
 
 import de.codingair.codingapi.bungeecord.BungeeCordHelper;
-import de.codingair.warpsystem.WarpSystem;
-import de.codingair.warpsystem.gui.guis.GWarps;
+import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.gui.guis.GWarps;
+import de.codingair.warpsystem.transfer.serializeable.icons.SActionIcon;
+import de.codingair.warpsystem.transfer.serializeable.icons.SActionObject;
+import de.codingair.warpsystem.transfer.serializeable.icons.SIcon;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public class ActionIcon extends Icon implements Serializable {
     static final long serialVersionUID = 1L;
@@ -48,13 +54,36 @@ public class ActionIcon extends Icon implements Serializable {
         this(name, item, slot, permission, Arrays.asList(actions));
     }
 
+    public ActionIcon(SActionIcon icon) {
+        super(icon);
+        this.permission = icon.getPermission();
+        this.actions = new ArrayList<>();
+        for(SActionObject s : icon.getActions()) {
+            this.actions.add(ActionIconHelper.translate(s));
+        }
+    }
+
+    @Override
+    public SIcon getSerializable() {
+        SActionIcon s = new SActionIcon(super.getSerializable());
+
+        s.setPermission(this.permission);
+        List<SActionObject> actions = new ArrayList<>();
+        for(ActionObject action : this.actions) {
+            actions.add(ActionIconHelper.translate(action));
+        }
+        s.setActions(actions);
+
+        return s;
+    }
+
     public void perform(Player p, boolean editor, Action... without) {
         List<Action> withouts = Arrays.asList(without);
 
-        for (ActionObject action : this.actions) {
+        for(ActionObject action : this.actions) {
             if(withouts.contains(action.getAction())) continue;
 
-            switch (action.getAction()) {
+            switch(action.getAction()) {
                 case OPEN_CATEGORY: {
                     Category category = action.getValue();
                     new GWarps(p, category, editor).open();
