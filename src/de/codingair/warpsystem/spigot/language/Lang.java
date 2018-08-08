@@ -60,7 +60,7 @@ public class Lang {
     public static String get(String key, Example... examples) {
         for(Example example : examples) {
             String s = getConfig().getString(example.getLanguage() + "." + key, null);
-            if(s == null || !s.equals(example.getText())) {
+            if(s == null) {
                 getConfig().set(example.getLanguage() + "." + key, example.getText());
                 saveConfig();
             }
