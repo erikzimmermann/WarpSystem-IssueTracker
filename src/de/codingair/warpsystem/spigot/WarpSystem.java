@@ -4,6 +4,7 @@ import de.codingair.codingapi.API;
 import de.codingair.codingapi.bungeecord.BungeeCordHelper;
 import de.codingair.codingapi.files.FileManager;
 import de.codingair.codingapi.server.Version;
+import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.time.Timer;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.commands.*;
@@ -26,6 +27,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 public class WarpSystem extends JavaPlugin {
@@ -52,6 +55,8 @@ public class WarpSystem extends JavaPlugin {
     private static boolean updateAvailable = false;
     private boolean old = false;
     private boolean ERROR = true;
+    private List<CommandBuilder> commands = new ArrayList<>();
+    private boolean shouldSave = true;
 
     private SpigotDataHandler dataHandler = new SpigotDataHandler(this);
     private GlobalWarpManager globalWarpManager = new GlobalWarpManager();
@@ -103,14 +108,24 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new SignListener(), this);
 
             if(fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Warps", true)) {
-                new CWarp().register(this);
-                new CWarps().register(this);
+                CWarp cWarp = new CWarp();
+                CWarps cWarps = new CWarps();
+
+                this.commands.add(cWarp);
+                this.commands.add(cWarps);
+
+                cWarp.register(this);
+                cWarps.register(this);
             }
 
-            new CWarpSystem().register(this);
+            CWarpSystem cWarpSystem = new CWarpSystem();
+            this.commands.add(cWarpSystem);
+            cWarpSystem.register(this);
 
             if(fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Portals", true)) {
-                new CPortal().register(this);
+                CPortal cPortal = new CPortal();
+                this.commands.add(cPortal);
+                cPortal.register(this);
             }
 
             this.startAutoSaver();
@@ -236,6 +251,34 @@ public class WarpSystem extends JavaPlugin {
         API.getInstance().onDisable(this);
         save(false);
         teleportManager.getTeleports().forEach(t -> t.cancel(false));
+
+        //Disable all functions
+        OP_CAN_SKIP_DELAY = false;
+        activated = false;
+        maintenance = false;
+        onBungeeCord = false;
+        server = null;
+        updateAvailable = false;
+        old = false;
+        ERROR = true;
+        shouldSave = true;
+        BungeeCordHelper.bungeeMessenger = null;
+
+        HandlerList.unregisterAll(this);
+        this.dataHandler.onDisable();
+
+        for(int i = 0; i < this.commands.size(); i++) {
+            this.commands.remove(0).unregister(this);
+        }
+
+        this.globalWarpManager.getGlobalWarps().clear();
+    }
+
+    public void reload(boolean save) {
+        this.shouldSave = save;
+
+        Bukkit.getPluginManager().disablePlugin(WarpSystem.getInstance());
+        Bukkit.getPluginManager().enablePlugin(WarpSystem.getInstance());
     }
 
     private void startAutoSaver() {
@@ -244,6 +287,7 @@ public class WarpSystem extends JavaPlugin {
     }
 
     private void save(boolean saver) {
+        if(!this.shouldSave) return;
         try {
             if(!saver) {
                 timer.start();
@@ -370,5 +414,9 @@ public class WarpSystem extends JavaPlugin {
 
     public String getCurrentServer() {
         return server;
+    }
+
+    public List<CommandBuilder> getCommands() {
+        return commands;
     }
 }
