@@ -9,6 +9,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.config.Configuration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class GlobalWarpManager {
@@ -53,39 +54,37 @@ public class GlobalWarpManager {
         file.save();
     }
 
-    public void synchronize(String name) {
+    public void synchronize(SGlobalWarp warp) {
         for(ServerInfo server : WarpSystem.getInstance().getServerManager().getOnlineServer()) {
-            WarpSystem.getInstance().getDataHandler().send(new UpdateGlobalWarpPacket(get(name) == null ? UpdateGlobalWarpPacket.Action.DELETE.getId() : UpdateGlobalWarpPacket.Action.ADD.getId(), name), server);
+            WarpSystem.getInstance().getDataHandler().send(new UpdateGlobalWarpPacket(get(warp.getName()) == null ? UpdateGlobalWarpPacket.Action.DELETE.getId() : UpdateGlobalWarpPacket.Action.ADD.getId(), warp.getName(), warp.getServer()), server);
         }
     }
 
     public void sendData(ServerInfo info) {
         if(this.globalWarps.isEmpty()) {
-            System.out.println("Don't have any global warps... nothing to send.");
             return;
         }
 
-        List<List<String>> list = new ArrayList<>();
-        List<String> current = new ArrayList<>();
+        List<HashMap<String, String>> list = new ArrayList<>();
+        HashMap<String, String> current = new HashMap<>();
         int currentBytes = 0;
 
         for(SGlobalWarp warp : this.globalWarps) {
-            currentBytes += warp.getName().length();
+            currentBytes += warp.getName().length() + warp.getServer().length();
 
             if(currentBytes > 32700) {
-                currentBytes = warp.getName().length();
                 list.add(current);
-                current = new ArrayList<>();
-            } else {
-                current.add(warp.getName());
+                current = new HashMap<>();
             }
+
+            currentBytes = warp.getName().length() + warp.getServer().length();
+            current.put(warp.getName(), warp.getServer());
         }
 
-        list.add(current);
+        if(current.size() > 0) list.add(current);
 
-        for(List<String> l : list) {
+        for(HashMap<String, String> l : list) {
             WarpSystem.getInstance().getDataHandler().send(new SendGlobalWarpNamesPacket(l), info);
-            System.out.println("Sent a list!");
         }
 
         list.clear();

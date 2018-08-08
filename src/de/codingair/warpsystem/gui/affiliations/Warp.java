@@ -64,4 +64,9 @@ public class Warp extends ActionIcon implements Serializable {
         s.setCategory(this.category == null ? null : this.category.getName());
         return s;
     }
+
+    @Override
+    public IconType getType() {
+        return IconType.WARP;
+    }
 }

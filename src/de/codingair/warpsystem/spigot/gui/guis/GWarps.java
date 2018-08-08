@@ -11,15 +11,13 @@ import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.ItemBuilder;
 import de.codingair.codingapi.utils.TextAlignment;
+import de.codingair.warpsystem.gui.affiliations.*;
+import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.gui.guis.utils.GUIListener;
 import de.codingair.warpsystem.spigot.gui.guis.utils.Task;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
-import de.codingair.warpsystem.spigot.WarpSystem;
-import de.codingair.warpsystem.gui.affiliations.Action;
-import de.codingair.warpsystem.gui.affiliations.ActionIcon;
-import de.codingair.warpsystem.gui.affiliations.Category;
-import de.codingair.warpsystem.gui.affiliations.Warp;
+import jdk.nashorn.internal.objects.Global;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -45,7 +43,7 @@ public class GWarps extends GUI {
     private boolean moving = false;
     private ItemStack cursor = null;
     private int oldSlot = -999;
-    private ActionIcon cursorIcon = null;
+    private Icon cursorIcon = null;
 
     private GUIListener listener = null;
 
@@ -120,10 +118,7 @@ public class GWarps extends GUI {
 
         if(editing) {
             noneBuilder = new ItemBuilder(Material.BARRIER).setHideStandardLore(true)
-                    .setName(Lang.get("Edit_Mode_Set_ActionIcon", new Example("ENG", "&3Leftclick: &bSet Warp"), new Example("GER", "&3Linksklick: &bWarp setzen")));
-
-            if(category == null)
-                noneBuilder.setLore(Lang.get("Edit_Mode_Set_Category", new Example("ENG", "&3Rightclick: &bSet Category"), new Example("GER", "&3Rechtsklick: &bKategorie setzen")));
+                    .setName(Lang.get("Edit_Mode_Set_Icon", new Example("ENG", "&3Leftclick: &bSet Icon"), new Example("GER", "&3Linksklick: &bIcon setzen")));
         } else {
             noneBuilder = new ItemBuilder(Material.STAINED_GLASS_PANE).setColor(DyeColor.BLACK).setHideName(true).setHideStandardLore(true);
         }
@@ -187,6 +182,20 @@ public class GWarps extends GUI {
             }
         }
 
+        if(WarpSystem.getInstance().isOnBungeeCord()) {
+            for(GlobalWarp warp : WarpSystem.getInstance().getIconManager().getGlobalWarps(category)) {
+                if((editing || (!warp.hasPermission() || p.hasPermission(warp.getPermission()))) && this.cursorIcon != warp) {
+                    addToGUI(p, warp);
+                }
+            }
+        }
+
+        for(DecoIcon icon : WarpSystem.getInstance().getIconManager().getDecoIcons(category)) {
+            if(this.cursorIcon != icon) {
+                addToGUI(p, icon);
+            }
+        }
+
         if(category == null) {
             for(Category c : WarpSystem.getInstance().getIconManager().getCategories()) {
                 if(editing || (!c.hasPermission() || p.hasPermission(c.getPermission()))) {
@@ -211,6 +220,16 @@ public class GWarps extends GUI {
                                         icon.setCategory(GWarps.this.category);
                                     }
 
+                                    if(cursorIcon instanceof GlobalWarp) {
+                                        GlobalWarp icon = (GlobalWarp) cursorIcon;
+                                        icon.setCategory(GWarps.this.category);
+                                    }
+
+                                    if(cursorIcon instanceof DecoIcon) {
+                                        DecoIcon icon = (DecoIcon) cursorIcon;
+                                        icon.setCategory(GWarps.this.category);
+                                    }
+
                                     cursorIcon.setSlot(clickEvent.getSlot());
                                     clickEvent.setCursor(new ItemStack(Material.AIR));
                                     setMoving(false, clickEvent.getSlot());
@@ -228,77 +247,120 @@ public class GWarps extends GUI {
 
                             p.closeInventory();
 
-                            AnvilGUI.openAnvil(WarpSystem.getInstance(), p, new AnvilListener() {
-                                private String input;
-
+                            new GChooseIconType(getPlayer(), category, new Callback<IconType>() {
                                 @Override
-                                public void onClick(AnvilClickEvent e) {
-                                    e.setCancelled(true);
-                                    e.setClose(false);
+                                public void accept(IconType type) {
+                                    if(type == null) {
+                                        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), GWarps.this::open, 2);
+                                        return;
+                                    }
 
-                                    if(e.getSlot().equals(AnvilSlot.OUTPUT)) {
-                                        playSound(p);
-                                        input = e.getInput();
+                                    switch(type) {
+                                        case DECORATION:
+                                            new GEditIcon(p, category, item, null, slot, IconType.DECORATION).open();
+                                            break;
 
-                                        if(input == null) {
-                                            p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Name", new Example("ENG", "&cPlease enter a name."), new Example("GER", "&cBitte gib einen Namen ein.")));
-                                            return;
-                                        }
+                                        case GLOBAL_WARP:
+                                        case WARP:
+                                        case CATEGORY:
+                                            AnvilGUI.openAnvil(WarpSystem.getInstance(), p, new AnvilListener() {
+                                                private String input;
 
-                                        if(input.contains("@")) {
-                                            p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Correct_Name", new Example("ENG", "&cPlease don't use '@'-Symbols."), new Example("GER", "&cBitte benutze keine '@'-Zeichen.")));
-                                            return;
-                                        }
+                                                @Override
+                                                public void onClick(AnvilClickEvent e) {
+                                                    e.setCancelled(true);
+                                                    e.setClose(false);
 
-                                        input = ChatColor.translateAlternateColorCodes('&', input);
+                                                    if(e.getSlot().equals(AnvilSlot.OUTPUT)) {
+                                                        playSound(p);
+                                                        input = e.getInput();
 
-                                        if(clickEvent.isRightClick()) {
-                                            StringBuilder builder = new StringBuilder();
+                                                        if(input == null) {
+                                                            p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Name", new Example("ENG", "&cPlease enter a name."), new Example("GER", "&cBitte gib einen Namen ein.")));
+                                                            return;
+                                                        }
 
-                                            boolean color = false;
-                                            for(char c : input.toCharArray()) {
-                                                builder.append(c);
+                                                        if(input.contains("@")) {
+                                                            p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Correct_Name", new Example("ENG", "&cPlease don't use '@'-Symbols."), new Example("GER", "&cBitte benutze keine '@'-Zeichen.")));
+                                                            return;
+                                                        }
 
-                                                if(c == '§') color = true;
-                                                else if(color) {
-                                                    builder.append("§n");
-                                                    color = false;
+                                                        input = ChatColor.translateAlternateColorCodes('&', input);
+
+                                                        if(clickEvent.isRightClick()) {
+                                                            StringBuilder builder = new StringBuilder();
+
+                                                            boolean color = false;
+                                                            for(char c : input.toCharArray()) {
+                                                                builder.append(c);
+
+                                                                if(c == '§') color = true;
+                                                                else if(color) {
+                                                                    builder.append("§n");
+                                                                    color = false;
+                                                                }
+                                                            }
+
+                                                            input = builder.toString();
+                                                        }
+
+                                                        if(type.equals(IconType.WARP)) {
+                                                            if(WarpSystem.getInstance().getIconManager().existsWarp(input, category)) {
+                                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                                                return;
+                                                            }
+                                                        } else if(type.equals(IconType.CATEGORY)) {
+                                                            if(WarpSystem.getInstance().getIconManager().existsCategory(input)) {
+                                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                                                return;
+                                                            }
+                                                        } else if(type.equals(IconType.GLOBAL_WARP)) {
+                                                            if(WarpSystem.getInstance().getIconManager().existsGlobalWarp(input)) {
+                                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                                                return;
+                                                            }
+                                                        } else return;
+
+                                                        input = input.replace("§", "&");
+
+                                                        e.setClose(true);
+                                                    }
                                                 }
-                                            }
 
-                                            input = builder.toString();
-                                        }
+                                                @Override
+                                                public void onClose(AnvilCloseEvent e) {
+                                                    if(e.isSubmitted())
+                                                        if(type.equals(IconType.GLOBAL_WARP)) {
+                                                            e.setPost(() -> new GGlobalWarpList(p, new GGlobalWarpList.Listener() {
+                                                                @Override
+                                                                public void onClickOnGlobalWarp(String warp, InventoryClickEvent e) {
+                                                                    getPlayer().closeInventory();
+                                                                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> new GEditIcon(p, category, item, input, slot, type, warp).open(), 2L);
+                                                                }
 
-                                        if(clickEvent.isLeftClick()) {
-                                            if(WarpSystem.getInstance().getIconManager().existsWarp(input, category)) {
-                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
-                                                return;
-                                            }
-                                        } else {
-                                            if(WarpSystem.getInstance().getIconManager().existsCategory(input)) {
-                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
-                                                return;
-                                            }
-                                        }
+                                                                @Override
+                                                                public void onClose() {
+                                                                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> new GWarps(p, category, true).open(), 1);
+                                                                }
 
-                                        input = input.replace("§", "&");
-
-                                        e.setClose(true);
+                                                                @Override
+                                                                public String getLeftclickDescription() {
+                                                                    return ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("GlobalWarp_Leftclick_To_Choose", new Example("ENG", "&3Leftclick: &bChoose"), new Example("GER", ChatColor.GRAY + "&3Linksklick: &bWählen"));
+                                                                }
+                                                            }).open());
+                                                        } else e.setPost(() -> new GEditIcon(p, category, item, input, slot, type).open());
+                                                    else {
+                                                        Sound.ITEM_BREAK.playSound(p);
+                                                        e.setPost(() -> new GWarps(p, category, editing).open());
+                                                    }
+                                                }
+                                            }, new ItemBuilder(Material.PAPER).setName(Lang.get("Name", new Example("ENG", "Name"), new Example("GER", "Name")) + "...").getItem());
+                                            break;
                                     }
                                 }
-
-                                @Override
-                                public void onClose(AnvilCloseEvent e) {
-                                    if(e.isSubmitted())
-                                        e.setPost(() -> new GEditIcon(p, category, item, input, slot, clickEvent.isRightClick()).open());
-                                    else {
-                                        Sound.ITEM_BREAK.playSound(p);
-                                        e.setPost(() -> new GWarps(p, category, editing).open());
-                                    }
-                                }
-                            }, new ItemBuilder(Material.PAPER).setName(Lang.get("Name", new Example("ENG", "Name"), new Example("GER", "Name")) + "...").getItem());
+                            }).open();
                         }
-                    }.setOption(option).setOnlyLeftClick(category != null));
+                    }.setOption(option).setOnlyLeftClick(true));
                 }
             } else {
                 if(getItem(i) == null || getItem(i).getType().equals(Material.AIR)) setItem(i, none);
@@ -330,21 +392,29 @@ public class GWarps extends GUI {
         option.setOnlyLeftClick(true);
 
         if(editing || (!icon.hasPermission() || p.hasPermission(icon.getPermission()))) {
-            ItemBuilder iconBuilder = new ItemBuilder(icon.getItem()).setName("§b" + (icon instanceof Category ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', icon.getName()));
+            ItemBuilder iconBuilder = new ItemBuilder(icon.getItem()).setName(icon.getName() == null ? null : "§b" + (icon instanceof Category ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', icon.getName()));
+            if(icon.getName() == null) iconBuilder.setHideName(true);
 
             if(editing) {
                 String command = icon.getAction(Action.RUN_COMMAND) == null ? "-" : icon.getAction(Action.RUN_COMMAND).getValue();
                 String permission = icon.getPermission() == null ? "-" : icon.getPermission();
 
                 iconBuilder.addLore("§8------------");
+                if(icon instanceof GlobalWarp) {
+                    iconBuilder.addLore("§7" + Lang.get("GlobalWarp", new Example("ENG", "GlobalWarp"), new Example("GER", "GlobalWarp")) + ": " + icon.getAction(Action.SWITCH_SERVER).getValue());
+                    iconBuilder.addLore("§7" + Lang.get("Target_Server", new Example("ENG", "Target-Server"), new Example("GER", "Ziel-Server")) + ": " + WarpSystem.getInstance().getGlobalWarpManager().getGlobalWarps().get(icon.getAction(Action.SWITCH_SERVER).getValue()));
+
+                    iconBuilder.addLore("§8------------");
+                }
                 iconBuilder.addLore("§7" + Lang.get("Command", new Example("ENG", "Command"), new Example("GER", "Befehl")) + ": " + command);
                 iconBuilder.addLore("§7" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")) + ": " + permission);
                 iconBuilder.addLore("§8------------");
                 iconBuilder.addLore(Lang.get("Leftclick_Edit", new Example("ENG", "&7Leftclick: Configure"), new Example("GER", "&7Linksklick: Bearbeiten")));
                 iconBuilder.addLore(Lang.get("Rightclick_Delete", new Example("ENG", "&7Rightclick: Delete"), new Example("GER", "&7Rechtsklick: Löschen")));
                 iconBuilder.addLore(Lang.get("Shift_Leftclick_Edit", new Example("ENG", "&7Shift-Leftclick: Move"), new Example("GER", "&7Shift-Linksklick: Bewegen")));
+                if(icon instanceof Category) iconBuilder.addLore(Lang.get("Shift_Rightclick_Edit", new Example("ENG", "&7Shift-Rightclick: Open"), new Example("GER", "&7Shift-Rechtsklick: Öffnen")));
 
-                if(icon instanceof Warp) {
+                if(icon instanceof Warp || icon instanceof GlobalWarp || icon instanceof DecoIcon) {
                     iconBuilder.addLore("§8------------");
 
                     List<String> list = TextAlignment.lineBreak(Lang.get("Move_Help", new Example("ENG", "&7Moving: Rightclick on categories to switch to it."), new Example("GER", "&7Bewegen: Rechtsklick auf Kategorien um dort hin zu wechseln.")), 80);
@@ -381,12 +451,19 @@ public class GWarps extends GUI {
                             }
                         } else if(e.isRightClick()) {
                             if(moving) {
-                                if(icon instanceof Category && cursorIcon instanceof Warp) {
+                                if(icon instanceof Category && (cursorIcon instanceof Warp || cursorIcon instanceof GlobalWarp || cursorIcon instanceof DecoIcon)) {
                                     GWarps.this.category = (Category) icon;
                                     reinitialize();
                                     setTitle(getTitle(GWarps.this.category));
                                 }
                             } else {
+                                if(e.isShiftClick() && icon instanceof Category) {
+                                    GWarps.this.category = (Category) icon;
+                                    reinitialize();
+                                    setTitle(getTitle(GWarps.this.category));
+                                    return;
+                                }
+
                                 p.closeInventory();
 
                                 new ConfirmGUI(p,
@@ -410,21 +487,27 @@ public class GWarps extends GUI {
                             }
                         }
                     } else if(e.isLeftClick()) {
-                        if(icon instanceof Category) {
-                            GWarps.this.category = (Category) icon;
-                            reinitialize();
-                            setTitle(getTitle(GWarps.this.category));
-                        } else if(icon instanceof Warp) {
-                            if(listener != null) {
-                                Task task = listener.onClickOnWarp((Warp) icon, editing);
+                        switch(icon.getType()) {
+                            case CATEGORY:
+                                GWarps.this.category = (Category) icon;
+                                reinitialize();
+                                setTitle(getTitle(GWarps.this.category));
+                                break;
 
-                                if(task != null) {
-                                    task.runTask(p, editing);
-                                    return;
+                            case WARP:
+                                if(listener != null) {
+                                    Task task = listener.onClickOnWarp((Warp) icon, editing);
+
+                                    if(task != null) {
+                                        task.runTask(p, editing);
+                                        return;
+                                    }
                                 }
-                            }
 
-                            icon.perform(p, editing);
+                            case DECORATION:
+                            case GLOBAL_WARP:
+                                icon.perform(p, editing);
+                                break;
                         }
                     }
                 }

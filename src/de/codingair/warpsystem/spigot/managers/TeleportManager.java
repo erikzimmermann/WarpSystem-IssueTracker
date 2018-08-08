@@ -151,6 +151,31 @@ public class TeleportManager {
         else teleport.start();
     }
 
+    public void teleport(Player player, String globalWarp, String globalWarpDisplayName) {
+        if(isTeleporting(player)) {
+            Teleport teleport = getTeleport(player);
+            long diff = System.currentTimeMillis() - teleport.getStartTime();
+            if(diff > 50)
+                player.sendMessage(Lang.getPrefix() + Lang.get("Player_Is_Already_Teleporting", new Example("ENG", "&cYou are already teleporting!"), new Example("GER", "&cDu wirst bereits teleportiert!")));
+            return;
+        }
+
+        String targetServer = WarpSystem.getInstance().getGlobalWarpManager().getGlobalWarps().get(globalWarp);
+
+        if(WarpSystem.getInstance().getCurrentServer().equalsIgnoreCase(targetServer)) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Player_Is_Already_On_Target_Server", new Example("ENG", "&cYou are already on the target server."), new Example("GER", "&cDu befindest dich bereits auf dem Ziel-Server.")));
+            return;
+        }
+
+        player.closeInventory();
+
+        Teleport teleport = new Teleport(player, globalWarp, globalWarpDisplayName);
+        this.teleports.add(teleport);
+
+        if(seconds == 0 || (WarpSystem.OP_CAN_SKIP_DELAY && player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay))) teleport.teleport();
+        else teleport.start();
+    }
+
     public void cancelTeleport(Player p) {
         if(!isTeleporting(p)) return;
 
@@ -181,16 +206,6 @@ public class TeleportManager {
         }
 
         return null;
-    }
-
-    public void bungeeTeleport(Player player, String warp) {
-        WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportPacket(player.getName(), warp, new Callback<Integer>() {
-            @Override
-            public void accept(Integer i) {
-                //TODO: Evaluate answer
-                System.out.println("Got the result: '" + i + "'");
-            }
-        }));
     }
 
     public boolean isCanMove() {

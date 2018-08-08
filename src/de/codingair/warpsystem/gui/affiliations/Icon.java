@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
 
-public class Icon implements Serializable {
+public abstract class Icon implements Serializable {
     static final long serialVersionUID = 1L;
 
     String name;
@@ -110,8 +110,9 @@ public class Icon implements Serializable {
 
     public void setItem(ItemStack item) {
         this.item = new SerializableItemStack(item);
-        ;
     }
+
+    public abstract IconType getType();
 
     public String getName() {
         return name;
