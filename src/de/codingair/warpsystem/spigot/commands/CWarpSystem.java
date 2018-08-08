@@ -8,10 +8,12 @@ import de.codingair.codingapi.server.fancymessages.FancyMessage;
 import de.codingair.codingapi.server.fancymessages.MessageTypes;
 import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.features.signs.WarpSign;
 import de.codingair.warpsystem.spigot.importfilter.ImportType;
 import de.codingair.warpsystem.spigot.importfilter.Result;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -54,15 +56,41 @@ public class CWarpSystem extends CommandBuilder {
             }
         }.setOnlyPlayers(true));
 
-        getBaseComponent().addChild(new CommandComponent("fileReload") {
+        getBaseComponent().addChild(new CommandComponent("reload") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 try {
-                    WarpSystem.getInstance().getFileManager().loadAll();
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Files_Reloaded", new Example("ENG", "&aAll files are reloaded."), new Example("GER", "&aAlle Dateien wurden neu geladen.")));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Plugin_Reloading", new Example("ENG", "&cThe plugin will be reloaded now..."), new Example("GER", "&cDas Plugin wird jetzt neu geladen...")));
+                    WarpSystem.getInstance().reload(true);
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Plugin_Reloaded", new Example("ENG", "&aThe plugin has been reloaded."), new Example("GER", "&aDas Plugin wurde neu geladen.")));
                 } catch(Exception ex) {
                     ex.printStackTrace();
                 }
+                return false;
+            }
+        });
+
+        getComponent("reload").addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, List<String> suggestions) {
+                suggestions.add("true");
+                suggestions.add("false");
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                if(argument == null || (!argument.equalsIgnoreCase("true") && !argument.equalsIgnoreCase("false"))) {
+                    sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " true, false");
+                    return false;
+                }
+
+                boolean save = argument.equalsIgnoreCase("true");
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Plugin_Reloading", new Example("ENG", "&cThe plugin will be reloaded now..."), new Example("GER", "&cDas Plugin wird jetzt neu geladen...")));
+                WarpSystem.getInstance().reload(save);
+                if(save)
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Plugin_Reloaded", new Example("ENG", "&aThe plugin has been reloaded."), new Example("GER", "&aDas Plugin wurde neu geladen.")));
+                else
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Plugin_Reloaded_Without_Saving", new Example("ENG", "&aThe plugin was reloaded without saving."), new Example("GER", "&aDas Plugin wurde ohne zu speichern neu geladen.")));
                 return false;
             }
         });

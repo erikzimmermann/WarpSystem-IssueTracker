@@ -39,7 +39,10 @@ public class IconManager {
 
             ActionIconHelper.load = true;
 
-            this.warps = new ArrayList<>();
+            this.warps.clear();
+            this.categories.clear();
+            this.globalWarps.clear();
+            this.decoIcons.clear();
 
             ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
             FileConfiguration config = file.getConfig();

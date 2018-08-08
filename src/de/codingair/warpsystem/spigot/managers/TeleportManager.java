@@ -72,6 +72,8 @@ public class TeleportManager {
         this.portals.forEach(Portal::destroy);
         this.portals.clear();
 
+        this.warpSigns.clear();
+
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
         
         WarpSystem.log("  > Loading Portals (from Teleporters).");
