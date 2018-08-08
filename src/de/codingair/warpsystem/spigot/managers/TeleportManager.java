@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.managers;
 
+import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.tools.Callback;
@@ -71,13 +72,15 @@ public class TeleportManager {
         this.portals.forEach(Portal::destroy);
         this.portals.clear();
 
+        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
+        
         WarpSystem.log("  > Loading Portals (from Teleporters).");
-        for(String s : WarpSystem.getInstance().getFileManager().getFile("Teleporters").getConfig().getStringList("Teleporters")) {
+        for(String s : file.getConfig().getStringList("Teleporters")) {
             this.portals.add(Portal.getByJSONString(s));
         }
 
         WarpSystem.log("  > Loading Portals (from Portals).");
-        for(String s : WarpSystem.getInstance().getFileManager().getFile("Teleporters").getConfig().getStringList("Portals")) {
+        for(String s : file.getConfig().getStringList("Portals")) {
             this.portals.add(Portal.getByJSONString(s));
         }
 
@@ -87,7 +90,7 @@ public class TeleportManager {
         }
 
         WarpSystem.log("  > Loading WarpSigns.");
-        for(String s : WarpSystem.getInstance().getFileManager().getFile("Teleporters").getConfig().getStringList("WarpSigns")) {
+        for(String s : file.getConfig().getStringList("WarpSigns")) {
             WarpSign warpSign = WarpSign.fromJSONString(s);
 
             if(warpSign.getLocation().getBlock().getType().equals(Material.SIGN_POST) || warpSign.getLocation().getBlock().getType().equals(Material.WALL_SIGN)) {
@@ -98,6 +101,10 @@ public class TeleportManager {
                 WarpSystem.log("    > Loaded WarpSign at location without sign! (Skip)");
             }
         }
+
+        //Remove old portals
+        file.getConfig().set("Teleporters", null);
+        file.saveConfig();
     }
 
     public void save(boolean saver) {
