@@ -9,6 +9,7 @@ import de.codingair.warpsystem.gui.affiliations.*;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.importfilter.CategoryData;
 import de.codingair.warpsystem.spigot.importfilter.WarpData;
+import jdk.nashorn.internal.objects.Global;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -21,6 +22,8 @@ public class IconManager {
 
     private List<Warp> warps = new ArrayList<>();
     private List<Category> categories = new ArrayList<>();
+    private List<GlobalWarp> globalWarps = new ArrayList<>();
+    private List<DecoIcon> decoIcons = new ArrayList<>();
 
     public void load(boolean sync) throws Exception {
         if(!sync) {
@@ -59,6 +62,23 @@ public class IconManager {
                     if(category.getName().contains("@")) category.setName(category.getName().replace("@", "(at)"));
                     this.categories.add(category);
                 }
+            }
+
+            List<String> gWarps = config.getStringList("GlobalWarps");
+            for(String s : gWarps) {
+                GlobalWarp warp = ActionIconHelper.fromString(s);
+
+                if(warp != null) {
+                    if(warp.getName().contains("@")) warp.setName(warp.getName().replace("@", "(at)"));
+                    this.globalWarps.add(warp);
+                }
+            }
+
+            List<String> decoIcons = config.getStringList("DecoIcons");
+            for(String s : decoIcons) {
+                DecoIcon deco = ActionIconHelper.fromString(s);
+
+                if(deco != null) this.decoIcons.add(deco);
             }
 
             for(Warp warp : this.warps) {
@@ -130,8 +150,20 @@ public class IconManager {
                 categories.add(ActionIconHelper.toString(category));
             }
 
+            List<String> gWarps = new ArrayList<>();
+            for(GlobalWarp warp : this.globalWarps) {
+                gWarps.add(ActionIconHelper.toString(warp));
+            }
+
+            List<String> decoIcons = new ArrayList<>();
+            for(DecoIcon deco : this.decoIcons) {
+                decoIcons.add(ActionIconHelper.toString(deco));
+            }
+
             config.set("Warps", warps);
             config.set("Categories", categories);
+            config.set("GlobalWarps", gWarps);
+            config.set("DecoIcons", decoIcons);
             file.saveConfig();
         }
     }
@@ -163,21 +195,29 @@ public class IconManager {
                             break;
                         }
                     }
+                }
 
-                    for(Warp warp : getWarps(null)) {
-                        if(warp.getSlot() == slot) {
-                            slot++;
-                            available = false;
-                            break;
-                        }
+                for(Warp warp : getWarps(category)) {
+                    if(warp.getSlot() == slot) {
+                        slot++;
+                        available = false;
+                        break;
                     }
-                } else {
-                    for(Warp warp : getWarps(category)) {
-                        if(warp.getSlot() == slot) {
-                            slot++;
-                            available = false;
-                            break;
-                        }
+                }
+
+                for(GlobalWarp warp : getGlobalWarps(category)) {
+                    if(warp.getSlot() == slot) {
+                        slot++;
+                        available = false;
+                        break;
+                    }
+                }
+
+                for(DecoIcon deco : getDecoIcons(category)) {
+                    if(deco.getSlot() == slot) {
+                        slot++;
+                        available = false;
+                        break;
                     }
                 }
             }
@@ -246,6 +286,12 @@ public class IconManager {
         return getCategory(name) != null;
     }
 
+    public boolean existsGlobalWarp(String name) {
+        if(name == null) return false;
+
+        return getGlobalWarp(name) != null;
+    }
+
     public Category getCategory(String name) {
         if(name == null) return null;
         name = Color.removeColor(name);
@@ -275,7 +321,35 @@ public class IconManager {
         return icons;
     }
 
-    public void remove(ActionIcon icon) {
+    public GlobalWarp getGlobalWarp(String name) {
+        for(GlobalWarp icon : this.globalWarps) {
+            if(icon.getName().equalsIgnoreCase(name)) return icon;
+        }
+
+        return null;
+    }
+
+    public List<GlobalWarp> getGlobalWarps(Category category) {
+        List<GlobalWarp> icons = new ArrayList<>();
+
+        for(GlobalWarp icon : this.globalWarps) {
+            if((icon.getCategory() == null && category == null) || ((icon.getCategory() != null && category != null) && icon.getCategory().getName().equals(category.getName()))) icons.add(icon);
+        }
+
+        return icons;
+    }
+
+    public List<DecoIcon> getDecoIcons(Category category) {
+        List<DecoIcon> icons = new ArrayList<>();
+
+        for(DecoIcon icon : this.decoIcons) {
+            if((icon.getCategory() == null && category == null) || ((icon.getCategory() != null && category != null) && icon.getCategory().getName().equals(category.getName()))) icons.add(icon);
+        }
+
+        return icons;
+    }
+
+    public void remove(Icon icon) {
         if(icon instanceof Category) {
             Category category = (Category) icon;
             List<Warp> warps = getWarps(category);
@@ -287,6 +361,18 @@ public class IconManager {
             this.categories.remove(icon);
         } else if(icon instanceof Warp) {
             this.warps.remove(icon);
+        } else if(icon instanceof GlobalWarp) {
+            this.globalWarps.remove(icon);
+        } else if(icon instanceof DecoIcon) {
+            this.decoIcons.remove(icon);
         }
+    }
+
+    public List<GlobalWarp> getGlobalWarps() {
+        return globalWarps;
+    }
+
+    public List<DecoIcon> getDecoIcons() {
+        return decoIcons;
     }
 }

@@ -1,8 +1,12 @@
 package de.codingair.warpsystem.gui.affiliations;
 
 import de.codingair.codingapi.bungeecord.BungeeCordHelper;
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.gui.guis.GWarps;
+import de.codingair.warpsystem.spigot.language.Example;
+import de.codingair.warpsystem.spigot.language.Lang;
+import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPacket;
 import de.codingair.warpsystem.transfer.serializeable.icons.SActionIcon;
 import de.codingair.warpsystem.transfer.serializeable.icons.SActionObject;
 import de.codingair.warpsystem.transfer.serializeable.icons.SIcon;
@@ -15,7 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class ActionIcon extends Icon implements Serializable {
+public abstract class ActionIcon extends Icon implements Serializable {
     static final long serialVersionUID = 1L;
 
     String permission;
@@ -92,13 +96,19 @@ public class ActionIcon extends Icon implements Serializable {
 
                 case RUN_COMMAND: {
                     String command = action.getValue();
+                    if(command.startsWith("/")) command = command.substring(1);
                     p.performCommand(command);
                     break;
                 }
 
                 case SWITCH_SERVER: {
+                    if(WarpSystem.getInstance().getTeleportManager().isTeleporting(p)) {
+                        p.sendMessage(Lang.getPrefix() + Lang.get("Player_Is_Already_Teleporting", new Example("ENG", "&cYou are already teleporting!"), new Example("GER", "&cDu wirst bereits teleportiert!")));
+                        return;
+                    }
+
                     String server = action.getValue();
-                    BungeeCordHelper.connect(p, server, WarpSystem.getInstance());
+                    WarpSystem.getInstance().getTeleportManager().teleport(p, server, getName());
                     break;
                 }
 

@@ -40,6 +40,7 @@ public class WarpSystem extends JavaPlugin {
     public static boolean maintenance = false;
 
     private boolean onBungeeCord = false;
+    private String server = null;
 
     private IconManager iconManager = new IconManager();
     private TeleportManager teleportManager = new TeleportManager();
@@ -144,32 +145,33 @@ public class WarpSystem extends JavaPlugin {
                         Bukkit.getScheduler().runTaskLater(WarpSystem.this, () -> {
                             if(Bukkit.getOnlinePlayers().isEmpty()) return;
 
-                            BungeeCordHelper.runningOnBungeeCord(WarpSystem.this, 20 * 10, new Callback<Boolean>() {
+                            BungeeCordHelper.getCurrentServer(WarpSystem.this, 20 * 10, new Callback<String>() {
                                 @Override
-                                public void accept(Boolean onBungeeCord) {
-                                    WarpSystem.this.onBungeeCord = onBungeeCord;
+                                public void accept(String server) {
+                                    WarpSystem.this.onBungeeCord = server != null;
 
                                     if(onBungeeCord) {
-                                        new CGlobalWarp().register(WarpSystem.this);
                                         log("WarpSystem - Found a BungeeCord > Init GlobalWarps");
+                                        WarpSystem.this.server = server;
+                                        new CGlobalWarp().register(WarpSystem.this);
+                                        globalWarpManager.loadAllGlobalWarps();
                                     } else {
                                         log("WarpSystem - Did not find a BungeeCord > Ignore GlobalWarps");
                                     }
-
-                                    unregister();
                                 }
                             });
                         }, 5);
                     }
                 }, this);
             } else {
-                BungeeCordHelper.runningOnBungeeCord(this, 20 * 10, new Callback<Boolean>() {
+                BungeeCordHelper.getCurrentServer(this, 20 * 10, new Callback<String>() {
                     @Override
-                    public void accept(Boolean onBungeeCord) {
-                        WarpSystem.this.onBungeeCord = onBungeeCord;
+                    public void accept(String server) {
+                        WarpSystem.this.onBungeeCord = server != null;
 
                         if(onBungeeCord) {
                             log("WarpSystem - Found a BungeeCord > Init GlobalWarps");
+                            WarpSystem.this.server = server;
                             new CGlobalWarp().register(WarpSystem.this);
                             globalWarpManager.loadAllGlobalWarps();
                         } else {
@@ -364,5 +366,9 @@ public class WarpSystem extends JavaPlugin {
 
     public GlobalWarpManager getGlobalWarpManager() {
         return globalWarpManager;
+    }
+
+    public String getCurrentServer() {
+        return server;
     }
 }

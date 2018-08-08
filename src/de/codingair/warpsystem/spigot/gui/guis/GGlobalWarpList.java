@@ -5,14 +5,13 @@ import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilGUI;
 import de.codingair.codingapi.player.gui.anvil.AnvilListener;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
+import de.codingair.codingapi.player.gui.inventory.gui.GUIListener;
 import de.codingair.codingapi.player.gui.inventory.gui.Skull;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.ItemBuilder;
 import de.codingair.warpsystem.spigot.WarpSystem;
-import de.codingair.warpsystem.spigot.features.portals.Portal;
-import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
 import org.bukkit.ChatColor;
@@ -20,12 +19,21 @@ import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GPortalList extends GUI {
+public class GGlobalWarpList extends GUI {
+    public interface Listener {
+        void onClickOnGlobalWarp(String warp, InventoryClickEvent e);
+        void onClose();
+        String getLeftclickDescription();
+    }
+
     private static int MAX_PAGE() {
         if(WarpSystem.getInstance().getTeleportManager().getPortals().isEmpty()) return 0;
 
@@ -33,81 +41,103 @@ public class GPortalList extends GUI {
     }
 
     private static String TITLE(int page) {
-        return ChatColor.RED + "Portals " + ChatColor.GRAY + "- " + ChatColor.RED + "List " + ChatColor.GRAY + "(" + page + "/" + (MAX_PAGE() + 1) + ")";
+        return ChatColor.RED + "GlobalWarps " + ChatColor.GRAY + "- " + ChatColor.RED + "List " + ChatColor.GRAY + "(" + page + "/" + (MAX_PAGE() + 1) + ")";
     }
 
-    private static void addPortal(GPortalList gui, Portal portal, String underline) {
+    private static void addGlobalWarps(GGlobalWarpList gui, String globalWarp, String underline) {
         ItemButtonOption option = new ItemButtonOption();
         option.setClickSound(Sound.CLICK.bukkitSound());
-        option.setCloseOnClick(true);
 
         int slot = gui.firstEmpty();
         if(slot < 0 || slot > 53) return;
 
         ItemStack icon;
-        ItemBuilder builder = new ItemBuilder(portal.getIcon());
+        ItemBuilder builder = new ItemBuilder(getIcon(globalWarp));
 
         if(underline != null) {
-            StringBuilder name = new StringBuilder(builder.getName().replace(ChatColor.UNDERLINE.toString(), ""));
-
-            //Prepare Underline (Upper-Case or Lower-Case?)
-            int start = name.toString().toLowerCase().indexOf(underline.toLowerCase());
-            StringBuilder prepared = new StringBuilder();
-            for(int i = start; i < start + underline.length(); i++) {
-                prepared.append(name.toString().charAt(i));
-            }
-
-            underline = prepared.toString();
-
-            //Underline String-Parts
-            String[] a = name.toString().split(underline);
-
-            name = new StringBuilder();
-            String color = "";
-
-            int i = 0;
-            for(String s : a) {
-                i++;
-
-                String nextColor = ChatColor.getLastColors(s);
-                color = nextColor.isEmpty() ? color : nextColor;
-
-                name.append(s);
-                if(a.length != i) name.append(ChatColor.UNDERLINE).append(underline).append(color);
-            }
-
-            builder.setName(name.toString());
+            builder.setName(de.codingair.codingapi.utils.ChatColor.GRAY + "\"" + de.codingair.codingapi.utils.ChatColor.RESET + de.codingair.codingapi.utils.ChatColor.highlight(globalWarp, underline, "§n") + de.codingair.codingapi.utils.ChatColor.GRAY + "\" ("+Lang.get("Target_Server", new Example("ENG", "Target-Server"), new Example("GER", "Ziel-Server"))+": \""+de.codingair.codingapi.utils.ChatColor.highlight(WarpSystem.getInstance().getGlobalWarpManager().getGlobalWarps().get(globalWarp), underline, "§n", "§7")+"\")");
         }
 
-        builder.setLore("", ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("Portal_List_Leftclick_To_Edit", new Example("ENG", ChatColor.GRAY + "Leftclick: Edit"), new Example("GER", ChatColor.GRAY + "Linksklick: Editieren")));
+        if(gui.getClickListener() != null) builder.setLore("", gui.getClickListener().getLeftclickDescription());
+
         icon = builder.getItem();
 
         gui.addButton(new ItemButton(slot, icon) {
             @Override
             public void onClick(InventoryClickEvent e) {
-                e.getWhoClicked().teleport(portal.getStart());
-                Sound.ENDERMAN_TELEPORT.playSound((Player) e.getWhoClicked());
-                new PortalEditor((Player) e.getWhoClicked(), portal).start();
+                gui.button = true;
+                if(gui.getClickListener() != null) gui.getClickListener().onClickOnGlobalWarp(globalWarp, e);
+                gui.button = false;
             }
         }.setOption(option));
     }
 
+    private Listener listener;
     private String searching;
     private int page = 0;
+    private boolean button = false;
 
-    public GPortalList(Player p) {
-        this(p, null);
+    public GGlobalWarpList(Player p) {
+        super(p, TITLE(1), 54, WarpSystem.getInstance());
     }
 
-    public GPortalList(Player p, String search) {
+    public GGlobalWarpList(Player p, String search) {
         super(p, TITLE(1), 54, WarpSystem.getInstance(), false);
 
         this.searching = search;
         initialize(p);
     }
 
+    public GGlobalWarpList(Player p, Listener listener) {
+        super(p, TITLE(1), 54, WarpSystem.getInstance(), false);
+        this.listener = listener;
+        initialize(p);
+    }
+
+    public Listener getClickListener() {
+        return listener;
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
+
     @Override
     public void initialize(Player p) {
+        addListener(new GUIListener() {
+            @Override
+            public void onInvClickEvent(InventoryClickEvent e) {
+
+            }
+
+            @Override
+            public void onInvOpenEvent(InventoryOpenEvent e) {
+
+            }
+
+            @Override
+            public void onInvCloseEvent(InventoryCloseEvent e) {
+                if(!button) {
+                    getClickListener().onClose();
+                }
+            }
+
+            @Override
+            public void onInvDragEvent(InventoryDragEvent e) {
+
+            }
+
+            @Override
+            public void onMoveToTopInventory(ItemStack item, int oldRawSlot, List<Integer> newRawSlots) {
+
+            }
+
+            @Override
+            public void onCollectToCursor(ItemStack item, List<Integer> oldRawSlots, int newRawSlot) {
+
+            }
+        });
+
         ItemStack ph = new ItemBuilder(Material.STAINED_GLASS_PANE).setHideName(true).setColor(DyeColor.BLACK).getItem();
         ItemBuilder search = new ItemBuilder(Material.COMPASS).setName(ChatColor.RED.toString() + (searching == null ? "" : ChatColor.UNDERLINE) + Lang.get("Search", new Example("ENG", "Search..."), new Example("GER", "Suchen...")));
         if(searching != null) {
@@ -174,22 +204,27 @@ public class GPortalList extends GUI {
             }
         }.setOption(option).setCloseOnClick(false));
 
-        List<Portal> portalList;
+        List<String> globalWarps;
         if(searching == null) {
-            portalList = new ArrayList<>(WarpSystem.getInstance().getTeleportManager().getPortals());
+            globalWarps = new ArrayList<>(WarpSystem.getInstance().getGlobalWarpManager().getGlobalWarps().keySet());
         } else {
-            portalList = new ArrayList<>();
+            globalWarps = new ArrayList<>();
 
-            for(Portal portal : WarpSystem.getInstance().getTeleportManager().getPortals()) {
-                if(ChatColor.stripColor(portal.getStartName()).toLowerCase().contains(searching.toLowerCase()) || ChatColor.stripColor(portal.getDestinationName()).toLowerCase().contains(searching.toLowerCase()))
-                    portalList.add(portal);
-            }
+            WarpSystem.getInstance().getGlobalWarpManager().getGlobalWarps().forEach((warp, server) -> {
+                if(ChatColor.stripColor(warp).toLowerCase().contains(searching.toLowerCase()) || server.toLowerCase().contains(searching.toLowerCase())){
+                    globalWarps.add(warp);
+                }
+            });
         }
 
         for(int i = page * 44; i < 44 + page * 44; i++) {
-            if(portalList.size() <= i) break;
+            if(globalWarps.size() <= i) break;
 
-            addPortal(this, portalList.get(i), searching);
+            addGlobalWarps(this, globalWarps.get(i), searching);
         }
+    }
+
+    public static ItemStack getIcon(String name) {
+        return new ItemBuilder(Material.ENDER_CHEST).setName(de.codingair.codingapi.utils.ChatColor.GRAY + "\"" + de.codingair.codingapi.utils.ChatColor.RESET + name + de.codingair.codingapi.utils.ChatColor.GRAY + "\" ("+Lang.get("Target_Server", new Example("ENG", "Target-Server"), new Example("GER", "Ziel-Server"))+": \""+WarpSystem.getInstance().getGlobalWarpManager().getGlobalWarps().get(name)+"\")").getItem();
     }
 }

@@ -49,7 +49,7 @@ public class BungeePacketHandler implements PacketHandler {
                 if(WarpSystem.getInstance().getGlobalWarpManager().add(((PublishGlobalWarpPacket) packet).warp)) {
                     //Added
                     answerBooleanPacket.setValue(true);
-                    WarpSystem.getInstance().getGlobalWarpManager().synchronize(((PublishGlobalWarpPacket) packet).warp.getName());
+                    WarpSystem.getInstance().getGlobalWarpManager().synchronize(((PublishGlobalWarpPacket) packet).warp);
                 } else {
                     //Name already exists
                     answerBooleanPacket.setValue(false);
@@ -72,20 +72,23 @@ public class BungeePacketHandler implements PacketHandler {
                     answerBooleanPacket.setValue(true);
                     this.dataHandler.send(answerBooleanPacket, server);
 
-                    WarpSystem.getInstance().getGlobalWarpManager().synchronize(warp.getName());
+                    WarpSystem.getInstance().getGlobalWarpManager().synchronize(warp);
                 }
                 break;
 
             case PrepareTeleportPacket:
                 String player = ((PrepareTeleportPacket) packet).getPlayer();
                 String teleport = ((PrepareTeleportPacket) packet).getTeleportName();
+                String teleportDisplayName = ((PrepareTeleportPacket) packet).getDisplayName();
                 warp = WarpSystem.getInstance().getGlobalWarpManager().get(teleport);
                 ServerInfo otherServer = BungeeCord.getInstance().getServerInfo(warp.getServer());
+                ProxiedPlayer p = BungeeCord.getInstance().getPlayer(player);
 
                 IntegerPacket answerIntegerPacket = new IntegerPacket();
 
                 if(warp == null) answerIntegerPacket.setValue(1);
                 else if(otherServer == null || !WarpSystem.getInstance().getServerManager().isOnline(otherServer)) answerIntegerPacket.setValue(2);
+                else if(p.getServer().getInfo().equals(otherServer)) answerIntegerPacket.setValue(3);
                 else answerIntegerPacket.setValue(0);
 
                 ((PrepareTeleportPacket) packet).applyAsAnswer(answerIntegerPacket);
@@ -93,14 +96,12 @@ public class BungeePacketHandler implements PacketHandler {
 
                 if(answerIntegerPacket.getValue() != 0) return;
 
-                ProxiedPlayer p = BungeeCord.getInstance().getPlayer(player);
                 p.connect(otherServer, (connected, throwable) -> {
-                    if(connected) dataHandler.send(new TeleportPacket(player, warp), otherServer);
+                    if(connected) dataHandler.send(new TeleportPacket(player, warp, teleportDisplayName), otherServer);
                 });
                 break;
 
             case RequestGlobalWarpNamesPacket:
-                System.out.println("Got the request packet, goingt to send data...");
                 WarpSystem.getInstance().getGlobalWarpManager().sendData(server);
                 break;
         }

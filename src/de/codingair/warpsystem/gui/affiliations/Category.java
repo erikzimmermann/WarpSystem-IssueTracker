@@ -36,4 +36,9 @@ public class Category extends ActionIcon implements Serializable {
     public SIcon getSerializable() {
         return new SCategory(super.getSerializable());
     }
+
+    @Override
+    public IconType getType() {
+        return IconType.CATEGORY;
+    }
 }

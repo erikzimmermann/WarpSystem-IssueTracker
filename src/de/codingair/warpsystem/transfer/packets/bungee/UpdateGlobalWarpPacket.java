@@ -9,25 +9,29 @@ import java.io.IOException;
 public class UpdateGlobalWarpPacket implements Packet {
     private int action;
     private String name;
+    private String server;
 
     public UpdateGlobalWarpPacket() {
     }
 
-    public UpdateGlobalWarpPacket(int action, String name) {
+    public UpdateGlobalWarpPacket(int action, String name, String server) {
         this.action = action;
         this.name = name;
+        this.server = server;
     }
 
     @Override
     public void write(DataOutputStream out) throws IOException {
         out.writeInt(action);
         out.writeUTF(name);
+        out.writeUTF(server);
     }
 
     @Override
     public void read(DataInputStream in) throws IOException {
         action = in.readInt();
         name = in.readUTF();
+        server = in.readUTF();
     }
 
     public Action getAction() {
@@ -36,6 +40,10 @@ public class UpdateGlobalWarpPacket implements Packet {
 
     public String getName() {
         return name;
+    }
+
+    public String getServer() {
+        return server;
     }
 
     public enum Action {

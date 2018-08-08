@@ -11,9 +11,9 @@ import de.codingair.codingapi.server.Environment;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.ItemBuilder;
 import de.codingair.warpsystem.gui.affiliations.*;
+import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
-import de.codingair.warpsystem.spigot.WarpSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -36,11 +36,18 @@ public class GEditIcon extends GUI {
     private Category category;
 
     private boolean isCategory;
-    private ActionIcon editing;
+    private Icon editing;
 
     private boolean quit = true;
 
-    public GEditIcon(Player p, Category category, ItemStack item, String name, int slot, boolean isCategory) {
+    private IconType type;
+    private String extra;
+
+    public GEditIcon(Player p, Category category, ItemStack item, String name, int slot, IconType type) {
+        this(p, category, item, name, slot, type, null);
+    }
+
+    public GEditIcon(Player p, Category category, ItemStack item, String name, int slot, IconType type, String extra) {
         super(p, "§c§l§n" + Lang.get("Item_Editing", new Example("ENG", "Item-Editing"), new Example("GER", "Item-Bearbeitung")), 45, WarpSystem.getInstance(), false);
 
         this.item = item;
@@ -48,8 +55,9 @@ public class GEditIcon extends GUI {
 
         this.slot = slot;
         this.category = category;
-
-        this.isCategory = isCategory;
+        this.type = type;
+        this.isCategory = this.type.equals(IconType.CATEGORY);
+        this.extra = extra;
 
         addListener(new InterfaceListener() {
             @Override
@@ -76,7 +84,46 @@ public class GEditIcon extends GUI {
         initialize(p);
     }
 
-    public GEditIcon(Player p, Category category, ActionIcon editing) {
+    @Deprecated
+    public GEditIcon(Player p, Category category, ItemStack item, String name, int slot, boolean isCategory) {
+        super(p, "§c§l§n" + Lang.get("Item_Editing", new Example("ENG", "Item-Editing"), new Example("GER", "Item-Bearbeitung")), 45, WarpSystem.getInstance(), false);
+
+        this.item = item;
+        this.name = name;
+
+        this.slot = slot;
+        this.category = category;
+
+        this.isCategory = isCategory;
+        this.extra = null;
+        this.type = isCategory ? IconType.CATEGORY : IconType.WARP;
+
+        addListener(new InterfaceListener() {
+            @Override
+            public void onInvClickEvent(InventoryClickEvent e) {
+            }
+
+            @Override
+            public void onInvOpenEvent(InventoryOpenEvent e) {
+            }
+
+            @Override
+            public void onInvCloseEvent(InventoryCloseEvent e) {
+                if(!quit) return;
+
+                Sound.ITEM_BREAK.playSound(p);
+                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> new GWarps(p, category, true).open(), 1L);
+            }
+
+            @Override
+            public void onInvDragEvent(InventoryDragEvent e) {
+            }
+        });
+
+        initialize(p);
+    }
+
+    public GEditIcon(Player p, Category category, Icon editing) {
         super(p, "§c§l§n" + Lang.get("Item_Editing", new Example("ENG", "Item-Editing"), new Example("GER", "Item-Bearbeitung")), 45, WarpSystem.getInstance(), false);
         this.editing = editing;
 
@@ -85,20 +132,59 @@ public class GEditIcon extends GUI {
 
         this.slot = editing.getSlot();
         this.category = category;
-        this.command = editing.getAction(Action.RUN_COMMAND) == null ? null : editing.getAction(Action.RUN_COMMAND).getValue();
-        this.permission = editing.getPermission();
+
+        if(editing instanceof ActionIcon) {
+            this.command = ((ActionIcon) editing).getAction(Action.RUN_COMMAND) == null ? null : ((ActionIcon) editing).getAction(Action.RUN_COMMAND).getValue();
+            this.permission = ((ActionIcon) editing).getPermission();
+        }
 
         this.isCategory = editing instanceof Category;
+        this.type = editing.getType();
+
+        addListener(new InterfaceListener() {
+            @Override
+            public void onInvClickEvent(InventoryClickEvent e) {
+            }
+
+            @Override
+            public void onInvOpenEvent(InventoryOpenEvent e) {
+            }
+
+            @Override
+            public void onInvCloseEvent(InventoryCloseEvent e) {
+                if(!quit) return;
+
+                Sound.ITEM_BREAK.playSound(p);
+                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> new GWarps(p, category, true).open(), 1L);
+            }
+
+            @Override
+            public void onInvDragEvent(InventoryDragEvent e) {
+            }
+        });
 
         initialize(p);
     }
 
     @Override
     public void initialize(Player p) {
-        this.item = new ItemBuilder(this.item).setName("§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).setHideStandardLore(true)
-                .addLore("§8------------", "", Lang.get("Change_Name_Leftclick", new Example("ENG", "&3Leftclick: &bChange name"), new Example("GER", "&3Linksklick: &bNamen ändern")),
-                        Lang.get("Change_Name_Rightclick", new Example("ENG", "&3Rightclick: &bChange item"), new Example("GER", "&3Rechtsklick: &bItem ändern")))
-                .getItem();
+        ItemBuilder builder = new ItemBuilder(item).removeLore().setName(name == null ? "§8------------" : "§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).setHideName(name == null).setHideStandardLore(true)
+                        .addLore("", Lang.get("Change_Name_Rightclick", new Example("ENG", "&3Rightclick: &bChange item"), new Example("GER", "&3Rechtsklick: &bItem ändern")));
+
+        builder.setHideName(false);
+
+        if(name != null) builder.addLore(0, "§8------------");
+
+        switch(this.type) {
+            case CATEGORY:
+            case WARP:
+            case GLOBAL_WARP:
+                builder.addLore(name == null ? 1 : 2, Lang.get("Change_Name_Leftclick", new Example("ENG", "&3Leftclick: &bChange name"), new Example("GER", "&3Linksklick: &bNamen ändern")));
+                break;
+        }
+
+        this.item = builder.getItem();
+
 
         ItemStack leaves = new ItemBuilder(Material.LEAVES).setName("§0").getItem();
         ItemStack glass = new ItemBuilder(Material.STAINED_GLASS_PANE).setColor(DyeColor.BLACK).setName("§0").getItem();
@@ -171,6 +257,13 @@ public class GEditIcon extends GUI {
             @Override
             public void onClick(InventoryClickEvent e) {
                 if(e.getClick().isLeftClick()) {
+                    switch(type) {
+                        case DECORATION:
+                            return;
+                    }
+
+                    Sound.CLICK.playSound(getPlayer());
+
                     quit = false;
                     p.closeInventory();
 
@@ -214,26 +307,39 @@ public class GEditIcon extends GUI {
                                     input = builder.toString();
                                 }
 
-                                if(!isCategory) {
-                                    if(WarpSystem.getInstance().getIconManager().existsWarp(input, category)) {
-                                        if(editing == null || !editing.getNameWithoutColor().equals(Color.removeColor(input))) {
-                                            p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
-                                            return;
+                                switch(type) {
+                                    case WARP:
+                                        if(WarpSystem.getInstance().getIconManager().existsWarp(input, category)) {
+                                            if(editing == null || !editing.getNameWithoutColor().equals(Color.removeColor(input))) {
+                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                                return;
+                                            }
                                         }
-                                    }
-                                } else {
-                                    if(WarpSystem.getInstance().getIconManager().existsCategory(input)) {
-                                        if(editing == null || !editing.getNameWithoutColor().equals(Color.removeColor(input))) {
-                                            p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
-                                            return;
+                                        break;
+
+                                    case CATEGORY:
+                                        if(WarpSystem.getInstance().getIconManager().existsCategory(input)) {
+                                            if(editing == null || !editing.getNameWithoutColor().equals(Color.removeColor(input))) {
+                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                                return;
+                                            }
                                         }
-                                    }
+                                        break;
+
+                                    case GLOBAL_WARP:
+                                        if(WarpSystem.getInstance().getIconManager().existsGlobalWarp(input)) {
+                                            if(editing == null || !editing.getNameWithoutColor().equals(Color.removeColor(input))) {
+                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                                return;
+                                            }
+                                        }
+                                        break;
                                 }
 
                                 input = input.replace("§", "&");
 
                                 e.setClose(true);
-                                playSound(p);
+                                Sound.CLICK.playSound(getPlayer());
                             }
                         }
 
@@ -241,7 +347,7 @@ public class GEditIcon extends GUI {
                         public void onClose(AnvilCloseEvent e) {
                             if(e.isSubmitted()) {
                                 name = input;
-                                item = new ItemBuilder(item).setName("§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).getItem();
+                                item = new ItemBuilder(item).setName(name == null ? null : "§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).setHideName(name == null).getItem();
                                 setItem(item);
                             } else Sound.ITEM_BREAK.playSound(p);
 
@@ -249,8 +355,9 @@ public class GEditIcon extends GUI {
                             e.setPost(GEditIcon.this::open);
                             quit = true;
                         }
-                    }, new ItemBuilder(item).setHideStandardLore(true).removeEnchantments().setName(name).getItem());
+                    }, new ItemBuilder(item).setHideStandardLore(true).removeEnchantments().setName(name).setHideName(name == null).getItem());
                 } else if(e.getClick().isRightClick()) {
+                    Sound.CLICK.playSound(getPlayer());
                     ItemStack item = p.getItemInHand();
 
                     if(item == null || item.getType().equals(Material.AIR)) {
@@ -260,12 +367,13 @@ public class GEditIcon extends GUI {
 
                     GEditIcon.this.item.setType(item.getType());
                     GEditIcon.this.item.setData(item.getData());
+                    GEditIcon.this.item.setAmount(item.getAmount());
 
                     setItem(GEditIcon.this.item);
                     p.updateInventory();
                 }
             }
-        }.setOption(option);
+        }.setOption(option).setClickSound(null);
 
         addButton(iconButton);
 
@@ -285,32 +393,57 @@ public class GEditIcon extends GUI {
                 quit = false;
 
                 ItemBuilder builder = new ItemBuilder(item);
-                builder.removeLore(builder.getLore().size() - 4, builder.getLore().size());
+                builder.removeLore((builder.getLore().size() - 4 < 0 ? 0 : builder.getLore().size() - 4), builder.getLore().size());
                 item = builder.getItem();
 
                 if(editing != null) {
                     editing.setName(name);
                     editing.setItem(item);
-                    editing.setPermission(permission);
-                    editing.removeAction(Action.RUN_COMMAND);
 
-                    if(GEditIcon.this.command != null) editing.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
+                    if(editing instanceof ActionIcon) {
+                        ((ActionIcon) editing).setPermission(permission);
+                        ((ActionIcon) editing).removeAction(Action.RUN_COMMAND);
+                        if(GEditIcon.this.command != null) ((ActionIcon) editing).addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
+                    }
 
                     p.sendMessage(Lang.getPrefix() + Lang.get("Success_Configured", new Example("ENG", "&aYou have configured the icon successfully."), new Example("GER", "&aDu hast das Symbol erfolgreich bearbeitet")));
                 } else {
-                    if(isCategory) {
-                        Category category = new Category(name, item, slot, permission);
+                    switch(type) {
+                        case WARP:
+                            Warp warp = new Warp(name, item, slot, permission, category, new ActionObject(Action.TELEPORT_TO_WARP, new SerializableLocation(p.getLocation())));
+                            if(GEditIcon.this.command != null) warp.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
 
-                        if(GEditIcon.this.command != null) category.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
+                            WarpSystem.getInstance().getIconManager().getWarps().add(warp);
 
-                        WarpSystem.getInstance().getIconManager().getCategories().add(category);
+                            p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Warp", new Example("ENG", "&aYou have created a &bWarp &asuccessfully."), new Example("GER", "&aDu hast erfolgreich ein &bWarp &aerstellt.")));
+                            break;
 
-                        p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Category", new Example("ENG", "&aYou have created a &bcategory &asuccessfully."), new Example("GER", "&aDu hast erfolgreich eine &bKategorie &aerstellt.")));
-                    } else {
-                        Warp warp = new Warp(name, item, slot, permission, category, new ActionObject(Action.TELEPORT_TO_WARP, new SerializableLocation(p.getLocation())));
-                        WarpSystem.getInstance().getIconManager().getWarps().add(warp);
+                        case CATEGORY:
+                            Category category = new Category(name, item, slot, permission);
+                            if(GEditIcon.this.command != null) category.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
 
-                        p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Warp", new Example("ENG", "&aYou have created a &bwarp &asuccessfully."), new Example("GER", "&aDu hast erfolgreich ein &bWarp &aerstellt.")));
+                            WarpSystem.getInstance().getIconManager().getCategories().add(category);
+
+                            p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Category", new Example("ENG", "&aYou have created a &bCategory &asuccessfully."), new Example("GER", "&aDu hast erfolgreich eine &bKategorie &aerstellt.")));
+                            break;
+
+                        case GLOBAL_WARP:
+                            GlobalWarp gWarp = new GlobalWarp(name, item, slot, permission, GEditIcon.this.category, new ActionObject(Action.SWITCH_SERVER, extra));
+                            if(GEditIcon.this.command != null) gWarp.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
+
+                            WarpSystem.getInstance().getIconManager().getGlobalWarps().add(gWarp);
+
+                            p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_GlobalWarp", new Example("ENG", "&aYou have created a &bGlobalWarp &asuccessfully."), new Example("GER", "&aDu hast erfolgreich ein &bGlobalWarp &aerstellt.")));
+                            break;
+
+                        case DECORATION:
+                            DecoIcon deco = new DecoIcon(name, item, slot, permission, GEditIcon.this.category);
+                            if(GEditIcon.this.command != null) deco.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
+                            WarpSystem.getInstance().getIconManager().getDecoIcons().add(deco);
+
+                            p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Warp", new Example("ENG", "&aYou have created a &bDecoIcon &asuccessfully."), new Example("GER", "&aDu hast erfolgreich ein &bDekoIcon &aerstellt.")));
+                            break;
+
                     }
 
                     Environment.playRandomFireworkEffect(p.getLocation());
@@ -372,8 +505,20 @@ public class GEditIcon extends GUI {
                             e.setClose(true);
                             playSound(p);
 
+                            boolean hasExtraLoreSlot = false;
+
+                            switch(type) {
+                                case DECORATION: hasExtraLoreSlot = true;
+                                break;
+                            }
+
                             ItemBuilder builder = new ItemBuilder(item).setHideStandardLore(true).setHideEnchantments(true);
-                            builder.addLore(builder.getLore().size() - 4, ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', input));
+                            if(builder.getLore().size() == 3 && hasExtraLoreSlot) {
+                                name = ChatColor.translateAlternateColorCodes('&', input);
+                                builder.setName(name);
+                                builder.setHideName(false);
+                                builder.addLore(0, "§8------------");
+                            } else builder.addLore(builder.getLore().size() - 4, ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', input));
 
                             item = builder.getItem();
                             iconButton.setItem(item);
@@ -389,10 +534,28 @@ public class GEditIcon extends GUI {
                         }
                     }, new ItemBuilder(Material.PAPER).setName(Lang.get("Line", new Example("ENG", "Line"), new Example("GER", "Linie")) + "...").getItem());
                 } else {
-                    item = new ItemBuilder(item).removeLore().setName("§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).setHideStandardLore(true)
-                            .addLore("§8------------", "", Lang.get("Change_Name_Leftclick", new Example("ENG", "&3Leftclick: &bChange name"), new Example("GER", "&3Linksklick: &bNamen ändern")),
-                                    Lang.get("Change_Name_Rightclick", new Example("ENG", "&3Rightclick: &bChange item"), new Example("GER", "&3Rechtsklick: &bItem ändern")))
-                            .getItem();
+                    switch(type) {
+                        case DECORATION:
+                            name = null;
+                            break;
+                    }
+
+                    ItemBuilder builder = new ItemBuilder(item).removeLore().setName(name == null ? "§8------------" : "§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).setHideName(name == null).setHideStandardLore(true)
+                            .addLore("", Lang.get("Change_Name_Leftclick", new Example("ENG", "&3Leftclick: &bChange name"), new Example("GER", "&3Linksklick: &bNamen ändern")),
+                                    Lang.get("Change_Name_Rightclick", new Example("ENG", "&3Rightclick: &bChange item"), new Example("GER", "&3Rechtsklick: &bItem ändern")));
+
+                    builder.setHideName(false);
+
+                    switch(type) {
+                        case WARP:
+                        case CATEGORY:
+                        case GLOBAL_WARP:
+                            builder.addLore(0, "§8------------");
+                            break;
+                    }
+
+                    item = builder.getItem();
+
                     iconButton.setItem(item);
                     p.updateInventory();
                 }
@@ -432,6 +595,8 @@ public class GEditIcon extends GUI {
                                 p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Command", new Example("ENG", "&cPlease enter a command."), new Example("GER", "&cBitte gib einen Befehl ein.")));
                                 return;
                             }
+
+                            if(!input.startsWith("/")) input = "/" + input;
 
                             ItemBuilder commandBuilder = new ItemBuilder(Material.REDSTONE).setName("§6§n" + Lang.get("Command", new Example("ENG", "Command"), new Example("GER", "Befehl")));
                             commandBuilder.setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + input);
@@ -514,6 +679,52 @@ public class GEditIcon extends GUI {
                 }
             }
         }.setOption(option).setOnlyLeftClick(true));
+
+        //update globalwarp
+        if(type.equals(IconType.GLOBAL_WARP)) {
+            ItemStack globalWarpIcon = new ItemBuilder(Material.ENDER_CHEST).setName("§6§n" + Lang.get("GlobalWarp", new Example("ENG", "GlobalWarp"), new Example("GER", "GlobalWarp")))
+                    .setLore(Lang.get("GlobalWarp_Current_Warp", new Example("ENG", "&7Current: &b%GlobalWarp%"), new Example("GER", "&7Aktuell: &b%GlobalWarp%")).replace("%GlobalWarp%", editing == null ? extra : ((GlobalWarp) editing).getAction(Action.SWITCH_SERVER).getValue()), "",
+                            "§8" + Lang.get("Leftclick_Change", new Example("ENG", "&3Leftclick: &aChange"), new Example("GER", "&3Linksklick: &aÄndern")))
+                    .getItem();
+
+            addButton(new ItemButton(4, 4, globalWarpIcon) {
+                @Override
+                public void onClick(InventoryClickEvent e) {
+                    quit = false;
+                    p.closeInventory();
+                    new GGlobalWarpList(getPlayer(), new GGlobalWarpList.Listener() {
+                        @Override
+                        public void onClickOnGlobalWarp(String warp, InventoryClickEvent e) {
+                            if(editing != null) {
+                                ((GlobalWarp) editing).removeAction(Action.SWITCH_SERVER);
+                                ((GlobalWarp) editing).addAction(new ActionObject(Action.SWITCH_SERVER, warp));
+                            } else extra = warp;
+
+                            quit = false;
+                            p.closeInventory();
+                            GEditIcon.this.reinitialize();
+                            GEditIcon.this.open();
+                            quit = true;
+                        }
+
+                        @Override
+                        public void onClose() {
+                            Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
+                                GEditIcon.this.reinitialize();
+                                GEditIcon.this.open();
+                                Sound.ITEM_BREAK.playSound(p);
+                                quit = true;
+                            }, 1);
+                        }
+
+                        @Override
+                        public String getLeftclickDescription() {
+                            return ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("GlobalWarp_Leftclick_To_Choose", new Example("ENG", "&3Leftclick: &bChoose"), new Example("GER", ChatColor.GRAY + "&3Linksklick: &bWählen"));
+                        }
+                    }).open();
+                }
+            }.setOption(option).setOnlyLeftClick(true));
+        }
     }
 
     public ItemStack getItem() {
@@ -541,7 +752,7 @@ public class GEditIcon extends GUI {
         return permission;
     }
 
-    public ActionIcon getEditing() {
+    public Icon getEditing() {
         return editing;
     }
 
