@@ -84,6 +84,26 @@ public class TeleportManager {
             this.portals.add(Portal.getByJSONString(s));
         }
 
+        //Check duplicates
+        List<Portal> duplicates = new ArrayList<>();
+        for(Portal p0 : this.portals) {
+            if(duplicates.contains(p0)) continue;
+
+            for(Portal p1 : this.portals) {
+                if(duplicates.contains(p1) || p0.equals(p1)) continue;
+
+                if(p0.getStart().equals(p1.getStart()) && p0.getDestination().equals(p1.getDestination())) {
+                    if(!duplicates.contains(p1)) duplicates.add(p1);
+                }
+            }
+        }
+
+        if(!duplicates.isEmpty()) {
+            WarpSystem.log("    > " + duplicates.size() + " duplicated Portal(s) - Removing...");
+            this.portals.removeAll(duplicates);
+            duplicates.clear();
+        }
+
         WarpSystem.log("    > Verify that portals are enabled");
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Portals", true)) {
             this.portals.forEach(p -> p.setRunning(true));
