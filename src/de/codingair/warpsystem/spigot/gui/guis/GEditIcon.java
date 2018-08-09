@@ -170,11 +170,14 @@ public class GEditIcon extends GUI {
         initialize(p);
     }
 
-    @Override
-    public void initialize(Player p) {
+    private void setupMainIcon() {
         ItemBuilder builder = new ItemBuilder(item);
-        List<String> loreList = new ArrayList<>(builder.getLore());
+        if(builder.getLore() != null) System.out.println(builder.getLore().size());
+        List<String> loreList = new ArrayList<>();
+        if(builder.getLore() != null) loreList.addAll(builder.getLore());
+
         builder.removeLore();
+        builder.setName(null);
 
         if(name == null && !loreList.isEmpty()) builder.setName(loreList.remove(0));
         else if(name != null) builder.setName("§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name));
@@ -199,6 +202,11 @@ public class GEditIcon extends GUI {
         builder.setHideName(false);
 
         this.item = builder.getItem();
+    }
+
+    @Override
+    public void initialize(Player p) {
+        setupMainIcon();
 
         ItemStack leaves = new ItemBuilder(MultiItemType.LEAVES).setName("§0").getItem();
         ItemStack glass = new ItemBuilder(MultiItemType.STAINED_GLASS_PANE).setColor(DyeColor.BLACK).setName("§0").getItem();
@@ -526,21 +534,17 @@ public class GEditIcon extends GUI {
                             e.setClose(true);
                             playSound(p);
 
-                            boolean hasExtraLoreSlot = false;
-
-                            switch(type) {
-                                case DECORATION:
-                                    hasExtraLoreSlot = true;
-                                    break;
-                            }
-
-                            ItemBuilder builder = new ItemBuilder(item).setHideStandardLore(true).setHideEnchantments(true);
-                            if(builder.getLore().size() == 3 && hasExtraLoreSlot) {
+                            ItemBuilder builder = new ItemBuilder(item);
+                            if(builder.getName().equals("§8------------")) {
                                 name = ChatColor.translateAlternateColorCodes('&', input);
                                 builder.setName(name);
                                 builder.setHideName(false);
                                 builder.addLore(0, "§8------------");
-                            } else builder.addLore(builder.getLore().size() - 4, ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', input));
+                            } else {
+                                int index = 0;
+                                while(!builder.getLore().get(index).equals("§8------------")) index++;
+                                builder.addLore(index, ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', input));
+                            }
 
                             item = builder.getItem();
                             iconButton.setItem(item);
@@ -562,21 +566,9 @@ public class GEditIcon extends GUI {
                             break;
                     }
 
-                    ItemBuilder builder = new ItemBuilder(item).removeLore().setName(name == null ? "§8------------" : "§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).setHideName(name == null).setHideStandardLore(true)
-                            .addLore("", Lang.get("Change_Name_Leftclick", new Example("ENG", "&3Leftclick: &bChange name"), new Example("GER", "&3Linksklick: &bNamen ändern")),
-                                    Lang.get("Change_Name_Rightclick", new Example("ENG", "&3Rightclick: &bChange item"), new Example("GER", "&3Rechtsklick: &bItem ändern")));
+                    item = new ItemBuilder(item).removeLore().getItem();
 
-                    builder.setHideName(false);
-
-                    switch(type) {
-                        case WARP:
-                        case CATEGORY:
-                        case GLOBAL_WARP:
-                            builder.addLore(0, "§8------------");
-                            break;
-                    }
-
-                    item = builder.getItem();
+                    setupMainIcon();
 
                     iconButton.setItem(item);
                     p.updateInventory();
