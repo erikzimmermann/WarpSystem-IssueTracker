@@ -9,6 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="CodingAPI" />
     <orderEntry type="library" name="BungeeCord" level="project" />
-    <orderEntry type="library" name="spigot-1.13" level="project" />
+    <orderEntry type="library" name="Spigot_All" level="project" />
   </component>
 </module>
