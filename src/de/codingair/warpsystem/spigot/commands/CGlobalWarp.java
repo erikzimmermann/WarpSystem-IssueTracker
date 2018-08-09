@@ -16,7 +16,7 @@ import java.util.List;
 
 public class CGlobalWarp extends CommandBuilder {
     public CGlobalWarp() {
-        super("GlobalWarp", new BaseComponent() {
+        super("GlobalWarp", new BaseComponent(WarpSystem.PERMISSION_MODIFY_GLOBAL_WARPS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission", new Example("GER", "&cDu hast keine Berechtigungen für diese Aktion!"), new Example("ENG", "&cYou don't have permissions for that action!"), new Example("FRE", "&cDésolé mais vous ne possédez la permission pour exécuter cette action!")));

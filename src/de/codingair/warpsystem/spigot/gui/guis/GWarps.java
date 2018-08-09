@@ -126,7 +126,7 @@ public class GWarps extends GUI {
 
         ItemStack none = noneBuilder.getItem();
 
-        if(p.hasPermission(WarpSystem.PERMISSION_MODIFY)) {
+        if(p.hasPermission(WarpSystem.PERMISSION_MODIFY_ICONS)) {
             ItemBuilder builder = new ItemBuilder(Material.NETHER_STAR).setName(Lang.get("Menu_Help", new Example("ENG", "&c&nHelp"), new Example("GER", "&c&nHilfe")));
 
             if(editing) {
