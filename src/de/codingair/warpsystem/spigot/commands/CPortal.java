@@ -24,7 +24,7 @@ public class CPortal extends CommandBuilder {
     private HashMap<String, Node<String, Location>> locations = new HashMap<>();
 
     public CPortal() {
-        super("Portal", new BaseComponent("WarpSystem.Modify.Portals") {
+        super("Portal", new BaseComponent(WarpSystem.PERMISSION_MODIFY_PORTALS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission", new Example("GER", "&cDu hast keine Berechtigungen für diese Aktion!"), new Example("ENG", "&cYou don't have permissions for that action!"), new Example("FRE", "&cDésolé mais vous ne possédez la permission pour exécuter cette action!")));

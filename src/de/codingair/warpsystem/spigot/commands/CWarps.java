@@ -17,10 +17,10 @@ import java.util.List;
 
 public class CWarps extends CommandBuilder {
     public CWarps() {
-        super("Warps", new BaseComponent(WarpSystem.PERMISSION_MODIFY) {
+        super("Warps", new BaseComponent(WarpSystem.PERMISSION_USE) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
-
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_System", new Example("ENG", "&cYou are not allowed to use warps!"), new Example("GER", "&cSie dürfen keine Warps benutzen!")));
             }
 
             @Override

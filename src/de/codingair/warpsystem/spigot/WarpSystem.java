@@ -37,6 +37,10 @@ import java.util.logging.Level;
 public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_NOTIFY = "WarpSystem.Notify";
     public static final String PERMISSION_MODIFY = "WarpSystem.Modify";
+    public static final String PERMISSION_MODIFY_ICONS = "WarpSystem.Modify.Icons";
+    public static final String PERMISSION_MODIFY_GLOBAL_WARPS = "WarpSystem.Modify.GlobalWarps";
+    public static final String PERMISSION_MODIFY_PORTALS = "WarpSystem.Modify.Portals";
+    public static final String PERMISSION_USE = "WarpSystem.Use";
     public static final String PERMISSION_ByPass_Maintenance = "WarpSystem.ByPass.Maintenance";
     public static final String PERMISSION_ByPass_Teleport_Delay = "WarpSystem.ByPass.Teleport.Delay";
     public static boolean OP_CAN_SKIP_DELAY = false;
