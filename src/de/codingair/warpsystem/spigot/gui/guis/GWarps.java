@@ -61,7 +61,7 @@ public class GWarps extends GUI {
     }
 
     public GWarps(Player p, Category category, boolean editing, GUIListener guiListener) {
-        super(p, getTitle(category, guiListener), 54, WarpSystem.getInstance(), false);
+        super(p, getTitle(category, guiListener), WarpSystem.getInstance().getIconManager().getSize(), WarpSystem.getInstance(), false);
         this.listener = guiListener;
         this.category = category;
         this.editing = editing;
@@ -174,8 +174,12 @@ public class GWarps extends GUI {
         }
 
         setItem(8, edge);
-        if(category == null) setItem(45, edge);
-        setItem(53, edge);
+        int size = WarpSystem.getInstance().getIconManager().getSize();
+
+        if(size > 9) {
+            if(category == null) setItem(size - 9, edge);
+            setItem(size - 1, edge);
+        }
 
         for(Warp warp : WarpSystem.getInstance().getIconManager().getWarps(category)) {
             if((editing || (!warp.hasPermission() || p.hasPermission(warp.getPermission()))) && this.cursorIcon != warp) {
@@ -205,10 +209,10 @@ public class GWarps extends GUI {
             }
         }
 
-        for(int i = 0; i < 54; i++) {
+        for(int i = 0; i < size; i++) {
             if(editing) {
                 final int slot = i;
-                if(slot == oldSlot && cursorIcon != null && cursorIcon instanceof Warp && ((Warp) cursorIcon).getCategory() == this.category) continue;
+                if(slot == oldSlot && cursorIcon instanceof Warp && ((Warp) cursorIcon).getCategory() == this.category) continue;
 
                 if(getItem(i) == null || getItem(i).getType().equals(Material.AIR)) {
                     addButton(new ItemButton(i, none.clone()) {
@@ -388,6 +392,8 @@ public class GWarps extends GUI {
     }
 
     private void addToGUI(Player p, ActionIcon icon) {
+        if(icon.getSlot() >= WarpSystem.getInstance().getIconManager().getSize()) return;
+
         ItemButtonOption option = new ItemButtonOption();
         option.setClickSound(Sound.CLICK.bukkitSound());
         option.setOnlyLeftClick(true);
