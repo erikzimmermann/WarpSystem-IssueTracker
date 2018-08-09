@@ -27,6 +27,9 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GEditIcon extends GUI {
     private ItemStack item;
     private String name;
@@ -167,25 +170,43 @@ public class GEditIcon extends GUI {
         initialize(p);
     }
 
-    @Override
-    public void initialize(Player p) {
-        ItemBuilder builder = new ItemBuilder(item).removeLore().setName(name == null ? "§8------------" : "§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).setHideName(name == null).setHideStandardLore(true)
-                        .addLore("", Lang.get("Change_Name_Rightclick", new Example("ENG", "&3Rightclick: &bChange item"), new Example("GER", "&3Rechtsklick: &bItem ändern")));
+    private void setupMainIcon() {
+        ItemBuilder builder = new ItemBuilder(item);
+        if(builder.getLore() != null) System.out.println(builder.getLore().size());
+        List<String> loreList = new ArrayList<>();
+        if(builder.getLore() != null) loreList.addAll(builder.getLore());
 
-        builder.setHideName(false);
+        builder.removeLore();
+        builder.setName(null);
 
-        if(name != null) builder.addLore(0, "§8------------");
+        if(name == null && !loreList.isEmpty()) builder.setName(loreList.remove(0));
+        else if(name != null) builder.setName("§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name));
+
+        if(!loreList.isEmpty()) builder.addLore(loreList);
+
+        if(builder.getName() == null) builder.setName("§8------------");
+        else builder.addLore("§8------------");
+
+        builder.addLore("");
 
         switch(this.type) {
             case CATEGORY:
             case WARP:
             case GLOBAL_WARP:
-                builder.addLore(name == null ? 1 : 2, Lang.get("Change_Name_Leftclick", new Example("ENG", "&3Leftclick: &bChange name"), new Example("GER", "&3Linksklick: &bNamen ändern")));
+                builder.addLore(Lang.get("Change_Name_Leftclick", new Example("ENG", "&3Leftclick: &bChange name"), new Example("GER", "&3Linksklick: &bNamen ändern")));
+            default:
+                builder.addLore(Lang.get("Change_Name_Rightclick", new Example("ENG", "&3Rightclick: &bChange item"), new Example("GER", "&3Rechtsklick: &bItem ändern")));
                 break;
         }
 
-        this.item = builder.getItem();
+        builder.setHideName(false);
 
+        this.item = builder.getItem();
+    }
+
+    @Override
+    public void initialize(Player p) {
+        setupMainIcon();
 
         ItemStack leaves = new ItemBuilder(MultiItemType.LEAVES).setName("§0").getItem();
         ItemStack glass = new ItemBuilder(MultiItemType.STAINED_GLASS_PANE).setColor(DyeColor.BLACK).setName("§0").getItem();
@@ -194,9 +215,16 @@ public class GEditIcon extends GUI {
         ItemStack cancel = new ItemBuilder(MultiItemType.WOOL).setColor(DyeColor.RED).setName("§c" + Lang.get("Cancel", new Example("ENG", "Cancel"), new Example("GER", "Abbrechen"))).getItem();
         ItemStack ready = new ItemBuilder(MultiItemType.WOOL).setColor(DyeColor.LIME).setName("§a" + Lang.get("Ready", new Example("ENG", "Ready"), new Example("GER", "Fertig"))).getItem();
 
-        ItemStack sparkle = new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle", new Example("ENG", "Sparkle"), new Example("GER", "Funkeln")))
-                .setLore("", Lang.get("Leftclick_Enable", new Example("ENG", "&3Leftclick: &aEnable"), new Example("GER", "&3Linksklick: &aAktivieren")))
-                .getItem();
+        ItemStack sparkle;
+        if(this.item.getEnchantments().size() == 0) {
+            sparkle = new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle", new Example("ENG", "Sparkle"), new Example("GER", "Funkeln")))
+                    .setLore("", Lang.get("Leftclick_Enable", new Example("ENG", "&3Leftclick: &aEnable"), new Example("GER", "&3Linksklick: &aAktivieren")))
+                    .getItem();
+        } else {
+            sparkle = new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle", new Example("ENG", "Sparkle"), new Example("GER", "Funkeln")))
+                    .setLore("", Lang.get("Leftclick_Disable", new Example("ENG", "&3Leftclick: &cDisable"), new Example("GER", "&3Linksklick: &cDeaktivieren")))
+                    .getItem();
+        }
 
         ItemStack lore = new ItemBuilder(Material.PAPER).setName("§6§n" + Lang.get("Description", new Example("ENG", "Description"), new Example("GER", "Beschreibung")))
                 .setLore("", Lang.get("Leftclick_Add_Line", new Example("ENG", "&3Leftclick: &aAdd line"), new Example("GER", "&3Linksklick: &aZeile hinzufügen")),
@@ -506,20 +534,17 @@ public class GEditIcon extends GUI {
                             e.setClose(true);
                             playSound(p);
 
-                            boolean hasExtraLoreSlot = false;
-
-                            switch(type) {
-                                case DECORATION: hasExtraLoreSlot = true;
-                                break;
-                            }
-
-                            ItemBuilder builder = new ItemBuilder(item).setHideStandardLore(true).setHideEnchantments(true);
-                            if(builder.getLore().size() == 3 && hasExtraLoreSlot) {
+                            ItemBuilder builder = new ItemBuilder(item);
+                            if(builder.getName().equals("§8------------")) {
                                 name = ChatColor.translateAlternateColorCodes('&', input);
                                 builder.setName(name);
                                 builder.setHideName(false);
                                 builder.addLore(0, "§8------------");
-                            } else builder.addLore(builder.getLore().size() - 4, ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', input));
+                            } else {
+                                int index = 0;
+                                while(!builder.getLore().get(index).equals("§8------------")) index++;
+                                builder.addLore(index, ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', input));
+                            }
 
                             item = builder.getItem();
                             iconButton.setItem(item);
@@ -541,21 +566,9 @@ public class GEditIcon extends GUI {
                             break;
                     }
 
-                    ItemBuilder builder = new ItemBuilder(item).removeLore().setName(name == null ? "§8------------" : "§b" + (isCategory ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', name)).setHideName(name == null).setHideStandardLore(true)
-                            .addLore("", Lang.get("Change_Name_Leftclick", new Example("ENG", "&3Leftclick: &bChange name"), new Example("GER", "&3Linksklick: &bNamen ändern")),
-                                    Lang.get("Change_Name_Rightclick", new Example("ENG", "&3Rightclick: &bChange item"), new Example("GER", "&3Rechtsklick: &bItem ändern")));
+                    item = new ItemBuilder(item).removeLore().getItem();
 
-                    builder.setHideName(false);
-
-                    switch(type) {
-                        case WARP:
-                        case CATEGORY:
-                        case GLOBAL_WARP:
-                            builder.addLore(0, "§8------------");
-                            break;
-                    }
-
-                    item = builder.getItem();
+                    setupMainIcon();
 
                     iconButton.setItem(item);
                     p.updateInventory();
