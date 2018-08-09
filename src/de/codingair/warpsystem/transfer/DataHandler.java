@@ -1,8 +1,8 @@
 package de.codingair.warpsystem.transfer;
 
 public interface DataHandler {
-    String GET_CHANNEL = "WarpSystem.GET";
-    String REQUEST_CHANNEL = "WarpSystem.REQUEST";
+    String GET_CHANNEL = "warpsystem:get";
+    String REQUEST_CHANNEL = "warpsystem:request";
     void onEnable();
     void onDisable();
 }

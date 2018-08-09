@@ -8,7 +8,7 @@ import de.codingair.codingapi.particles.animations.standalone.*;
 import de.codingair.codingapi.player.Hologram;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
-import de.codingair.codingapi.tools.ItemBuilder;
+import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Removable;
@@ -49,6 +49,7 @@ public class Portal implements Removable {
     private SoundData teleportSound;
 
     private String permission;
+    private boolean disabled = false;
 
     public Portal(Portal portal) {
         this(portal.getStart(), portal.getDestination(), portal.getAnimationType(), portal.getAnimationHeight(), portal.getParticle(), portal.getTeleportRadius(), portal.getStartName(), portal.getDestinationName(), portal.getTeleportSound(), 2.2, portal.isStartHoloStatus(), portal.isDestinationHoloStatus());
@@ -99,11 +100,13 @@ public class Portal implements Removable {
     }
 
     public void update() {
+        if(this.disabled) return;
         updateAnimations();
         updateHolograms();
     }
 
     public void updateHolograms() {
+        if(this.disabled) return;
         if(this.startHolo != null && this.startHolo.isVisible()) this.startHolo.hide();
         if(this.destinationHolo != null && this.destinationHolo.isVisible()) this.destinationHolo.hide();
 
@@ -115,6 +118,7 @@ public class Portal implements Removable {
     }
 
     public void updateAnimations() {
+        if(this.disabled) return;
         if(this.startAnim != null && this.startAnim.isRunning()) this.startAnim.setRunning(false);
         if(this.destinationAnim != null && this.destinationAnim.isRunning()) this.destinationAnim.setRunning(false);
 
@@ -181,7 +185,7 @@ public class Portal implements Removable {
     }
 
     public void setRunning(boolean running) {
-        if(this.running == running) return;
+        if(this.running == running || this.disabled) return;
 
         update();
 
@@ -409,5 +413,13 @@ public class Portal implements Removable {
 
     public void setDestinationHoloStatus(boolean destinationHoloStatus) {
         this.destinationHoloStatus = destinationHoloStatus;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 }

@@ -45,6 +45,11 @@ public class SpigotPacketHandler implements PacketHandler {
                 String warpDisplayName = ((TeleportPacket) packet).getTeleportDisplayName();
 
                 if(player != null) {
+                    if(location.getWorld() == null) {
+                        player.sendMessage(Lang.getPrefix() + "§4World '" + warp.getLoc().getWorld() + "' is missing. Please contact an admin!");
+                        return;
+                    }
+
                     player.teleport(location);
                     Sound.ENDERMAN_TELEPORT.playSound(player);
 
