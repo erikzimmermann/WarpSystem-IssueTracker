@@ -44,11 +44,15 @@ public class GlobalWarpManager {
     }
 
     public void teleport(Player player, String display, String name, Callback<PrepareTeleportPacket.Result> callback) {
+        teleport(player, display, name, 0, callback);
+    }
+
+    public void teleport(Player player, String display, String name, double costs, Callback<PrepareTeleportPacket.Result> callback) {
         if(name == null) return;
         name = getCaseCorrectlyName(name);
         if(!this.globalWarps.containsKey(name)) return;
 
-        WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportPacket(player.getName(), name, display, new Callback<Integer>() {
+        WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportPacket(player.getName(), name, display, costs, new Callback<Integer>() {
             @Override
             public void accept(Integer object) {
                 callback.accept(PrepareTeleportPacket.Result.getById(object));
