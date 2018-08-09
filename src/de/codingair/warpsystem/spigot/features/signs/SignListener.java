@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.features.signs;
 import de.codingair.codingapi.player.gui.sign.SignGUI;
 import de.codingair.codingapi.player.gui.sign.SignTools;
 import de.codingair.codingapi.tools.Location;
+import de.codingair.codingapi.tools.items.MultiItemType;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.gui.affiliations.Warp;
 import de.codingair.warpsystem.spigot.gui.guis.GWarps;
@@ -29,7 +30,7 @@ public class SignListener implements Listener {
     public void onInteract(PlayerInteractEvent e) {
         if(!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 
-        if(e.getClickedBlock() == null || e.getClickedBlock().getType().equals(Material.WALL_SIGN) || e.getClickedBlock().getType().equals(Material.SIGN_POST)) {
+        if(e.getClickedBlock() == null || e.getClickedBlock().getType().equals(Material.WALL_SIGN) || e.getClickedBlock().getType().equals(MultiItemType.SIGN_POST.getMaterial())) {
             Sign s = e.getClickedBlock() == null ? null : (Sign) e.getClickedBlock().getState();
 
             WarpSign sign = WarpSystem.getInstance().getTeleportManager().getByLocation(s.getLocation());
@@ -68,19 +69,20 @@ public class SignListener implements Listener {
 
     @EventHandler(ignoreCancelled = false, priority = EventPriority.LOWEST)
     public void onBreak(BlockBreakEvent e) {
-        if(!e.getBlock().getType().equals(Material.SIGN)) return;
+        try {
+            Sign s = e.getBlock() == null ? null : (Sign) e.getBlock().getState();
+            if(s == null) return;
+            WarpSign sign = WarpSystem.getInstance().getTeleportManager().getByLocation(s.getLocation());
+            if(sign == null) return;
 
-        Sign s = e.getBlock() == null ? null : (Sign) e.getBlock().getState();
-        if(s == null) return;
-        WarpSign sign = WarpSystem.getInstance().getTeleportManager().getByLocation(s.getLocation());
-        if(sign == null) return;
-
-        if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY) || !e.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
-            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("No_Permission", new Example("GER", "&cDu hast keine Berechtigungen für diese Aktion!"), new Example("ENG", "&cYou don't have permissions for that action!"), new Example("FRE", "&cDésolé mais vous ne possédez la permission pour exécuter cette action!")));
-            e.setCancelled(true);
-        } else {
-            WarpSystem.getInstance().getTeleportManager().getWarpSigns().remove(sign);
-            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("WarpSign_Removed", new Example("GER", "&7Das Warp-Schild wurde &centfernt&7!"), new Example("ENG", "&7The WarpSign was &cremoved&7!")));
+            if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY) || !e.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
+                e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("No_Permission", new Example("GER", "&cDu hast keine Berechtigungen für diese Aktion!"), new Example("ENG", "&cYou don't have permissions for that action!"), new Example("FRE", "&cDésolé mais vous ne possédez la permission pour exécuter cette action!")));
+                e.setCancelled(true);
+            } else {
+                WarpSystem.getInstance().getTeleportManager().getWarpSigns().remove(sign);
+                e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("WarpSign_Removed", new Example("GER", "&7Das Warp-Schild wurde &centfernt&7!"), new Example("ENG", "&7The WarpSign was &cremoved&7!")));
+            }
+        } catch(Exception ignored) {
         }
     }
 
@@ -101,7 +103,7 @@ public class SignListener implements Listener {
                 @Override
                 public Task onClickOnWarp(Warp warp, boolean editing) {
                     Sign s = (Sign) e.getBlock().getState();
-                    SignTools.updateSign(s, new String[]{"", "§4§n" + Lang.get("Description"), "", ""});
+                    SignTools.updateSign(s, new String[] {"", "§4§n" + Lang.get("Description"), "", ""});
 
                     Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
                         new SignGUI(e.getPlayer(), s) {

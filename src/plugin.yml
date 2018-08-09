@@ -4,6 +4,7 @@ version: 2.1.0
 description: WarpSystem
 main: de.codingair.warpsystem.spigot.WarpSystem
 softdepend: [Multiverse-Core]
+api-version: 1.13
 
 commands:
   warp:

@@ -2,7 +2,7 @@ package de.codingair.warpsystem.gui.affiliations;
 
 import de.codingair.codingapi.serializable.SerializableItemStack;
 import de.codingair.codingapi.server.Color;
-import de.codingair.codingapi.tools.ItemBuilder;
+import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.warpsystem.transfer.serializeable.icons.SIcon;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;

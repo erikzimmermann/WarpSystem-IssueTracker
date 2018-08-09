@@ -1,8 +1,5 @@
 package de.codingair.warpsystem.gui.affiliations;
 
-import de.codingair.codingapi.tools.ItemBuilder;
-import de.codingair.codingapi.utils.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;

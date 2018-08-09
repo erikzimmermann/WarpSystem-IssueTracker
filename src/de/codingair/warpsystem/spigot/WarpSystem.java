@@ -7,6 +7,8 @@ import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.time.Timer;
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.tools.items.ItemBuilder;
+import de.codingair.codingapi.tools.items.MultiItemType;
 import de.codingair.warpsystem.spigot.commands.*;
 import de.codingair.warpsystem.spigot.features.signs.SignListener;
 import de.codingair.warpsystem.spigot.language.Lang;
@@ -19,6 +21,7 @@ import de.codingair.warpsystem.spigot.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.utils.UpdateChecker;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -160,40 +163,12 @@ public class WarpSystem extends JavaPlugin {
                         Bukkit.getScheduler().runTaskLater(WarpSystem.this, () -> {
                             if(Bukkit.getOnlinePlayers().isEmpty()) return;
 
-                            BungeeCordHelper.getCurrentServer(WarpSystem.this, 20 * 10, new Callback<String>() {
-                                @Override
-                                public void accept(String server) {
-                                    WarpSystem.this.onBungeeCord = server != null;
-
-                                    if(onBungeeCord) {
-                                        log("WarpSystem - Found a BungeeCord > Init GlobalWarps");
-                                        WarpSystem.this.server = server;
-                                        new CGlobalWarp().register(WarpSystem.this);
-                                        globalWarpManager.loadAllGlobalWarps();
-                                    } else {
-                                        log("WarpSystem - Did not find a BungeeCord > Ignore GlobalWarps");
-                                    }
-                                }
-                            });
+                            checkBungee();
                         }, 5);
                     }
                 }, this);
             } else {
-                BungeeCordHelper.getCurrentServer(this, 20 * 10, new Callback<String>() {
-                    @Override
-                    public void accept(String server) {
-                        WarpSystem.this.onBungeeCord = server != null;
-
-                        if(onBungeeCord) {
-                            log("WarpSystem - Found a BungeeCord > Init GlobalWarps");
-                            WarpSystem.this.server = server;
-                            new CGlobalWarp().register(WarpSystem.this);
-                            globalWarpManager.loadAllGlobalWarps();
-                        } else {
-                            log("WarpSystem - Did not find a BungeeCord > Ignore GlobalWarps");
-                        }
-                    }
-                });
+                checkBungee();
             }
         } catch(Exception ex) {
             //make error-report
@@ -244,6 +219,24 @@ public class WarpSystem extends JavaPlugin {
             this.ERROR = true;
             Bukkit.getPluginManager().disablePlugin(this);
         }
+    }
+
+    private void checkBungee() {
+        BungeeCordHelper.getCurrentServer(WarpSystem.this, 20 * 10, new Callback<String>() {
+            @Override
+            public void accept(String server) {
+                WarpSystem.this.onBungeeCord = server != null;
+
+                if(onBungeeCord) {
+                    log("WarpSystem - Found a BungeeCord > Init GlobalWarps");
+                    WarpSystem.this.server = server;
+                    new CGlobalWarp().register(WarpSystem.this);
+                    globalWarpManager.loadAllGlobalWarps();
+                } else {
+                    log("WarpSystem - Did not find a BungeeCord > Ignore GlobalWarps");
+                }
+            }
+        });
     }
 
     @Override
@@ -336,7 +329,9 @@ public class WarpSystem extends JavaPlugin {
                 log(" ");
             }
         } catch(Exception ex) {
-            getLogger().log(Level.SEVERE, "Error at saving data! Exception: \n\n" + ex.toString() + "\n");
+            getLogger().log(Level.SEVERE, "Error at saving data! Exception: \n\n");
+            ex.printStackTrace();
+            getLogger().log(Level.SEVERE, "\n");
         }
     }
 

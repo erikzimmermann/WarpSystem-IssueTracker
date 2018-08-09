@@ -9,7 +9,8 @@ import de.codingair.codingapi.serializable.SerializableLocation;
 import de.codingair.codingapi.server.Color;
 import de.codingair.codingapi.server.Environment;
 import de.codingair.codingapi.server.Sound;
-import de.codingair.codingapi.tools.ItemBuilder;
+import de.codingair.codingapi.tools.items.ItemBuilder;
+import de.codingair.codingapi.tools.items.MultiItemType;
 import de.codingair.warpsystem.gui.affiliations.*;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.language.Example;
@@ -186,12 +187,12 @@ public class GEditIcon extends GUI {
         this.item = builder.getItem();
 
 
-        ItemStack leaves = new ItemBuilder(Material.LEAVES).setName("§0").getItem();
-        ItemStack glass = new ItemBuilder(Material.STAINED_GLASS_PANE).setColor(DyeColor.BLACK).setName("§0").getItem();
-        ItemStack bars = new ItemBuilder(Material.IRON_FENCE).setName("§0").getItem();
+        ItemStack leaves = new ItemBuilder(MultiItemType.LEAVES).setName("§0").getItem();
+        ItemStack glass = new ItemBuilder(MultiItemType.STAINED_GLASS_PANE).setColor(DyeColor.BLACK).setName("§0").getItem();
+        ItemStack bars = new ItemBuilder(MultiItemType.IRON_FENCE).setName("§0").getItem();
 
-        ItemStack cancel = new ItemBuilder(Material.WOOL).setColor(DyeColor.RED).setName("§c" + Lang.get("Cancel", new Example("ENG", "Cancel"), new Example("GER", "Abbrechen"))).getItem();
-        ItemStack ready = new ItemBuilder(Material.WOOL).setColor(DyeColor.LIME).setName("§a" + Lang.get("Ready", new Example("ENG", "Ready"), new Example("GER", "Fertig"))).getItem();
+        ItemStack cancel = new ItemBuilder(MultiItemType.WOOL).setColor(DyeColor.RED).setName("§c" + Lang.get("Cancel", new Example("ENG", "Cancel"), new Example("GER", "Abbrechen"))).getItem();
+        ItemStack ready = new ItemBuilder(MultiItemType.WOOL).setColor(DyeColor.LIME).setName("§a" + Lang.get("Ready", new Example("ENG", "Ready"), new Example("GER", "Fertig"))).getItem();
 
         ItemStack sparkle = new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle", new Example("ENG", "Sparkle"), new Example("GER", "Funkeln")))
                 .setLore("", Lang.get("Leftclick_Enable", new Example("ENG", "&3Leftclick: &aEnable"), new Example("GER", "&3Linksklick: &aAktivieren")))
@@ -208,7 +209,7 @@ public class GEditIcon extends GUI {
                                 : Lang.get("Leftclick_Remove", new Example("ENG", "&3Leftclick: &cRemove"), new Example("GER", "&3Linksklick: &cEntfernen")))
                 .getItem();
 
-        ItemStack permissionIcon = new ItemBuilder(Material.EYE_OF_ENDER).setName("§6§n" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")))
+        ItemStack permissionIcon = new ItemBuilder(MultiItemType.EYE_OF_ENDER).setName("§6§n" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")))
                 .setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + (this.permission == null ? "-" : this.permission), "",
                         this.permission == null ? Lang.get("Leftclick_Add", new Example("ENG", "&3Leftclick: &aAdd"), new Example("GER", "&3Linksklick: &aHinzufügen"))
                                 : Lang.get("Leftclick_Remove", new Example("ENG", "&3Leftclick: &cRemove"), new Example("GER", "&3Linksklick: &cEntfernen")))
@@ -631,7 +632,7 @@ public class GEditIcon extends GUI {
                 if(permission != null) {
                     permission = null;
 
-                    ItemBuilder permissionIconBuilder = new ItemBuilder(Material.EYE_OF_ENDER).setName("§6§n" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")))
+                    ItemBuilder permissionIconBuilder = new ItemBuilder(MultiItemType.EYE_OF_ENDER).setName("§6§n" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")))
                             .setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7-", "", Lang.get("Leftclick_Add", new Example("ENG", "&3Leftclick: &aAdd"), new Example("GER", "&3Linksklick: &aHinzufügen")));
 
                     ItemStack permissionIcon = permissionIconBuilder.getItem();
@@ -656,7 +657,7 @@ public class GEditIcon extends GUI {
                                 return;
                             }
 
-                            ItemBuilder permissionIconBuilder = new ItemBuilder(Material.EYE_OF_ENDER).setName("§6§n" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")));
+                            ItemBuilder permissionIconBuilder = new ItemBuilder(MultiItemType.EYE_OF_ENDER).setName("§6§n" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")));
                             permissionIconBuilder.setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + input);
                             permissionIconBuilder.addLore("", Lang.get("Leftclick_Remove", new Example("ENG", "&3Leftclick: &cRemove"), new Example("GER", "&3Linksklick: &cEntfernen")));
 
@@ -675,7 +676,7 @@ public class GEditIcon extends GUI {
                             e.setPost(GEditIcon.this::open);
                             quit = true;
                         }
-                    }, new ItemBuilder(Material.EYE_OF_ENDER).setName(Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")) + "...").getItem());
+                    }, new ItemBuilder(MultiItemType.EYE_OF_ENDER).setName(Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")) + "...").getItem());
                 }
             }
         }.setOption(option).setOnlyLeftClick(true));

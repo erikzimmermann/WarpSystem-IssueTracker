@@ -6,11 +6,12 @@ import de.codingair.codingapi.player.gui.hotbar.ItemComponent;
 import de.codingair.codingapi.player.gui.hotbar.ItemListener;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
-import de.codingair.codingapi.tools.ItemBuilder;
+import de.codingair.codingapi.tools.items.ItemBuilder;
+import de.codingair.codingapi.tools.items.MultiItemType;
 import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
-import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -36,12 +37,12 @@ public class Menu extends HotbarGUI {
     }
 
     private void init() {
-        setItem(0, new ItemComponent(new ItemBuilder(Material.STAINED_GLASS_PANE).setColor(DyeColor.BLACK).setHideName(true).getItem()));
+        setItem(0, new ItemComponent(new ItemBuilder(MultiItemType.STAINED_GLASS_PANE).setColor(DyeColor.BLACK).setHideName(true).getItem()));
         setItem(1, new ItemComponent(new ItemBuilder(Material.REDSTONE).setName("§7» §e" + Lang.get("Animation", new Example("ENG", "Animation"), new Example("GER", "Animation")) + "§7 «").getItem()).setLink(this.animation));
         setItem(2, new ItemComponent(new ItemBuilder(Material.SIGN).setName("§7» §e" + Lang.get("Hologram", new Example("ENG", "Hologram"), new Example("GER", "Hologram")) + "§7 «").getItem()).setLink(this.hologram));
         setItem(3, new ItemComponent(new ItemBuilder(Material.ENDER_PEARL).setName("§7» §e" + Lang.get("Teleport", new Example("ENG", "Teleport"), new Example("GER", "Teleport")) + "§7 «").getItem()).setLink(this.teleport));
 
-        setItem(5, new ItemComponent(new ItemBuilder(Material.STAINED_CLAY).setColor(DyeColor.LIME).setName("§7» §a" + Lang.get("Save", new Example("ENG", "Save"), new Example("GER", "Speichern")) + "§7 «").getItem(), new ItemListener() {
+        setItem(5, new ItemComponent(new ItemBuilder(MultiItemType.STAINED_CLAY).setColor(DyeColor.LIME).setName("§7» §a" + Lang.get("Save", new Example("ENG", "Save"), new Example("GER", "Speichern")) + "§7 «").getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 editor.finish();
@@ -66,7 +67,7 @@ public class Menu extends HotbarGUI {
             }
         }).setCloseOnClick(true));
 
-        setItem(6, new ItemComponent(new ItemBuilder(Material.STAINED_CLAY).setColor(DyeColor.RED).setName("§7» §c" + Lang.get("Cancel", new Example("ENG", "Cancel"), new Example("GER", "Abbrechen")) + "§7 «").getItem(), new ItemListener() {
+        setItem(6, new ItemComponent(new ItemBuilder(MultiItemType.STAINED_CLAY).setColor(DyeColor.RED).setName("§7» §c" + Lang.get("Cancel", new Example("ENG", "Cancel"), new Example("GER", "Abbrechen")) + "§7 «").getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 editor.exit();

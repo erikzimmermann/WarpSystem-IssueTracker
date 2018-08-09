@@ -1,13 +1,13 @@
 package de.codingair.warpsystem.spigot.gui.guis;
 
-import com.sun.org.apache.xerces.internal.jaxp.validation.WrappedSAXException;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
 import de.codingair.codingapi.player.gui.inventory.gui.GUIListener;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.codingapi.tools.ItemBuilder;
+import de.codingair.codingapi.tools.items.ItemBuilder;
+import de.codingair.codingapi.tools.items.MultiItemType;
 import de.codingair.warpsystem.gui.affiliations.Category;
 import de.codingair.warpsystem.gui.affiliations.IconType;
 import de.codingair.warpsystem.spigot.WarpSystem;
@@ -139,7 +139,7 @@ public class GChooseIconType extends GUI {
             }.setOption(option));
         }
 
-        addButton(new ItemButton(slots.remove(0), new ItemBuilder(Material.FLOWER_POT_ITEM).setName("§c" + Lang.get("Decoration", new Example("ENG", "Decoration"), new Example("GER", "Dekoration"))).getItem()) {
+        addButton(new ItemButton(slots.remove(0), new ItemBuilder(MultiItemType.FLOWER_POT_ITEM).setName("§c" + Lang.get("Decoration", new Example("ENG", "Decoration"), new Example("GER", "Dekoration"))).getItem()) {
             @Override
             public void onClick(InventoryClickEvent e) {
                 set = true;

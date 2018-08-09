@@ -2,7 +2,7 @@ package de.codingair.warpsystem.spigot.gui.guis.utils;
 
 import com.mojang.authlib.GameProfile;
 import de.codingair.codingapi.player.data.gameprofile.GameProfileUtils;
-import de.codingair.codingapi.tools.ItemBuilder;
+import de.codingair.codingapi.tools.items.ItemBuilder;
 import org.bukkit.inventory.ItemStack;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

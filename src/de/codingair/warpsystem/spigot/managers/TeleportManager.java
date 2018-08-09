@@ -4,6 +4,7 @@ import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.tools.items.MultiItemType;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.features.portals.Portal;
 import de.codingair.warpsystem.spigot.features.signs.WarpSign;
@@ -106,6 +107,11 @@ public class TeleportManager {
             duplicates.clear();
         }
 
+        WarpSystem.log("    > Verify that worlds are available");
+        for(Portal portal : this.portals) {
+            if(portal.getStart().getWorld() == null || portal.getDestination().getWorld() == null) portal.setDisabled(true);
+        }
+
         WarpSystem.log("    > Verify that portals are enabled");
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Portals", true)) {
             this.portals.forEach(p -> p.setRunning(true));
@@ -115,7 +121,7 @@ public class TeleportManager {
         for(String s : file.getConfig().getStringList("WarpSigns")) {
             WarpSign warpSign = WarpSign.fromJSONString(s);
 
-            if(warpSign.getLocation().getBlock().getType().equals(Material.SIGN_POST) || warpSign.getLocation().getBlock().getType().equals(Material.WALL_SIGN)) {
+            if(warpSign.getLocation().getBlock().getType().equals(MultiItemType.SIGN_POST.getMaterial()) || warpSign.getLocation().getBlock().getType().equals(Material.WALL_SIGN)) {
                 ((Sign) warpSign.getLocation().getBlock().getState()).setLine(0, "AUTO");
                 warpSign.getLocation().getBlock().getState().update(true);
                 this.warpSigns.add(warpSign);
@@ -146,6 +152,7 @@ public class TeleportManager {
         List<String> data = new ArrayList<>();
 
         for(Portal portal : this.portals) {
+            if(portal.getStart().getWorld() == null || portal.getDestination().getWorld() == null) continue;
             data.add(portal.toJSONString());
         }
 

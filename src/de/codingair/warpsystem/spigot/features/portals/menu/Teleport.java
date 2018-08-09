@@ -8,7 +8,9 @@ import de.codingair.codingapi.player.gui.hotbar.ItemListener;
 import de.codingair.codingapi.player.gui.inventory.gui.Skull;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
-import de.codingair.codingapi.tools.ItemBuilder;
+import de.codingair.codingapi.tools.items.MultiItemType;
+import de.codingair.codingapi.tools.items.ItemBuilder;
+import de.codingair.codingapi.tools.items.MultiItemType;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
@@ -31,7 +33,7 @@ public class Teleport extends HotbarGUI {
 
     public void init() {
         setItem(0, new ItemComponent(new ItemBuilder(Skull.ArrowLeft).setName("§7» §c" + Lang.get("Back") + "§7 «").getItem()).setLink(this.menu));
-        setItem(1, new ItemComponent(new ItemBuilder(Material.STAINED_GLASS_PANE).setColor(DyeColor.BLACK).setHideName(true).getItem()));
+        setItem(1, new ItemComponent(new ItemBuilder(MultiItemType.STAINED_GLASS_PANE).setColor(DyeColor.BLACK).setHideName(true).getItem()));
 
         setItem(2, new ItemComponent(new ItemBuilder(Material.STICK)
                 .setName("§7" + Lang.get("Permission") + ": '§e" + menu.getEditor().getPortal().getPermission() + "§7'")
@@ -53,7 +55,7 @@ public class Teleport extends HotbarGUI {
             }
         }));
 
-        setItem(4, new ItemComponent(new ItemBuilder(Material.RECORD_5)
+        setItem(4, new ItemComponent(new ItemBuilder(MultiItemType.RECORD_5)
                 .setName("§7" + Lang.get("Sound", new Example("ENG", "Sound"), new Example("GER", "Ton")) + ": '§e" + menu.getEditor().getPortal().getTeleportSound().getSound().name() + "§7'")
                 .getItem(), new ItemListener() {
             @Override
