@@ -17,12 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IconManager {
-    public static ItemBuilder STANDARD_ITEM() {return new ItemBuilder(Material.GRASS);}
+    public static ItemBuilder STANDARD_ITEM() {
+        return new ItemBuilder(Material.GRASS);
+    }
 
     private List<Warp> warps = new ArrayList<>();
     private List<Category> categories = new ArrayList<>();
     private List<GlobalWarp> globalWarps = new ArrayList<>();
     private List<DecoIcon> decoIcons = new ArrayList<>();
+
+    private int size = 54;
 
     public void load(boolean sync) throws Exception {
         if(!sync) {
@@ -38,13 +42,32 @@ public class IconManager {
 
             ActionIconHelper.load = true;
 
+            ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
+            FileConfiguration config = file.getConfig();
+            this.size = config.getInt("WarpSystem.GUI_Size", 54);
+            switch(this.size) {
+                case 9:
+                case 18:
+                case 27:
+                case 36:
+                case 45:
+                case 54:
+                    break;
+                default:
+                    this.size = 54;
+                    config.set("WarpSystem.GUI_Size", 54);
+                    file.saveConfig();
+                    break;
+            }
+
+
             this.warps.clear();
             this.categories.clear();
             this.globalWarps.clear();
             this.decoIcons.clear();
 
-            ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
-            FileConfiguration config = file.getConfig();
+            file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
+            config = file.getConfig();
 
             List<String> warps = config.getStringList("Warps");
             for(String s : warps) {
@@ -376,5 +399,13 @@ public class IconManager {
 
     public List<DecoIcon> getDecoIcons() {
         return decoIcons;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
     }
 }

@@ -288,10 +288,7 @@ public class WarpSystem extends JavaPlugin {
                 log(" ");
                 log("__________________________________________________________");
                 log(" ");
-                if(saver)
-                    log("           AutoSaver - WarpSystem [" + getDescription().getVersion() + "]");
-                else
-                    log("                       WarpSystem [" + getDescription().getVersion() + "]");
+                log("                       WarpSystem [" + getDescription().getVersion() + "]");
                 if(updateAvailable) {
                     log(" ");
                     log("New update available [v" + updateChecker.getVersion() + " - " + WarpSystem.this.updateChecker.getUpdateInfo() + "]. Download it on \n\n" + updateChecker.getDownload() + "\n");
@@ -313,6 +310,7 @@ public class WarpSystem extends JavaPlugin {
             if(!this.ERROR) {
                 iconManager.save(true);
                 if(!saver) log("Saving options.");
+                fileManager.getFile("Config").loadConfig();
                 fileManager.getFile("Config").getConfig().set("WarpSystem.Maintenance", maintenance);
                 fileManager.getFile("Config").getConfig().set("WarpSystem.Teleport.Op_Can_Skip_Delay", OP_CAN_SKIP_DELAY);
                 if(!saver) log("Saving features.");
