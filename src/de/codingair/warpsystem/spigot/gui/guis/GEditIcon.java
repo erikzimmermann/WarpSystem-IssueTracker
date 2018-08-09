@@ -15,6 +15,7 @@ import de.codingair.warpsystem.gui.affiliations.*;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
+import de.codingair.warpsystem.spigot.utils.money.AdapterType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -35,6 +36,7 @@ public class GEditIcon extends GUI {
     private String name;
     private String permission = null;
     private String command = null;
+    private double costs = 0;
 
     private int slot;
     private Category category;
@@ -140,6 +142,7 @@ public class GEditIcon extends GUI {
         if(editing instanceof ActionIcon) {
             this.command = ((ActionIcon) editing).getAction(Action.RUN_COMMAND) == null ? null : ((ActionIcon) editing).getAction(Action.RUN_COMMAND).getValue();
             this.permission = ((ActionIcon) editing).getPermission();
+            this.costs = ((ActionIcon) editing).getAction(Action.PAY_MONEY) == null ? 0.0 : ((ActionIcon) editing).getAction(Action.PAY_MONEY).getValue();
         }
 
         this.isCategory = editing instanceof Category;
@@ -172,7 +175,6 @@ public class GEditIcon extends GUI {
 
     private void setupMainIcon() {
         ItemBuilder builder = new ItemBuilder(item);
-        if(builder.getLore() != null) System.out.println(builder.getLore().size());
         List<String> loreList = new ArrayList<>();
         if(builder.getLore() != null) loreList.addAll(builder.getLore());
 
@@ -241,6 +243,11 @@ public class GEditIcon extends GUI {
                 .setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + (this.permission == null ? "-" : this.permission), "",
                         this.permission == null ? Lang.get("Leftclick_Add", new Example("ENG", "&3Leftclick: &aAdd"), new Example("GER", "&3Linksklick: &aHinzufügen"))
                                 : Lang.get("Leftclick_Remove", new Example("ENG", "&3Leftclick: &cRemove"), new Example("GER", "&3Linksklick: &cEntfernen")))
+                .getItem();
+
+        ItemStack costsIcon = new ItemBuilder(Material.GOLD_NUGGET).setName("§6§n" + Lang.get("Costs", new Example("ENG", "Costs"), new Example("GER", "Kosten")))
+                .setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + costs + " " + Lang.get("Coins", new Example("ENG", "Coin(s)"), new Example("GER", "Coin(s)")), "",
+                        Lang.get("Leftclick_Set", new Example("ENG", "&3Leftclick: &aSet"), new Example("GER", "&3Linksklick: &aSetzen")))
                 .getItem();
 
         //decoration
@@ -433,6 +440,9 @@ public class GEditIcon extends GUI {
                         ((ActionIcon) editing).setPermission(permission);
                         ((ActionIcon) editing).removeAction(Action.RUN_COMMAND);
                         if(GEditIcon.this.command != null) ((ActionIcon) editing).addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
+
+                        ((ActionIcon) editing).removeAction(Action.PAY_MONEY);
+                        if(GEditIcon.this.costs > 0) ((ActionIcon) editing).addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
                     }
 
                     p.sendMessage(Lang.getPrefix() + Lang.get("Success_Configured", new Example("ENG", "&aYou have configured the icon successfully."), new Example("GER", "&aDu hast das Symbol erfolgreich bearbeitet")));
@@ -441,6 +451,7 @@ public class GEditIcon extends GUI {
                         case WARP:
                             Warp warp = new Warp(name, item, slot, permission, category, new ActionObject(Action.TELEPORT_TO_WARP, new SerializableLocation(p.getLocation())));
                             if(GEditIcon.this.command != null) warp.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
+                            if(GEditIcon.this.costs > 0) warp.addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
 
                             WarpSystem.getInstance().getIconManager().getWarps().add(warp);
 
@@ -450,6 +461,7 @@ public class GEditIcon extends GUI {
                         case CATEGORY:
                             Category category = new Category(name, item, slot, permission);
                             if(GEditIcon.this.command != null) category.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
+                            if(GEditIcon.this.costs > 0) category.addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
 
                             WarpSystem.getInstance().getIconManager().getCategories().add(category);
 
@@ -459,6 +471,7 @@ public class GEditIcon extends GUI {
                         case GLOBAL_WARP:
                             GlobalWarp gWarp = new GlobalWarp(name, item, slot, permission, GEditIcon.this.category, new ActionObject(Action.SWITCH_SERVER, extra));
                             if(GEditIcon.this.command != null) gWarp.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
+                            if(GEditIcon.this.costs > 0) gWarp.addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
 
                             WarpSystem.getInstance().getIconManager().getGlobalWarps().add(gWarp);
 
@@ -468,6 +481,7 @@ public class GEditIcon extends GUI {
                         case DECORATION:
                             DecoIcon deco = new DecoIcon(name, item, slot, permission, GEditIcon.this.category);
                             if(GEditIcon.this.command != null) deco.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
+                            if(GEditIcon.this.costs > 0) deco.addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
                             WarpSystem.getInstance().getIconManager().getDecoIcons().add(deco);
 
                             p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Warp", new Example("ENG", "&aYou have created a &bDecoIcon &asuccessfully."), new Example("GER", "&aDu hast erfolgreich ein &bDekoIcon &aerstellt.")));
@@ -738,6 +752,73 @@ public class GEditIcon extends GUI {
                     }).open();
                 }
             }.setOption(option).setOnlyLeftClick(true));
+        }
+
+        //costs
+        if(AdapterType.canEnable()) {
+            switch(this.type) {
+                case WARP:
+                case GLOBAL_WARP:
+                    addButton(new ItemButton(4, 2, costsIcon) {
+                        @Override
+                        public void onClick(InventoryClickEvent e) {
+                            if(e.isLeftClick()) {
+                                quit = false;
+                                p.closeInventory();
+                                AnvilGUI.openAnvil(WarpSystem.getInstance(), getPlayer(), new AnvilListener() {
+                                    @Override
+                                    public void onClick(AnvilClickEvent e) {
+                                        e.setClose(false);
+                                        e.setCancelled(true);
+
+                                        if(e.getInput() != null) {
+                                            double costs;
+
+                                            String in = e.getInput().replace(",", ".");
+                                            if(!in.contains(".")) in += ".0";
+
+                                            try {
+                                                costs = Double.parseDouble(in);
+                                            } catch(NumberFormatException ex) {
+                                                getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number", new Example("ENG", "&cPlease enter a positive number!"), new Example("GER", "&cBitte gib eine positive Nummer ein!")));
+                                                return;
+                                            }
+
+                                            if(costs < 0) {
+                                                getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number", new Example("ENG", "&cPlease enter a positive number!"), new Example("GER", "&cBitte gib eine positive Nummer ein!")));
+                                                return;
+                                            }
+
+                                            GEditIcon.this.costs = costs;
+                                            e.setClose(true);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onClose(AnvilCloseEvent e) {
+                                        e.setPost(() -> {
+                                            if(e.isSubmitted()) {
+                                                ItemStack costsIcon = new ItemBuilder(Material.GOLD_NUGGET).setName("§6§n" + Lang.get("Costs", new Example("ENG", "Costs"), new Example("GER", "Kosten")))
+                                                        .setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + costs + " " + Lang.get("Coins", new Example("ENG", "Coin(s)"), new Example("GER", "Coin(s)")), "",
+                                                                Lang.get("Leftclick_Set", new Example("ENG", "&3Leftclick: &aSet"), new Example("GER", "&3Linksklick: &aSetzen")))
+                                                        .getItem();
+                                                setItem(costsIcon);
+
+                                                playSound(getPlayer());
+                                            } else {
+                                                Sound.ITEM_BREAK.playSound(p);
+                                            }
+
+                                            GEditIcon.this.open();
+                                            quit = true;
+                                        });
+                                    }
+                                }, new ItemBuilder(Material.PAPER).setName(Lang.get("Costs") + "...").getItem());
+                            }
+                        }
+                    }.setOption(option).setOnlyLeftClick(true));
+                    break;
+            }
         }
     }
 

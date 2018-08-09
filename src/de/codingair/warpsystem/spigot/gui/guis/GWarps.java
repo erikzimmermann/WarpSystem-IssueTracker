@@ -19,6 +19,7 @@ import de.codingair.warpsystem.spigot.gui.guis.utils.GUIListener;
 import de.codingair.warpsystem.spigot.gui.guis.utils.Task;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
+import de.codingair.warpsystem.spigot.utils.money.AdapterType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -46,7 +47,7 @@ public class GWarps extends GUI {
     private int oldSlot = -999;
     private Icon cursorIcon = null;
 
-    private GUIListener listener = null;
+    private GUIListener listener;
 
     private static String getTitle(Category category) {
         return getTitle(category, null);
@@ -405,6 +406,7 @@ public class GWarps extends GUI {
             if(editing) {
                 String command = icon.getAction(Action.RUN_COMMAND) == null ? "-" : icon.getAction(Action.RUN_COMMAND).getValue();
                 String permission = icon.getPermission() == null ? "-" : icon.getPermission();
+                String costs = (icon.getAction(Action.PAY_MONEY) == null ? "0" : icon.getAction(Action.PAY_MONEY).getValue()) + " " + Lang.get("Coins", new Example("ENG", "Coin(s)"), new Example("GER", "Coin(s)"));
 
                 iconBuilder.addLore("§8------------");
                 if(icon instanceof GlobalWarp) {
@@ -415,6 +417,7 @@ public class GWarps extends GUI {
                 }
                 iconBuilder.addLore("§7" + Lang.get("Command", new Example("ENG", "Command"), new Example("GER", "Befehl")) + ": " + command);
                 iconBuilder.addLore("§7" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")) + ": " + permission);
+                if(AdapterType.canEnable()) iconBuilder.addLore("§7" + Lang.get("Costs", new Example("ENG", "Costs"), new Example("GER", "Kosten")) + ": " + costs);
                 iconBuilder.addLore("§8------------");
                 iconBuilder.addLore(Lang.get("Leftclick_Edit", new Example("ENG", "&7Leftclick: Configure"), new Example("GER", "&7Linksklick: Bearbeiten")));
                 iconBuilder.addLore(Lang.get("Rightclick_Delete", new Example("ENG", "&7Rightclick: Delete"), new Example("GER", "&7Rechtsklick: Löschen")));

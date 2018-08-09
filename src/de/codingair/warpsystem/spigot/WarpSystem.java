@@ -19,6 +19,7 @@ import de.codingair.warpsystem.spigot.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.managers.IconManager;
 import de.codingair.warpsystem.spigot.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.utils.UpdateChecker;
+import de.codingair.warpsystem.spigot.utils.money.AdapterType;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
@@ -42,6 +43,7 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_MODIFY_PORTALS = "WarpSystem.Modify.Portals";
     public static final String PERMISSION_USE = "WarpSystem.Use";
     public static final String PERMISSION_ByPass_Maintenance = "WarpSystem.ByPass.Maintenance";
+    public static final String PERMISSION_ByPass_Teleport_Costs = "WarpSystem.ByPass.Teleport.Costs";
     public static final String PERMISSION_ByPass_Teleport_Delay = "WarpSystem.ByPass.Teleport.Delay";
     public static boolean OP_CAN_SKIP_DELAY = false;
 
@@ -247,7 +249,7 @@ public class WarpSystem extends JavaPlugin {
     public void onDisable() {
         API.getInstance().onDisable(this);
         save(false);
-        teleportManager.getTeleports().forEach(t -> t.cancel(false));
+        teleportManager.getTeleports().forEach(t -> t.cancel(false, false));
 
         //Disable all functions
         OP_CAN_SKIP_DELAY = false;

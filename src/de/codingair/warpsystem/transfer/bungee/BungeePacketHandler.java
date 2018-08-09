@@ -97,7 +97,7 @@ public class BungeePacketHandler implements PacketHandler {
                 if(answerIntegerPacket.getValue() != 0) return;
 
                 p.connect(otherServer, (connected, throwable) -> {
-                    if(connected) dataHandler.send(new TeleportPacket(player, warp, teleportDisplayName), otherServer);
+                    if(connected) dataHandler.send(new TeleportPacket(player, warp, teleportDisplayName, ((PrepareTeleportPacket) packet).getCosts()), otherServer);
                 });
                 break;
 

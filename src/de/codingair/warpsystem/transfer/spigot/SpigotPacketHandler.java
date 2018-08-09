@@ -53,8 +53,12 @@ public class SpigotPacketHandler implements PacketHandler {
                     player.teleport(location);
                     Sound.ENDERMAN_TELEPORT.playSound(player);
 
-                    if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message", true)) {
-                        player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To", new Example("ENG", "&7You have been teleported to '&b%warp%&7'."), new Example("GER", "&7Du wurdest zu '&b%warp%&7' teleportiert.")).replace("%warp%", ChatColor.translateAlternateColorCodes('&', warpDisplayName)));
+                    if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message", true) || ((TeleportPacket) packet).getCosts() > 0) {
+                        if(((TeleportPacket) packet).getCosts() > 0) {
+                            player.sendMessage(Lang.getPrefix() + Lang.get("Money_Paid", new Example("ENG", "&7You have paid &c%AMOUNT% coin(s) &7to teleport to '&b%warp%&7'."), new Example("GER", "&7Du hast &c%AMOUNT% Coin(s) &7bezahlt, um dich nach '&b%warp%&7' zu teleportieren!")).replace("%AMOUNT%", ((TeleportPacket) packet).getCosts() + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', warpDisplayName)));
+                        } else {
+                            player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To", new Example("ENG", "&7You have been teleported to '&b%warp%&7'."), new Example("GER", "&7Du wurdest zu '&b%warp%&7' teleportiert.")).replace("%warp%", ChatColor.translateAlternateColorCodes('&', warpDisplayName)));
+                        }
                     }
                 }
                 break;

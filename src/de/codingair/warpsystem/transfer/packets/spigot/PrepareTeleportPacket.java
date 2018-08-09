@@ -11,15 +11,17 @@ public class PrepareTeleportPacket extends RequestPacket<Integer> {
     private String player;
     private String teleportName;
     private String displayName;
+    private double costs;
 
     public PrepareTeleportPacket() {
     }
 
-    public PrepareTeleportPacket(String player, String teleportName, String displayName, Callback<Integer> callback) {
+    public PrepareTeleportPacket(String player, String teleportName, String displayName, double costs, Callback<Integer> callback) {
         super(callback);
         this.player = player;
         this.teleportName = teleportName;
         this.displayName = displayName;
+        this.costs = costs;
     }
 
     @Override
@@ -27,6 +29,7 @@ public class PrepareTeleportPacket extends RequestPacket<Integer> {
         out.writeUTF(this.player);
         out.writeUTF(this.teleportName);
         out.writeUTF(this.displayName);
+        out.writeDouble(this.costs);
         super.write(out);
     }
 
@@ -35,6 +38,7 @@ public class PrepareTeleportPacket extends RequestPacket<Integer> {
         this.player = in.readUTF();
         this.teleportName = in.readUTF();
         this.displayName = in.readUTF();
+        this.costs = in.readDouble();
         super.read(in);
     }
 
@@ -48,6 +52,10 @@ public class PrepareTeleportPacket extends RequestPacket<Integer> {
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public double getCosts() {
+        return costs;
     }
 
     public enum Result {

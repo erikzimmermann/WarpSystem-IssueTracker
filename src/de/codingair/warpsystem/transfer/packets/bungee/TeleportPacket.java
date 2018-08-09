@@ -11,14 +11,16 @@ public class TeleportPacket implements Packet {
     private String player;
     private SGlobalWarp warp;
     private String teleportDisplayName;
+    private double costs;
 
     public TeleportPacket() {
     }
 
-    public TeleportPacket(String player, SGlobalWarp warp, String teleportDisplayName) {
+    public TeleportPacket(String player, SGlobalWarp warp, String teleportDisplayName, double costs) {
         this.player = player;
         this.warp = warp;
         this.teleportDisplayName = teleportDisplayName;
+        this.costs = costs;
     }
 
     @Override
@@ -26,6 +28,7 @@ public class TeleportPacket implements Packet {
         out.writeUTF(this.player);
         this.warp.write(out);
         out.writeUTF(this.teleportDisplayName);
+        out.writeDouble(this.costs);
     }
 
     @Override
@@ -34,6 +37,7 @@ public class TeleportPacket implements Packet {
         this.warp = new SGlobalWarp();
         this.warp.read(in);
         this.teleportDisplayName = in.readUTF();
+        this.costs = in.readDouble();
     }
 
     public String getPlayer() {
@@ -46,5 +50,9 @@ public class TeleportPacket implements Packet {
 
     public String getTeleportDisplayName() {
         return teleportDisplayName;
+    }
+
+    public double getCosts() {
+        return costs;
     }
 }

@@ -121,13 +121,13 @@ public class TeleportManager {
         for(String s : file.getConfig().getStringList("WarpSigns")) {
             WarpSign warpSign = WarpSign.fromJSONString(s);
 
-            if(warpSign.getLocation().getBlock().getType().equals(MultiItemType.SIGN_POST.getMaterial()) || warpSign.getLocation().getBlock().getType().equals(Material.WALL_SIGN)) {
-                ((Sign) warpSign.getLocation().getBlock().getState()).setLine(0, "AUTO");
-                warpSign.getLocation().getBlock().getState().update(true);
-                this.warpSigns.add(warpSign);
-            } else {
-                WarpSystem.log("    > Loaded WarpSign at location without sign! (Skip)");
-            }
+            if(warpSign != null) {
+                if(warpSign.getLocation() != null && warpSign.getLocation().getWorld() != null && warpSign.getLocation().getBlock() != null) {
+                    if(warpSign.getLocation().getBlock().getType().equals(MultiItemType.SIGN_POST.getMaterial()) || warpSign.getLocation().getBlock().getType().equals(Material.WALL_SIGN)) {
+                        this.warpSigns.add(warpSign);
+                    } else WarpSystem.log("    > Loaded WarpSign at location without sign! (Skip)");
+                } else WarpSystem.log("    > Loaded WarpSign with missing world! (Skip)");
+            } else WarpSystem.log("    > Could not load WarpSign! (Skip)");
         }
 
         //Remove old portals
@@ -187,7 +187,7 @@ public class TeleportManager {
         else teleport.start();
     }
 
-    public void teleport(Player player, String globalWarp, String globalWarpDisplayName) {
+    public void teleport(Player player, String globalWarp, String globalWarpDisplayName, double costs) {
         if(isTeleporting(player)) {
             Teleport teleport = getTeleport(player);
             long diff = System.currentTimeMillis() - teleport.getStartTime();
@@ -205,7 +205,7 @@ public class TeleportManager {
 
         player.closeInventory();
 
-        Teleport teleport = new Teleport(player, globalWarp, globalWarpDisplayName);
+        Teleport teleport = new Teleport(player, globalWarp, globalWarpDisplayName, costs);
         this.teleports.add(teleport);
 
         if(seconds == 0 || (WarpSystem.OP_CAN_SKIP_DELAY && player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay))) teleport.teleport();
@@ -216,7 +216,7 @@ public class TeleportManager {
         if(!isTeleporting(p)) return;
 
         Teleport teleport = getTeleport(p);
-        teleport.cancel(true);
+        teleport.cancel(true, false);
         this.teleports.remove(teleport);
 
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Cancel_Message", true)) {
