@@ -132,7 +132,7 @@ public abstract class Icon implements Serializable {
     }
 
     public ItemStack getItem() {
-        return item.getItem();
+        return new ItemBuilder(item.getItem()).setHideStandardLore(true).getItem();
     }
 
     public String getNameWithoutColor() {

@@ -3,9 +3,9 @@ package de.codingair.warpsystem.spigot.features.signs;
 import de.codingair.codingapi.player.gui.sign.SignGUI;
 import de.codingair.codingapi.player.gui.sign.SignTools;
 import de.codingair.codingapi.tools.Location;
-import de.codingair.codingapi.tools.items.MultiItemType;
-import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.gui.affiliations.Warp;
+import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.gui.guis.GWarps;
 import de.codingair.warpsystem.spigot.gui.guis.utils.GUIListener;
 import de.codingair.warpsystem.spigot.gui.guis.utils.Task;
@@ -30,7 +30,7 @@ public class SignListener implements Listener {
     public void onInteract(PlayerInteractEvent e) {
         if(!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 
-        if(e.getClickedBlock() == null || e.getClickedBlock().getType().equals(Material.WALL_SIGN) || e.getClickedBlock().getType().equals(MultiItemType.SIGN_POST.getMaterial())) {
+        if(e.getClickedBlock() == null || e.getClickedBlock().getType().equals(Material.WALL_SIGN) || e.getClickedBlock().getType().equals(XMaterial.SIGN.parseMaterial())) {
             Sign s = e.getClickedBlock() == null ? null : (Sign) e.getClickedBlock().getState();
 
             WarpSign sign = WarpSystem.getInstance().getTeleportManager().getByLocation(s.getLocation());

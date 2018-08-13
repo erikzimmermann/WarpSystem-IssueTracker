@@ -10,7 +10,7 @@ import de.codingair.codingapi.server.Color;
 import de.codingair.codingapi.server.Environment;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.items.ItemBuilder;
-import de.codingair.codingapi.tools.items.MultiItemType;
+import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.gui.affiliations.*;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.language.Example;
@@ -18,7 +18,6 @@ import de.codingair.warpsystem.spigot.language.Lang;
 import de.codingair.warpsystem.spigot.utils.money.AdapterType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -213,12 +212,12 @@ public class GEditIcon extends GUI {
     public void initialize(Player p) {
         setupMainIcon();
 
-        ItemStack leaves = new ItemBuilder(MultiItemType.LEAVES).setName("§0").getItem();
-        ItemStack glass = new ItemBuilder(MultiItemType.STAINED_GLASS_PANE).setColor(DyeColor.BLACK).setName("§0").getItem();
-        ItemStack bars = new ItemBuilder(MultiItemType.IRON_FENCE).setName("§0").getItem();
+        ItemStack leaves = new ItemBuilder(XMaterial.OAK_LEAVES).setName("§0").getItem();
+        ItemStack glass = new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setName("§0").getItem();
+        ItemStack bars = new ItemBuilder(XMaterial.IRON_BARS).setName("§0").getItem();
 
-        ItemStack cancel = new ItemBuilder(MultiItemType.WOOL).setColor(DyeColor.RED).setName("§c" + Lang.get("Cancel", new Example("ENG", "Cancel"), new Example("GER", "Abbrechen"))).getItem();
-        ItemStack ready = new ItemBuilder(MultiItemType.WOOL).setColor(DyeColor.LIME).setName("§a" + Lang.get("Ready", new Example("ENG", "Ready"), new Example("GER", "Fertig"))).getItem();
+        ItemStack cancel = new ItemBuilder(XMaterial.RED_WOOL).setName("§c" + Lang.get("Cancel", new Example("ENG", "Cancel"), new Example("GER", "Abbrechen"))).getItem();
+        ItemStack ready = new ItemBuilder(XMaterial.LIME_WOOL).setName("§a" + Lang.get("Ready", new Example("ENG", "Ready"), new Example("GER", "Fertig"))).getItem();
 
         ItemStack sparkle;
         if(this.item.getEnchantments().size() == 0) {
@@ -242,7 +241,7 @@ public class GEditIcon extends GUI {
                                 : Lang.get("Leftclick_Remove", new Example("ENG", "&3Leftclick: &cRemove"), new Example("GER", "&3Linksklick: &cEntfernen")))
                 .getItem();
 
-        ItemStack permissionIcon = new ItemBuilder(MultiItemType.EYE_OF_ENDER).setName("§6§n" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")))
+        ItemStack permissionIcon = new ItemBuilder(XMaterial.ENDER_EYE).setName("§6§n" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")))
                 .setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + (this.permission == null ? "-" : this.permission), "",
                         this.permission == null ? Lang.get("Leftclick_Add", new Example("ENG", "&3Leftclick: &aAdd"), new Example("GER", "&3Linksklick: &aHinzufügen"))
                                 : Lang.get("Leftclick_Remove", new Example("ENG", "&3Leftclick: &cRemove"), new Example("GER", "&3Linksklick: &cEntfernen")))
@@ -253,14 +252,13 @@ public class GEditIcon extends GUI {
                         Lang.get("Leftclick_Set", new Example("ENG", "&3Leftclick: &aSet"), new Example("GER", "&3Linksklick: &aSetzen")))
                 .getItem();
 
-        ItemStack disableIcon = new ItemBuilder(MultiItemType.INK_SACK)
+        ItemStack disableIcon = new ItemBuilder(this.disabled ? XMaterial.ROSE_RED : XMaterial.LIME_DYE)
                 .setName("§6§n" + Lang.get("Status", new Example("ENG", "Status"), new Example("GER", "Status")) + ": " + (this.disabled ?
                         Lang.get("Disabled", new Example("ENG", "Disabled"), new Example("GER", "Deaktiviert")) :
                         Lang.get("Enabled", new Example("ENG", "Enabled"), new Example("GER", "Aktiviert"))))
                 .setLore("",
                         this.disabled ? Lang.get("Leftclick_Enable_This_Icon", new Example("ENG", "&3Leftclick: &a&lEnable this icon"), new Example("GER", "&3Linksklick: &a&lAktiviere dieses Icon")) :
                                 Lang.get("Disable_This_Icon", new Example("ENG", "&3Leftclick: &c&lDisable this icon"), new Example("GER", "&3Linksklick: &c&lDeaktiviere dieses Icon")))
-                .setColor(this.disabled ? DyeColor.RED : DyeColor.LIME)
                 .getItem();
 
         //decoration
@@ -407,7 +405,7 @@ public class GEditIcon extends GUI {
                     }, new ItemBuilder(item).setHideStandardLore(true).removeEnchantments().setName(name).setHideName(name == null).getItem());
                 } else if(e.getClick().isRightClick()) {
                     Sound.CLICK.playSound(getPlayer());
-                    ItemStack item = p.getItemInHand();
+                    ItemStack item = p.getInventory().getItem(p.getInventory().getHeldItemSlot());
 
                     if(item == null || item.getType().equals(Material.AIR)) {
                         p.sendMessage(Lang.getPrefix() + Lang.get("No_Item_In_Hand", new Example("ENG", "&cYou have to hold an item!"), new Example("GER", "&cDu musst ein Item halten!")));
@@ -416,6 +414,7 @@ public class GEditIcon extends GUI {
 
                     GEditIcon.this.item.setType(item.getType());
                     GEditIcon.this.item.setData(item.getData());
+                    GEditIcon.this.item.setDurability(item.getDurability());
                     GEditIcon.this.item.setAmount(item.getAmount());
 
                     setItem(GEditIcon.this.item);
@@ -678,7 +677,7 @@ public class GEditIcon extends GUI {
                 if(permission != null) {
                     permission = null;
 
-                    ItemBuilder permissionIconBuilder = new ItemBuilder(MultiItemType.EYE_OF_ENDER).setName("§6§n" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")))
+                    ItemBuilder permissionIconBuilder = new ItemBuilder(XMaterial.ENDER_EYE).setName("§6§n" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")))
                             .setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7-", "", Lang.get("Leftclick_Add", new Example("ENG", "&3Leftclick: &aAdd"), new Example("GER", "&3Linksklick: &aHinzufügen")));
 
                     ItemStack permissionIcon = permissionIconBuilder.getItem();
@@ -703,7 +702,7 @@ public class GEditIcon extends GUI {
                                 return;
                             }
 
-                            ItemBuilder permissionIconBuilder = new ItemBuilder(MultiItemType.EYE_OF_ENDER).setName("§6§n" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")));
+                            ItemBuilder permissionIconBuilder = new ItemBuilder(XMaterial.ENDER_EYE).setName("§6§n" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")));
                             permissionIconBuilder.setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + input);
                             permissionIconBuilder.addLore("", Lang.get("Leftclick_Remove", new Example("ENG", "&3Leftclick: &cRemove"), new Example("GER", "&3Linksklick: &cEntfernen")));
 
@@ -722,7 +721,7 @@ public class GEditIcon extends GUI {
                             e.setPost(GEditIcon.this::open);
                             quit = true;
                         }
-                    }, new ItemBuilder(MultiItemType.EYE_OF_ENDER).setName(Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")) + "...").getItem());
+                    }, new ItemBuilder(XMaterial.ENDER_EYE).setName(Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")) + "...").getItem());
                 }
             }
         }.setOption(option).setOnlyLeftClick(true));
@@ -846,14 +845,13 @@ public class GEditIcon extends GUI {
             public void onClick(InventoryClickEvent e) {
                 disabled = !disabled;
 
-                ItemStack disableIcon = new ItemBuilder(MultiItemType.INK_SACK)
+                ItemStack disableIcon = new ItemBuilder(disabled ? XMaterial.ROSE_RED : XMaterial.LIME_DYE)
                         .setName("§6§n" + Lang.get("Status", new Example("ENG", "Status"), new Example("GER", "Status")) + ": " + (disabled ?
                                 Lang.get("Disabled", new Example("ENG", "Disabled"), new Example("GER", "Deaktiviert")) :
                                 Lang.get("Enabled", new Example("ENG", "Enabled"), new Example("GER", "Aktiviert"))))
                         .setLore("",
                                 disabled ? Lang.get("Leftclick_Enable_This_Icon", new Example("ENG", "&3Leftclick: &a&lEnable this icon"), new Example("GER", "&3Linksklick: &a&lAktiviere dieses Icon")) :
                                         Lang.get("Disable_This_Icon", new Example("ENG", "&3Leftclick: &c&lDisable this icon"), new Example("GER", "&3Linksklick: &c&lDeaktiviere dieses Icon")))
-                        .setColor(disabled ? DyeColor.RED : DyeColor.LIME)
                         .getItem();
 
                 setItem(disableIcon);

@@ -9,8 +9,8 @@ import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOpti
 import de.codingair.codingapi.player.gui.inventory.guis.ConfirmGUI;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.codingapi.tools.items.MultiItemType;
 import de.codingair.codingapi.tools.items.ItemBuilder;
+import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.gui.affiliations.*;
 import de.codingair.warpsystem.spigot.WarpSystem;
@@ -21,7 +21,6 @@ import de.codingair.warpsystem.spigot.language.Lang;
 import de.codingair.warpsystem.spigot.utils.money.AdapterType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -115,14 +114,14 @@ public class GWarps extends GUI {
         option.setClickSound(Sound.CLICK.bukkitSound());
         option.setOnlyLeftClick(true);
 
-        ItemStack edge = new ItemBuilder(MultiItemType.IRON_FENCE).setHideName(true).setHideStandardLore(true).getItem();
+        ItemStack edge = new ItemBuilder(XMaterial.IRON_BARS).setHideName(true).setHideStandardLore(true).getItem();
         ItemBuilder noneBuilder;
 
         if(editing) {
             noneBuilder = new ItemBuilder(Material.BARRIER).setHideStandardLore(true)
                     .setName(Lang.get("Edit_Mode_Set_Icon", new Example("ENG", "&3Leftclick: &bSet Icon"), new Example("GER", "&3Linksklick: &bIcon setzen")));
         } else {
-            noneBuilder = new ItemBuilder(MultiItemType.STAINED_GLASS_PANE).setColor(DyeColor.BLACK).setHideName(true).setHideStandardLore(true);
+            noneBuilder = new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).setHideStandardLore(true);
         }
 
         ItemStack none = noneBuilder.getItem();
