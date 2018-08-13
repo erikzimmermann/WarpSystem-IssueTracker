@@ -61,7 +61,9 @@ public class TeleportManager {
     /**
      * Have to be launched after the IconManager (see WarpSign.class - fromJSONString method - need warps and categories)
      */
-    public void load() {
+    public boolean load() {
+        boolean success = true;
+
         this.particleId = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Animation", 17);
         this.seconds = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Delay", 5);
         this.canMove = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Teleport.Allow_Move", false);
@@ -107,7 +109,10 @@ public class TeleportManager {
 
         WarpSystem.log("    > Verify that worlds are available");
         for(Portal portal : this.portals) {
-            if(portal.getStart().getWorld() == null || portal.getDestination().getWorld() == null) portal.setDisabled(true);
+            if(portal.getStart().getWorld() == null || portal.getDestination().getWorld() == null) {
+                portal.setDisabled(true);
+                success = false;
+            }
         }
 
         WarpSystem.log("    > Verify that portals are enabled");
@@ -123,14 +128,24 @@ public class TeleportManager {
                 if(warpSign.getLocation() != null && warpSign.getLocation().getWorld() != null && warpSign.getLocation().getBlock() != null) {
                     if(warpSign.getLocation().getBlock().getState() instanceof Sign) {
                         this.warpSigns.add(warpSign);
-                    } else WarpSystem.log("    > Loaded WarpSign at location without sign! (Skip)");
-                } else WarpSystem.log("    > Loaded WarpSign with missing world! (Skip)");
-            } else WarpSystem.log("    > Could not load WarpSign! (Skip)");
+                    } else {
+                        WarpSystem.log("    > Loaded WarpSign at location without sign! (Skip)");
+                        success = false;
+                    }
+                } else {
+                    WarpSystem.log("    > Loaded WarpSign with missing world! (Skip)");
+                    success = false;
+                }
+            } else {
+                WarpSystem.log("    > Could not load WarpSign! (Skip)");
+                success = false;
+            }
         }
 
         //Remove old portals
         file.getConfig().set("Teleporters", null);
         file.saveConfig();
+        return success;
     }
 
     public void save(boolean saver) {

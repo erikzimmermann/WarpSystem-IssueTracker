@@ -8,6 +8,7 @@ import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.fancymessages.FancyMessage;
 import de.codingair.codingapi.server.fancymessages.MessageTypes;
+import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.commands.*;
@@ -34,7 +35,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -110,10 +113,17 @@ public class WarpSystem extends JavaPlugin {
             this.fileManager.loadFile("Language", "/");
             this.fileManager.loadFile("Config", "/");
 
+            boolean createBackup = false;
             log("Loading icons.");
-            this.iconManager.load(true);
+            if(!this.iconManager.load(true)) createBackup = true;
             log("Loading TeleportManager.");
-            this.teleportManager.load();
+            if(!this.teleportManager.load()) createBackup = true;
+
+            if(createBackup) {
+                log("Loading with errors > Create backup...");
+                createBackup();
+                log("Backup successfully created.");
+            }
 
             maintenance = fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Maintenance", false);
             OP_CAN_SKIP_DELAY = fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Teleport.Op_Can_Skip_Delay", false);
@@ -366,6 +376,60 @@ public class WarpSystem extends JavaPlugin {
 
         new File(file, "Config.yml").renameTo(new File(file, "OldConfig_Update_2.0.yml"));
         new File(file, "Language.yml").renameTo(new File(file, "OldLanguage_Update_2.0.yml"));
+    }
+
+    public void createBackup() {
+        try {
+            getDataFolder().createNewFile();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
+        File backupFolder = new File(getDataFolder().getPath() + "/Backups/", TimeFetcher.getYear() + "_" + (TimeFetcher.getMonthNum() + 1) + "_" + TimeFetcher.getDay() + " " + TimeFetcher.getHour() + "_" + TimeFetcher.getMinute() + "_" + TimeFetcher.getSecond());
+        backupFolder.mkdirs();
+
+        for(File file : getDataFolder().listFiles()) {
+            if(file.getName().equals("Backups") || file.getName().equals("ErrorReport.txt")) continue;
+            File dest = new File(backupFolder, file.getName());
+
+            try {
+                if(file.isDirectory()) {
+                    copyFolder(file, dest);
+                    continue;
+                }
+
+                copyFileUsingFileChannels(file, dest);
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void copyFolder(File source, File dest) throws IOException {
+        dest.mkdirs();
+        for(File file : source.listFiles()) {
+            File copy = new File(dest, file.getName());
+
+            if(file.isDirectory()) {
+                copyFolder(file, copy);
+                continue;
+            }
+
+            copyFileUsingFileChannels(file, copy);
+        }
+    }
+
+    private void copyFileUsingFileChannels(File source, File dest) throws IOException {
+        FileChannel inputChannel = null;
+        FileChannel outputChannel = null;
+        try {
+            inputChannel = new FileInputStream(source).getChannel();
+            outputChannel = new FileOutputStream(dest).getChannel();
+            outputChannel.transferFrom(inputChannel, 0, inputChannel.size());
+        } finally {
+            inputChannel.close();
+            outputChannel.close();
+        }
     }
 
     public void notifyPlayers(Player player) {
