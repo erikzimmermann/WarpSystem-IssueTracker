@@ -1,14 +1,10 @@
 package de.codingair.warpsystem.gui.affiliations;
 
-import de.codingair.codingapi.bungeecord.BungeeCordHelper;
-import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.gui.guis.GWarps;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
-import de.codingair.warpsystem.spigot.utils.money.Adapter;
 import de.codingair.warpsystem.spigot.utils.money.AdapterType;
-import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPacket;
 import de.codingair.warpsystem.transfer.serializeable.icons.SActionIcon;
 import de.codingair.warpsystem.transfer.serializeable.icons.SActionObject;
 import de.codingair.warpsystem.transfer.serializeable.icons.SIcon;
