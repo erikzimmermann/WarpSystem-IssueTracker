@@ -2,9 +2,12 @@ package de.codingair.warpsystem.spigot;
 
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.bungeecord.BungeeCordHelper;
+import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.files.FileManager;
 import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.server.commands.CommandBuilder;
+import de.codingair.codingapi.server.fancymessages.FancyMessage;
+import de.codingair.codingapi.server.fancymessages.MessageTypes;
 import de.codingair.codingapi.time.Timer;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.commands.*;
@@ -18,6 +21,10 @@ import de.codingair.warpsystem.spigot.managers.IconManager;
 import de.codingair.warpsystem.spigot.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.utils.UpdateChecker;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -55,6 +62,9 @@ public class WarpSystem extends JavaPlugin {
     private FileManager fileManager = new FileManager(this);
 
     private UpdateChecker updateChecker = new UpdateChecker("https://www.spigotmc.org/resources/warpsystem-gui.29595/history");
+    private int latestVersionId = -1;
+    private boolean runningFirstTime = false;
+
     private Timer timer = new Timer();
 
     private static boolean updateAvailable = false;
@@ -77,6 +87,7 @@ public class WarpSystem extends JavaPlugin {
             timer.start();
 
             updateAvailable = WarpSystem.this.updateChecker.needsUpdate();
+            latestVersionId = UpdateChecker.getLatestVersionID();
 
             log(" ");
             log("__________________________________________________________");
@@ -123,6 +134,8 @@ public class WarpSystem extends JavaPlugin {
                 cWarps.register(this);
             }
 
+            this.runningFirstTime = !fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "2.1.0").equals(getDescription().getVersion());
+
             CWarpSystem cWarpSystem = new CWarpSystem();
             this.commands.add(cWarpSystem);
             cWarpSystem.register(this);
@@ -144,7 +157,7 @@ public class WarpSystem extends JavaPlugin {
             log(" ");
 
             activated = true;
-            notifyPlayers(null);
+            Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> WarpSystem.getInstance().notifyPlayers(null), 20L);
 
             this.ERROR = false;
 
@@ -362,11 +375,55 @@ public class WarpSystem extends JavaPlugin {
             }
         } else {
             if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && WarpSystem.updateAvailable) {
+                TextComponent tc0 = new TextComponent(Lang.getPrefix() + "§7A new update is available §8[§bv" + WarpSystem.getInstance().updateChecker.getVersion() + "§8 - §b" + WarpSystem.getInstance().updateChecker.getUpdateInfo() + "§8]§7. Download it §7»");
+                TextComponent click = new TextComponent("§chere");
+                TextComponent tc1 = new TextComponent("§7«!");
+
+                click.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/warps-portals-and-warpsigns-warp-system-only-gui.29595/update?update=" + latestVersionId));
+                click.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
+
+                tc0.addExtra(click);
+                tc0.addExtra(tc1);
+                tc0.setColor(ChatColor.GRAY);
+
+                int updateId = WarpSystem.getInstance().getLatestVersionId();
+
+                TextComponent command0 = new TextComponent(Lang.getPrefix() + "§7Run \"§c/WarpSystem news§7\" or click »");
+                TextComponent command1 = new TextComponent("§chere");
+                TextComponent command2 = new TextComponent("§7« to read all new stuff!");
+
+                command1.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/warps-portals-and-warpsigns-warp-system-only-gui.29595/update?update=" + updateId));
+                command1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
+
+                command0.addExtra(command1);
+                command0.addExtra(command2);
+                command0.setColor(ChatColor.GRAY);
+
                 player.sendMessage("");
                 player.sendMessage("");
-                player.sendMessage(Lang.getPrefix() + "§aA new update is available §8[§bv" + WarpSystem.getInstance().updateChecker.getVersion() + "§8 - §b" + WarpSystem.getInstance().updateChecker.getUpdateInfo() + "§8]§a. Download it on §b§nhttps://www.spigotmc.org/resources/warpsystem-gui.29595/history");
+                player.spigot().sendMessage(tc0);
+                player.sendMessage("");
+                player.spigot().sendMessage(command0);
                 player.sendMessage("");
                 player.sendMessage("");
+            } else if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && this.runningFirstTime) {
+                ConfigFile file = fileManager.getFile("Config");
+                file.getConfig().set("Do_Not_Edit.Last_Version", getDescription().getVersion());
+                file.saveConfig();
+
+                FancyMessage message = new FancyMessage(player, MessageTypes.INFO_MESSAGE, true);
+                message.addMessages("                                       §c§l§n" + getDescription().getName() + " §c- §l" + getDescription().getVersion());
+                message.addMessages("");
+                message.addMessages("    §7Hey there,");
+                message.addMessages("    §7This is the first time for this server running my latest");
+                message.addMessages("    §7version! If you're struggling with all the §cnew stuff§7, run");
+                message.addMessages("    §7\"§c/WarpSystem news§7\". And if you'll find some new §cbugs§7,");
+                message.addMessages("    §7please run \"§c/WarpSystem report§7\" to report the bug!");
+                message.addMessages("");
+                message.addMessages("    §7Thank you for using my plugin!");
+                message.addMessages("");
+                message.addMessages("    §bCodingAir");
+                message.send();
             }
         }
     }
@@ -413,5 +470,9 @@ public class WarpSystem extends JavaPlugin {
 
     public List<CommandBuilder> getCommands() {
         return commands;
+    }
+
+    public int getLatestVersionId() {
+        return latestVersionId;
     }
 }
