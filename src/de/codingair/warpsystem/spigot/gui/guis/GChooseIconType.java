@@ -7,7 +7,7 @@ import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOpti
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.ItemBuilder;
-import de.codingair.codingapi.tools.items.MultiItemType;
+import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.gui.affiliations.Category;
 import de.codingair.warpsystem.gui.affiliations.IconType;
 import de.codingair.warpsystem.spigot.WarpSystem;
@@ -139,7 +139,7 @@ public class GChooseIconType extends GUI {
             }.setOption(option));
         }
 
-        addButton(new ItemButton(slots.remove(0), new ItemBuilder(MultiItemType.FLOWER_POT_ITEM).setName("§c" + Lang.get("Decoration", new Example("ENG", "Decoration"), new Example("GER", "Dekoration"))).getItem()) {
+        addButton(new ItemButton(slots.remove(0), new ItemBuilder(XMaterial.FLOWER_POT).setName("§c" + Lang.get("Decoration", new Example("ENG", "Decoration"), new Example("GER", "Dekoration"))).getItem()) {
             @Override
             public void onClick(InventoryClickEvent e) {
                 set = true;

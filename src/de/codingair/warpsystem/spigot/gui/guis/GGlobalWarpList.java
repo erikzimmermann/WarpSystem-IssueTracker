@@ -11,12 +11,11 @@ import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.items.ItemBuilder;
-import de.codingair.codingapi.tools.items.MultiItemType;
+import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -139,7 +138,7 @@ public class GGlobalWarpList extends GUI {
             }
         });
 
-        ItemStack ph = new ItemBuilder(MultiItemType.STAINED_GLASS_PANE).setHideName(true).setColor(DyeColor.BLACK).getItem();
+        ItemStack ph = new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem();
         ItemBuilder search = new ItemBuilder(Material.COMPASS).setName(ChatColor.RED.toString() + (searching == null ? "" : ChatColor.UNDERLINE) + Lang.get("Search", new Example("ENG", "Search..."), new Example("GER", "Suchen...")));
         if(searching != null) {
             search.addLore("", ChatColor.GRAY + "» " + Lang.get("Current") + ": '" + ChatColor.YELLOW + searching + ChatColor.GRAY + "'",

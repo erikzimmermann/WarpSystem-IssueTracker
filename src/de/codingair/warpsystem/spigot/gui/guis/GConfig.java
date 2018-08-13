@@ -8,15 +8,13 @@ import de.codingair.codingapi.player.gui.inventory.gui.Skull;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.server.Sound;
-import de.codingair.codingapi.tools.items.MultiItemType;
 import de.codingair.codingapi.tools.items.ItemBuilder;
-import de.codingair.codingapi.tools.items.MultiItemType;
+import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.warpsystem.gui.affiliations.Category;
+import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
-import de.codingair.warpsystem.spigot.WarpSystem;
-import de.codingair.warpsystem.gui.affiliations.Category;
 import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -73,8 +71,8 @@ public class GConfig extends GUI {
         option.setClickSound(Sound.CLICK.bukkitSound());
         option.setOnlyLeftClick(true);
 
-        ItemStack leaves = new ItemBuilder(MultiItemType.LEAVES).setName("§0").getItem();
-        ItemStack glass = new ItemBuilder(MultiItemType.STAINED_GLASS_PANE).setColor(DyeColor.BLACK).setName("§0").getItem();
+        ItemStack leaves = new ItemBuilder(XMaterial.OAK_LEAVES).setName("§0").getItem();
+        ItemStack glass = new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setName("§0").getItem();
 
         setItem(1, leaves);
         setItem(4, glass);
@@ -244,7 +242,7 @@ public class GConfig extends GUI {
             }
         }.setOption(option));
 
-        ItemBuilder delay = new ItemBuilder(MultiItemType.WATCH).setName("§c§n" + Lang.get("Teleport_Delay", new Example("ENG", "Teleport delay"), new Example("GER", "Teleport-Zeit")));
+        ItemBuilder delay = new ItemBuilder(XMaterial.CLOCK).setName("§c§n" + Lang.get("Teleport_Delay", new Example("ENG", "Teleport delay"), new Example("GER", "Teleport-Zeit")));
         delay.setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + WarpSystem.getInstance().getTeleportManager().getSeconds());
         delay.addLore("", Lang.get("Leftclick_Reduce", new Example("ENG", "&3Leftclick: &bReduce"), new Example("GER", "&3Linksklick: &bVerringern")));
         delay.addLore(Lang.get("Rightclick_Enlarge", new Example("ENG", "&3Rightclick: &bEnlarge"), new Example("GER", "&3Rechtsklick: &bVergrößern")));
@@ -267,7 +265,7 @@ public class GConfig extends GUI {
                 p.sendMessage(Lang.getPrefix() + Lang.get("Success_Changed_Teleport_Delay", new Example("ENG", "&aThe teleport delay was changed to '%delay%'."),
                         new Example("GER", "&aDie Teleport-Zeit wurde auf '%delay%' geändert.")).replace("%delay%", WarpSystem.getInstance().getTeleportManager().getSeconds() + ""));
 
-                ItemBuilder delay = new ItemBuilder(MultiItemType.WATCH).setName("§c§n" + Lang.get("Teleport_Delay", new Example("ENG", "Teleport delay"), new Example("GER", "Teleport-Zeit")));
+                ItemBuilder delay = new ItemBuilder(XMaterial.CLOCK).setName("§c§n" + Lang.get("Teleport_Delay", new Example("ENG", "Teleport delay"), new Example("GER", "Teleport-Zeit")));
                 delay.setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + WarpSystem.getInstance().getTeleportManager().getSeconds());
                 delay.addLore("", Lang.get("Leftclick_Reduce", new Example("ENG", "&3Leftclick: &bReduce"), new Example("GER", "&3Linksklick: &bVerringern")));
                 delay.addLore(Lang.get("Rightclick_Enlarge", new Example("ENG", "&3Rightclick: &bEnlarge"), new Example("GER", "&3Rechtsklick: &bVergrößern")));

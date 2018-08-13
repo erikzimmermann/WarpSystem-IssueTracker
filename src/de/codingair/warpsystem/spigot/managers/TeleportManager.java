@@ -3,19 +3,16 @@ package de.codingair.warpsystem.spigot.managers;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
-import de.codingair.codingapi.tools.Callback;
-import de.codingair.codingapi.tools.items.MultiItemType;
+import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.warpsystem.gui.affiliations.Warp;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.features.portals.Portal;
 import de.codingair.warpsystem.spigot.features.signs.WarpSign;
-import de.codingair.warpsystem.gui.affiliations.Warp;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
 import de.codingair.warpsystem.spigot.utils.Teleport;
-import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPacket;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -123,7 +120,7 @@ public class TeleportManager {
 
             if(warpSign != null) {
                 if(warpSign.getLocation() != null && warpSign.getLocation().getWorld() != null && warpSign.getLocation().getBlock() != null) {
-                    if(warpSign.getLocation().getBlock().getType().equals(MultiItemType.SIGN_POST.getMaterial()) || warpSign.getLocation().getBlock().getType().equals(Material.WALL_SIGN)) {
+                    if(warpSign.getLocation().getBlock().getType().equals(XMaterial.SIGN.parseMaterial()) || warpSign.getLocation().getBlock().getType().equals(Material.WALL_SIGN)) {
                         this.warpSigns.add(warpSign);
                     } else WarpSystem.log("    > Loaded WarpSign at location without sign! (Skip)");
                 } else WarpSystem.log("    > Loaded WarpSign with missing world! (Skip)");
