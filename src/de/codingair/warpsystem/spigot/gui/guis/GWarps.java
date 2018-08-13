@@ -11,7 +11,6 @@ import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.MultiItemType;
 import de.codingair.codingapi.tools.items.ItemBuilder;
-import de.codingair.codingapi.tools.items.MultiItemType;
 import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.gui.affiliations.*;
 import de.codingair.warpsystem.spigot.WarpSystem;
@@ -36,6 +35,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GWarps extends GUI {
@@ -54,7 +54,7 @@ public class GWarps extends GUI {
     }
 
     private static String getTitle(Category category, GUIListener listener) {
-        return listener == null || listener.getTitle() == null ? "§c§l§nWarps§r" + (category != null ? " §8@" + category.getNameWithoutColor() : "") : listener.getTitle();
+        return listener == null || listener.getTitle() == null ? "§c§l§nWarps§r" + (category != null ? " §c@" + category.getNameWithoutColor() : "") : listener.getTitle();
     }
 
     public GWarps(Player p, Category category, boolean editing) {
@@ -163,8 +163,9 @@ public class GWarps extends GUI {
             setItem(0, edge);
         }
 
+        int size = WarpSystem.getInstance().getIconManager().getSize();
         if(category != null) {
-            addButton(new ItemButton(0, 5, new ItemBuilder(Skull.ArrowLeft).setName("§c" + Lang.get("Back", new Example("ENG", "Back"), new Example("GER", "Zurück"))).getItem()) {
+            addButton(new ItemButton(size - 9, new ItemBuilder(Skull.ArrowLeft).setName("§c" + Lang.get("Back", new Example("ENG", "Back"), new Example("GER", "Zurück"))).getItem()) {
                 @Override
                 public void onClick(InventoryClickEvent e) {
                     GWarps.this.category = null;
@@ -175,8 +176,6 @@ public class GWarps extends GUI {
         }
 
         setItem(8, edge);
-        int size = WarpSystem.getInstance().getIconManager().getSize();
-
         if(size > 9) {
             if(category == null) setItem(size - 9, edge);
             setItem(size - 1, edge);
@@ -392,6 +391,18 @@ public class GWarps extends GUI {
         }
     }
 
+    private ItemBuilder prepareIcon(ActionIcon icon) {
+        ItemBuilder builder = new ItemBuilder(icon.getItem());
+
+        List<String> loreList = new ArrayList<>();
+        if(icon.getName() != null) loreList.add("§b" + (icon instanceof Category ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', icon.getName()));
+        if(builder.getLore() != null) loreList.addAll(new ArrayList<>(builder.getLore()));
+        builder.setText(loreList);
+        builder.setHideName(false);
+
+        return builder;
+    }
+
     private void addToGUI(Player p, ActionIcon icon) {
         if(icon.getSlot() >= WarpSystem.getInstance().getIconManager().getSize()) return;
 
@@ -400,37 +411,41 @@ public class GWarps extends GUI {
         option.setOnlyLeftClick(true);
 
         if(editing || (!icon.hasPermission() || p.hasPermission(icon.getPermission()))) {
-            ItemBuilder iconBuilder = new ItemBuilder(icon.getItem()).setName(icon.getName() == null ? null : "§b" + (icon instanceof Category ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', icon.getName()));
-            if(icon.getName() == null) iconBuilder.setHideName(true);
+            ItemBuilder iconBuilder = prepareIcon(icon);
 
             if(editing) {
                 String command = icon.getAction(Action.RUN_COMMAND) == null ? "-" : icon.getAction(Action.RUN_COMMAND).getValue();
                 String permission = icon.getPermission() == null ? "-" : icon.getPermission();
                 String costs = (icon.getAction(Action.PAY_MONEY) == null ? "0" : icon.getAction(Action.PAY_MONEY).getValue()) + " " + Lang.get("Coins", new Example("ENG", "Coin(s)"), new Example("GER", "Coin(s)"));
 
-                iconBuilder.addLore("§8------------");
-                if(icon instanceof GlobalWarp) {
-                    iconBuilder.addLore("§7" + Lang.get("GlobalWarp", new Example("ENG", "GlobalWarp"), new Example("GER", "GlobalWarp")) + ": " + icon.getAction(Action.SWITCH_SERVER).getValue());
-                    iconBuilder.addLore("§7" + Lang.get("Target_Server", new Example("ENG", "Target-Server"), new Example("GER", "Ziel-Server")) + ": " + WarpSystem.getInstance().getGlobalWarpManager().getGlobalWarps().get(icon.getAction(Action.SWITCH_SERVER).getValue()));
-
-                    iconBuilder.addLore("§8------------");
+                if(icon.isDisabled()) {
+                    iconBuilder.addText("§8------------");
+                    iconBuilder.addText(Lang.get("Icon_Is_Disabled", new Example("ENG", "&4This icon is &l&ndisabled&4!"), new Example("GER", "&4Dieses Icon ist &l&ndeaktiviert&4!")));
                 }
-                iconBuilder.addLore("§7" + Lang.get("Command", new Example("ENG", "Command"), new Example("GER", "Befehl")) + ": " + command);
-                iconBuilder.addLore("§7" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")) + ": " + permission);
-                if(AdapterType.canEnable()) iconBuilder.addLore("§7" + Lang.get("Costs", new Example("ENG", "Costs"), new Example("GER", "Kosten")) + ": " + costs);
-                iconBuilder.addLore("§8------------");
-                iconBuilder.addLore(Lang.get("Leftclick_Edit", new Example("ENG", "&7Leftclick: Configure"), new Example("GER", "&7Linksklick: Bearbeiten")));
-                iconBuilder.addLore(Lang.get("Rightclick_Delete", new Example("ENG", "&7Rightclick: Delete"), new Example("GER", "&7Rechtsklick: Löschen")));
-                iconBuilder.addLore(Lang.get("Shift_Leftclick_Edit", new Example("ENG", "&7Shift-Leftclick: Move"), new Example("GER", "&7Shift-Linksklick: Bewegen")));
-                if(icon instanceof Category) iconBuilder.addLore(Lang.get("Shift_Rightclick_Edit", new Example("ENG", "&7Shift-Rightclick: Open"), new Example("GER", "&7Shift-Rechtsklick: Öffnen")));
+
+                iconBuilder.addText("§8------------");
+                if(icon instanceof GlobalWarp) {
+                    iconBuilder.addText("§7" + Lang.get("GlobalWarp", new Example("ENG", "GlobalWarp"), new Example("GER", "GlobalWarp")) + ": " + icon.getAction(Action.SWITCH_SERVER).getValue());
+                    iconBuilder.addText("§7" + Lang.get("Target_Server", new Example("ENG", "Target-Server"), new Example("GER", "Ziel-Server")) + ": " + WarpSystem.getInstance().getGlobalWarpManager().getGlobalWarps().get(icon.getAction(Action.SWITCH_SERVER).getValue()));
+
+                    iconBuilder.addText("§8------------");
+                }
+                iconBuilder.addText("§7" + Lang.get("Command", new Example("ENG", "Command"), new Example("GER", "Befehl")) + ": " + command);
+                iconBuilder.addText("§7" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")) + ": " + permission);
+                if(AdapterType.canEnable()) iconBuilder.addText("§7" + Lang.get("Costs", new Example("ENG", "Costs"), new Example("GER", "Kosten")) + ": " + costs);
+                iconBuilder.addText("§8------------");
+                iconBuilder.addText(Lang.get("Leftclick_Edit", new Example("ENG", "&7Leftclick: Configure"), new Example("GER", "&7Linksklick: Bearbeiten")));
+                iconBuilder.addText(Lang.get("Rightclick_Delete", new Example("ENG", "&7Rightclick: Delete"), new Example("GER", "&7Rechtsklick: Löschen")));
+                iconBuilder.addText(Lang.get("Shift_Leftclick_Edit", new Example("ENG", "&7Shift-Leftclick: Move"), new Example("GER", "&7Shift-Linksklick: Bewegen")));
+                if(icon instanceof Category) iconBuilder.addText(Lang.get("Shift_Rightclick_Edit", new Example("ENG", "&7Shift-Rightclick: Open"), new Example("GER", "&7Shift-Rechtsklick: Öffnen")));
 
                 if(icon instanceof Warp || icon instanceof GlobalWarp || icon instanceof DecoIcon) {
-                    iconBuilder.addLore("§8------------");
+                    iconBuilder.addText("§8------------");
 
                     List<String> list = TextAlignment.lineBreak(Lang.get("Move_Help", new Example("ENG", "&7Moving: Rightclick on categories to switch to it."), new Example("GER", "&7Bewegen: Rechtsklick auf Kategorien um dort hin zu wechseln.")), 80);
-                    iconBuilder.addLore(list);
+                    iconBuilder.addText(list);
                 }
-            }
+            } else if(icon.isDisabled()) return;
 
             addButton(new ItemButton(icon.getSlot(), iconBuilder.getItem()) {
                 @Override

@@ -15,6 +15,7 @@ public abstract class Icon implements Serializable {
     String name;
     SerializableItemStack item;
     int slot;
+    boolean disabled = false;
 
     public Icon() {
     }
@@ -136,5 +137,13 @@ public abstract class Icon implements Serializable {
 
     public String getNameWithoutColor() {
         return Color.removeColor(ChatColor.translateAlternateColorCodes('&', this.name));
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 }

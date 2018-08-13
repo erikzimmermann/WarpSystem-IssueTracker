@@ -37,6 +37,7 @@ public class GEditIcon extends GUI {
     private String permission = null;
     private String command = null;
     private double costs = 0;
+    private boolean disabled = false;
 
     private int slot;
     private Category category;
@@ -145,6 +146,8 @@ public class GEditIcon extends GUI {
             this.costs = ((ActionIcon) editing).getAction(Action.PAY_MONEY) == null ? 0.0 : ((ActionIcon) editing).getAction(Action.PAY_MONEY).getValue();
         }
 
+        this.disabled = this.editing.isDisabled();
+
         this.isCategory = editing instanceof Category;
         this.type = editing.getType();
 
@@ -248,6 +251,16 @@ public class GEditIcon extends GUI {
         ItemStack costsIcon = new ItemBuilder(Material.GOLD_NUGGET).setName("§6§n" + Lang.get("Costs", new Example("ENG", "Costs"), new Example("GER", "Kosten")))
                 .setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + costs + " " + Lang.get("Coins", new Example("ENG", "Coin(s)"), new Example("GER", "Coin(s)")), "",
                         Lang.get("Leftclick_Set", new Example("ENG", "&3Leftclick: &aSet"), new Example("GER", "&3Linksklick: &aSetzen")))
+                .getItem();
+
+        ItemStack disableIcon = new ItemBuilder(MultiItemType.INK_SACK)
+                .setName("§6§n" + Lang.get("Status", new Example("ENG", "Status"), new Example("GER", "Status")) + ": " + (this.disabled ?
+                        Lang.get("Disabled", new Example("ENG", "Disabled"), new Example("GER", "Deaktiviert")) :
+                        Lang.get("Enabled", new Example("ENG", "Enabled"), new Example("GER", "Aktiviert"))))
+                .setLore("",
+                        this.disabled ? Lang.get("Leftclick_Enable_This_Icon", new Example("ENG", "&3Leftclick: &a&lEnable this icon"), new Example("GER", "&3Linksklick: &a&lAktiviere dieses Icon")) :
+                                Lang.get("Disable_This_Icon", new Example("ENG", "&3Leftclick: &c&lDisable this icon"), new Example("GER", "&3Linksklick: &c&lDeaktiviere dieses Icon")))
+                .setColor(this.disabled ? DyeColor.RED : DyeColor.LIME)
                 .getItem();
 
         //decoration
@@ -429,12 +442,14 @@ public class GEditIcon extends GUI {
                 quit = false;
 
                 ItemBuilder builder = new ItemBuilder(item);
+                if(builder.getLore().size() - 4 < 0 && builder.getName().equals("§8------------")) builder.setName(null);
                 builder.removeLore((builder.getLore().size() - 4 < 0 ? 0 : builder.getLore().size() - 4), builder.getLore().size());
                 item = builder.getItem();
 
                 if(editing != null) {
                     editing.setName(name);
                     editing.setItem(item);
+                    editing.setDisabled(disabled);
 
                     if(editing instanceof ActionIcon) {
                         ((ActionIcon) editing).setPermission(permission);
@@ -452,6 +467,7 @@ public class GEditIcon extends GUI {
                             Warp warp = new Warp(name, item, slot, permission, category, new ActionObject(Action.TELEPORT_TO_WARP, new SerializableLocation(p.getLocation())));
                             if(GEditIcon.this.command != null) warp.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
                             if(GEditIcon.this.costs > 0) warp.addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
+                            warp.setDisabled(disabled);
 
                             WarpSystem.getInstance().getIconManager().getWarps().add(warp);
 
@@ -462,6 +478,7 @@ public class GEditIcon extends GUI {
                             Category category = new Category(name, item, slot, permission);
                             if(GEditIcon.this.command != null) category.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
                             if(GEditIcon.this.costs > 0) category.addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
+                            category.setDisabled(disabled);
 
                             WarpSystem.getInstance().getIconManager().getCategories().add(category);
 
@@ -472,6 +489,7 @@ public class GEditIcon extends GUI {
                             GlobalWarp gWarp = new GlobalWarp(name, item, slot, permission, GEditIcon.this.category, new ActionObject(Action.SWITCH_SERVER, extra));
                             if(GEditIcon.this.command != null) gWarp.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
                             if(GEditIcon.this.costs > 0) gWarp.addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
+                            gWarp.setDisabled(disabled);
 
                             WarpSystem.getInstance().getIconManager().getGlobalWarps().add(gWarp);
 
@@ -483,6 +501,7 @@ public class GEditIcon extends GUI {
                             if(GEditIcon.this.command != null) deco.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
                             if(GEditIcon.this.costs > 0) deco.addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
                             WarpSystem.getInstance().getIconManager().getDecoIcons().add(deco);
+                            deco.setDisabled(disabled);
 
                             p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Warp", new Example("ENG", "&aYou have created a &bDecoIcon &asuccessfully."), new Example("GER", "&aDu hast erfolgreich ein &bDekoIcon &aerstellt.")));
                             break;
@@ -820,6 +839,27 @@ public class GEditIcon extends GUI {
                     break;
             }
         }
+
+        //disable/enable
+        addButton(new ItemButton(4, 3, disableIcon) {
+            @Override
+            public void onClick(InventoryClickEvent e) {
+                disabled = !disabled;
+
+                ItemStack disableIcon = new ItemBuilder(MultiItemType.INK_SACK)
+                        .setName("§6§n" + Lang.get("Status", new Example("ENG", "Status"), new Example("GER", "Status")) + ": " + (disabled ?
+                                Lang.get("Disabled", new Example("ENG", "Disabled"), new Example("GER", "Deaktiviert")) :
+                                Lang.get("Enabled", new Example("ENG", "Enabled"), new Example("GER", "Aktiviert"))))
+                        .setLore("",
+                                disabled ? Lang.get("Leftclick_Enable_This_Icon", new Example("ENG", "&3Leftclick: &a&lEnable this icon"), new Example("GER", "&3Linksklick: &a&lAktiviere dieses Icon")) :
+                                        Lang.get("Disable_This_Icon", new Example("ENG", "&3Leftclick: &c&lDisable this icon"), new Example("GER", "&3Linksklick: &c&lDeaktiviere dieses Icon")))
+                        .setColor(disabled ? DyeColor.RED : DyeColor.LIME)
+                        .getItem();
+
+                setItem(disableIcon);
+                p.updateInventory();
+            }
+        }.setOption(option).setOnlyLeftClick(true));
     }
 
     public ItemStack getItem() {
