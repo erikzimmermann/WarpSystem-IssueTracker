@@ -28,7 +28,7 @@ public class IconManager {
 
     private int size = 54;
 
-    public void load(boolean sync) throws Exception {
+    public boolean load(boolean sync) throws Exception {
         if(!sync) {
             Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), () -> {
                 try {
@@ -37,8 +37,11 @@ public class IconManager {
                     e.printStackTrace();
                 }
             });
+
+            return true;
         } else {
             //Load
+            boolean success = true;
 
             ActionIconHelper.load = true;
 
@@ -76,7 +79,7 @@ public class IconManager {
                 if(warp != null) {
                     if(warp.getName().contains("@")) warp.setName(warp.getName().replace("@", "(at)"));
                     this.warps.add(warp);
-                }
+                } else success = false;
             }
 
             List<String> categories = config.getStringList("Categories");
@@ -86,7 +89,7 @@ public class IconManager {
                 if(category != null) {
                     if(category.getName().contains("@")) category.setName(category.getName().replace("@", "(at)"));
                     this.categories.add(category);
-                }
+                } else success = false;
             }
 
             List<String> gWarps = config.getStringList("GlobalWarps");
@@ -96,7 +99,7 @@ public class IconManager {
                 if(warp != null) {
                     if(warp.getName().contains("@")) warp.setName(warp.getName().replace("@", "(at)"));
                     this.globalWarps.add(warp);
-                }
+                } else success = false;
             }
 
             List<String> decoIcons = config.getStringList("DecoIcons");
@@ -104,6 +107,7 @@ public class IconManager {
                 DecoIcon deco = ActionIconHelper.fromString(s);
 
                 if(deco != null) this.decoIcons.add(deco);
+                else success = false;
             }
 
             for(Warp warp : this.warps) {
@@ -148,6 +152,8 @@ public class IconManager {
                 WarpSystem.getInstance().getFileManager().getFile("Categories").delete();
                 WarpSystem.getInstance().getFileManager().getFile("Warps").delete();
             }
+
+            return success;
         }
     }
 
