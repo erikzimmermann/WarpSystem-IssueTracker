@@ -13,6 +13,7 @@ import de.codingair.warpsystem.spigot.language.Lang;
 import de.codingair.warpsystem.spigot.utils.Teleport;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -120,7 +121,7 @@ public class TeleportManager {
 
             if(warpSign != null) {
                 if(warpSign.getLocation() != null && warpSign.getLocation().getWorld() != null && warpSign.getLocation().getBlock() != null) {
-                    if(warpSign.getLocation().getBlock().getType().equals(XMaterial.SIGN.parseMaterial()) || warpSign.getLocation().getBlock().getType().equals(Material.WALL_SIGN)) {
+                    if(warpSign.getLocation().getBlock().getState() instanceof Sign) {
                         this.warpSigns.add(warpSign);
                     } else WarpSystem.log("    > Loaded WarpSign at location without sign! (Skip)");
                 } else WarpSystem.log("    > Loaded WarpSign with missing world! (Skip)");

@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.utils;
 import de.codingair.warpsystem.spigot.WarpSystem;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -24,6 +25,41 @@ public class UpdateChecker {
             this.url = new URL(url);
         } catch(MalformedURLException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    public static int getLatestVersionID() {
+        try {
+            URL url = new URL("https://www.spigotmc.org/resources/warps-portals-and-warpsigns-warp-system-only-gui.29595/updates");
+
+            URLConnection con = url.openConnection();
+            con.setRequestProperty("User-Agent", "Mozilla/5.0");
+            con.setConnectTimeout(5000);
+            con.connect();
+
+            BufferedReader input = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+            int status = 0;
+
+            String line;
+            while((line = input.readLine()) != null) {
+                switch(status) {
+                    case 0:
+                        if(line.equals("<div class=\"updateContainer\">")) status = 1;
+                        break;
+                    case 1:
+                        if(line.startsWith("<li class=\"primaryContent messageSimple resourceUpdate\" id=\"")) {
+                            String part = line.replace("<li class=\"primaryContent messageSimple resourceUpdate\" id=\"", "").split("\"")[0].split("-")[1];
+                            return Integer.parseInt(part);
+                        }
+                        break;
+                }
+            }
+
+            return -1;
+        } catch(IOException e) {
+            e.printStackTrace();
+            return -1;
         }
     }
 

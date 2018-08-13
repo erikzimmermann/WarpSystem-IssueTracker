@@ -30,7 +30,7 @@ public class SignListener implements Listener {
     public void onInteract(PlayerInteractEvent e) {
         if(!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 
-        if(e.getClickedBlock() == null || e.getClickedBlock().getType().equals(Material.WALL_SIGN) || e.getClickedBlock().getType().equals(XMaterial.SIGN.parseMaterial())) {
+        if(e.getClickedBlock() == null || e.getClickedBlock().getState() instanceof Sign) {
             Sign s = e.getClickedBlock() == null ? null : (Sign) e.getClickedBlock().getState();
 
             WarpSign sign = WarpSystem.getInstance().getTeleportManager().getByLocation(s.getLocation());
