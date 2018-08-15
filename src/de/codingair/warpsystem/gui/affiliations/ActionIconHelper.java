@@ -2,6 +2,8 @@ package de.codingair.warpsystem.gui.affiliations;
 
 import de.codingair.codingapi.serializable.SerializableLocation;
 import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.transfer.serializeable.icons.SActionObject;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -47,6 +49,7 @@ public class ActionIconHelper {
     }
 
     public static ActionObject translate(SActionObject s) {
+        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
         ActionObject action = new ActionObject();
 
         action.action = Action.getById(s.getAction());
@@ -59,7 +62,7 @@ public class ActionIconHelper {
                 action.value = s.getCommand();
                 break;
             case OPEN_CATEGORY:
-                action.value = WarpSystem.getInstance().getIconManager().getCategory(s.getCategory());
+                action.value = manager.getCategory(s.getCategory());
                 break;
             case TELEPORT_TO_WARP:
                 action.value = new SerializableLocation(new Location(Bukkit.getWorld(s.getWorld()), s.getX(), s.getY(), s.getZ(), s.getYaw(), s.getPitch()));

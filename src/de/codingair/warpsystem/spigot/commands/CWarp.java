@@ -5,8 +5,10 @@ import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.warpsystem.spigot.WarpSystem;
-import de.codingair.warpsystem.gui.affiliations.Category;
-import de.codingair.warpsystem.gui.affiliations.Warp;
+import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
+import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
 import org.bukkit.command.CommandSender;
@@ -47,6 +49,8 @@ public class CWarp extends CommandBuilder {
                 return false;
             }
         }.setOnlyPlayers(true), true);
+        
+        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
 
         try {
             setHighestPriority(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Dominate_In_Commands.Highest_Priority.Warp", true));
@@ -58,11 +62,11 @@ public class CWarp extends CommandBuilder {
             @Override
             public void addArguments(CommandSender sender, List<String> suggestions) {
                 if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
-                    for(Category c : WarpSystem.getInstance().getIconManager().getCategories()) {
+                    for(Category c : manager.getCategories()) {
                         suggestions.add(c.getNameWithoutColor());
                     }
                 } else {
-                    for(Warp warp : WarpSystem.getInstance().getIconManager().getWarps()) {
+                    for(Warp warp : manager.getWarps()) {
                         if(!warp.getNameWithoutColor().isEmpty()) {
                             suggestions.add(warp.getNameWithoutColor().replace(" ", "_") + (warp.isInCategory() ? "@" + warp.getCategory().getName() : ""));
                         }
@@ -73,7 +77,7 @@ public class CWarp extends CommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
                 if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
-                    CWarps.run(sender, WarpSystem.getInstance().getIconManager().getCategory(argument));
+                    CWarps.run(sender, manager.getCategory(argument));
                 } else {
                     if(args.length == 0 || argument == null || argument.isEmpty()) {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_HELP", new Example("ENG", "&7Use: &e" + label + " <Warp-Name>"), new Example("GER", "&7Benutze: &e/" + label + " <Warp-Name>")));
@@ -85,11 +89,11 @@ public class CWarp extends CommandBuilder {
                     if(argument.contains("@")) {
                         String[] a = argument.split("@");
 
-                        category = WarpSystem.getInstance().getIconManager().getCategory(a[1]);
+                        category = manager.getCategory(a[1]);
                         argument = a[0];
                     }
 
-                    Warp warp = WarpSystem.getInstance().getIconManager().getWarp(argument, category);
+                    Warp warp = manager.getWarp(argument, category);
 
                     if(warp == null) {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS", new Example("ENG", "&cThis warp does not exist."), new Example("GER", "&cDieser Warp existiert nicht.")));

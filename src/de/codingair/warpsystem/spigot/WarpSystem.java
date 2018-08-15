@@ -10,15 +10,13 @@ import de.codingair.codingapi.server.fancymessages.FancyMessage;
 import de.codingair.codingapi.server.fancymessages.MessageTypes;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
-import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.commands.*;
-import de.codingair.warpsystem.spigot.features.signs.SignListener;
 import de.codingair.warpsystem.spigot.language.Lang;
 import de.codingair.warpsystem.spigot.listeners.NotifyListener;
-import de.codingair.warpsystem.spigot.listeners.PortalListener;
 import de.codingair.warpsystem.spigot.listeners.TeleportListener;
-import de.codingair.warpsystem.spigot.managers.GlobalWarpManager;
-import de.codingair.warpsystem.spigot.managers.IconManager;
+import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
+import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
+import de.codingair.warpsystem.spigot.managers.DataManager;
 import de.codingair.warpsystem.spigot.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.utils.UpdateChecker;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
@@ -28,16 +26,12 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -60,9 +54,9 @@ public class WarpSystem extends JavaPlugin {
     private boolean onBungeeCord = false;
     private String server = null;
 
-    private IconManager iconManager = new IconManager();
     private TeleportManager teleportManager = new TeleportManager();
     private FileManager fileManager = new FileManager(this);
+    private DataManager dataManager = new DataManager();
 
     private UpdateChecker updateChecker = new UpdateChecker("https://www.spigotmc.org/resources/warpsystem-gui.29595/history");
     private int latestVersionId = -1;
@@ -73,11 +67,11 @@ public class WarpSystem extends JavaPlugin {
     private static boolean updateAvailable = false;
     private boolean old = false;
     private boolean ERROR = true;
+
     private List<CommandBuilder> commands = new ArrayList<>();
     private boolean shouldSave = true;
 
     private SpigotDataHandler dataHandler = new SpigotDataHandler(this);
-    private GlobalWarpManager globalWarpManager = new GlobalWarpManager();
 
     @Override
     public void onEnable() {
@@ -107,23 +101,20 @@ public class WarpSystem extends JavaPlugin {
             log("MC-Version: " + Version.getVersion().getVersionName());
             log(" ");
 
-            log("Loading files.");
+            log("Loading features");
             this.fileManager.loadAll();
-            if(this.fileManager.getFile("ActionIcons") == null) this.fileManager.loadFile("ActionIcons", "/Memory/");
-            if(this.fileManager.getFile("Teleporters") == null) this.fileManager.loadFile("Teleporters", "/Memory/");
             if(this.fileManager.getFile("Language") == null) this.fileManager.loadFile("Language", "/");
             if(this.fileManager.getFile("Config") == null) this.fileManager.loadFile("Config", "/");
 
             boolean createBackup = false;
-            log("Loading icons.");
-            if(!this.iconManager.load(true)) createBackup = true;
-            log("Loading TeleportManager.");
+            if(!this.dataManager.load()) createBackup = true;
+            log("Loading TeleportManager");
             if(!this.teleportManager.load()) createBackup = true;
 
             if(createBackup) {
                 log("Loading with errors > Create backup...");
                 createBackup();
-                log("Backup successfully created.");
+                log("Backup successfully created");
             }
 
             maintenance = fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Maintenance", false);
@@ -131,31 +122,12 @@ public class WarpSystem extends JavaPlugin {
 
             Bukkit.getPluginManager().registerEvents(new TeleportListener(), this);
             Bukkit.getPluginManager().registerEvents(new NotifyListener(), this);
-            Bukkit.getPluginManager().registerEvents(new PortalListener(), this);
-            Bukkit.getPluginManager().registerEvents(new SignListener(), this);
-
-            if(fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Warps", true)) {
-                CWarp cWarp = new CWarp();
-                CWarps cWarps = new CWarps();
-
-                this.commands.add(cWarp);
-                this.commands.add(cWarps);
-
-                cWarp.register(this);
-                cWarps.register(this);
-            }
 
             this.runningFirstTime = !fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "2.1.0").equals(getDescription().getVersion());
 
             CWarpSystem cWarpSystem = new CWarpSystem();
             this.commands.add(cWarpSystem);
             cWarpSystem.register(this);
-
-            if(fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Portals", true)) {
-                CPortal cPortal = new CPortal();
-                this.commands.add(cPortal);
-                cPortal.register(this);
-            }
 
             this.startAutoSaver();
 
@@ -173,29 +145,6 @@ public class WarpSystem extends JavaPlugin {
             this.ERROR = false;
 
             this.dataHandler.onEnable();
-
-            log("WarpSystem - Looking for a BungeeCord...");
-
-            if(Bukkit.getOnlinePlayers().isEmpty()) {
-                log("WarpSystem - Needs a player to search for a BungeeCord. Waiting...");
-
-                Bukkit.getPluginManager().registerEvents(new Listener() {
-                    private void unregister() {
-                        HandlerList.unregisterAll(this);
-                    }
-
-                    @EventHandler
-                    public void onJoin(PlayerJoinEvent e) {
-                        Bukkit.getScheduler().runTaskLater(WarpSystem.this, () -> {
-                            if(Bukkit.getOnlinePlayers().isEmpty()) return;
-
-                            checkBungee();
-                        }, 5);
-                    }
-                }, this);
-            } else {
-                checkBungee();
-            }
         } catch(Exception ex) {
             //make error-report
 
@@ -247,24 +196,6 @@ public class WarpSystem extends JavaPlugin {
         }
     }
 
-    private void checkBungee() {
-        BungeeCordHelper.getCurrentServer(WarpSystem.this, 20 * 10, new Callback<String>() {
-            @Override
-            public void accept(String server) {
-                WarpSystem.this.onBungeeCord = server != null;
-
-                if(onBungeeCord) {
-                    log("WarpSystem - Found a BungeeCord > Init GlobalWarps");
-                    WarpSystem.this.server = server;
-                    new CGlobalWarp().register(WarpSystem.this);
-                    globalWarpManager.loadAllGlobalWarps();
-                } else {
-                    log("WarpSystem - Did not find a BungeeCord > Ignore GlobalWarps");
-                }
-            }
-        });
-    }
-
     @Override
     public void onDisable() {
         API.getInstance().onDisable(this);
@@ -289,8 +220,6 @@ public class WarpSystem extends JavaPlugin {
         for(int i = 0; i < this.commands.size(); i++) {
             this.commands.remove(0).unregister(this);
         }
-
-        this.globalWarpManager.getGlobalWarps().clear();
     }
 
     public void reload(boolean save) {
@@ -301,7 +230,7 @@ public class WarpSystem extends JavaPlugin {
     }
 
     private void startAutoSaver() {
-        WarpSystem.log("Starting AutoSaver.");
+        WarpSystem.log("Starting AutoSaver");
         Bukkit.getScheduler().scheduleAsyncRepeatingTask(WarpSystem.getInstance(), () -> save(true), 20 * 60 * 20, 20 * 60 * 20);
     }
 
@@ -324,23 +253,21 @@ public class WarpSystem extends JavaPlugin {
                 log(" ");
                 log("MC-Version: " + Version.getVersion().name());
                 log(" ");
-
-                if(!this.ERROR) log("Saving icons.");
-                else {
-                    log("Does not save data, because of errors at enabling this plugin.");
-                    log(" ");
-                    log("Please submit the ErrorReport.txt file to CodingAir.");
-                }
             }
 
             if(!this.ERROR) {
-                iconManager.save(true);
-                if(!saver) log("Saving options.");
+                if(!saver) log("Saving options");
                 fileManager.getFile("Config").loadConfig();
                 fileManager.getFile("Config").getConfig().set("WarpSystem.Maintenance", maintenance);
                 fileManager.getFile("Config").getConfig().set("WarpSystem.Teleport.Op_Can_Skip_Delay", OP_CAN_SKIP_DELAY);
-                if(!saver) log("Saving features.");
-                teleportManager.save(saver);
+
+                if(!saver) log("Saving features");
+                this.dataManager.save(saver);
+                this.teleportManager.save(saver);
+            } else {
+                log("Does not save data, because of errors at enabling this plugin.");
+                log(" ");
+                log("Please submit the ErrorReport.txt file to CodingAir.");
             }
 
             if(!saver) {
@@ -497,16 +424,16 @@ public class WarpSystem extends JavaPlugin {
         return instance;
     }
 
-    public IconManager getIconManager() {
-        return iconManager;
-    }
-
     public FileManager getFileManager() {
         return fileManager;
     }
 
     public boolean isOnBungeeCord() {
         return onBungeeCord;
+    }
+
+    public void setOnBungeeCord(boolean onBungeeCord) {
+        this.onBungeeCord = onBungeeCord;
     }
 
     public TeleportManager getTeleportManager() {
@@ -525,12 +452,16 @@ public class WarpSystem extends JavaPlugin {
         return dataHandler;
     }
 
-    public GlobalWarpManager getGlobalWarpManager() {
-        return globalWarpManager;
+    public DataManager getDataManager() {
+        return dataManager;
     }
 
     public String getCurrentServer() {
         return server;
+    }
+
+    public void setCurrentServer(String server) {
+        this.server = server;
     }
 
     public List<CommandBuilder> getCommands() {

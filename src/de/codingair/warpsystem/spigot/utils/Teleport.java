@@ -5,8 +5,10 @@ import de.codingair.codingapi.particles.animations.playeranimations.CircleAnimat
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.warpsystem.gui.affiliations.Action;
-import de.codingair.warpsystem.gui.affiliations.Warp;
+import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
@@ -123,7 +125,7 @@ public class Teleport {
 
         if(warp != null) player.teleport(warp.getLocation());
         else {
-            WarpSystem.getInstance().getGlobalWarpManager().teleport(getPlayer(), globalWarpDisplayName, warpName, this.costs, new Callback<PrepareTeleportPacket.Result>() {
+            ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).teleport(getPlayer(), globalWarpDisplayName, warpName, this.costs, new Callback<PrepareTeleportPacket.Result>() {
                 @Override
                 public void accept(PrepareTeleportPacket.Result result) {
                     switch(result) {
