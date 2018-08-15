@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
 
-public class Category extends ActionIcon implements Serializable {
+public class Category extends ActionIcon implements Serializable, Mergable {
     static final long serialVersionUID = 1L;
 
     public Category() {
@@ -40,5 +40,16 @@ public class Category extends ActionIcon implements Serializable {
     @Override
     public IconType getType() {
         return IconType.CATEGORY;
+    }
+
+    @Override
+    public Object convert() {
+        de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category c = new de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category(getName(), getItem(), getSlot(), getPermission());
+
+        for(ActionObject action : getActions()) {
+            c.addAction(new de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionObject(de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action.getById(action.getAction().getId()), action.getValue()));
+        }
+
+        return c;
     }
 }

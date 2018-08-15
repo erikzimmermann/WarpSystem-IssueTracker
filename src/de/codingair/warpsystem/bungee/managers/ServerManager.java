@@ -28,6 +28,6 @@ public class ServerManager implements Listener {
                     else if(!onlineServer.contains(info)) onlineServer.add(info);
                 });
             }
-        }, 0, 1, TimeUnit.SECONDS);
+        }, 0, 5, TimeUnit.SECONDS);
     }
 }

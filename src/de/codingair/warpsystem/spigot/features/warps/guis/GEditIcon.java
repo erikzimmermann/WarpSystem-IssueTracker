@@ -11,9 +11,13 @@ import de.codingair.codingapi.server.Environment;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.*;
 import de.codingair.warpsystem.spigot.WarpSystem;
-import de.codingair.warpsystem.spigot.features.warps.globalwarps.guis.GGlobalWarpList;
+import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.*;
+import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
 import de.codingair.warpsystem.spigot.utils.money.AdapterType;
@@ -211,6 +215,8 @@ public class GEditIcon extends GUI {
 
     @Override
     public void initialize(Player p) {
+        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
+
         setupMainIcon();
 
         ItemStack leaves = new ItemBuilder(XMaterial.OAK_LEAVES).setName("§0").getItem();
@@ -357,7 +363,7 @@ public class GEditIcon extends GUI {
 
                                 switch(type) {
                                     case WARP:
-                                        if(WarpSystem.getInstance().getIconManager().existsWarp(input, category)) {
+                                        if(manager.existsWarp(input, category)) {
                                             if(editing == null || !editing.getNameWithoutColor().equals(Color.removeColor(input))) {
                                                 p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
                                                 return;
@@ -366,7 +372,7 @@ public class GEditIcon extends GUI {
                                         break;
 
                                     case CATEGORY:
-                                        if(WarpSystem.getInstance().getIconManager().existsCategory(input)) {
+                                        if(manager.existsCategory(input)) {
                                             if(editing == null || !editing.getNameWithoutColor().equals(Color.removeColor(input))) {
                                                 p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
                                                 return;
@@ -375,7 +381,7 @@ public class GEditIcon extends GUI {
                                         break;
 
                                     case GLOBAL_WARP:
-                                        if(WarpSystem.getInstance().getIconManager().existsGlobalWarp(input)) {
+                                        if(manager.existsGlobalWarp(input)) {
                                             if(editing == null || !editing.getNameWithoutColor().equals(Color.removeColor(input))) {
                                                 p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
                                                 return;
@@ -469,7 +475,7 @@ public class GEditIcon extends GUI {
                             if(GEditIcon.this.costs > 0) warp.addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
                             warp.setDisabled(disabled);
 
-                            WarpSystem.getInstance().getIconManager().getWarps().add(warp);
+                            manager.getWarps().add(warp);
 
                             p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Warp", new Example("ENG", "&aYou have created a &bWarp &asuccessfully."), new Example("GER", "&aDu hast erfolgreich ein &bWarp &aerstellt.")));
                             break;
@@ -480,7 +486,7 @@ public class GEditIcon extends GUI {
                             if(GEditIcon.this.costs > 0) category.addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
                             category.setDisabled(disabled);
 
-                            WarpSystem.getInstance().getIconManager().getCategories().add(category);
+                            manager.getCategories().add(category);
 
                             p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Category", new Example("ENG", "&aYou have created a &bCategory &asuccessfully."), new Example("GER", "&aDu hast erfolgreich eine &bKategorie &aerstellt.")));
                             break;
@@ -491,7 +497,7 @@ public class GEditIcon extends GUI {
                             if(GEditIcon.this.costs > 0) gWarp.addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
                             gWarp.setDisabled(disabled);
 
-                            WarpSystem.getInstance().getIconManager().getGlobalWarps().add(gWarp);
+                            manager.getGlobalWarps().add(gWarp);
 
                             p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_GlobalWarp", new Example("ENG", "&aYou have created a &bGlobalWarp &asuccessfully."), new Example("GER", "&aDu hast erfolgreich ein &bGlobalWarp &aerstellt.")));
                             break;
@@ -500,7 +506,7 @@ public class GEditIcon extends GUI {
                             DecoIcon deco = new DecoIcon(name, item, slot, permission, GEditIcon.this.category);
                             if(GEditIcon.this.command != null) deco.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
                             if(GEditIcon.this.costs > 0) deco.addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
-                            WarpSystem.getInstance().getIconManager().getDecoIcons().add(deco);
+                            manager.getDecoIcons().add(deco);
                             deco.setDisabled(disabled);
 
                             p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Warp", new Example("ENG", "&aYou have created a &bDecoIcon &asuccessfully."), new Example("GER", "&aDu hast erfolgreich ein &bDekoIcon &aerstellt.")));

@@ -6,8 +6,10 @@ import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
+import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
 import org.bukkit.command.CommandSender;
@@ -39,6 +41,8 @@ public class CWarps extends CommandBuilder {
                 return false;
             }
         }.setOnlyPlayers(true), true);
+        
+        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
 
         try {
             setHighestPriority(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Dominate_In_Commands.Highest_Priority.Warps", true));
@@ -49,14 +53,14 @@ public class CWarps extends CommandBuilder {
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, List<String> suggestions) {
-                for(Category c : WarpSystem.getInstance().getIconManager().getCategories()) {
+                for(Category c : manager.getCategories()) {
                     suggestions.add(c.getNameWithoutColor());
                 }
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                run(sender, WarpSystem.getInstance().getIconManager().getCategory(argument));
+                run(sender, manager.getCategory(argument));
                 return false;
             }
         });

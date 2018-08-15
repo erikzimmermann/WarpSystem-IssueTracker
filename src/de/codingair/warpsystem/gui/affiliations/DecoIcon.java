@@ -1,11 +1,13 @@
 package de.codingair.warpsystem.gui.affiliations;
 
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class DecoIcon extends ActionIcon implements Serializable {
+public class DecoIcon extends ActionIcon implements Serializable, Mergable {
     static final long serialVersionUID = 1L;
     private Category category;
 
@@ -57,5 +59,15 @@ public class DecoIcon extends ActionIcon implements Serializable {
     @Override
     public IconType getType() {
         return IconType.DECORATION;
+    }
+
+    @Override
+    public Object convert() {
+        List<de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionObject> list = new ArrayList<>();
+        for(ActionObject action : getActions()) {
+            list.add(new de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionObject(Action.getById(action.getAction().getId()), action.getValue()));
+        }
+
+        return new de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon(getName(), getItem(), getSlot(), getPermission(), this.category == null ? null : (de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category) this.category.convert(), list);
     }
 }

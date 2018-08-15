@@ -1,11 +1,13 @@
-package de.codingair.warpsystem.bungee.managers;
+package de.codingair.warpsystem.bungee.features.globalwarps.managers;
 
 import de.codingair.codingapi.bungeecord.files.ConfigFile;
 import de.codingair.warpsystem.bungee.WarpSystem;
+import de.codingair.warpsystem.bungee.features.globalwarps.listeners.GlobalWarpListener;
 import de.codingair.warpsystem.transfer.packets.bungee.SendGlobalWarpNamesPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.UpdateGlobalWarpPacket;
 import de.codingair.warpsystem.transfer.serializeable.SGlobalWarp;
 import de.codingair.warpsystem.transfer.serializeable.SLocation;
+import de.codingair.warpsystem.utils.Manager;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.config.Configuration;
 
@@ -13,12 +15,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class GlobalWarpManager {
+public class GlobalWarpManager implements Manager {
     private List<SGlobalWarp> globalWarps = new ArrayList<>();
 
-    public void load() {
+    public boolean load() {
+        WarpSystem.getInstance().getFileManager().loadFile("GlobalWarps", "/");
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("GlobalWarps");
         Configuration config = file.getConfig();
+
+        WarpSystem.log("  > Loading locations of GlobalWarps");
 
         this.globalWarps = new ArrayList<>();
 
@@ -37,6 +42,19 @@ public class GlobalWarpManager {
             ));
 
             this.globalWarps.add(warp);
+        }
+
+        WarpSystem.getInstance().getDataHandler().register(new GlobalWarpListener());
+
+        return true;
+    }
+
+    @Override
+    public void save(boolean saver) {
+        if(!saver) WarpSystem.log("  > Saving locations if GlobalWarps");
+
+        for(SGlobalWarp globalWarp : this.globalWarps) {
+            save(globalWarp);
         }
     }
 

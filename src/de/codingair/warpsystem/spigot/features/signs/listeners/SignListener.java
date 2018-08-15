@@ -1,8 +1,11 @@
-package de.codingair.warpsystem.spigot.features.signs;
+package de.codingair.warpsystem.spigot.features.signs.listeners;
 
 import de.codingair.codingapi.player.gui.sign.SignGUI;
 import de.codingair.codingapi.player.gui.sign.SignTools;
 import de.codingair.codingapi.tools.Location;
+import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.signs.managers.SignManager;
+import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
@@ -32,7 +35,8 @@ public class SignListener implements Listener {
         if(e.getClickedBlock() == null || e.getClickedBlock().getState() instanceof Sign) {
             Sign s = e.getClickedBlock() == null ? null : (Sign) e.getClickedBlock().getState();
 
-            WarpSign sign = WarpSystem.getInstance().getTeleportManager().getByLocation(s.getLocation());
+            SignManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIGNS);
+            WarpSign sign = manager.getByLocation(s.getLocation());
             if(sign != null) {
                 if(e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY) && e.getPlayer().getGameMode().equals(GameMode.CREATIVE) && e.getPlayer().getItemInHand().getType().equals(Material.SIGN)) {
                     String[] lines = s.getLines();
@@ -68,17 +72,19 @@ public class SignListener implements Listener {
 
     @EventHandler(ignoreCancelled = false, priority = EventPriority.LOWEST)
     public void onBreak(BlockBreakEvent e) {
+        SignManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIGNS);
+
         try {
             Sign s = e.getBlock() == null ? null : (Sign) e.getBlock().getState();
             if(s == null) return;
-            WarpSign sign = WarpSystem.getInstance().getTeleportManager().getByLocation(s.getLocation());
+            WarpSign sign = manager.getByLocation(s.getLocation());
             if(sign == null) return;
 
             if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY) || !e.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
                 e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("No_Permission", new Example("GER", "&cDu hast keine Berechtigungen für diese Aktion!"), new Example("ENG", "&cYou don't have permissions for that action!"), new Example("FRE", "&cDésolé mais vous ne possédez la permission pour exécuter cette action!")));
                 e.setCancelled(true);
             } else {
-                WarpSystem.getInstance().getTeleportManager().getWarpSigns().remove(sign);
+                manager.getWarpSigns().remove(sign);
                 e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("WarpSign_Removed", new Example("GER", "&7Das Warp-Schild wurde &centfernt&7!"), new Example("ENG", "&7The WarpSign was &cremoved&7!")));
             }
         } catch(Exception ignored) {
@@ -87,6 +93,7 @@ public class SignListener implements Listener {
 
     @EventHandler(ignoreCancelled = false, priority = EventPriority.LOWEST)
     public void onPlace(SignChangeEvent e) {
+        SignManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIGNS);
         if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY) || !e.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
 
         if(e.getLine(0).equalsIgnoreCase("[warps]")) {
@@ -123,7 +130,7 @@ public class SignListener implements Listener {
                         }.open();
 
                         WarpSign sign = new WarpSign(Location.getByLocation(s.getLocation()), warp);
-                        WarpSystem.getInstance().getTeleportManager().getWarpSigns().add(sign);
+                        manager.getWarpSigns().add(sign);
                     }, 2L);
 
                     return new Task();

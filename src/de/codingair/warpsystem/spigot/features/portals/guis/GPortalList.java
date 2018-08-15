@@ -12,6 +12,8 @@ import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
 import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
 import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
 import de.codingair.warpsystem.spigot.language.Example;
@@ -27,9 +29,10 @@ import java.util.List;
 
 public class GPortalList extends GUI {
     private static int MAX_PAGE() {
-        if(WarpSystem.getInstance().getTeleportManager().getPortals().isEmpty()) return 0;
+        PortalManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.PORTALS);
+        if(manager.getPortals().isEmpty()) return 0;
 
-        return (int) (Math.ceil((double) WarpSystem.getInstance().getTeleportManager().getPortals().size() / 44.0) - 1);
+        return (int) (Math.ceil((double) manager.getPortals().size() / 44.0) - 1);
     }
 
     private static String TITLE(int page) {
@@ -108,6 +111,8 @@ public class GPortalList extends GUI {
 
     @Override
     public void initialize(Player p) {
+        PortalManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.PORTALS);
+
         ItemStack ph = new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem();
         ItemBuilder search = new ItemBuilder(Material.COMPASS).setName(ChatColor.RED.toString() + (searching == null ? "" : ChatColor.UNDERLINE) + Lang.get("Search", new Example("ENG", "Search..."), new Example("GER", "Suchen...")));
         if(searching != null) {
@@ -176,11 +181,11 @@ public class GPortalList extends GUI {
 
         List<Portal> portalList;
         if(searching == null) {
-            portalList = new ArrayList<>(WarpSystem.getInstance().getTeleportManager().getPortals());
+            portalList = new ArrayList<>(manager.getPortals());
         } else {
             portalList = new ArrayList<>();
 
-            for(Portal portal : WarpSystem.getInstance().getTeleportManager().getPortals()) {
+            for(Portal portal : manager.getPortals()) {
                 if(ChatColor.stripColor(portal.getStartName()).toLowerCase().contains(searching.toLowerCase()) || ChatColor.stripColor(portal.getDestinationName()).toLowerCase().contains(searching.toLowerCase()))
                     portalList.add(portal);
             }

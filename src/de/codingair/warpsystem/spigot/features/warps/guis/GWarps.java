@@ -12,11 +12,21 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.TextAlignment;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.*;
 import de.codingair.warpsystem.spigot.WarpSystem;
-import de.codingair.warpsystem.spigot.features.warps.globalwarps.guis.GGlobalWarpList;
+import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
+import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
+import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionIcon;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Icon;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.IconType;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.GUIListener;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
+import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
 import de.codingair.warpsystem.spigot.utils.money.AdapterType;
@@ -62,7 +72,7 @@ public class GWarps extends GUI {
     }
 
     public GWarps(Player p, Category category, boolean editing, GUIListener guiListener) {
-        super(p, getTitle(category, guiListener), WarpSystem.getInstance().getIconManager().getSize(), WarpSystem.getInstance(), false);
+        super(p, getTitle(category, guiListener), ((IconManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS)).getSize(), WarpSystem.getInstance(), false);
         this.listener = guiListener;
         this.category = category;
         this.editing = editing;
@@ -111,6 +121,8 @@ public class GWarps extends GUI {
     }
 
     public void initialize(Player p) {
+        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
+        
         ItemButtonOption option = new ItemButtonOption();
         option.setClickSound(Sound.CLICK.bukkitSound());
         option.setOnlyLeftClick(true);
@@ -163,7 +175,7 @@ public class GWarps extends GUI {
             setItem(0, edge);
         }
 
-        int size = WarpSystem.getInstance().getIconManager().getSize();
+        int size = manager.getSize();
         if(category != null) {
             addButton(new ItemButton(size - 9, new ItemBuilder(Skull.ArrowLeft).setName("§c" + Lang.get("Back", new Example("ENG", "Back"), new Example("GER", "Zurück"))).getItem()) {
                 @Override
@@ -181,28 +193,28 @@ public class GWarps extends GUI {
             setItem(size - 1, edge);
         }
 
-        for(Warp warp : WarpSystem.getInstance().getIconManager().getWarps(category)) {
+        for(Warp warp : manager.getWarps(category)) {
             if((editing || (!warp.hasPermission() || p.hasPermission(warp.getPermission()))) && this.cursorIcon != warp) {
                 addToGUI(p, warp);
             }
         }
 
         if(WarpSystem.getInstance().isOnBungeeCord()) {
-            for(GlobalWarp warp : WarpSystem.getInstance().getIconManager().getGlobalWarps(category)) {
+            for(GlobalWarp warp : manager.getGlobalWarps(category)) {
                 if((editing || (!warp.hasPermission() || p.hasPermission(warp.getPermission()))) && this.cursorIcon != warp) {
                     addToGUI(p, warp);
                 }
             }
         }
 
-        for(DecoIcon icon : WarpSystem.getInstance().getIconManager().getDecoIcons(category)) {
+        for(DecoIcon icon : manager.getDecoIcons(category)) {
             if(this.cursorIcon != icon) {
                 addToGUI(p, icon);
             }
         }
 
         if(category == null) {
-            for(Category c : WarpSystem.getInstance().getIconManager().getCategories()) {
+            for(Category c : manager.getCategories()) {
                 if(editing || (!c.hasPermission() || p.hasPermission(c.getPermission()))) {
                     addToGUI(p, c);
                 }
@@ -310,17 +322,17 @@ public class GWarps extends GUI {
                                                         }
 
                                                         if(type.equals(IconType.WARP)) {
-                                                            if(WarpSystem.getInstance().getIconManager().existsWarp(input, category)) {
+                                                            if(manager.existsWarp(input, category)) {
                                                                 p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
                                                                 return;
                                                             }
                                                         } else if(type.equals(IconType.CATEGORY)) {
-                                                            if(WarpSystem.getInstance().getIconManager().existsCategory(input)) {
+                                                            if(manager.existsCategory(input)) {
                                                                 p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
                                                                 return;
                                                             }
                                                         } else if(type.equals(IconType.GLOBAL_WARP)) {
-                                                            if(WarpSystem.getInstance().getIconManager().existsGlobalWarp(input)) {
+                                                            if(manager.existsGlobalWarp(input)) {
                                                                 p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
                                                                 return;
                                                             }
@@ -404,7 +416,9 @@ public class GWarps extends GUI {
     }
 
     private void addToGUI(Player p, ActionIcon icon) {
-        if(icon.getSlot() >= WarpSystem.getInstance().getIconManager().getSize()) return;
+        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
+
+        if(icon.getSlot() >= manager.getSize()) return;
 
         ItemButtonOption option = new ItemButtonOption();
         option.setClickSound(Sound.CLICK.bukkitSound());
@@ -426,7 +440,7 @@ public class GWarps extends GUI {
                 iconBuilder.addText("§8------------");
                 if(icon instanceof GlobalWarp) {
                     iconBuilder.addText("§7" + Lang.get("GlobalWarp", new Example("ENG", "GlobalWarp"), new Example("GER", "GlobalWarp")) + ": " + icon.getAction(Action.SWITCH_SERVER).getValue());
-                    iconBuilder.addText("§7" + Lang.get("Target_Server", new Example("ENG", "Target-Server"), new Example("GER", "Ziel-Server")) + ": " + WarpSystem.getInstance().getGlobalWarpManager().getGlobalWarps().get(icon.getAction(Action.SWITCH_SERVER).getValue()));
+                    iconBuilder.addText("§7" + Lang.get("Target_Server", new Example("ENG", "Target-Server"), new Example("GER", "Ziel-Server")) + ": " + ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).getGlobalWarps().get(icon.getAction(Action.SWITCH_SERVER).getValue()));
 
                     iconBuilder.addText("§8------------");
                 }
@@ -500,7 +514,7 @@ public class GWarps extends GUI {
                                     @Override
                                     public void accept(Boolean accepted) {
                                         if(accepted) {
-                                            WarpSystem.getInstance().getIconManager().remove(icon);
+                                            manager.remove(icon);
                                             p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Deleted", new Example("ENG", "&cThe icon was deleted successfully."), new Example("GER", "&cDas Symbol wurde erfolgreich gelöscht.")));
                                         } else {
                                             p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Not_Deleted", new Example("ENG", "&7The icon was &cnot &7deleted."), new Example("GER", "&7Das Symbol wurde &cnicht &7gelöscht.")));

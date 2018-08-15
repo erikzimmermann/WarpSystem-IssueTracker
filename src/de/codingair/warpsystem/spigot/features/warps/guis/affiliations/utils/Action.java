@@ -1,6 +1,7 @@
-package de.codingair.warpsystem.spigot.features.warps.guis.affiliations;
+package de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils;
 
 import de.codingair.codingapi.serializable.SerializableLocation;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 
 public enum Action {
     RUN_COMMAND(0, String.class, Priority.LOW),

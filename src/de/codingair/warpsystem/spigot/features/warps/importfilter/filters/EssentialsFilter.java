@@ -1,9 +1,11 @@
 package de.codingair.warpsystem.spigot.features.warps.importfilter.filters;
 
 import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Filter;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Result;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
+import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -13,6 +15,8 @@ public class EssentialsFilter implements Filter {
 
     @Override
     public Result importData() {
+        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
+
         try {
             File target = new File(WarpSystem.getInstance().getDataFolder().getParent() + "/Essentials/warps/");
             if(!target.exists()) return Result.MISSING_FILE;
@@ -31,8 +35,8 @@ public class EssentialsFilter implements Filter {
                 float pitch = (float) config.getDouble("pitch");
 
                 WarpData warpData = new WarpData(name, null, "essentials.warps." + name, world, x, y, z, yaw, pitch);
-                if(WarpSystem.getInstance().getIconManager().existsWarp(warpData.getName(), null) && result != Result.ERROR) result = Result.UNAVAILABLE_NAME;
-                else if(!WarpSystem.getInstance().getIconManager().importWarpData(warpData)) result = Result.ERROR;
+                if(manager.existsWarp(warpData.getName(), null) && result != Result.ERROR) result = Result.UNAVAILABLE_NAME;
+                else if(!manager.importWarpData(warpData)) result = Result.ERROR;
             }
 
             return result;

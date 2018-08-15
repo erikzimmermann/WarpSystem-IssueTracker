@@ -5,6 +5,8 @@ import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.commands.CPortal;
+import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
 import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
 import de.codingair.warpsystem.spigot.features.portals.PortalDeleteGUI;
 import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
@@ -20,6 +22,8 @@ public class PortalListener implements Listener {
 
     @EventHandler
     public void onWalk(PlayerWalkEvent e) {
+        PortalManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.PORTALS);
+
         Player player = e.getPlayer();
         boolean aboutToEdit = CPortal.aboutToEdit.contains(player.getName());
         boolean aboutToDelete = CPortal.aboutToDelete.contains(player.getName());
@@ -40,7 +44,7 @@ public class PortalListener implements Listener {
                             @Override
                             public void accept(Boolean delete) {
                                 if(delete) {
-                                    WarpSystem.getInstance().getTeleportManager().getPortals().remove(portal);
+                                    manager.getPortals().remove(portal);
                                     portal.setRunning(false);
 
                                     player.sendMessage(Lang.getPrefix() + Lang.get("Delete_Portal_Successfully", new Example("ENG", "&7The portal has been &cdeleted &7successfully."), new Example("GER", "&7Das Portal wurde erfolgreich &cgelöscht&7.")));
@@ -65,7 +69,7 @@ public class PortalListener implements Listener {
                             @Override
                             public void accept(Boolean delete) {
                                 if(delete) {
-                                    WarpSystem.getInstance().getTeleportManager().getPortals().remove(portal);
+                                    manager.getPortals().remove(portal);
                                     portal.setRunning(false);
 
                                     player.sendMessage(Lang.getPrefix() + Lang.get("Delete_Portal_Successfully", new Example("ENG", "&7The portal has been &cdeleted &7successfully."), new Example("GER", "&7Das Portal wurde erfolgreich &cgelöscht&7.")));

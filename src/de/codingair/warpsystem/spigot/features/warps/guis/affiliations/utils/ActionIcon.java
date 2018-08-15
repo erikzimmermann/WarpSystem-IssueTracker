@@ -1,7 +1,9 @@
-package de.codingair.warpsystem.spigot.features.warps.guis.affiliations;
+package de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils;
 
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
 import de.codingair.warpsystem.spigot.utils.money.AdapterType;

@@ -3,12 +3,22 @@ package de.codingair.warpsystem.spigot.features.warps.managers;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.serializable.SerializableLocation;
 import de.codingair.codingapi.server.Color;
-import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.Location;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.*;
+import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.commands.CWarp;
+import de.codingair.warpsystem.spigot.commands.CWarps;
+import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionIconHelper;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionObject;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Icon;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.CategoryData;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
+import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -16,8 +26,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IconManager {
-    public static ItemBuilder STANDARD_ITEM() {
+public class IconManager implements Manager {
+    private static ItemBuilder STANDARD_ITEM() {
         return new ItemBuilder(Material.GRASS);
     }
 
@@ -28,175 +38,181 @@ public class IconManager {
 
     private int size = 54;
 
-    public boolean load(boolean sync) throws Exception {
-        if(!sync) {
-            Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), () -> {
-                try {
-                    load(true);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
-            });
+    public boolean load() {
+        if(WarpSystem.getInstance().getFileManager().getFile("ActionIcons") == null) WarpSystem.getInstance().getFileManager().loadFile("ActionIcons", "/Memory/");
 
-            return true;
-        } else {
-            //Load
-            boolean success = true;
+        //Load
+        boolean success = true;
 
-            ActionIconHelper.load = true;
+        WarpSystem.log("  > Loading Icons");
+        ActionIconHelper.load = true;
 
-            ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
-            FileConfiguration config = file.getConfig();
-            this.size = config.getInt("WarpSystem.GUI_Size", 54);
-            switch(this.size) {
-                case 9:
-                case 18:
-                case 27:
-                case 36:
-                case 45:
-                case 54:
-                    break;
-                default:
-                    this.size = 54;
-                    config.set("WarpSystem.GUI_Size", 54);
-                    file.saveConfig();
-                    break;
-            }
-
-
-            this.warps.clear();
-            this.categories.clear();
-            this.globalWarps.clear();
-            this.decoIcons.clear();
-
-            file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
-            config = file.getConfig();
-
-            List<String> warps = config.getStringList("Warps");
-            for(String s : warps) {
-                Warp warp = ActionIconHelper.fromString(s);
-
-                if(warp != null) {
-                    if(warp.getName().contains("@")) warp.setName(warp.getName().replace("@", "(at)"));
-                    this.warps.add(warp);
-                } else success = false;
-            }
-
-            List<String> categories = config.getStringList("Categories");
-            for(String s : categories) {
-                Category category = ActionIconHelper.fromString(s);
-
-                if(category != null) {
-                    if(category.getName().contains("@")) category.setName(category.getName().replace("@", "(at)"));
-                    this.categories.add(category);
-                } else success = false;
-            }
-
-            List<String> gWarps = config.getStringList("GlobalWarps");
-            for(String s : gWarps) {
-                GlobalWarp warp = ActionIconHelper.fromString(s);
-
-                if(warp != null) {
-                    if(warp.getName().contains("@")) warp.setName(warp.getName().replace("@", "(at)"));
-                    this.globalWarps.add(warp);
-                } else success = false;
-            }
-
-            List<String> decoIcons = config.getStringList("DecoIcons");
-            for(String s : decoIcons) {
-                DecoIcon deco = ActionIconHelper.fromString(s);
-
-                if(deco != null) this.decoIcons.add(deco);
-                else success = false;
-            }
-
-            for(Warp warp : this.warps) {
-                if(warp.getCategory() == null) continue;
-                if(!existsCategory(warp.getCategory().getName())) {
-                    this.categories.add(warp.getCategory());
-                }
-            }
-
-            ActionIconHelper.load = false;
-
-            //Import old
-            if(WarpSystem.getInstance().isOld()) {
-                WarpSystem.log("Import old icons.");
-
-                WarpSystem.getInstance().getFileManager().loadFile("Categories", "Memory/");
-                WarpSystem.getInstance().getFileManager().loadFile("Warps", "Memory/");
-
-                ConfigFile oldFile = WarpSystem.getInstance().getFileManager().getFile("Categories");
-                FileConfiguration oldConfig = oldFile.getConfig();
-
-                for(String key : oldConfig.getKeys(false)) {
-                    Category category = new Category(key, ImportHelper.getItem(oldConfig.getString(key + ".Item")), oldConfig.getInt(key + ".Slot"), oldConfig.getString(key + ".Permission", null));
-
-                    category.setItem(new ItemBuilder(category.getItem()).setHideStandardLore(true).setAmount(1).setName("§b§n" + category.getName()).setLore(oldConfig.getStringList(key + ".Lore")).getItem());
-
-                    this.categories.add(category);
-                }
-
-                oldFile = WarpSystem.getInstance().getFileManager().getFile("Warps");
-                oldConfig = oldFile.getConfig();
-
-                for(String key : oldConfig.getKeys(false)) {
-                    Warp warp = new Warp(key, ImportHelper.getItem(oldConfig.getString(key + ".Item")), oldConfig.getInt(key + ".Slot"), oldConfig.getString(key + ".Permission", null), getCategory(oldConfig.getString(key + ".Category", null))
-                            , new ActionObject(Action.TELEPORT_TO_WARP, new SerializableLocation(ImportHelper.stringToLoc(oldConfig.getString(key + ".Location")))));
-
-                    warp.setItem(new ItemBuilder(warp.getItem()).setHideStandardLore(true).setAmount(1).setName("§b" + warp.getName()).setLore(oldConfig.getStringList(key + ".Lore")).getItem());
-
-                    this.warps.add(warp);
-                }
-
-                WarpSystem.getInstance().getFileManager().getFile("Categories").delete();
-                WarpSystem.getInstance().getFileManager().getFile("Warps").delete();
-            }
-
-            return success;
+        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
+        FileConfiguration config = file.getConfig();
+        this.size = config.getInt("WarpSystem.GUI_Size", 54);
+        switch(this.size) {
+            case 9:
+            case 18:
+            case 27:
+            case 36:
+            case 45:
+            case 54:
+                break;
+            default:
+                this.size = 54;
+                config.set("WarpSystem.GUI_Size", 54);
+                file.saveConfig();
+                break;
         }
+
+
+        this.warps.clear();
+        this.categories.clear();
+        this.globalWarps.clear();
+        this.decoIcons.clear();
+        ActionIconHelper.CONVERTED_ICONS = 0;
+
+        file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
+        config = file.getConfig();
+
+        WarpSystem.log("    > Loading Categories");
+        List<String> categories = config.getStringList("Categories");
+        for(String s : categories) {
+            Category category = ActionIconHelper.fromString(s);
+
+            if(category != null) {
+                if(category.getName().contains("@")) category.setName(category.getName().replace("@", "(at)"));
+                this.categories.add(category);
+            } else success = false;
+        }
+
+        WarpSystem.log("    > Loading Warps");
+        List<String> warps = config.getStringList("Warps");
+        for(String s : warps) {
+            Warp warp = ActionIconHelper.fromString(s);
+
+            if(warp != null) {
+                if(warp.getName().contains("@")) warp.setName(warp.getName().replace("@", "(at)"));
+                this.warps.add(warp);
+            } else success = false;
+        }
+
+        WarpSystem.log("      > Check each Category of all Warps");
+        for(Warp warp : this.warps) {
+            if(warp.getCategory() == null) continue;
+            if(!existsCategory(warp.getCategory().getName())) {
+                this.categories.add(warp.getCategory());
+            }
+        }
+
+        WarpSystem.log("    > Loading GlobalWarps");
+        List<String> gWarps = config.getStringList("GlobalWarps");
+        for(String s : gWarps) {
+            GlobalWarp warp = ActionIconHelper.fromString(s);
+
+            if(warp != null) {
+                if(warp.getName().contains("@")) warp.setName(warp.getName().replace("@", "(at)"));
+                this.globalWarps.add(warp);
+            } else success = false;
+        }
+
+        WarpSystem.log("    > Loading Deco");
+        List<String> decoIcons = config.getStringList("DecoIcons");
+        for(String s : decoIcons) {
+            DecoIcon deco = ActionIconHelper.fromString(s);
+
+            if(deco != null) this.decoIcons.add(deco);
+            else success = false;
+        }
+
+        WarpSystem.log("    > " + ActionIconHelper.CONVERTED_ICONS + " Icon(s) imported");
+
+        ActionIconHelper.load = false;
+
+        //Import old
+        if(WarpSystem.getInstance().isOld()) {
+            WarpSystem.log("    > Import old icons");
+
+            WarpSystem.getInstance().getFileManager().loadFile("Categories", "Memory/");
+            WarpSystem.getInstance().getFileManager().loadFile("Warps", "Memory/");
+
+            ConfigFile oldFile = WarpSystem.getInstance().getFileManager().getFile("Categories");
+            FileConfiguration oldConfig = oldFile.getConfig();
+
+            for(String key : oldConfig.getKeys(false)) {
+                Category category = new Category(key, ImportHelper.getItem(oldConfig.getString(key + ".Item")), oldConfig.getInt(key + ".Slot"), oldConfig.getString(key + ".Permission", null));
+
+                category.setItem(new ItemBuilder(category.getItem()).setHideStandardLore(true).setAmount(1).setName("§b§n" + category.getName()).setLore(oldConfig.getStringList(key + ".Lore")).getItem());
+
+                this.categories.add(category);
+            }
+
+            oldFile = WarpSystem.getInstance().getFileManager().getFile("Warps");
+            oldConfig = oldFile.getConfig();
+
+            for(String key : oldConfig.getKeys(false)) {
+                Warp warp = new Warp(key, ImportHelper.getItem(oldConfig.getString(key + ".Item")), oldConfig.getInt(key + ".Slot"), oldConfig.getString(key + ".Permission", null), getCategory(oldConfig.getString(key + ".Category", null))
+                        , new ActionObject(Action.TELEPORT_TO_WARP, new SerializableLocation(ImportHelper.stringToLoc(oldConfig.getString(key + ".Location")))));
+
+                warp.setItem(new ItemBuilder(warp.getItem()).setHideStandardLore(true).setAmount(1).setName("§b" + warp.getName()).setLore(oldConfig.getStringList(key + ".Lore")).getItem());
+
+                this.warps.add(warp);
+            }
+
+            WarpSystem.getInstance().getFileManager().getFile("Categories").delete();
+            WarpSystem.getInstance().getFileManager().getFile("Warps").delete();
+        }
+
+        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Warps", true)) {
+            CWarp cWarp = new CWarp();
+            CWarps cWarps = new CWarps();
+
+            WarpSystem.getInstance().getCommands().add(cWarp);
+            WarpSystem.getInstance().getCommands().add(cWarps);
+
+            cWarp.register(WarpSystem.getInstance());
+            cWarps.register(WarpSystem.getInstance());
+        }
+
+        return success;
     }
 
-    public void save(boolean sync) throws Exception {
-        if(!sync) {
-            Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), () -> {
-                try {
-                    save(true);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
-            });
-        } else {
-            //Save
-            ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
-            FileConfiguration config = file.getConfig();
+    public void save(boolean saver) {
+        //Save
+        if(!saver) WarpSystem.log("  > Saving Icons");
 
-            List<String> warps = new ArrayList<>();
-            for(Warp warp : this.warps) {
-                warps.add(ActionIconHelper.toString(warp));
-            }
+        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
+        FileConfiguration config = file.getConfig();
 
-            List<String> categories = new ArrayList<>();
-            for(Category category : this.categories) {
-                categories.add(ActionIconHelper.toString(category));
-            }
-
-            List<String> gWarps = new ArrayList<>();
-            for(GlobalWarp warp : this.globalWarps) {
-                gWarps.add(ActionIconHelper.toString(warp));
-            }
-
-            List<String> decoIcons = new ArrayList<>();
-            for(DecoIcon deco : this.decoIcons) {
-                decoIcons.add(ActionIconHelper.toString(deco));
-            }
-
-            config.set("Warps", warps);
-            config.set("Categories", categories);
-            config.set("GlobalWarps", gWarps);
-            config.set("DecoIcons", decoIcons);
-            file.saveConfig();
+        if(!saver) WarpSystem.log("    > Saving Warps");
+        List<String> warps = new ArrayList<>();
+        for(Warp warp : this.warps) {
+            warps.add(ActionIconHelper.toString(warp));
         }
+
+        if(!saver) WarpSystem.log("    > Saving Categories");
+        List<String> categories = new ArrayList<>();
+        for(Category category : this.categories) {
+            categories.add(ActionIconHelper.toString(category));
+        }
+
+        if(!saver) WarpSystem.log("    > Saving GlobalWarps");
+        List<String> gWarps = new ArrayList<>();
+        for(GlobalWarp warp : this.globalWarps) {
+            gWarps.add(ActionIconHelper.toString(warp));
+        }
+
+        if(!saver) WarpSystem.log("    > Saving Deco");
+        List<String> decoIcons = new ArrayList<>();
+        for(DecoIcon deco : this.decoIcons) {
+            decoIcons.add(ActionIconHelper.toString(deco));
+        }
+
+        config.set("Warps", warps);
+        config.set("Categories", categories);
+        config.set("GlobalWarps", gWarps);
+        config.set("DecoIcons", decoIcons);
+        file.saveConfig();
     }
 
     private int getNextFreeSlot(Category category) {

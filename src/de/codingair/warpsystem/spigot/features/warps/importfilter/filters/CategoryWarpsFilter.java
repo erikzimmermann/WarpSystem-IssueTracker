@@ -1,10 +1,12 @@
 package de.codingair.warpsystem.spigot.features.warps.importfilter.filters;
 
 import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.CategoryData;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Filter;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Result;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
+import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -16,6 +18,8 @@ import java.util.List;
 public class CategoryWarpsFilter implements Filter {
     @Override
     public Result importData() {
+        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
+
         try {
             File target = new File(WarpSystem.getInstance().getDataFolder().getParent() + "/CategoryWarps/Data.yml");
 
@@ -66,8 +70,8 @@ public class CategoryWarpsFilter implements Filter {
                     cd.getWarps().add(wd);
                 }
 
-                if(WarpSystem.getInstance().getIconManager().existsCategory(cd.getName()) && result != Result.ERROR) result = Result.UNAVAILABLE_NAME;
-                else if(!WarpSystem.getInstance().getIconManager().importCategoryData(cd)) result = Result.ERROR;
+                if(manager.existsCategory(cd.getName()) && result != Result.ERROR) result = Result.UNAVAILABLE_NAME;
+                else if(!manager.importCategoryData(cd)) result = Result.ERROR;
             }
 
             return result;

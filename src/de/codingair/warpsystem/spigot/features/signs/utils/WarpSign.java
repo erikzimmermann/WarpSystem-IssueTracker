@@ -1,8 +1,10 @@
-package de.codingair.warpsystem.spigot.features.signs;
+package de.codingair.warpsystem.spigot.features.signs.utils;
 
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
+import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -35,11 +37,13 @@ public class WarpSign {
     }
 
     public static WarpSign fromJSONString(String s) {
+        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
+
         try {
             JSONObject json = (JSONObject) new JSONParser().parse(s);
 
             Location loc = Location.getByJSONString((String) json.get("Loc"));
-            Warp warp = WarpSystem.getInstance().getIconManager().getWarp((String) json.get("Warp"), json.get("Category") == null ? null : WarpSystem.getInstance().getIconManager().getCategory((String) json.get("Category")));
+            Warp warp = manager.getWarp((String) json.get("Warp"), json.get("Category") == null ? null : manager.getCategory((String) json.get("Category")));
 
             return new WarpSign(loc, warp);
         } catch(ParseException e) {

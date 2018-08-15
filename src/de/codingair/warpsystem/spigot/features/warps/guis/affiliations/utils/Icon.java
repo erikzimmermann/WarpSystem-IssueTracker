@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.warps.guis.affiliations;
+package de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils;
 
 import de.codingair.codingapi.serializable.SerializableItemStack;
 import de.codingair.codingapi.server.Color;

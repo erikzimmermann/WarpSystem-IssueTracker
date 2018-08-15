@@ -1,17 +1,14 @@
 package de.codingair.warpsystem.gui.affiliations;
 
-import de.codingair.codingapi.serializable.SerializableLocation;
-import de.codingair.warpsystem.spigot.WarpSystem;
-import de.codingair.warpsystem.transfer.serializeable.icons.SIcon;
-import de.codingair.warpsystem.transfer.serializeable.icons.SWarp;
-import org.bukkit.Location;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Warp extends ActionIcon implements Serializable {
+public class Warp extends ActionIcon implements Serializable, Mergable {
     static final long serialVersionUID = 1L;
     Category category;
 
@@ -36,32 +33,18 @@ public class Warp extends ActionIcon implements Serializable {
         this(name, item, slot, permission, category, Arrays.asList(actions));
     }
 
-    public boolean isInCategory() {
-        return category != null;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public Location getLocation() {
-        SerializableLocation sLoc = getAction(Action.TELEPORT_TO_WARP).getValue();
-        return sLoc.getLocation();
-    }
-
-    @Override
-    public SIcon getSerializable() {
-        SWarp s = new SWarp(super.getSerializable());
-        s.setCategory(this.category == null ? null : this.category.getName());
-        return s;
-    }
-
     @Override
     public IconType getType() {
         return IconType.WARP;
+    }
+
+    @Override
+    public Object convert() {
+        List<de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionObject> list = new ArrayList<>();
+        for(ActionObject action : getActions()) {
+            list.add(new de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionObject(Action.getById(action.getAction().getId()), action.getValue()));
+        }
+
+        return new de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp(getName(), getItem(), getSlot(), getPermission(), this.category == null ? null : (de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category) this.category.convert(), list);
     }
 }

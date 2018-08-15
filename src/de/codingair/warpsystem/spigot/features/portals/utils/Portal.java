@@ -13,6 +13,8 @@ import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
 import org.bukkit.Material;
@@ -333,7 +335,8 @@ public class Portal implements Removable {
     }
 
     public boolean isRegistered() {
-        for(Portal portal : WarpSystem.getInstance().getTeleportManager().getPortals()) {
+        PortalManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.PORTALS);
+        for(Portal portal : manager.getPortals()) {
             if(portal == this) return true;
         }
 

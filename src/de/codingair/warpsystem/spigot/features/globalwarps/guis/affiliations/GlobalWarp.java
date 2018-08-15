@@ -1,8 +1,13 @@
-package de.codingair.warpsystem.spigot.features.warps.guis.affiliations;
+package de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations;
 
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionIcon;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionObject;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.IconType;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 public class GlobalWarp extends ActionIcon implements Serializable {
@@ -41,9 +46,13 @@ public class GlobalWarp extends ActionIcon implements Serializable {
         this.category = category;
     }
 
-    public GlobalWarp(String name, ItemStack item, int slot, String permission, Category category, ActionObject... actions) {
+    public GlobalWarp(String name, ItemStack item, int slot, String permission, Category category, List<ActionObject> actions) {
         super(name, item, slot, permission, actions);
         this.category = category;
+    }
+
+    public GlobalWarp(String name, ItemStack item, int slot, String permission, Category category, ActionObject... actions) {
+        this(name, item, slot, permission, category, Arrays.asList(actions));
     }
 
     public Category getCategory() {

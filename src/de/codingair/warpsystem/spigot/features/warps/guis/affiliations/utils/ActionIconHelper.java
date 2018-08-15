@@ -1,7 +1,11 @@
-package de.codingair.warpsystem.spigot.features.warps.guis.affiliations;
+package de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils;
 
 import de.codingair.codingapi.serializable.SerializableLocation;
+import de.codingair.warpsystem.gui.affiliations.Mergable;
 import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
+import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.transfer.serializeable.icons.SActionObject;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -10,6 +14,7 @@ import java.io.*;
 import java.util.Base64;
 
 public class ActionIconHelper {
+    public static int CONVERTED_ICONS = 0;
     public static boolean load = false;
 
     public static String toString(Serializable serializable) {
@@ -33,12 +38,18 @@ public class ActionIconHelper {
             ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
             Object o = ois.readObject();
             ois.close();
+
+            if(o instanceof Mergable) {
+                o = ((Mergable) o).convert();
+                CONVERTED_ICONS++;
+            }
             return (T) o;
         } catch(EOFException | StreamCorruptedException | ClassNotFoundException e) {
             if(load) {
                 System.out.println("    Couldn't handle some Icon-Data.");
                 load = false;
             }
+            e.printStackTrace();
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -47,6 +58,8 @@ public class ActionIconHelper {
     }
 
     public static ActionObject translate(SActionObject s) {
+        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
+
         ActionObject action = new ActionObject();
 
         action.action = Action.getById(s.getAction());
@@ -59,7 +72,7 @@ public class ActionIconHelper {
                 action.value = s.getCommand();
                 break;
             case OPEN_CATEGORY:
-                action.value = WarpSystem.getInstance().getIconManager().getCategory(s.getCategory());
+                action.value = manager.getCategory(s.getCategory());
                 break;
             case TELEPORT_TO_WARP:
                 action.value = new SerializableLocation(new Location(Bukkit.getWorld(s.getWorld()), s.getX(), s.getY(), s.getZ(), s.getYaw(), s.getPitch()));

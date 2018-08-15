@@ -8,8 +8,10 @@ import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.IconType;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.IconType;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
@@ -128,7 +130,7 @@ public class GChooseIconType extends GUI {
             addButton(new ItemButton(slots.remove(0), new ItemBuilder(Material.ENDER_CHEST).setName("§c" + Lang.get("GlobalWarp", new Example("ENG", "GlobalWarp"), new Example("GER", "GlobalWarp"))).getItem()) {
                 @Override
                 public void onClick(InventoryClickEvent e) {
-                    if(WarpSystem.getInstance().getGlobalWarpManager().getGlobalWarps().isEmpty()) {
+                    if(((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).getGlobalWarps().isEmpty()) {
                         getPlayer().sendMessage(Lang.getPrefix() + Lang.get("GlobalWarps_Not_Available", new Example("ENG", "&cThere are no GlobalWarps, which can be linked!"), new Example("GER", "&cEs existieren keine GlobalWarps, die verknüpft werden können!")));
                     } else {
                         set = true;
