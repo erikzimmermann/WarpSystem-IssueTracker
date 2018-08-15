@@ -108,10 +108,11 @@ public class WarpSystem extends JavaPlugin {
             log(" ");
 
             log("Loading files.");
-            this.fileManager.loadFile("ActionIcons", "/Memory/");
-            this.fileManager.loadFile("Teleporters", "/Memory/");
-            this.fileManager.loadFile("Language", "/");
-            this.fileManager.loadFile("Config", "/");
+            this.fileManager.loadAll();
+            if(this.fileManager.getFile("ActionIcons") == null) this.fileManager.loadFile("ActionIcons", "/Memory/");
+            if(this.fileManager.getFile("Teleporters") == null) this.fileManager.loadFile("Teleporters", "/Memory/");
+            if(this.fileManager.getFile("Language") == null) this.fileManager.loadFile("Language", "/");
+            if(this.fileManager.getFile("Config") == null) this.fileManager.loadFile("Config", "/");
 
             boolean createBackup = false;
             log("Loading icons.");
