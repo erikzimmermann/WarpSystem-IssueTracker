@@ -1,6 +1,8 @@
 package de.codingair.warpsystem.bungee;
 
 import de.codingair.codingapi.bungeecord.files.FileManager;
+import de.codingair.warpsystem.bungee.managers.GlobalWarpManager;
+import de.codingair.warpsystem.bungee.managers.ServerManager;
 import de.codingair.warpsystem.transfer.bungee.BungeeDataHandler;
 import net.md_5.bungee.api.plugin.Plugin;
 

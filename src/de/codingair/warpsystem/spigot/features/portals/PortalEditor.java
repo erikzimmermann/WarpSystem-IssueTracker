@@ -14,6 +14,7 @@ import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.utils.Node;
 import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
 import de.codingair.warpsystem.spigot.features.portals.menu.Menu;

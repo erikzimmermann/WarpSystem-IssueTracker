@@ -1,8 +1,8 @@
 package de.codingair.warpsystem.transfer.spigot;
 
 import de.codingair.codingapi.server.Sound;
-import de.codingair.warpsystem.gui.affiliations.Action;
-import de.codingair.warpsystem.gui.affiliations.GlobalWarp;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Action;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;

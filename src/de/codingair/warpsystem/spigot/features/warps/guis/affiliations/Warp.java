@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.gui.affiliations;
+package de.codingair.warpsystem.spigot.features.warps.guis.affiliations;
 
 import de.codingair.codingapi.serializable.SerializableLocation;
 import de.codingair.warpsystem.spigot.WarpSystem;
@@ -34,6 +34,11 @@ public class Warp extends ActionIcon implements Serializable {
 
     public Warp(String name, ItemStack item, int slot, String permission, Category category, ActionObject... actions) {
         this(name, item, slot, permission, category, Arrays.asList(actions));
+    }
+
+    public Warp(SWarp s) {
+        super(s);
+        this.category = WarpSystem.getInstance().getIconManager().getCategory(s.getCategory());
     }
 
     public boolean isInCategory() {

@@ -2,7 +2,7 @@ package de.codingair.warpsystem.spigot.features.signs;
 
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.WarpSystem;
-import de.codingair.warpsystem.gui.affiliations.Warp;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;

@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.gui.affiliations;
+package de.codingair.warpsystem.spigot.features.warps.guis.affiliations;
 
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;

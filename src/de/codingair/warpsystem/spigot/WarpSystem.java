@@ -15,10 +15,10 @@ import de.codingair.warpsystem.spigot.commands.*;
 import de.codingair.warpsystem.spigot.features.signs.SignListener;
 import de.codingair.warpsystem.spigot.language.Lang;
 import de.codingair.warpsystem.spigot.listeners.NotifyListener;
-import de.codingair.warpsystem.spigot.listeners.PortalListener;
+import de.codingair.warpsystem.spigot.features.portals.listeners.PortalListener;
 import de.codingair.warpsystem.spigot.listeners.TeleportListener;
-import de.codingair.warpsystem.spigot.managers.GlobalWarpManager;
-import de.codingair.warpsystem.spigot.managers.IconManager;
+import de.codingair.warpsystem.spigot.features.warps.globalwarps.managers.GlobalWarpManager;
+import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.utils.UpdateChecker;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
@@ -37,7 +37,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -267,7 +266,8 @@ public class WarpSystem extends JavaPlugin {
     @Override
     public void onDisable() {
         API.getInstance().onDisable(this);
-        save(false);
+        //TODO
+//        save(false);
         teleportManager.getTeleports().forEach(t -> t.cancel(false, false));
 
         //Disable all functions
@@ -301,7 +301,8 @@ public class WarpSystem extends JavaPlugin {
 
     private void startAutoSaver() {
         WarpSystem.log("Starting AutoSaver.");
-        Bukkit.getScheduler().scheduleAsyncRepeatingTask(WarpSystem.getInstance(), () -> save(true), 20 * 60 * 20, 20 * 60 * 20);
+        //TODO
+//        Bukkit.getScheduler().scheduleAsyncRepeatingTask(WarpSystem.getInstance(), () -> save(true), 20 * 60 * 20, 20 * 60 * 20);
     }
 
     private void save(boolean saver) {

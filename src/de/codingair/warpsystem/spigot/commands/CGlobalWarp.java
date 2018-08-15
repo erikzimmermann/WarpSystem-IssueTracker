@@ -6,7 +6,7 @@ import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.WarpSystem;
-import de.codingair.warpsystem.spigot.gui.guis.GGlobalWarpList;
+import de.codingair.warpsystem.spigot.features.warps.globalwarps.guis.GGlobalWarpList;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
 import org.bukkit.command.CommandSender;

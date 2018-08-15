@@ -5,8 +5,8 @@ import de.codingair.codingapi.particles.animations.playeranimations.CircleAnimat
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.warpsystem.gui.affiliations.Action;
-import de.codingair.warpsystem.gui.affiliations.Warp;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Action;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
