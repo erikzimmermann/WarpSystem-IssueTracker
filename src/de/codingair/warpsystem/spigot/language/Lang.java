@@ -5,7 +5,6 @@ import de.codingair.warpsystem.spigot.WarpSystem;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -20,8 +19,7 @@ public class Lang {
     }
 
     public static void setCurrentLanguage(String lang) {
-        getConfig().set("Default_Language", lang.toUpperCase());
-        saveConfig();
+        save(() -> getConfig().set("Default_Language", lang.toUpperCase()));
     }
 
     public static int getLanguageId(String lang) {
@@ -61,8 +59,7 @@ public class Lang {
         for(Example example : examples) {
             String s = getConfig().getString(example.getLanguage() + "." + key, null);
             if(s == null) {
-                getConfig().set(example.getLanguage() + "." + key, example.getText());
-                saveConfig();
+                save(() -> getConfig().set(example.getLanguage() + "." + key, example.getText()));
             }
         }
 
@@ -87,7 +84,10 @@ public class Lang {
         }
     }
 
-    private static void saveConfig() {
-        WarpSystem.getInstance().getFileManager().getFile("Language").saveConfig();
+    private static void save(Runnable task) {
+        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Language");
+        file.loadConfig();
+        task.run();
+        file.saveConfig();
     }
 }
