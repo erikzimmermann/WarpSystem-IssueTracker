@@ -94,7 +94,6 @@ public class IconManager implements Manager {
         this.categories.clear();
         this.globalWarps.clear();
         this.decoIcons.clear();
-        ActionIconHelper.CONVERTED_ICONS = 0;
 
         file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
         config = file.getConfig();
@@ -148,8 +147,6 @@ public class IconManager implements Manager {
             if(deco != null) this.decoIcons.add(deco);
             else success = false;
         }
-
-        WarpSystem.log("    > " + ActionIconHelper.CONVERTED_ICONS + " Icon(s) imported");
 
         ActionIconHelper.load = false;
 
