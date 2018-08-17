@@ -1,22 +1,27 @@
 name: WarpSystem
 author: CodingAir
-version: 2.1.0
+version: 3.0.0
 description: WarpSystem
-main: de.codingair.warpsystem.WarpSystem
-softdepend: [Multiverse-Core]
+main: de.codingair.warpsystem.spigot.WarpSystem
+softdepend: [Multiverse-Core, Vault, Essentials]
+api-version: 1.13
 
 commands:
   warp:
     usuage: /Warp
-    description: Warp-System-CMD
+    description: A Warp-System-CMD
   warps:
     usuage: /Warps
-    description: Warp-System-CMD
+    description: A Warp-System-CMD
   warpsystem:
     usuage: /WarpSystem
-    description: Warp-System-CMD
+    description: A Warp-System-CMD
     aliases: [ws]
   portal:
     usuage: /Portal
-    description: Setup portals
+    description: A Warp-System-CMD
     aliases: [portals]
+  globalwarps:
+    ususage: /GlobalWarps
+    description: A Warp-System-CMD
+    aliases: [gw, globalwarp]

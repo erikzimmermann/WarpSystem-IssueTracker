@@ -3,18 +3,44 @@ package de.codingair.warpsystem.gui.affiliations;
 import de.codingair.codingapi.serializable.SerializableLocation;
 
 public enum Action {
-    RUN_COMMAND(String.class),
-    OPEN_CATEGORY(Category.class),
-    TELEPORT_TO_WARP(SerializableLocation.class),
-    SWITCH_SERVER(String.class);
+    RUN_COMMAND(0, String.class, Priority.LOW),
+    OPEN_CATEGORY(1, Category.class, Priority.LOW),
+    TELEPORT_TO_WARP(2, SerializableLocation.class, Priority.LOW),
+    SWITCH_SERVER(3, String.class, Priority.LOW),
+    PAY_MONEY(4, Double.class, Priority.HIGHEST)
+    ;
 
+    private int id;
     private Class<?> clazz;
+    private Priority priority;
 
-    Action(Class<?> clazz) {
+    Action(int id, Class<?> clazz, Priority priority) {
+        this.id = id;
         this.clazz = clazz;
+        this.priority = priority;
     }
 
     public Class<?> getClazz() {
         return clazz;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public static Action getById(int id) {
+        for(Action action : values()) {
+            if(action.getId() == id) return action;
+        }
+
+        return null;
+    }
+    
+    public enum Priority {
+        HIGHEST, HIGH, LOW, LOWEST
     }
 }

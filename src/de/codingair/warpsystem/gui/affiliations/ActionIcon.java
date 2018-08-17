@@ -1,15 +1,23 @@
 package de.codingair.warpsystem.gui.affiliations;
 
-import de.codingair.codingapi.bungeecord.BungeeCordHelper;
-import de.codingair.warpsystem.WarpSystem;
-import de.codingair.warpsystem.gui.guis.GWarps;
+import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.gui.guis.GWarps;
+import de.codingair.warpsystem.spigot.language.Example;
+import de.codingair.warpsystem.spigot.language.Lang;
+import de.codingair.warpsystem.spigot.utils.money.AdapterType;
+import de.codingair.warpsystem.transfer.serializeable.icons.SActionIcon;
+import de.codingair.warpsystem.transfer.serializeable.icons.SActionObject;
+import de.codingair.warpsystem.transfer.serializeable.icons.SIcon;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
-public class ActionIcon extends Icon implements Serializable {
+public abstract class ActionIcon extends Icon implements Serializable {
     static final long serialVersionUID = 1L;
 
     String permission;
@@ -48,39 +56,94 @@ public class ActionIcon extends Icon implements Serializable {
         this(name, item, slot, permission, Arrays.asList(actions));
     }
 
+    public ActionIcon(SActionIcon icon) {
+        super(icon);
+        this.permission = icon.getPermission();
+        this.actions = new ArrayList<>();
+        for(SActionObject s : icon.getActions()) {
+            this.actions.add(ActionIconHelper.translate(s));
+        }
+    }
+
+    @Override
+    public SIcon getSerializable() {
+        SActionIcon s = new SActionIcon(super.getSerializable());
+
+        s.setPermission(this.permission);
+        List<SActionObject> actions = new ArrayList<>();
+        for(ActionObject action : this.actions) {
+            actions.add(ActionIconHelper.translate(action));
+        }
+        s.setActions(actions);
+
+        return s;
+    }
+
     public void perform(Player p, boolean editor, Action... without) {
         List<Action> withouts = Arrays.asList(without);
 
-        for (ActionObject action : this.actions) {
-            if(withouts.contains(action.getAction())) continue;
-
-            switch (action.getAction()) {
-                case OPEN_CATEGORY: {
-                    Category category = action.getValue();
-                    new GWarps(p, category, editor).open();
-                    break;
-                }
-
-                case RUN_COMMAND: {
-                    String command = action.getValue();
-                    p.performCommand(command);
-                    break;
-                }
-
-                case SWITCH_SERVER: {
-                    String server = action.getValue();
-                    BungeeCordHelper.connect(p, server, WarpSystem.getInstance());
-                    break;
-                }
-
-                case TELEPORT_TO_WARP: {
-                    if(!(this instanceof Warp)) return;
-
-                    WarpSystem.getInstance().getTeleportManager().teleport(p, (Warp) this);
-                    break;
-                }
+        for(Action.Priority value : Action.Priority.values()) {
+            for(ActionObject ao : getActions(value)) {
+                if(!withouts.contains(ao.getAction()) && run(ao, p, editor)) return;
             }
         }
+    }
+
+    /**
+     * @return 'true' if the loop should be canceled.
+     */
+    private boolean run(ActionObject action, Player p, boolean editor) {
+        switch(action.getAction()) {
+            case OPEN_CATEGORY:
+                Category category = action.getValue();
+                new GWarps(p, category, editor).open();
+                break;
+
+            case RUN_COMMAND:
+                String command = action.getValue();
+                if(command.startsWith("/")) command = command.substring(1);
+                p.performCommand(command);
+                break;
+
+            case SWITCH_SERVER:
+                if(WarpSystem.getInstance().getTeleportManager().isTeleporting(p)) {
+                    p.sendMessage(Lang.getPrefix() + Lang.get("Player_Is_Already_Teleporting", new Example("ENG", "&cYou are already teleporting!"), new Example("GER", "&cDu wirst bereits teleportiert!")));
+                    break;
+                }
+
+                String server = action.getValue();
+                double costs = getAction(Action.PAY_MONEY) == null ? 0 : getAction(Action.PAY_MONEY).getValue();
+                if(p.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) costs = 0;
+
+                WarpSystem.getInstance().getTeleportManager().teleport(p, server, getName(), costs);
+                break;
+
+            case TELEPORT_TO_WARP:
+                if(!(this instanceof Warp)) break;
+
+                WarpSystem.getInstance().getTeleportManager().teleport(p, (Warp) this);
+                break;
+
+            case PAY_MONEY:
+                if(p.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) break;
+                if(AdapterType.getActive() == null) break;
+                if(WarpSystem.getInstance().getTeleportManager().isTeleporting(p)) break;
+
+                double prize = action.getValue();
+                if(prize <= 0) break;
+
+                double bank = AdapterType.getActive().getMoney(p);
+
+                if(bank < prize) {
+                    p.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money", new Example("ENG", "&7You need at least &c%AMOUNT% coin(s)&7, to teleport to that position!"), new Example("GER", "&7Du brauchst mindestens &c%AMOUNT% Coin(s)&7, um dich dorthin zu teleportieren!")).replace("%AMOUNT%", prize + ""));
+                    return true;
+                }
+
+                AdapterType.getActive().setMoney(p, bank - prize);
+                break;
+        }
+
+        return false;
     }
 
     public void perform(Player p) {
@@ -88,6 +151,16 @@ public class ActionIcon extends Icon implements Serializable {
     }
 
     public List<ActionObject> getActions() {
+        return actions;
+    }
+
+    public List<ActionObject> getActions(Action.Priority priority) {
+        List<ActionObject> actions = new ArrayList<>(this.actions);
+
+        for(ActionObject action : this.actions) {
+            if(!action.action.getPriority().equals(priority)) actions.remove(action);
+        }
+
         return actions;
     }
 
