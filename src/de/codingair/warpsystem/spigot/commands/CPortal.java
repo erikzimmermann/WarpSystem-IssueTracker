@@ -9,7 +9,7 @@ import de.codingair.codingapi.tools.TimeList;
 import de.codingair.codingapi.utils.Node;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
-import de.codingair.warpsystem.spigot.gui.guis.GPortalList;
+import de.codingair.warpsystem.spigot.features.portals.guis.GPortalList;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
 import org.bukkit.command.CommandSender;

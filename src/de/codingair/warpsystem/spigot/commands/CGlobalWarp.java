@@ -6,7 +6,9 @@ import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.WarpSystem;
-import de.codingair.warpsystem.spigot.gui.guis.GGlobalWarpList;
+import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
+import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
 import org.bukkit.command.CommandSender;
@@ -55,7 +57,7 @@ public class CGlobalWarp extends CommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
                 Player player = (Player) sender;
-                WarpSystem.getInstance().getGlobalWarpManager().create(argument, player.getLocation(), new Callback<Boolean>() {
+                ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).create(argument, player.getLocation(), new Callback<Boolean>() {
                     @Override
                     public void accept(Boolean created) {
                         if(created) {
@@ -80,16 +82,16 @@ public class CGlobalWarp extends CommandBuilder {
         getComponent("delete").addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, List<String> suggestions) {
-                suggestions.addAll(WarpSystem.getInstance().getGlobalWarpManager().getGlobalWarps().keySet());
+                suggestions.addAll(((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).getGlobalWarps().keySet());
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                WarpSystem.getInstance().getGlobalWarpManager().delete(argument, new Callback<Boolean>() {
+                ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).delete(argument, new Callback<Boolean>() {
                     @Override
                     public void accept(Boolean deleted) {
                         if(deleted) {
-                            String name = WarpSystem.getInstance().getGlobalWarpManager().getCaseCorrectlyName(argument);
+                            String name = ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).getCaseCorrectlyName(argument);
 
                             sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Deleted", new Example("ENG", "&7The GlobalWarp '&b%GLOBAL_WARP%&7' was &cdeleted&7."), new Example("GER", "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' wurde &cgelöscht&7.")).replace("%GLOBAL_WARP%", name));
                         } else {

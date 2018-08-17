@@ -3,6 +3,7 @@ package de.codingair.warpsystem.transfer.bungee;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.transfer.DataHandler;
 import de.codingair.warpsystem.transfer.packets.utils.*;
+import de.codingair.warpsystem.transfer.utils.PacketListener;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -10,7 +11,9 @@ import net.md_5.bungee.api.plugin.Plugin;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class BungeeDataHandler implements DataHandler {
@@ -18,6 +21,7 @@ public class BungeeDataHandler implements DataHandler {
     private ChannelListener listener = new ChannelListener(this);
     private BungeePacketHandler packetHandler = new BungeePacketHandler(this);
     private HashMap<String, Callback> callbacks = new HashMap<>();
+    private List<PacketListener> listeners = new ArrayList<>();
 
     public BungeeDataHandler(Plugin plugin) {
         this.plugin = plugin;
@@ -58,6 +62,10 @@ public class BungeeDataHandler implements DataHandler {
             e.printStackTrace();
         }
 
+        for(PacketListener listener : listeners) {
+            if(listener.onSend(packet)) return;
+        }
+
         server.sendData(GET_CHANNEL, stream.toByteArray());
     }
 
@@ -70,5 +78,17 @@ public class BungeeDataHandler implements DataHandler {
             if((callback = this.callbacks.remove(uniqueId.toString())) == null) return;
             callback.accept(((AnswerPacket) packet).getValue());
         }
+
+        for(PacketListener listener : listeners) {
+            listener.onReceive(packet, server.getName());
+        }
+    }
+
+    public void register(PacketListener listener) {
+        this.listeners.add(listener);
+    }
+
+    public void unregister(PacketListener listener) {
+        this.listeners.remove(listener);
     }
 }

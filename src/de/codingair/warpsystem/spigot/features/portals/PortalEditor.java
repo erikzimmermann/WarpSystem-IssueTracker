@@ -14,6 +14,9 @@ import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.utils.Node;
 import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
+import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
 import de.codingair.warpsystem.spigot.language.Example;
 import de.codingair.warpsystem.spigot.language.Lang;
 import de.codingair.warpsystem.spigot.features.portals.menu.Menu;
@@ -308,12 +311,13 @@ public class PortalEditor implements Removable {
     }
 
     public void finish() {
+        PortalManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.PORTALS);
         if(finished) return;
         if(this.backupPortal != null) this.backupPortal.applyAttrs(this.portal);
 
         exit(true);
 
-        if(this.backupPortal == null) WarpSystem.getInstance().getTeleportManager().getPortals().add(this.portal);
+        if(this.backupPortal == null) manager.getPortals().add(this.portal);
     }
 
     public void exit() {
