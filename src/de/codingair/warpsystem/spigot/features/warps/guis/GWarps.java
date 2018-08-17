@@ -33,6 +33,7 @@ import de.codingair.warpsystem.spigot.utils.money.AdapterType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -59,12 +60,23 @@ public class GWarps extends GUI {
 
     private GUIListener listener;
 
-    private static String getTitle(Category category) {
-        return getTitle(category, null);
+    private static String getTitle(Category category, Player p) {
+        return getTitle(category, null, p);
     }
 
-    private static String getTitle(Category category, GUIListener listener) {
-        return listener == null || listener.getTitle() == null ? "§c§l§nWarps§r" + (category != null ? " §c@" + category.getNameWithoutColor() : "") : listener.getTitle();
+    private static String getTitle(Category category, GUIListener listener, Player player) {
+        FileConfiguration config = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig();
+        String key = player.hasPermission(IconManager.getInstance().getAdminPermission()) ? "Admin" : "User";
+
+        return listener == null || listener.getTitle() == null ?
+                ChatColor.translateAlternateColorCodes('&', (category == null ?
+                        config.getString("WarpSystem.GUI." + key + ".Title.Standard", "&c&l&nWarps&r") :
+                        config.getString("WarpSystem.GUI." + key + ".Title.In_Category", "&c&l&nWarps&r &c@%CATEGORY%").replace("%CATEGORY%", category.getNameWithoutColor())))
+                : listener.getTitle();
+    }
+
+    private static int getSize(Player player) {
+        return player.hasPermission(IconManager.getInstance().getAdminPermission()) ? IconManager.getInstance().getAdminSize() : IconManager.getInstance().getUserSize();
     }
 
     public GWarps(Player p, Category category, boolean editing) {
@@ -72,7 +84,7 @@ public class GWarps extends GUI {
     }
 
     public GWarps(Player p, Category category, boolean editing, GUIListener guiListener) {
-        super(p, getTitle(category, guiListener), ((IconManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS)).getSize(), WarpSystem.getInstance(), false);
+        super(p, getTitle(category, guiListener, p), getSize(p), WarpSystem.getInstance(), false);
         this.listener = guiListener;
         this.category = category;
         this.editing = editing;
@@ -163,7 +175,7 @@ public class GWarps extends GUI {
                     if(e.isLeftClick()) {
                         editing = !editing;
                         reinitialize();
-                        setTitle(getTitle(GWarps.this.category));
+                        setTitle(getTitle(GWarps.this.category, getPlayer()));
                     } else {
                         p.closeInventory();
                         new GConfig(p, category, editing).open();
@@ -175,14 +187,14 @@ public class GWarps extends GUI {
             setItem(0, edge);
         }
 
-        int size = manager.getSize();
+        int size = getSize(getPlayer());
         if(category != null) {
             addButton(new ItemButton(size - 9, new ItemBuilder(Skull.ArrowLeft).setName("§c" + Lang.get("Back", new Example("ENG", "Back"), new Example("GER", "Zurück"))).getItem()) {
                 @Override
                 public void onClick(InventoryClickEvent e) {
                     GWarps.this.category = null;
                     reinitialize();
-                    setTitle(getTitle(GWarps.this.category));
+                    setTitle(getTitle(GWarps.this.category, getPlayer()));
                 }
             }.setOption(option));
         }
@@ -418,7 +430,7 @@ public class GWarps extends GUI {
     private void addToGUI(Player p, ActionIcon icon) {
         IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
 
-        if(icon.getSlot() >= manager.getSize()) return;
+        if(icon.getSlot() >= getSize(getPlayer())) return;
 
         ItemButtonOption option = new ItemButtonOption();
         option.setClickSound(Sound.CLICK.bukkitSound());
@@ -493,13 +505,13 @@ public class GWarps extends GUI {
                                 if(icon instanceof Category && (cursorIcon instanceof Warp || cursorIcon instanceof GlobalWarp || cursorIcon instanceof DecoIcon)) {
                                     GWarps.this.category = (Category) icon;
                                     reinitialize();
-                                    setTitle(getTitle(GWarps.this.category));
+                                    setTitle(getTitle(GWarps.this.category, getPlayer()));
                                 }
                             } else {
                                 if(e.isShiftClick() && icon instanceof Category) {
                                     GWarps.this.category = (Category) icon;
                                     reinitialize();
-                                    setTitle(getTitle(GWarps.this.category));
+                                    setTitle(getTitle(GWarps.this.category, getPlayer()));
                                     return;
                                 }
 
@@ -530,7 +542,7 @@ public class GWarps extends GUI {
                             case CATEGORY:
                                 GWarps.this.category = (Category) icon;
                                 reinitialize();
-                                setTitle(getTitle(GWarps.this.category));
+                                setTitle(getTitle(GWarps.this.category, getPlayer()));
                                 break;
 
                             case WARP:
@@ -564,7 +576,7 @@ public class GWarps extends GUI {
             cursor = null;
             cursorIcon = null;
             reinitialize();
-            setTitle(getTitle(GWarps.this.category));
+            setTitle(getTitle(GWarps.this.category, getPlayer()));
         }
 
         this.moving = moving;

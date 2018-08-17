@@ -8,6 +8,7 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.commands.CWarp;
 import de.codingair.warpsystem.spigot.commands.CWarps;
+import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
@@ -36,7 +37,13 @@ public class IconManager implements Manager {
     private List<GlobalWarp> globalWarps = new ArrayList<>();
     private List<DecoIcon> decoIcons = new ArrayList<>();
 
-    private int size = 54;
+    private int userSize = 54;
+    private int adminSize = 54;
+    private String adminPermission = "WarpSystem.Admin";
+
+    public static IconManager getInstance() {
+        return ((IconManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS));
+    }
 
     public boolean load() {
         if(WarpSystem.getInstance().getFileManager().getFile("ActionIcons") == null) WarpSystem.getInstance().getFileManager().loadFile("ActionIcons", "/Memory/");
@@ -49,8 +56,8 @@ public class IconManager implements Manager {
 
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
         FileConfiguration config = file.getConfig();
-        this.size = config.getInt("WarpSystem.GUI_Size", 54);
-        switch(this.size) {
+        this.userSize = config.getInt("WarpSystem.GUI.User.Size", 54);
+        switch(this.userSize) {
             case 9:
             case 18:
             case 27:
@@ -59,12 +66,29 @@ public class IconManager implements Manager {
             case 54:
                 break;
             default:
-                this.size = 54;
-                config.set("WarpSystem.GUI_Size", 54);
+                this.userSize = 54;
+                config.set("WarpSystem.GUI.User.Size", 54);
                 file.saveConfig();
                 break;
         }
 
+        this.adminSize = config.getInt("WarpSystem.GUI.Admin.Size", 54);
+        switch(this.adminSize) {
+            case 9:
+            case 18:
+            case 27:
+            case 36:
+            case 45:
+            case 54:
+                break;
+            default:
+                this.adminSize = 54;
+                config.set("WarpSystem.GUI.Admin.Size", 54);
+                file.saveConfig();
+                break;
+        }
+
+        this.adminPermission = config.getString("WarpSystem.GUI.Admin.Permission", "WarpSystem.Admin");
 
         this.warps.clear();
         this.categories.clear();
@@ -423,11 +447,27 @@ public class IconManager implements Manager {
         return decoIcons;
     }
 
-    public int getSize() {
-        return size;
+    public int getUserSize() {
+        return userSize;
     }
 
-    public void setSize(int size) {
-        this.size = size;
+    public void setUserSize(int userSize) {
+        this.userSize = userSize;
+    }
+
+    public int getAdminSize() {
+        return adminSize;
+    }
+
+    public void setAdminSize(int adminSize) {
+        this.adminSize = adminSize;
+    }
+
+    public String getAdminPermission() {
+        return adminPermission;
+    }
+
+    public void setAdminPermission(String adminPermission) {
+        this.adminPermission = adminPermission;
     }
 }
