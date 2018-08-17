@@ -100,20 +100,11 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, String globalWarp, String globalWarpDisplayName, double costs) {
-        GlobalWarpManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS);
-
         if(isTeleporting(player)) {
             Teleport teleport = getTeleport(player);
             long diff = System.currentTimeMillis() - teleport.getStartTime();
             if(diff > 50)
                 player.sendMessage(Lang.getPrefix() + Lang.get("Player_Is_Already_Teleporting", new Example("ENG", "&cYou are already teleporting!"), new Example("GER", "&cDu wirst bereits teleportiert!")));
-            return;
-        }
-
-        String targetServer = manager.getGlobalWarps().get(globalWarp);
-
-        if(WarpSystem.getInstance().getCurrentServer().equalsIgnoreCase(targetServer)) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Player_Is_Already_On_Target_Server", new Example("ENG", "&cYou are already on the target server."), new Example("GER", "&cDu befindest dich bereits auf dem Ziel-Server.")));
             return;
         }
 

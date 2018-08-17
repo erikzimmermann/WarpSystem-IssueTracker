@@ -71,7 +71,6 @@ public class GlobalWarpListener implements PacketListener {
 
                 if(warp == null) answerIntegerPacket.setValue(1);
                 else if(otherServer == null || !WarpSystem.getInstance().getServerManager().isOnline(otherServer)) answerIntegerPacket.setValue(2);
-                else if(p.getServer().getInfo().equals(otherServer)) answerIntegerPacket.setValue(3);
                 else answerIntegerPacket.setValue(0);
 
                 ((PrepareTeleportPacket) packet).applyAsAnswer(answerIntegerPacket);
@@ -79,9 +78,14 @@ public class GlobalWarpListener implements PacketListener {
 
                 if(answerIntegerPacket.getValue() != 0) return;
 
-                p.connect(otherServer, (connected, throwable) -> {
-                    if(connected) WarpSystem.getInstance().getDataHandler().send(new TeleportPacket(player, warp, teleportDisplayName, ((PrepareTeleportPacket) packet).getCosts()), otherServer);
-                });
+
+                if(p.getServer().getInfo().equals(otherServer)){
+                    WarpSystem.getInstance().getDataHandler().send(new TeleportPacket(player, warp, teleportDisplayName, ((PrepareTeleportPacket) packet).getCosts()), otherServer);
+                } else {
+                    p.connect(otherServer, (connected, throwable) -> {
+                        if(connected) WarpSystem.getInstance().getDataHandler().send(new TeleportPacket(player, warp, teleportDisplayName, ((PrepareTeleportPacket) packet).getCosts()), otherServer);
+                    });
+                }
                 break;
 
             case RequestGlobalWarpNamesPacket:
