@@ -1,7 +1,6 @@
 package de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils;
 
 import de.codingair.codingapi.serializable.SerializableLocation;
-import de.codingair.warpsystem.gui.affiliations.Mergable;
 import de.codingair.warpsystem.spigot.WarpSystem;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
@@ -14,7 +13,6 @@ import java.io.*;
 import java.util.Base64;
 
 public class ActionIconHelper {
-    public static int CONVERTED_ICONS = 0;
     public static boolean load = false;
 
     public static String toString(Serializable serializable) {
@@ -39,17 +37,12 @@ public class ActionIconHelper {
             Object o = ois.readObject();
             ois.close();
 
-            if(o instanceof Mergable) {
-                o = ((Mergable) o).convert();
-                CONVERTED_ICONS++;
-            }
             return (T) o;
         } catch(EOFException | StreamCorruptedException | ClassNotFoundException e) {
             if(load) {
                 System.out.println("    Couldn't handle some Icon-Data.");
                 load = false;
             }
-            e.printStackTrace();
         } catch(IOException e) {
             e.printStackTrace();
         }
