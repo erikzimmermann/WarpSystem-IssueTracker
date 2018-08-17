@@ -17,7 +17,18 @@
 # #   Commands.Warp.GUI: Turn this to false, if you want to use this command for teleports ("/warp spawn"). If you turn this to 'true', the gui opens by running this command
 # #####################################
 WarpSystem:
-  GUI_Size: 54
+  GUI:
+    Admin:
+      Permission: "WarpSystem.Admin"
+      Size: 54
+      Title:
+        Standard: "&c&l&nWarps&r"
+        In_Category: "&c&l&nWarps&r &c@%CATEGORY%"
+    User:
+      Size: 54
+      Title:
+        Standard: "&c&l&nWarps&r"
+        In_Category: "&c&l&nWarps&r &c@%CATEGORY%"
   Maintenance: false
   Teleport:
     Op_Can_Skip_Delay: false
