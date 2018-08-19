@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.commands;
+package de.codingair.warpsystem.spigot.features.portals.commands;
 
 import de.codingair.codingapi.server.commands.BaseComponent;
 import de.codingair.codingapi.server.commands.CommandBuilder;

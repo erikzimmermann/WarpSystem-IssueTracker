@@ -57,6 +57,7 @@ public class GWarps extends GUI {
     private ItemStack cursor = null;
     private int oldSlot = -999;
     private Icon cursorIcon = null;
+    private boolean showMenu = true;
 
     private GUIListener listener;
 
@@ -134,24 +135,23 @@ public class GWarps extends GUI {
 
     public void initialize(Player p) {
         IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
-        
+
         ItemButtonOption option = new ItemButtonOption();
         option.setClickSound(Sound.CLICK.bukkitSound());
         option.setOnlyLeftClick(true);
 
-        ItemStack edge = new ItemBuilder(XMaterial.IRON_BARS).setHideName(true).setHideStandardLore(true).getItem();
         ItemBuilder noneBuilder;
 
         if(editing) {
             noneBuilder = new ItemBuilder(Material.BARRIER).setHideStandardLore(true)
                     .setName(Lang.get("Edit_Mode_Set_Icon", new Example("ENG", "&3Leftclick: &bSet Icon"), new Example("GER", "&3Linksklick: &bIcon setzen")));
         } else {
-            noneBuilder = new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).setHideStandardLore(true);
+            noneBuilder = new ItemBuilder(IconManager.getInstance().getBackground()).setHideName(true).setHideStandardLore(true).setHideEnchantments(true);
         }
 
         ItemStack none = noneBuilder.getItem();
 
-        if(p.hasPermission(WarpSystem.PERMISSION_MODIFY_ICONS)) {
+        if(p.hasPermission(WarpSystem.PERMISSION_MODIFY_ICONS) && showMenu) {
             ItemBuilder builder = new ItemBuilder(Material.NETHER_STAR).setName(Lang.get("Menu_Help", new Example("ENG", "&c&nHelp"), new Example("GER", "&c&nHilfe")));
 
             if(editing) {
@@ -161,8 +161,10 @@ public class GWarps extends GUI {
                 builder.setLore("§0",
                         Lang.get("Menu_Help_Leftclick", new Example("ENG", "&3Leftclick: &bEdit-Mode"), new Example("GER", "&3Linksklick: &bBearbeitungs-Modus")));
             }
-
+            builder.addLore(Lang.get("Menu_Help_Shift_Leftclick", new Example("ENG", "&3Shift-Leftclick: &bSet background"), new Example("GER", "&3Shift-Linksklick: &bHintergrund setzen")));
+            builder.addLore("");
             builder.addLore(Lang.get("Menu_Help_Rightclick", new Example("ENG", "&3Rightclick: &bOptions"), new Example("GER", "&3Rechtsklick: &bOptionen")));
+            builder.addLore(Lang.get("Menu_Help_Shift_Rightclick_Show_Icon", new Example("ENG", "&3Shift-Rightclick: &bShow icon"), new Example("GER", "&3Shift-Rechtsklick: &bZeige Icon")));
 
             builder.addEnchantment(Enchantment.DAMAGE_ALL, 1);
             builder.setHideEnchantments(true);
@@ -173,18 +175,28 @@ public class GWarps extends GUI {
                     if(moving) return;
 
                     if(e.isLeftClick()) {
-                        editing = !editing;
-                        reinitialize();
-                        setTitle(getTitle(GWarps.this.category, getPlayer()));
+                        if(e.isShiftClick()) {
+                            IconManager.getInstance().setBackground(getPlayer().getInventory().getItem(getPlayer().getInventory().getHeldItemSlot()));
+                            reinitialize();
+                            setTitle(getTitle(GWarps.this.category, getPlayer()));
+                        } else {
+                            editing = !editing;
+                            reinitialize();
+                            setTitle(getTitle(GWarps.this.category, getPlayer()));
+                        }
                     } else {
-                        p.closeInventory();
-                        new GConfig(p, category, editing).open();
+                        if(e.isShiftClick()) {
+                            showMenu = !showMenu;
+                            reinitialize();
+                            setTitle(getTitle(GWarps.this.category, getPlayer()));
+                        } else {
+                            p.closeInventory();
+                            new GConfig(p, category, editing).open();
+                        }
                     }
                 }
             }.setOption(option).setOnlyLeftClick(false));
 
-        } else {
-            setItem(0, edge);
         }
 
         int size = getSize(getPlayer());
@@ -197,12 +209,6 @@ public class GWarps extends GUI {
                     setTitle(getTitle(GWarps.this.category, getPlayer()));
                 }
             }.setOption(option));
-        }
-
-        setItem(8, edge);
-        if(size > 9) {
-            if(category == null) setItem(size - 9, edge);
-            setItem(size - 1, edge);
         }
 
         for(Warp warp : manager.getWarps(category)) {
@@ -395,24 +401,6 @@ public class GWarps extends GUI {
                 if(getItem(i) == null || getItem(i).getType().equals(Material.AIR)) setItem(i, none);
             }
         }
-
-        if(editing && cursorIcon instanceof Warp && ((Warp) cursorIcon).getCategory() == this.category) {
-            addButton(new ItemButton(oldSlot, new ItemStack(Material.AIR)) {
-                @Override
-                public void onClick(InventoryClickEvent e) {
-                    if(e.isLeftClick()) {
-                        if(cursorIcon instanceof Warp) {
-                            Warp icon = (Warp) cursorIcon;
-                            icon.setCategory(GWarps.this.category);
-                        }
-
-                        cursorIcon.setSlot(e.getSlot());
-                        e.setCursor(new ItemStack(Material.AIR));
-                        setMoving(false, e.getSlot());
-                    }
-                }
-            }.setOption(option));
-        }
     }
 
     private ItemBuilder prepareIcon(ActionIcon icon) {
@@ -430,7 +418,7 @@ public class GWarps extends GUI {
     private void addToGUI(Player p, ActionIcon icon) {
         IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
 
-        if(icon.getSlot() >= getSize(getPlayer())) return;
+        if((icon.getSlot() == 0 && showMenu) || icon.getSlot() >= getSize(getPlayer())) return;
 
         ItemButtonOption option = new ItemButtonOption();
         option.setClickSound(Sound.CLICK.bukkitSound());
@@ -461,8 +449,8 @@ public class GWarps extends GUI {
                 if(AdapterType.canEnable()) iconBuilder.addText("§7" + Lang.get("Costs", new Example("ENG", "Costs"), new Example("GER", "Kosten")) + ": " + costs);
                 iconBuilder.addText("§8------------");
                 iconBuilder.addText(Lang.get("Leftclick_Edit", new Example("ENG", "&7Leftclick: Configure"), new Example("GER", "&7Linksklick: Bearbeiten")));
-                iconBuilder.addText(Lang.get("Rightclick_Delete", new Example("ENG", "&7Rightclick: Delete"), new Example("GER", "&7Rechtsklick: Löschen")));
                 iconBuilder.addText(Lang.get("Shift_Leftclick_Edit", new Example("ENG", "&7Shift-Leftclick: Move"), new Example("GER", "&7Shift-Linksklick: Bewegen")));
+                iconBuilder.addText(Lang.get("Rightclick_Delete", new Example("ENG", "&7Rightclick: Delete"), new Example("GER", "&7Rechtsklick: Löschen")));
                 if(icon instanceof Category) iconBuilder.addText(Lang.get("Shift_Rightclick_Edit", new Example("ENG", "&7Shift-Rightclick: Open"), new Example("GER", "&7Shift-Rechtsklick: Öffnen")));
 
                 if(icon instanceof Warp || icon instanceof GlobalWarp || icon instanceof DecoIcon) {

@@ -3,7 +3,7 @@ package de.codingair.warpsystem.spigot.features.globalwarps.managers;
 import de.codingair.codingapi.bungeecord.BungeeCordHelper;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.WarpSystem;
-import de.codingair.warpsystem.spigot.commands.CGlobalWarp;
+import de.codingair.warpsystem.spigot.features.globalwarps.commands.CGlobalWarp;
 import de.codingair.warpsystem.spigot.features.globalwarps.listeners.GlobalWarpListener;
 import de.codingair.warpsystem.utils.Manager;
 import de.codingair.warpsystem.transfer.packets.spigot.DeleteGlobalWarpPacket;
