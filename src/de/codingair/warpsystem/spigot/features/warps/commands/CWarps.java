@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.commands;
+package de.codingair.warpsystem.spigot.features.warps.commands;
 
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.commands.BaseComponent;

@@ -5,9 +5,10 @@ import de.codingair.codingapi.serializable.SerializableLocation;
 import de.codingair.codingapi.server.Color;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.items.ItemBuilder;
+import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.WarpSystem;
-import de.codingair.warpsystem.spigot.commands.CWarp;
-import de.codingair.warpsystem.spigot.commands.CWarps;
+import de.codingair.warpsystem.spigot.features.warps.commands.CWarp;
+import de.codingair.warpsystem.spigot.features.warps.commands.CWarps;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
@@ -23,6 +24,7 @@ import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,8 @@ public class IconManager implements Manager {
     private List<Category> categories = new ArrayList<>();
     private List<GlobalWarp> globalWarps = new ArrayList<>();
     private List<DecoIcon> decoIcons = new ArrayList<>();
+
+    private ItemStack background = null;
 
     private int userSize = 54;
     private int adminSize = 54;
@@ -97,6 +101,11 @@ public class IconManager implements Manager {
 
         file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
         config = file.getConfig();
+
+        WarpSystem.log("    > Loading background");
+        String data = config.getString("Background_Item", null);
+        this.background = data == null ? null : ItemBuilder.getFromJSON(data).getItem();
+        if(this.background == null) this.background = new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem();
 
         WarpSystem.log("    > Loading Categories");
         List<String> categories = config.getStringList("Categories");
@@ -204,6 +213,9 @@ public class IconManager implements Manager {
 
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
         FileConfiguration config = file.getConfig();
+
+        if(!saver) WarpSystem.log("    > Saving background");
+        config.set("Background_Item", new ItemBuilder(this.background).toJSONString());
 
         if(!saver) WarpSystem.log("    > Saving Warps");
         List<String> warps = new ArrayList<>();
@@ -466,5 +478,15 @@ public class IconManager implements Manager {
 
     public void setAdminPermission(String adminPermission) {
         this.adminPermission = adminPermission;
+    }
+
+    public ItemStack getBackground() {
+        return background;
+    }
+
+    public void setBackground(ItemStack background) {
+        if(background == null) background = new ItemStack(Material.AIR);
+        new ItemBuilder(background).removeLore().setName(null).setHideName(true).setHideStandardLore(true).setHideEnchantments(true);
+        this.background = background;
     }
 }
