@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.language;
+package de.codingair.warpsystem.spigot.base.language;
 
 public class Example {
     private String language;

@@ -1,6 +1,6 @@
 package de.codingair.warpsystem.bungee.features.globalwarps.listeners;
 
-import de.codingair.warpsystem.bungee.WarpSystem;
+import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.features.FeatureType;
 import de.codingair.warpsystem.bungee.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPacket;

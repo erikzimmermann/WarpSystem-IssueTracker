@@ -6,7 +6,7 @@ import de.codingair.codingapi.server.Color;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
-import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.warps.commands.CWarp;
 import de.codingair.warpsystem.spigot.features.warps.commands.CWarps;
 import de.codingair.warpsystem.spigot.features.FeatureType;
@@ -402,7 +402,14 @@ public class IconManager implements Manager {
     }
 
     public GlobalWarp getGlobalWarp(String name) {
-        for(GlobalWarp icon : this.globalWarps) {
+        return getGlobalWarp(name, null);
+    }
+
+    public GlobalWarp getGlobalWarp(String name, Category category) {
+        if(name == null) return null;
+        name = Color.removeColor(name);
+
+        for(GlobalWarp icon : this.getGlobalWarps(category)) {
             if(icon.getName().equalsIgnoreCase(name)) return icon;
         }
 

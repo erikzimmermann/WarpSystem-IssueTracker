@@ -1,20 +1,12 @@
-package de.codingair.warpsystem.spigot.managers;
+package de.codingair.warpsystem.spigot.base.managers;
 
-import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
-import de.codingair.warpsystem.spigot.WarpSystem;
-import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
-import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
-import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
-import de.codingair.warpsystem.spigot.language.Example;
-import de.codingair.warpsystem.spigot.language.Lang;
-import de.codingair.warpsystem.spigot.utils.Teleport;
-import org.bukkit.Location;
-import org.bukkit.block.Sign;
+import de.codingair.warpsystem.spigot.base.language.Example;
+import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.Teleport;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 

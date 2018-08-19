@@ -5,13 +5,13 @@ import de.codingair.codingapi.server.commands.BaseComponent;
 import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
-import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
-import de.codingair.warpsystem.spigot.language.Example;
-import de.codingair.warpsystem.spigot.language.Lang;
+import de.codingair.warpsystem.spigot.base.language.Example;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

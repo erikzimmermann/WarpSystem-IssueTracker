@@ -2,9 +2,9 @@ package de.codingair.warpsystem.spigot.features.portals;
 
 import de.codingair.codingapi.player.gui.inventory.guis.ConfirmGUI;
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.warpsystem.spigot.WarpSystem;
-import de.codingair.warpsystem.spigot.language.Example;
-import de.codingair.warpsystem.spigot.language.Lang;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Example;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.entity.Player;
 
 public class PortalDeleteGUI extends ConfirmGUI {

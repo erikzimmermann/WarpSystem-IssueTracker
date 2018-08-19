@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.managers;
+package de.codingair.warpsystem.spigot.base.managers;
 
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.utils.Manager;

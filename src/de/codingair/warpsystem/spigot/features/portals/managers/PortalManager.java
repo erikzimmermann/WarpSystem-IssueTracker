@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.spigot.features.portals.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
-import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.portals.commands.CPortal;
 import de.codingair.warpsystem.spigot.features.portals.listeners.PortalListener;
 import de.codingair.warpsystem.spigot.features.portals.utils.Portal;

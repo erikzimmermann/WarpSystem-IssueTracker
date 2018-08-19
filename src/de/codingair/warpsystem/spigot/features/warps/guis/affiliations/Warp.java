@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.spigot.features.warps.guis.affiliations;
 
 import de.codingair.codingapi.serializable.SerializableLocation;
-import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionIcon;

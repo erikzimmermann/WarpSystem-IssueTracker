@@ -1,9 +1,9 @@
 package de.codingair.warpsystem.transfer.spigot;
 
 import de.codingair.codingapi.server.Sound;
-import de.codingair.warpsystem.spigot.WarpSystem;
-import de.codingair.warpsystem.spigot.language.Example;
-import de.codingair.warpsystem.spigot.language.Lang;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Example;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPacket;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketHandler;
