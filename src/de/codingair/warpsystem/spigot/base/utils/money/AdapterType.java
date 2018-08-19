@@ -1,7 +1,7 @@
-package de.codingair.warpsystem.spigot.utils.money;
+package de.codingair.warpsystem.spigot.base.utils.money;
 
-import de.codingair.warpsystem.spigot.utils.money.adapters.Essentials;
-import de.codingair.warpsystem.spigot.utils.money.adapters.Vault;
+import de.codingair.warpsystem.spigot.base.utils.money.adapters.Essentials;
+import de.codingair.warpsystem.spigot.base.utils.money.adapters.Vault;
 import org.bukkit.Bukkit;
 
 public enum AdapterType {

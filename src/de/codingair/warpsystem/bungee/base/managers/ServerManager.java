@@ -1,6 +1,6 @@
-package de.codingair.warpsystem.bungee.managers;
+package de.codingair.warpsystem.bungee.base.managers;
 
-import de.codingair.warpsystem.bungee.WarpSystem;
+import de.codingair.warpsystem.bungee.base.WarpSystem;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Listener;

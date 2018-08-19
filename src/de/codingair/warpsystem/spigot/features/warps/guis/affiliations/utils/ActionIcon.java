@@ -1,12 +1,12 @@
 package de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils;
 
-import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.language.Example;
-import de.codingair.warpsystem.spigot.language.Lang;
-import de.codingair.warpsystem.spigot.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.language.Example;
+import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.transfer.serializeable.icons.SActionIcon;
 import de.codingair.warpsystem.transfer.serializeable.icons.SActionObject;
 import de.codingair.warpsystem.transfer.serializeable.icons.SIcon;

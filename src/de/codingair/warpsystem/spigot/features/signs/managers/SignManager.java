@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.spigot.features.signs.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
-import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.signs.listeners.SignListener;
 import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
 import de.codingair.warpsystem.utils.Manager;

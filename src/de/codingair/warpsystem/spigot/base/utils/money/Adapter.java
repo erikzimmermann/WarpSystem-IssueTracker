@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.utils.money;
+package de.codingair.warpsystem.spigot.base.utils.money;
 
 import org.bukkit.entity.Player;
 

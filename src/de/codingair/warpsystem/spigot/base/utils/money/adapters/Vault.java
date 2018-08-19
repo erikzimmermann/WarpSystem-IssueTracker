@@ -1,6 +1,6 @@
-package de.codingair.warpsystem.spigot.utils.money.adapters;
+package de.codingair.warpsystem.spigot.base.utils.money.adapters;
 
-import de.codingair.warpsystem.spigot.utils.money.Adapter;
+import de.codingair.warpsystem.spigot.base.utils.money.Adapter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

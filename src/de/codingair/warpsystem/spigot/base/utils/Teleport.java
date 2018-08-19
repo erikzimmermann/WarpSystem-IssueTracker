@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.utils;
+package de.codingair.warpsystem.spigot.base.utils;
 
 import de.codingair.codingapi.particles.animations.Animation;
 import de.codingair.codingapi.particles.animations.playeranimations.CircleAnimation;
@@ -9,10 +9,10 @@ import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.WarpSystem;
-import de.codingair.warpsystem.spigot.language.Example;
-import de.codingair.warpsystem.spigot.language.Lang;
-import de.codingair.warpsystem.spigot.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Example;
+import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPacket;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

@@ -1,9 +1,9 @@
-package de.codingair.warpsystem.spigot.utils.money.adapters;
+package de.codingair.warpsystem.spigot.base.utils.money.adapters;
 
 import com.earth2me.essentials.api.Economy;
 import com.earth2me.essentials.api.NoLoanPermittedException;
 import com.earth2me.essentials.api.UserDoesNotExistException;
-import de.codingair.warpsystem.spigot.utils.money.Adapter;
+import de.codingair.warpsystem.spigot.base.utils.money.Adapter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

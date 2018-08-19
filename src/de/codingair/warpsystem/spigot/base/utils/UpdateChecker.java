@@ -1,6 +1,6 @@
-package de.codingair.warpsystem.spigot.utils;
+package de.codingair.warpsystem.spigot.base.utils;
 
-import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 
 import java.io.BufferedReader;
 import java.io.IOException;

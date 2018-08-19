@@ -1,11 +1,10 @@
-package de.codingair.warpsystem.bungee;
+package de.codingair.warpsystem.bungee.base;
 
 import de.codingair.codingapi.bungeecord.files.FileManager;
-import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
-import de.codingair.warpsystem.bungee.managers.DataManager;
-import de.codingair.warpsystem.bungee.managers.ServerManager;
+import de.codingair.warpsystem.bungee.base.managers.DataManager;
+import de.codingair.warpsystem.bungee.base.managers.ServerManager;
 import de.codingair.warpsystem.transfer.bungee.BungeeDataHandler;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.plugin.Plugin;

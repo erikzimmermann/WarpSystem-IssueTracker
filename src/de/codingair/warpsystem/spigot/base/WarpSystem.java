@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot;
+package de.codingair.warpsystem.spigot.base;
 
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.bungeecord.BungeeCordHelper;
@@ -10,13 +10,13 @@ import de.codingair.codingapi.server.fancymessages.FancyMessage;
 import de.codingair.codingapi.server.fancymessages.MessageTypes;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
-import de.codingair.warpsystem.spigot.commands.CWarpSystem;
-import de.codingair.warpsystem.spigot.language.Lang;
-import de.codingair.warpsystem.spigot.listeners.NotifyListener;
-import de.codingair.warpsystem.spigot.listeners.TeleportListener;
-import de.codingair.warpsystem.spigot.managers.DataManager;
-import de.codingair.warpsystem.spigot.managers.TeleportManager;
-import de.codingair.warpsystem.spigot.utils.UpdateChecker;
+import de.codingair.warpsystem.spigot.base.commands.CWarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.listeners.NotifyListener;
+import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
+import de.codingair.warpsystem.spigot.base.managers.DataManager;
+import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
+import de.codingair.warpsystem.spigot.base.utils.UpdateChecker;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;

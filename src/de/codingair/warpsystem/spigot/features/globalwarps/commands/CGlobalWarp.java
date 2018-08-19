@@ -4,13 +4,14 @@ import de.codingair.codingapi.server.commands.BaseComponent;
 import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
-import de.codingair.codingapi.tools.Callback;
-import de.codingair.warpsystem.spigot.WarpSystem;
-import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Example;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
-import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
-import de.codingair.warpsystem.spigot.language.Example;
-import de.codingair.warpsystem.spigot.language.Lang;
+import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
+import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class CGlobalWarp extends CommandBuilder {
     public CGlobalWarp() {
-        super("GlobalWarp", new BaseComponent(WarpSystem.PERMISSION_MODIFY_GLOBAL_WARPS) {
+        super("GlobalWarp", new BaseComponent(WarpSystem.PERMISSION_USE) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission", new Example("GER", "&cDu hast keine Berechtigungen für diese Aktion!"), new Example("ENG", "&cYou don't have permissions for that action!"), new Example("FRE", "&cDésolé mais vous ne possédez la permission pour exécuter cette action!")));
@@ -31,82 +32,53 @@ public class CGlobalWarp extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Help", new Example("ENG", "&7Use: &e/GlobalWarp <create, delete>"), new Example("GER", "&7Benutze: &e/GlobalWarp <create, delete>")));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Teleport_Help", new Example("ENG", "&7Use: &e/GlobalWarp <warp>"), new Example("GER", "&7Benutze: &e/GlobalWarp <warp>")));
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Help", new Example("ENG", "&7Use: &e/GlobalWarp <create, delete>"), new Example("GER", "&7Benutze: &e/GlobalWarp <create, delete>")));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Teleport_Help", new Example("ENG", "&7Use: &e/GlobalWarp <warp>"), new Example("GER", "&7Benutze: &e/GlobalWarp <warp>")));
                 return false;
             }
         }, true);
 
-        getBaseComponent().addChild(new CommandComponent("create") {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Create_Help", new Example("ENG", "&7Use: &e/GlobalWarp create <name>"), new Example("GER", "&7Benutze: &e/GlobalWarp create <Name>")));
-                return false;
-            }
-        });
-
-        getComponent("create").addChild(new MultiCommandComponent() {
+        getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, List<String> suggestions) {
+                for(GlobalWarp globalWarp : IconManager.getInstance().getGlobalWarps()) {
+                    if(!globalWarp.hasPermission() || sender.hasPermission(globalWarp.getPermission())) {
+                        suggestions.add(globalWarp.getNameWithoutColor() + (globalWarp.getCategory() == null ? "" : "@" + globalWarp.getCategory().getNameWithoutColor()));
+                    }
+                }
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                Player player = (Player) sender;
-                ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).create(argument, player.getLocation(), new Callback<Boolean>() {
-                    @Override
-                    public void accept(Boolean created) {
-                        if(created) {
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Created", new Example("ENG", "&7The GlobalWarp '&b%GLOBAL_WARP%&7' was &acreated successfully&7."), new Example("GER", "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' wurde &aerfolgreich erstellt&7.")).replace("%GLOBAL_WARP%", argument));
-                        } else {
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Create_Name_Already_Exists", new Example("ENG", "&7The GlobalWarp '&b%GLOBAL_WARP%&7' &calready exists&7."), new Example("GER", "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' &cexistiert bereits&7.")).replace("%GLOBAL_WARP%", argument));
-                        }
-                    }
-                });
-                return false;
-            }
-        });
+                String warp = "";
+                for(String arg : args) {
+                    if(arg.isEmpty()) continue;
+                    if(!warp.isEmpty()) warp += " " + arg;
+                    else warp += arg;
+                }
 
-        getBaseComponent().addChild(new CommandComponent("delete") {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Delete_Help", new Example("ENG", "&7Use: &e/GlobalWarp delete <name>"), new Example("GER", "&7Benutze: &e/GlobalWarp delete <Name>")));
-                return false;
-            }
-        });
+                Category category = null;
+                boolean failure = false;
 
-        getComponent("delete").addChild(new MultiCommandComponent() {
-            @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
-                suggestions.addAll(((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).getGlobalWarps().keySet());
-            }
+                if(warp.contains("@")) {
+                    category = IconManager.getInstance().getCategory(warp.split("@")[1]);
+                    warp = warp.split("@")[0];
 
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).delete(argument, new Callback<Boolean>() {
-                    @Override
-                    public void accept(Boolean deleted) {
-                        if(deleted) {
-                            String name = ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).getCaseCorrectlyName(argument);
+                    failure = category == null;
+                }
 
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Deleted", new Example("ENG", "&7The GlobalWarp '&b%GLOBAL_WARP%&7' was &cdeleted&7."), new Example("GER", "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' wurde &cgelöscht&7.")).replace("%GLOBAL_WARP%", name));
-                        } else {
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists", new Example("ENG", "&7The GlobalWarp '&b%GLOBAL_WARP%&7' &cdoes not exist&7."), new Example("GER", "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' &cexistiert nicht&7.")).replace("%GLOBAL_WARP%", argument));
-                        }
-                    }
-                });
-                return false;
-            }
-        });
+                GlobalWarp gw = IconManager.getInstance().getGlobalWarp(warp, category);
 
-        getBaseComponent().addChild(new CommandComponent("list") {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                new GGlobalWarpList((Player) sender).open();
+                if(gw == null || failure) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Does_Not_Exist", new Example("ENG", "&cThis GlobalWarp does not exist."), new Example("GER", "&cDieser GlobalWarp existiert nicht.")));
+                    return false;
+                }
+
+                gw.perform((Player) sender, false, Action.RUN_COMMAND);
                 return false;
             }
         });

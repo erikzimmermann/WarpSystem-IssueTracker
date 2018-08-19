@@ -1,6 +1,6 @@
-package de.codingair.warpsystem.spigot.listeners;
+package de.codingair.warpsystem.spigot.base.listeners;
 
-import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

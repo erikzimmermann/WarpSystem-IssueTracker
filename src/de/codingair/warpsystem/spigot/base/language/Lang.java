@@ -1,7 +1,7 @@
-package de.codingair.warpsystem.spigot.language;
+package de.codingair.warpsystem.spigot.base.language;
 
 import de.codingair.codingapi.files.ConfigFile;
-import de.codingair.warpsystem.spigot.WarpSystem;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 

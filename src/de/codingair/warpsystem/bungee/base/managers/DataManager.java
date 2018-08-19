@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.bungee.managers;
+package de.codingair.warpsystem.bungee.base.managers;
 
 import de.codingair.warpsystem.bungee.features.FeatureType;
 import de.codingair.warpsystem.utils.Manager;
