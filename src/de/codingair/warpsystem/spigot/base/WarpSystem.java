@@ -206,7 +206,7 @@ public class WarpSystem extends JavaPlugin {
     @Override
     public void onDisable() {
         API.getInstance().onDisable(this);
-//        save(false);
+        save(false);
         teleportManager.getTeleports().forEach(t -> t.cancel(false, false));
 
         //Disable all functions

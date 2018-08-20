@@ -406,7 +406,7 @@ public class GWarps extends GUI {
         ItemBuilder builder = new ItemBuilder(icon.getItem());
 
         List<String> loreList = new ArrayList<>();
-        if(icon.getName() != null) loreList.add("§b" + (icon instanceof Category ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', icon.getName()));
+        if(icon.getName() != null) loreList.add("§f" + (icon instanceof Category ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', icon.getName()));
         if(builder.getLore() != null) loreList.addAll(new ArrayList<>(builder.getLore()));
         builder.setText(loreList);
         builder.setHideName(false);
