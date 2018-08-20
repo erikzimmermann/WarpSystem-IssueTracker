@@ -40,7 +40,7 @@ public class ActionIconHelper {
             return (T) o;
         } catch(EOFException | StreamCorruptedException | ClassNotFoundException e) {
             if(load) {
-                System.out.println("    Couldn't handle some Icon-Data.");
+                System.out.println("      > Couldn't handle some Icon-Data.");
                 load = false;
             }
         } catch(IOException e) {

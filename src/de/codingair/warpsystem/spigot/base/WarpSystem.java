@@ -17,6 +17,7 @@ import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.managers.DataManager;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.utils.UpdateChecker;
+import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -24,7 +25,10 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
@@ -110,9 +114,14 @@ public class WarpSystem extends JavaPlugin {
             if(!this.teleportManager.load()) createBackup = true;
 
             if(createBackup) {
+                log(" ");
+                log(" ");
                 log("Loading with errors > Create backup...");
                 createBackup();
                 log("Backup successfully created");
+                log(" ");
+                log("Try to use WarpSystem v3.0.1, which converts the old icons.");
+                log(" ");
             }
 
             maintenance = fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Maintenance", false);
@@ -197,7 +206,7 @@ public class WarpSystem extends JavaPlugin {
     @Override
     public void onDisable() {
         API.getInstance().onDisable(this);
-        save(false);
+//        save(false);
         teleportManager.getTeleports().forEach(t -> t.cancel(false, false));
 
         //Disable all functions

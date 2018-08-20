@@ -7,10 +7,11 @@ import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.features.warps.commands.CWarp;
-import de.codingair.warpsystem.spigot.features.warps.commands.CWarps;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
+import de.codingair.warpsystem.spigot.features.warps.commands.CWarp;
+import de.codingair.warpsystem.spigot.features.warps.commands.CWarps;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
@@ -21,9 +22,17 @@ import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Ico
 import de.codingair.warpsystem.spigot.features.warps.importfilter.CategoryData;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
 import de.codingair.warpsystem.utils.Manager;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -202,6 +211,43 @@ public class IconManager implements Manager {
 
             cWarp.register(WarpSystem.getInstance());
             cWarps.register(WarpSystem.getInstance());
+        }
+
+        if(!success) {
+            TextComponent base = new TextComponent(Lang.getPrefix() + "§cTry to use WarpSystem ");
+            TextComponent link = new TextComponent("§c§nv3.0.1");
+            TextComponent end = new TextComponent("§c to convert your icons!");
+
+            link.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/warps-portals-and-warpsigns-warp-system-only-gui.29595/history"));
+            link.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {new TextComponent("§8» Click «")}));
+
+            base.addExtra(link);
+            base.addExtra(end);
+
+            Bukkit.getPluginManager().registerEvents(new Listener() {
+                @EventHandler
+                public void onJoin(PlayerJoinEvent e) {
+                    if(e.getPlayer().hasPermission(IconManager.getInstance().getAdminPermission())) {
+                        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
+                            e.getPlayer().sendMessage(" ");
+                            e.getPlayer().sendMessage(Lang.getPrefix() + "§4Warning! §cCouldn't load all icons successfully.");
+                            e.getPlayer().spigot().sendMessage(base);
+                            e.getPlayer().sendMessage(" ");
+                        }, 20);
+                    }
+                }
+            }, WarpSystem.getInstance());
+
+            for(Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                if(onlinePlayer.hasPermission(IconManager.getInstance().getAdminPermission())) {
+                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
+                        onlinePlayer.sendMessage(" ");
+                        onlinePlayer.sendMessage(Lang.getPrefix() + "§4Warning! §cCouldn't load all icons successfully.");
+                        onlinePlayer.spigot().sendMessage(base);
+                        onlinePlayer.sendMessage(" ");
+                    }, 20);
+                }
+            }
         }
 
         return success;
