@@ -200,8 +200,11 @@ public class IconManager implements Manager {
             oldConfig = oldFile.getConfig();
 
             for(String key : oldConfig.getKeys(false)) {
+                org.bukkit.Location loc = ImportHelper.stringToLoc(oldConfig.getString(key + ".Location"));
+                if(loc.getWorld() == null) continue;
+
                 Warp warp = new Warp(key, ImportHelper.getItem(oldConfig.getString(key + ".Item")), oldConfig.getInt(key + ".Slot"), oldConfig.getString(key + ".Permission", null), getCategory(oldConfig.getString(key + ".Category", null))
-                        , new ActionObject(Action.TELEPORT_TO_WARP, new SerializableLocation(ImportHelper.stringToLoc(oldConfig.getString(key + ".Location")))));
+                        , new ActionObject(Action.TELEPORT_TO_WARP, new SerializableLocation(loc)));
 
                 warp.setItem(new ItemBuilder(warp.getItem()).setHideStandardLore(true).setAmount(1).setName("§b" + warp.getName()).setLore(oldConfig.getStringList(key + ".Lore")).getItem());
 
