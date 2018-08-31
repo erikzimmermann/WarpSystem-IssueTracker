@@ -326,6 +326,11 @@ public class GWarps extends GUI {
                                                             return;
                                                         }
 
+                                                        if(input.contains("_")) {
+                                                            p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Correct_Name_Underline", new Example("ENG", "&cPlease don't use '_'-Symbols."), new Example("GER", "&cBitte benutze keine '_'-Zeichen.")));
+                                                            return;
+                                                        }
+
                                                         input = ChatColor.translateAlternateColorCodes('&', input);
 
                                                         if(clickEvent.isRightClick()) {

@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.features.globalwarps.managers;
 
 import de.codingair.codingapi.bungeecord.BungeeCordHelper;
+import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.FeatureType;
@@ -29,6 +30,7 @@ import java.util.logging.Level;
 public class GlobalWarpManager implements Manager {
     //              Name,   Server
     private HashMap<String, String> globalWarps = new HashMap<>();
+    private boolean globalWarpsOfGUI = false;
 
     private void loadAllGlobalWarps() {
         this.getGlobalWarps().clear();
@@ -55,6 +57,14 @@ public class GlobalWarpManager implements Manager {
         return name;
     }
 
+    public boolean exists(String name) {
+        for(String warp : this.globalWarps.keySet()) {
+            if(warp.equalsIgnoreCase(name)) return true;
+        }
+
+        return false;
+    }
+
     public void teleport(Player player, String display, String name, Callback<PrepareTeleportPacket.Result> callback) {
         teleport(player, display, name, 0, callback);
     }
@@ -74,6 +84,14 @@ public class GlobalWarpManager implements Manager {
 
     @Override
     public boolean load() {
+        ConfigFile config = WarpSystem.getInstance().getFileManager().getFile("Config");
+        Object test = config.getConfig().get("WarpSystem.GlobalWarps.Use_Warps_Of_WarpsGUI", null);
+        if(test == null) {
+            config.getConfig().set("WarpSystem.GlobalWarps.Use_Warps_Of_WarpsGUI", false);
+        } else if(test instanceof Boolean) {
+            globalWarpsOfGUI = (boolean) test;
+        }
+
         Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
             WarpSystem.getInstance().getLogger().log(Level.INFO, "Looking for a BungeeCord...");
 
@@ -125,5 +143,9 @@ public class GlobalWarpManager implements Manager {
 
     public static GlobalWarpManager getInstance() {
         return WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS);
+    }
+
+    public boolean isGlobalWarpsOfGUI() {
+        return globalWarpsOfGUI;
     }
 }
