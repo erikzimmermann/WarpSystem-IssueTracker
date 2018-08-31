@@ -4,31 +4,34 @@ import de.codingair.codingapi.API;
 import de.codingair.codingapi.bungeecord.BungeeCordHelper;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.files.FileManager;
+import de.codingair.codingapi.player.gui.PlayerItem;
 import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.fancymessages.FancyMessage;
 import de.codingair.codingapi.server.fancymessages.MessageTypes;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
+import de.codingair.warpsystem.spigot.api.SpigotAPI;
 import de.codingair.warpsystem.spigot.base.commands.CWarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.listeners.CommandListener;
 import de.codingair.warpsystem.spigot.base.listeners.NotifyListener;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.managers.DataManager;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.utils.UpdateChecker;
-import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
@@ -43,6 +46,7 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_MODIFY_ICONS = "WarpSystem.Modify.Icons";
     public static final String PERMISSION_MODIFY_GLOBAL_WARPS = "WarpSystem.Modify.GlobalWarps";
     public static final String PERMISSION_MODIFY_PORTALS = "WarpSystem.Modify.Portals";
+    public static final String PERMISSION_MODIFY_NATIVE_PORTALS = "WarpSystem.Modify.NativePortals";
     public static final String PERMISSION_USE = "WarpSystem.Use";
     public static final String PERMISSION_ByPass_Maintenance = "WarpSystem.ByPass.Maintenance";
     public static final String PERMISSION_ByPass_Teleport_Costs = "WarpSystem.ByPass.Teleport.Costs";
@@ -58,7 +62,7 @@ public class WarpSystem extends JavaPlugin {
 
     private TeleportManager teleportManager = new TeleportManager();
     private FileManager fileManager = new FileManager(this);
-    private DataManager dataManager = new DataManager();
+    private DataManager dataManager;
 
     private UpdateChecker updateChecker = new UpdateChecker("https://www.spigotmc.org/resources/warpsystem-gui.29595/history");
     private int latestVersionId = -1;
@@ -82,6 +86,7 @@ public class WarpSystem extends JavaPlugin {
 
             instance = this;
             API.getInstance().onEnable(this);
+            SpigotAPI.getInstance().onEnable(this);
 
             timer.start();
 
@@ -103,13 +108,15 @@ public class WarpSystem extends JavaPlugin {
             log("MC-Version: " + Version.getVersion().getVersionName());
             log(" ");
 
-            log("Loading features");
-            this.fileManager.loadAll();
             if(this.fileManager.getFile("Language") == null) this.fileManager.loadFile("Language", "/");
             if(this.fileManager.getFile("Config") == null) this.fileManager.loadFile("Config", "/");
+            log("Loading features");
+            this.fileManager.loadAll();
 
             boolean createBackup = false;
+            this.dataManager = new DataManager();
             if(!this.dataManager.load()) createBackup = true;
+            log(" ");
             log("Loading TeleportManager");
             if(!this.teleportManager.load()) createBackup = true;
 
@@ -129,6 +136,7 @@ public class WarpSystem extends JavaPlugin {
 
             Bukkit.getPluginManager().registerEvents(new TeleportListener(), this);
             Bukkit.getPluginManager().registerEvents(new NotifyListener(), this);
+            Bukkit.getPluginManager().registerEvents(new CommandListener(), this);
 
             this.runningFirstTime = !fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "2.1.0").equals(getDescription().getVersion());
 
@@ -206,6 +214,8 @@ public class WarpSystem extends JavaPlugin {
     @Override
     public void onDisable() {
         API.getInstance().onDisable(this);
+        SpigotAPI.getInstance().onDisable(this);
+
         save(false);
         teleportManager.getTeleports().forEach(t -> t.cancel(false, false));
 

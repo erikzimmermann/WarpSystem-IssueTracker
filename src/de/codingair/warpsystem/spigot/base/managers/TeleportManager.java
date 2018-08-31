@@ -74,6 +74,22 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, Warp warp) {
+        teleport(player, warp, false);
+    }
+
+    public void teleport(Player player, Warp warp, boolean skip) {
+        teleport(player, warp, skip, this.canMove);
+    }
+
+    public void teleport(Player player, Warp warp, boolean skip, boolean canMove) {
+        teleport(player, warp, null, skip, canMove);
+    }
+
+    public void teleport(Player player, Warp warp, String displayName, boolean skip, boolean canMove) {
+        teleport(player, warp, displayName, skip, canMove, WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Warps", true));
+    }
+
+    public void teleport(Player player, Warp warp, String displayName, boolean skip, boolean canMove, boolean showMessage) {
         if(isTeleporting(player)) {
             Teleport teleport = getTeleport(player);
             long diff = System.currentTimeMillis() - teleport.getStartTime();
@@ -84,14 +100,30 @@ public class TeleportManager {
 
         player.closeInventory();
 
-        Teleport teleport = new Teleport(player, warp);
+        Teleport teleport = new Teleport(player, warp, displayName);
+        teleport.setCanMove(canMove);
+        teleport.setShowMessage(showMessage);
+
         this.teleports.add(teleport);
 
-        if(seconds == 0 || (WarpSystem.OP_CAN_SKIP_DELAY && player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay))) teleport.teleport();
+        if(seconds == 0 || (WarpSystem.OP_CAN_SKIP_DELAY && player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) || skip) teleport.teleport();
         else teleport.start();
     }
 
     public void teleport(Player player, String globalWarp, String globalWarpDisplayName, double costs) {
+        teleport(player, globalWarp, globalWarpDisplayName, costs, false);
+    }
+
+
+    public void teleport(Player player, String globalWarp, String globalWarpDisplayName, double costs, boolean skip) {
+        teleport(player, globalWarp, globalWarpDisplayName, costs, skip, this.canMove);
+    }
+
+    public void teleport(Player player, String globalWarp, String globalWarpDisplayName, double costs, boolean skip, boolean canMove) {
+        teleport(player, globalWarp, globalWarpDisplayName, costs, skip, canMove, WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true));
+    }
+
+    public void teleport(Player player, String globalWarp, String globalWarpDisplayName, double costs, boolean skip, boolean canMove, boolean showMessage) {
         if(isTeleporting(player)) {
             Teleport teleport = getTeleport(player);
             long diff = System.currentTimeMillis() - teleport.getStartTime();
@@ -103,9 +135,12 @@ public class TeleportManager {
         player.closeInventory();
 
         Teleport teleport = new Teleport(player, globalWarp, globalWarpDisplayName, costs);
+        teleport.setCanMove(canMove);
+        teleport.setShowMessage(showMessage);
+
         this.teleports.add(teleport);
 
-        if(seconds == 0 || (WarpSystem.OP_CAN_SKIP_DELAY && player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay))) teleport.teleport();
+        if(seconds == 0 || (WarpSystem.OP_CAN_SKIP_DELAY && player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) || skip) teleport.teleport();
         else teleport.start();
     }
 
