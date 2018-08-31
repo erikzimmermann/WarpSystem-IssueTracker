@@ -12,7 +12,7 @@ public class TeleportListener implements Listener {
     public void onMove(PlayerWalkEvent e) {
         Player p = e.getPlayer();
 
-        if(!WarpSystem.getInstance().getTeleportManager().isTeleporting(p) || WarpSystem.getInstance().getTeleportManager().isCanMove()) return;
+        if(!WarpSystem.getInstance().getTeleportManager().isTeleporting(p) || WarpSystem.getInstance().getTeleportManager().getTeleport(e.getPlayer()).isCanMove()) return;
         WarpSystem.getInstance().getTeleportManager().cancelTeleport(p);
     }
 

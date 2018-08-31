@@ -311,7 +311,7 @@ public class Portal implements Removable {
         player.teleport(this.start);
         update(player);
 
-        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message", true)) {
+        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Portals", true)) {
             player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", this.startName));
         }
 
@@ -327,7 +327,7 @@ public class Portal implements Removable {
         player.teleport(this.destination);
         update(player);
 
-        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message", true)) {
+        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Portals", true)) {
             player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", this.destinationName));
         }
 

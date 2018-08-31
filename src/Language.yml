@@ -92,6 +92,76 @@ ENG:
   Portal_Delete_Changes: '&7The changes have &cnot &7been saved.'
   PORTAL_HELP: '&7Use: &eportal <create, edit, delete>'
   Delete_Portal_Cancel: '&7The portal has &4not &7been &cdeleted&7.'
+  Change_Name_Leftclick: '&3Leftclick: &bChange name'
+  Change_Name_Rightclick: '&3Rightclick: &bChange item'
+  Move_Help: '&7Moving: Rightclick on categories to switch to it.'
+  Edit_Mode_Set_Icon: '&3Leftclick: &bSet Icon'
+  Coins: Coin(s)
+  Costs: Costs
+  Shift_Rightclick_Edit: '&7Shift-Rightclick: Open'
+  WarpSign_Choose_Warp: Choose a warp for the sign!
+  WarpSign_Choose_Warp_GUI: '&4&lChoose a warp!'
+  WarpSign_Finish: The WarpSign was set successfully!
+  Teleport_Cancelled: '&cThe teleport was cancelled.'
+  WarpSign_Removed: '&7The WarpSign was &cremoved&7!'
+  Search: Search...
+  Previous_Page: Previous Page
+  Next_Page: Next Page
+  GlobalWarp_Created: '&7The GlobalWarp ''&b%GLOBAL_WARP%&7'' was &acreated successfully&7.'
+  Target_Server: Target-Server
+  GUI_Choose_Icon: Choose your IconType
+  Warp: Warp
+  Category: Category
+  GlobalWarp: GlobalWarp
+  Decoration: Decoration
+  GlobalWarp_Leftclick_To_Choose: '&3Leftclick: &bChoose'
+  Leftclick_Set: '&3Leftclick: &aSet'
+  Status: Status
+  Enabled: Enabled
+  Disable_This_Icon: '&3Leftclick: &c&lDisable this icon'
+  GlobalWarp_Current_Warp: '&7Current: &b%GlobalWarp%'
+  Leftclick_Change: '&3Leftclick: &aChange'
+  Success_Create_GlobalWarp: '&aYou have created a &bGlobalWarp &asuccessfully.'
+  GlobalWarp_Does_Not_Exist: '&cThis GlobalWarp does not exist.'
+  Menu_Help_Shift_Leftclick: '&3Shift-Leftclick: &bSet background'
+  Menu_Help_Shift_Rightclick_Show_Icon: '&3Shift-Rightclick: &bShow icon'
+  WARP_HELP: '&7Use: &ewarp <Warp-Name>'
+  WARP_DOES_NOT_EXISTS: '&cThis warp does not exist.'
+  Native_Portals: '&cNative Portals &7- &cEditor'
+  Water_Portal: '&bWater backup'
+  Lava_Portal: '&cLava backup'
+  Nether_Portal: '&4Nether backup'
+  End_Portal: '&9End backup'
+  NativePortal_Material: Portal material
+  Teleport_Link: Teleport link
+  Portal_Blocks: Portal blocks
+  Not_Ready_For_Saving: '&cThe portal cannot be saved yet'
+  Set_Portal_Name: Set portal name
+  NativePortals_Set_Blocks: Set teleport blocks
+  Portal_Name: Portal name
+  Drop_To_Leave: '&cDrop the item to go to the menu'
+  Choose_A_Warp: '&bChoose a warp'
+  Choose_A_GlobalWarp: '&bChoose a global warp'
+  NativePortals_Confirm_Close: '&cNative Portals &7- &4Save?'
+  Sure_That_You_Want_To_Loose_Your_Data: '&7Are you sure that you &cdon''t &7want
+    to &csave &7your changes?'
+  Close: Close
+  Save: Save
+  GlobalWarp_Server_Is_Not_Online: '&cThe target server is not online!'
+  GlobalWarp_Player_Is_Already_On_Target_Server: '&cYou are already on the target
+    server.'
+  Go_To_NativePortal: '&7You have 30 seconds to go into a native portal.'
+  GlobalWarp_Help: '&7Use: &e/GlobalWarp <create, delete>'
+  GlobalWarp_Create_Name_Already_Exists: '&7The GlobalWarp ''&b%GLOBAL_WARP%&7'' &calready
+    exists&7.'
+  GlobalWarp_Deleted: '&7The GlobalWarp ''&b%GLOBAL_WARP%&7'' was &cdeleted&7.'
+  Native_Portal_Choose_Warp: '&cChoose a warp'
+  Plugin_Reloading: '&cThe plugin will be reloaded now...'
+  Success_Plugin_Reloaded: '&aThe plugin has been reloaded.'
+  Status_Of_Start: 'Status of Start-Holo: '
+  Status_Of_Destination: 'Status of Destination-Holo: '
+  Hologram: Hologram
+  Teleport: Teleport
 GER:
   Menu_Help: '&c&nHilfe'
   Menu_Help_Leftclick: '&3Linksklick: &bBearbeitungs-Modus'
@@ -144,7 +214,7 @@ GER:
   Success_Walking_Enabled: '&7Laufen beim Teleport ist nun &aerlaubt&7.'
   Success_Walking_Disabled: '&7Laufen beim Teleport ist nun &cnicht mehr erlaubt&7.'
   Success_Changed_Teleport_Delay: "&aDie Teleport-Zeit wurde auf '%delay%' geändert."
-  Success_Configured: '&aDu hast das Symbol erfolgreich bearbeitet.'
+  Success_Configured: '&aDu hast das Symbol erfolgreich bearbeitet'
   Delete: "&cLöschen"
   'Yes': Ja
   Confirm_Delete: "&7Möchten Sie dieses Symbol wirklich löschen?"
@@ -184,3 +254,70 @@ GER:
   Portal_Delete_Changes: "&7Die Änderungen wurden &cnicht &7gespeichert."
   PORTAL_HELP: '&7Benutze: &e/portal <create, edit, delete>'
   Delete_Portal_Cancel: "&7Das Portal wurde &4nicht &cgelöscht&7."
+  Change_Name_Leftclick: "&3Linksklick: &bNamen ändern"
+  Change_Name_Rightclick: "&3Rechtsklick: &bItem ändern"
+  Move_Help: '&7Bewegen: Rechtsklick auf Kategorien um dort hin zu wechseln.'
+  Edit_Mode_Set_Icon: '&3Linksklick: &bIcon setzen'
+  Coins: Coin(s)
+  Costs: Kosten
+  Shift_Rightclick_Edit: "&7Shift-Rechtsklick: öffnen"
+  WarpSign_Choose_Warp: "Wähle ein Warp für das Warp-Schild aus!"
+  WarpSign_Choose_Warp_GUI: "&4&lWähle ein Warp!"
+  WarpSign_Finish: Das Warp-Schild wurde erfolgreich gesetzt!
+  Teleport_Cancelled: '&cDer Teleport wurde abgebrochen.'
+  WarpSign_Removed: '&7Das Warp-Schild wurde &centfernt&7!'
+  Search: Suchen...
+  Previous_Page: Vorherige Seite
+  Next_Page: "Nächste Seite"
+  GlobalWarp_Created: '&7Der GlobalWarp ''&b%GLOBAL_WARP%&7'' wurde &aerfolgreich erstellt&7.'
+  Target_Server: Ziel-Server
+  GUI_Choose_Icon: "Wähle deinen Symbol-Typen"
+  Warp: Warp
+  Category: Kategorie
+  GlobalWarp: GlobalWarp
+  Decoration: Dekoration
+  GlobalWarp_Leftclick_To_Choose: "&3Linksklick: &bWählen"
+  Leftclick_Set: '&3Linksklick: &aSetzen'
+  Status: Status
+  Enabled: Aktiviert
+  Disable_This_Icon: '&3Linksklick: &c&lDeaktiviere dieses Icon'
+  GlobalWarp_Current_Warp: '&7Aktuell: &b%GlobalWarp%'
+  Leftclick_Change: "&3Linksklick: &aändern"
+  Success_Create_GlobalWarp: '&aDu hast erfolgreich ein &bGlobalWarp &aerstellt.'
+  GlobalWarp_Does_Not_Exist: '&cDieser GlobalWarp existiert nicht.'
+  Menu_Help_Shift_Leftclick: '&3Shift-Linksklick: &bHintergrund setzen'
+  Menu_Help_Shift_Rightclick_Show_Icon: '&3Shift-Rechtsklick: &bZeige Icon'
+  WARP_HELP: '&7Benutze: &e/warp <Warp-Name>'
+  WARP_DOES_NOT_EXISTS: '&cDieser Warp existiert nicht.'
+  Native_Portals: '&cNative Portals &7- &cEditor'
+  Water_Portal: '&bWasser-Portal'
+  Lava_Portal: '&cLava-Portal'
+  Nether_Portal: '&4Nether-Portal'
+  End_Portal: '&9End-Portal'
+  NativePortal_Material: Portal-Material
+  Teleport_Link: Teleport-Verlinkung
+  Portal_Blocks: "Portal-Blöcke"
+  Not_Ready_For_Saving: '&cDas Portal kann noch nicht gespeichert werden'
+  Set_Portal_Name: Name setzen
+  NativePortals_Set_Blocks: "Setze Teleport-Blöcke"
+  Portal_Name: Portal-Name
+  Drop_To_Leave: "&cLasse den Block fallen, um zum Menü zu kommen"
+  Choose_A_Warp: "&bWähle ein Warp"
+  Choose_A_GlobalWarp: "&bWähle ein globalen Warp"
+  NativePortals_Confirm_Close: '&cNative Portals &7- &4Speichern?'
+  Sure_That_You_Want_To_Loose_Your_Data: "&7Bist du sicher, dass du deine änderungen &cnicht Speichern &7möchtest?"
+  Close: "Schließen"
+  Save: Speichern
+  GlobalWarp_Server_Is_Not_Online: '&cDer Ziel-Server ist nicht online!'
+  GlobalWarp_Player_Is_Already_On_Target_Server: '&cDu befindest dich bereits auf dem Ziel-Server.'
+  Go_To_NativePortal: '&7Du hast nun 30 Sekunden Zeit, um in ein Ur-Portal zu gehen.'
+  GlobalWarp_Help: '&7Benutze: &e/GlobalWarp <create, delete>'
+  GlobalWarp_Create_Name_Already_Exists: '&7Der GlobalWarp ''&b%GLOBAL_WARP%&7'' &cexistiert bereits&7.'
+  GlobalWarp_Deleted: "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' wurde &cgelöscht&7."
+  Native_Portal_Choose_Warp: "&cWähle ein Warp"
+  Plugin_Reloading: '&cDas Plugin wird jetzt neu geladen...'
+  Success_Plugin_Reloaded: '&aDas Plugin wurde neu geladen.'
+  Status_Of_Start: 'Status vom Start-Holo: '
+  Status_Of_Destination: 'Status vom Destination-Holo: '
+  Hologram: Hologram
+  Teleport: Teleport

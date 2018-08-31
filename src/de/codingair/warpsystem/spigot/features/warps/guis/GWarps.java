@@ -59,6 +59,7 @@ public class GWarps extends GUI {
     private boolean showMenu = true;
 
     private GUIListener listener;
+    private boolean canEdit = true;
 
     private static String getTitle(Category category, Player p) {
         return getTitle(category, null, p);
@@ -84,10 +85,15 @@ public class GWarps extends GUI {
     }
 
     public GWarps(Player p, Category category, boolean editing, GUIListener guiListener) {
+        this(p, category, editing, guiListener, true);
+    }
+
+    public GWarps(Player p, Category category, boolean editing, GUIListener guiListener, boolean canEdit) {
         super(p, getTitle(category, guiListener, p), getSize(p), WarpSystem.getInstance(), false);
         this.listener = guiListener;
         this.category = category;
         this.editing = editing;
+        this.canEdit = canEdit;
 
         Listener listener;
         Bukkit.getPluginManager().registerEvents(listener = new Listener() {
@@ -121,6 +127,8 @@ public class GWarps extends GUI {
             @Override
             public void onInvCloseEvent(InventoryCloseEvent e) {
                 if(cursor == null) HandlerList.unregisterAll(listener);
+                if(isClosingByButton()) return;
+                if(GWarps.this.listener != null) GWarps.this.listener.onClose();
             }
 
             @Override
@@ -150,7 +158,7 @@ public class GWarps extends GUI {
 
         ItemStack none = noneBuilder.getItem();
 
-        if(p.hasPermission(WarpSystem.PERMISSION_MODIFY_ICONS) && showMenu) {
+        if(p.hasPermission(WarpSystem.PERMISSION_MODIFY_ICONS) && showMenu && canEdit) {
             ItemBuilder builder = new ItemBuilder(Material.NETHER_STAR).setName(Lang.get("Menu_Help", new Example("ENG", "&c&nHelp"), new Example("GER", "&c&nHilfe")));
 
             if(editing) {
@@ -195,7 +203,6 @@ public class GWarps extends GUI {
                     }
                 }
             }.setOption(option).setOnlyLeftClick(false));
-
         }
 
         int size = getSize(getPlayer());

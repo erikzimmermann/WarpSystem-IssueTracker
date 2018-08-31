@@ -107,6 +107,11 @@ public class SignListener implements Listener {
                 }
 
                 @Override
+                public void onClose() {
+
+                }
+
+                @Override
                 public Task onClickOnWarp(Warp warp, boolean editing) {
                     Sign s = (Sign) e.getBlock().getState();
                     SignTools.updateSign(s, new String[] {"", "§4§n" + Lang.get("Description"), "", ""});

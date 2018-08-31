@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.base.managers;
 
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.utils.Manager;
 
@@ -12,6 +13,8 @@ public class DataManager {
     public DataManager() {
         for(FeatureType.Priority value : FeatureType.Priority.values()) {
             for(FeatureType ft : FeatureType.values(value)) {
+                if(!ft.isActive()) continue;
+
                 try {
                     this.managers.add(ft.getManagerClass().newInstance());
                 } catch(InstantiationException | IllegalAccessException e) {
@@ -26,6 +29,9 @@ public class DataManager {
         for(Manager manager : this.managers) {
             if(!manager.load()) success = false;
         }
+
+        WarpSystem.getInstance().getFileManager().getFile("Config").saveConfig();
+
         return success;
     }
 

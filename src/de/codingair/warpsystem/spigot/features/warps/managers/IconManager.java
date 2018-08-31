@@ -114,7 +114,10 @@ public class IconManager implements Manager {
         WarpSystem.log("    > Loading background");
         String data = config.getString("Background_Item", null);
         this.background = data == null ? null : ItemBuilder.getFromJSON(data).getItem();
-        if(this.background == null) this.background = new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem();
+        if(this.background == null) {
+            WarpSystem.log("      ...no background available > create standard");
+            this.background = new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem();
+        } else WarpSystem.log("      ...got 1 background");
 
         WarpSystem.log("    > Loading Categories");
         List<String> categories = config.getStringList("Categories");
@@ -127,6 +130,8 @@ public class IconManager implements Manager {
             } else success = false;
         }
 
+        WarpSystem.log("      ...got " + categories.size() + " " + (categories.size() == 1 ? "Category" : "Categories"));
+
         WarpSystem.log("    > Loading Warps");
         List<String> warps = config.getStringList("Warps");
         for(String s : warps) {
@@ -137,6 +142,8 @@ public class IconManager implements Manager {
                 this.warps.add(warp);
             } else success = false;
         }
+
+        WarpSystem.log("      ...got " + warps.size() + " Warp(s)");
 
         WarpSystem.log("      > Check each Category of all Warps");
         for(Warp warp : this.warps) {
@@ -157,6 +164,8 @@ public class IconManager implements Manager {
             } else success = false;
         }
 
+        WarpSystem.log("      ...got " + globalWarps.size() + " GlobalWarp(s)");
+
         WarpSystem.log("    > Loading Deco");
         List<String> decoIcons = config.getStringList("DecoIcons");
         for(String s : decoIcons) {
@@ -165,6 +174,7 @@ public class IconManager implements Manager {
             if(deco != null) this.decoIcons.add(deco);
             else success = false;
         }
+        WarpSystem.log("      ...got " + decoIcons.size() + " DecoIcon(s)");
 
         ActionIconHelper.load = false;
 
@@ -262,6 +272,7 @@ public class IconManager implements Manager {
 
         if(!saver) WarpSystem.log("    > Saving background");
         config.set("Background_Item", new ItemBuilder(this.background).toJSONString());
+        if(!saver) WarpSystem.log("      ...saved 1 background");
 
         if(!saver) WarpSystem.log("    > Saving Warps");
         List<String> warps = new ArrayList<>();
@@ -269,11 +280,17 @@ public class IconManager implements Manager {
             warps.add(ActionIconHelper.toString(warp));
         }
 
+        config.set("Warps", warps);
+        if(!saver) WarpSystem.log("      ...saved " + warps.size() + " Warp(s)");
+
         if(!saver) WarpSystem.log("    > Saving Categories");
         List<String> categories = new ArrayList<>();
         for(Category category : this.categories) {
             categories.add(ActionIconHelper.toString(category));
         }
+
+        config.set("Categories", categories);
+        if(!saver) WarpSystem.log("      ...saved " + categories.size() + " " + (categories.size() == 1 ? "Category" : "Categories"));
 
         if(!saver) WarpSystem.log("    > Saving GlobalWarps");
         List<String> gWarps = new ArrayList<>();
@@ -281,16 +298,18 @@ public class IconManager implements Manager {
             gWarps.add(ActionIconHelper.toString(warp));
         }
 
+        config.set("GlobalWarps", gWarps);
+        if(!saver) WarpSystem.log("      ...saved " + gWarps.size() + " GlobalWarp(s)");
+
         if(!saver) WarpSystem.log("    > Saving Deco");
         List<String> decoIcons = new ArrayList<>();
         for(DecoIcon deco : this.decoIcons) {
             decoIcons.add(ActionIconHelper.toString(deco));
         }
 
-        config.set("Warps", warps);
-        config.set("Categories", categories);
-        config.set("GlobalWarps", gWarps);
         config.set("DecoIcons", decoIcons);
+        if(!saver) WarpSystem.log("      ...saved " + decoIcons.size() + " DecoIcon(s)");
+
         file.saveConfig();
     }
 
@@ -403,6 +422,15 @@ public class IconManager implements Manager {
         }
 
         return null;
+    }
+
+    public Warp getWarp(String identifier) {
+        if(identifier == null) return null;
+        String warp = identifier.contains("@") ? identifier.split("@")[0] : identifier;
+        String category = identifier.contains("@") ? identifier.split("@")[1] : null;
+
+        Category cat = getCategory(category);
+        return getWarp(warp, cat);
     }
 
     public boolean existsCategory(String name) {

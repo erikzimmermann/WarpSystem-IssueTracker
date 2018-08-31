@@ -36,11 +36,18 @@ WarpSystem:
     Animation: 17
     Allow_Move: false
   Send:
-    Teleport_Message: true
+    Teleport_Message:
+      Warps: true
+      GlobalWarps: true
+      NativePortals: true
+      Portals: true
     Teleport_Cancel_Message: true
   Functions:
     Warps: true
     Portals: true
+    NativePortals: true
+    WarpSigns: true
+    GlobalWarps: true
   Dominate_In_Commands:
     Highest_Priority:
       Warp: true

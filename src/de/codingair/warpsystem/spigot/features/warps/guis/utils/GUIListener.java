@@ -9,4 +9,5 @@ import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 public interface GUIListener {
     String getTitle();
     Task onClickOnWarp(Warp warp, boolean editing);
+    void onClose();
 }

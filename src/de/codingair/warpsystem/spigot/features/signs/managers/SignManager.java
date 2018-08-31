@@ -22,7 +22,7 @@ public class SignManager implements Manager {
 
         this.warpSigns.clear();
 
-        WarpSystem.log("  > Loading WarpSigns.");
+        WarpSystem.log("  > Loading WarpSigns");
         for(String s : file.getConfig().getStringList("WarpSigns")) {
             WarpSign warpSign = WarpSign.fromJSONString(s);
 
@@ -44,6 +44,8 @@ public class SignManager implements Manager {
             }
         }
 
+        WarpSystem.log("    ...got " + this.warpSigns.size() + " WarpSign(s)");
+
 
         Bukkit.getPluginManager().registerEvents(new SignListener(), WarpSystem.getInstance());
 
@@ -62,6 +64,8 @@ public class SignManager implements Manager {
 
         file.getConfig().set("WarpSigns", data);
         file.saveConfig();
+
+        if(!saver) WarpSystem.log("    ...saved " + data.size() + " WarpSign(s)");
     }
 
     public WarpSign getByLocation(Location location) {

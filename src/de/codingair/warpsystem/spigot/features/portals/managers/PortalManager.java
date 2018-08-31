@@ -24,15 +24,23 @@ public class PortalManager implements Manager {
 
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
 
-        WarpSystem.log("  > Loading Portals (from Teleporters)");
-        for(String s : file.getConfig().getStringList("Teleporters")) {
-            this.portals.add(Portal.getByJSONString(s));
+        if(!file.getConfig().getStringList("Teleporters").isEmpty()) {
+            WarpSystem.log("  > Loading Portals (from Teleporters)");
+            for(String s : file.getConfig().getStringList("Teleporters")) {
+                this.portals.add(Portal.getByJSONString(s));
+            }
+
+            WarpSystem.log("     ...got " + this.portals.size() + " Portal(s)");
         }
+
+        int temp = this.portals.size();
 
         WarpSystem.log("  > Loading Portals (from Portals)");
         for(String s : file.getConfig().getStringList("Portals")) {
             this.portals.add(Portal.getByJSONString(s));
         }
+
+        WarpSystem.log("     ...got " + (portals.size() - temp) + " Portal(s)");
 
         //Check duplicates
         List<Portal> duplicates = new ArrayList<>();
@@ -87,7 +95,7 @@ public class PortalManager implements Manager {
     public void save(boolean saver) {
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
 
-        if(!saver) WarpSystem.log("  > Saving Portals");
+        if(!saver) WarpSystem.log("  > Saving Portals...");
         List<String> data = new ArrayList<>();
 
         for(Portal portal : this.portals) {
@@ -96,8 +104,9 @@ public class PortalManager implements Manager {
         }
 
         file.getConfig().set("Portals", data);
-
         file.saveConfig();
+
+        if(!saver) WarpSystem.log("    ...saved " + data.size() + " Portal(s)");
     }
 
     public List<Portal> getPortals() {
