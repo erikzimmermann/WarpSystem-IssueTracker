@@ -78,6 +78,8 @@ public class Portal {
     }
 
     public boolean isInPortal(LivingEntity entity, Location target) {
+        if(entity == null || target == null) return false;
+
         Location[] edges = getCachedEdges();
         if(Area.isInArea(entity, target, edges[0], edges[1])) {
             for(PortalBlock block : getBlocks()) {
