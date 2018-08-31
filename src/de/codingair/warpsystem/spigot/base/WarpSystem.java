@@ -421,7 +421,7 @@ public class WarpSystem extends JavaPlugin {
                 file.saveConfig();
 
                 FancyMessage message = new FancyMessage(player, MessageTypes.INFO_MESSAGE, true);
-                message.addMessages("                                       §c§l§n" + getDescription().getName() + " §c- §l" + getDescription().getVersion());
+                message.addMessages("                         §c§l§n" + getDescription().getName() + " §c- §l" + getDescription().getVersion());
                 message.addMessages("");
                 message.addMessages("    §7Hey there,");
                 message.addMessages("    §7This is the first time for this server running my latest");
