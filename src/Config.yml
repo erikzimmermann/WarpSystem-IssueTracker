@@ -48,6 +48,8 @@ WarpSystem:
     NativePortals: true
     WarpSigns: true
     GlobalWarps: true
+  GlobalWarps:
+    Use_Warps_Of_WarpsGUI: false
   Dominate_In_Commands:
     Highest_Priority:
       Warp: true

@@ -9,6 +9,7 @@ import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
+import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
@@ -45,40 +46,45 @@ public class CGlobalWarp extends CommandBuilder {
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, List<String> suggestions) {
-                for(GlobalWarp globalWarp : IconManager.getInstance().getGlobalWarps()) {
-                    if(!globalWarp.hasPermission() || sender.hasPermission(globalWarp.getPermission())) {
-                        suggestions.add(globalWarp.getNameWithoutColor() + (globalWarp.getCategory() == null ? "" : "@" + globalWarp.getCategory().getNameWithoutColor()));
+                if(GlobalWarpManager.getInstance().isGlobalWarpsOfGUI()) {
+                    for(GlobalWarp globalWarp : IconManager.getInstance().getGlobalWarps()) {
+                        if(!globalWarp.hasPermission() || sender.hasPermission(globalWarp.getPermission())) {
+                            suggestions.add((globalWarp.getNameWithoutColor() + (globalWarp.getCategory() == null ? "" : "@" + globalWarp.getCategory().getNameWithoutColor())).replace(" ", "_"));
+                        }
                     }
+                } else {
+                    suggestions.addAll(GlobalWarpManager.getInstance().getGlobalWarps().keySet());
                 }
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                String warp = "";
-                for(String arg : args) {
-                    if(arg.isEmpty()) continue;
-                    if(!warp.isEmpty()) warp += " " + arg;
-                    else warp += arg;
+                if(GlobalWarpManager.getInstance().isGlobalWarpsOfGUI()) {
+                    argument = argument.replace("_", " ");
+
+                    Category category = null;
+                    boolean failure = false;
+
+                    if(argument.contains("@")) {
+                        category = IconManager.getInstance().getCategory(argument.split("@")[1]);
+                        argument = argument.split("@")[0];
+
+                        failure = category == null;
+                    }
+
+                    GlobalWarp gw = IconManager.getInstance().getGlobalWarp(argument, category);
+
+                    if(gw == null || failure) {
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Does_Not_Exist", new Example("ENG", "&cThis GlobalWarp does not exist."), new Example("GER", "&cDieser GlobalWarp existiert nicht.")));
+                        return false;
+                    }
+
+                    gw.perform((Player) sender, false, Action.RUN_COMMAND);
+                } else {
+                    if(GlobalWarpManager.getInstance().exists(argument)) {
+                        WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, argument, argument, 0);
+                    } else sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Does_Not_Exist", new Example("ENG", "&cThis GlobalWarp does not exist."), new Example("GER", "&cDieser GlobalWarp existiert nicht.")));
                 }
-
-                Category category = null;
-                boolean failure = false;
-
-                if(warp.contains("@")) {
-                    category = IconManager.getInstance().getCategory(warp.split("@")[1]);
-                    warp = warp.split("@")[0];
-
-                    failure = category == null;
-                }
-
-                GlobalWarp gw = IconManager.getInstance().getGlobalWarp(warp, category);
-
-                if(gw == null || failure) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Does_Not_Exist", new Example("ENG", "&cThis GlobalWarp does not exist."), new Example("GER", "&cDieser GlobalWarp existiert nicht.")));
-                    return false;
-                }
-
-                gw.perform((Player) sender, false, Action.RUN_COMMAND);
                 return false;
             }
         });

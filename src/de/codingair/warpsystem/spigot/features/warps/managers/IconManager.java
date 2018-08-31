@@ -226,6 +226,26 @@ public class IconManager implements Manager {
             cWarps.register(WarpSystem.getInstance());
         }
 
+        int changes = 0;
+        for(Warp icon : this.warps) if(icon.getName().contains("_")) {
+            icon.setName(icon.getName().replace("_", " "));
+            changes++;
+        }
+        for(Category icon : this.categories) if(icon.getName().contains("_")) {
+            icon.setName(icon.getName().replace("_", " "));
+            changes++;
+        }
+        for(GlobalWarp icon : this.globalWarps) if(icon.getName().contains("_")) {
+            icon.setName(icon.getName().replace("_", " "));
+            changes++;
+        }
+        for(DecoIcon icon : this.decoIcons) if(icon.getName().contains("_")) {
+            icon.setName(icon.getName().replace("_", " "));
+            changes++;
+        }
+
+        WarpSystem.log("    > Replacing \"_\" to \" \" for " + changes + " icons");
+
         if(!success) {
             TextComponent base = new TextComponent(Lang.getPrefix() + "§cTry to use WarpSystem ");
             TextComponent link = new TextComponent("§c§nv3.0.1");
@@ -487,7 +507,7 @@ public class IconManager implements Manager {
         name = Color.removeColor(name);
 
         for(GlobalWarp icon : this.getGlobalWarps(category)) {
-            if(icon.getName().equalsIgnoreCase(name)) return icon;
+            if(icon.getNameWithoutColor().equalsIgnoreCase(name)) return icon;
         }
 
         return null;
