@@ -6,8 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import static org.bukkit.Bukkit.getServer;
-
 public class Vault implements Adapter {
     private Economy economy = null;
 
@@ -18,7 +16,7 @@ public class Vault implements Adapter {
     @Override
     public double getMoney(Player player) {
         if(economy == null) return 0;
-        return this.economy.bankBalance(player.getName()).balance;
+        return this.economy.getBalance(player);
     }
 
     @Override
@@ -26,12 +24,12 @@ public class Vault implements Adapter {
         if(economy == null) return;
 
         double diff = amount - getMoney(player);
-        if(diff > 0) this.economy.bankDeposit(player.getName(), amount);
-        else if(diff < 0) this.economy.bankWithdraw(player.getName(), amount);
+        if(diff > 0) this.economy.depositPlayer(player, diff);
+        else if(diff < 0) this.economy.withdrawPlayer(player, -diff);
     }
 
     private boolean setupEconomy() {
-        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+        RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
         if(economyProvider != null) {
             economy = economyProvider.getProvider();
         }
