@@ -227,19 +227,19 @@ public class IconManager implements Manager {
         }
 
         int changes = 0;
-        for(Warp icon : this.warps) if(icon.getName().contains("_")) {
+        for(Warp icon : this.warps) if(icon.getName() != null && icon.getName().contains("_")) {
             icon.setName(icon.getName().replace("_", " "));
             changes++;
         }
-        for(Category icon : this.categories) if(icon.getName().contains("_")) {
+        for(Category icon : this.categories) if(icon.getName() != null && icon.getName().contains("_")) {
             icon.setName(icon.getName().replace("_", " "));
             changes++;
         }
-        for(GlobalWarp icon : this.globalWarps) if(icon.getName().contains("_")) {
+        for(GlobalWarp icon : this.globalWarps) if(icon.getName() != null && icon.getName().contains("_")) {
             icon.setName(icon.getName().replace("_", " "));
             changes++;
         }
-        for(DecoIcon icon : this.decoIcons) if(icon.getName().contains("_")) {
+        for(DecoIcon icon : this.decoIcons) if(icon.getName() != null && icon.getName().contains("_")) {
             icon.setName(icon.getName().replace("_", " "));
             changes++;
         }
