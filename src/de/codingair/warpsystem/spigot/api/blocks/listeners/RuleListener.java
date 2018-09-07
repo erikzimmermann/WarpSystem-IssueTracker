@@ -1,7 +1,6 @@
 package de.codingair.warpsystem.spigot.api.blocks.listeners;
 
 import de.codingair.codingapi.API;
-import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.warpsystem.spigot.api.blocks.StaticLavaBlock;
 import de.codingair.warpsystem.spigot.api.blocks.utils.StaticBlock;
 import org.bukkit.Location;
@@ -104,6 +103,7 @@ public class RuleListener implements Listener {
         }
 
         locs.clear();
+        if(isLava.isEmpty()) return false;
 
         List<StaticLavaBlock> l = API.getRemovables(StaticLavaBlock.class);
 
