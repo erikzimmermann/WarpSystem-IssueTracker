@@ -18,29 +18,33 @@ public class SignManager implements Manager {
     @Override
     public boolean load() {
         boolean success = true;
+        if(WarpSystem.getInstance().getFileManager().getFile("Teleporters") == null) WarpSystem.getInstance().getFileManager().loadFile("Teleporters", "/Memory/");
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
 
         this.warpSigns.clear();
 
         WarpSystem.log("  > Loading WarpSigns");
-        for(String s : file.getConfig().getStringList("WarpSigns")) {
-            WarpSign warpSign = WarpSign.fromJSONString(s);
+        List<String> data = file.getConfig().getStringList("WarpSigns");
+        if(data != null) {
+            for(String s : data) {
+                WarpSign warpSign = WarpSign.fromJSONString(s);
 
-            if(warpSign != null) {
-                if(warpSign.getLocation() != null && warpSign.getLocation().getWorld() != null && warpSign.getLocation().getBlock() != null) {
-                    if(warpSign.getLocation().getBlock().getState() instanceof Sign) {
-                        this.warpSigns.add(warpSign);
+                if(warpSign != null) {
+                    if(warpSign.getLocation() != null && warpSign.getLocation().getWorld() != null && warpSign.getLocation().getBlock() != null) {
+                        if(warpSign.getLocation().getBlock().getState() instanceof Sign) {
+                            this.warpSigns.add(warpSign);
+                        } else {
+                            WarpSystem.log("    > Loaded WarpSign at location without sign! (Skip)");
+                            success = false;
+                        }
                     } else {
-                        WarpSystem.log("    > Loaded WarpSign at location without sign! (Skip)");
+                        WarpSystem.log("    > Loaded WarpSign with missing world! (Skip)");
                         success = false;
                     }
                 } else {
-                    WarpSystem.log("    > Loaded WarpSign with missing world! (Skip)");
+                    WarpSystem.log("    > Could not load WarpSign! (Skip)");
                     success = false;
                 }
-            } else {
-                WarpSystem.log("    > Could not load WarpSign! (Skip)");
-                success = false;
             }
         }
 
