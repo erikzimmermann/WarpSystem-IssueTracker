@@ -21,6 +21,8 @@ public class GlobalPacketReaderManager {
         for(Player player : Bukkit.getOnlinePlayers()) {
             uninjectAll(player);
         }
+
+        this.globalPacketReaderList.clear();
     }
 
     public void register(GlobalPacketReader reader, boolean update) {
