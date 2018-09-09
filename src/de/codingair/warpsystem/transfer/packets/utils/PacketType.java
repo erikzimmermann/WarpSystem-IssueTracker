@@ -20,6 +20,7 @@ public enum PacketType {
     RequestGlobalWarpNamesPacket(7, RequestGlobalWarpNamesPacket.class),
     SendGlobalWarpNamesPacket(8, SendGlobalWarpNamesPacket.class),
     UpdateGlobalWarpPacket(9, UpdateGlobalWarpPacket.class),
+    PerformCommandPacket(10, PerformCommandPacket.class),
 
     BooleanPacket(100, BooleanPacket.class),
     IntegerPacket(101, IntegerPacket.class),

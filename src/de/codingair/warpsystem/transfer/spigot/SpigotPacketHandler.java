@@ -28,9 +28,6 @@ public class SpigotPacketHandler implements PacketHandler {
                 System.out.println("Couldn't handle anything!");
                 break;
 
-            case DeployIconPacket:
-                break;
-
             case TeleportPacket:
                 Player player = Bukkit.getPlayer(((TeleportPacket) packet).getPlayer());
                 SGlobalWarp warp = ((TeleportPacket) packet).getWarp();
