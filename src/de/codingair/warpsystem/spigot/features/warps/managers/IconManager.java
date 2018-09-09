@@ -3,12 +3,9 @@ package de.codingair.warpsystem.spigot.features.warps.managers;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.serializable.SerializableLocation;
 import de.codingair.codingapi.server.Color;
-import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
-import de.codingair.warpsystem.spigot.api.SpigotAPI;
-import de.codingair.warpsystem.spigot.api.packetreader.GlobalPacketReader;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
@@ -66,28 +63,6 @@ public class IconManager implements Manager {
 
         //Load
         boolean success = true;
-
-        //prevents Essentials system from sending "/warp <pagenumber:warp> [player]"
-        SpigotAPI.getInstance().getGlobalPacketReaderManager().register(new GlobalPacketReader() {
-            @Override
-            public boolean readPacket(Object packet) {
-                return false;
-            }
-
-            @Override
-            public boolean writePacket(Object packet) {
-                if(packet.getClass().getSimpleName().equals("PacketPlayOutChat")) {
-                    Object message = IReflection.getField(packet.getClass(), "a").get(packet);
-                    if(message != null && message.toString().contains("/warp <pagenumber:warp> [player]")) return true;
-                }
-                return false;
-            }
-
-            @Override
-            public String getName() {
-                return "WarpPacketReader";
-            }
-        }, true);
 
         WarpSystem.log("  > Loading Icons");
         ActionIconHelper.load = true;
