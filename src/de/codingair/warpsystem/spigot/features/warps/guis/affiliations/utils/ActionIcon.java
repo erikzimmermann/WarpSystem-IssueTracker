@@ -1,15 +1,18 @@
 package de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils;
 
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
+import de.codingair.warpsystem.transfer.packets.spigot.PerformCommandPacket;
 import de.codingair.warpsystem.transfer.serializeable.icons.SActionIcon;
 import de.codingair.warpsystem.transfer.serializeable.icons.SActionObject;
 import de.codingair.warpsystem.transfer.serializeable.icons.SIcon;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -104,7 +107,17 @@ public abstract class ActionIcon extends Icon implements Serializable {
             case RUN_COMMAND:
                 String command = action.getValue();
                 if(command.startsWith("/")) command = command.substring(1);
-                p.performCommand(command);
+
+                String tag = command.contains(" ") ? command.split(" ")[0] : command;
+
+                if(WarpSystem.getInstance().isOnBungeeCord() && Bukkit.getPluginCommand(tag) == null) {
+                    WarpSystem.getInstance().getDataHandler().send(new PerformCommandPacket(p.getName(), command, new Callback<Boolean>() {
+                        @Override
+                        public void accept(Boolean exists) {
+                            if(!exists) p.sendMessage(org.spigotmc.SpigotConfig.unknownCommandMessage);
+                        }
+                    }));
+                } else p.performCommand(command);
                 break;
 
             case SWITCH_SERVER:
