@@ -451,6 +451,9 @@ public class WarpSystem extends JavaPlugin {
 
     public void setOnBungeeCord(boolean onBungeeCord) {
         this.onBungeeCord = onBungeeCord;
+        if(onBungeeCord) {
+            ((CWarpSystem) getCommandBuilder("WarpSystem")).initBungee();
+        }
     }
 
     public TeleportManager getTeleportManager() {

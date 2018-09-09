@@ -40,7 +40,7 @@ public class ShortcutManager implements Manager {
         WarpSystem.log("     ...got " + this.shortcuts.size() + " Shortcut(s)");
 
         Bukkit.getPluginManager().registerEvents(new ShortcutListener(), WarpSystem.getInstance());
-        return false;
+        return true;
     }
 
     @Override

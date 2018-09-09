@@ -59,9 +59,69 @@ public class CWarpSystem extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("shortcut") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut §e<add, remove>");
                 return false;
             }
         }.setOnlyPlayers(true));
+
+        getComponent("shortcut").addChild(new CommandComponent("add") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add §e<warp" + (WarpSystem.getInstance().isOnBungeeCord() ? ", globalwarp" : "") + ">");
+                return false;
+            }
+        }.setOnlyPlayers(true));
+
+        getComponent("shortcut", "add").addChild(new CommandComponent("warp") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add warp §e<warp>");
+                return false;
+            }
+        }.setOnlyPlayers(true));
+
+        getComponent("shortcut", "add", "warp").addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, List<String> suggestions) {
+                for(Warp warp : IconManager.getInstance().getWarps()) {
+                    suggestions.add(warp.getIdentifier());
+                }
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add warp " + argument + " §e<shortcut>");
+                return false;
+            }
+        });
+
+        getComponent("shortcut", "add", "warp", null).addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, List<String> suggestions) {
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                String warpId = args[3];
+                String shortcut = argument;
+
+                Warp warp = IconManager.getInstance().getWarp(warpId);
+
+                if(warp == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS", new Example("ENG", "&cThis warp does not exist."), new Example("GER", "&cDieser Warp existiert nicht.")));
+                    return false;
+                }
+
+                if(ShortcutManager.getInstance().getShortcut(shortcut) != null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_already_exists", new Example("ENG", "&cThis shortcut already exists!"), new Example("GER", "&cDieser Shortcut existiert bereits!")));
+                    return false;
+                }
+
+                ShortcutManager.getInstance().getShortcuts().add(new Shortcut(warp, shortcut));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_created", new Example("ENG", "&7The shortcut \"&b%SHORTCUT%&7\" was &aadded&7!"), new Example("GER", "&7Der Shortcut \"&b%SHORTCUT%&7\" wurde &ahinzugefügt&7!")).replace("%SHORTCUT%", shortcut));
+                return false;
+            }
+        });
 
         getComponent("shortcut").addChild(new CommandComponent("remove") {
             @Override
@@ -90,117 +150,6 @@ public class CWarpSystem extends CommandBuilder {
 
                 ShortcutManager.getInstance().getShortcuts().remove(shortcut);
                 sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_was_removed", new Example("ENG", "&7The shortcut \"&b%SHORTCUT%&7\" was &cremoved&7!"), new Example("GER", "&7Der Shortcut \"&b%SHORTCUT%&7\" wurde &cgelöscht&7!")).replace("%SHORTCUT%", shortcut.getDisplayName()));
-                return false;
-            }
-        });
-
-        getComponent("shortcut").addChild(new CommandComponent("add") {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add §e<warp, globalwarp>");
-                return false;
-            }
-        }.setOnlyPlayers(true));
-
-        getComponent("shortcut", "add").addChild(new CommandComponent("warp") {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add warp §e<warp>");
-                return false;
-            }
-        }.setOnlyPlayers(true));
-
-        getComponent("shortcut", "add", "warp").addChild(new MultiCommandComponent() {
-            @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
-                System.out.println("Add 1");
-                for(Warp warp : IconManager.getInstance().getWarps()) {
-                    suggestions.add(warp.getIdentifier());
-                }
-            }
-
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add warp " + argument + " §e<shortcut>");
-                return false;
-            }
-        });
-
-        getComponent("shortcut", "add", "warp", null).addChild(new MultiCommandComponent() {
-            @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
-                System.out.println("Add 2");
-            }
-
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                String warpId = args[3];
-                String shortcut = argument;
-
-                Warp warp = IconManager.getInstance().getWarp(warpId);
-
-                if(warp == null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS", new Example("ENG", "&cThis warp does not exist."), new Example("GER", "&cDieser Warp existiert nicht.")));
-                    return false;
-                }
-
-                if(ShortcutManager.getInstance().getShortcut(shortcut) != null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_already_exists", new Example("ENG", "&cThis shortcut already exists!"), new Example("GER", "&cDieser Shortcut existiert bereits!")));
-                    return false;
-                }
-
-                ShortcutManager.getInstance().getShortcuts().add(new Shortcut(warp, shortcut));
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_created", new Example("ENG", "&7The shortcut \"&b%SHORTCUT%&7\" was &aadded&7!"), new Example("GER", "&7Der Shortcut \"&b%SHORTCUT%&7\" wurde &ahinzugefügt&7!")).replace("%SHORTCUT%", shortcut));
-                return false;
-            }
-        });
-
-        getComponent("shortcut", "add").addChild(new CommandComponent("globalwarp") {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add globalwarp §e<globalwarp>");
-                return false;
-            }
-        }.setOnlyPlayers(true));
-
-        getComponent("shortcut", "add", "globalwarp").addChild(new MultiCommandComponent() {
-            @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
-                suggestions.addAll(GlobalWarpManager.getInstance().getGlobalWarps().keySet());
-            }
-
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add globalwarp " + argument + " §e<shortcut>");
-                return false;
-            }
-        });
-
-        getComponent("shortcut", "add", "globalwarp", null).addChild(new MultiCommandComponent() {
-            @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
-
-            }
-
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                String warpId = args[3];
-                String shortcut = argument;
-
-                String globalWarp = GlobalWarpManager.getInstance().getCaseCorrectlyName(warpId);
-
-                if(globalWarp == null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS", new Example("ENG", "&cThis warp does not exist."), new Example("GER", "&cDieser Warp existiert nicht.")));
-                    return false;
-                }
-
-                if(ShortcutManager.getInstance().getShortcut(shortcut) != null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_already_exists", new Example("ENG", "&cThis shortcut already exists!"), new Example("GER", "&cDieser Shortcut existiert bereits!")));
-                    return false;
-                }
-
-                ShortcutManager.getInstance().getShortcuts().add(new Shortcut(globalWarp, shortcut));
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_created", new Example("ENG", "&7The shortcut \"&b%SHORTCUT%&7\" was &aadded&7!"), new Example("GER", "&7Der Shortcut \"&b%SHORTCUT%&7\" wurde &ahinzugefügt&7!")).replace("%SHORTCUT%", shortcut));
                 return false;
             }
         });
@@ -387,6 +336,60 @@ public class CWarpSystem extends CommandBuilder {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish_With_Errors", new Example("ENG", "&7Could &cnot &7import all files."), new Example("GER", "&7Es konnten &cnicht alle Dateien &7importiert werden.")) + " §8[" + result.name() + "]");
                     }
                 }
+                return false;
+            }
+        });
+    }
+
+    public void initBungee() {
+        if(getComponent("shortcut", "add", "globalwarp") != null) return;
+
+        getComponent("shortcut", "add").addChild(new CommandComponent("globalwarp") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add globalwarp §e<globalwarp>");
+                return false;
+            }
+        }.setOnlyPlayers(true));
+
+        getComponent("shortcut", "add", "globalwarp").addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, List<String> suggestions) {
+                suggestions.addAll(GlobalWarpManager.getInstance().getGlobalWarps().keySet());
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add globalwarp " + argument + " §e<shortcut>");
+                return false;
+            }
+        });
+
+        getComponent("shortcut", "add", "globalwarp", null).addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, List<String> suggestions) {
+
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                String warpId = args[3];
+                String shortcut = argument;
+
+                String globalWarp = GlobalWarpManager.getInstance().getCaseCorrectlyName(warpId);
+
+                if(globalWarp == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS", new Example("ENG", "&cThis warp does not exist."), new Example("GER", "&cDieser Warp existiert nicht.")));
+                    return false;
+                }
+
+                if(ShortcutManager.getInstance().getShortcut(shortcut) != null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_already_exists", new Example("ENG", "&cThis shortcut already exists!"), new Example("GER", "&cDieser Shortcut existiert bereits!")));
+                    return false;
+                }
+
+                ShortcutManager.getInstance().getShortcuts().add(new Shortcut(globalWarp, shortcut));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_created", new Example("ENG", "&7The shortcut \"&b%SHORTCUT%&7\" was &aadded&7!"), new Example("GER", "&7Der Shortcut \"&b%SHORTCUT%&7\" wurde &ahinzugefügt&7!")).replace("%SHORTCUT%", shortcut));
                 return false;
             }
         });
