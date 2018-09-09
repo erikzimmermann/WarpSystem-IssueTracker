@@ -5,13 +5,13 @@ import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Example;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
-import de.codingair.warpsystem.spigot.base.language.Example;
-import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -64,12 +64,15 @@ public class CWarp extends CommandBuilder {
             public void addArguments(CommandSender sender, List<String> suggestions) {
                 if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
                     for(Category c : manager.getCategories()) {
-                        suggestions.add(c.getNameWithoutColor());
+                        if(!c.hasPermission() || sender.hasPermission(c.getPermission())) suggestions.add(c.getNameWithoutColor());
                     }
                 } else {
                     for(Warp warp : manager.getWarps()) {
+                        Category c = warp.getCategory();
+
                         if(!warp.getNameWithoutColor().isEmpty()) {
-                            suggestions.add(warp.getNameWithoutColor().replace(" ", "_") + (warp.isInCategory() ? "@" + warp.getCategory().getName() : ""));
+                            if((c == null || !c.hasPermission() || sender.hasPermission(c.getPermission())) && (!warp.hasPermission() || sender.hasPermission(warp.getPermission())))
+                                suggestions.add(warp.getNameWithoutColor().replace(" ", "_") + (warp.isInCategory() ? "@" + warp.getCategory().getNameWithoutColor() : ""));
                         }
                     }
                 }
@@ -78,7 +81,14 @@ public class CWarp extends CommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
                 if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
-                    CWarps.run(sender, manager.getCategory(argument));
+                    Category category = manager.getCategory(argument);
+
+                    if(category != null && category.hasPermission() && !sender.hasPermission(category.getPermission())) {
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category", new Example("ENG", "&cYou are not allowed to open this category!"), new Example("GER", "&cSie dürfen diese Kategorie nicht öffnen!")));
+                        return false;
+                    }
+
+                    CWarps.run(sender, category);
                 } else {
                     if(args.length == 0 || argument == null || argument.isEmpty()) {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_HELP", new Example("ENG", "&7Use: &e" + label + " <Warp-Name>"), new Example("GER", "&7Benutze: &e/" + label + " <Warp-Name>")));
@@ -94,10 +104,20 @@ public class CWarp extends CommandBuilder {
                         argument = a[0];
                     }
 
+                    if(category != null && category.hasPermission() && !sender.hasPermission(category.getPermission())) {
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category", new Example("ENG", "&cYou are not allowed to open this category!"), new Example("GER", "&cSie dürfen diese Kategorie nicht öffnen!")));
+                        return false;
+                    }
+
                     Warp warp = manager.getWarp(argument, category);
 
                     if(warp == null) {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS", new Example("ENG", "&cThis warp does not exist."), new Example("GER", "&cDieser Warp existiert nicht.")));
+                        return false;
+                    }
+
+                    if(warp.hasPermission() && !sender.hasPermission(warp.getPermission())) {
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp", new Example("ENG", "&cYou are not allowed to use this warp!"), new Example("GER", "&cSie dürfen diesen Warp nicht benutzen!")));
                         return false;
                     }
 

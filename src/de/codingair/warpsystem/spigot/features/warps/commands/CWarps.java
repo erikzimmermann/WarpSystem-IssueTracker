@@ -41,7 +41,7 @@ public class CWarps extends CommandBuilder {
                 return false;
             }
         }.setOnlyPlayers(true), true);
-        
+
         IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
 
         try {
@@ -54,13 +54,20 @@ public class CWarps extends CommandBuilder {
             @Override
             public void addArguments(CommandSender sender, List<String> suggestions) {
                 for(Category c : manager.getCategories()) {
-                    suggestions.add(c.getNameWithoutColor());
+                    if(!c.hasPermission() || sender.hasPermission(c.getPermission())) suggestions.add(c.getNameWithoutColor());
                 }
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                run(sender, manager.getCategory(argument));
+                Category category = manager.getCategory(argument);
+
+                if(category != null && category.hasPermission() && !sender.hasPermission(category.getPermission())) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category", new Example("ENG", "&cYou are not allowed to open this category!"), new Example("GER", "&cSie dürfen diese Kategorie nicht öffnen!")));
+                    return false;
+                }
+
+                run(sender, category);
                 return false;
             }
         });
