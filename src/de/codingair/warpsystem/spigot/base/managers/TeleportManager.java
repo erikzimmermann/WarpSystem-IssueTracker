@@ -3,10 +3,13 @@ package de.codingair.warpsystem.spigot.base.managers;
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
+import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.Teleport;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -71,6 +74,56 @@ public class TeleportManager {
         config.set("WarpSystem.Teleport.Allow_Move", this.canMove);
 
         WarpSystem.getInstance().getFileManager().getFile("Config").saveConfig();
+    }
+
+    public boolean tryToTeleport(Player player, Warp warp) {
+        if(warp == null) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS", new Example("ENG", "&cThis warp does not exist."), new Example("GER", "&cDieser Warp existiert nicht.")));
+            return false;
+        }
+
+        if(warp.getCategory() != null && warp.getCategory().hasPermission() && !player.hasPermission(warp.getCategory().getPermission())) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category", new Example("ENG", "&cYou are not allowed to open this category!"), new Example("GER", "&cSie dürfen diese Kategorie nicht öffnen!")));
+            return false;
+        }
+
+        if(warp.hasPermission() && !player.hasPermission(warp.getPermission())) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp", new Example("ENG", "&cYou are not allowed to use this warp!"), new Example("GER", "&cSie dürfen diesen Warp nicht benutzen!")));
+            return false;
+        }
+
+        warp.perform(player, false, Action.RUN_COMMAND);
+        return true;
+    }
+
+    public boolean tryToTeleport(Player player, GlobalWarp warp) {
+        if(warp == null) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS", new Example("ENG", "&cThis warp does not exist."), new Example("GER", "&cDieser Warp existiert nicht.")));
+            return false;
+        }
+
+        if(warp.getCategory() != null && warp.getCategory().hasPermission() && !player.hasPermission(warp.getCategory().getPermission())) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category", new Example("ENG", "&cYou are not allowed to open this category!"), new Example("GER", "&cSie dürfen diese Kategorie nicht öffnen!")));
+            return false;
+        }
+
+        if(warp.hasPermission() && !player.hasPermission(warp.getPermission())) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp", new Example("ENG", "&cYou are not allowed to use this warp!"), new Example("GER", "&cSie dürfen diesen Warp nicht benutzen!")));
+            return false;
+        }
+
+        warp.perform(player, false, Action.RUN_COMMAND);
+        return true;
+    }
+
+    public boolean tryToTeleport(Player player, String globalWarp, String displayName, double costs) {
+        if(GlobalWarpManager.getInstance().exists(globalWarp)) {
+            teleport(player, globalWarp, displayName, costs);
+            return true;
+        }
+
+        player.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Does_Not_Exist", new Example("ENG", "&cThis GlobalWarp does not exist."), new Example("GER", "&cDieser GlobalWarp existiert nicht.")));
+        return false;
     }
 
     public void teleport(Player player, Warp warp) {
