@@ -28,7 +28,7 @@ commands:
   globalwarp:
     ususage: /GlobalWarp
     description: A Warp-System-CMD
-    aliases: [gw]
+    aliases: [gw, gwarp]
   nativeportals:
     usuage: /NativePortals
     description: A Warp-System-CMD
