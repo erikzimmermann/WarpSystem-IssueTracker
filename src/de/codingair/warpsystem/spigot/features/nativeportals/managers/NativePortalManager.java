@@ -55,7 +55,7 @@ public class NativePortalManager implements Manager {
 
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
 
-        WarpSystem.log("  > Loading NativePortals...");
+        WarpSystem.log("  > Loading NativePortals");
         int fails = 0;
         for(String s : file.getConfig().getStringList("NativePortals")) {
             Portal p = Portal.fromJSONString(s);

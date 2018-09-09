@@ -451,6 +451,9 @@ public class WarpSystem extends JavaPlugin {
 
     public void setOnBungeeCord(boolean onBungeeCord) {
         this.onBungeeCord = onBungeeCord;
+        if(onBungeeCord) {
+            ((CWarpSystem) getCommandBuilder("WarpSystem")).initBungee();
+        }
     }
 
     public TeleportManager getTeleportManager() {
@@ -487,5 +490,13 @@ public class WarpSystem extends JavaPlugin {
 
     public int getLatestVersionId() {
         return latestVersionId;
+    }
+
+    public CommandBuilder getCommandBuilder(String command) {
+        for(CommandBuilder commandBuilder : this.commands) {
+            if(commandBuilder.getName().equalsIgnoreCase(command)) return commandBuilder;
+        }
+
+        return null;
     }
 }

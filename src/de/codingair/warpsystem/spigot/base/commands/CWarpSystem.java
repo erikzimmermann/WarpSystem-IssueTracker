@@ -8,10 +8,18 @@ import de.codingair.codingapi.server.fancymessages.FancyMessage;
 import de.codingair.codingapi.server.fancymessages.MessageTypes;
 import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
+import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
+import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
+import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
+import de.codingair.warpsystem.spigot.features.warps.guis.utils.GUIListener;
+import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.ImportType;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Result;
 import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -38,15 +46,114 @@ public class CWarpSystem extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " §e<info, reload, import, news, report>");
+                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " §e<info, reload, import, news, report, shortcut>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " §e<info, reload, import, news, report>");
+                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " §e<info, reload, import, news, report, shortcut>");
                 return false;
             }
         }, true);
+
+        getBaseComponent().addChild(new CommandComponent("shortcut") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut §e<add, remove>");
+                return false;
+            }
+        }.setOnlyPlayers(true));
+
+        getComponent("shortcut").addChild(new CommandComponent("add") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add §e<warp" + (WarpSystem.getInstance().isOnBungeeCord() ? ", globalwarp" : "") + ">");
+                return false;
+            }
+        }.setOnlyPlayers(true));
+
+        getComponent("shortcut", "add").addChild(new CommandComponent("warp") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add warp §e<warp>");
+                return false;
+            }
+        }.setOnlyPlayers(true));
+
+        getComponent("shortcut", "add", "warp").addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, List<String> suggestions) {
+                for(Warp warp : IconManager.getInstance().getWarps()) {
+                    suggestions.add(warp.getIdentifier());
+                }
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add warp " + argument + " §e<shortcut>");
+                return false;
+            }
+        });
+
+        getComponent("shortcut", "add", "warp", null).addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, List<String> suggestions) {
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                String warpId = args[3];
+                String shortcut = argument;
+
+                Warp warp = IconManager.getInstance().getWarp(warpId);
+
+                if(warp == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS", new Example("ENG", "&cThis warp does not exist."), new Example("GER", "&cDieser Warp existiert nicht.")));
+                    return false;
+                }
+
+                if(ShortcutManager.getInstance().getShortcut(shortcut) != null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_already_exists", new Example("ENG", "&cThis shortcut already exists!"), new Example("GER", "&cDieser Shortcut existiert bereits!")));
+                    return false;
+                }
+
+                ShortcutManager.getInstance().getShortcuts().add(new Shortcut(warp, shortcut));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_created", new Example("ENG", "&7The shortcut \"&b%SHORTCUT%&7\" was &aadded&7!"), new Example("GER", "&7Der Shortcut \"&b%SHORTCUT%&7\" wurde &ahinzugefügt&7!")).replace("%SHORTCUT%", shortcut));
+                return false;
+            }
+        });
+
+        getComponent("shortcut").addChild(new CommandComponent("remove") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut remove §e<name>");
+                return false;
+            }
+        }.setOnlyPlayers(true));
+
+        getComponent("shortcut", "remove").addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, List<String> suggestions) {
+                for(Shortcut shortcut : ShortcutManager.getInstance().getShortcuts()) {
+                    suggestions.add(shortcut.getDisplayName());
+                }
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                Shortcut shortcut = ShortcutManager.getInstance().getShortcut(argument);
+
+                if(shortcut == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_does_not_exist", new Example("ENG", "&cThis shortcut does not exist!"), new Example("GER", "&cDieser Shortcut existiert nicht!")));
+                    return false;
+                }
+
+                ShortcutManager.getInstance().getShortcuts().remove(shortcut);
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_was_removed", new Example("ENG", "&7The shortcut \"&b%SHORTCUT%&7\" was &cremoved&7!"), new Example("GER", "&7Der Shortcut \"&b%SHORTCUT%&7\" wurde &cgelöscht&7!")).replace("%SHORTCUT%", shortcut.getDisplayName()));
+                return false;
+            }
+        });
+
 
         getBaseComponent().addChild(new CommandComponent("info") {
             @Override
@@ -130,7 +237,7 @@ public class CWarpSystem extends CommandBuilder {
                         link = new TextComponent("§chere");
                         base1 = new TextComponent("§7« to report the bug to §bme §8(§bCodingAir§8)§7.");
 
-                        link.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/conversations/add?to=CodingAir&title=WarpSystem-Bug%20(v" + WarpSystem.getInstance().getDescription().getVersion() + ",%20"+System.getProperty("os.name").replace(" ", "%20")+")"));
+                        link.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/conversations/add?to=CodingAir&title=WarpSystem-Bug%20(v" + WarpSystem.getInstance().getDescription().getVersion() + ",%20" + System.getProperty("os.name").replace(" ", "%20") + ")"));
                         link.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
 
                         base.addExtra(link);
@@ -229,6 +336,60 @@ public class CWarpSystem extends CommandBuilder {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish_With_Errors", new Example("ENG", "&7Could &cnot &7import all files."), new Example("GER", "&7Es konnten &cnicht alle Dateien &7importiert werden.")) + " §8[" + result.name() + "]");
                     }
                 }
+                return false;
+            }
+        });
+    }
+
+    public void initBungee() {
+        if(getComponent("shortcut", "add", "globalwarp") != null) return;
+
+        getComponent("shortcut", "add").addChild(new CommandComponent("globalwarp") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add globalwarp §e<globalwarp>");
+                return false;
+            }
+        }.setOnlyPlayers(true));
+
+        getComponent("shortcut", "add", "globalwarp").addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, List<String> suggestions) {
+                suggestions.addAll(GlobalWarpManager.getInstance().getGlobalWarps().keySet());
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add globalwarp " + argument + " §e<shortcut>");
+                return false;
+            }
+        });
+
+        getComponent("shortcut", "add", "globalwarp", null).addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, List<String> suggestions) {
+
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                String warpId = args[3];
+                String shortcut = argument;
+
+                String globalWarp = GlobalWarpManager.getInstance().getCaseCorrectlyName(warpId);
+
+                if(globalWarp == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS", new Example("ENG", "&cThis warp does not exist."), new Example("GER", "&cDieser Warp existiert nicht.")));
+                    return false;
+                }
+
+                if(ShortcutManager.getInstance().getShortcut(shortcut) != null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_already_exists", new Example("ENG", "&cThis shortcut already exists!"), new Example("GER", "&cDieser Shortcut existiert bereits!")));
+                    return false;
+                }
+
+                ShortcutManager.getInstance().getShortcuts().add(new Shortcut(globalWarp, shortcut));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_created", new Example("ENG", "&7The shortcut \"&b%SHORTCUT%&7\" was &aadded&7!"), new Example("GER", "&7Der Shortcut \"&b%SHORTCUT%&7\" wurde &ahinzugefügt&7!")).replace("%SHORTCUT%", shortcut));
                 return false;
             }
         });

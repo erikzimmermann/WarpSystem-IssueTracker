@@ -10,7 +10,6 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -104,24 +103,9 @@ public class CWarp extends CommandBuilder {
                         argument = a[0];
                     }
 
-                    if(category != null && category.hasPermission() && !sender.hasPermission(category.getPermission())) {
-                        sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category", new Example("ENG", "&cYou are not allowed to open this category!"), new Example("GER", "&cSie dürfen diese Kategorie nicht öffnen!")));
-                        return false;
-                    }
-
                     Warp warp = manager.getWarp(argument, category);
 
-                    if(warp == null) {
-                        sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS", new Example("ENG", "&cThis warp does not exist."), new Example("GER", "&cDieser Warp existiert nicht.")));
-                        return false;
-                    }
-
-                    if(warp.hasPermission() && !sender.hasPermission(warp.getPermission())) {
-                        sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp", new Example("ENG", "&cYou are not allowed to use this warp!"), new Example("GER", "&cSie dürfen diesen Warp nicht benutzen!")));
-                        return false;
-                    }
-
-                    warp.perform((Player) sender, false, Action.RUN_COMMAND);
+                    WarpSystem.getInstance().getTeleportManager().tryToTeleport((Player) sender, warp);
                 }
                 return false;
             }

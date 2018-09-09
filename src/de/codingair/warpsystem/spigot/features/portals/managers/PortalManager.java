@@ -95,7 +95,7 @@ public class PortalManager implements Manager {
     public void save(boolean saver) {
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
 
-        if(!saver) WarpSystem.log("  > Saving Portals...");
+        if(!saver) WarpSystem.log("  > Saving Portals");
         List<String> data = new ArrayList<>();
 
         for(Portal portal : this.portals) {
