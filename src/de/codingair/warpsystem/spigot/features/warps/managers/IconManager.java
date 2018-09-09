@@ -78,7 +78,7 @@ public class IconManager implements Manager {
             public boolean writePacket(Object packet) {
                 if(packet.getClass().getSimpleName().equals("PacketPlayOutChat")) {
                     Object message = IReflection.getField(packet.getClass(), "a").get(packet);
-                    if(message.toString().contains("/warp <pagenumber:warp> [player]")) return true;
+                    if(message != null && message.toString().contains("/warp <pagenumber:warp> [player]")) return true;
                 }
                 return false;
             }
