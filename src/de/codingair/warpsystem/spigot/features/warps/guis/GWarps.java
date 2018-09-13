@@ -46,6 +46,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GWarps extends GUI {
@@ -60,6 +61,7 @@ public class GWarps extends GUI {
 
     private GUIListener listener;
     private boolean canEdit = true;
+    private List<Class<? extends Icon>> hide = new ArrayList<>();
 
     private static String getTitle(Category category, Player p) {
         return getTitle(category, null, p);
@@ -84,16 +86,17 @@ public class GWarps extends GUI {
         this(p, category, editing, null);
     }
 
-    public GWarps(Player p, Category category, boolean editing, GUIListener guiListener) {
-        this(p, category, editing, guiListener, true);
+    public GWarps(Player p, Category category, boolean editing, GUIListener guiListener, Class<? extends Icon>... without) {
+        this(p, category, editing, guiListener, true, without);
     }
 
-    public GWarps(Player p, Category category, boolean editing, GUIListener guiListener, boolean canEdit) {
+    public GWarps(Player p, Category category, boolean editing, GUIListener guiListener, boolean canEdit, Class<? extends Icon>... without) {
         super(p, getTitle(category, guiListener, p), getSize(p), WarpSystem.getInstance(), false);
         this.listener = guiListener;
         this.category = category;
         this.editing = editing;
         this.canEdit = canEdit;
+        this.hide = without == null ? new ArrayList<>() : Arrays.asList(without);
 
         Listener listener;
         Bukkit.getPluginManager().registerEvents(listener = new Listener() {
@@ -430,6 +433,10 @@ public class GWarps extends GUI {
         IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
 
         if((icon.getSlot() == 0 && showMenu) || icon.getSlot() >= getSize(getPlayer())) return;
+
+        for(Class<? extends Icon> forbidden : this.hide) {
+            if(forbidden.isInstance(icon)) return;
+        }
 
         ItemButtonOption option = new ItemButtonOption();
         option.setClickSound(Sound.CLICK.bukkitSound());
