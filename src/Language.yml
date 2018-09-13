@@ -70,7 +70,7 @@ ENG:
   PORTAL_GO_TO_PORTAL: '&7You have 30 seconds to go into a portal.'
   Apply_Delete_No: '&7No, &akeep it&7.'
   Question_Delete_Portal: '&7Do you really want to &cdelete &7this portal?'
-  Apply_Delete_Yes: '&7Yes,&4delete&7.'
+  Apply_Delete_Yes: '&7Yes, &4delete&7.'
   Delete_Portal_Successfully: '&7The portal has been &cdeleted &7successfully.'
   PORTAL_CREATE_HELP: '&7Use: &e/portal create <Position-Name>'
   PORTAL_CREATE_FIRST_SAVED: '&7The first position has been saved.'
@@ -155,6 +155,7 @@ ENG:
   GlobalWarp_Create_Name_Already_Exists: '&7The GlobalWarp ''&b%GLOBAL_WARP%&7'' &calready
     exists&7.'
   GlobalWarp_Deleted: '&7The GlobalWarp ''&b%GLOBAL_WARP%&7'' was &cdeleted&7.'
+  GlobalWarp_Deleted_Cancel: '&7The GlobalWarp ''&b%GLOBAL_WARP%&7'' was &c&l&nnot&c deleted&7.'
   Native_Portal_Choose_Warp: '&cChoose a warp'
   Plugin_Reloading: '&cThe plugin will be reloaded now...'
   Success_Plugin_Reloaded: '&aThe plugin has been reloaded.'
@@ -314,6 +315,7 @@ GER:
   GlobalWarp_Help: '&7Benutze: &e/GlobalWarp <create, delete>'
   GlobalWarp_Create_Name_Already_Exists: '&7Der GlobalWarp ''&b%GLOBAL_WARP%&7'' &cexistiert bereits&7.'
   GlobalWarp_Deleted: "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' wurde &cgelöscht&7."
+  GlobalWarp_Deleted_Cancel: "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' wurde &c&l&nnicht&c gelöscht&7."
   Native_Portal_Choose_Warp: "&cWähle ein Warp"
   Plugin_Reloading: '&cDas Plugin wird jetzt neu geladen...'
   Success_Plugin_Reloaded: '&aDas Plugin wurde neu geladen.'
