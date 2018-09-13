@@ -32,12 +32,12 @@ public class CGlobalWarps extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Help", new Example("ENG", "&7Use: &e/GlobalWarp <create, delete>"), new Example("GER", "&7Benutze: &e/GlobalWarp <create, delete>")));
+                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " §e<create, delete, list>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Help", new Example("ENG", "&7Use: &e/GlobalWarp <create, delete>"), new Example("GER", "&7Benutze: &e/GlobalWarp <create, delete>")));
+                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " §e<create, delete, list>");
                 return false;
             }
         }, true);
