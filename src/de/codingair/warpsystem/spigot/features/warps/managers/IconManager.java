@@ -10,6 +10,9 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
+import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
+import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
+import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import de.codingair.warpsystem.spigot.features.warps.commands.CWarp;
 import de.codingair.warpsystem.spigot.features.warps.commands.CWarps;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
@@ -21,6 +24,7 @@ import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Act
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Icon;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.CategoryData;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
+import de.codingair.warpsystem.transfer.packets.bungee.UpdateGlobalWarpPacket;
 import de.codingair.warpsystem.utils.Manager;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -544,6 +548,15 @@ public class IconManager implements Manager {
 
             this.categories.remove(icon);
         } else if(icon instanceof Warp) {
+            String warp = icon.getNameWithoutColor();
+
+            List<Shortcut> toDelete = new ArrayList<>();
+            for(Shortcut shortcut : ShortcutManager.getInstance().getShortcuts()) {
+                if(shortcut.getWarp() != null && shortcut.getWarp().getNameWithoutColor().equals(warp)) toDelete.add(shortcut);
+            }
+
+            ShortcutManager.getInstance().getShortcuts().removeAll(toDelete);
+            toDelete.clear();
             this.warps.remove(icon);
         } else if(icon instanceof GlobalWarp) {
             this.globalWarps.remove(icon);
