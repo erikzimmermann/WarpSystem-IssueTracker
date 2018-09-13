@@ -17,11 +17,13 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
+import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
 import de.codingair.warpsystem.spigot.features.nativeportals.PortalEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Head;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
@@ -102,12 +104,11 @@ public class GEditor extends GUI {
                     return;
                 }
 
-                if(!changed) {
+                if(!changed && menu == Menu.MAIN) {
                     if(backup != null) {
                         portal.clear();
                         backup.setVisible(true);
                     }
-
                     return;
                 }
 
@@ -383,8 +384,9 @@ public class GEditor extends GUI {
 
                             @Override
                             public void onClose() {
+                                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), GEditor.this::open, 1);
                             }
-                        }, false).open();
+                        }, false, GlobalWarp.class, DecoIcon.class).open();
                     }
                 }.setOption(option).setCloseOnClick(true));
 
@@ -405,8 +407,6 @@ public class GEditor extends GUI {
 
                                 @Override
                                 public void onClose() {
-                                    menu = Menu.MAIN;
-                                    reinitialize();
                                     Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), GEditor.this::open, 1);
                                 }
 
