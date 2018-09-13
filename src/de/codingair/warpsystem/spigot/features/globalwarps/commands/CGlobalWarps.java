@@ -1,16 +1,17 @@
 package de.codingair.warpsystem.spigot.features.globalwarps.commands;
 
+import de.codingair.codingapi.player.gui.inventory.guis.ConfirmGUI;
 import de.codingair.codingapi.server.commands.BaseComponent;
 import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Example;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
-import de.codingair.warpsystem.spigot.base.language.Example;
-import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -87,18 +88,40 @@ public class CGlobalWarps extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).delete(argument, new Callback<Boolean>() {
-                    @Override
-                    public void accept(Boolean deleted) {
-                        if(deleted) {
-                            String name = ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).getCaseCorrectlyName(argument);
+                String name = GlobalWarpManager.getInstance().getCaseCorrectlyName(argument);
 
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Deleted", new Example("ENG", "&7The GlobalWarp '&b%GLOBAL_WARP%&7' was &cdeleted&7."), new Example("GER", "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' wurde &cgelöscht&7.")).replace("%GLOBAL_WARP%", name));
-                        } else {
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists", new Example("ENG", "&7The GlobalWarp '&b%GLOBAL_WARP%&7' &cdoes not exist&7."), new Example("GER", "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' &cexistiert nicht&7.")).replace("%GLOBAL_WARP%", argument));
+                if(name != null) {
+                    new ConfirmGUI((Player) sender,
+                            Lang.get("Confirm",
+                                    new Example("ENG", "&cAre you sure?"),
+                                    new Example("GER", "&cBist du sicher?")),
+                            Lang.get("Apply_Delete_No"),
+                            Lang.get("Delete_confirmation_globalwarp",
+                                    new Example("ENG", "&7Do you really want to &cdelete &7the global warp &7\"&c%GLOBAL_WARP%&7\"&7? You could &cdelete shortcuts&7 linked to that as well."),
+                                    new Example("GER", "&7Möchtest du den globalen Warp \"&c%GLOBAL_WARP%&7\" wirklich &clöschen&7? Du könntest automatisch &cShortcuts löschen&7, die damit verbunden sind.")).replace("%GLOBAL_WARP%", name),
+                            Lang.get("Apply_Delete_Yes"),
+                            WarpSystem.getInstance(), new Callback<Boolean>() {
+                        @Override
+                        public void accept(Boolean keep) {
+                            if(keep) {
+                                sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Deleted_Cancel").replace("%GLOBAL_WARP%", name));
+                            } else {
+                                ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).delete(argument, new Callback<Boolean>() {
+                                    @Override
+                                    public void accept(Boolean deleted) {
+                                        if(deleted) {
+                                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Deleted", new Example("ENG", "&7The GlobalWarp '&b%GLOBAL_WARP%&7' was &cdeleted&7."), new Example("GER", "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' wurde &cgelöscht&7.")).replace("%GLOBAL_WARP%", name));
+                                        } else {
+                                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists", new Example("ENG", "&7The GlobalWarp '&b%GLOBAL_WARP%&7' &cdoes not exist&7."), new Example("GER", "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' &cexistiert nicht&7.")).replace("%GLOBAL_WARP%", argument));
+                                        }
+                                    }
+                                });
+                            }
                         }
-                    }
-                });
+                    }).open();
+                } else {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists", new Example("ENG", "&7The GlobalWarp '&b%GLOBAL_WARP%&7' &cdoes not exist&7."), new Example("GER", "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' &cexistiert nicht&7.")).replace("%GLOBAL_WARP%", argument));
+                }
                 return false;
             }
         });
