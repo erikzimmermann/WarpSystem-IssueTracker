@@ -44,7 +44,7 @@ public class Teleport extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Permission", new Example("ENG", "&7Leftclick: &eChange permission"), new Example("GER", "&7Linksklick: &eBerechtigung ändern")), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Permission", new Example("ENG", "&7Leftclick: &eChange permission"), new Example("GER", "&7Linksklick: &eBerechtigung ändern")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -70,7 +70,7 @@ public class Teleport extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.NEXT_PREVIOUS(Lang.get("Sound")), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), PortalEditor.NEXT_PREVIOUS(Lang.get("Sound")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -96,7 +96,7 @@ public class Teleport extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Volume")), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Volume")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -122,7 +122,7 @@ public class Teleport extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Pitch")), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Pitch")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override

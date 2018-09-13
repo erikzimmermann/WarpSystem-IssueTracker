@@ -50,7 +50,7 @@ public class Hologram extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Hologram_Height")), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Hologram_Height")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -68,7 +68,7 @@ public class Hologram extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Name", new Example("ENG", "&7Leftclick: Change name"), new Example("GER", "&7Linksklick: Name ändern")), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Name", new Example("ENG", "&7Leftclick: Change name"), new Example("GER", "&7Linksklick: Name ändern")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -99,7 +99,7 @@ public class Hologram extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Name", new Example("ENG", "&7Leftclick: &eChange name"), new Example("GER", "&7Linksklick: Name ändern")), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Name", new Example("ENG", "&7Leftclick: &eChange name"), new Example("GER", "&7Linksklick: Name ändern")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -119,7 +119,7 @@ public class Hologram extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Name", new Example("ENG", "&7Leftclick: &eChange name")), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Name", new Example("ENG", "&7Leftclick: &eChange name")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override

@@ -20,6 +20,7 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -112,8 +113,8 @@ public class Portal implements Removable {
         if(this.startHolo != null && this.startHolo.isVisible()) this.startHolo.hide();
         if(this.destinationHolo != null && this.destinationHolo.isVisible()) this.destinationHolo.hide();
 
-        this.startHolo = new Hologram(this.start.clone().add(0, this.hologramHeight, 0), ChatColor.translateAlternateColorCodes('&', startName));
-        this.destinationHolo = new Hologram(this.destination.clone().add(0, this.hologramHeight, 0), ChatColor.translateAlternateColorCodes('&', destinationName));
+        this.startHolo = new Hologram(this.start.clone().add(0, this.hologramHeight, 0), WarpSystem.getInstance(), ChatColor.translateAlternateColorCodes('&', startName));
+        this.destinationHolo = new Hologram(this.destination.clone().add(0, this.hologramHeight, 0), WarpSystem.getInstance(), ChatColor.translateAlternateColorCodes('&', destinationName));
 
         if(this.startHoloStatus && running) this.startHolo.show();
         if(this.destinationHoloStatus && running) this.destinationHolo.show();
@@ -172,6 +173,11 @@ public class Portal implements Removable {
     @Override
     public UUID getUniqueId() {
         return uniqueId;
+    }
+
+    @Override
+    public JavaPlugin getPlugin() {
+        return WarpSystem.getInstance();
     }
 
     public Location getStart() {

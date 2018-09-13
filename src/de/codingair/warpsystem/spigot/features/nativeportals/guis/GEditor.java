@@ -270,7 +270,7 @@ public class GEditor extends GUI {
                         int size = editor.getPortal().getBlocks().size();
                         editor.init();
 
-                        MessageAPI.sendActionBar(getPlayer(), Lang.get("Drop_To_Leave", new Example("ENG", "&cDrop the item to go to the menu"), new Example("GER", "&cLasse den Block fallen, um zum Menü zu kommen")), Integer.MAX_VALUE);
+                        MessageAPI.sendActionBar(getPlayer(), Lang.get("Drop_To_Leave", new Example("ENG", "&cDrop the item to go to the menu"), new Example("GER", "&cLasse den Block fallen, um zum Menü zu kommen")), WarpSystem.getInstance(), Integer.MAX_VALUE);
 
                         Bukkit.getPluginManager().registerEvents(new Listener() {
                             @EventHandler
