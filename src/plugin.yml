@@ -24,7 +24,7 @@ commands:
   globalwarps:
     ususage: /GlobalWarps
     description: A Warp-System-CMD
-    aliases: [gws]
+    aliases: [gws, gwarps]
   globalwarp:
     ususage: /GlobalWarp
     description: A Warp-System-CMD
