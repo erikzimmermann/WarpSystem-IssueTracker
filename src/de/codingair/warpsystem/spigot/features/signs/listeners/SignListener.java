@@ -46,7 +46,7 @@ public class SignListener implements Listener {
 
                     SignTools.updateSign(s, lines);
 
-                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> new SignGUI(e.getPlayer(), s) {
+                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> new SignGUI(e.getPlayer(), s, WarpSystem.getInstance()) {
                         @Override
                         public void onSignChangeEvent(String[] lines) {
                             Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> {
@@ -117,7 +117,7 @@ public class SignListener implements Listener {
                     SignTools.updateSign(s, new String[] {"", "§4§n" + Lang.get("Description"), "", ""});
 
                     Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                        new SignGUI(e.getPlayer(), s) {
+                        new SignGUI(e.getPlayer(), s, WarpSystem.getInstance()) {
                             @Override
                             public void onSignChangeEvent(String[] lines) {
 

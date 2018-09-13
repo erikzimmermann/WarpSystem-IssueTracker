@@ -2,6 +2,7 @@ package de.codingair.warpsystem.spigot.api.packetreader;
 
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.player.data.PacketReader;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -56,7 +57,7 @@ public class GlobalPacketReaderManager {
     }
 
     public void inject(Player player, GlobalPacketReader reader) {
-        new PacketReader(player, reader.getName()){
+        new PacketReader(player, reader.getName(), WarpSystem.getInstance()){
             @Override
             public boolean readPacket(Object packet) {
                 return reader.readPacket(packet);

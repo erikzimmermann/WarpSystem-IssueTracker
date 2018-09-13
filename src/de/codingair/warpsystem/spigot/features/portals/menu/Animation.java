@@ -11,9 +11,9 @@ import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
 import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -50,7 +50,7 @@ public class Animation extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Animation_Height")), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Animation_Height")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -76,7 +76,7 @@ public class Animation extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Animation_Height")), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Animation_Height")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -102,7 +102,7 @@ public class Animation extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.NEXT_PREVIOUS(Lang.get("Animation_Height")), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), PortalEditor.NEXT_PREVIOUS(Lang.get("Animation_Height")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -133,7 +133,7 @@ public class Animation extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.NEXT_PREVIOUS(Lang.get("Animation_Height")), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), PortalEditor.NEXT_PREVIOUS(Lang.get("Animation_Height")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override

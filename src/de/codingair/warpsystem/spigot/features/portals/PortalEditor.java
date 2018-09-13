@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.features.portals;
 
+import com.sun.org.apache.xerces.internal.jaxp.validation.WrappedSAXException;
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.particles.animations.standalone.AnimationType;
@@ -23,6 +24,7 @@ import de.codingair.warpsystem.spigot.features.portals.menu.Menu;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
@@ -82,6 +84,11 @@ public class PortalEditor implements Removable {
     @Override
     public UUID getUniqueId() {
         return this.uniqueId;
+    }
+
+    @Override
+    public JavaPlugin getPlugin() {
+        return WarpSystem.getInstance();
     }
 
     public int getCurrentAnimationTypeIndex() {
