@@ -1,6 +1,5 @@
 package de.codingair.warpsystem.spigot.features.portals;
 
-import com.sun.org.apache.xerces.internal.jaxp.validation.WrappedSAXException;
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.particles.animations.standalone.AnimationType;
@@ -10,23 +9,23 @@ import de.codingair.codingapi.player.gui.anvil.AnvilGUI;
 import de.codingair.codingapi.player.gui.anvil.AnvilListener;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
-import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.Location;
+import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.utils.Node;
 import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
-import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
 import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
 import de.codingair.warpsystem.spigot.features.portals.menu.Menu;
+import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.*;
+import java.util.UUID;
 
 public class PortalEditor implements Removable {
     public static String PLUS_MINUS(String s) {
