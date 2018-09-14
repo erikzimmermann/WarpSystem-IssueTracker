@@ -139,6 +139,7 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new CommandListener(), this);
 
             this.runningFirstTime = !fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "2.1.0").equals(getDescription().getVersion());
+            if(this.runningFirstTime && !createBackup) createBackup();
 
             CWarpSystem cWarpSystem = new CWarpSystem();
             this.commands.add(cWarpSystem);
