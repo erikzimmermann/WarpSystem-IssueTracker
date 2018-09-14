@@ -14,6 +14,7 @@ import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -89,17 +90,21 @@ public class PortalListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent e) {
         for(Portal portal : API.getRemovables(Portal.class)) {
-            portal.update(e.getPlayer());
+            portal.add(e.getPlayer());
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onQuit(PlayerQuitEvent e) {
         for(PortalEditor portalEditor : API.getRemovables(e.getPlayer(), PortalEditor.class)) {
             portalEditor.exit();
+        }
+
+        for(Portal portal : API.getRemovables(Portal.class)) {
+            portal.remove(e.getPlayer());
         }
     }
 

@@ -99,12 +99,10 @@ public class Hologram extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Name", new Example("ENG", "&7Leftclick: &eChange name"), new Example("GER", "&7Linksklick: Name ändern")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
             public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
-                MessageAPI.stopSendingActionBar(getPlayer());
             }
         }));
 
@@ -155,6 +153,7 @@ public class Hologram extends HotbarGUI {
 
             @Override
             public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
+                MessageAPI.stopSendingActionBar(getPlayer());
             }
         }));
     }

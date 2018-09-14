@@ -8,15 +8,16 @@ import de.codingair.codingapi.particles.animations.standalone.*;
 import de.codingair.codingapi.player.Hologram;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
-import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.Location;
+import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
 import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -80,9 +81,14 @@ public class Portal implements Removable {
         update();
     }
 
-    public void update(Player player) {
-        this.startHolo.update(player);
-        this.destinationHolo.update(player);
+    public void add(Player player) {
+        this.startHolo.addPlayer(player);
+        this.destinationHolo.addPlayer(player);
+    }
+
+    public void remove(Player player) {
+        this.startHolo.removePlayer(player);
+        this.destinationHolo.removePlayer(player);
     }
 
     public void applyAttrs(Portal portal) {
@@ -110,14 +116,20 @@ public class Portal implements Removable {
 
     public void updateHolograms() {
         if(this.disabled) return;
-        if(this.startHolo != null && this.startHolo.isVisible()) this.startHolo.hide();
-        if(this.destinationHolo != null && this.destinationHolo.isVisible()) this.destinationHolo.hide();
 
-        this.startHolo = new Hologram(this.start.clone().add(0, this.hologramHeight, 0), WarpSystem.getInstance(), ChatColor.translateAlternateColorCodes('&', startName));
-        this.destinationHolo = new Hologram(this.destination.clone().add(0, this.hologramHeight, 0), WarpSystem.getInstance(), ChatColor.translateAlternateColorCodes('&', destinationName));
+        if(this.startHolo == null) this.startHolo = new Hologram(this.start.clone().add(0, this.hologramHeight, 0), WarpSystem.getInstance(), ChatColor.translateAlternateColorCodes('&', startName));
+        else this.startHolo.setText(ChatColor.translateAlternateColorCodes('&', startName));
+        this.startHolo.setVisible(this.startHoloStatus);
 
-        if(this.startHoloStatus && running) this.startHolo.show();
-        if(this.destinationHoloStatus && running) this.destinationHolo.show();
+        if(this.destinationHolo == null) this.destinationHolo = new Hologram(this.destination.clone().add(0, this.hologramHeight, 0), WarpSystem.getInstance(), ChatColor.translateAlternateColorCodes('&', destinationName));
+        else this.destinationHolo.setText(ChatColor.translateAlternateColorCodes('&', destinationName));
+        this.destinationHolo.setVisible(this.destinationHoloStatus);
+
+        this.startHolo.update();
+        this.destinationHolo.update();
+
+        this.startHolo.addAll();
+        this.destinationHolo.addAll();
     }
 
     public void updateAnimations() {
@@ -194,24 +206,28 @@ public class Portal implements Removable {
 
     public void setRunning(boolean running) {
         if(this.running == running || this.disabled) return;
+        this.running = running;
 
-        update();
+        if(this.startAnim != null) this.startAnim.setRunning(running);
+        if(this.destinationAnim != null) this.destinationAnim.setRunning(running);
 
-        if(this.startAnim != null && destinationAnim != null) {
-            this.startAnim.setRunning(running);
-            this.destinationAnim.setRunning(running);
-
-
-            if(running) {
-                if(this.startHoloStatus) this.startHolo.show();
-                if(this.destinationHoloStatus) this.destinationHolo.show();
-            } else {
-                this.startHolo.hide();
-                this.destinationHolo.hide();
-            }
+        if(this.startHolo != null) {
+            this.startHolo.setVisible(this.startHoloStatus && running);
+            this.startHolo.update();
         }
 
-        this.running = running;
+        if(this.destinationHolo != null) {
+            this.destinationHolo.setVisible(this.destinationHoloStatus && running);
+            this.destinationHolo.update();
+        }
+
+        if(running) {
+            this.startHolo.addAll();
+            this.destinationHolo.addAll();
+        } else {
+            this.startHolo.removeAll();
+            this.destinationHolo.removeAll();
+        }
 
         if(running) API.addRemovable(this);
         else API.removeRemovable(this);
@@ -245,7 +261,7 @@ public class Portal implements Removable {
 
     public void setStartName(String startName) {
         this.startName = startName;
-        updateHolograms();
+        this.updateHolograms();
     }
 
     public String getDestinationName() {
@@ -254,7 +270,7 @@ public class Portal implements Removable {
 
     public void setDestinationName(String destinationName) {
         this.destinationName = destinationName;
-        updateHolograms();
+        this.updateHolograms();
     }
 
     public void setSoundVolume(double volume) {
@@ -315,7 +331,6 @@ public class Portal implements Removable {
         }
 
         player.teleport(this.start);
-        update(player);
 
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Portals", true)) {
             player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", this.startName));
@@ -331,7 +346,6 @@ public class Portal implements Removable {
         }
 
         player.teleport(this.destination);
-        update(player);
 
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Portals", true)) {
             player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", this.destinationName));
