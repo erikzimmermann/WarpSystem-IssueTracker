@@ -110,6 +110,10 @@ public class WarpSystem extends JavaPlugin {
 
             if(this.fileManager.getFile("Language") == null) this.fileManager.loadFile("Language", "/");
             if(this.fileManager.getFile("Config") == null) this.fileManager.loadFile("Config", "/");
+
+            this.runningFirstTime = !fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "2.1.0").equals(getDescription().getVersion());
+            if(this.runningFirstTime) createBackup();
+
             log("Loading features");
             this.fileManager.loadAll();
 
@@ -124,10 +128,10 @@ public class WarpSystem extends JavaPlugin {
                 log(" ");
                 log(" ");
                 log("Loading with errors > Create backup...");
-                createBackup();
+                if(!this.runningFirstTime) createBackup();
                 log("Backup successfully created");
                 log(" ");
-                log("Try to use WarpSystem v3.0.1, which converts the old icons.");
+                log("Try to use WarpSystem v3.0.1, which converts old icons.");
                 log(" ");
             }
 
@@ -137,9 +141,6 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new TeleportListener(), this);
             Bukkit.getPluginManager().registerEvents(new NotifyListener(), this);
             Bukkit.getPluginManager().registerEvents(new CommandListener(), this);
-
-            this.runningFirstTime = !fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "2.1.0").equals(getDescription().getVersion());
-            if(this.runningFirstTime && !createBackup) createBackup();
 
             CWarpSystem cWarpSystem = new CWarpSystem();
             this.commands.add(cWarpSystem);
