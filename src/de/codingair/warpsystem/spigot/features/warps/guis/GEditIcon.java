@@ -11,16 +11,17 @@ import de.codingair.codingapi.server.Environment;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
-import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.*;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.*;
-import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
-import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
+import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.*;
+import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -60,7 +61,7 @@ public class GEditIcon extends GUI {
     }
 
     public GEditIcon(Player p, Category category, ItemStack item, String name, int slot, IconType type, String extra) {
-        super(p, "§c§l§n" + Lang.get("Item_Editing", new Example("ENG", "Item-Editing"), new Example("GER", "Item-Bearbeitung")), 45, WarpSystem.getInstance(), false);
+        super(p, "§c§l§n" + Lang.get("Item_Editing"), 45, WarpSystem.getInstance(), false);
 
         name = (name == null ? null : ChatColor.translateAlternateColorCodes('&', name));
         if(type.equals(IconType.CATEGORY) && name != null) name = ChatColor.UNDERLINE + name;
@@ -100,7 +101,7 @@ public class GEditIcon extends GUI {
     }
 
     public GEditIcon(Player p, Category category, Icon editing) {
-        super(p, "§c§l§n" + Lang.get("Item_Editing", new Example("ENG", "Item-Editing"), new Example("GER", "Item-Bearbeitung")), 45, WarpSystem.getInstance(), false);
+        super(p, "§c§l§n" + Lang.get("Item_Editing"), 45, WarpSystem.getInstance(), false);
         this.editing = editing;
 
         this.item = editing.getItem();
@@ -154,9 +155,9 @@ public class GEditIcon extends GUI {
                 case CATEGORY:
                 case WARP:
                 case GLOBAL_WARP:
-                    mainDescription.add(Lang.get("Change_Name_Leftclick", new Example("ENG", "&3Leftclick: &bChange name"), new Example("GER", "&3Linksklick: &bNamen ändern")));
+                    mainDescription.add(Lang.get("Change_Name_Leftclick"));
                 default:
-                    mainDescription.add(Lang.get("Change_Name_Rightclick", new Example("ENG", "&3Rightclick: &bChange item"), new Example("GER", "&3Rechtsklick: &bItem ändern")));
+                    mainDescription.add(Lang.get("Change_Name_Rightclick"));
                     break;
             }
         }
@@ -177,49 +178,49 @@ public class GEditIcon extends GUI {
         ItemStack glass = new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setName("§0").getItem();
         ItemStack bars = new ItemBuilder(XMaterial.IRON_BARS).setName("§0").getItem();
 
-        ItemStack cancel = new ItemBuilder(XMaterial.RED_WOOL).setName("§c" + Lang.get("Cancel", new Example("ENG", "Cancel"), new Example("GER", "Abbrechen"))).getItem();
-        ItemStack ready = new ItemBuilder(XMaterial.LIME_WOOL).setName("§a" + Lang.get("Ready", new Example("ENG", "Ready"), new Example("GER", "Fertig"))).getItem();
+        ItemStack cancel = new ItemBuilder(XMaterial.RED_WOOL).setName("§c" + Lang.get("Cancel")).getItem();
+        ItemStack ready = new ItemBuilder(XMaterial.LIME_WOOL).setName("§a" + Lang.get("Ready")).getItem();
 
         ItemStack sparkle;
         if(this.item.getEnchantments().size() == 0) {
-            sparkle = new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle", new Example("ENG", "Sparkle"), new Example("GER", "Funkeln")))
-                    .setLore("", Lang.get("Leftclick_Enable", new Example("ENG", "&3Leftclick: &aEnable"), new Example("GER", "&3Linksklick: &aAktivieren")))
+            sparkle = new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle"))
+                    .setLore("", Lang.get("Leftclick_Enable"))
                     .getItem();
         } else {
-            sparkle = new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle", new Example("ENG", "Sparkle"), new Example("GER", "Funkeln")))
-                    .setLore("", Lang.get("Leftclick_Disable", new Example("ENG", "&3Leftclick: &cDisable"), new Example("GER", "&3Linksklick: &cDeaktivieren")))
+            sparkle = new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle"))
+                    .setLore("", Lang.get("Leftclick_Disable"))
                     .getItem();
         }
 
-        ItemStack lore = new ItemBuilder(Material.PAPER).setName("§6§n" + Lang.get("Description", new Example("ENG", "Description"), new Example("GER", "Beschreibung")))
-                .setLore("", Lang.get("Leftclick_Add_Line", new Example("ENG", "&3Leftclick: &aAdd line"), new Example("GER", "&3Linksklick: &aZeile hinzufügen")),
-                        Lang.get("Rightclick_Reset_Lines", new Example("ENG", "&3Rightclick: &cReset lines"), new Example("GER", "&3Rechtsklick: &cZeilen zurücksetzen")))
+        ItemStack lore = new ItemBuilder(Material.PAPER).setName("§6§n" + Lang.get("Description"))
+                .setLore("", Lang.get("Leftclick_Add_Line"),
+                        Lang.get("Rightclick_Reset_Lines"))
                 .getItem();
 
-        ItemStack command = new ItemBuilder(Material.REDSTONE).setName("§6§n" + Lang.get("Command", new Example("ENG", "Command"), new Example("GER", "Befehl")))
-                .setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + (this.command == null ? "-" : this.command), "",
-                        this.command == null ? Lang.get("Leftclick_Add", new Example("ENG", "&3Leftclick: &aAdd"), new Example("GER", "&3Linksklick: &aHinzufügen"))
-                                : Lang.get("Leftclick_Remove", new Example("ENG", "&3Leftclick: &cRemove"), new Example("GER", "&3Linksklick: &cEntfernen")))
+        ItemStack command = new ItemBuilder(Material.REDSTONE).setName("§6§n" + Lang.get("Command"))
+                .setLore("§8" + Lang.get("Current") + ": §7" + (this.command == null ? "-" : this.command), "",
+                        this.command == null ? Lang.get("Leftclick_Add")
+                                : Lang.get("Leftclick_Remove"))
                 .getItem();
 
-        ItemStack permissionIcon = new ItemBuilder(XMaterial.ENDER_EYE).setName("§6§n" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")))
-                .setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + (this.permission == null ? "-" : this.permission), "",
-                        this.permission == null ? Lang.get("Leftclick_Add", new Example("ENG", "&3Leftclick: &aAdd"), new Example("GER", "&3Linksklick: &aHinzufügen"))
-                                : Lang.get("Leftclick_Remove", new Example("ENG", "&3Leftclick: &cRemove"), new Example("GER", "&3Linksklick: &cEntfernen")))
+        ItemStack permissionIcon = new ItemBuilder(XMaterial.ENDER_EYE).setName("§6§n" + Lang.get("Permission"))
+                .setLore("§8" + Lang.get("Current") + ": §7" + (this.permission == null ? "-" : this.permission), "",
+                        this.permission == null ? Lang.get("Leftclick_Add")
+                                : Lang.get("Leftclick_Remove"))
                 .getItem();
 
-        ItemStack costsIcon = new ItemBuilder(Material.GOLD_NUGGET).setName("§6§n" + Lang.get("Costs", new Example("ENG", "Costs"), new Example("GER", "Kosten")))
-                .setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + costs + " " + Lang.get("Coins", new Example("ENG", "Coin(s)"), new Example("GER", "Coin(s)")), "",
-                        Lang.get("Leftclick_Set", new Example("ENG", "&3Leftclick: &aSet"), new Example("GER", "&3Linksklick: &aSetzen")))
+        ItemStack costsIcon = new ItemBuilder(Material.GOLD_NUGGET).setName("§6§n" + Lang.get("Costs"))
+                .setLore("§8" + Lang.get("Current") + ": §7" + costs + " " + Lang.get("Coins"), "",
+                        Lang.get("Leftclick_Set"))
                 .getItem();
 
         ItemStack disableIcon = new ItemBuilder(this.disabled ? XMaterial.ROSE_RED : XMaterial.LIME_DYE)
-                .setName("§6§n" + Lang.get("Status", new Example("ENG", "Status"), new Example("GER", "Status")) + ": " + (this.disabled ?
-                        Lang.get("Disabled", new Example("ENG", "Disabled"), new Example("GER", "Deaktiviert")) :
-                        Lang.get("Enabled", new Example("ENG", "Enabled"), new Example("GER", "Aktiviert"))))
+                .setName("§6§n" + Lang.get("Status") + ": " + (this.disabled ?
+                        Lang.get("Disabled") :
+                        Lang.get("Enabled")))
                 .setLore("",
-                        this.disabled ? Lang.get("Leftclick_Enable_This_Icon", new Example("ENG", "&3Leftclick: &a&lEnable this icon"), new Example("GER", "&3Linksklick: &a&lAktiviere dieses Icon")) :
-                                Lang.get("Disable_This_Icon", new Example("ENG", "&3Leftclick: &c&lDisable this icon"), new Example("GER", "&3Linksklick: &c&lDeaktiviere dieses Icon")))
+                        this.disabled ? Lang.get("Leftclick_Enable_This_Icon") :
+                                Lang.get("Disable_This_Icon"))
                 .getItem();
 
         //decoration
@@ -287,12 +288,12 @@ public class GEditIcon extends GUI {
                                 input = e.getInput();
 
                                 if(input == null) {
-                                    p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Name", new Example("ENG", "&cPlease enter a name."), new Example("GER", "&cBitte gib einen Namen ein.")));
+                                    p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
                                     return;
                                 }
 
                                 if(input.contains("@")) {
-                                    p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Correct_Name", new Example("ENG", "&cPlease don't use '@'-Symbols."), new Example("GER", "&cBitte benutze keine '@'-Zeichen.")));
+                                    p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Correct_Name"));
                                     return;
                                 }
 
@@ -302,7 +303,7 @@ public class GEditIcon extends GUI {
                                     case WARP:
                                         if(manager.existsWarp(input, category)) {
                                             if(editing == null || !editing.getNameWithoutColor().equals(Color.removeColor(input))) {
-                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                                                 return;
                                             }
                                         }
@@ -311,7 +312,7 @@ public class GEditIcon extends GUI {
                                     case CATEGORY:
                                         if(manager.existsCategory(input)) {
                                             if(editing == null || !editing.getNameWithoutColor().equals(Color.removeColor(input))) {
-                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                                                 return;
                                             }
                                         }
@@ -320,7 +321,7 @@ public class GEditIcon extends GUI {
                                     case GLOBAL_WARP:
                                         if(manager.existsGlobalWarp(input)) {
                                             if(editing == null || !editing.getNameWithoutColor().equals(Color.removeColor(input))) {
-                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                                                 return;
                                             }
                                         }
@@ -352,7 +353,7 @@ public class GEditIcon extends GUI {
                     ItemStack item = p.getInventory().getItem(p.getInventory().getHeldItemSlot());
 
                     if(item == null || item.getType().equals(Material.AIR)) {
-                        p.sendMessage(Lang.getPrefix() + Lang.get("No_Item_In_Hand", new Example("ENG", "&cYou have to hold an item!"), new Example("GER", "&cDu musst ein Item halten!")));
+                        p.sendMessage(Lang.getPrefix() + Lang.get("No_Item_In_Hand"));
                         return;
                     }
 
@@ -402,7 +403,7 @@ public class GEditIcon extends GUI {
                         if(GEditIcon.this.costs > 0) ((ActionIcon) editing).addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
                     }
 
-                    p.sendMessage(Lang.getPrefix() + Lang.get("Success_Configured", new Example("ENG", "&aYou have configured the icon successfully."), new Example("GER", "&aDu hast das Symbol erfolgreich bearbeitet")));
+                    p.sendMessage(Lang.getPrefix() + Lang.get("Success_Configured"));
                 } else {
                     switch(type) {
                         case WARP:
@@ -413,7 +414,7 @@ public class GEditIcon extends GUI {
 
                             manager.getWarps().add(warp);
 
-                            p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Warp", new Example("ENG", "&aYou have created a &bWarp &asuccessfully."), new Example("GER", "&aDu hast erfolgreich ein &bWarp &aerstellt.")));
+                            p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Warp"));
                             break;
 
                         case CATEGORY:
@@ -424,7 +425,7 @@ public class GEditIcon extends GUI {
 
                             manager.getCategories().add(category);
 
-                            p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Category", new Example("ENG", "&aYou have created a &bCategory &asuccessfully."), new Example("GER", "&aDu hast erfolgreich eine &bKategorie &aerstellt.")));
+                            p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Category"));
                             break;
 
                         case GLOBAL_WARP:
@@ -435,7 +436,7 @@ public class GEditIcon extends GUI {
 
                             manager.getGlobalWarps().add(gWarp);
 
-                            p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_GlobalWarp", new Example("ENG", "&aYou have created a &bGlobalWarp &asuccessfully."), new Example("GER", "&aDu hast erfolgreich ein &bGlobalWarp &aerstellt.")));
+                            p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_GlobalWarp"));
                             break;
 
                         case DECORATION:
@@ -445,7 +446,7 @@ public class GEditIcon extends GUI {
                             manager.getDecoIcons().add(deco);
                             deco.setDisabled(disabled);
 
-                            p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Warp", new Example("ENG", "&aYou have created a &bDecoIcon &asuccessfully."), new Example("GER", "&aDu hast erfolgreich ein &bDekoIcon &aerstellt.")));
+                            p.sendMessage(Lang.getPrefix() + Lang.get("Success_Create_Decoration"));
                             break;
 
                     }
@@ -466,15 +467,15 @@ public class GEditIcon extends GUI {
                 if(iconButton.getItem().getEnchantments().size() == 0) {
                     item = new ItemBuilder(item).setHideStandardLore(true).addEnchantment(Enchantment.DAMAGE_ALL, 1).setHideEnchantments(true).getItem();
 
-                    setItem(new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle", new Example("ENG", "Sparkle"), new Example("GER", "Funkeln")))
-                            .setLore("", Lang.get("Leftclick_Disable", new Example("ENG", "&3Leftclick: &cDisable"), new Example("GER", "&3Linksklick: &cDeaktivieren")))
+                    setItem(new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle"))
+                            .setLore("", Lang.get("Leftclick_Disable"))
                             .getItem());
                 } else {
                     ItemBuilder builder = new ItemBuilder(item).setHideStandardLore(true);
                     builder.removeEnchantments();
                     item = builder.getItem();
 
-                    setItem(new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle", new Example("ENG", "Sparkle"), new Example("GER", "Funkeln")))
+                    setItem(new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle"))
                             .setLore("", Lang.get("Leftclick_Enable")).getItem());
                 }
 
@@ -502,7 +503,7 @@ public class GEditIcon extends GUI {
                             String input = e.getInput();
 
                             if(input == null) {
-                                p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Lore", new Example("ENG", "&cPlease enter a lore."), new Example("GER", "&cBitte gib eine Beschreibung ein.")));
+                                p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Lore"));
                                 return;
                             }
 
@@ -528,7 +529,7 @@ public class GEditIcon extends GUI {
                             e.setPost(GEditIcon.this::open);
                             quit = true;
                         }
-                    }, new ItemBuilder(Material.PAPER).setName(Lang.get("Line", new Example("ENG", "Line"), new Example("GER", "Linie")) + "...").getItem());
+                    }, new ItemBuilder(Material.PAPER).setName(Lang.get("Line") + "...").getItem());
                 } else {
                     switch(type) {
                         case DECORATION:
@@ -554,9 +555,9 @@ public class GEditIcon extends GUI {
                 if(GEditIcon.this.command != null) {
                     GEditIcon.this.command = null;
 
-                    ItemBuilder commandBuilder = new ItemBuilder(Material.REDSTONE).setName("§6§n" + Lang.get("Command", new Example("ENG", "Command"), new Example("GER", "Befehl")));
-                    commandBuilder.setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7-");
-                    commandBuilder.addLore("", Lang.get("Leftclick_Add", new Example("ENG", "&3Leftclick: &aAdd"), new Example("GER", "&3Linksklick: &aHinzufügen")));
+                    ItemBuilder commandBuilder = new ItemBuilder(Material.REDSTONE).setName("§6§n" + Lang.get("Command"));
+                    commandBuilder.setLore("§8" + Lang.get("Current") + ": §7-");
+                    commandBuilder.addLore("", Lang.get("Leftclick_Add"));
 
                     ItemStack command = commandBuilder.getItem();
                     setItem(command);
@@ -576,15 +577,15 @@ public class GEditIcon extends GUI {
                             String input = e.getInput();
 
                             if(input == null) {
-                                p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Command", new Example("ENG", "&cPlease enter a command."), new Example("GER", "&cBitte gib einen Befehl ein.")));
+                                p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Command"));
                                 return;
                             }
 
                             if(!input.startsWith("/")) input = "/" + input;
 
-                            ItemBuilder commandBuilder = new ItemBuilder(Material.REDSTONE).setName("§6§n" + Lang.get("Command", new Example("ENG", "Command"), new Example("GER", "Befehl")));
-                            commandBuilder.setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + input);
-                            commandBuilder.addLore("", Lang.get("Leftclick_Remove", new Example("ENG", "&3Leftclick: &cRemove"), new Example("GER", "&3Linksklick: &cEntfernen")));
+                            ItemBuilder commandBuilder = new ItemBuilder(Material.REDSTONE).setName("§6§n" + Lang.get("Command"));
+                            commandBuilder.setLore("§8" + Lang.get("Current") + ": §7" + input);
+                            commandBuilder.addLore("", Lang.get("Leftclick_Remove"));
 
                             ItemStack command = commandBuilder.getItem();
                             setItem(command);
@@ -602,7 +603,7 @@ public class GEditIcon extends GUI {
                             e.setPost(GEditIcon.this::open);
                             quit = true;
                         }
-                    }, new ItemBuilder(Material.REDSTONE).setName(Lang.get("Command", new Example("ENG", "Command"), new Example("GER", "Befehl")) + "...").getItem());
+                    }, new ItemBuilder(Material.REDSTONE).setName(Lang.get("Command") + "...").getItem());
                 }
             }
         }.setOption(option).setOnlyLeftClick(true));
@@ -615,8 +616,8 @@ public class GEditIcon extends GUI {
                 if(permission != null) {
                     permission = null;
 
-                    ItemBuilder permissionIconBuilder = new ItemBuilder(XMaterial.ENDER_EYE).setName("§6§n" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")))
-                            .setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7-", "", Lang.get("Leftclick_Add", new Example("ENG", "&3Leftclick: &aAdd"), new Example("GER", "&3Linksklick: &aHinzufügen")));
+                    ItemBuilder permissionIconBuilder = new ItemBuilder(XMaterial.ENDER_EYE).setName("§6§n" + Lang.get("Permission"))
+                            .setLore("§8" + Lang.get("Current") + ": §7-", "", Lang.get("Leftclick_Add"));
 
                     ItemStack permissionIcon = permissionIconBuilder.getItem();
                     setItem(permissionIcon);
@@ -636,13 +637,13 @@ public class GEditIcon extends GUI {
                             String input = e.getInput();
 
                             if(input == null) {
-                                p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Command", new Example("ENG", "&cPlease enter a command."), new Example("GER", "&cBitte gib einen Befehl ein.")));
+                                p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Permission"));
                                 return;
                             }
 
-                            ItemBuilder permissionIconBuilder = new ItemBuilder(XMaterial.ENDER_EYE).setName("§6§n" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")));
-                            permissionIconBuilder.setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + input);
-                            permissionIconBuilder.addLore("", Lang.get("Leftclick_Remove", new Example("ENG", "&3Leftclick: &cRemove"), new Example("GER", "&3Linksklick: &cEntfernen")));
+                            ItemBuilder permissionIconBuilder = new ItemBuilder(XMaterial.ENDER_EYE).setName("§6§n" + Lang.get("Permission"));
+                            permissionIconBuilder.setLore("§8" + Lang.get("Current") + ": §7" + input);
+                            permissionIconBuilder.addLore("", Lang.get("Leftclick_Remove"));
 
                             ItemStack permissionIcon = permissionIconBuilder.getItem();
                             setItem(permissionIcon);
@@ -659,16 +660,16 @@ public class GEditIcon extends GUI {
                             e.setPost(GEditIcon.this::open);
                             quit = true;
                         }
-                    }, new ItemBuilder(XMaterial.ENDER_EYE).setName(Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")) + "...").getItem());
+                    }, new ItemBuilder(XMaterial.ENDER_EYE).setName(Lang.get("Permission") + "...").getItem());
                 }
             }
         }.setOption(option).setOnlyLeftClick(true));
 
         //update globalwarp
         if(type.equals(IconType.GLOBAL_WARP)) {
-            ItemStack globalWarpIcon = new ItemBuilder(Material.ENDER_CHEST).setName("§6§n" + Lang.get("GlobalWarp", new Example("ENG", "GlobalWarp"), new Example("GER", "GlobalWarp")))
-                    .setLore(Lang.get("GlobalWarp_Current_Warp", new Example("ENG", "&7Current: &b%GlobalWarp%"), new Example("GER", "&7Aktuell: &b%GlobalWarp%")).replace("%GlobalWarp%", editing == null ? extra : ((GlobalWarp) editing).getAction(Action.SWITCH_SERVER).getValue()), "",
-                            "§8" + Lang.get("Leftclick_Change", new Example("ENG", "&3Leftclick: &aChange"), new Example("GER", "&3Linksklick: &aÄndern")))
+            ItemStack globalWarpIcon = new ItemBuilder(Material.ENDER_CHEST).setName("§6§n" + Lang.get("GlobalWarp"))
+                    .setLore(Lang.get("GlobalWarp_Current_Warp").replace("%GlobalWarp%", editing == null ? extra : ((GlobalWarp) editing).getAction(Action.SWITCH_SERVER).getValue()), "",
+                            "§8" + Lang.get("Leftclick_Change"))
                     .getItem();
 
             addButton(new ItemButton(4, 4, globalWarpIcon) {
@@ -703,7 +704,7 @@ public class GEditIcon extends GUI {
 
                         @Override
                         public String getLeftclickDescription() {
-                            return ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("GlobalWarp_Leftclick_To_Choose", new Example("ENG", "&3Leftclick: &bChoose"), new Example("GER", ChatColor.GRAY + "&3Linksklick: &bWählen"));
+                            return ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("GlobalWarp_Leftclick_To_Choose");
                         }
                     }).open();
                 }
@@ -736,12 +737,12 @@ public class GEditIcon extends GUI {
                                             try {
                                                 costs = Double.parseDouble(in);
                                             } catch(NumberFormatException ex) {
-                                                getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number", new Example("ENG", "&cPlease enter a positive number!"), new Example("GER", "&cBitte gib eine positive Nummer ein!")));
+                                                getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number"));
                                                 return;
                                             }
 
                                             if(costs < 0) {
-                                                getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number", new Example("ENG", "&cPlease enter a positive number!"), new Example("GER", "&cBitte gib eine positive Nummer ein!")));
+                                                getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number"));
                                                 return;
                                             }
 
@@ -754,9 +755,9 @@ public class GEditIcon extends GUI {
                                     public void onClose(AnvilCloseEvent e) {
                                         e.setPost(() -> {
                                             if(e.isSubmitted()) {
-                                                ItemStack costsIcon = new ItemBuilder(Material.GOLD_NUGGET).setName("§6§n" + Lang.get("Costs", new Example("ENG", "Costs"), new Example("GER", "Kosten")))
-                                                        .setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + costs + " " + Lang.get("Coins", new Example("ENG", "Coin(s)"), new Example("GER", "Coin(s)")), "",
-                                                                Lang.get("Leftclick_Set", new Example("ENG", "&3Leftclick: &aSet"), new Example("GER", "&3Linksklick: &aSetzen")))
+                                                ItemStack costsIcon = new ItemBuilder(Material.GOLD_NUGGET).setName("§6§n" + Lang.get("Costs"))
+                                                        .setLore("§8" + Lang.get("Current") + ": §7" + costs + " " + Lang.get("Coins"), "",
+                                                                Lang.get("Leftclick_Set"))
                                                         .getItem();
                                                 setItem(costsIcon);
 
@@ -784,12 +785,12 @@ public class GEditIcon extends GUI {
                 disabled = !disabled;
 
                 ItemStack disableIcon = new ItemBuilder(disabled ? XMaterial.ROSE_RED : XMaterial.LIME_DYE)
-                        .setName("§6§n" + Lang.get("Status", new Example("ENG", "Status"), new Example("GER", "Status")) + ": " + (disabled ?
-                                Lang.get("Disabled", new Example("ENG", "Disabled"), new Example("GER", "Deaktiviert")) :
-                                Lang.get("Enabled", new Example("ENG", "Enabled"), new Example("GER", "Aktiviert"))))
+                        .setName("§6§n" + Lang.get("Status") + ": " + (disabled ?
+                                Lang.get("Disabled") :
+                                Lang.get("Enabled")))
                         .setLore("",
-                                disabled ? Lang.get("Leftclick_Enable_This_Icon", new Example("ENG", "&3Leftclick: &a&lEnable this icon"), new Example("GER", "&3Linksklick: &a&lAktiviere dieses Icon")) :
-                                        Lang.get("Disable_This_Icon", new Example("ENG", "&3Leftclick: &c&lDisable this icon"), new Example("GER", "&3Linksklick: &c&lDeaktiviere dieses Icon")))
+                                disabled ? Lang.get("Leftclick_Enable_This_Icon") :
+                                        Lang.get("Disable_This_Icon"))
                         .getItem();
 
                 setItem(disableIcon);

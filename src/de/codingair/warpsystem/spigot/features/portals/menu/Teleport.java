@@ -11,9 +11,8 @@ import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
-import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -44,7 +43,7 @@ public class Teleport extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Permission", new Example("ENG", "&7Leftclick: &eChange permission"), new Example("GER", "&7Linksklick: &eBerechtigung ändern")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Permission"), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -54,7 +53,7 @@ public class Teleport extends HotbarGUI {
         }));
 
         setItem(4, new ItemComponent(new ItemBuilder(XMaterial.MUSIC_DISC_CHIRP)
-                .setName("§7" + Lang.get("Sound", new Example("ENG", "Sound"), new Example("GER", "Ton")) + ": '§e" + menu.getEditor().getPortal().getTeleportSound().getSound().name() + "§7'")
+                .setName("§7" + Lang.get("Sound") + ": '§e" + menu.getEditor().getPortal().getTeleportSound().getSound().name() + "§7'")
                 .getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
@@ -80,7 +79,7 @@ public class Teleport extends HotbarGUI {
         }));
 
         setItem(5, new ItemComponent(new ItemBuilder(Material.NOTE_BLOCK)
-                .setName("§7" + Lang.get("Volume", new Example("ENG", "Volume"), new Example("GER", "Lautstärke")) + ": §e" + menu.getEditor().getPortal().getTeleportSound().getVolume())
+                .setName("§7" + Lang.get("Volume") + ": §e" + menu.getEditor().getPortal().getTeleportSound().getVolume())
                 .getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
@@ -106,7 +105,7 @@ public class Teleport extends HotbarGUI {
         }));
 
         setItem(6, new ItemComponent(new ItemBuilder(Material.BLAZE_ROD)
-                .setName("§7" + Lang.get("Pitch", new Example("ENG", "Pitch"), new Example("GER", "Tonhöhe")) + ": §e" + menu.getEditor().getPortal().getTeleportSound().getPitch())
+                .setName("§7" + Lang.get("Pitch") + ": §e" + menu.getEditor().getPortal().getTeleportSound().getPitch())
                 .getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {

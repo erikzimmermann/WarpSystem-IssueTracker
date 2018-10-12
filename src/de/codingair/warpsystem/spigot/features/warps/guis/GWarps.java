@@ -12,6 +12,8 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
@@ -26,9 +28,6 @@ import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Ico
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.GUIListener;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
-import de.codingair.warpsystem.spigot.base.language.Example;
-import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -154,7 +153,7 @@ public class GWarps extends GUI {
 
         if(editing) {
             noneBuilder = new ItemBuilder(Material.BARRIER).setHideStandardLore(true)
-                    .setName(Lang.get("Edit_Mode_Set_Icon", new Example("ENG", "&3Leftclick: &bSet Icon"), new Example("GER", "&3Linksklick: &bIcon setzen")));
+                    .setName(Lang.get("Edit_Mode_Set_Icon"));
         } else {
             noneBuilder = new ItemBuilder(IconManager.getInstance().getBackground()).setHideName(true).setHideStandardLore(true).setHideEnchantments(true);
         }
@@ -162,19 +161,19 @@ public class GWarps extends GUI {
         ItemStack none = noneBuilder.getItem();
 
         if(p.hasPermission(WarpSystem.PERMISSION_MODIFY_ICONS) && showMenu && canEdit) {
-            ItemBuilder builder = new ItemBuilder(Material.NETHER_STAR).setName(Lang.get("Menu_Help", new Example("ENG", "&c&nHelp"), new Example("GER", "&c&nHilfe")));
+            ItemBuilder builder = new ItemBuilder(Material.NETHER_STAR).setName(Lang.get("Menu_Help"));
 
             if(editing) {
                 builder.setLore("§0",
-                        Lang.get("Menu_Help_Leftclick_Edit_Mode", new Example("ENG", "&3Leftclick: &bQuit Edit-Mode"), new Example("GER", "&3Linksklick: &bBearbeitungs-Modus verlassen")));
+                        Lang.get("Menu_Help_Leftclick_Edit_Mode"));
             } else {
                 builder.setLore("§0",
-                        Lang.get("Menu_Help_Leftclick", new Example("ENG", "&3Leftclick: &bEdit-Mode"), new Example("GER", "&3Linksklick: &bBearbeitungs-Modus")));
+                        Lang.get("Menu_Help_Leftclick"));
             }
-            builder.addLore(Lang.get("Menu_Help_Shift_Leftclick", new Example("ENG", "&3Shift-Leftclick: &bSet background"), new Example("GER", "&3Shift-Linksklick: &bHintergrund setzen")));
+            builder.addLore(Lang.get("Menu_Help_Shift_Leftclick"));
             builder.addLore("");
-            builder.addLore(Lang.get("Menu_Help_Rightclick", new Example("ENG", "&3Rightclick: &bOptions"), new Example("GER", "&3Rechtsklick: &bOptionen")));
-            builder.addLore(Lang.get("Menu_Help_Shift_Rightclick_Show_Icon", new Example("ENG", "&3Shift-Rightclick: &bShow icon"), new Example("GER", "&3Shift-Rechtsklick: &bZeige Icon")));
+            builder.addLore(Lang.get("Menu_Help_Rightclick"));
+            builder.addLore(Lang.get("Menu_Help_Shift_Rightclick_Show_Icon"));
 
             builder.addEnchantment(Enchantment.DAMAGE_ALL, 1);
             builder.setHideEnchantments(true);
@@ -210,7 +209,7 @@ public class GWarps extends GUI {
 
         int size = getSize(getPlayer());
         if(category != null) {
-            addButton(new ItemButton(size - 9, new ItemBuilder(Skull.ArrowLeft).setName("§c" + Lang.get("Back", new Example("ENG", "Back"), new Example("GER", "Zurück"))).getItem()) {
+            addButton(new ItemButton(size - 9, new ItemBuilder(Skull.ArrowLeft).setName("§c" + Lang.get("Back")).getItem()) {
                 @Override
                 public void onClick(InventoryClickEvent e) {
                     GWarps.this.category = null;
@@ -285,7 +284,7 @@ public class GWarps extends GUI {
                             ItemStack item = p.getItemInHand();
 
                             if(item == null || item.getType().equals(Material.AIR)) {
-                                p.sendMessage(Lang.getPrefix() + Lang.get("No_Item_In_Hand", new Example("ENG", "&cYou have to hold an item!"), new Example("GER", "&cDu musst ein Item halten!")));
+                                p.sendMessage(Lang.getPrefix() + Lang.get("No_Item_In_Hand"));
                                 return;
                             }
 
@@ -320,17 +319,17 @@ public class GWarps extends GUI {
                                                         input = e.getInput();
 
                                                         if(input == null) {
-                                                            p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Name", new Example("ENG", "&cPlease enter a name."), new Example("GER", "&cBitte gib einen Namen ein.")));
+                                                            p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
                                                             return;
                                                         }
 
                                                         if(input.contains("@")) {
-                                                            p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Correct_Name", new Example("ENG", "&cPlease don't use '@'-Symbols."), new Example("GER", "&cBitte benutze keine '@'-Zeichen.")));
+                                                            p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Correct_Name"));
                                                             return;
                                                         }
 
                                                         if(input.contains("_")) {
-                                                            p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Correct_Name_Underline", new Example("ENG", "&cPlease don't use '_'-Symbols."), new Example("GER", "&cBitte benutze keine '_'-Zeichen.")));
+                                                            p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Correct_Name_Underline"));
                                                             return;
                                                         }
 
@@ -355,17 +354,17 @@ public class GWarps extends GUI {
 
                                                         if(type.equals(IconType.WARP)) {
                                                             if(manager.existsWarp(input, category)) {
-                                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                                                                 return;
                                                             }
                                                         } else if(type.equals(IconType.CATEGORY)) {
                                                             if(manager.existsCategory(input)) {
-                                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                                                                 return;
                                                             }
                                                         } else if(type.equals(IconType.GLOBAL_WARP)) {
                                                             if(manager.existsGlobalWarp(input)) {
-                                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists", new Example("ENG", "&cThis name already exists."), new Example("GER", "&cDieser Name existiert bereits.")));
+                                                                p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                                                                 return;
                                                             }
                                                         } else return;
@@ -394,7 +393,7 @@ public class GWarps extends GUI {
 
                                                                 @Override
                                                                 public String getLeftclickDescription() {
-                                                                    return ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("GlobalWarp_Leftclick_To_Choose", new Example("ENG", "&3Leftclick: &bChoose"), new Example("GER", ChatColor.GRAY + "&3Linksklick: &bWählen"));
+                                                                    return ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("GlobalWarp_Leftclick_To_Choose");
                                                                 }
                                                             }).open());
                                                         } else e.setPost(() -> new GEditIcon(p, category, item, input, slot, type).open());
@@ -403,7 +402,7 @@ public class GWarps extends GUI {
                                                         e.setPost(() -> new GWarps(p, category, editing).open());
                                                     }
                                                 }
-                                            }, new ItemBuilder(Material.PAPER).setName(Lang.get("Name", new Example("ENG", "Name"), new Example("GER", "Name")) + "...").getItem());
+                                            }, new ItemBuilder(Material.PAPER).setName(Lang.get("Name") + "...").getItem());
                                             break;
                                     }
                                 }
@@ -448,33 +447,33 @@ public class GWarps extends GUI {
             if(editing) {
                 String command = icon.getAction(Action.RUN_COMMAND) == null ? "-" : icon.getAction(Action.RUN_COMMAND).getValue();
                 String permission = icon.getPermission() == null ? "-" : icon.getPermission();
-                String costs = (icon.getAction(Action.PAY_MONEY) == null ? "0" : icon.getAction(Action.PAY_MONEY).getValue()) + " " + Lang.get("Coins", new Example("ENG", "Coin(s)"), new Example("GER", "Coin(s)"));
+                String costs = (icon.getAction(Action.PAY_MONEY) == null ? "0" : icon.getAction(Action.PAY_MONEY).getValue()) + " " + Lang.get("Coins");
 
                 if(icon.isDisabled()) {
                     iconBuilder.addText("§8------------");
-                    iconBuilder.addText(Lang.get("Icon_Is_Disabled", new Example("ENG", "&4This icon is &l&ndisabled&4!"), new Example("GER", "&4Dieses Icon ist &l&ndeaktiviert&4!")));
+                    iconBuilder.addText(Lang.get("Icon_Is_Disabled"));
                 }
 
                 iconBuilder.addText("§8------------");
                 if(icon instanceof GlobalWarp) {
-                    iconBuilder.addText("§7" + Lang.get("GlobalWarp", new Example("ENG", "GlobalWarp"), new Example("GER", "GlobalWarp")) + ": " + icon.getAction(Action.SWITCH_SERVER).getValue());
-                    iconBuilder.addText("§7" + Lang.get("Target_Server", new Example("ENG", "Target-Server"), new Example("GER", "Ziel-Server")) + ": " + ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).getGlobalWarps().get(icon.getAction(Action.SWITCH_SERVER).getValue()));
+                    iconBuilder.addText("§7" + Lang.get("GlobalWarp") + ": " + icon.getAction(Action.SWITCH_SERVER).getValue());
+                    iconBuilder.addText("§7" + Lang.get("Target_Server") + ": " + ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).getGlobalWarps().get(icon.getAction(Action.SWITCH_SERVER).getValue()));
 
                     iconBuilder.addText("§8------------");
                 }
-                iconBuilder.addText("§7" + Lang.get("Command", new Example("ENG", "Command"), new Example("GER", "Befehl")) + ": " + command);
-                iconBuilder.addText("§7" + Lang.get("Permission", new Example("ENG", "Permission"), new Example("GER", "Berechtigung")) + ": " + permission);
-                if(AdapterType.canEnable()) iconBuilder.addText("§7" + Lang.get("Costs", new Example("ENG", "Costs"), new Example("GER", "Kosten")) + ": " + costs);
+                iconBuilder.addText("§7" + Lang.get("Command") + ": " + command);
+                iconBuilder.addText("§7" + Lang.get("Permission") + ": " + permission);
+                if(AdapterType.canEnable()) iconBuilder.addText("§7" + Lang.get("Costs") + ": " + costs);
                 iconBuilder.addText("§8------------");
-                iconBuilder.addText(Lang.get("Leftclick_Edit", new Example("ENG", "&7Leftclick: Configure"), new Example("GER", "&7Linksklick: Bearbeiten")));
-                iconBuilder.addText(Lang.get("Shift_Leftclick_Edit", new Example("ENG", "&7Shift-Leftclick: Move"), new Example("GER", "&7Shift-Linksklick: Bewegen")));
-                iconBuilder.addText(Lang.get("Rightclick_Delete", new Example("ENG", "&7Rightclick: Delete"), new Example("GER", "&7Rechtsklick: Löschen")));
-                if(icon instanceof Category) iconBuilder.addText(Lang.get("Shift_Rightclick_Edit", new Example("ENG", "&7Shift-Rightclick: Open"), new Example("GER", "&7Shift-Rechtsklick: Öffnen")));
+                iconBuilder.addText(Lang.get("Leftclick_Edit"));
+                iconBuilder.addText(Lang.get("Shift_Leftclick_Edit"));
+                iconBuilder.addText(Lang.get("Rightclick_Delete"));
+                if(icon instanceof Category) iconBuilder.addText(Lang.get("Shift_Rightclick_Edit"));
 
                 if(icon instanceof Warp || icon instanceof GlobalWarp || icon instanceof DecoIcon) {
                     iconBuilder.addText("§8------------");
 
-                    List<String> list = TextAlignment.lineBreak(Lang.get("Move_Help", new Example("ENG", "&7Moving: Rightclick on categories to switch to it."), new Example("GER", "&7Bewegen: Rechtsklick auf Kategorien um dort hin zu wechseln.")), 80);
+                    List<String> list = TextAlignment.lineBreak(Lang.get("Move_Help"), 80);
                     iconBuilder.addText(list);
                 }
             } else if(icon.isDisabled()) return;
@@ -524,18 +523,18 @@ public class GWarps extends GUI {
                                 p.closeInventory();
 
                                 new ConfirmGUI(p,
-                                        Lang.get("Delete", new Example("ENG", "&cDelete"), new Example("GER", "&cLöschen")),
-                                        "§a" + Lang.get("Yes", new Example("ENG", "Yes"), new Example("GER", "Ja")),
-                                        Lang.get("Confirm_Delete", new Example("ENG", "&7Are you sure you want to &cdelete &7this icon?"), new Example("GER", "&7Möchten Sie dieses Symbol wirklich löschen?")),
-                                        "§c" + Lang.get("No", new Example("ENG", "No"), new Example("GER", "Nein")),
+                                        Lang.get("Delete"),
+                                        "§a" + Lang.get("Yes"),
+                                        Lang.get("Confirm_Delete"),
+                                        "§c" + Lang.get("No"),
                                         WarpSystem.getInstance(), new Callback<Boolean>() {
                                     @Override
                                     public void accept(Boolean accepted) {
                                         if(accepted) {
                                             manager.remove(icon);
-                                            p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Deleted", new Example("ENG", "&cThe icon was deleted successfully."), new Example("GER", "&cDas Symbol wurde erfolgreich gelöscht.")));
+                                            p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Deleted"));
                                         } else {
-                                            p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Not_Deleted", new Example("ENG", "&7The icon was &cnot &7deleted."), new Example("GER", "&7Das Symbol wurde &cnicht &7gelöscht.")));
+                                            p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Not_Deleted"));
                                         }
 
                                         new GWarps(p, category, editing).open();
@@ -576,7 +575,7 @@ public class GWarps extends GUI {
         if(!moving) {
 
             if(oldSlot != slot) {
-                getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Success_Icon_Moved", new Example("ENG", "&aThe icon was moved successfully."), new Example("GER", "&aDas Symbol wurde erfolgreich bewegt.")));
+                getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Success_Icon_Moved"));
             }
 
             cursor = null;
@@ -592,7 +591,7 @@ public class GWarps extends GUI {
             for(int i = 0; i < getSize(); i++) {
                 if(i == slot || getItem(i) == null || getItem(i).getType().equals(Material.AIR)) continue;
 
-                setItem(i, new ItemBuilder(getItem(i)).setLore("", Lang.get("Leftclick_Move_Icon", new Example("ENG", "&3Leftclick: &bMove icon"), new Example("GER", "&3Linksklick: &bSymbol bewegen"))).getItem());
+                setItem(i, new ItemBuilder(getItem(i)).setLore("", Lang.get("Leftclick_Move_Icon")).getItem());
             }
         }
     }

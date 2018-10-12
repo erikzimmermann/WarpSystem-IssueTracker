@@ -3,13 +3,13 @@ package de.codingair.warpsystem.spigot.base.managers;
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.Teleport;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.base.language.Example;
-import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.Teleport;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -24,6 +24,7 @@ public class TeleportManager {
     private int seconds = 5;
     private int particleId = 0;
     private double radius = 1.5;
+    private boolean showMessage = true;
 
     public TeleportManager() {
         particles.add(Particle.FIREWORKS_SPARK);
@@ -62,7 +63,7 @@ public class TeleportManager {
         this.particleId = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Animation", 17);
         this.seconds = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Delay", 5);
         this.canMove = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Teleport.Allow_Move", false);
-
+        this.showMessage = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true);
         return success;
     }
 
@@ -76,39 +77,55 @@ public class TeleportManager {
         WarpSystem.getInstance().getFileManager().getFile("Config").saveConfig();
     }
 
+    public boolean tryToTeleport(Player player, Location location, String displayName, String permission) {
+        if(location == null) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
+            return false;
+        }
+
+        if(permission != null && !player.hasPermission(permission)) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"));
+            return false;
+        }
+
+        teleport(player, location, displayName);
+        return true;
+    }
+
     public boolean tryToTeleport(Player player, Warp warp) {
         if(warp == null) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS", new Example("ENG", "&cThis warp does not exist."), new Example("GER", "&cDieser Warp existiert nicht.")));
+            player.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
             return false;
         }
 
         if(warp.getCategory() != null && warp.getCategory().hasPermission() && !player.hasPermission(warp.getCategory().getPermission())) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category", new Example("ENG", "&cYou are not allowed to open this category!"), new Example("GER", "&cSie dürfen diese Kategorie nicht öffnen!")));
+            player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category"));
             return false;
         }
 
         if(warp.hasPermission() && !player.hasPermission(warp.getPermission())) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp", new Example("ENG", "&cYou are not allowed to use this warp!"), new Example("GER", "&cSie dürfen diesen Warp nicht benutzen!")));
+            player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"));
             return false;
         }
 
-        warp.perform(player, false, Action.RUN_COMMAND);
+        warp.perform(player, false, Action.RUN_COMMAND, Action.TELEPORT_TO_WARP);
+        teleport(player, warp);
         return true;
     }
 
     public boolean tryToTeleport(Player player, GlobalWarp warp) {
         if(warp == null) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS", new Example("ENG", "&cThis warp does not exist."), new Example("GER", "&cDieser Warp existiert nicht.")));
+            player.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
             return false;
         }
 
         if(warp.getCategory() != null && warp.getCategory().hasPermission() && !player.hasPermission(warp.getCategory().getPermission())) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category", new Example("ENG", "&cYou are not allowed to open this category!"), new Example("GER", "&cSie dürfen diese Kategorie nicht öffnen!")));
+            player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category"));
             return false;
         }
 
         if(warp.hasPermission() && !player.hasPermission(warp.getPermission())) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp", new Example("ENG", "&cYou are not allowed to use this warp!"), new Example("GER", "&cSie dürfen diesen Warp nicht benutzen!")));
+            player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"));
             return false;
         }
 
@@ -122,7 +139,7 @@ public class TeleportManager {
             return true;
         }
 
-        player.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Does_Not_Exist", new Example("ENG", "&cThis GlobalWarp does not exist."), new Example("GER", "&cDieser GlobalWarp existiert nicht.")));
+        player.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Does_Not_Exist"));
         return false;
     }
 
@@ -143,24 +160,7 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, Warp warp, String displayName, boolean skip, boolean canMove, boolean showMessage) {
-        if(isTeleporting(player)) {
-            Teleport teleport = getTeleport(player);
-            long diff = System.currentTimeMillis() - teleport.getStartTime();
-            if(diff > 50)
-                player.sendMessage(Lang.getPrefix() + Lang.get("Player_Is_Already_Teleporting", new Example("ENG", "&cYou are already teleporting!"), new Example("GER", "&cDu wirst bereits teleportiert!")));
-            return;
-        }
-
-        player.closeInventory();
-
-        Teleport teleport = new Teleport(player, warp, displayName);
-        teleport.setCanMove(canMove);
-        teleport.setShowMessage(showMessage);
-
-        this.teleports.add(teleport);
-
-        if(seconds == 0 || (WarpSystem.OP_CAN_SKIP_DELAY && player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) || skip) teleport.teleport();
-        else teleport.start();
+        teleport(player, warp.getLocation(), displayName == null ? warp.getName() : displayName, warp.getAction(Action.PAY_MONEY) == null ? 0 : warp.getAction(Action.PAY_MONEY).getValue(), skip, canMove, showMessage);
     }
 
     public void teleport(Player player, String globalWarp, String globalWarpDisplayName, double costs) {
@@ -173,24 +173,44 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, String globalWarp, String globalWarpDisplayName, double costs, boolean skip, boolean canMove) {
-        teleport(player, globalWarp, globalWarpDisplayName, costs, skip, canMove, WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true));
+        teleport(player, globalWarp, globalWarpDisplayName, costs, skip, canMove, this.showMessage);
     }
 
-    public void teleport(Player player, String globalWarp, String globalWarpDisplayName, double costs, boolean skip, boolean canMove, boolean showMessage) {
+    public void teleport(Player player, String globalWarp, String displayName, double costs, boolean skip, boolean canMove, boolean showMessage) {
         if(isTeleporting(player)) {
             Teleport teleport = getTeleport(player);
             long diff = System.currentTimeMillis() - teleport.getStartTime();
             if(diff > 50)
-                player.sendMessage(Lang.getPrefix() + Lang.get("Player_Is_Already_Teleporting", new Example("ENG", "&cYou are already teleporting!"), new Example("GER", "&cDu wirst bereits teleportiert!")));
+                player.sendMessage(Lang.getPrefix() + Lang.get("Player_Is_Already_Teleporting"));
             return;
         }
 
         player.closeInventory();
 
-        Teleport teleport = new Teleport(player, globalWarp, globalWarpDisplayName, costs);
-        teleport.setCanMove(canMove);
-        teleport.setShowMessage(showMessage);
+        Teleport teleport = new Teleport(player, globalWarp, displayName, costs, showMessage, canMove);
 
+        this.teleports.add(teleport);
+
+        if(seconds == 0 || (WarpSystem.OP_CAN_SKIP_DELAY && player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) || skip) teleport.teleport();
+        else teleport.start();
+    }
+
+    public void teleport(Player player, Location location, String displayName) {
+        teleport(player, location, displayName, 0, false, this.canMove, this.showMessage);
+    }
+
+    public void teleport(Player player, Location location, String displayName, double costs, boolean skip, boolean canMove, boolean showMessage) {
+        if(isTeleporting(player)) {
+            Teleport teleport = getTeleport(player);
+            long diff = System.currentTimeMillis() - teleport.getStartTime();
+            if(diff > 50)
+                player.sendMessage(Lang.getPrefix() + Lang.get("Player_Is_Already_Teleporting"));
+            return;
+        }
+
+        player.closeInventory();
+
+        Teleport teleport = new Teleport(player, location, displayName, costs, showMessage, canMove);
         this.teleports.add(teleport);
 
         if(seconds == 0 || (WarpSystem.OP_CAN_SKIP_DELAY && player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) || skip) teleport.teleport();
@@ -205,7 +225,7 @@ public class TeleportManager {
         this.teleports.remove(teleport);
 
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Cancel_Message", true)) {
-            MessageAPI.sendActionBar(p, Lang.get("Teleport_Cancelled", new Example("ENG", "&cThe teleport was cancelled."), new Example("GER", "&cDer Teleport wurde abgebrochen.")));
+            MessageAPI.sendActionBar(p, Lang.get("Teleport_Cancelled"));
         }
     }
 

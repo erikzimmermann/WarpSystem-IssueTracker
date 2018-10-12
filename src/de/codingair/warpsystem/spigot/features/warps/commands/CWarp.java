@@ -5,7 +5,6 @@ import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
@@ -21,12 +20,12 @@ public class CWarp extends CommandBuilder {
         super("Warp", new BaseComponent(WarpSystem.PERMISSION_USE) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_System", new Example("ENG", "&cYou are not allowed to use warps!"), new Example("GER", "&cSie dürfen keine Warps benutzen!")));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
             }
 
             @Override
             public void onlyFor(boolean player, CommandSender sender, String label, CommandComponent child) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Only_For_Players", new Example("ENG", "This action is only for players!"), new Example("GER", "Diese Aktion ist nur für Spieler!")));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Only_For_Players"));
             }
 
             @Override
@@ -34,7 +33,7 @@ public class CWarp extends CommandBuilder {
                 if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
                     CWarps.run(sender, null);
                 } else {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_HELP", new Example("ENG", "&7Use: &e" + label + " <Warp-Name>"), new Example("GER", "&7Benutze: &e/" + label + " <Warp-Name>")));
+                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp>");
                 }
             }
 
@@ -43,7 +42,7 @@ public class CWarp extends CommandBuilder {
                 if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
                     CWarps.run(sender, null);
                 } else {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_HELP", new Example("ENG", "&7Use: &e" + label + " <Warp-Name>"), new Example("GER", "&7Benutze: &e/" + label + " <Warp-Name>")));
+                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp>");
                 }
 
                 return false;
@@ -83,14 +82,14 @@ public class CWarp extends CommandBuilder {
                     Category category = manager.getCategory(argument);
 
                     if(category != null && category.hasPermission() && !sender.hasPermission(category.getPermission())) {
-                        sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category", new Example("ENG", "&cYou are not allowed to open this category!"), new Example("GER", "&cSie dürfen diese Kategorie nicht öffnen!")));
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category"));
                         return false;
                     }
 
                     CWarps.run(sender, category);
                 } else {
                     if(args.length == 0 || argument == null || argument.isEmpty()) {
-                        sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_HELP", new Example("ENG", "&7Use: &e" + label + " <Warp-Name>"), new Example("GER", "&7Benutze: &e/" + label + " <Warp-Name>")));
+                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp>");
                         return false;
                     }
 

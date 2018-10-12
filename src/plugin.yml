@@ -33,3 +33,11 @@ commands:
     usuage: /NativePortals
     description: A Warp-System-CMD
     aliases: [nativeportal, np, nps]
+  tempwarps:
+    usuage: /TempWarps
+    description: A Warp-System-CMD
+    aliases: [tws, twarps]
+  tempwarp:
+    usuage: /TempWarp
+    description: A Warp-System-CMD
+    aliases: [tw, twarp]

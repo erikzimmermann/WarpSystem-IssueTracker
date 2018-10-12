@@ -1,40 +1,27 @@
-# #####################################
-# # Help:
-# #   "GUI_Size" is the size of the GUI. The number must be between inclusive 9 and inclusive 54 and must be divisible by 9.
-# #
-# #   "Dominate_In_Commands" means the priority for one command.
-# #
-# #   For example: A player runs the "/warp"-command and your
-# #   server has Essentials activated and this System.
-# #   The server refer the command to the plugin, which was activated
-# #   first.
-# #   If you toggle the command "Warp" in this section to true, it
-# #   will be run in every case and will blocks all other system in
-# #   that moment.
-# #
-# #
-# #
-# #   Commands.Warp.GUI: Turn this to false, if you want to use this command for teleports ("/warp spawn"). If you turn this to 'true', the gui opens by running this command
-# #####################################
 WarpSystem:
+  Maintenance: false
+
   GUI:
     Admin:
-      Permission: "WarpSystem.Admin"
+      Permission: 'WarpSystem.Admin'
+      # The number must be between inclusive 9 and inclusive 54 and must be divisible by 9.
       Size: 54
       Title:
-        Standard: "&c&l&nWarps&r"
-        In_Category: "&c&l&nWarps&r &c@%CATEGORY%"
+        Standard: '&c&l&nWarps&r'
+        In_Category: '&c&l&nWarps&r &c@%CATEGORY%'
     User:
+      # The number must be between inclusive 9 and inclusive 54 and must be divisible by 9.
       Size: 54
       Title:
-        Standard: "&c&l&nWarps&r"
-        In_Category: "&c&l&nWarps&r &c@%CATEGORY%"
-  Maintenance: false
+        Standard: '&c&l&nWarps&r'
+        In_Category: '&c&l&nWarps&r &c@%CATEGORY%'
+
   Teleport:
     Op_Can_Skip_Delay: false
     Delay: 5
     Animation: 17
     Allow_Move: false
+
   Send:
     Teleport_Message:
       Warps: true
@@ -42,20 +29,63 @@ WarpSystem:
       NativePortals: true
       Portals: true
     Teleport_Cancel_Message: true
+
   Functions:
     Warps: true
     Portals: true
     NativePortals: true
     WarpSigns: true
     GlobalWarps: true
+    Shortcuts: true
+    TempWarps: true
+
+  TempWarps:
+    Time:
+      Interval: min
+      #Step to increase/decrease the duration in the gui
+      DurationSteps: 5
+      Min_Time: 5
+      Max_Time: 1440
+    # When a TempWarp expires, then it's inactive. (When "Time_After_Expiration" is expired too, the TempWarp will be deleted.)
+    Inactive:
+      Time_After_Expiration: 60
+      # Time to remind a player, if a TempWarp is inactive
+      Reminds:
+      - 30
+      - 10
+      - 5
+    Name:
+      Edit_Costs: 50
+    Message:
+      Min_character_length: 5
+      Max_character_length: 50
+      Refund_by_removing_message: 0
+      Edit_Costs: 50
+    Custom_Teleport_Costs:
+      Max_Costs: 500
+      #Step to increase/decrease costs in gui
+      Cost_Steps: 50
+    Costs:
+      CostsPerInterval: 5
+      PublicCosts: 5
+      MessageCosts: 5
+      #Percent of custom TeleportCosts
+      TeleportCosts: 5000.0
+
   GlobalWarps:
     Use_Warps_Of_WarpsGUI: false
+
+  Commands:
+    Warp:
+      #true: '/warp' opens the WarpGUI
+      #false: '/warp <warp>' teleports you to warps
+      GUI: false
+
+  # true: block all commands of other plugin, which have this command
+  # false: ignore
   Dominate_In_Commands:
     Highest_Priority:
       Warp: true
       Warps: true
       WarpSystem: true
       Portal: true
-  Commands:
-    Warp:
-      GUI: false

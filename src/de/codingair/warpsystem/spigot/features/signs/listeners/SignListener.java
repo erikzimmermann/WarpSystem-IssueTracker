@@ -3,16 +3,15 @@ package de.codingair.warpsystem.spigot.features.signs.listeners;
 import de.codingair.codingapi.player.gui.sign.SignGUI;
 import de.codingair.codingapi.player.gui.sign.SignTools;
 import de.codingair.codingapi.tools.Location;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.signs.managers.SignManager;
 import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.GUIListener;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
-import de.codingair.warpsystem.spigot.base.language.Example;
-import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -58,14 +57,14 @@ public class SignListener implements Listener {
                             });
                             close();
 
-                            e.getPlayer().sendMessage(Lang.getPrefix() + "§7" + Lang.get("WarpSign_Edited", new Example("ENG", "The WarpSign was edited successfully!"), new Example("GER", "Das Warp-Schild wurde erfolgreich bearbeitet!")));
+                            e.getPlayer().sendMessage(Lang.getPrefix() + "§7" + Lang.get("WarpSign_Edited"));
                         }
                     }.open(), 2L);
 
                     return;
                 }
 
-                WarpSystem.getInstance().getTeleportManager().teleport(e.getPlayer(), sign.getWarp());
+                WarpSystem.getInstance().getTeleportManager().tryToTeleport(e.getPlayer(), sign.getWarp());
             }
         }
     }
@@ -81,11 +80,11 @@ public class SignListener implements Listener {
             if(sign == null) return;
 
             if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY) || !e.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
-                e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("No_Permission", new Example("GER", "&cDu hast keine Berechtigungen für diese Aktion!"), new Example("ENG", "&cYou don't have permissions for that action!"), new Example("FRE", "&cDésolé mais vous ne possédez la permission pour exécuter cette action!")));
+                e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                 e.setCancelled(true);
             } else {
                 manager.getWarpSigns().remove(sign);
-                e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("WarpSign_Removed", new Example("GER", "&7Das Warp-Schild wurde &centfernt&7!"), new Example("ENG", "&7The WarpSign was &cremoved&7!")));
+                e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("WarpSign_Removed"));
             }
         } catch(Exception ignored) {
         }
@@ -98,12 +97,12 @@ public class SignListener implements Listener {
 
         if(e.getLine(0).equalsIgnoreCase("[warps]")) {
             e.getPlayer().sendMessage(" ");
-            e.getPlayer().sendMessage(Lang.getPrefix() + "§7" + Lang.get("WarpSign_Choose_Warp", new Example("ENG", "Choose a warp for the sign!"), new Example("GER", "Wähle ein Warp für das Warp-Schild aus!")));
+            e.getPlayer().sendMessage(Lang.getPrefix() + "§7" + Lang.get("WarpSign_Choose_Warp"));
             e.getPlayer().sendMessage(" ");
             new GWarps(e.getPlayer(), null, false, new GUIListener() {
                 @Override
                 public String getTitle() {
-                    return Lang.get("WarpSign_Choose_Warp_GUI", new Example("ENG", "&4&lChoose a warp!"), new Example("GER", "&4&lWähle ein Warp!"));
+                    return Lang.get("WarpSign_Choose_Warp_GUI");
                 }
 
                 @Override
@@ -130,7 +129,7 @@ public class SignListener implements Listener {
                                 }, 2L);
                                 close();
 
-                                e.getPlayer().sendMessage(Lang.getPrefix() + "§7" + Lang.get("WarpSign_Finish", new Example("ENG", "The WarpSign was set successfully!"), new Example("GER", "Das Warp-Schild wurde erfolgreich gesetzt!")));
+                                e.getPlayer().sendMessage(Lang.getPrefix() + "§7" + Lang.get("WarpSign_Finish"));
                             }
                         }.open();
 

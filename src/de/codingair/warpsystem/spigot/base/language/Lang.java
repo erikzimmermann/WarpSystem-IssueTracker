@@ -55,14 +55,7 @@ public class Lang {
         return prefix;
     }
 
-    public static String get(String key, Example... examples) {
-        for(Example example : examples) {
-            String s = getConfig().getString(example.getLanguage() + "." + key, null);
-            if(s == null) {
-                save(() -> getConfig().set(example.getLanguage() + "." + key, example.getText()));
-            }
-        }
-
+    public static String get(String key) {
         String text = getConfig().getString(getCurrentLanguage() + "." + key, null);
 
         if(text == null) {

@@ -12,12 +12,11 @@ import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
 import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
 import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
-import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
-import de.codingair.warpsystem.spigot.base.language.Example;
-import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -82,7 +81,7 @@ public class GPortalList extends GUI {
             builder.setName(name.toString());
         }
 
-        builder.setLore("", ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("Portal_List_Leftclick_To_Edit", new Example("ENG", ChatColor.GRAY + "Leftclick: Edit"), new Example("GER", ChatColor.GRAY + "Linksklick: Editieren")));
+        builder.setLore("", ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("Portal_List_Leftclick_To_Edit"));
         icon = builder.getItem();
 
         gui.addButton(new ItemButton(slot, icon) {
@@ -114,10 +113,10 @@ public class GPortalList extends GUI {
         PortalManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.PORTALS);
 
         ItemStack ph = new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem();
-        ItemBuilder search = new ItemBuilder(Material.COMPASS).setName(ChatColor.RED.toString() + (searching == null ? "" : ChatColor.UNDERLINE) + Lang.get("Search", new Example("ENG", "Search..."), new Example("GER", "Suchen...")));
+        ItemBuilder search = new ItemBuilder(Material.COMPASS).setName(ChatColor.RED.toString() + (searching == null ? "" : ChatColor.UNDERLINE) + Lang.get("Search"));
         if(searching != null) {
             search.addLore("", ChatColor.GRAY + "» " + Lang.get("Current") + ": '" + ChatColor.YELLOW + searching + ChatColor.GRAY + "'",
-                    ChatColor.GRAY + "» " + Lang.get("Rightclick_To_Reset", new Example("ENG", "Rightclick to reset"), new Example("GER", "Rechtsklick zum resetten")));
+                    ChatColor.GRAY + "» " + Lang.get("Rightclick_To_Reset"));
         }
 
         setItem(2, ph);
@@ -128,7 +127,7 @@ public class GPortalList extends GUI {
         option.setClickSound(Sound.CLICK.bukkitSound());
         option.setCloseOnClick(true);
 
-        addButton(new ItemButton(3, new ItemBuilder(Skull.ArrowLeft).setName(ChatColor.GRAY + Lang.get("Previous_Page", new Example("ENG", "Previous Page"), new Example("GER", "Vorherige Seite"))).getItem()) {
+        addButton(new ItemButton(3, new ItemBuilder(Skull.ArrowLeft).setName(ChatColor.GRAY + Lang.get("Previous_Page")).getItem()) {
             @Override
             public void onClick(InventoryClickEvent e) {
                 if(page == 0) return;
@@ -137,7 +136,7 @@ public class GPortalList extends GUI {
             }
         });
 
-        addButton(new ItemButton(5, new ItemBuilder(Skull.ArrowRight).setName(ChatColor.GRAY + Lang.get("Next_Page", new Example("ENG", "Next Page"), new Example("GER", "Nächste Seite"))).getItem()) {
+        addButton(new ItemButton(5, new ItemBuilder(Skull.ArrowRight).setName(ChatColor.GRAY + Lang.get("Next_Page")).getItem()) {
             @Override
             public void onClick(InventoryClickEvent e) {
                 if(page == MAX_PAGE()) return;

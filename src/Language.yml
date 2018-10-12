@@ -1,5 +1,6 @@
 Default_Language: ENG
 Prefix: '&8[&6Warps&8] &r'
+
 ENG:
   Menu_Help: '&c&nHelp'
   Menu_Help_Leftclick: '&3Leftclick: &bEdit-Mode'
@@ -14,9 +15,10 @@ ENG:
   Leftclick_Edit: '&7Leftclick: Configure'
   Rightclick_Delete: '&7Rightclick: Delete'
   Item_Editing: Item-Editing
-  Change_Name: '&8> Click here to change the name.'
+  Change_Name: '&7» Click here to change the name.'
   Cancel: Cancel
   Ready: Ready
+  Not_Ready: 'Not ready'
   Sparkle: Sparkle
   Description: Description
   Leftclick_Add_Line: '&3Leftclick: &aAdd line'
@@ -28,8 +30,9 @@ ENG:
   Line: Line
   Name: Name
   Success_Create_Warp: '&aYou have created a &bwarp &asuccessfully.'
+  Success_Create_Decoration: '&aYou have created a &bDecoIcon &asuccessfully.'
   Teleporting_Info: '&cTeleport in &l&n%seconds%'
-  Teleported_To: '&7You was teleported to ''&b%warp%&7''.'
+  Teleported_To: '&7You was teleported to "&b%warp%&7".'
   Config: Config
   Maintenance: Maintenance
   Language: Language
@@ -43,20 +46,20 @@ ENG:
   Teleport_Delay: Teleport delay
   Leftclick_Reduce: '&3Leftclick: &bReduce'
   Rightclick_Enlarge: '&3Rightclick: &bEnlarge'
-  Success_Changed_Lang: '&aThe language was changed to ''%lang%''.'
+  Success_Changed_Lang: '&aThe language was changed to "%lang%".'
   Success_Maintenance_Enabled: '&4The Maintenance-Mode was enabled.'
   Leftclick_Maintenance_Off: '&3Leftclick: &cDisable'
   Success_Maintenance_Disabled: '&4The Maintenance-Mode was disabled.'
   Leftclick_Maintenance_On: '&3Leftclick: &aEnable'
-  Success_Changed_Animation: '&aThe animation was changed to ''%anim%''.'
+  Success_Changed_Animation: '&aThe animation was changed to "%anim%".'
   Success_Walking_Enabled: '&7Walking during a teleport is &aallowed &7now.'
   Success_Walking_Disabled: '&7Walking during a teleport is &cdisallowed &7now.'
-  Success_Changed_Teleport_Delay: '&aThe teleport delay was changed to ''%delay%''.'
+  Success_Changed_Teleport_Delay: '&aThe teleport delay was changed to "%delay%".'
   Success_Configured: '&aYou have configured the icon successfully.'
   Delete: '&cDelete'
-  'Yes': 'Yes'
+  Yes: Yes
   Confirm_Delete: '&7Are you sure you want to &cdelete &7this icon?'
-  'No': 'No'
+  No: No
   Icon_Not_Deleted: '&7The icon was &cnot &7deleted.'
   Icon_Deleted: '&cThe icon was deleted successfully.'
   Leftclick_Move_Icon: '&3Leftclick: &bMove icon'
@@ -70,7 +73,7 @@ ENG:
   PORTAL_GO_TO_PORTAL: '&7You have 30 seconds to go into a portal.'
   Apply_Delete_No: '&7No, &akeep it&7.'
   Question_Delete_Portal: '&7Do you really want to &cdelete &7this portal?'
-  Apply_Delete_Yes: '&7Yes, &4delete&7.'
+  Apply_Delete_Yes: '&7Yes,&4delete&7.'
   Delete_Portal_Successfully: '&7The portal has been &cdeleted &7successfully.'
   PORTAL_CREATE_HELP: '&7Use: &e/portal create <Position-Name>'
   PORTAL_CREATE_FIRST_SAVED: '&7The first position has been saved.'
@@ -107,7 +110,7 @@ ENG:
   Search: Search...
   Previous_Page: Previous Page
   Next_Page: Next Page
-  GlobalWarp_Created: '&7The GlobalWarp ''&b%GLOBAL_WARP%&7'' was &acreated successfully&7.'
+  GlobalWarp_Created: '&7The GlobalWarp "&b%GLOBAL_WARP%&7" was &acreated successfully&7.'
   Target_Server: Target-Server
   GUI_Choose_Icon: Choose your IconType
   Warp: Warp
@@ -143,19 +146,16 @@ ENG:
   Choose_A_Warp: '&bChoose a warp'
   Choose_A_GlobalWarp: '&bChoose a global warp'
   NativePortals_Confirm_Close: '&cNative Portals &7- &4Save?'
-  Sure_That_You_Want_To_Loose_Your_Data: '&7Are you sure that you &cdon''t &7want
-    to &csave &7your changes?'
+  Sure_That_You_Want_To_Loose_Your_Data: '&7Are you sure that you &cdon''t &7want to &csave &7your changes?'
   Close: Close
   Save: Save
   GlobalWarp_Server_Is_Not_Online: '&cThe target server is not online!'
-  GlobalWarp_Player_Is_Already_On_Target_Server: '&cYou are already on the target
-    server.'
+  GlobalWarp_Player_Is_Already_On_Target_Server: '&cYou are already on the target server.'
   Go_To_NativePortal: '&7You have 30 seconds to go into a native portal.'
   GlobalWarp_Help: '&7Use: &e/GlobalWarp <create, delete>'
-  GlobalWarp_Create_Name_Already_Exists: '&7The GlobalWarp ''&b%GLOBAL_WARP%&7'' &calready
-    exists&7.'
-  GlobalWarp_Deleted: '&7The GlobalWarp ''&b%GLOBAL_WARP%&7'' was &cdeleted&7.'
-  GlobalWarp_Deleted_Cancel: '&7The GlobalWarp ''&b%GLOBAL_WARP%&7'' was &c&l&nnot&c deleted&7.'
+  GlobalWarp_Create_Name_Already_Exists: '&7The GlobalWarp "&b%GLOBAL_WARP%&7" &calready exists&7.'
+  GlobalWarp_Deleted: '&7The GlobalWarp "&b%GLOBAL_WARP%&7" was &cdeleted&7.'
+  GlobalWarp_Deleted_Cancel: '&7The GlobalWarp "&b%GLOBAL_WARP%&7" was &cnot &7deleted.'
   Native_Portal_Choose_Warp: '&cChoose a warp'
   Plugin_Reloading: '&cThe plugin will be reloaded now...'
   Success_Plugin_Reloaded: '&aThe plugin has been reloaded.'
@@ -163,11 +163,98 @@ ENG:
   Status_Of_Destination: 'Status of Destination-Holo: '
   Hologram: Hologram
   Teleport: Teleport
+  No_Permission: '&cYou don''t have permissions for that action!'
+  Enter_Name: '&cPlease enter a name.'
+  Disabled: Disabled
+  Leftclick_Enable_This_Icon: '&3Leftclick: &a&lEnable this icon'
+  Icon_Is_Disabled: '&4This icon is &l&ndisabled&4!'
+  Player_Cannot_Use_System: '&cYou are not allowed to use warps!'
+  Player_Is_Already_Teleporting: '&cYou are already teleporting!'
+  Player_Cannot_Use_Warp: '&cYou are not allowed to use this warp!'
+  Shortcut_created: '&7The shortcut "&b%SHORTCUT%&7" was &aadded&7!'
+  Shortcut_already_exists: '&cThis shortcut already exists!'
+  Shortcut_was_removed: '&7The shortcut "&b%SHORTCUT%&7" was &cremoved&7!'
+  WarpSign_Edited: The WarpSign was edited successfully!
+  Leftclick: Leftclick
+  Rightclick: Rightclick
+  Portal_Editor_Change_Name: '&7Leftclick: Change name'
+  NativePortals_Help: '&7Use: &e/%LABEL% <create, edit, delete>'
+  NativePortalEditor_Place_Blocks: '&cPlace blocks!'
+  NativePortal_Confirm_Delete: '&7Do you really want to &4delete &7the backup?'
+  No_Keep: '&aNo, keep'
+  Yes_Delete: '&cYes, &4delete'
+  NativePortal_Deleted: '&cThe portal was deleted successfully.'
+  TempWarp_Editor: '&cTemp Warps &7- &cEditor'
+  TempWarp_Reactivate: '&cTemp Warps &7- &cReactivate'
+  TempWarp_Create: '&cTemp Warps &7- &cCreate'
+  TempWarp_Delete: '&cTemp Warps &7- &cDelete'
+  Set_Name: Set name
+  Duration: Duration
+  Private: Private
+  Teleport_Message: Teleport message
+  Teleport_Costs: Teleport costs
+  Message: Message
+  GlobalWarp_Not_Exists: '&7The GlobalWarp "&b%GLOBAL_WARP%&7" &cdoes not exist&7.'
+  Money_Paid: '&7You have paid &c%AMOUNT% coin(s) &7to teleport to "&b%warp%&7".'
+  GlobalWarp_Delete_Help: '&7Use: &e/GlobalWarp delete <name>'
+  Confirm: '&cAre you sure?'
+  Delete_confirmation_globalwarp: '&7Do you really want to &cdelete &7the global warp &7"&c%GLOBAL_WARP%&7"&7? You could &cdelete shortcuts&7 linked to that as well.'
+  Rightclick_To_Reset: Rightclick to reset
+  NativePortal_Not_Deleted: '&7The portal was &cnot &7deleted.'
+  Portal_List_Leftclick_To_Edit: '&7Leftclick: Edit'
+  Portal_Editor_Change_Permission: '&7Leftclick: &eChange permission'
+  Portal_Insufficient_Permissions: '&cYou have insufficient permissions to teleport with this portal.'
+  Enter_Correct_Name_Underline: '&cPlease don''t use "_"-Symbols.'
+  Player_Cannot_Use_Category: '&cYou are not allowed to open this category!'
+  Warning_Maintenance: '&cThe WarpSystem is currently in maintenance mode, please try it later again.'
+  Not_Enough_Money: '&7You need at least &c%AMOUNT% coin(s)&7, to teleport to that position!'
+  GlobalWarps_Not_Available: '&cThere are no GlobalWarps, which can be linked!'
+  Move_To_Open_Editor: '&cMove to open the &nconfig-editor&r'
+  No_Item_In_Hand: '&cYou have to hold an item!'
+  Enter_Correct_Name: '&cPlease don''t use "@"-Symbols.'
+  Enter_Lore: '&cPlease enter a lore.'
+  Enter_Command: '&cPlease enter a command.'
+  Enter_Permission: '&cPlease enter a permission.'
+  Enter_A_Positive_Number: '&cPlease enter a positive number!'
+  TempWarp_is_private: '&7This warp is &cprivate&7!'
+  TempWarp_is_expired: '&7This warp is &cexpired&7!'
+  TempWarp_is_not_expired: '&7This warp is not &cexpired&7!'
+  Public: Public
+  TempWarp_Message_Too_Long_Too_Short: '&7The length of your message have to be between &c%MIN% &7and &c%MAX%&7!'
+  TempWarp_was_deleted: '&7Your TempWarp "&c%WARP%&7" has been &cpermanently deleted&7.'
+  TempWarp_no_access: '&cYou don''t have access to this TempWarp.'
+  Not_Set: 'Not set'
+  Active_Time: 'Active time'
+  Minimum: 'Minimum'
+  Maximum: 'Maximum'
+  Click_Toggle: '&7» Click here to toggle'
+  TempWarp_Click_Buy: '&7» Click here to &cactivate &7your TempWarp for &c%PRICE% Coin(s)'
+  TempWarp_Click_Renew: '&7» Click here to &creactivate &7your TempWarp for &c%PRICE% Coin(s)'
+  Change_Message: '&7» Click here to change the message'
+  Price: 'Price'
+  TempWarp_Created: '&7Your TempWarp "&b%NAME%&7" &7was activated for &c%PRICE% Coin(s)&7!'
+  TempWarp_Confirm_Delete: '&7Are you sure you want to &cdelete &7this TempWarp? &7You will get just &a%COINS% Coin(s) &7back, if you delete this warp.'
+  TempWarp_Deleted: '&7The TempWarp "&b%TEMP_WARP%&7" was &cdeleted&7.'
+  TempWarp_Deleted_Refund: '&7The TempWarp "&b%TEMP_WARP%&7" was &cdeleted&7. You got &a%COINS% Coin(s) &7back.'
+  TempWarp_Deleted_Cancel: '&7The TempWarp "&b%TEMP_WARP%&7" was &cnot &7deleted.'
+  TempWarp_Delete_TimeOut: '&7You took &ctoo much time &7to delete your TempWarp, try it again.'
+  TempWarp_expiring: '&7Your TempWarp "&b%TEMP_WARP%&7" &cexpired&7. You have &b%TIME_LEFT% &7left to reactivate it.'
+  TempWarp_Deletion_In: '&7Your TempWarp "&b%TEMP_WARP%&7" will be &cdeleted &7in &b%TIME_LEFT%&7!'
+  Removed: 'Removed'
+  TempWarp_Edited_Pay: '&7Your TempWarp "&b%TEMP_WARP%&7" was &aedited &7for &c%COINS% Coin(s)&7.'
+  TempWarp_Edited_Refund: '&7You got &a%COINS% Coin(s) &7back for your edit on your TempWarps "&b%TEMP_WARP%&7".'
+  TempWarp_Edited: '&7Your TempWarp "&b%TEMP_WARP%&7" was edited &asuccessfully&7.'
+  TempWarp_Renew: '&7Do you want to reactivate your TempWarp "&b%TEMP_WARP%&7" &7for &c%COINS% &cCoin(s)&7? &8[%YES%&8]'
+  TempWarp_Renew_Yes: '&aYes'
+  TempWarp_Renew_Yes_Hover: '&7> Click <'
+  TempWarp_Renew_Not_Enough_Money: '&7You have &cnot enough money &7to reactivate your TempWarp.'
+  TempWarp_Renew_Finished: '&7Your TempWarp "&b%TEMP_WARP%&7" was &areactivated &7for &c%COINS% Coin(s)&7.'
+
 GER:
   Menu_Help: '&c&nHilfe'
   Menu_Help_Leftclick: '&3Linksklick: &bBearbeitungs-Modus'
   Menu_Help_Rightclick: '&3Rechtsklick: &bOptionen'
-  Back: "Zurück"
+  Back: 'Zurück'
   Edit_Mode_Set_ActionIcon: '&3Linksklick: &bWarp setzen'
   Edit_Mode_Set_Category: '&3Rechtsklick: &bKategorie setzen'
   Menu_Help_Leftclick_Edit_Mode: '&3Linksklick: &bBearbeitungs-Modus verlassen'
@@ -175,115 +262,117 @@ GER:
   Permission: Berechtigung
   Shift_Leftclick_Edit: '&7Shift-Linksklick: Bewegen'
   Leftclick_Edit: '&7Linksklick: Bearbeiten'
-  Rightclick_Delete: "&7Rechtsklick: Löschen"
+  Rightclick_Delete: '&7Rechtsklick: Löschen'
   Item_Editing: Item-Bearbeitung
-  Change_Name: "&8> Klicke hier um den Namen zu ändern."
+  Change_Name: '&7» Klicke hier, um den Namen zu ändern.'
   Cancel: Abbrechen
   Ready: Fertig
+  Not_Ready: 'Nicht fertig'
   Sparkle: Funkeln
   Description: Beschreibung
-  Leftclick_Add_Line: "&3Linksklick: &aZeile hinzufügen"
-  Rightclick_Reset_Lines: "&3Rechtsklick: &cZeilen zurücksetzen"
+  Leftclick_Add_Line: '&3Linksklick: &aZeile hinzufügen'
+  Rightclick_Reset_Lines: '&3Rechtsklick: &cZeilen zurücksetzen'
   Current: Aktuell
-  Leftclick_Add: "&3Linksklick: &aHinzufügen"
+  Leftclick_Add: '&3Linksklick: &aHinzufügen'
   Leftclick_Disable: '&3Linksklick: &cDeaktivieren'
   Leftclick_Remove: '&3Linksklick: &cEntfernen'
   Line: Linie
   Name: Name
   Success_Create_Warp: '&aDu hast erfolgreich ein &bWarp &aerstellt.'
+  Success_Create_Decoration: '&aDu hast erfolgreich ein &bDekoIcon &aerstellt.'
   Teleporting_Info: '&cTeleport in &l&n%seconds%'
-  Teleported_To: '&7Du wurdest zu ''&b%warp%&7'' teleportiert.'
+  Teleported_To: '&7Du wurdest zu "&b%warp%&7" teleportiert.'
   Config: Config
   Maintenance: Wartung
   Language: Sprache
   Leftclick_Prev_Lang: '&3Linksklick: &bVorherige Sprache'
-  Rightclick_Next_Lang: "&3Rechtsklick: &bNächste Sprache"
+  Rightclick_Next_Lang: '&3Rechtsklick: &bNächste Sprache'
   Animation: Animation
   Shift_Leftclick_Show_Animation: '&3Shift-Linksklick: &bZeigen'
   Leftclick_Prev_Animation: '&3Linksklick: &bVorherige Animation'
-  Rightclick_Next_Animation: "&3Rechtsklick: &bNächste Animation"
+  Rightclick_Next_Animation: '&3Rechtsklick: &bNächste Animation'
   Walking_During_Teleports: Laufen beim Teleport
   Teleport_Delay: Teleport-Zeit
   Leftclick_Reduce: '&3Linksklick: &bVerringern'
-  Rightclick_Enlarge: "&3Rechtsklick: &bVergrößern"
-  Success_Changed_Lang: "&aDie Sprache wurde auf '%lang%' geändert."
+  Rightclick_Enlarge: '&3Rechtsklick: &bVergrößern'
+  Success_Changed_Lang: '&aDie Sprache wurde auf "%lang%" geändert.'
   Success_Maintenance_Enabled: '&4Der Wartungs-Modus wurde aktiviert.'
   Leftclick_Maintenance_Off: '&3Linksklick: &cDeaktivieren'
   Success_Maintenance_Disabled: '&4Der Wartungs-Modus wurde deaktiviert.'
   Leftclick_Maintenance_On: '&3Linksklick: &aAktivieren'
-  Success_Changed_Animation: "&aDie Animation wurde auf '%anim%' geändert."
+  Success_Changed_Animation: '&aDie Animation wurde auf "%anim%" geändert.'
   Success_Walking_Enabled: '&7Laufen beim Teleport ist nun &aerlaubt&7.'
   Success_Walking_Disabled: '&7Laufen beim Teleport ist nun &cnicht mehr erlaubt&7.'
-  Success_Changed_Teleport_Delay: "&aDie Teleport-Zeit wurde auf '%delay%' geändert."
-  Success_Configured: '&aDu hast das Symbol erfolgreich bearbeitet'
-  Delete: "&cLöschen"
-  'Yes': Ja
-  Confirm_Delete: "&7Möchten Sie dieses Symbol wirklich löschen?"
-  'No': Nein
-  Icon_Not_Deleted: "&7Das Symbol wurde &cnicht &7gelöscht."
-  Icon_Deleted: "&cDas Symbol wurde erfolgreich gelöscht."
+  Success_Changed_Teleport_Delay: '&aDie Teleport-Zeit wurde auf "%delay%" geändert.'
+  Success_Configured: '&aDu hast das Symbol erfolgreich bearbeitet.'
+  Delete: '&cLöschen'
+  Yes: Ja
+  Confirm_Delete: '&7Möchten Sie dieses Symbol wirklich löschen?'
+  No: Nein
+  Icon_Not_Deleted: '&7Das Symbol wurde &cnicht &7gelöscht.'
+  Icon_Deleted: '&cDas Symbol wurde erfolgreich gelöscht.'
   Leftclick_Move_Icon: '&3Linksklick: &bSymbol bewegen'
   Success_Icon_Moved: '&aDas Symbol wurde erfolgreich bewegt.'
   Name_Already_Exists: '&cDieser Name existiert bereits.'
-  Only_For_Players: "&cDies ist nur für Spieler!"
+  Only_For_Players: '&cDies ist nur für Spieler!'
   Use: Benutze
   Success_Files_Reloaded: '&aAlle Dateien wurden neu geladen.'
   Leftclick_Enable: '&3Linksklick: &aAktivieren'
   Success_Create_Category: '&aDu hast erfolgreich eine &bKategorie &aerstellt.'
   PORTAL_GO_TO_PORTAL: '&7Du hast nun 30 Sekunden Zeit, um in ein Portal zu gehen.'
   Apply_Delete_No: '&7Nein, &abehalten&7.'
-  Question_Delete_Portal: "&7Willst du dieses Portal wirklich &clöschen&7?"
-  Apply_Delete_Yes: "&7Ja, &4löschen&7."
-  Delete_Portal_Successfully: "&7Das Portal wurde erfolgreich &cgelöscht&7."
+  Question_Delete_Portal: '&7Willst du dieses Portal wirklich &clöschen&7?'
+  Apply_Delete_Yes: '&7Ja, &4löschen&7.'
+  Delete_Portal_Successfully: '&7Das Portal wurde erfolgreich &cgelöscht&7.'
   PORTAL_CREATE_HELP: '&7Benutze: &e/portal create <Position-Name>'
   PORTAL_CREATE_FIRST_SAVED: '&7Die erste Position wurde gespeichert.'
-  PORTAL_CREATE_NEXT: "&7Führe diesen Befehl erneut an der gewünschten Zielposition aus."
+  PORTAL_CREATE_NEXT: '&7Führe diesen Befehl erneut an der gewünschten Zielposition aus.'
   Teleport_Radius: Teleport-Radius
-  Animation_Height: "Animations-Höhe"
+  Animation_Height: 'Animations-Höhe'
   Animation_Type: Animations-Typ
   Particle_Effect: Partikel-Effekt
-  Hologram_Height: "Hologram-Höhe"
+  Hologram_Height: 'Hologram-Höhe'
   Start_Name: Start-Name
   Goal_Name: Ziel-Name
   Sound: Ton
-  Volume: "Lautstärke"
-  Pitch: "Tonhöhe"
+  Volume: 'Lautstärke'
+  Pitch: 'Tonhöhe'
   Entering_Portal_Editor: '&7Du bist nun im Portal-Editor.'
   Portal_Created: '&7Das Portal wurde erstellt.'
   Portal_Not_Created: '&7Das Portal wurde &cnicht &7erstellt.'
-  Portal_Save_Changes: "&7Die Änderungen wurden gespeichert."
-  Portal_Delete_Changes: "&7Die Änderungen wurden &cnicht &7gespeichert."
+  Portal_Save_Changes: '&7Die Änderungen wurden gespeichert.'
+  Portal_Delete_Changes: '&7Die Änderungen wurden &cnicht &7gespeichert.'
   PORTAL_HELP: '&7Benutze: &e/portal <create, edit, delete>'
-  Delete_Portal_Cancel: "&7Das Portal wurde &4nicht &cgelöscht&7."
-  Change_Name_Leftclick: "&3Linksklick: &bNamen ändern"
-  Change_Name_Rightclick: "&3Rechtsklick: &bItem ändern"
+  Delete_Portal_Cancel: '&7Das Portal wurde &4nicht &cgelöscht&7.'
+  Change_Name_Leftclick: '&3Linksklick: &bNamen ändern'
+  Change_Name_Rightclick: '&3Rechtsklick: &bItem ändern'
   Move_Help: '&7Bewegen: Rechtsklick auf Kategorien um dort hin zu wechseln.'
   Edit_Mode_Set_Icon: '&3Linksklick: &bIcon setzen'
   Coins: Coin(s)
   Costs: Kosten
-  Shift_Rightclick_Edit: "&7Shift-Rechtsklick: öffnen"
-  WarpSign_Choose_Warp: "Wähle ein Warp für das Warp-Schild aus!"
-  WarpSign_Choose_Warp_GUI: "&4&lWähle ein Warp!"
+  Shift_Rightclick_Edit: '&7Shift-Rechtsklick: öffnen'
+  WarpSign_Choose_Warp: 'Wähle ein Warp für das Warp-Schild aus!'
+  WarpSign_Choose_Warp_GUI: '&4&lWähle ein Warp!'
   WarpSign_Finish: Das Warp-Schild wurde erfolgreich gesetzt!
   Teleport_Cancelled: '&cDer Teleport wurde abgebrochen.'
   WarpSign_Removed: '&7Das Warp-Schild wurde &centfernt&7!'
   Search: Suchen...
   Previous_Page: Vorherige Seite
-  Next_Page: "Nächste Seite"
-  GlobalWarp_Created: '&7Der GlobalWarp ''&b%GLOBAL_WARP%&7'' wurde &aerfolgreich erstellt&7.'
+  Next_Page: 'Nächste Seite'
+  GlobalWarp_Created: '&7Der GlobalWarp "&b%GLOBAL_WARP%&7" wurde &aerfolgreich erstellt&7.'
   Target_Server: Ziel-Server
-  GUI_Choose_Icon: "Wähle deinen Symbol-Typen"
+  GUI_Choose_Icon: 'Wähle deinen Symbol-Typen'
   Warp: Warp
   Category: Kategorie
   GlobalWarp: GlobalWarp
   Decoration: Dekoration
-  GlobalWarp_Leftclick_To_Choose: "&3Linksklick: &bWählen"
+  GlobalWarp_Leftclick_To_Choose: '&3Linksklick: &bWählen'
   Leftclick_Set: '&3Linksklick: &aSetzen'
   Status: Status
   Enabled: Aktiviert
   Disable_This_Icon: '&3Linksklick: &c&lDeaktiviere dieses Icon'
   GlobalWarp_Current_Warp: '&7Aktuell: &b%GlobalWarp%'
-  Leftclick_Change: "&3Linksklick: &aändern"
+  Leftclick_Change: '&3Linksklick: &aändern'
   Success_Create_GlobalWarp: '&aDu hast erfolgreich ein &bGlobalWarp &aerstellt.'
   GlobalWarp_Does_Not_Exist: '&cDieser GlobalWarp existiert nicht.'
   Menu_Help_Shift_Leftclick: '&3Shift-Linksklick: &bHintergrund setzen'
@@ -297,29 +386,115 @@ GER:
   End_Portal: '&9End-Portal'
   NativePortal_Material: Portal-Material
   Teleport_Link: Teleport-Verlinkung
-  Portal_Blocks: "Portal-Blöcke"
+  Portal_Blocks: 'Portal-Blöcke'
   Not_Ready_For_Saving: '&cDas Portal kann noch nicht gespeichert werden'
   Set_Portal_Name: Name setzen
-  NativePortals_Set_Blocks: "Setze Teleport-Blöcke"
+  NativePortals_Set_Blocks: 'Setze Teleport-Blöcke'
   Portal_Name: Portal-Name
-  Drop_To_Leave: "&cLasse den Block fallen, um zum Menü zu kommen"
-  Choose_A_Warp: "&bWähle ein Warp"
-  Choose_A_GlobalWarp: "&bWähle ein globalen Warp"
+  Drop_To_Leave: '&cLasse den Block fallen, um zum Menü zu kommen'
+  Choose_A_Warp: '&bWähle ein Warp'
+  Choose_A_GlobalWarp: '&bWähle ein globalen Warp'
   NativePortals_Confirm_Close: '&cNative Portals &7- &4Speichern?'
-  Sure_That_You_Want_To_Loose_Your_Data: "&7Bist du sicher, dass du deine änderungen &cnicht Speichern &7möchtest?"
-  Close: "Schließen"
+  Sure_That_You_Want_To_Loose_Your_Data: '&7Bist du sicher, dass du deine Änderungen &cnicht Speichern &7möchtest?'
+  Close: 'Schließen'
   Save: Speichern
   GlobalWarp_Server_Is_Not_Online: '&cDer Ziel-Server ist nicht online!'
   GlobalWarp_Player_Is_Already_On_Target_Server: '&cDu befindest dich bereits auf dem Ziel-Server.'
   Go_To_NativePortal: '&7Du hast nun 30 Sekunden Zeit, um in ein Ur-Portal zu gehen.'
   GlobalWarp_Help: '&7Benutze: &e/GlobalWarp <create, delete>'
-  GlobalWarp_Create_Name_Already_Exists: '&7Der GlobalWarp ''&b%GLOBAL_WARP%&7'' &cexistiert bereits&7.'
-  GlobalWarp_Deleted: "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' wurde &cgelöscht&7."
-  GlobalWarp_Deleted_Cancel: "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' wurde &c&l&nnicht&c gelöscht&7."
-  Native_Portal_Choose_Warp: "&cWähle ein Warp"
+  GlobalWarp_Create_Name_Already_Exists: '&7Der GlobalWarp "&b%GLOBAL_WARP%&7" &cexistiert bereits&7.'
+  GlobalWarp_Deleted: '&7Der GlobalWarp "&b%GLOBAL_WARP%&7" wurde &cgelöscht&7.'
+  GlobalWarp_Deleted_Cancel: '&7Der GlobalWarp "&b%GLOBAL_WARP%&7" wurde &cnicht &7gelöscht.'
+  Native_Portal_Choose_Warp: '&cWähle ein Warp'
   Plugin_Reloading: '&cDas Plugin wird jetzt neu geladen...'
   Success_Plugin_Reloaded: '&aDas Plugin wurde neu geladen.'
   Status_Of_Start: 'Status vom Start-Holo: '
   Status_Of_Destination: 'Status vom Destination-Holo: '
   Hologram: Hologram
   Teleport: Teleport
+  No_Permission: '&cDu hast keine Berechtigungen für diese Aktion!'
+  Enter_Name: '&cBitte gib einen Namen ein.'
+  Disabled: Deaktiviert
+  Leftclick_Enable_This_Icon: '&3Linksklick: &a&lAktiviere dieses Icon'
+  Icon_Is_Disabled: '&4Dieses Icon ist &l&ndeaktiviert&4!'
+  Player_Cannot_Use_System: '&cSie dürfen keine Warps benutzen!'
+  Player_Is_Already_Teleporting: '&cDu wirst bereits teleportiert!'
+  Player_Cannot_Use_Warp: '&cSie dürfen diesen Warp nicht benutzen!'
+  Shortcut_created: '&7Der Shortcut "&b%SHORTCUT%&7" wurde &ahinzugefügt&7!'
+  Shortcut_already_exists: '&cDieser Shortcut existiert bereits!'
+  Shortcut_was_removed: '&7Der Shortcut "&b%SHORTCUT%&7" wurde &cgelöscht&7!'
+  WarpSign_Edited: Das Warp-Schild wurde erfolgreich bearbeitet!
+  Leftclick: Linksklick
+  Rightclick: Rechtsklick
+  Portal_Editor_Change_Name: '&7Linksklick: Name ändern'
+  NativePortals_Help: '&7Benutze: &e/%LABEL% <create, edit, delete>'
+  NativePortalEditor_Place_Blocks: '&cPlatziere Blöcke!'
+  NativePortal_Confirm_Delete: '&7Möchtest du das Portal wirklich &4löschen&7?'
+  No_Keep: '&aNein, behalten'
+  Yes_Delete: '&cJa, &4löschen'
+  NativePortal_Deleted: '&cDas Portal wurde erfolgreich gelöscht.'
+  TempWarp_Editor: '&cTemp Warps &7- &cEditor'
+  TempWarp_Reactivate: '&cTemp Warps &7- &cErneuern'
+  TempWarp_Create: '&cTemp Warps &7- &cErstellen'
+  TempWarp_Delete: '&cTemp Warps &7- &cLöschen'
+  Set_Name: Name setzen
+  Duration: Dauer
+  Private: Privat
+  Teleport_Message: Teleport Nachricht
+  Teleport_Costs: Teleport Kosten
+  Message: Nachricht
+  GlobalWarp_Not_Exists: '&7Der GlobalWarp "&b%GLOBAL_WARP%&7" &cexistiert nicht&7.'
+  Money_Paid: '&7Du hast &c%AMOUNT% Coin(s) &7bezahlt, um dich nach "&b%warp%&7" zu teleportieren!'
+  GlobalWarp_Delete_Help: '&7Benutze: &e/GlobalWarp delete <Name>'
+  Confirm: '&cBist du sicher?'
+  Delete_confirmation_globalwarp: '&7Möchtest du den globalen Warp "&c%GLOBAL_WARP%&7" wirklich &clöschen&7? Du könntest automatisch &cShortcuts löschen&7, die damit verbunden sind.'
+  Rightclick_To_Reset: Rechtsklick zum resetten
+  NativePortal_Not_Deleted: '&7Das Portal wurde &cnicht &7gelöscht.'
+  Portal_List_Leftclick_To_Edit: '&7Linksklick: Editieren'
+  Portal_Editor_Change_Permission: '&7Linksklick: &eBerechtigung ändern'
+  Portal_Insufficient_Permissions: '&cDu hast nicht genug Berechtigungen, um dich mit diesem Portal zu teleportieren.'
+  Enter_Correct_Name_Underline: '&cBitte benutze keine "_"-Zeichen.'
+  Player_Cannot_Use_Category: '&cSie dürfen diese Kategorie nicht öffnen!'
+  Warning_Maintenance: '&cDas WarpSystem ist momentan im Wartungs-Modus, bitte versuche es später erneut.'
+  Not_Enough_Money: '&7Du brauchst mindestens &c%AMOUNT% Coin(s)&7, um dich dorthin zu teleportieren!'
+  GlobalWarps_Not_Available: '&cEs existieren keine GlobalWarps, die verknüpft werden können!'
+  Move_To_Open_Editor: '&cBewegen um den &nEditor&c wieder zu öffnen'
+  No_Item_In_Hand: '&cDu musst ein Item halten!'
+  Enter_Correct_Name: '&cBitte benutze keine "@"-Zeichen.'
+  Enter_Lore: '&cBitte gib eine Beschreibung ein.'
+  Enter_Command: '&cBitte gib einen Befehl ein.'
+  Enter_Permission: '&cBitte gib einen Permission ein.'
+  Enter_A_Positive_Number: '&cBitte gib eine positive Nummer ein!'
+  TempWarp_is_private: '&7Dieser Warp ist &cprivat&7!'
+  TempWarp_is_expired: '&7Dieser Warp ist &cabgelaufen&7!'
+  TempWarp_is_not_expired: '&7Dieser Warp ist noch &cnicht abgelaufen&7!'
+  Public: Öffentlich
+  TempWarp_Message_Too_Long_Too_Short: '&7Die Länge deiner Nachricht muss zwischen &c%MIN% &7und &c%MAX%&7 liegen!'
+  TempWarp_was_deleted: '&7Dein TempWarp "&c%WARP%&7" wurde &cendgültig gelöscht&7.'
+  TempWarp_no_access: '&cDu hast keinen Zugriff auf diesen TempWarp.'
+  Not_Set: 'Nicht gesetzt'
+  Active_Time: 'Aktive Zeit'
+  Minimum: 'Minimum'
+  Maximum: 'Maximum'
+  Click_Toggle: '&7» Klicke hier, um umzuschalten'
+  Change_Message: '&7» Klicke hier, um die Nachricht zu ändern'
+  Price: 'Preis'
+  TempWarp_Click_Buy: '&7» Klicke hier, um dein TempWarp für &c%PRICE% Coin(s) &7zu aktivieren'
+  TempWarp_Click_Renew: '&7» Klicke hier, um dein TempWarp für &c%PRICE% Coin(s) &7zu reaktivieren'
+  TempWarp_Created: '&7Dein TempWarp "&b%NAME%&7" &7wurde für &c%PRICE% Coin(s) &7aktiviert!'
+  TempWarp_Confirm_Delete: '&7Bist du sicher, dass du diesen TempWarp &clöschen &7möchtest? &7Du wirst nur &a%COINS% Coin(s) &7erstattet bekommen.'
+  TempWarp_Deleted: '&7Der TempWarp "&b%TEMP_WARP%&7" wurde &cgelöscht&7.'
+  TempWarp_Deleted_Refung: '&7Der TempWarp "&b%TEMP_WARP%&7" wurde &cgelöscht&7. Dir wurden &a%COINS% Coin(s) &7erstattet.'
+  TempWarp_Deleted_Cancel: '&7Der TempWarp "&b%TEMP_WARP%&7" wurde &cnicht &7gelöscht.'
+  TempWarp_Delete_TimeOut: '&7Du hast &czu lange gebraucht&7, um dein TempWarp zu löschen, versuche es erneut.'
+  TempWarp_expiring: '&7Dein TempWarp "&b%TEMP_WARP%&7" ist &cabgelaufen&7. Es verbleiben noch &b%TIME_LEFT%&7, um es zu erneuern.'
+  TempWarp_Deletion_In: '&7Dein TempWarp "&b%TEMP_WARP%&7" wird in &b%TIME_LEFT% &cgelöscht&7!'
+  Removed: 'Entfernt'
+  TempWarp_Edited_Pay: '&7Dein TempWarp "&b%TEMP_WARP%&7" wurde &aerfolgreich &7für &c%COINS% Coin(s) &7bearbeitet.'
+  TempWarp_Edited_Refund: '&7Dir wurden &a%COINS% Coin(s) &7beim Bearbeiten deines TempWarps "&b%TEMP_WARP%&7" erstattet.'
+  TempWarp_Edited: '&7Dein TempWarp "&b%TEMP_WARP%&7" wurde &aerfolgreich &7bearbeitet.'
+  TempWarp_Renew: '&7Willst du dein TempWarp "&b%TEMP_WARP%&7" für &c%COINS% &cCoin(s) &7erneuern? &8[%YES%&8]'
+  TempWarp_Renew_Yes: '&aJa'
+  TempWarp_Renew_Yes_Hover: '&7> Klick <'
+  TempWarp_Renew_Not_Enough_Money: '&7Du hast &cnicht genügend Geld&7, um dein TempWarp zu erneuern.'
+  TempWarp_Renew_Finished: '&7Dein TempWarp "&b%TEMP_WARP%&7" wurde &aerfolgreich für &c%COINS% Coin(s) &7erneuert.'

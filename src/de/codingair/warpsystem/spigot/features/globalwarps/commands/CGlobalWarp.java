@@ -5,7 +5,6 @@ import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
@@ -22,7 +21,7 @@ public class CGlobalWarp extends CommandBuilder {
         super("GlobalWarp", new BaseComponent(WarpSystem.PERMISSION_USE) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission", new Example("GER", "&cDu hast keine Berechtigungen für diese Aktion!"), new Example("ENG", "&cYou don't have permissions for that action!"), new Example("FRE", "&cDésolé mais vous ne possédez la permission pour exécuter cette action!")));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
             }
 
             @Override
@@ -32,12 +31,12 @@ public class CGlobalWarp extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Teleport_Help", new Example("ENG", "&7Use: &e/GlobalWarp <warp>"), new Example("GER", "&7Benutze: &e/GlobalWarp <warp>")));
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Teleport_Help", new Example("ENG", "&7Use: &e/GlobalWarp <warp>"), new Example("GER", "&7Benutze: &e/GlobalWarp <warp>")));
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp>");
                 return false;
             }
         }, true);
@@ -74,7 +73,7 @@ public class CGlobalWarp extends CommandBuilder {
                     GlobalWarp gw = IconManager.getInstance().getGlobalWarp(argument, category);
 
                     if(gw == null || failure) {
-                        sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Does_Not_Exist", new Example("ENG", "&cThis GlobalWarp does not exist."), new Example("GER", "&cDieser GlobalWarp existiert nicht.")));
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Does_Not_Exist"));
                         return false;
                     }
 

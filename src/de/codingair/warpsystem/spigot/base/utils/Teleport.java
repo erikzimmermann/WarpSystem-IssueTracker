@@ -5,16 +5,14 @@ import de.codingair.codingapi.particles.animations.playeranimations.CircleAnimat
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPacket;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -28,25 +26,21 @@ public class Teleport {
 
     private long startTime = 0;
 
-    private Warp warp;
     private String globalWarpName;
+    private Location location;
+
     private String displayName;
     private double costs;
-
     private boolean showMessage = true;
     private boolean canMove = false;
 
-
-    public Teleport(Player player, Warp warp) {
-        this(player, warp, null);
-    }
-
-    public Teleport(Player player, Warp warp, String displayName) {
+    public Teleport(Player player, String displayName, double costs, boolean showMessage, boolean canMove) {
         this.player = player;
-        this.warp = warp;
         this.displayName = displayName;
+        this.costs = costs;
+        this.showMessage = showMessage;
+        this.canMove = canMove;
 
-        this.costs = warp.getAction(Action.PAY_MONEY) == null ? 0 : warp.getAction(Action.PAY_MONEY).getValue();
         if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) this.costs = 0;
 
         this.animation = new CircleAnimation(WarpSystem.getInstance().getTeleportManager().getParticle(), player, WarpSystem.getInstance(), WarpSystem.getInstance().getTeleportManager().getRadius());
@@ -63,7 +57,7 @@ public class Teleport {
 
                 player.playSound(player.getLocation(), Sound.NOTE_PIANO.bukkitSound(), 1.5F, 0.5F);
 
-                String msg = Lang.get("Teleporting_Info", new Example("ENG", "&cTeleport in §l§n%seconds%"), new Example("GER", "&cTeleport in &l&n%seconds%")).replace("%seconds%", left + "");
+                String msg = Lang.get("Teleporting_Info").replace("%seconds%", left + "");
 
                 MessageAPI.sendActionBar(player, msg);
 
@@ -72,36 +66,26 @@ public class Teleport {
         };
     }
 
-    public Teleport(Player player, String globalWarpName, String displayName) {
-        this(player, globalWarpName, displayName, 0);
+    public Teleport(Player player, String globalWarp, String displayName, double costs, boolean showMessage, boolean canMove) {
+        this(player, displayName, costs, showMessage, canMove);
+        this.globalWarpName = globalWarp;
     }
 
-    public Teleport(Player player, String globalWarpName, String displayName, double costs) {
-        this.player = player;
-        this.globalWarpName = globalWarpName;
-        this.displayName = displayName;
-        this.costs = costs;
-        this.animation = new CircleAnimation(WarpSystem.getInstance().getTeleportManager().getParticle(), player, WarpSystem.getInstance(), WarpSystem.getInstance().getTeleportManager().getRadius());
-        this.runnable = new BukkitRunnable() {
-            private int left = WarpSystem.getInstance().getTeleportManager().getSeconds();
+    public Teleport(Player player, Sound finishSound, Sound cancelSound, String globalWarp, String displayName, double costs, boolean showMessage, boolean canMove) {
+        this(player, globalWarp, displayName, costs, showMessage, canMove);
+        this.finishSound = finishSound;
+        this.cancelSound = cancelSound;
+    }
 
-            @Override
-            public void run() {
-                if(left == 0) {
-                    teleport();
-                    MessageAPI.sendActionBar(player, null);
-                    return;
-                }
+    public Teleport(Player player, Location location, String displayName, double costs, boolean showMessage, boolean canMove) {
+        this(player, displayName, costs, showMessage, canMove);
+        this.location = location;
+    }
 
-                player.playSound(player.getLocation(), Sound.NOTE_PIANO.bukkitSound(), 1.5F, 0.5F);
-
-                String msg = Lang.get("Teleporting_Info", new Example("ENG", "&cTeleport in §l§n%seconds%"), new Example("GER", "&cTeleport in &l&n%seconds%")).replace("%seconds%", left + "");
-
-                MessageAPI.sendActionBar(player, msg);
-
-                left--;
-            }
-        };
+    public Teleport(Player player, Sound finishSound, Sound cancelSound, Location location, String displayName, double costs, boolean showMessage, boolean canMove) {
+        this(player, location, displayName, costs, showMessage, canMove);
+        this.finishSound = finishSound;
+        this.cancelSound = cancelSound;
     }
 
     public void start() {
@@ -119,7 +103,7 @@ public class Teleport {
             this.runnable.cancel();
             MessageAPI.sendActionBar(player, null);
         }
-        if(sound) cancelSound.playSound(player);
+        if(sound && cancelSound != null) cancelSound.playSound(player);
 
         if(!finished) {
             if(AdapterType.getActive() != null) {
@@ -131,13 +115,13 @@ public class Teleport {
     public void teleport() {
         cancel(false, true);
 
-        String warpName = warp == null ? globalWarpName : warp.getName();
+        String warpName = displayName;
 
-        if(warp != null) {
+        if(location != null) {
             player.setFallDistance(0F);
-            player.teleport(warp.getLocation());
+            player.teleport(location);
             WarpSystem.getInstance().getTeleportManager().getTeleports().remove(this);
-        } else {
+        } else if(this.globalWarpName != null) {
             ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).teleport(getPlayer(), displayName, warpName, this.costs, new Callback<PrepareTeleportPacket.Result>() {
                 @Override
                 public void accept(PrepareTeleportPacket.Result result) {
@@ -147,13 +131,13 @@ public class Teleport {
                             break;
 
                         case WARP_NOT_EXISTS:
-                            getPlayer().sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists", new Example("ENG", "&7The GlobalWarp '&b%GLOBAL_WARP%&7' &cdoes not exist&7."), new Example("GER", "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' &cexistiert nicht&7.")).replace("%GLOBAL_WARP%", globalWarpName));
+                            getPlayer().sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists").replace("%GLOBAL_WARP%", globalWarpName));
 
                         case SERVER_NOT_AVAILABLE:
-                            getPlayer().sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Server_Is_Not_Online", new Example("ENG", "&cThe target server is not online!"), new Example("GER", "&cDer Ziel-Server ist nicht online!")));
+                            getPlayer().sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Server_Is_Not_Online"));
 
                         case PLAYER_ALREADY_ON_SERVER:
-                            getPlayer().sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Player_Is_Already_On_Target_Server", new Example("ENG", "&cYou are already on the target server."), new Example("GER", "&cDu befindest dich bereits auf dem Ziel-Server.")));
+                            getPlayer().sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Player_Is_Already_On_Target_Server"));
 
                         default:
                             if(AdapterType.getActive() != null) {
@@ -167,13 +151,13 @@ public class Teleport {
             return;
         }
 
-        finishSound.playSound(player);
+        if(finishSound != null) finishSound.playSound(player);
 
         if(showMessage || this.costs > 0) {
             if(this.costs > 0) {
-                player.sendMessage(Lang.getPrefix() + Lang.get("Money_Paid", new Example("ENG", "&7You have paid &c%AMOUNT% coin(s) &7to teleport to '&b%warp%&7'."), new Example("GER", "&7Du hast &c%AMOUNT% Coin(s) &7bezahlt, um dich nach '&b%warp%&7' zu teleportieren!")).replace("%AMOUNT%", costs + "").replace("%warp%", displayName != null ? ChatColor.translateAlternateColorCodes('&', displayName) : ChatColor.translateAlternateColorCodes('&', warp.getName())));
+                player.sendMessage(Lang.getPrefix() + Lang.get("Money_Paid").replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
             } else {
-                player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To", new Example("ENG", "&7You have been teleported to '&b%warp%&7'."), new Example("GER", "&7Du wurdest zu '&b%warp%&7' teleportiert.")).replace("%warp%", displayName != null ? ChatColor.translateAlternateColorCodes('&', displayName) : ChatColor.translateAlternateColorCodes('&', warp.getName())));
+                player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
             }
         }
     }
@@ -182,8 +166,8 @@ public class Teleport {
         return player;
     }
 
-    public Warp getTo() {
-        return warp;
+    public Location getTo() {
+        return this.location;
     }
 
     public Animation getAnimation() {
@@ -228,5 +212,9 @@ public class Teleport {
 
     public void setShowMessage(boolean showMessage) {
         this.showMessage = showMessage;
+    }
+
+    public Location getLocation() {
+        return location;
     }
 }

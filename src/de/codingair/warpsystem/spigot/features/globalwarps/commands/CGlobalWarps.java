@@ -7,7 +7,6 @@ import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
@@ -22,7 +21,7 @@ public class CGlobalWarps extends CommandBuilder {
         super("GlobalWarps", new BaseComponent(WarpSystem.PERMISSION_MODIFY_GLOBAL_WARPS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission", new Example("GER", "&cDu hast keine Berechtigungen für diese Aktion!"), new Example("ENG", "&cYou don't have permissions for that action!"), new Example("FRE", "&cDésolé mais vous ne possédez la permission pour exécuter cette action!")));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
             }
 
             @Override
@@ -32,12 +31,12 @@ public class CGlobalWarps extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " §e<create, delete, list>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, list>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " §e<create, delete, list>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, list>");
                 return false;
             }
         }, true);
@@ -45,7 +44,7 @@ public class CGlobalWarps extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("create") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Create_Help", new Example("ENG", "&7Use: &e/GlobalWarp create <name>"), new Example("GER", "&7Benutze: &e/GlobalWarp create <Name>")));
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " create §e<name>");
                 return false;
             }
         });
@@ -62,9 +61,9 @@ public class CGlobalWarps extends CommandBuilder {
                     @Override
                     public void accept(Boolean created) {
                         if(created) {
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Created", new Example("ENG", "&7The GlobalWarp '&b%GLOBAL_WARP%&7' was &acreated successfully&7."), new Example("GER", "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' wurde &aerfolgreich erstellt&7.")).replace("%GLOBAL_WARP%", argument));
+                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Created").replace("%GLOBAL_WARP%", argument));
                         } else {
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Create_Name_Already_Exists", new Example("ENG", "&7The GlobalWarp '&b%GLOBAL_WARP%&7' &calready exists&7."), new Example("GER", "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' &cexistiert bereits&7.")).replace("%GLOBAL_WARP%", argument));
+                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Create_Name_Already_Exists").replace("%GLOBAL_WARP%", argument));
                         }
                     }
                 });
@@ -75,7 +74,7 @@ public class CGlobalWarps extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("delete") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Delete_Help", new Example("ENG", "&7Use: &e/GlobalWarp delete <name>"), new Example("GER", "&7Benutze: &e/GlobalWarp delete <Name>")));
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " delete §e<name>");
                 return false;
             }
         });
@@ -92,13 +91,9 @@ public class CGlobalWarps extends CommandBuilder {
 
                 if(name != null) {
                     new ConfirmGUI((Player) sender,
-                            Lang.get("Confirm",
-                                    new Example("ENG", "&cAre you sure?"),
-                                    new Example("GER", "&cBist du sicher?")),
+                            Lang.get("Confirm"),
                             Lang.get("Apply_Delete_No"),
-                            Lang.get("Delete_confirmation_globalwarp",
-                                    new Example("ENG", "&7Do you really want to &cdelete &7the global warp &7\"&c%GLOBAL_WARP%&7\"&7? You could &cdelete shortcuts&7 linked to that as well."),
-                                    new Example("GER", "&7Möchtest du den globalen Warp \"&c%GLOBAL_WARP%&7\" wirklich &clöschen&7? Du könntest automatisch &cShortcuts löschen&7, die damit verbunden sind.")).replace("%GLOBAL_WARP%", name),
+                            Lang.get("Delete_confirmation_globalwarp").replace("%GLOBAL_WARP%", name),
                             Lang.get("Apply_Delete_Yes"),
                             WarpSystem.getInstance(), new Callback<Boolean>() {
                         @Override
@@ -110,9 +105,9 @@ public class CGlobalWarps extends CommandBuilder {
                                     @Override
                                     public void accept(Boolean deleted) {
                                         if(deleted) {
-                                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Deleted", new Example("ENG", "&7The GlobalWarp '&b%GLOBAL_WARP%&7' was &cdeleted&7."), new Example("GER", "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' wurde &cgelöscht&7.")).replace("%GLOBAL_WARP%", name));
+                                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Deleted").replace("%GLOBAL_WARP%", name));
                                         } else {
-                                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists", new Example("ENG", "&7The GlobalWarp '&b%GLOBAL_WARP%&7' &cdoes not exist&7."), new Example("GER", "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' &cexistiert nicht&7.")).replace("%GLOBAL_WARP%", argument));
+                                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists").replace("%GLOBAL_WARP%", argument));
                                         }
                                     }
                                 });
@@ -120,7 +115,7 @@ public class CGlobalWarps extends CommandBuilder {
                         }
                     }).open();
                 } else {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists", new Example("ENG", "&7The GlobalWarp '&b%GLOBAL_WARP%&7' &cdoes not exist&7."), new Example("GER", "&7Der GlobalWarp '&b%GLOBAL_WARP%&7' &cexistiert nicht&7.")).replace("%GLOBAL_WARP%", argument));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists").replace("%GLOBAL_WARP%", argument));
                 }
                 return false;
             }

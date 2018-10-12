@@ -4,7 +4,6 @@ import de.codingair.codingapi.server.commands.BaseComponent;
 import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.nativeportals.guis.GEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
@@ -16,7 +15,7 @@ public class CNativePortals extends CommandBuilder {
         super("NativePortals", new BaseComponent(WarpSystem.PERMISSION_MODIFY_NATIVE_PORTALS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission", new Example("GER", "&cDu hast keine Berechtigungen für diese Aktion!"), new Example("ENG", "&cYou don't have permissions for that action!"), new Example("FRE", "&cDésolé mais vous ne possédez la permission pour exécuter cette action!")));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
             }
 
             @Override
@@ -26,12 +25,12 @@ public class CNativePortals extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("NativePortals_Help", new Example("ENG", "&7Use: &e/%LABEL% <create, edit, delete>"), new Example("GER", "&7Benutze: &e/%LABEL% <create, edit, delete>")).replace("%LABEL%", label));
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, edit, delete>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("NativePortals_Help", new Example("ENG", "&7Use: &e/%LABEL% <create, edit, delete>"), new Example("GER", "&7Benutze: &e/%LABEL% <create, edit, delete>")).replace("%LABEL%", label));
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, edit, delete>");
                 return false;
             }
         }, true);
@@ -49,7 +48,7 @@ public class CNativePortals extends CommandBuilder {
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 NativePortalManager.getInstance().setGoingToEdit((Player) sender, 0);
                 NativePortalManager.getInstance().setGoingToDelete((Player) sender, 30);
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Go_To_NativePortal", new Example("ENG", "&7You have 30 seconds to go into a native portal."), new Example("GER", "&7Du hast nun 30 Sekunden Zeit, um in ein Ur-Portal zu gehen.")));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Go_To_NativePortal"));
                 return false;
             }
         });
@@ -59,7 +58,7 @@ public class CNativePortals extends CommandBuilder {
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 NativePortalManager.getInstance().setGoingToDelete((Player) sender, 0);
                 NativePortalManager.getInstance().setGoingToEdit((Player) sender, 30);
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Go_To_NativePortal", new Example("ENG", "&7You have 30 seconds to go into a native portal."), new Example("GER", "&7Du hast nun 30 Sekunden Zeit, um in ein Ur-Portal zu gehen.")));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Go_To_NativePortal"));
                 return false;
             }
         });

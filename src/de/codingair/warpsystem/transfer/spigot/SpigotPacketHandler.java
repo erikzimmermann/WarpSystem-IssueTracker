@@ -2,7 +2,6 @@ package de.codingair.warpsystem.transfer.spigot;
 
 import de.codingair.codingapi.server.Sound;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPacket;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
@@ -22,7 +21,7 @@ public class SpigotPacketHandler implements PacketHandler {
     }
 
     @Override
-    public void handle(Packet packet, String extra) {
+    public void handle(Packet packet, String... extra) {
         switch(PacketType.getByObject(packet)) {
             case ERROR:
                 System.out.println("Couldn't handle anything!");
@@ -45,9 +44,9 @@ public class SpigotPacketHandler implements PacketHandler {
 
                     if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message", true) || ((TeleportPacket) packet).getCosts() > 0) {
                         if(((TeleportPacket) packet).getCosts() > 0) {
-                            player.sendMessage(Lang.getPrefix() + Lang.get("Money_Paid", new Example("ENG", "&7You have paid &c%AMOUNT% coin(s) &7to teleport to '&b%warp%&7'."), new Example("GER", "&7Du hast &c%AMOUNT% Coin(s) &7bezahlt, um dich nach '&b%warp%&7' zu teleportieren!")).replace("%AMOUNT%", ((TeleportPacket) packet).getCosts() + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', warpDisplayName)));
+                            player.sendMessage(Lang.getPrefix() + Lang.get("Money_Paid").replace("%AMOUNT%", ((TeleportPacket) packet).getCosts() + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', warpDisplayName)));
                         } else {
-                            player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To", new Example("ENG", "&7You have been teleported to '&b%warp%&7'."), new Example("GER", "&7Du wurdest zu '&b%warp%&7' teleportiert.")).replace("%warp%", ChatColor.translateAlternateColorCodes('&', warpDisplayName)));
+                            player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", ChatColor.translateAlternateColorCodes('&', warpDisplayName)));
                         }
                     }
                 }
