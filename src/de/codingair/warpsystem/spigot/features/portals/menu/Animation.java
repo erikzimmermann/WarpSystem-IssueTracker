@@ -11,7 +11,6 @@ import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
 import org.bukkit.Material;
@@ -34,7 +33,7 @@ public class Animation extends HotbarGUI {
         setItem(1, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
 
         setItem(2, new ItemComponent(new ItemBuilder(Material.STRING)
-                .setName("§7" + Lang.get("Teleport_Radius", new Example("ENG", "Teleport-Radius"), new Example("GER", "Teleport-Radius")) + ": §e" + menu.getEditor().getPortal().getTeleportRadius())
+                .setName("§7" + Lang.get("Teleport_Radius") + ": §e" + menu.getEditor().getPortal().getTeleportRadius())
                 .getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
@@ -60,7 +59,7 @@ public class Animation extends HotbarGUI {
         }));
 
         setItem(3, new ItemComponent(new ItemBuilder(Material.STICK)
-                .setName("§7" + Lang.get("Animation_Height", new Example("ENG", "Animation-Height"), new Example("GER", "Animations-Höhe")) + ": §e" + menu.getEditor().getPortal().getAnimationHeight())
+                .setName("§7" + Lang.get("Animation_Height") + ": §e" + menu.getEditor().getPortal().getAnimationHeight())
                 .getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
@@ -86,7 +85,7 @@ public class Animation extends HotbarGUI {
         }));
 
         setItem(4, new ItemComponent(new ItemBuilder(Material.BEACON)
-                .setName("§7" + Lang.get("Animation_Type", new Example("ENG", "Animation-Type"), new Example("GER", "Animations-Typ")) + ": '§e" + menu.getEditor().getPortal().getAnimationType().name() + "§7'")
+                .setName("§7" + Lang.get("Animation_Type") + ": '§e" + menu.getEditor().getPortal().getAnimationType().name() + "§7'")
                 .getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
@@ -115,7 +114,7 @@ public class Animation extends HotbarGUI {
         s = s.substring(0, 1).toUpperCase() + s.substring(1, s.length());
 
         setItem(5, new ItemComponent(new ItemBuilder(Material.NETHER_STAR)
-                .setName("§7" + Lang.get("Particle_Effect", new Example("ENG", "Particle-Effect"), new Example("GER", "Partikel-Effekt")) + ": '§e" + s + "§7'")
+                .setName("§7" + Lang.get("Particle_Effect") + ": '§e" + s + "§7'")
                 .getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {

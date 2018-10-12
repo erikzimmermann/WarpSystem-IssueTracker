@@ -10,10 +10,9 @@ import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOpti
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -34,7 +33,7 @@ public class GConfig extends GUI {
     private boolean close = false;
 
     public GConfig(Player p, Category category, boolean editMode) {
-        super(p, "§c§l§nWarps§r §7- §6" + Lang.get("Config", new Example("ENG", "Config"), new Example("GER", "Config")), 9, WarpSystem.getInstance(), false);
+        super(p, "§c§l§nWarps§r §7- §6" + Lang.get("Config"), 9, WarpSystem.getInstance(), false);
 
         this.category = category;
         this.editMode = editMode;
@@ -78,7 +77,7 @@ public class GConfig extends GUI {
         setItem(4, glass);
         setItem(8, leaves);
 
-        addButton(new ItemButton(0, new ItemBuilder(Skull.ArrowLeft).setName("§c" + Lang.get("Back", new Example("ENG", "Back"), new Example("GER", "Zurück"))).getItem()) {
+        addButton(new ItemButton(0, new ItemBuilder(Skull.ArrowLeft).setName("§c" + Lang.get("Back")).getItem()) {
             @Override
             public void onClick(InventoryClickEvent e) {
                 close = true;
@@ -87,12 +86,12 @@ public class GConfig extends GUI {
             }
         }.setOption(option));
 
-        ItemBuilder maintenance = new ItemBuilder(Material.BEACON).setName("§c§l§n" + Lang.get("Maintenance", new Example("ENG", "Maintenance"), new Example("GER", "Wartung")));
+        ItemBuilder maintenance = new ItemBuilder(Material.BEACON).setName("§c§l§n" + Lang.get("Maintenance"));
 
         if(!WarpSystem.maintenance)
-            maintenance.setLore("", Lang.get("Leftclick_Enable", new Example("ENG", "&3Leftclick: &aEnable"), new Example("GER", "&3Linksklick: &aAktivieren")));
+            maintenance.setLore("", Lang.get("Leftclick_Enable"));
         else
-            maintenance.setLore("", Lang.get("Leftclick_Disable", new Example("ENG", "&3Leftclick: &cDisable"), new Example("GER", "&3Linksklick: &cDeaktivieren")));
+            maintenance.setLore("", Lang.get("Leftclick_Disable"));
 
         addButton(new ItemButton(2, maintenance.getItem()) {
             @Override
@@ -100,26 +99,26 @@ public class GConfig extends GUI {
                 WarpSystem.maintenance = !WarpSystem.maintenance;
 
                 if(WarpSystem.maintenance) {
-                    p.sendMessage(Lang.getPrefix() + Lang.get("Success_Maintenance_Enabled", new Example("ENG", "&4The Maintenance-Mode was enabled."), new Example("GER", "&4Der Wartungs-Modus wurde aktiviert.")));
+                    p.sendMessage(Lang.getPrefix() + Lang.get("Success_Maintenance_Enabled"));
                 } else {
-                    p.sendMessage(Lang.getPrefix() + Lang.get("Success_Maintenance_Disabled", new Example("ENG", "&4The Maintenance-Mode was disabled."), new Example("GER", "&4Der Wartungs-Modus wurde deaktiviert.")));
+                    p.sendMessage(Lang.getPrefix() + Lang.get("Success_Maintenance_Disabled"));
                 }
 
-                ItemBuilder maintenance = new ItemBuilder(Material.BEACON).setName("§c§l§n" + Lang.get("Maintenance", new Example("ENG", "Maintenance"), new Example("GER", "Wartung")));
+                ItemBuilder maintenance = new ItemBuilder(Material.BEACON).setName("§c§l§n" + Lang.get("Maintenance"));
 
                 if(!WarpSystem.maintenance)
-                    maintenance.setLore("", Lang.get("Leftclick_Maintenance_On", new Example("ENG", "&3Leftclick: &bEnable"), new Example("GER", "&3Linksklick: &aAktivieren")));
+                    maintenance.setLore("", Lang.get("Leftclick_Maintenance_On"));
                 else
-                    maintenance.setLore("", Lang.get("Leftclick_Maintenance_Off", new Example("ENG", "&3Leftclick: &cDisable"), new Example("GER", "&3Linksklick: &cDeaktivieren")));
+                    maintenance.setLore("", Lang.get("Leftclick_Maintenance_Off"));
 
                 setItem(maintenance.getItem());
             }
         }.setOption(option));
 
-        ItemBuilder lang = new ItemBuilder(Material.BOOK).setName("§c§n" + Lang.get("Language", new Example("ENG", "Language"), new Example("GER", "Sprache")));
-        lang.setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + Lang.getCurrentLanguage());
-        lang.addLore("", Lang.get("Leftclick_Prev_Lang", new Example("ENG", "&3Leftclick: &bPrevious language"), new Example("GER", "&3Linksklick: &bVorherige Sprache")));
-        lang.addLore(Lang.get("Rightclick_Next_Lang", new Example("ENG", "&3Rightclick: &bNext language"), new Example("GER", "&3Rechtsklick: &bNächste Sprache")));
+        ItemBuilder lang = new ItemBuilder(Material.BOOK).setName("§c§n" + Lang.get("Language"));
+        lang.setLore("§8" + Lang.get("Current") + ": §7" + Lang.getCurrentLanguage());
+        lang.addLore("", Lang.get("Leftclick_Prev_Lang"));
+        lang.addLore(Lang.get("Rightclick_Next_Lang"));
 
         addButton(new ItemButton(3, lang.getItem()) {
             @Override
@@ -136,19 +135,18 @@ public class GConfig extends GUI {
                     Lang.setCurrentLanguage(Lang.getLanguage(nextId));
                 }
 
-                p.sendMessage(Lang.getPrefix() + Lang.get("Success_Changed_Lang", new Example("ENG", "&aThe language was changed to '%lang%'."),
-                        new Example("GER", "&aDie Sprache wurde auf '%lang%' geändert.")).replace("%lang%", Lang.getCurrentLanguage()));
+                p.sendMessage(Lang.getPrefix() + Lang.get("Success_Changed_Lang").replace("%lang%", Lang.getCurrentLanguage()));
 
                 reinitialize();
-                setTitle("§c§l§nWarps§r §7- §6" + Lang.get("Config", new Example("ENG", "Config"), new Example("GER", "Config")));
+                setTitle("§c§l§nWarps§r §7- §6" + Lang.get("Config"));
             }
         }.setOption(option).setOnlyLeftClick(false));
 
-        ItemBuilder anim = new ItemBuilder(Material.GLOWSTONE_DUST).setName("§c§n" + Lang.get("Animation", new Example("ENG", "PlayerAnimation"), new Example("GER", "PlayerAnimation")));
-        anim.setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + WarpSystem.getInstance().getTeleportManager().getParticle().name());
-        anim.addLore("", Lang.get("Shift_Leftclick_Show_Animation", new Example("ENG", "&3Shift-Leftclick: &bShow"), new Example("GER", "&3Shift-Linksklick: &bZeigen")));
-        anim.addLore(Lang.get("Leftclick_Prev_Animation", new Example("ENG", "&3Leftclick: &bPrevious animation"), new Example("GER", "&3Linksklick: &bVorherige Animation")));
-        anim.addLore(Lang.get("Rightclick_Next_Animation", new Example("ENG", "&3Rightclick: &bNext animation"), new Example("GER", "&3Rechtsklick: &bNächste Animation")));
+        ItemBuilder anim = new ItemBuilder(Material.GLOWSTONE_DUST).setName("§c§n" + Lang.get("Animation"));
+        anim.setLore("§8" + Lang.get("Current") + ": §7" + WarpSystem.getInstance().getTeleportManager().getParticle().name());
+        anim.addLore("", Lang.get("Shift_Leftclick_Show_Animation"));
+        anim.addLore(Lang.get("Leftclick_Prev_Animation"));
+        anim.addLore(Lang.get("Rightclick_Next_Animation"));
 
         addButton(new ItemButton(5, anim.getItem()) {
             @Override
@@ -162,7 +160,7 @@ public class GConfig extends GUI {
                         CircleAnimation circleAnimation = new CircleAnimation(WarpSystem.getInstance().getTeleportManager().getParticle(), p, WarpSystem.getInstance(), WarpSystem.getInstance().getTeleportManager().getRadius());
                         circleAnimation.setRunning(true);
 
-                        MessageAPI.sendActionBar(p, Lang.get("Move_To_Open_Editor", new Example("ENG", "&cMove to open the §nconfig-editor§r"), new Example("GER", "&cBewegen um den §nEditor§c wieder zu öffnen")),
+                        MessageAPI.sendActionBar(p, Lang.get("Move_To_Open_Editor"),
                                 WarpSystem.getInstance(), Integer.MAX_VALUE);
 
                         Listener listener = new Listener() {
@@ -208,17 +206,16 @@ public class GConfig extends GUI {
                     reinitialize();
                 }
 
-                p.sendMessage(Lang.getPrefix() + Lang.get("Success_Changed_Animation", new Example("ENG", "&aThe animation was changed to '%anim%'."),
-                        new Example("GER", "&aDie Animation wurde auf '%anim%' geändert.")).replace("%anim%", WarpSystem.getInstance().getTeleportManager().getParticle().name()));
+                p.sendMessage(Lang.getPrefix() + Lang.get("Success_Changed_Animation").replace("%anim%", WarpSystem.getInstance().getTeleportManager().getParticle().name()));
             }
         }.setOption(option).setOnlyLeftClick(false));
 
-        ItemBuilder movingAllowed = new ItemBuilder(Material.LEATHER_BOOTS).setHideStandardLore(true).setName("§c§n" + Lang.get("Walking_During_Teleports", new Example("ENG", "Walking in teleports"), new Example("GER", "Laufen beim Teleport")));
+        ItemBuilder movingAllowed = new ItemBuilder(Material.LEATHER_BOOTS).setHideStandardLore(true).setName("§c§n" + Lang.get("Walking_During_Teleports"));
 
         if(!WarpSystem.getInstance().getTeleportManager().isCanMove())
-            movingAllowed.setLore("", Lang.get("Leftclick_Enable", new Example("ENG", "&3Leftclick: &aEnable"), new Example("GER", "&3Linksklick: &aAktivieren")));
+            movingAllowed.setLore("", Lang.get("Leftclick_Enable"));
         else
-            movingAllowed.setLore("", Lang.get("Leftclick_Disable", new Example("ENG", "&3Leftclick: &cDisable"), new Example("GER", "&3Linksklick: &cDeaktivieren")));
+            movingAllowed.setLore("", Lang.get("Leftclick_Disable"));
 
         addButton(new ItemButton(6, movingAllowed.getItem()) {
             @Override
@@ -226,26 +223,26 @@ public class GConfig extends GUI {
                 WarpSystem.getInstance().getTeleportManager().setCanMove(!WarpSystem.getInstance().getTeleportManager().isCanMove());
 
                 if(WarpSystem.getInstance().getTeleportManager().isCanMove()) {
-                    p.sendMessage(Lang.getPrefix() + Lang.get("Success_Walking_Enabled", new Example("ENG", "&7Walking during a teleport is &aallowed &7now."), new Example("GER", "&7Laufen beim Teleport ist nun &aerlaubt&7.")));
+                    p.sendMessage(Lang.getPrefix() + Lang.get("Success_Walking_Enabled"));
                 } else {
-                    p.sendMessage(Lang.getPrefix() + Lang.get("Success_Walking_Disabled", new Example("ENG", "&7Walking during a teleport is &cdisallowed &7now."), new Example("GER", "&7Laufen beim Teleport ist nun &cnicht mehr erlaubt&7.")));
+                    p.sendMessage(Lang.getPrefix() + Lang.get("Success_Walking_Disabled"));
                 }
 
-                ItemBuilder movingAllowed = new ItemBuilder(Material.LEATHER_BOOTS).setHideStandardLore(true).setName("§c§n" + Lang.get("Walking_During_Teleports", new Example("ENG", "Walking in teleports"), new Example("GER", "Laufen beim Teleport")));
+                ItemBuilder movingAllowed = new ItemBuilder(Material.LEATHER_BOOTS).setHideStandardLore(true).setName("§c§n" + Lang.get("Walking_During_Teleports"));
 
                 if(!WarpSystem.getInstance().getTeleportManager().isCanMove())
-                    movingAllowed.setLore("", Lang.get("Leftclick_Enable", new Example("ENG", "&3Leftclick: &aEnable"), new Example("GER", "&3Linksklick: &aAktivieren")));
+                    movingAllowed.setLore("", Lang.get("Leftclick_Enable"));
                 else
-                    movingAllowed.setLore("", Lang.get("Leftclick_Disable", new Example("ENG", "&3Leftclick: &cDisable"), new Example("GER", "&3Linksklick: &cDeaktivieren")));
+                    movingAllowed.setLore("", Lang.get("Leftclick_Disable"));
 
                 setItem(movingAllowed.getItem());
             }
         }.setOption(option));
 
-        ItemBuilder delay = new ItemBuilder(XMaterial.CLOCK).setName("§c§n" + Lang.get("Teleport_Delay", new Example("ENG", "Teleport delay"), new Example("GER", "Teleport-Zeit")));
-        delay.setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + WarpSystem.getInstance().getTeleportManager().getSeconds());
-        delay.addLore("", Lang.get("Leftclick_Reduce", new Example("ENG", "&3Leftclick: &bReduce"), new Example("GER", "&3Linksklick: &bVerringern")));
-        delay.addLore(Lang.get("Rightclick_Enlarge", new Example("ENG", "&3Rightclick: &bEnlarge"), new Example("GER", "&3Rechtsklick: &bVergrößern")));
+        ItemBuilder delay = new ItemBuilder(XMaterial.CLOCK).setName("§c§n" + Lang.get("Teleport_Delay"));
+        delay.setLore("§8" + Lang.get("Current") + ": §7" + WarpSystem.getInstance().getTeleportManager().getSeconds());
+        delay.addLore("", Lang.get("Leftclick_Reduce"));
+        delay.addLore(Lang.get("Rightclick_Enlarge"));
 
         addButton(new ItemButton(7, delay.getItem()) {
             @Override
@@ -262,13 +259,12 @@ public class GConfig extends GUI {
                     WarpSystem.getInstance().getTeleportManager().setSeconds(seconds);
                 }
 
-                p.sendMessage(Lang.getPrefix() + Lang.get("Success_Changed_Teleport_Delay", new Example("ENG", "&aThe teleport delay was changed to '%delay%'."),
-                        new Example("GER", "&aDie Teleport-Zeit wurde auf '%delay%' geändert.")).replace("%delay%", WarpSystem.getInstance().getTeleportManager().getSeconds() + ""));
+                p.sendMessage(Lang.getPrefix() + Lang.get("Success_Changed_Teleport_Delay").replace("%delay%", WarpSystem.getInstance().getTeleportManager().getSeconds() + ""));
 
-                ItemBuilder delay = new ItemBuilder(XMaterial.CLOCK).setName("§c§n" + Lang.get("Teleport_Delay", new Example("ENG", "Teleport delay"), new Example("GER", "Teleport-Zeit")));
-                delay.setLore("§8" + Lang.get("Current", new Example("ENG", "Current"), new Example("GER", "Aktuell")) + ": §7" + WarpSystem.getInstance().getTeleportManager().getSeconds());
-                delay.addLore("", Lang.get("Leftclick_Reduce", new Example("ENG", "&3Leftclick: &bReduce"), new Example("GER", "&3Linksklick: &bVerringern")));
-                delay.addLore(Lang.get("Rightclick_Enlarge", new Example("ENG", "&3Rightclick: &bEnlarge"), new Example("GER", "&3Rechtsklick: &bVergrößern")));
+                ItemBuilder delay = new ItemBuilder(XMaterial.CLOCK).setName("§c§n" + Lang.get("Teleport_Delay"));
+                delay.setLore("§8" + Lang.get("Current") + ": §7" + WarpSystem.getInstance().getTeleportManager().getSeconds());
+                delay.addLore("", Lang.get("Leftclick_Reduce"));
+                delay.addLore(Lang.get("Rightclick_Enlarge"));
                 setItem(delay.getItem());
             }
         }.setOption(option).setOnlyLeftClick(false));

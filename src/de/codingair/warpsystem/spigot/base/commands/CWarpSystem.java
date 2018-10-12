@@ -8,17 +8,13 @@ import de.codingair.codingapi.server.fancymessages.FancyMessage;
 import de.codingair.codingapi.server.fancymessages.MessageTypes;
 import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
-import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.guis.utils.GUIListener;
-import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.ImportType;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Result;
-import de.codingair.warpsystem.spigot.base.language.Example;
-import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -27,7 +23,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,18 +38,18 @@ public class CWarpSystem extends CommandBuilder {
             @Override
             public void onlyFor(boolean player, CommandSender sender, String label, CommandComponent child) {
                 if(player) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Only_For_Players", new Example("ENG", "&cThis is only for players!"), new Example("GER", "&cDies ist nur für Spieler!")));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Only_For_Players"));
                 }
             }
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " §e<info, reload, import, news, report, shortcut>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, shortcut>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " §e<info, reload, import, news, report, shortcut>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, shortcut>");
                 return false;
             }
         }, true);
@@ -62,7 +57,7 @@ public class CWarpSystem extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("shortcut") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut §e<add, remove, list>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut §e<add, remove, list>");
                 return false;
             }
         }.setOnlyPlayers(true));
@@ -70,7 +65,7 @@ public class CWarpSystem extends CommandBuilder {
         getComponent("shortcut").addChild(new CommandComponent("add") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add §e<warp" + (WarpSystem.getInstance().isOnBungeeCord() ? ", globalwarp" : "") + ">");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut add §e<warp" + (WarpSystem.getInstance().isOnBungeeCord() ? ", globalwarp" : "") + ">");
                 return false;
             }
         }.setOnlyPlayers(true));
@@ -78,7 +73,7 @@ public class CWarpSystem extends CommandBuilder {
         getComponent("shortcut", "add").addChild(new CommandComponent("warp") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add warp §e<warp>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut add warp §e<warp>");
                 return false;
             }
         }.setOnlyPlayers(true));
@@ -93,7 +88,7 @@ public class CWarpSystem extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add warp " + argument + " §e<shortcut>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut add warp " + argument + " §e<shortcut>");
                 return false;
             }
         });
@@ -111,17 +106,17 @@ public class CWarpSystem extends CommandBuilder {
                 Warp warp = IconManager.getInstance().getWarp(warpId);
 
                 if(warp == null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS", new Example("ENG", "&cThis warp does not exist."), new Example("GER", "&cDieser Warp existiert nicht.")));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
                     return false;
                 }
 
                 if(ShortcutManager.getInstance().getShortcut(shortcut) != null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_already_exists", new Example("ENG", "&cThis shortcut already exists!"), new Example("GER", "&cDieser Shortcut existiert bereits!")));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_already_exists"));
                     return false;
                 }
 
                 ShortcutManager.getInstance().getShortcuts().add(new Shortcut(warp, shortcut));
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_created", new Example("ENG", "&7The shortcut \"&b%SHORTCUT%&7\" was &aadded&7!"), new Example("GER", "&7Der Shortcut \"&b%SHORTCUT%&7\" wurde &ahinzugefügt&7!")).replace("%SHORTCUT%", shortcut));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_created").replace("%SHORTCUT%", shortcut));
                 return false;
             }
         });
@@ -129,7 +124,7 @@ public class CWarpSystem extends CommandBuilder {
         getComponent("shortcut").addChild(new CommandComponent("remove") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut remove §e<name>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut remove §e<name>");
                 return false;
             }
         }.setOnlyPlayers(true));
@@ -147,12 +142,12 @@ public class CWarpSystem extends CommandBuilder {
                 Shortcut shortcut = ShortcutManager.getInstance().getShortcut(argument);
 
                 if(shortcut == null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_does_not_exist", new Example("ENG", "&cThis shortcut does not exist!"), new Example("GER", "&cDieser Shortcut existiert nicht!")));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_does_not_exist"));
                     return false;
                 }
 
                 ShortcutManager.getInstance().getShortcuts().remove(shortcut);
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_was_removed", new Example("ENG", "&7The shortcut \"&b%SHORTCUT%&7\" was &cremoved&7!"), new Example("GER", "&7Der Shortcut \"&b%SHORTCUT%&7\" wurde &cgelöscht&7!")).replace("%SHORTCUT%", shortcut.getDisplayName()));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_was_removed").replace("%SHORTCUT%", shortcut.getDisplayName()));
                 return false;
             }
         });
@@ -222,7 +217,7 @@ public class CWarpSystem extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("report") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " report §e<GitHub, Spigot-Forum, Direct>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " report §e<GitHub, Spigot-Forum, Direct>");
                 return false;
             }
         }.setOnlyPlayers(true));
@@ -281,7 +276,7 @@ public class CWarpSystem extends CommandBuilder {
                         break;
 
                     default:
-                        sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " report <GitHub, Spigot-Forum>");
+                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " report <GitHub, Spigot-Forum>");
                         break;
                 }
                 return false;
@@ -292,9 +287,9 @@ public class CWarpSystem extends CommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 try {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Plugin_Reloading", new Example("ENG", "&cThe plugin will be reloaded now..."), new Example("GER", "&cDas Plugin wird jetzt neu geladen...")));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Plugin_Reloading"));
                     WarpSystem.getInstance().reload(true);
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Plugin_Reloaded", new Example("ENG", "&aThe plugin has been reloaded."), new Example("GER", "&aDas Plugin wurde neu geladen.")));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Plugin_Reloaded"));
                 } catch(Exception ex) {
                     ex.printStackTrace();
                 }
@@ -312,17 +307,17 @@ public class CWarpSystem extends CommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
                 if(argument == null || (!argument.equalsIgnoreCase("true") && !argument.equalsIgnoreCase("false"))) {
-                    sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " §e<true, false>");
+                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<true, false>");
                     return false;
                 }
 
                 boolean save = argument.equalsIgnoreCase("true");
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Plugin_Reloading", new Example("ENG", "&cThe plugin will be reloaded now..."), new Example("GER", "&cDas Plugin wird jetzt neu geladen...")));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Plugin_Reloading"));
                 WarpSystem.getInstance().reload(save);
                 if(save)
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Plugin_Reloaded", new Example("ENG", "&aThe plugin has been reloaded."), new Example("GER", "&aDas Plugin wurde neu geladen.")));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Plugin_Reloaded"));
                 else
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Plugin_Reloaded_Without_Saving", new Example("ENG", "&aThe plugin was reloaded without saving."), new Example("GER", "&aDas Plugin wurde ohne zu speichern neu geladen.")));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Plugin_Reloaded_Without_Saving"));
                 return false;
             }
         });
@@ -330,7 +325,7 @@ public class CWarpSystem extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("import") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " import §e<CategoryWarps, Essentials>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " import §e<CategoryWarps, Essentials>");
                 return false;
             }
         });
@@ -359,15 +354,15 @@ public class CWarpSystem extends CommandBuilder {
                 }
 
                 if(type == null) {
-                    sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " import §e<CategoryWarps, Essentials>");
+                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " import §e<CategoryWarps, Essentials>");
                 } else {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Start", new Example("ENG", "&7Importing data from other systems..."), new Example("GER", "&7Dateien von anderen System werden importiert...")));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Start"));
 
                     Result result;
                     if((result = type.importData()).isFinished()) {
-                        sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish", new Example("ENG", "&7All files are imported &asuccessfully&7."), new Example("GER", "&7Alle Dateien wurden &aerfolgreich &7importiert.")));
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish"));
                     } else {
-                        sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish_With_Errors", new Example("ENG", "&7Could &cnot &7import all files."), new Example("GER", "&7Es konnten &cnicht alle Dateien &7importiert werden.")) + " §8[" + result.name() + "]");
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish_With_Errors") + " §8[" + result.name() + "]");
                     }
                 }
                 return false;
@@ -381,7 +376,7 @@ public class CWarpSystem extends CommandBuilder {
         getComponent("shortcut", "add").addChild(new CommandComponent("globalwarp") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add globalwarp §e<globalwarp>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut add globalwarp §e<globalwarp>");
                 return false;
             }
         }.setOnlyPlayers(true));
@@ -394,7 +389,7 @@ public class CWarpSystem extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                sender.sendMessage("§8» §7" + Lang.get("Use", new Example("ENG", "Use"), new Example("GER", "Benutze")) + ": /" + label + " shortcut add globalwarp " + argument + " §e<shortcut>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut add globalwarp " + argument + " §e<shortcut>");
                 return false;
             }
         });
@@ -413,17 +408,17 @@ public class CWarpSystem extends CommandBuilder {
                 String globalWarp = GlobalWarpManager.getInstance().getCaseCorrectlyName(warpId);
 
                 if(globalWarp == null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS", new Example("ENG", "&cThis warp does not exist."), new Example("GER", "&cDieser Warp existiert nicht.")));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
                     return false;
                 }
 
                 if(ShortcutManager.getInstance().getShortcut(shortcut) != null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_already_exists", new Example("ENG", "&cThis shortcut already exists!"), new Example("GER", "&cDieser Shortcut existiert bereits!")));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_already_exists"));
                     return false;
                 }
 
                 ShortcutManager.getInstance().getShortcuts().add(new Shortcut(globalWarp, shortcut));
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_created", new Example("ENG", "&7The shortcut \"&b%SHORTCUT%&7\" was &aadded&7!"), new Example("GER", "&7Der Shortcut \"&b%SHORTCUT%&7\" wurde &ahinzugefügt&7!")).replace("%SHORTCUT%", shortcut));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_created").replace("%SHORTCUT%", shortcut));
                 return false;
             }
         });

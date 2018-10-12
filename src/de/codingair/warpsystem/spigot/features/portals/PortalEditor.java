@@ -14,7 +14,6 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.utils.Node;
 import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
@@ -29,11 +28,11 @@ import java.util.UUID;
 
 public class PortalEditor implements Removable {
     public static String PLUS_MINUS(String s) {
-        return ChatColor.YELLOW.toString() + "+ " + ChatColor.GRAY + Lang.get("Leftclick", new Example("ENG", "Leftclick"), new Example("GER", "Linksklick")) + " | " + ChatColor.RED + s + ChatColor.GRAY + " | " + ChatColor.GRAY + Lang.get("Rightclick", new Example("ENG", "Rightclick"), new Example("GER", "Rechtsklick")) + " " + ChatColor.YELLOW + "-";
+        return ChatColor.YELLOW.toString() + "+ " + ChatColor.GRAY + Lang.get("Leftclick") + " | " + ChatColor.RED + s + ChatColor.GRAY + " | " + ChatColor.GRAY + Lang.get("Rightclick") + " " + ChatColor.YELLOW + "-";
     }
 
     public static String NEXT_PREVIOUS(String s) {
-        return ChatColor.YELLOW.toString() + "« " + ChatColor.GRAY + Lang.get("Leftclick", new Example("ENG", "Leftclick"), new Example("GER", "Linksklick")) + " | " + ChatColor.RED + s + ChatColor.GRAY + " | " + ChatColor.GRAY + Lang.get("Rightclick", new Example("ENG", "Rightclick"), new Example("GER", "Rechtsklick")) + " " + ChatColor.YELLOW + "»";
+        return ChatColor.YELLOW.toString() + "« " + ChatColor.GRAY + Lang.get("Leftclick") + " | " + ChatColor.RED + s + ChatColor.GRAY + " | " + ChatColor.GRAY + Lang.get("Rightclick") + " " + ChatColor.YELLOW + "»";
     }
 
     private final UUID uniqueId = UUID.randomUUID();
@@ -154,7 +153,7 @@ public class PortalEditor implements Removable {
 
                         if(input == null) {
                             e.setClose(false);
-                            player.sendMessage(Lang.getPrefix() + Lang.get("NO_INPUT_NAME", new Example("ENG", "&cYou have to enter a name!"), new Example("GER", "&cDu musst einen Namen eingeben!")));
+                            player.sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
                             return;
                         }
 
@@ -177,7 +176,7 @@ public class PortalEditor implements Removable {
 
                         if(input == null) {
                             e.setClose(false);
-                            player.sendMessage(Lang.getPrefix() + Lang.get("NO_INPUT_NAME", new Example("ENG", "&cYou have to enter a name!"), new Example("GER", "&cDu musst einen Namen eingeben!")));
+                            player.sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
                             return;
                         }
 
@@ -309,7 +308,7 @@ public class PortalEditor implements Removable {
         this.portal.setRunning(true);
         this.menu.open(true);
 
-        this.player.sendMessage(Lang.getPrefix() + Lang.get("Entering_Portal_Editor", new Example("ENG", "&7You are now in the portal-editor."), new Example("GER", "&7Du bist nun im Portal-Editor.")));
+        this.player.sendMessage(Lang.getPrefix() + Lang.get("Entering_Portal_Editor"));
     }
 
     private void quit() {

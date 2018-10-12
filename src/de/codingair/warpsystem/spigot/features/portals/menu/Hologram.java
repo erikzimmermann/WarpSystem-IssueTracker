@@ -11,9 +11,8 @@ import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
-import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -35,7 +34,7 @@ public class Hologram extends HotbarGUI {
         setItem(0, new ItemComponent(new ItemBuilder(Skull.ArrowLeft).setName("§7» §c" + Lang.get("Back") + "§7 «").getItem()).setLink(this.menu));
         setItem(1, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
 
-        setItem(2, new ItemComponent(new ItemBuilder(Material.STICK).setName("§7" + Lang.get("Hologram_Height", new Example("ENG", "Hologram-Height"), new Example("GER", "Hologram-Höhe")) + ": §e" + menu.getEditor().getPortal().getHologramHeight()).getItem(), new ItemListener() {
+        setItem(2, new ItemComponent(new ItemBuilder(Material.STICK).setName("§7" + Lang.get("Hologram_Height") + ": §e" + menu.getEditor().getPortal().getHologramHeight()).getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 //Hologram-Height
@@ -59,7 +58,7 @@ public class Hologram extends HotbarGUI {
             }
         }));
 
-        setItem(4, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Start_Name", new Example("ENG", "Start-Name"), new Example("GER", "Start-Name")) + ": '§r" + menu.getEditor().getPortal().getStartName() + "§7'").getItem(), new ItemListener() {
+        setItem(4, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Start_Name") + ": '§r" + menu.getEditor().getPortal().getStartName() + "§7'").getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 //Start-Name
@@ -68,7 +67,7 @@ public class Hologram extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Name", new Example("ENG", "&7Leftclick: Change name"), new Example("GER", "&7Linksklick: Name ändern")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Name"), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -78,9 +77,9 @@ public class Hologram extends HotbarGUI {
         }));
 
         ItemBuilder builder = new ItemBuilder(menu.getEditor().getPortal().isStartHoloStatus() ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA);
-        builder.setName(ChatColor.GRAY + Lang.get("Status_Of_Start", new Example("ENG", "Status of Start-Holo: "), new Example("GER", "Status vom Start-Holo: ")) +
-                (menu.getEditor().getPortal().isStartHoloStatus() ? ChatColor.GREEN + Lang.get("Enabled", new Example("ENG", "Enabled"), new Example("GER", "Aktiviert")) :
-                        ChatColor.RED + Lang.get("Disabled", new Example("ENG", "Disabled"), new Example("GER", "Deaktiviert"))));
+        builder.setName(ChatColor.GRAY + Lang.get("Status_Of_Start") +
+                (menu.getEditor().getPortal().isStartHoloStatus() ? ChatColor.GREEN + Lang.get("Enabled") :
+                        ChatColor.RED + Lang.get("Disabled")));
 
         setItem(5, new ItemComponent(builder.getItem(), new ItemListener() {
             @Override
@@ -89,9 +88,9 @@ public class Hologram extends HotbarGUI {
                 menu.getEditor().getPortal().updateHolograms();
 
                 ItemBuilder builder = new ItemBuilder(menu.getEditor().getPortal().isStartHoloStatus() ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA);
-                builder.setName(ChatColor.GRAY + Lang.get("Status_Of_Start", new Example("ENG", "Status of Start-Holo: "), new Example("GER", "Status vom Start-Holo: ")) +
-                        (menu.getEditor().getPortal().isStartHoloStatus() ? ChatColor.GREEN + Lang.get("Enabled", new Example("ENG", "Enabled"), new Example("GER", "Aktiviert")) :
-                                ChatColor.RED + Lang.get("Disabled", new Example("ENG", "Disabled"), new Example("GER", "Deaktiviert"))));
+                builder.setName(ChatColor.GRAY + Lang.get("Status_Of_Start") +
+                        (menu.getEditor().getPortal().isStartHoloStatus() ? ChatColor.GREEN + Lang.get("Enabled") :
+                                ChatColor.RED + Lang.get("Disabled")));
 
                 setItem(5, new ItemComponent(builder.getItem(), this), false);
                 updateSingle(5);
@@ -108,7 +107,7 @@ public class Hologram extends HotbarGUI {
 
         setItem(6, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
 
-        setItem(7, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Goal_Name", new Example("ENG", "Destination-Name"), new Example("GER", "Ziel-Name")) + ": '§r" + menu.getEditor().getPortal().getDestinationName() + "§7'").getItem(), new ItemListener() {
+        setItem(7, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Goal_Name") + ": '§r" + menu.getEditor().getPortal().getDestinationName() + "§7'").getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 //Goal-Name
@@ -117,7 +116,7 @@ public class Hologram extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Name", new Example("ENG", "&7Leftclick: &eChange name")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Name"), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -128,9 +127,9 @@ public class Hologram extends HotbarGUI {
 
 
         builder = new ItemBuilder(menu.getEditor().getPortal().isDestinationHoloStatus() ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA);
-        builder.setName(ChatColor.GRAY + Lang.get("Status_Of_Destination", new Example("ENG", "Status of Destination-Holo: "), new Example("GER", "Status vom Destination-Holo: ")) +
-                (menu.getEditor().getPortal().isDestinationHoloStatus() ? ChatColor.GREEN + Lang.get("Enabled", new Example("ENG", "Enabled"), new Example("GER", "Aktiviert")) :
-                        ChatColor.RED + Lang.get("Disabled", new Example("ENG", "Disabled"), new Example("GER", "Deaktiviert"))));
+        builder.setName(ChatColor.GRAY + Lang.get("Status_Of_Destination") +
+                (menu.getEditor().getPortal().isDestinationHoloStatus() ? ChatColor.GREEN + Lang.get("Enabled") :
+                        ChatColor.RED + Lang.get("Disabled")));
 
         setItem(8, new ItemComponent(builder.getItem(), new ItemListener() {
             @Override
@@ -139,9 +138,9 @@ public class Hologram extends HotbarGUI {
                 menu.getEditor().getPortal().updateHolograms();
 
                 ItemBuilder builder = new ItemBuilder(menu.getEditor().getPortal().isDestinationHoloStatus() ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA);
-                builder.setName(ChatColor.GRAY + Lang.get("Status_Of_Destination", new Example("ENG", "Status of Destination-Holo: "), new Example("GER", "Status vom Destination-Holo: ")) +
-                        (menu.getEditor().getPortal().isDestinationHoloStatus() ? ChatColor.GREEN + Lang.get("Enabled", new Example("ENG", "Enabled"), new Example("GER", "Aktiviert")) :
-                                ChatColor.RED + Lang.get("Disabled", new Example("ENG", "Disabled"), new Example("GER", "Deaktiviert"))));
+                builder.setName(ChatColor.GRAY + Lang.get("Status_Of_Destination") +
+                        (menu.getEditor().getPortal().isDestinationHoloStatus() ? ChatColor.GREEN + Lang.get("Enabled") :
+                                ChatColor.RED + Lang.get("Disabled")));
 
                 setItem(8, new ItemComponent(builder.getItem(), this), false);
                 updateSingle(8);

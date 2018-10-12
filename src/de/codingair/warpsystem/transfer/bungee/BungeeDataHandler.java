@@ -6,6 +6,8 @@ import de.codingair.warpsystem.transfer.packets.utils.*;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.Connection;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.io.ByteArrayOutputStream;
@@ -69,8 +71,8 @@ public class BungeeDataHandler implements DataHandler {
         server.sendData(GET_CHANNEL, stream.toByteArray());
     }
 
-    public void onReceive(Packet packet, ServerInfo server) {
-        this.packetHandler.handle(packet, server.getName());
+    public void onReceive(Packet packet, ServerInfo server, Connection sender) {
+        this.packetHandler.handle(packet, server.getName(), sender instanceof ProxiedPlayer ? ((ProxiedPlayer) sender).getName() : null);
 
         if(packet instanceof AnswerPacket) {
             UUID uniqueId = ((AssignedPacket) packet).getUniqueId();

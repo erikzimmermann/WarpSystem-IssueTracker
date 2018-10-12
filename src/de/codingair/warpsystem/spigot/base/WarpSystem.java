@@ -4,7 +4,6 @@ import de.codingair.codingapi.API;
 import de.codingair.codingapi.bungeecord.BungeeCordHelper;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.files.FileManager;
-import de.codingair.codingapi.player.gui.PlayerItem;
 import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.fancymessages.FancyMessage;
@@ -17,8 +16,10 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.CommandListener;
 import de.codingair.warpsystem.spigot.base.listeners.NotifyListener;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
+import de.codingair.warpsystem.spigot.base.listeners.UUIDListener;
 import de.codingair.warpsystem.spigot.base.managers.DataManager;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
+import de.codingair.warpsystem.spigot.base.managers.UUIDManager;
 import de.codingair.warpsystem.spigot.base.utils.UpdateChecker;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
 import net.md_5.bungee.api.ChatColor;
@@ -26,12 +27,8 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
@@ -78,6 +75,7 @@ public class WarpSystem extends JavaPlugin {
     private boolean shouldSave = true;
 
     private SpigotDataHandler dataHandler = new SpigotDataHandler(this);
+    private UUIDManager uuidManager = new UUIDManager();
 
     @Override
     public void onEnable() {
@@ -141,6 +139,7 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new TeleportListener(), this);
             Bukkit.getPluginManager().registerEvents(new NotifyListener(), this);
             Bukkit.getPluginManager().registerEvents(new CommandListener(), this);
+            Bukkit.getPluginManager().registerEvents(new UUIDListener(), this);
 
             CWarpSystem cWarpSystem = new CWarpSystem();
             this.commands.add(cWarpSystem);
@@ -232,6 +231,7 @@ public class WarpSystem extends JavaPlugin {
         ERROR = true;
         shouldSave = true;
         BungeeCordHelper.bungeeMessenger = null;
+        this.uuidManager.removeAll();
 
         HandlerList.unregisterAll(this);
         this.dataHandler.onDisable();
@@ -283,6 +283,7 @@ public class WarpSystem extends JavaPlugin {
                 if(!saver) log("Saving features");
                 this.dataManager.save(saver);
                 this.teleportManager.save(saver);
+                fileManager.getFile("Config").destroy();
             } else {
                 log("Does not save data, because of errors at enabling this plugin.");
                 log(" ");
@@ -455,6 +456,7 @@ public class WarpSystem extends JavaPlugin {
         this.onBungeeCord = onBungeeCord;
         if(onBungeeCord) {
             ((CWarpSystem) getCommandBuilder("WarpSystem")).initBungee();
+            this.uuidManager.downloadAll();
         }
     }
 
@@ -500,5 +502,9 @@ public class WarpSystem extends JavaPlugin {
         }
 
         return null;
+    }
+
+    public UUIDManager getUUIDManager() {
+        return uuidManager;
     }
 }

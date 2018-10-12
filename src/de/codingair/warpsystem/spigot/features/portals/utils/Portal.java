@@ -13,11 +13,9 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -326,7 +324,7 @@ public class Portal implements Removable {
 
     public void teleportToStart(Player player) {
         if(this.permission != null && !player.hasPermission(this.permission)) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("Portal_Insufficient_Permissions", new Example("ENG", "&cYou have insufficient permissions to teleport with this portal."), new Example("GER", "&cDu hast nicht genug Berechtigungen, um dich mit diesem Portal zu teleportieren.")));
+            player.sendMessage(Lang.getPrefix() + Lang.get("Portal_Insufficient_Permissions"));
             return;
         }
 
@@ -341,7 +339,7 @@ public class Portal implements Removable {
 
     public void teleportToDestination(Player player) {
         if(this.permission != null && !player.hasPermission(this.permission)) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("Portal_Insufficient_Permissions", new Example("ENG", "&cYou have insufficient permissions to teleport with this portal."), new Example("GER", "&cDu hast nicht genug Berechtigungen, um dich mit diesem Portal zu teleportieren.")));
+            player.sendMessage(Lang.getPrefix() + Lang.get("Portal_Insufficient_Permissions"));
             return;
         }
 

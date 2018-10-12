@@ -35,7 +35,7 @@ public class ChannelListener implements Listener {
                 Packet packet = (Packet) type.getPacket().newInstance();
 
                 packet.read(in);
-                this.bungeeDataHandler.onReceive(packet, server);
+                this.bungeeDataHandler.onReceive(packet, server, e.getReceiver());
             } catch(IOException | IllegalAccessException | InstantiationException e1) {
                 e1.printStackTrace();
             }

@@ -8,10 +8,9 @@ import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.TimeList;
 import de.codingair.codingapi.utils.Node;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
 import de.codingair.warpsystem.spigot.features.portals.guis.GPortalList;
-import de.codingair.warpsystem.spigot.base.language.Example;
-import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -27,7 +26,7 @@ public class CPortal extends CommandBuilder {
         super("Portal", new BaseComponent(WarpSystem.PERMISSION_MODIFY_PORTALS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission", new Example("GER", "&cDu hast keine Berechtigungen für diese Aktion!"), new Example("ENG", "&cYou don't have permissions for that action!"), new Example("FRE", "&cDésolé mais vous ne possédez la permission pour exécuter cette action!")));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
             }
 
             @Override
@@ -37,12 +36,12 @@ public class CPortal extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_HELP", new Example("ENG", "&7Use: &e/" + label + " <create, edit, delete, list>"), new Example("GER", "&7Benutze: &e/" + label + " <create, edit, delete, list>")));
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, edit, delete, list>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_HELP", new Example("ENG", "&7Use: &e/" + label + " <create, edit, delete, list>"), new Example("GER", "&7Benutze: &e/" + label + " <create, edit, delete, list>")));
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, edit, delete, list>");
 
                 return false;
             }
@@ -71,7 +70,7 @@ public class CPortal extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("create") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_CREATE_HELP", new Example("ENG", "&7Use: &e/" + label + " create <Position-Name>"), new Example("GER", "&7Benutze: &e/" + label + " create <Position-Name>")));
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " create §e<name>");
                 return false;
             }
         });
@@ -90,8 +89,8 @@ public class CPortal extends CommandBuilder {
                     new PortalEditor((Player) sender, first, second).start();
                 } else {
                     locations.put(sender.getName(), new Node<>(args[1], Location.getByLocation(((Player) sender).getLocation().clone())));
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_CREATE_FIRST_SAVED", new Example("ENG", "&7The first position has been saved."), new Example("GER", "&7Die erste Position wurde gespeichert.")));
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_CREATE_NEXT", new Example("ENG", "&7Run this command at the next required position again."), new Example("GER", "&7Führe diesen Befehl erneut an der gewünschten Zielposition aus.")));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_CREATE_FIRST_SAVED"));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_CREATE_NEXT"));
                 }
 
                 return false;
@@ -107,7 +106,7 @@ public class CPortal extends CommandBuilder {
                 aboutToDelete.remove(sender.getName());
 
                 aboutToEdit.add(sender.getName(), 30);
-                sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_GO_TO_PORTAL", new Example("ENG", "&7You have 30 seconds to go into a portal."), new Example("GER", "&7Du hast nun 30 Sekunden Zeit, um in ein Portal zu gehen.")));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_GO_TO_PORTAL"));
                 return false;
             }
         });
@@ -121,7 +120,7 @@ public class CPortal extends CommandBuilder {
                 aboutToEdit.remove(sender.getName());
 
                 aboutToDelete.add(sender.getName(), 30);
-                sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_GO_TO_PORTAL", new Example("ENG", "&7You have 30 seconds to go into a portal."), new Example("GER", "&7Du hast nun 30 Sekunden Zeit, um in ein Portal zu gehen.")));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_GO_TO_PORTAL"));
                 return false;
             }
         });

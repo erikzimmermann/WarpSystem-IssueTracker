@@ -2,7 +2,6 @@ package de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils;
 
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.language.Example;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
@@ -122,7 +121,7 @@ public abstract class ActionIcon extends Icon implements Serializable {
 
             case SWITCH_SERVER:
                 if(WarpSystem.getInstance().getTeleportManager().isTeleporting(p)) {
-                    p.sendMessage(Lang.getPrefix() + Lang.get("Player_Is_Already_Teleporting", new Example("ENG", "&cYou are already teleporting!"), new Example("GER", "&cDu wirst bereits teleportiert!")));
+                    p.sendMessage(Lang.getPrefix() + Lang.get("Player_Is_Already_Teleporting"));
                     break;
                 }
 
@@ -130,13 +129,13 @@ public abstract class ActionIcon extends Icon implements Serializable {
                 double costs = getAction(Action.PAY_MONEY) == null ? 0 : getAction(Action.PAY_MONEY).getValue();
                 if(p.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) costs = 0;
 
-                WarpSystem.getInstance().getTeleportManager().teleport(p, server, getName(), costs);
+                WarpSystem.getInstance().getTeleportManager().tryToTeleport(p, server, getName(), costs);
                 break;
 
             case TELEPORT_TO_WARP:
                 if(!(this instanceof Warp)) break;
 
-                WarpSystem.getInstance().getTeleportManager().teleport(p, (Warp) this);
+                WarpSystem.getInstance().getTeleportManager().tryToTeleport(p, (Warp) this);
                 break;
 
             case PAY_MONEY:
@@ -150,7 +149,7 @@ public abstract class ActionIcon extends Icon implements Serializable {
                 double bank = AdapterType.getActive().getMoney(p);
 
                 if(bank < prize) {
-                    p.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money", new Example("ENG", "&7You need at least &c%AMOUNT% coin(s)&7, to teleport to that position!"), new Example("GER", "&7Du brauchst mindestens &c%AMOUNT% Coin(s)&7, um dich dorthin zu teleportieren!")).replace("%AMOUNT%", prize + ""));
+                    p.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money").replace("%AMOUNT%", (prize % ((int) prize) == 0 ? (int) prize : prize) + ""));
                     return true;
                 }
 

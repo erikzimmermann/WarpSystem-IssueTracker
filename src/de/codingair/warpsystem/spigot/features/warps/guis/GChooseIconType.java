@@ -8,13 +8,12 @@ import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.IconType;
-import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.language.Example;
-import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -32,7 +31,7 @@ public class GChooseIconType extends GUI {
     private Category category;
 
     public GChooseIconType(Player p, Category category, Callback<IconType> callback) {
-        super(p, "§c" + Lang.get("GUI_Choose_Icon", new Example("ENG", "Choose your IconType"), new Example("GER", "Wähle deinen Symbol-Typen")), 9, WarpSystem.getInstance(), false);
+        super(p, "§c" + Lang.get("GUI_Choose_Icon"), 9, WarpSystem.getInstance(), false);
 
         this.callback = callback;
         this.category = category;
@@ -106,7 +105,7 @@ public class GChooseIconType extends GUI {
                 break;
         }
 
-        addButton(new ItemButton(slots.remove(0), new ItemBuilder(Material.ENDER_PEARL).setName("§c" + Lang.get("Warp", new Example("ENG", "Warp"), new Example("GER", "Warp"))).getItem()) {
+        addButton(new ItemButton(slots.remove(0), new ItemBuilder(Material.ENDER_PEARL).setName("§c" + Lang.get("Warp")).getItem()) {
             @Override
             public void onClick(InventoryClickEvent e) {
                 set = true;
@@ -116,7 +115,7 @@ public class GChooseIconType extends GUI {
         }.setOption(option));
 
         if(this.category == null) {
-            addButton(new ItemButton(slots.remove(0), new ItemBuilder(Material.CHEST).setName("§c" + Lang.get("Category", new Example("ENG", "Category"), new Example("GER", "Kategorie"))).getItem()) {
+            addButton(new ItemButton(slots.remove(0), new ItemBuilder(Material.CHEST).setName("§c" + Lang.get("Category")).getItem()) {
                 @Override
                 public void onClick(InventoryClickEvent e) {
                     set = true;
@@ -127,11 +126,11 @@ public class GChooseIconType extends GUI {
         }
 
         if(WarpSystem.getInstance().isOnBungeeCord()) {
-            addButton(new ItemButton(slots.remove(0), new ItemBuilder(Material.ENDER_CHEST).setName("§c" + Lang.get("GlobalWarp", new Example("ENG", "GlobalWarp"), new Example("GER", "GlobalWarp"))).getItem()) {
+            addButton(new ItemButton(slots.remove(0), new ItemBuilder(Material.ENDER_CHEST).setName("§c" + Lang.get("GlobalWarp")).getItem()) {
                 @Override
                 public void onClick(InventoryClickEvent e) {
                     if(((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).getGlobalWarps().isEmpty()) {
-                        getPlayer().sendMessage(Lang.getPrefix() + Lang.get("GlobalWarps_Not_Available", new Example("ENG", "&cThere are no GlobalWarps, which can be linked!"), new Example("GER", "&cEs existieren keine GlobalWarps, die verknüpft werden können!")));
+                        getPlayer().sendMessage(Lang.getPrefix() + Lang.get("GlobalWarps_Not_Available"));
                     } else {
                         set = true;
                         p.closeInventory();
@@ -141,7 +140,7 @@ public class GChooseIconType extends GUI {
             }.setOption(option));
         }
 
-        addButton(new ItemButton(slots.remove(0), new ItemBuilder(XMaterial.FLOWER_POT).setName("§c" + Lang.get("Decoration", new Example("ENG", "Decoration"), new Example("GER", "Dekoration"))).getItem()) {
+        addButton(new ItemButton(slots.remove(0), new ItemBuilder(XMaterial.FLOWER_POT).setName("§c" + Lang.get("Decoration")).getItem()) {
             @Override
             public void onClick(InventoryClickEvent e) {
                 set = true;
