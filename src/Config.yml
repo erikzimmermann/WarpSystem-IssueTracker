@@ -41,6 +41,7 @@ WarpSystem:
 
   TempWarps:
     Time:
+      #sec, min, hour, day
       Interval: min
       #Step to increase/decrease the duration in the gui
       DurationSteps: 5

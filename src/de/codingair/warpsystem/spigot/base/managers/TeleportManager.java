@@ -2,6 +2,7 @@ package de.codingair.warpsystem.spigot.base.managers;
 
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.Teleport;
@@ -200,6 +201,14 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, Location location, String displayName, double costs, boolean skip, boolean canMove, boolean showMessage) {
+        teleport(player, location, displayName, costs, skip, canMove, showMessage ? costs > 0 ? Lang.get("Money_Paid") : Lang.get("Teleported_To") : null);
+    }
+
+    public void teleport(Player player, Location location, String displayName, double costs, boolean skip, boolean canMove, String message) {
+        teleport(player, location, displayName, costs, skip, canMove, message, null);
+    }
+
+    public void teleport(Player player, Location location, String displayName, double costs, boolean skip, boolean canMove, String message, Callback<Boolean> callback) {
         if(isTeleporting(player)) {
             Teleport teleport = getTeleport(player);
             long diff = System.currentTimeMillis() - teleport.getStartTime();
@@ -210,7 +219,7 @@ public class TeleportManager {
 
         player.closeInventory();
 
-        Teleport teleport = new Teleport(player, location, displayName, costs, showMessage, canMove);
+        Teleport teleport = new Teleport(player, location, displayName, costs, message, canMove, callback);
         this.teleports.add(teleport);
 
         if(seconds == 0 || (WarpSystem.OP_CAN_SKIP_DELAY && player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) || skip) teleport.teleport();
@@ -243,6 +252,10 @@ public class TeleportManager {
 
     public boolean isCanMove() {
         return canMove;
+    }
+
+    public boolean isShowMessage() {
+        return showMessage;
     }
 
     public void setCanMove(boolean canMove) {
