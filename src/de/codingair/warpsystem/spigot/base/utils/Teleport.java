@@ -31,8 +31,10 @@ public class Teleport {
 
     private String displayName;
     private double costs;
-    private boolean showMessage = true;
-    private boolean canMove = false;
+    private boolean showMessage;
+    private boolean canMove;
+    private String message = null;
+    private Callback<Boolean> callback;
 
     public Teleport(Player player, String displayName, double costs, boolean showMessage, boolean canMove) {
         this.player = player;
@@ -77,6 +79,13 @@ public class Teleport {
         this.cancelSound = cancelSound;
     }
 
+    public Teleport(Player player, Location location, String displayName, double costs, String message, boolean canMove, Callback<Boolean> callback) {
+        this(player, displayName, costs, message != null && !message.isEmpty(), canMove);
+        this.location = location;
+        this.message = message;
+        this.callback = callback;
+    }
+
     public Teleport(Player player, Location location, String displayName, double costs, boolean showMessage, boolean canMove) {
         this(player, displayName, costs, showMessage, canMove);
         this.location = location;
@@ -110,24 +119,25 @@ public class Teleport {
                 AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) + this.costs);
             }
         }
+
+        if(callback != null) callback.accept(false);
     }
 
     public void teleport() {
         cancel(false, true);
-
-        String warpName = displayName;
 
         if(location != null) {
             player.setFallDistance(0F);
             player.teleport(location);
             WarpSystem.getInstance().getTeleportManager().getTeleports().remove(this);
         } else if(this.globalWarpName != null) {
-            ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).teleport(getPlayer(), displayName, warpName, this.costs, new Callback<PrepareTeleportPacket.Result>() {
+            ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).teleport(getPlayer(), this.displayName, this.globalWarpName, this.costs, new Callback<PrepareTeleportPacket.Result>() {
                 @Override
                 public void accept(PrepareTeleportPacket.Result result) {
                     switch(result) {
                         case TELEPORTED:
                             WarpSystem.getInstance().getTeleportManager().getTeleports().remove(Teleport.this);
+                            if(callback != null) callback.accept(true);
                             break;
 
                         case WARP_NOT_EXISTS:
@@ -153,13 +163,15 @@ public class Teleport {
 
         if(finishSound != null) finishSound.playSound(player);
 
-        if(showMessage || this.costs > 0) {
-            if(this.costs > 0) {
-                player.sendMessage(Lang.getPrefix() + Lang.get("Money_Paid").replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
-            } else {
-                player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
-            }
+        if(message == null || message.isEmpty()) return;
+
+        if(this.costs > 0) {
+            player.sendMessage(Lang.getPrefix() + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
+        } else if(showMessage) {
+            player.sendMessage(Lang.getPrefix() + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
         }
+
+        if(callback != null) callback.accept(true);
     }
 
     public Player getPlayer() {

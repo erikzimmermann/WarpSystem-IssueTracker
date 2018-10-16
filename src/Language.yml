@@ -249,6 +249,7 @@ ENG:
   TempWarp_Renew_Yes_Hover: '&7> Click <'
   TempWarp_Renew_Not_Enough_Money: '&7You have &cnot enough money &7to reactivate your TempWarp.'
   TempWarp_Renew_Finished: '&7Your TempWarp "&b%TEMP_WARP%&7" was &areactivated &7for &c%COINS% Coin(s)&7.'
+  TempWarp_Inactive_Win: '&7You got &b%AMOUNT% coin(s) &7by your TempWarps while you were offline.'
 
 GER:
   Menu_Help: '&c&nHilfe'
@@ -498,3 +499,4 @@ GER:
   TempWarp_Renew_Yes_Hover: '&7> Klick <'
   TempWarp_Renew_Not_Enough_Money: '&7Du hast &cnicht genügend Geld&7, um dein TempWarp zu erneuern.'
   TempWarp_Renew_Finished: '&7Dein TempWarp "&b%TEMP_WARP%&7" wurde &aerfolgreich für &c%COINS% Coin(s) &7erneuert.'
+  TempWarp_Inactive_Win: '&7Du hast &b%AMOUNT% Coin(s) &7von deinen TempWarps eingenommen, während du offline warst!'

@@ -29,8 +29,9 @@ public class TempWarp {
     private int teleportCosts;
 
     private int paid;
+    private int inactiveSales = 0;
 
-    TempWarp(String lastKnownName, UUID owner, Location location, String name, String message, Date startDate, Date endDate, int duration, boolean isPublic, int teleportCosts, int paid) {
+    TempWarp(String lastKnownName, UUID owner, Location location, String name, String message, Date startDate, Date endDate, int duration, boolean isPublic, int teleportCosts, int paid, int inactiveSales) {
         this.lastKnownName = lastKnownName;
         this.owner = owner;
         this.location = location;
@@ -42,6 +43,7 @@ public class TempWarp {
         this.isPublic = isPublic;
         this.teleportCosts = teleportCosts;
         this.paid = paid;
+        this.inactiveSales = inactiveSales;
     }
 
     private TempWarp(String lastKnownName, UUID owner, Location location, String name, String message, Date startDate, int duration, boolean isPublic, int teleportCosts, int paid) {
@@ -241,7 +243,7 @@ public class TempWarp {
     }
 
     public TempWarp clone() {
-        return new TempWarp(this.lastKnownName, this.owner, this.location, this.name, this.message, this.startDate, this.endDate, this.duration, this.isPublic, this.teleportCosts, this.paid);
+        return new TempWarp(this.lastKnownName, this.owner, this.location, this.name, this.message, this.startDate, this.endDate, this.duration, this.isPublic, this.teleportCosts, this.paid, this.inactiveSales);
     }
 
     public String toJSONString() {
@@ -258,6 +260,7 @@ public class TempWarp {
         json.put("isPublic", this.isPublic);
         json.put("TeleportCosts", this.teleportCosts);
         json.put("Paid", this.paid);
+        json.put("InactiveSales", this.inactiveSales);
 
         return json.toJSONString();
     }
@@ -277,8 +280,9 @@ public class TempWarp {
             boolean isPublic = (boolean) json.get("isPublic");
             int teleportCosts = Integer.parseInt(json.get("TeleportCosts") + "");
             int paid = Integer.parseInt(json.get("Paid") + "");
+            int inactiveSales = Integer.parseInt(json.get("InactiveSales") + "");
 
-            return new TempWarp(lastKnownName, owner, location, name, teleportMessage, startDate, endDate, timeIntervals, isPublic, teleportCosts, paid);
+            return new TempWarp(lastKnownName, owner, location, name, teleportMessage, startDate, endDate, timeIntervals, isPublic, teleportCosts, paid, inactiveSales);
         } catch(ParseException e) {
             e.printStackTrace();
             return null;
@@ -291,5 +295,13 @@ public class TempWarp {
 
     public void setTeleportCosts(int teleportCosts) {
         this.teleportCosts = teleportCosts;
+    }
+
+    public int getInactiveSales() {
+        return inactiveSales;
+    }
+
+    public void setInactiveSales(int inactiveSales) {
+        this.inactiveSales = inactiveSales;
     }
 }

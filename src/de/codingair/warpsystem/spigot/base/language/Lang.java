@@ -7,7 +7,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 public class Lang {
     public static String getCurrentLanguage() {
@@ -59,8 +58,7 @@ public class Lang {
         String text = getConfig().getString(getCurrentLanguage() + "." + key, null);
 
         if(text == null) {
-            WarpSystem.getInstance().getLogger().log(Level.WARNING, "Unknown translation key: '" + getCurrentLanguage() + "." + key + "' >> Check the Language.yml at '" + getCurrentLanguage() + "." + key + "'");
-            return null;
+            throw new IllegalStateException("Unknown translation key: '" + getCurrentLanguage() + "." + key + "' >> Check the Language.yml at '" + getCurrentLanguage() + "." + key + "'");
         }
 
         text = ChatColor.translateAlternateColorCodes('&', text);
