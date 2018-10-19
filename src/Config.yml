@@ -40,6 +40,7 @@ WarpSystem:
     TempWarps: true
 
   TempWarps:
+    #Permission to set the available amount of TempWarps: "WarpSystem.TempWarps.2" (Example for a maximum of 2 TempWarps)
     Time:
       #sec, min, hour, day
       Interval: min
