@@ -32,6 +32,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class TempWarpManager implements Manager, Ticker {
+    public static String PERMISSION(int amount) { return "WarpSystem.TempWarps." + amount; }
     private List<EmptyTempWarp> reserved = new ArrayList<>();
     private List<TempWarp> warps = new ArrayList<>();
 
