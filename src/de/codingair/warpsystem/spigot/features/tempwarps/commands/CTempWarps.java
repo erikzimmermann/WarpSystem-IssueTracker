@@ -11,6 +11,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CTempWarps extends CommandBuilder {
@@ -28,12 +29,12 @@ public class CTempWarps extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, edit, renew>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, edit, list, renew>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, edit, renew>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, edit, list, renew>");
                 return false;
             }
         }, true);
@@ -114,6 +115,28 @@ public class CTempWarps extends CommandBuilder {
             }
         });
 
+        getBaseComponent().addChild(new CommandComponent("list") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                List<TempWarp> list = TempWarpManager.getManager().getWarps((Player) sender);
+                if(list.isEmpty()) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_No_Warps"));
+                    return false;
+                }
+
+                List<String> l = new ArrayList<>();
+
+                l.add("§7______________________________");
+                l.add("  §3TempWarps§7: §b" + list.size());
+                l.add("§7______________________________");
+
+                sender.sendMessage(l.toArray(new String[0]));
+
+                l.clear();
+                list.clear();
+                return false;
+            }
+        });
 
         getBaseComponent().addChild(new CommandComponent("renew") {
             @Override

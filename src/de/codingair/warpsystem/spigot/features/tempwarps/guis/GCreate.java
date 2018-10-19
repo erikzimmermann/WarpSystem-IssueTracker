@@ -22,6 +22,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Date;
+
 public class GCreate extends SimpleGUI {
     private TempWarp warp;
 
@@ -129,23 +131,51 @@ public class GCreate extends SimpleGUI {
                 }.setOption(option));
 
                 addButton(new SyncButton(3, 2) {
+                    private int direction = 0;
+                    private long last = 0;
+                    private int increase = 1;
+
                     @Override
                     public void onClick(InventoryClickEvent e, Player player) {
+                        if(last == 0) last = new Date().getTime();
+
                         if(e.isLeftClick()) {
-                            warp.setDuration(warp.getDuration() - TempWarpManager.getManager().getConfig().getDurationSteps());
+                            if(direction != 1) {
+                                increase = 1;
+                                direction = 1;
+                            } else {
+                                if(new Date().getTime() - last < 250L) increase += 2;
+                                else increase = 1;
+
+                                last = new Date().getTime();
+                            }
+
+                            warp.setDuration(warp.getDuration() - TempWarpManager.getManager().getConfig().getDurationSteps() * increase);
                             if(warp.getDuration() < TempWarpManager.getManager().getMinTime()) {
                                 warp.setDuration(TempWarpManager.getManager().getMinTime());
 
                                 Sound.CLICK.playSound(p, 1, 0.7F);
+                                increase = 1;
                             } else Sound.CLICK.playSound(p);
 
                             updatePage();
                         } else if(e.isRightClick()) {
-                            warp.setDuration(warp.getDuration() + TempWarpManager.getManager().getConfig().getDurationSteps());
+                            if(direction != 2) {
+                                increase = 1;
+                                direction = 2;
+                            } else {
+                                if(new Date().getTime() - last < 250L) increase += 2;
+                                else increase = 1;
+
+                                last = new Date().getTime();
+                            }
+
+                            warp.setDuration(warp.getDuration() + TempWarpManager.getManager().getConfig().getDurationSteps() * increase);
                             if(warp.getDuration() > TempWarpManager.getManager().getMaxTime()) {
                                 warp.setDuration(TempWarpManager.getManager().getMaxTime());
 
                                 Sound.CLICK.playSound(p, 1, 0.7F);
+                                increase = 1;
                             } else Sound.CLICK.playSound(p);
 
                             updatePage();
@@ -154,7 +184,7 @@ public class GCreate extends SimpleGUI {
 
                     @Override
                     public ItemStack craftItem() {
-                        ItemBuilder builder = new ItemBuilder(XMaterial.CLOCK).setName("§7" + Lang.get("Active_Time") + ": " + (warp.getDuration() <= 0 ? "§c" + Lang.get("Not_Set") : "§b" + warp.getDuration() + TempWarpManager.getManager().getConfig().getUnit().name().toLowerCase().substring(0, 1)
+                        ItemBuilder builder = new ItemBuilder(XMaterial.CLOCK).setName("§7" + Lang.get("Active_Time") + ": " + (warp.getDuration() <= 0 ? "§c" + Lang.get("Not_Set") : "§b" + TempWarpManager.getManager().convertInTimeFormat(warp.getDuration(), TempWarpManager.getManager().getConfig().getUnit())
                                 + (warp.getDuration() == TempWarpManager.getManager().getMinTime() ? " §7(§c" + Lang.get("Minimum") + "§7)" : warp.getDuration() == TempWarpManager.getManager().getMaxTime() ? " §7(§c" + Lang.get("Maximum") + "§7)" : "")));
 
                         builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp.getCosts()) ? "§a" : "§c") + (warp.getDuration() * TempWarpManager.getManager().getConfig().getDurationCosts()) + " " + Lang.get("Coins"));

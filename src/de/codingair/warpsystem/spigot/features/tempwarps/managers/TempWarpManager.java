@@ -322,6 +322,40 @@ public class TempWarpManager implements Manager, Ticker {
         return null;
     }
 
+    public String convertInTimeFormat(long time, TimeUnit unit) {
+        long days = TimeUnit.DAYS.convert(time, unit);
+        time -= unit.convert(days, TimeUnit.DAYS);
+        long hours = TimeUnit.HOURS.convert(time, unit);
+        time -= unit.convert(hours, TimeUnit.HOURS);
+        long min = TimeUnit.MINUTES.convert(time, unit);
+        time -= unit.convert(min, TimeUnit.MINUTES);
+        long sec = TimeUnit.SECONDS.convert(time, unit);
+
+        StringBuilder builder = new StringBuilder();
+
+        if(days > 0) {
+            if(!builder.toString().isEmpty()) builder.append(", ");
+            builder.append(days).append("d");
+        }
+
+        if(hours > 0) {
+            if(!builder.toString().isEmpty()) builder.append(", ");
+            builder.append(hours).append("h");
+        }
+
+        if(min > 0) {
+            if(!builder.toString().isEmpty()) builder.append(", ");
+            builder.append(min).append("min");
+        }
+
+        if(sec > 0) {
+            if(!builder.toString().isEmpty()) builder.append(", ");
+            builder.append(sec).append("sec");
+        }
+
+        return builder.toString();
+    }
+
     public void activate(TempWarp warp) {
         this.warps.add(warp);
     }
