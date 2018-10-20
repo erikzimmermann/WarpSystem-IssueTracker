@@ -292,7 +292,7 @@ public class TempWarpManager implements Manager, Ticker {
         if(getWarp(identifier) != null) return true;
 
         for(EmptyTempWarp emptyTempWarp : this.reserved) {
-            if(emptyTempWarp.getIdentifier() != null && emptyTempWarp.getIdentifier().equals(identifier)) return true;
+            if(emptyTempWarp.getIdentifier() != null && emptyTempWarp.getIdentifier().equalsIgnoreCase(identifier)) return true;
         }
 
         return false;
@@ -313,7 +313,7 @@ public class TempWarpManager implements Manager, Ticker {
         List<TempWarp> warps = new ArrayList<>(this.warps);
 
         for(TempWarp warp : warps) {
-            if(warp.getIdentifier().replace("_", " ").equals(identifier)) {
+            if(warp.getIdentifier().replace("_", " ").equalsIgnoreCase(identifier)) {
                 warps.clear();
                 return warp;
             }
@@ -321,6 +321,40 @@ public class TempWarpManager implements Manager, Ticker {
 
         warps.clear();
         return null;
+    }
+
+    public String convertInTimeFormat(long time, TimeUnit unit) {
+        long days = TimeUnit.DAYS.convert(time, unit);
+        time -= unit.convert(days, TimeUnit.DAYS);
+        long hours = TimeUnit.HOURS.convert(time, unit);
+        time -= unit.convert(hours, TimeUnit.HOURS);
+        long min = TimeUnit.MINUTES.convert(time, unit);
+        time -= unit.convert(min, TimeUnit.MINUTES);
+        long sec = TimeUnit.SECONDS.convert(time, unit);
+
+        StringBuilder builder = new StringBuilder();
+
+        if(days > 0) {
+            if(!builder.toString().isEmpty()) builder.append(", ");
+            builder.append(days).append("d");
+        }
+
+        if(hours > 0) {
+            if(!builder.toString().isEmpty()) builder.append(", ");
+            builder.append(hours).append("h");
+        }
+
+        if(min > 0) {
+            if(!builder.toString().isEmpty()) builder.append(", ");
+            builder.append(min).append("m");
+        }
+
+        if(sec > 0) {
+            if(!builder.toString().isEmpty()) builder.append(", ");
+            builder.append(sec).append("s");
+        }
+
+        return builder.toString();
     }
 
     public void activate(TempWarp warp) {

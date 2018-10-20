@@ -12,7 +12,9 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class CTempWarps extends CommandBuilder {
     public CTempWarps() {
@@ -29,12 +31,12 @@ public class CTempWarps extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, edit, renew>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, edit, list, renew>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, edit, renew>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, edit, list, renew>");
                 return false;
             }
         }, true);
@@ -42,7 +44,9 @@ public class CTempWarps extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("create") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                int current = TempWarpManager.getManager().getWarps((Player) sender).size();
+                List<TempWarp> list = TempWarpManager.getManager().getWarps((Player) sender);
+                int current = list.size();
+                list.clear();
                 if(!sender.hasPermission(TempWarpManager.PERMISSION(current + 1))) {
                     if(current == 0) {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -62,7 +66,9 @@ public class CTempWarps extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                int current = TempWarpManager.getManager().getWarps((Player) sender).size();
+                List<TempWarp> list = TempWarpManager.getManager().getWarps((Player) sender);
+                int current = list.size();
+                list.clear();
                 if(!sender.hasPermission(TempWarpManager.PERMISSION(current + 1))) {
                     if(current == 0) {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -131,6 +137,36 @@ public class CTempWarps extends CommandBuilder {
             }
         });
 
+        getBaseComponent().addChild(new CommandComponent("list") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                List<TempWarp> list = TempWarpManager.getManager().getWarps((Player) sender);
+                if(list.isEmpty()) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_No_Warps"));
+                    return false;
+                }
+
+                List<String> l = new ArrayList<>();
+
+                l.add(" ");
+                l.add("§7§l§m------------------------------------------------");
+                l.add(" ");
+                l.add("  " + Lang.get("TempWarp_You_have_n_Warps").replace("%AMOUNT%", list.size() + ""));
+                l.add(" ");
+                for(TempWarp warp : list) {
+                    l.add("  §7\"§f" + warp.getName() + "§7\" §8(" + (warp.isPublic() ? "§a" + Lang.get("Public") : "§c" + Lang.get("Private")) + "§8)§7: §b" + TempWarpManager.getManager().convertInTimeFormat(warp.getLeftTime(), TimeUnit.MILLISECONDS) + " §7" + Lang.get("Remaining"));
+                }
+
+                l.add(" ");
+                l.add("§7§l§m------------------------------------------------");
+
+                sender.sendMessage(l.toArray(new String[0]));
+
+                l.clear();
+                list.clear();
+                return false;
+            }
+        });
 
         getBaseComponent().addChild(new CommandComponent("renew") {
             @Override
