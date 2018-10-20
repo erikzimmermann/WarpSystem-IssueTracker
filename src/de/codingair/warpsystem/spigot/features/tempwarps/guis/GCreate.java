@@ -94,7 +94,7 @@ public class GCreate extends SimpleGUI {
                             return;
                         }
 
-                        if(TempWarpManager.getManager().isReserved(warp.isPublic() ? input : warp.getLastKnownName() + input)) {
+                        if(TempWarpManager.getManager().isReserved(warp.isPublic() ? input : p.getName() + "." + input)) {
                             p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                             Sound.CLICK.playSound(p, 1, 0.7F);
                             return;
