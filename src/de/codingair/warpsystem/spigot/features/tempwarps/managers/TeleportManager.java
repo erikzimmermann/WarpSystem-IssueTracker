@@ -3,7 +3,6 @@ package de.codingair.warpsystem.spigot.features.tempwarps.managers;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.Adapter;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
 import org.bukkit.entity.Player;
@@ -16,6 +15,10 @@ public class TeleportManager {
         if(warp == null) {
             player.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
             return false;
+        }
+
+        if(!warp.isAvailable()) {
+            player.sendMessage(TempWarpManager.ERROR_NOT_AVAILABLE(warp.getIdentifier()));
         }
 
         return tryToTeleport(player, warp);
@@ -35,16 +38,19 @@ public class TeleportManager {
         }
 
         int costs = warp.getTeleportCosts();
+        boolean isOwner;
 
-        if(AdapterType.getActive().getMoney(player) < costs) {
-            //not enough money
-            player.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money").replace("%AMOUNT%", warp.getTeleportCosts() + ""));
-            return false;
+        if(!(isOwner = warp.isOwner(player))) {
+            if(AdapterType.getActive().getMoney(player) < costs) {
+                //not enough money
+                player.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money").replace("%AMOUNT%", warp.getTeleportCosts() + ""));
+                return false;
+            }
+
+            AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) - costs);
         }
 
-        AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) - costs);
-
-        WarpSystem.getInstance().getTeleportManager().teleport(player, warp.getLocation(), warp.getName(), warp.getTeleportCosts(), false, false, warp.getMessage(), new Callback<Boolean>() {
+        WarpSystem.getInstance().getTeleportManager().teleport(player, warp.getLocation(), warp.getName(), warp.getTeleportCosts(), false, false, warp.getMessage(), isOwner ? null : new Callback<Boolean>() {
             @Override
             public void accept(Boolean teleported) {
                 if(teleported) {

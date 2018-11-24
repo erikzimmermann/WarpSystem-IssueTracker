@@ -48,6 +48,7 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_ByPass_Maintenance = "WarpSystem.ByPass.Maintenance";
     public static final String PERMISSION_ByPass_Teleport_Costs = "WarpSystem.ByPass.Teleport.Costs";
     public static final String PERMISSION_ByPass_Teleport_Delay = "WarpSystem.ByPass.Teleport.Delay";
+    public static String PERMISSION_ADMIN = "WarpSystem.Admin";
     public static boolean OP_CAN_SKIP_DELAY = false;
 
     private static WarpSystem instance;
@@ -107,6 +108,8 @@ public class WarpSystem extends JavaPlugin {
 
             if(this.fileManager.getFile("Language") == null) this.fileManager.loadFile("Language", "/");
             if(this.fileManager.getFile("Config") == null) this.fileManager.loadFile("Config", "/");
+
+            PERMISSION_ADMIN = this.fileManager.getFile("Config").getConfig().getString("WarpSystem.Admin.Permission", "WarpSystem.Admin");
 
             this.runningFirstTime = !fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "2.1.0").equals(getDescription().getVersion());
             if(this.runningFirstTime) createBackup();
@@ -285,7 +288,7 @@ public class WarpSystem extends JavaPlugin {
                 if(!saver) log("Saving features");
                 this.dataManager.save(saver);
                 this.teleportManager.save(saver);
-                fileManager.getFile("Config").destroy();
+                fileManager.getFile("Config");
             } else {
                 log("Does not save data, because of errors at enabling this plugin.");
                 log(" ");

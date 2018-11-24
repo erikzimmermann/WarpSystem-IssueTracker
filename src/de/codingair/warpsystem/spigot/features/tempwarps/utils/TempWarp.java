@@ -21,6 +21,7 @@ public class TempWarp {
     private Location location;
     private String name;
 
+    private Date bornDate;
     private Date startDate;
     private Date endDate;
     private int duration;
@@ -31,12 +32,13 @@ public class TempWarp {
     private int paid;
     private int inactiveSales = 0;
 
-    TempWarp(String lastKnownName, UUID owner, Location location, String name, String message, Date startDate, Date endDate, int duration, boolean isPublic, int teleportCosts, int paid, int inactiveSales) {
+    TempWarp(String lastKnownName, UUID owner, Location location, String name, String message, Date bornDate, Date startDate, Date endDate, int duration, boolean isPublic, int teleportCosts, int paid, int inactiveSales) {
         this.lastKnownName = lastKnownName;
         this.owner = owner;
         this.location = location;
         this.name = name;
         this.message = message;
+        this.bornDate = bornDate;
         this.startDate = startDate;
         this.endDate = endDate;
         this.duration = duration;
@@ -46,12 +48,13 @@ public class TempWarp {
         this.inactiveSales = inactiveSales;
     }
 
-    private TempWarp(String lastKnownName, UUID owner, Location location, String name, String message, Date startDate, int duration, boolean isPublic, int teleportCosts, int paid) {
+    private TempWarp(String lastKnownName, UUID owner, Location location, String name, String message, Date bornDate, Date startDate, int duration, boolean isPublic, int teleportCosts, int paid) {
         this.lastKnownName = lastKnownName;
         this.owner = owner;
         this.location = location;
         this.name = name;
         this.message = message;
+        this.bornDate = bornDate;
         this.startDate = startDate;
         this.duration = duration;
         this.isPublic = isPublic;
@@ -62,7 +65,7 @@ public class TempWarp {
     }
 
     public TempWarp(Player player, Location location, String name, int duration, boolean isPublic, String message, int teleportCosts) {
-        this(player.getName(), WarpSystem.getInstance().getUUIDManager().get(player), location, name, message, new Date(), duration, isPublic, teleportCosts, 0);
+        this(player.getName(), WarpSystem.getInstance().getUUIDManager().get(player), location, name, message, new Date(), new Date(), duration, isPublic, teleportCosts, 0);
         saveCosts();
     }
 
@@ -105,6 +108,10 @@ public class TempWarp {
 
     public Date getStartDate() {
         return startDate;
+    }
+
+    public Date getBornDate() {
+        return bornDate;
     }
 
     public int getDuration() {
@@ -219,6 +226,10 @@ public class TempWarp {
         this.endDate = calculateEndDate();
     }
 
+    public boolean isAvailable() {
+        return this.location != null && this.location.getWorld() != null;
+    }
+
     public void apply() {
         this.backup = null;
     }
@@ -243,7 +254,7 @@ public class TempWarp {
     }
 
     public TempWarp clone() {
-        return new TempWarp(this.lastKnownName, this.owner, this.location, this.name, this.message, this.startDate, this.endDate, this.duration, this.isPublic, this.teleportCosts, this.paid, this.inactiveSales);
+        return new TempWarp(this.lastKnownName, this.owner, this.location, this.name, this.message, this.bornDate, this.startDate, this.endDate, this.duration, this.isPublic, this.teleportCosts, this.paid, this.inactiveSales);
     }
 
     public String toJSONString() {
@@ -251,9 +262,10 @@ public class TempWarp {
 
         json.put("Owner", this.owner.toString());
         json.put("LastKnownName", this.lastKnownName);
-        json.put("Location", this.location.toJSONString(4));
+        json.put("Location", this.location == null ? null : this.location.toJSONString(4));
         json.put("Name", this.name);
         json.put("Message", this.message);
+        json.put("BornDate", this.bornDate.getTime() + "");
         json.put("StartDate", this.startDate.getTime() + "");
         json.put("EndDate", this.endDate.getTime() + "");
         json.put("Duration", this.duration + "");
@@ -274,6 +286,7 @@ public class TempWarp {
             Location location = json.get("Location") == null ? null : Location.getByJSONString((String) json.get("Location"));
             String name = (String) json.get("Name");
             String teleportMessage = json.get("Message") == null ? null : (String) json.get("Message");
+            Date bornDate = new Date(Long.parseLong((String) json.get("BornDate")));
             Date startDate = new Date(Long.parseLong((String) json.get("StartDate")));
             Date endDate = new Date(Long.parseLong((String) json.get("EndDate")));
             int timeIntervals = Integer.parseInt(json.get("Duration") + "");
@@ -282,7 +295,7 @@ public class TempWarp {
             int paid = Integer.parseInt(json.get("Paid") + "");
             int inactiveSales = Integer.parseInt(json.get("InactiveSales") + "");
 
-            return new TempWarp(lastKnownName, owner, location, name, teleportMessage, startDate, endDate, timeIntervals, isPublic, teleportCosts, paid, inactiveSales);
+            return new TempWarp(lastKnownName, owner, location, name, teleportMessage, bornDate, startDate, endDate, timeIntervals, isPublic, teleportCosts, paid, inactiveSales);
         } catch(ParseException e) {
             e.printStackTrace();
             return null;

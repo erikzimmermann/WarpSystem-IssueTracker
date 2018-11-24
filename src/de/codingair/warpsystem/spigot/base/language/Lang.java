@@ -58,6 +58,8 @@ public class Lang {
         String text = getConfig().getString(getCurrentLanguage() + "." + key, null);
 
         if(text == null) {
+            if(key.equalsIgnoreCase("Yes") && get("true").equals("true")) return "Yes";
+            else if(key.equalsIgnoreCase("No") && get("no").equals("false")) return "No";
             throw new IllegalStateException("Unknown translation key: '" + getCurrentLanguage() + "." + key + "' >> Check the Language.yml at '" + getCurrentLanguage() + "." + key + "'");
         }
 

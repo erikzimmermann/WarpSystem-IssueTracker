@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class EmptyTempWarp extends TempWarp {
     public EmptyTempWarp(Player player) {
-        super(player.getName(), WarpSystem.getInstance().getUUIDManager().get(player), Location.getByLocation(player.getLocation()), null, null, null, null, -999, false, 0, 0, 0);
+        super(player.getName(), WarpSystem.getInstance().getUUIDManager().get(player), Location.getByLocation(player.getLocation()), null, null, null, null, null, -999, false, 0, 0, 0);
         TempWarpManager.getManager().getReserved().add(this);
     }
 

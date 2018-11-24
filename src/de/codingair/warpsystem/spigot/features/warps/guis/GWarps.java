@@ -68,7 +68,7 @@ public class GWarps extends GUI {
 
     private static String getTitle(Category category, GUIListener listener, Player player) {
         FileConfiguration config = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig();
-        String key = player.hasPermission(IconManager.getInstance().getAdminPermission()) ? "Admin" : "User";
+        String key = player.hasPermission(WarpSystem.PERMISSION_ADMIN) ? "Admin" : "User";
 
         return listener == null || listener.getTitle() == null ?
                 ChatColor.translateAlternateColorCodes('&', (category == null ?
@@ -78,7 +78,7 @@ public class GWarps extends GUI {
     }
 
     private static int getSize(Player player) {
-        return player.hasPermission(IconManager.getInstance().getAdminPermission()) ? IconManager.getInstance().getAdminSize() : IconManager.getInstance().getUserSize();
+        return player.hasPermission(WarpSystem.PERMISSION_ADMIN) ? IconManager.getInstance().getAdminSize() : IconManager.getInstance().getUserSize();
     }
 
     public GWarps(Player p, Category category, boolean editing) {
