@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TempWarpManager implements Manager, Ticker {
     public static String PERMISSION(int amount) { return "WarpSystem.TempWarps." + amount; }
+    public static String ERROR_NOT_AVAILABLE(String name) { return "§8[§4§lERROR§4 - WarpSystem§8] §cThe TempWarp is not available. Check the info of §n" + name + "§c and take a look to the worlds!"; }
     private List<EmptyTempWarp> reserved = new ArrayList<>();
     private List<TempWarp> warps = new ArrayList<>();
 
@@ -48,6 +49,7 @@ public class TempWarpManager implements Manager, Ticker {
     private int messageChangeCosts;
     private int inactiveTime;
     private List<Integer> inactiveReminds;
+    private boolean refund;
 
     private TempWarpConfig config;
 
@@ -84,14 +86,15 @@ public class TempWarpManager implements Manager, Ticker {
         this.refundByRemovingMessage = config.getInt("WarpSystem.TempWarps.Message.Refund_by_removing_message", 0);
         this.maxTeleportCosts = config.getInt("WarpSystem.TempWarps.Custom_Teleport_Costs.Max_Costs", 500);
         this.teleportCostsSteps = config.getInt("WarpSystem.TempWarps.Custom_Teleport_Costs.Cost_Steps", 50);
-        this.teleportCosts = config.getInt("WarpSystem.TempWarps.Custom_Teleport_Costs.TeleportCosts", 5000) / 100;
+        this.teleportCosts = config.getInt("WarpSystem.TempWarps.Custom_Teleport_Costs.TeleportCosts", 50);
         this.inactiveTime = config.getInt("WarpSystem.TempWarps.Inactive.Time_After_Expiration", 60);
         this.nameChangeCosts = config.getInt("WarpSystem.TempWarps.Name.Edit_Costs", 50);
         this.inactiveReminds = config.getIntegerList("WarpSystem.TempWarps.Inactive.Reminds");
+        this.refund = config.getBoolean("WarpSystem.TempWarps.Refund", true);
 
         String timeUnit = config.getString("WarpSystem.TempWarps.Time.Interval", "m");
         TimeUnit unit = getTimeUnitOfString(timeUnit);
-        int durationCosts = config.getInt("WarpSystem.TempWarps.Costs.DurationCosts", 5);
+        int durationCosts = config.getInt("WarpSystem.TempWarps.Costs.CostsPerInterval", 5);
         int durationSteps = config.getInt("WarpSystem.TempWarps.Time.DurationSteps", 5);
         int publicCosts = config.getInt("WarpSystem.TempWarps.Costs.PublicCosts", 5);
         int messageCosts = config.getInt("WarpSystem.TempWarps.Costs.MessageCosts", 5);
@@ -149,7 +152,7 @@ public class TempWarpManager implements Manager, Ticker {
                 if(warp.getLeftTime() >= -1050L) {
                     Player p = warp.getOnlineOwner();
                     if(p != null)
-                        p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_expiring").replace("%TEMP_WARP%", warp.getName()).replace("%TIME_LEFT%", getInactiveTime() + getConfig().getUnit().name().toLowerCase().substring(0, 1)));
+                        p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_expiring").replace("%TEMP_WARP%", warp.getName()).replace("%TIME_LEFT%", convertInTimeFormat(getInactiveTime(), TimeUnit.SECONDS)));
                 }
 
                 for(Integer remind : this.inactiveReminds) {
@@ -159,11 +162,11 @@ public class TempWarpManager implements Manager, Ticker {
                     if(warp.getLeftTime() >= time - 1050L && warp.getLeftTime() < time) {
                         Player p = warp.getOnlineOwner();
                         if(p != null)
-                            p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Deletion_In").replace("%TEMP_WARP%", warp.getName()).replace("%TIME_LEFT%", remind + getConfig().getUnit().name().toLowerCase().substring(0, 1)));
+                            p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Deletion_In").replace("%TEMP_WARP%", warp.getName()).replace("%TIME_LEFT%", convertInTimeFormat(remind, TimeUnit.SECONDS)));
                     }
                 }
 
-                Date inactive = new Date(warp.getEndDate().getTime() + TimeUnit.MILLISECONDS.convert(this.inactiveTime, this.config.getUnit()));
+                Date inactive = new Date(warp.getEndDate().getTime() + TimeUnit.MILLISECONDS.convert(this.inactiveTime, TimeUnit.SECONDS));
 
                 if(inactive.before(new Date())) {
                     //Delete
@@ -272,9 +275,14 @@ public class TempWarpManager implements Manager, Ticker {
     }
 
     public List<TempWarp> getWarps(Player player) {
-        List<TempWarp> correct = new ArrayList<>();
-
         UUID uniqueId = WarpSystem.getInstance().getUUIDManager().get(player);
+        if(uniqueId == null) return new ArrayList<>();
+
+        return getWarps(uniqueId);
+    }
+
+    public List<TempWarp> getWarps(UUID uniqueId) {
+        List<TempWarp> correct = new ArrayList<>();
         if(uniqueId == null) return correct;
 
         List<TempWarp> warps = new ArrayList<>(this.warps);
@@ -494,5 +502,9 @@ public class TempWarpManager implements Manager, Ticker {
 
     public List<EmptyTempWarp> getReserved() {
         return reserved;
+    }
+
+    public boolean isRefund() {
+        return refund;
     }
 }

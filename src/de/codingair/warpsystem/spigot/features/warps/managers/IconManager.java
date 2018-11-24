@@ -10,7 +10,6 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
-import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import de.codingair.warpsystem.spigot.features.warps.commands.CWarp;
@@ -24,7 +23,6 @@ import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Act
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Icon;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.CategoryData;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
-import de.codingair.warpsystem.transfer.packets.bungee.UpdateGlobalWarpPacket;
 import de.codingair.warpsystem.utils.Manager;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -56,7 +54,6 @@ public class IconManager implements Manager {
 
     private int userSize = 54;
     private int adminSize = 54;
-    private String adminPermission = "WarpSystem.Admin";
 
     public static IconManager getInstance() {
         return ((IconManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS));
@@ -104,8 +101,6 @@ public class IconManager implements Manager {
                 file.saveConfig();
                 break;
         }
-
-        this.adminPermission = config.getString("WarpSystem.GUI.Admin.Permission", "WarpSystem.Admin");
 
         this.warps.clear();
         this.categories.clear();
@@ -264,7 +259,7 @@ public class IconManager implements Manager {
             Bukkit.getPluginManager().registerEvents(new Listener() {
                 @EventHandler
                 public void onJoin(PlayerJoinEvent e) {
-                    if(e.getPlayer().hasPermission(IconManager.getInstance().getAdminPermission())) {
+                    if(e.getPlayer().hasPermission(WarpSystem.PERMISSION_ADMIN)) {
                         Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
                             e.getPlayer().sendMessage(" ");
                             e.getPlayer().sendMessage(Lang.getPrefix() + "§4Warning! §cCouldn't load all icons successfully.");
@@ -276,7 +271,7 @@ public class IconManager implements Manager {
             }, WarpSystem.getInstance());
 
             for(Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                if(onlinePlayer.hasPermission(IconManager.getInstance().getAdminPermission())) {
+                if(onlinePlayer.hasPermission(WarpSystem.PERMISSION_ADMIN)) {
                     Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
                         onlinePlayer.sendMessage(" ");
                         onlinePlayer.sendMessage(Lang.getPrefix() + "§4Warning! §cCouldn't load all icons successfully.");
@@ -587,14 +582,6 @@ public class IconManager implements Manager {
 
     public void setAdminSize(int adminSize) {
         this.adminSize = adminSize;
-    }
-
-    public String getAdminPermission() {
-        return adminPermission;
-    }
-
-    public void setAdminPermission(String adminPermission) {
-        this.adminPermission = adminPermission;
     }
 
     public ItemStack getBackground() {

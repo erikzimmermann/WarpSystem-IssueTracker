@@ -33,7 +33,7 @@ public class GDelete extends SimpleGUI {
         super(p, new StandardLayout(), new Page(p, Lang.get("TempWarp_Delete"), new Layout(27) {
             @Override
             public void initialize() {
-                this.setItem(4, new ItemBuilder(XMaterial.NETHER_STAR).setText(Lang.get("TempWarp_Confirm_Delete").replace("%COINS%", warp.getRemainingCosts() + ""), 100).getItem());
+                this.setItem(4, new ItemBuilder(XMaterial.NETHER_STAR).setText(Lang.get("TempWarp_Confirm_Delete").replace("%COINS%", getRefund(warp) + ""), 100).getItem());
             }
         }) {
             @Override
@@ -55,7 +55,7 @@ public class GDelete extends SimpleGUI {
                     public void onClick(InventoryClickEvent e, Player player) {
                         TempWarpManager.getManager().delete(warp);
 
-                        int costs = warp.getRemainingCosts();
+                        int costs = getRefund(warp);
                         AdapterType.getActive().setMoney(p, AdapterType.getActive().getMoney(p) + costs);
 
                         if(costs > 0) {
@@ -114,9 +114,13 @@ public class GDelete extends SimpleGUI {
 
             @Override
             public void onTick(Object item, int timeLeft) {
-                setItem(4, new ItemBuilder(XMaterial.NETHER_STAR).setText(Lang.get("TempWarp_Confirm_Delete").replace("%COINS%", warp.getRemainingCosts() + ""), 100).getItem());
+                setItem(4, new ItemBuilder(XMaterial.NETHER_STAR).setText(Lang.get("TempWarp_Confirm_Delete").replace("%COINS%", getRefund(warp) + ""), 100).getItem());
                 getPlayer().updateInventory();
             }
         });
+    }
+    
+    private static int getRefund(TempWarp warp) {
+        return TempWarpManager.getManager().isRefund() ? warp.getRemainingCosts() : 0;
     }
 }
