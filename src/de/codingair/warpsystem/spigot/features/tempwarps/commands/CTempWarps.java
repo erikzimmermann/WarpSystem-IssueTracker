@@ -190,7 +190,7 @@ public class CTempWarps extends CommandBuilder {
                                         }
                                     });
                                 }
-                            }.setHover(Lang.get("Click_Hover")).build());
+                            }.setHover(Lang.get("Click_Hover")));
 
                             message.setTimeOut(60);
                             message.send((Player) sender);
