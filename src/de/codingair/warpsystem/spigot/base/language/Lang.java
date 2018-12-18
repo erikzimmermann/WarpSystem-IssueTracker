@@ -59,7 +59,7 @@ public class Lang {
 
         if(text == null) {
             if(key.equalsIgnoreCase("Yes") && get("true").equals("true")) return "Yes";
-            else if(key.equalsIgnoreCase("No") && get("no").equals("false")) return "No";
+            else if(key.equalsIgnoreCase("No") && get("false").equals("false")) return "No";
             throw new IllegalStateException("Unknown translation key: '" + getCurrentLanguage() + "." + key + "' >> Check the Language.yml at '" + getCurrentLanguage() + "." + key + "'");
         }
 
