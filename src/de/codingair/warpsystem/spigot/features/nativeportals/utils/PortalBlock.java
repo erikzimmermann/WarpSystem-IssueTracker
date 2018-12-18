@@ -33,6 +33,10 @@ public class PortalBlock {
             } else {
                 if(portal.getType() == PortalType.NETHER) {
                     new ModernBlock(this.loc.getBlock()).setTypeAndData(portal.getType().getBlockMaterial(), new Orientable(portal.getCachedAxis()));
+                } else if(portal.getType() == PortalType.END) {
+                    if(portal.isVertically() && portal.getType().getVerticalBlockMaterial() != null) {
+                        this.loc.getBlock().setType(portal.getType().getVerticalBlockMaterial(), true);
+                    } else this.loc.getBlock().setType(portal.getType().getBlockMaterial(), false);
                 } else this.loc.getBlock().setType(portal.getType().getBlockMaterial(), false);
             }
         } else this.loc.getBlock().setType(Material.AIR, true);
