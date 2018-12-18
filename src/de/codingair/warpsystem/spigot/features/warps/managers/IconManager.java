@@ -543,15 +543,18 @@ public class IconManager implements Manager {
 
             this.categories.remove(icon);
         } else if(icon instanceof Warp) {
-            String warp = icon.getNameWithoutColor();
+            if(ShortcutManager.getInstance() != null) {
+                String warp = icon.getNameWithoutColor();
 
-            List<Shortcut> toDelete = new ArrayList<>();
-            for(Shortcut shortcut : ShortcutManager.getInstance().getShortcuts()) {
-                if(shortcut.getWarp() != null && shortcut.getWarp().getNameWithoutColor().equals(warp)) toDelete.add(shortcut);
+                List<Shortcut> toDelete = new ArrayList<>();
+                for(Shortcut shortcut : ShortcutManager.getInstance().getShortcuts()) {
+                    if(shortcut.getWarp() != null && shortcut.getWarp().getNameWithoutColor().equals(warp)) toDelete.add(shortcut);
+                }
+
+                ShortcutManager.getInstance().getShortcuts().removeAll(toDelete);
+                toDelete.clear();
             }
-
-            ShortcutManager.getInstance().getShortcuts().removeAll(toDelete);
-            toDelete.clear();
+            
             this.warps.remove(icon);
         } else if(icon instanceof GlobalWarp) {
             this.globalWarps.remove(icon);
