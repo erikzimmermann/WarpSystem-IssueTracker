@@ -434,7 +434,7 @@ public class GEditor extends GUI {
                 addButton(new ItemButton(6, 2, new ItemBuilder(XMaterial.BARRIER).setName("§8» §c" + Lang.get("Close")).getItem()) {
                     @Override
                     public void onClick(InventoryClickEvent e) {
-                        portal.clear();
+                        if(portal != null) portal.clear();
                         if(backup != null) backup.setVisible(true);
                     }
                 }.setOption(option).setCloseOnClick(true));

@@ -10,6 +10,7 @@ import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.util.Vector;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -152,6 +153,11 @@ public class Portal {
 
         double diff = 0.0;
         return cachedEdges = new Location[] {new Location(world, x0 - diff, y0 - diff, z0 - diff), new Location(world, x1 + 0.999999 + diff, y1 + 0.999999 + diff, z1 + 0.999999 + diff)};
+    }
+
+    public boolean isVertically() {
+        Vector v = getCachedEdges()[0].toVector().subtract(getCachedEdges()[1].toVector().subtract(new Vector(0.999999, 0.999999, 0.999999)));
+        return Math.abs(v.getY()) >= 1;
     }
 
     public void update() {

@@ -131,10 +131,10 @@ ENG:
   WARP_HELP: '&7Use: &ewarp <Warp-Name>'
   WARP_DOES_NOT_EXISTS: '&cThis warp does not exist.'
   Native_Portals: '&cNative Portals &7- &cEditor'
-  Water_Portal: '&bWater backup'
-  Lava_Portal: '&cLava backup'
-  Nether_Portal: '&4Nether backup'
-  End_Portal: '&9End backup'
+  Water_Portal: '&bWater portal'
+  Lava_Portal: '&cLava portal'
+  Nether_Portal: '&4Nether portal'
+  End_Portal: '&9End portal'
   NativePortal_Material: Portal material
   Teleport_Link: Teleport link
   Portal_Blocks: Portal blocks
@@ -180,7 +180,7 @@ ENG:
   Portal_Editor_Change_Name: '&7Leftclick: Change name'
   NativePortals_Help: '&7Use: &e/%LABEL% <create, edit, delete>'
   NativePortalEditor_Place_Blocks: '&cPlace blocks!'
-  NativePortal_Confirm_Delete: '&7Do you really want to &4delete &7the backup?'
+  NativePortal_Confirm_Delete: '&7Do you really want to &4delete &7the portal?'
   No_Keep: '&aNo, keep'
   Yes_Delete: '&cYes, &4delete'
   NativePortal_Deleted: '&cThe portal was deleted successfully.'
