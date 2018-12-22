@@ -1,0 +1,287 @@
+Default_Language: CZE
+Prefix: '&8[&6Warps&8] &r'
+CZE:
+  Menu_Help: '&c&nPomoc'
+  Menu_Help_Leftclick: '&3Levyklik: &bEdit-Mode'
+  Menu_Help_Rightclick: '&3Pravyklik: &bNastaveni'
+  Back: Back
+  Edit_Mode_Set_ActionIcon: '&3Levyklik: &bNastavi warp'
+  Edit_Mode_Set_Category: '&3Pravyklik: &bNastaviy kategorii'
+  Menu_Help_Leftclick_Edit_Mode: '&3Levyklik: &bOpusti Edit-Mode'
+  Command: Prikaz
+  Permission: Prava
+  Shift_Leftclick_Edit: '&7Shift-levyklik: Move'
+  Leftclick_Edit: '&7Levyklik: Configure'
+  Rightclick_Delete: '&7Pravyklik: Smazani'
+  Item_Editing: Item-Editing
+  Change_Name: '&7» Klikni sem pro zmenu jmena.'
+  Cancel: Cancel
+  Ready: Ready
+  Not_Ready: Not ready
+  Sparkle: Sparkle
+  Description: Popisek
+  Leftclick_Add_Line: '&3Levyklik: &aPrida radek'
+  Rightclick_Reset_Lines: '&3Pravyklik: &cResetuje radky'
+  Current: Current
+  Leftclick_Add: '&3Levyklik: &aadd'
+  Leftclick_Disable: '&3Levyklik: &cDisable'
+  Leftclick_Remove: '&3Levyklik: &cRemove'
+  Line: Line
+  Name: Jmeno
+  Success_Create_Warp: '&aVytvoril jsi &bwarp &aUspesne.'
+  Success_Create_Decoration: '&aYou have created a &bDekoracni ikona &auspesne.'
+  Teleporting_Info: '&cTeleportace za &l&n%seconds%'
+  Teleported_To: '&7byl jsi teleportovan na "&b%warp%&7".'
+  Config: Config
+  Maintenance: Udrzba
+  Language: Jazyk
+  Leftclick_Prev_Lang: '&3Levyklik: &bPredchozi jazyk'
+  Rightclick_Next_Lang: '&3Pravyklik: &bPristi jazyk'
+  Animation: Animace
+  Shift_Leftclick_Show_Animation: '&3Shift-Levyklik &bUkaze animaci'
+  Leftclick_Prev_Animation: '&3Levyklik: &bPredchozi animace'
+  Rightclick_Next_Animation: '&3Pravyklik: &bPristi animace'
+  Walking_During_Teleports: Chozeni pri teleportaci
+  Teleport_Delay: Teleportacni zpozdeni
+  Leftclick_Reduce: '&3Levyklik: &bSnizi'
+  Rightclick_Enlarge: '&3Pravyklikvyk: &bZvisi'
+  Success_Changed_Lang: '&aJazyk byl zmenen na "%lang%".'
+  Success_Maintenance_Enabled: '&4Mod-Udrzby byl zapnut.'
+  Leftclick_Maintenance_Off: '&3Levyklik: &cVypne'
+  Success_Maintenance_Disabled: '&4Mod-Udrzby byl vypnut.'
+  Leftclick_Maintenance_On: '&3Levyklik: &aZapne'
+  Success_Changed_Animation: '&aAnimace byl zmenena na "%anim%".'
+  Success_Walking_Enabled: '&7Chozeni behem teleportace bylo &aZapnuto&7.'
+  Success_Walking_Disabled: '&7chozeni behem teleportace bylo &cVypnuto&7.'
+  Success_Changed_Teleport_Delay: '&aTeleportacni zpozdeni bylo nastaveno na "%delay%".'
+  Success_Configured: '&aUspesne jsi upravil iconu.'
+  Delete: '&cSmazat'
+  'true': Ano
+  Confirm_Delete: '&7Jsi si jisty ze chces &cSmazat &7Tuhle iconu?'
+  'false': Ne
+  Icon_Not_Deleted: '&7Icona &cNebyla &7Smazana.'
+  Icon_Deleted: '&cIcona byla uspesne smazana.'
+  Leftclick_Move_Icon: '&3Levyklik: &bPremisti iconu'
+  Success_Icon_Moved: '&aIcona byla uspesne premistena.'
+  Name_Already_Exists: '&cTohle jmeno jiz existuje.'
+  Only_For_Players: '&cTohle je pro hrace!'
+  Use: Pouzit
+  Success_Files_Reloaded: '&aVsechny slozky byly reloadnuty.'
+  Leftclick_Enable: '&3Levyklik: &aZapne'
+  Success_Create_Category: '&a&lspesne &aJsi vytvoril &bcategorii&a.'
+  PORTAL_GO_TO_PORTAL: '&7Mas 30 sekund na to aby jsi vesel do portalu.'
+  Apply_Delete_No: '&7Ne, &aNemazat&7.'
+  Question_Delete_Portal: '&7Chces opravdu &cSmazat &7Tento portal?'
+  Apply_Delete_Yes: '&7Ano,&4Smazat&7.'
+  Delete_Portal_Successfully: '&7Portal byl &aUspesne &cSmazan&7.'
+  PORTAL_CREATE_HELP: '&7Pouzij: &e/portal create <Nazev pozice>'
+  PORTAL_CREATE_FIRST_SAVED: '&7Prvni pozice byla ulozena.'
+  PORTAL_CREATE_NEXT: '&7Pouzij tento prikaz na dalsi pozici.'
+  Teleport_Radius: Dosah-teleportace
+  Animation_Height: Vyska-Animace
+  Animation_Type: Typ-Animace
+  Particle_Effect: Prarticle-Effects
+  Hologram_Height: Vyska-Hologramu
+  Start_Name: Zacinajici-Jmeno
+  Goal_Name: Koncici-Jmeno
+  Sound: Zvuk
+  Volume: Zesilovac
+  Pitch: Pitch
+  Entering_Portal_Editor: '&7Jsi momentalne v Portal-Editor modu.'
+  Portal_Created: '&7Portal byl vytvoren.'
+  Portal_Not_Created: '&7Portal &cnebyl &7vytvoren.'
+  Portal_Save_Changes: '&7Zmeny byly ulozeny.'
+  Portal_Delete_Changes: '&7Zmeny &cnebyly &7ulozeny.'
+  PORTAL_HELP: '&7Pouzij: &eportal <create, edit, delete>'
+  Delete_Portal_Cancel: '&7Portal &4nebyl &csmazan&7.'
+  Change_Name_Leftclick: '&3Levyklik: &bZmeni jmeno.'
+  Change_Name_Rightclick: '&3Pravyklik: &bZmeni item'
+  Move_Help: '&7Pohyb: Pravym kliknutim na kategorie se k nemu přrepnete.'
+  Edit_Mode_Set_Icon: '&3Levyklik: &bZmeni iconu'
+  Coins: Penez
+  Costs: Za
+  Shift_Rightclick_Edit: '&7Shift-PravyKlik: Otevre'
+  WarpSign_Choose_Warp: Vyber warp pro cedulku!
+  WarpSign_Choose_Warp_GUI: '&4&lVyber warp!'
+  WarpSign_Finish: WarpSign byl uspesne vytvoren!
+  Teleport_Cancelled: '&cTeleport byl zrusenen.'
+  WarpSign_Removed: '&7WarpSign byl &cSmazan&7!'
+  Search: Vyhledat...
+  Previous_Page: Predchozi strana
+  Next_Page: Pristi strana
+  GlobalWarp_Created: '&7GlobalnWarp "&b%GLOBAL_WARP%&7" byl &auspesne vytvoren&7.'
+  Target_Server: Cilovy-server
+  GUI_Choose_Icon: Vyber typ iconky
+  Warp: Warp
+  Category: Categorie
+  GlobalWarp: GlobalniWarp
+  Decoration: Dekorace
+  GlobalWarp_Leftclick_To_Choose: '&3Levyklik: &bVybrat'
+  Leftclick_Set: '&3Levyklik: &aNastavit'
+  Status: Status
+  Enabled: Zapnuto
+  Disable_This_Icon: '&3Levyklik: &c&lVypne iconu'
+  GlobalWarp_Current_Warp: '&7Momentalne: &b%GlobalWarp%'
+  Leftclick_Change: '&3Levyklik: &aZmeni'
+  Success_Create_GlobalWarp: '&aUspesne jsi vytvoril &bGlobalniWarp&a.'
+  GlobalWarp_Does_Not_Exist: '&cTeno GlobalniWarp neexistuje.'
+  Menu_Help_Shift_Leftclick: '&3Shift-Levyklik: &bNastavi pozadi'
+  Menu_Help_Shift_Rightclick_Show_Icon: '&3Shift-PravyKlik: &bUkaze iconu'
+  WARP_HELP: '&7Pouzij: &ewarp <Jmeno-Warpu>'
+  WARP_DOES_NOT_EXISTS: '&cTento warp neexistuje.'
+  Native_Portals: '&cRodny Portaly &7- &cEditor'
+  Water_Portal: '&bVodni portal'
+  Lava_Portal: '&cLavovy portal'
+  Nether_Portal: '&4Nether portal'
+  End_Portal: '&9End portal'
+  NativePortal_Material: Portal material
+  Teleport_Link: Teleport link
+  Portal_Blocks: Portal blocks
+  Not_Ready_For_Saving: '&cPortal nejde ulozit'
+  Set_Portal_Name: Nastav jmeno portalu
+  NativePortals_Set_Blocks: Nastav teleport bloky
+  Portal_Name: Jmeno portalu
+  Drop_To_Leave: '&cVyhod item do menu'
+  Choose_A_Warp: '&bVyber warp'
+  Choose_A_GlobalWarp: '&bVyber globalni warp'
+  NativePortals_Confirm_Close: '&cRodny Portaly &7- &4Ulozit?'
+  Sure_That_You_Want_To_Loose_Your_Data: '&7Jsi si jisty ze &cNechces &cUlozit &7Tvoje
+    zmeny?'
+  Close: Zavrit
+  Save: Uozit
+  GlobalWarp_Server_Is_Not_Online: '&cVybrany server neni online!'
+  GlobalWarp_Player_Is_Already_On_Target_Server: '&cJiz jsi na vybranem serveru.'
+  Go_To_NativePortal: '&7Mas 30 sekund na to vejit do rodnyho portalu.'
+  GlobalWarp_Help: '&7Pouzij: &e/GlobalWarp <create, delete>'
+  GlobalWarp_Create_Name_Already_Exists: '&7GlobalniWarp "&b%GLOBAL_WARP%&7" &cJiz
+    existuje&7.'
+  GlobalWarp_Deleted: '&7GlobalniWarp "&b%GLOBAL_WARP%&7" byl &csmazan&7.'
+  GlobalWarp_Deleted_Cancel: '&7GlbalniWarp "&b%GLOBAL_WARP%&7" &cnebyl &7Smazan.'
+  Native_Portal_Choose_Warp: '&cVyber warp'
+  Plugin_Reloading: '&cPLugin se reloaduje...'
+  Success_Plugin_Reloaded: '&aPlugin byl reloadnut.'
+  Status_Of_Start: 'Status of Start-Holo: '
+  Status_Of_Destination: 'Status of Destination-Holo: '
+  Hologram: Hologram
+  Teleport: Teleport
+  No_Permission: '&cNa tohle nemas dostatecna prava!'
+  Enter_Name: '&cProsim zadej jmeno.'
+  Disabled: Vypnuto
+  Leftclick_Enable_This_Icon: '&3Levyklik: &a&lZapne tuhle ikonu'
+  Icon_Is_Disabled: '&4ikona byla &l&nvypnuta&4!'
+  Player_Cannot_Use_System: '&cNemas prava na warpy!'
+  Player_Is_Already_Teleporting: '&cJiz se teleportujes!'
+  Player_Cannot_Use_Warp: '&cNemas dostatecna prava na pouziti tohodle warpu!'
+  Shortcut_created: '&7Zkratka "&b%SHORTCUT%&7" byla &apridana&7!'
+  Shortcut_already_exists: '&cTahle zkratka jiz existuje!'
+  Shortcut_was_removed: '&7Zkratka "&b%SHORTCUT%&7" Byla &cSmazana&7!'
+  WarpSign_Edited: WarpSIgn byl uspesne ediovan!
+  Leftclick: Levyklik
+  Rightclick: PravyKlik
+  Portal_Editor_Change_Name: '&7Levyklik: Zmeni jmeno'
+  NativePortals_Help: '&7Pouzij: &e/%LABEL% <create, edit, delete>'
+  NativePortalEditor_Place_Blocks: '&cPoloz bloky!'
+  NativePortal_Confirm_Delete: '&7Jsi si jisty ze chces &4Smazat &7tento portal?'
+  No_Keep: '&aNe, Nemazat'
+  Yes_Delete: '&cAno, &4Smazat'
+  NativePortal_Deleted: '&cPortal byl uspesne smazan.'
+  TempWarp_Editor: '&cDocasne Warpy &7- &cEditor'
+  TempWarp_Reactivate: '&cDocasne Warpy &7- &cZnovu aktivovat'
+  TempWarp_Create: '&cDocasne Warpy &7- &Vytvorit'
+  TempWarp_Delete: '&cDocasne Warpy &7- &cSmazat'
+  Set_Name: Nastavit meno
+  Duration: Doba trvani
+  Private: Private
+  Teleport_Message: Teleport Zprava
+  Teleport_Costs: Teleport za
+  Message: Zprava
+  GlobalWarp_Not_Exists: '&7GlobalniWarp "&b%GLOBAL_WARP%&7" &cNeexistuje&7.'
+  Money_Paid: '&7Musis zaplatit &c%AMOUNT% penez &7Pro teleportaci na warp "&b%warp%&7".'
+  GlobalWarp_Delete_Help: '&7Pouzij: &e/GlobalWarp delete <jmeno>'
+  Confirm: '&cJsi si jisty?'
+  Delete_confirmation_globalwarp: '&7chcete opravdu &csamazat &7GlobalniWarp &7"&c%GLOBAL_WARP%&7"&7?
+    Muzes s tim &csmazat i zkratky&7 s tim spojene.'
+  Rightclick_To_Reset: KlikniPravym pro resetovani
+  NativePortal_Not_Deleted: '&7Portal &cnebyl &7smazan.'
+  Portal_List_Leftclick_To_Edit: '&7Levyklik: Edit'
+  Portal_Editor_Change_Permission: '&7Levyklik: &eZmeni permise'
+  Portal_Insufficient_Permissions: '&cNemáte dostatečná oprávnění k teleportaci s
+    tímto portálem.'
+  Enter_Correct_Name_Underline: '&cProsim nepouzivejte "_"-Symboly.'
+  Player_Cannot_Use_Category: '&cNemas prava na otevreni teto kategorie!'
+  Warning_Maintenance: '&cWarp system je v soucasne dobe v rezimu udrzby, zkuste to
+    pozdeji znovu.'
+  Not_Enough_Money: '&7Potrebujes &c%AMOUNT% penez&7, Pro teleport na tuhle pozici!'
+  GlobalWarps_Not_Available: '&cThere are no GlobalWarps, which can be linked!'
+  Move_To_Open_Editor: '&cMove to open the &nconfig-editor&r'
+  No_Item_In_Hand: '&cYou have to hold an item!'
+  Enter_Correct_Name: '&cProsim nepouzivej "@"-Symboly.'
+  Enter_Lore: '&cProsim zadej popisek.'
+  Enter_Command: '&cZadej prosim prikaz.'
+  Enter_Permission: '&cZadej prosim permisi.'
+  Enter_A_Positive_Number: '&cZadej prosim kladne cislo!'
+  TempWarp_is_private: '&7tento warp je &cprivate&7!'
+  TempWarp_is_expired: '&7tento warp jiz &cvyprsel&7!'
+  TempWarp_is_not_expired: '&7Tento warp jeste &cnevyprsel&7!'
+  Public: Public
+  TempWarp_Message_Too_Long_Too_Short: '&7Delka vasi zpravy musi byt mezi &c%MIN%
+    &7a &c%MAX%&7!'
+  TempWarp_was_deleted: '&7Tvuj docasnyWarp "&c%WARP%&7" Byl &cpnavzdy smazan&7.'
+  TempWarp_no_access: '&cnemas prava na tento DocasnyWarp.'
+  Not_Set: neni nastaveno
+  Active_Time: Aktivni cas
+  Minimum: Minimum
+  Maximum: Maximum
+  Click_Toggle: '&7» Klikni zde pro vypnuti'
+  TempWarp_Click_Buy: '&7» Klikni zde pro &caktivaci &7tveho DocasnehoWarp za &c%PRICE%
+    Penez'
+  TempWarp_Click_Renew: '&7» Klikni zde pro &cznovu aktivaci &7Tveho DocasnehoWarpu
+    za &c%PRICE% Penez'
+  Change_Message: '&7» Klikni zde pro zmenu zpravy'
+  Price: penize
+  TempWarp_Created: '&7Tvuj DocasnyWarp "&b%NAME%&7" &7Byl aktivovan za &c%PRICE%
+    Penez&7!'
+  TempWarp_Confirm_Delete: '&7Jsi si jisty ze chces &csmazat &7tento DocasnyWarp?
+    &Po odstraněni tohoto warpu dostanete zpět &a%COINS% Penez'
+  TempWarp_Deleted: '&7DocasnyWarp "&b%TEMP_WARP%&7" byl &cSmazan&7.'
+  TempWarp_Deleted_Refund: '&7DocasnyWarp "&b%TEMP_WARP%&7" byl &csmazan&7. Dostanes
+    zpet &a%COINS% Penez&7.'
+  TempWarp_Deleted_Cancel: '&7DocasnyWarp "&b%TEMP_WARP%&7" &cnebyl &7smazan.'
+  TempWarp_Delete_TimeOut: '&7Trvalo prilis mnoho casu &7na to smazat tvuj DocasnyWarp,
+    zkus to znovu.'
+  TempWarp_expiring: '&7Tvuj DocasnyWarp "&b%TEMP_WARP%&7" &cvyprsel&7. mas &b%TIME_LEFT%
+    &7nechat ji znovu aktivovat.'
+  TempWarp_Deletion_In: '&7Your TempWarp "&b%TEMP_WARP%&7" will be &cdeleted &7in
+    &b%TIME_LEFT%&7!'
+  TempWarp_List_deleted_in: '&csmazan v &n%TIME_LEFT%'
+  Removed: smazan
+  TempWarp_Edited_Pay: '&7Tvuj DocasnyWarp "&b%TEMP_WARP%&7" byl &aedited &7zy &c%COINS%
+    Penez&7.'
+  TempWarp_Edited_Refund: '&7Mas &a%COINS% Penez &7zpet pro upravu DocasnehoWarpu
+    "&b%TEMP_WARP%&7".'
+  TempWarp_Edited: '&7Tvuj DocasnyWarp "&b%TEMP_WARP%&7" syl &aUspesne editovan&7.'
+  TempWarp_Renew: '&7chcete znovu aktivovat vas DocasnyWarp "&b%TEMP_WARP%&7" &7za
+    &c%COINS% &cPenez&7? &8[%YES%&8]'
+  TempWarp_Renew_Yes: '&aAno'
+  TempWarp_Renew_Yes_Hover: '&7> Klikni <'
+  TempWarp_Renew_Not_Enough_Money: '&7Nemas &cdostatek penez &7pro znovu aktivaci
+    DocasnehoWarpu.'
+  TempWarp_Renew_Finished: '&7Tvuj DocasnyWarp "&b%TEMP_WARP%&7" byl &aznovu aktivovan
+    &7za &c%COINS% Penez&7.'
+  TempWarp_Inactive_Win: '&7Mas &b%AMOUNT% Penez &7od vaseho DocasnehoWarpu zatim
+    co jste byl offline.'
+  TempWarp_No_Warps: '&cNemas &7zadne DocasneWarpy!'
+  TempWarp_No_Warps_Other: '&7Tento hrac &cnema &7zadne DocasneWarpy!'
+  TempWarp_Maximum_of_Warps: '&cNemuzes &7vytvorit vic nez &b%AMOUNT% &7DocasnychWarpu!'
+  Remaining: zbyvajici
+  TempWarp_You_have_n_Warps: '&7Mas dohromady &b%AMOUNT% DocasnychWarpu'
+  TempWarp_Player_have_n_Warps: '&7Hrac &b%PLAYER% &7ma dohromady &b%AMOUNT% DocasnychWarpu'
+  Ask_to_download_uuid: '&7Tento hrac &cneni &7online. &7chces &bstahnout &bUUID &7z
+    Mojang-Server? &8[&a%YES%&8]'
+  Player_does_not_exist: '&7Tento hrac &cneexistuje&7!'
+  Player_is_not_online: '&7Tento hrac &cneni online&7!'
+  Click_Hover: '&7» Klikni «'
+  Import_Start: '&7Warpy se nyni importuji...'
+  Import_Finish: '&7Warpy se &auspesne &7importovaly!'
+  Import_Finish_With_Errors: '&Warpy &cnebyly &7importovany &cspravne&7!'
+  Expired: Platnost vyprsela
