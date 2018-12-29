@@ -378,6 +378,7 @@ public class Portal implements Removable {
         json.put("HologramHeight", this.getHologramHeight());
         json.put("StartHoloStatus", this.startHoloStatus);
         json.put("DestinationHoloStatus", this.destinationHoloStatus);
+        json.put("Permission", this.permission);
 
         return json.toJSONString();
     }
@@ -400,8 +401,11 @@ public class Portal implements Removable {
             float soundPitch = Float.parseFloat(json.get("TeleportSoundPitch") + "");
             boolean startHoloStatus = json.get("StartHoloStatus") == null || Boolean.parseBoolean(json.get("StartHoloStatus") + "");
             boolean destinationHoloStatus = json.get("DestinationHoloStatus") == null || Boolean.parseBoolean(json.get("DestinationHoloStatus") + "");
+            String permission = json.get("Permission") == null ? null : (String) json.get("Permission");
 
-            return new Portal(start, destination, animationType, animationHeight, particle, teleportDistance, messageToStart, messageToDestination, new SoundData(sound, soundVolume, soundPitch), hologramHeight, startHoloStatus, destinationHoloStatus);
+            Portal portal = new Portal(start, destination, animationType, animationHeight, particle, teleportDistance, messageToStart, messageToDestination, new SoundData(sound, soundVolume, soundPitch), hologramHeight, startHoloStatus, destinationHoloStatus);
+            portal.setPermission(permission);
+            return portal;
         } catch(ParseException e) {
             e.printStackTrace();
             return null;

@@ -368,21 +368,20 @@ public class GEditor extends GUI {
 
                             @Override
                             public Task onClickOnWarp(Warp warp, boolean editing) {
-                                p.closeInventory();
 
                                 if(GEditor.this.warp != warp) {
                                     GEditor.this.warp = warp;
                                     changed = true;
                                 }
 
-                                menu = Menu.MAIN;
-                                reinitialize();
-                                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), GEditor.this::open, 1);
+                                p.closeInventory();
                                 return new Task();
                             }
 
                             @Override
                             public void onClose() {
+                                menu = Menu.MAIN;
+                                reinitialize();
                                 Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), GEditor.this::open, 1);
                             }
                         }, false, GlobalWarp.class, DecoIcon.class).open();
