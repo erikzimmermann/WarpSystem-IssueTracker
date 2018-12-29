@@ -115,12 +115,12 @@ public class Portal implements Removable {
     public void updateHolograms() {
         if(this.disabled) return;
 
-        if(this.startHolo == null) this.startHolo = new Hologram(this.start.clone().add(0, this.hologramHeight, 0), WarpSystem.getInstance(), ChatColor.translateAlternateColorCodes('&', startName));
-        else this.startHolo.setText(ChatColor.translateAlternateColorCodes('&', startName));
+        if(this.startHolo == null) this.startHolo = new Hologram(this.start.clone().add(0, this.hologramHeight, 0), WarpSystem.getInstance(), ChatColor.translateAlternateColorCodes('&', startName.replace("_", " ")));
+        else this.startHolo.setText(ChatColor.translateAlternateColorCodes('&', startName.replace("_", " ")));
         this.startHolo.setVisible(this.startHoloStatus);
 
-        if(this.destinationHolo == null) this.destinationHolo = new Hologram(this.destination.clone().add(0, this.hologramHeight, 0), WarpSystem.getInstance(), ChatColor.translateAlternateColorCodes('&', destinationName));
-        else this.destinationHolo.setText(ChatColor.translateAlternateColorCodes('&', destinationName));
+        if(this.destinationHolo == null) this.destinationHolo = new Hologram(this.destination.clone().add(0, this.hologramHeight, 0), WarpSystem.getInstance(), ChatColor.translateAlternateColorCodes('&', destinationName.replace("_", " ")));
+        else this.destinationHolo.setText(ChatColor.translateAlternateColorCodes('&', destinationName.replace("_", " ")));
         this.destinationHolo.setVisible(this.destinationHoloStatus);
 
         this.startHolo.update();
