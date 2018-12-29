@@ -195,6 +195,7 @@ public class GConfig extends GUI {
                         if(id < 0) id = WarpSystem.getInstance().getTeleportManager().getParticles().size() - 1;
 
                         WarpSystem.getInstance().getTeleportManager().setParticleId(id);
+                        WarpSystem.getInstance().getTeleportManager().save(false);
                         reinitialize();
                     }
 
@@ -221,6 +222,7 @@ public class GConfig extends GUI {
             @Override
             public void onClick(InventoryClickEvent e) {
                 WarpSystem.getInstance().getTeleportManager().setCanMove(!WarpSystem.getInstance().getTeleportManager().isCanMove());
+                WarpSystem.getInstance().getTeleportManager().save(false);
 
                 if(WarpSystem.getInstance().getTeleportManager().isCanMove()) {
                     p.sendMessage(Lang.getPrefix() + Lang.get("Success_Walking_Enabled"));
@@ -258,6 +260,8 @@ public class GConfig extends GUI {
 
                     WarpSystem.getInstance().getTeleportManager().setSeconds(seconds);
                 }
+
+                WarpSystem.getInstance().getTeleportManager().save(false);
 
                 p.sendMessage(Lang.getPrefix() + Lang.get("Success_Changed_Teleport_Delay").replace("%delay%", WarpSystem.getInstance().getTeleportManager().getSeconds() + ""));
 
