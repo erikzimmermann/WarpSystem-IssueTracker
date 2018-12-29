@@ -295,11 +295,11 @@ GER:
   Leftclick_Remove: '&3Linksklick: &cEntfernen'
   Line: Linie
   Name: Name
-  Success_Create_Warp: '&aDu hast erfolgreich ein &bWarp &aerstellt.'
-  Success_Create_Decoration: '&aDu hast erfolgreich ein &bDekoIcon &aerstellt.'
-  Teleporting_Info: '&cTeleport in &l&n%seconds%'
-  Teleported_To: '&7Du wurdest zu "&b%warp%&7" teleportiert.'
-  Config: Config
+  Success_Create_Warp: '&aDu hast erfolgreich einen &bWarp &aerstellt.'
+  Success_Create_Decoration: '&aDu hast erfolgreich ein &bDekosymbol &aerstellt.'
+  Teleporting_Info: '&cTeleportation in &l&n%seconds% &cSekunden.'
+  Teleported_To: '&7Du wurdest zum Warp "&b%warp%&7" teleportiert.'
+  Config: Konfiguration
   Maintenance: Wartung
   Language: Sprache
   Leftclick_Prev_Lang: '&3Linksklick: &bVorherige Sprache'
@@ -309,7 +309,7 @@ GER:
   Leftclick_Prev_Animation: '&3Linksklick: &bVorherige Animation'
   Rightclick_Next_Animation: '&3Rechtsklick: &bNächste Animation'
   Walking_During_Teleports: Laufen beim Teleport
-  Teleport_Delay: Teleport-Zeit
+  Teleport_Delay: Teleportations-Zeit
   Leftclick_Reduce: '&3Linksklick: &bVerringern'
   Rightclick_Enlarge: '&3Rechtsklick: &bVergrößern'
   Success_Changed_Lang: '&aDie Sprache wurde auf "%lang%" geändert.'
@@ -320,7 +320,7 @@ GER:
   Success_Changed_Animation: '&aDie Animation wurde auf "%anim%" geändert.'
   Success_Walking_Enabled: '&7Laufen beim Teleport ist nun &aerlaubt&7.'
   Success_Walking_Disabled: '&7Laufen beim Teleport ist nun &cnicht mehr erlaubt&7.'
-  Success_Changed_Teleport_Delay: '&aDie Teleport-Zeit wurde auf "%delay%" geändert.'
+  Success_Changed_Teleport_Delay: '&aDie Teleportations-Zeit wurde auf "%delay%" geändert.'
   Success_Configured: '&aDu hast das Symbol erfolgreich bearbeitet.'
   Delete: '&cLöschen'
   Yes: Ja
@@ -373,7 +373,7 @@ GER:
   WarpSign_Finish: Das Warp-Schild wurde erfolgreich gesetzt!
   Teleport_Cancelled: '&cDer Teleport wurde abgebrochen.'
   WarpSign_Removed: '&7Das Warp-Schild wurde &centfernt&7!'
-  Search: Suchen...
+  Search: Suche...
   Previous_Page: Vorherige Seite
   Next_Page: 'Nächste Seite'
   GlobalWarp_Created: '&7Der GlobalWarp "&b%GLOBAL_WARP%&7" wurde &aerfolgreich erstellt&7.'
@@ -424,11 +424,11 @@ GER:
   GlobalWarp_Deleted_Cancel: '&7Der GlobalWarp "&b%GLOBAL_WARP%&7" wurde &cnicht &7gelöscht.'
   Native_Portal_Choose_Warp: '&cWähle ein Warp'
   Plugin_Reloading: '&cDas Plugin wird jetzt neu geladen...'
-  Success_Plugin_Reloaded: '&aDas Plugin wurde neu geladen.'
+  Success_Plugin_Reloaded: '&aDas Plugin wurde erfolgreich neu geladen.'
   Status_Of_Start: 'Status vom Start-Holo: '
   Status_Of_Destination: 'Status vom Destination-Holo: '
-  Hologram: Hologram
-  Teleport: Teleport
+  Hologram: Hologramm
+  Teleport: Teleportation
   No_Permission: '&cDu hast keine Berechtigungen für diese Aktion!'
   Enter_Name: '&cBitte gib einen Namen ein.'
   Disabled: Deaktiviert
@@ -457,15 +457,15 @@ GER:
   Set_Name: Name setzen
   Duration: Dauer
   Private: Privat
-  Teleport_Message: Teleport Nachricht
-  Teleport_Costs: Teleport Kosten
+  Teleport_Message: Teleportationsnachricht
+  Teleport_Costs: Teleportationskosten
   Message: Nachricht
   GlobalWarp_Not_Exists: '&7Der GlobalWarp "&b%GLOBAL_WARP%&7" &cexistiert nicht&7.'
   Money_Paid: '&7Du hast &c%AMOUNT% Coin(s) &7bezahlt, um dich nach "&b%warp%&7" zu teleportieren!'
   GlobalWarp_Delete_Help: '&7Benutze: &e/GlobalWarp delete <Name>'
   Confirm: '&cBist du sicher?'
   Delete_confirmation_globalwarp: '&7Möchtest du den globalen Warp "&c%GLOBAL_WARP%&7" wirklich &clöschen&7? Du könntest automatisch &cShortcuts löschen&7, die damit verbunden sind.'
-  Rightclick_To_Reset: Rechtsklick zum resetten
+  Rightclick_To_Reset: Rechtsklick zum zurücksetzen
   NativePortal_Not_Deleted: '&7Das Portal wurde &cnicht &7gelöscht.'
   Portal_List_Leftclick_To_Edit: '&7Linksklick: Editieren'
   Portal_Editor_Change_Permission: '&7Linksklick: &eBerechtigung ändern'
