@@ -1,8 +1,10 @@
 package de.codingair.warpsystem.spigot.features.nativeportals.listeners;
 
+import de.codingair.codingapi.API;
 import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
+import de.codingair.warpsystem.spigot.features.nativeportals.guis.GEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -33,7 +35,8 @@ public class PortalListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPortal(PlayerPortalEvent e) {
-        if(NativePortalManager.getInstance().getNoTeleport().contains(e.getPlayer()) || NativePortalManager.getInstance().isEditing(e.getPlayer()) || WarpSystem.getInstance().getTeleportManager().isTeleporting(e.getPlayer())) {
+        if(NativePortalManager.getInstance().getNoTeleport().contains(e.getPlayer()) || NativePortalManager.getInstance().isEditing(e.getPlayer()) || WarpSystem.getInstance().getTeleportManager().isTeleporting(e.getPlayer())
+                || API.getRemovables(e.getPlayer(), GEditor.class) != null) {
             e.setCancelled(true);
             return;
         }
@@ -102,7 +105,7 @@ public class PortalListener implements Listener {
                 case NETHER:
                     if(portal.isAround(e.getBlock().getLocation(), 0, true))
                         e.setCancelled(true);
-                    else if(portal.isAround(e.getBlock().getLocation(), 1, true)){
+                    else if(portal.isAround(e.getBlock().getLocation(), 1, true)) {
                         Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), portal::update, 1);
                     }
                     break;

@@ -20,6 +20,7 @@ import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.Glo
 import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
 import de.codingair.warpsystem.spigot.features.nativeportals.PortalEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
+import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalBlock;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
@@ -73,6 +74,7 @@ public class GEditor extends GUI {
 
             this.backup.setVisible(false);
             this.portal = backup.clone();
+            this.portal.setType(PortalType.EDIT);
             this.portal.setVisible(true);
         }
 
@@ -196,12 +198,12 @@ public class GEditor extends GUI {
                             portal.setWarp(warp);
                             NativePortalManager.getInstance().addPortal(portal);
                         } else {
+                            backup.apply(portal);
                             backup.setType(type);
                             backup.setDisplayName(name);
                             backup.setGlobalWarp(globalWarp);
                             backup.setWarp(warp);
 
-                            backup.apply(portal);
                             portal.clear();
                             backup.setVisible(true);
                         }
@@ -266,7 +268,7 @@ public class GEditor extends GUI {
                 addButton(new ItemButton(6, 2, new ItemBuilder(XMaterial.IRON_PICKAXE).setHideStandardLore(true).setName("§8» §b" + Lang.get("NativePortals_Set_Blocks")).getItem()) {
                     @Override
                     public void onClick(InventoryClickEvent e) {
-                        PortalEditor editor = portal == null ? new PortalEditor(getPlayer(), type) : new PortalEditor(getPlayer(), portal);
+                        PortalEditor editor = portal == null ? new PortalEditor(getPlayer(), PortalType.EDIT) : new PortalEditor(getPlayer(), portal);
                         int size = editor.getPortal().getBlocks().size();
                         editor.init();
 
@@ -280,11 +282,12 @@ public class GEditor extends GUI {
 
                                     Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> {
                                         MessageAPI.stopSendingActionBar(getPlayer());
-                                        portal = editor.end();
-                                        if(size != portal.getBlocks().size()) changed = true;
                                         reinitialize();
                                         open();
                                         HandlerList.unregisterAll(this);
+
+                                        portal = editor.end();
+                                        if(size != portal.getBlocks().size()) changed = true;
                                     });
                                 }
                             }
@@ -301,7 +304,6 @@ public class GEditor extends GUI {
                         if(type != next) {
                             changed = true;
                             type = next;
-                            if(portal != null) portal.setType(type);
                         }
 
                         menu = Menu.MAIN;
@@ -316,7 +318,6 @@ public class GEditor extends GUI {
                         if(type != next) {
                             changed = true;
                             type = next;
-                            if(portal != null) portal.setType(type);
                         }
 
                         menu = Menu.MAIN;
@@ -331,7 +332,6 @@ public class GEditor extends GUI {
                         if(type != next) {
                             changed = true;
                             type = next;
-                            if(portal != null) portal.setType(type);
                         }
 
                         menu = Menu.MAIN;
@@ -346,7 +346,6 @@ public class GEditor extends GUI {
                         if(type != next) {
                             changed = true;
                             type = next;
-                            if(portal != null) portal.setType(type);
                         }
 
                         menu = Menu.MAIN;
@@ -405,6 +404,8 @@ public class GEditor extends GUI {
 
                                 @Override
                                 public void onClose() {
+                                    menu = Menu.MAIN;
+                                    reinitialize();
                                     Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), GEditor.this::open, 1);
                                 }
 
@@ -466,6 +467,10 @@ public class GEditor extends GUI {
                 }.setOption(option).setCloseOnClick(true));
                 break;
         }
+    }
+
+    public Portal getPortal() {
+        return portal;
     }
 
     public enum Menu {

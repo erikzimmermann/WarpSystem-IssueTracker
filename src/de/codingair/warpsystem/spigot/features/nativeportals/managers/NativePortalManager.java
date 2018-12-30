@@ -121,8 +121,11 @@ public class NativePortalManager implements Manager {
     private void init(Portal portal) {
         portal.getListeners().clear();
         portal.getListeners().add((player) -> {
-            if(API.getRemovable(player, GUI.class) != null) return;
-            else if(NativePortalManager.getInstance().isEditing(player)) return;
+            if(NativePortalManager.getInstance().isEditing(player) || API.getRemovable(player, GEditor.class) != null) {
+                player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.8));
+                return;
+            }
+            else if(API.getRemovable(player, GUI.class) != null) return;
             else if(WarpSystem.getInstance().getTeleportManager().isTeleporting(player)) return;
 
             if(goingToDelete.contains(player.getName())) {
@@ -132,7 +135,8 @@ public class NativePortalManager implements Manager {
                 player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.8));
 
                 Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                    new GEditor(player, portal, GEditor.Menu.DELETE).open();
+                    GEditor editor = new GEditor(player, portal, GEditor.Menu.DELETE);
+                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), editor::open, 2L);
                     noTeleport.remove(player);
                 }, 4L);
 
@@ -143,7 +147,8 @@ public class NativePortalManager implements Manager {
                 player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.8));
 
                 Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                    new GEditor(player, portal).open();
+                    GEditor editor = new GEditor(player, portal);
+                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), editor::open, 2L);
                     noTeleport.remove(player);
                 }, 4L);
             } else if(!noTeleport.contains(player)) {
