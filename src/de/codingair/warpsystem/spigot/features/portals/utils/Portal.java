@@ -75,8 +75,6 @@ public class Portal implements Removable {
 
         this.startHoloStatus = startHoloStatus;
         this.destinationHoloStatus = destinationHoloStatus;
-
-        update();
     }
 
     public void add(Player player) {
@@ -115,12 +113,22 @@ public class Portal implements Removable {
     public void updateHolograms() {
         if(this.disabled) return;
 
-        if(this.startHolo == null) this.startHolo = new Hologram(this.start.clone().add(0, this.hologramHeight, 0), WarpSystem.getInstance(), ChatColor.translateAlternateColorCodes('&', startName.replace("_", " ")));
-        else this.startHolo.setText(ChatColor.translateAlternateColorCodes('&', startName.replace("_", " ")));
+        if(this.startHolo == null) {
+            System.out.println("NULL| Y: " + this.start.clone().add(0, this.hologramHeight, 0).getY());
+            this.startHolo = new Hologram(this.start.clone().add(0, this.hologramHeight, 0), WarpSystem.getInstance(), ChatColor.translateAlternateColorCodes('&', startName.replace("_", " ")));
+        }
+        else {
+            System.out.println("Y: " + this.start.clone().add(0, this.hologramHeight, 0).getY());
+            this.startHolo.teleport(this.start.clone().add(0, this.hologramHeight, 0));
+            this.startHolo.setText(ChatColor.translateAlternateColorCodes('&', startName.replace("_", " ")));
+        }
         this.startHolo.setVisible(this.startHoloStatus);
 
         if(this.destinationHolo == null) this.destinationHolo = new Hologram(this.destination.clone().add(0, this.hologramHeight, 0), WarpSystem.getInstance(), ChatColor.translateAlternateColorCodes('&', destinationName.replace("_", " ")));
-        else this.destinationHolo.setText(ChatColor.translateAlternateColorCodes('&', destinationName.replace("_", " ")));
+        else {
+            this.destinationHolo.teleport(this.destination.clone().add(0, this.hologramHeight, 0));
+            this.destinationHolo.setText(ChatColor.translateAlternateColorCodes('&', destinationName.replace("_", " ")));
+        }
         this.destinationHolo.setVisible(this.destinationHoloStatus);
 
         this.startHolo.update();
@@ -204,6 +212,8 @@ public class Portal implements Removable {
 
     public void setRunning(boolean running) {
         if(this.running == running || this.disabled) return;
+        update();
+
         this.running = running;
 
         if(this.startAnim != null) this.startAnim.setRunning(running);

@@ -41,6 +41,7 @@ public class Portal {
     public Portal(Portal portal) {
         this.type = portal.getType();
         this.blocks = new ArrayList<>(portal.getBlocks());
+        this.listeners.addAll(portal.getListeners());
     }
 
     public Portal(PortalType type, List<PortalBlock> blocks) {
@@ -70,6 +71,8 @@ public class Portal {
         this.blocks.clear();
         this.blocks.addAll(portal.getBlocks());
         this.type = portal.getType();
+        this.listeners.clear();
+        this.listeners.addAll(portal.getListeners());
 
         if(visible) setVisible(true);
     }
