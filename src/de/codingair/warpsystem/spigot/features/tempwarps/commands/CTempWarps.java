@@ -52,7 +52,7 @@ public class CTempWarps extends CommandBuilder {
                 List<TempWarp> list = TempWarpManager.getManager().getWarps((Player) sender);
                 int current = list.size();
                 list.clear();
-                if(!sender.hasPermission(TempWarpManager.PERMISSION(current + 1))) {
+                if(!TempWarpManager.hasPermission((Player) sender)) {
                     if(current == 0) {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     } else sender.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Maximum_of_Warps").replace("%AMOUNT%", current + ""));
@@ -74,7 +74,7 @@ public class CTempWarps extends CommandBuilder {
                 List<TempWarp> list = TempWarpManager.getManager().getWarps((Player) sender);
                 int current = list.size();
                 list.clear();
-                if(!sender.hasPermission(TempWarpManager.PERMISSION(current + 1))) {
+                if(!TempWarpManager.hasPermission((Player) sender)) {
                     if(current == 0) {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     } else sender.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Maximum_of_Warps").replace("%AMOUNT%", current + ""));
