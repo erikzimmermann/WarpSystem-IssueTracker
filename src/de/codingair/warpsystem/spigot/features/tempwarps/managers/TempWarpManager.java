@@ -24,6 +24,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +33,22 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class TempWarpManager implements Manager, Ticker {
+    public static boolean hasPermission(Player player) {
+        if(player.isOp()) return true;
+
+        int warps = TempWarpManager.getManager().getWarps(player).size() + 1;
+        for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
+            String perm = effectivePermission.getPermission();
+
+            if(perm.toLowerCase().startsWith("warpsystem.tempwarps.")) {
+                int amount = Integer.parseInt(perm.substring(21));
+                if(amount >= warps) return true;
+            }
+
+        }
+
+        return false;
+    }
     public static String PERMISSION(int amount) { return "WarpSystem.TempWarps." + amount; }
     public static String ERROR_NOT_AVAILABLE(String name) { return "§8[§4§lERROR§4 - WarpSystem§8] §cThe TempWarp is not available. Check the info of §n" + name + "§c and take a look to the worlds!"; }
     private List<EmptyTempWarp> reserved = new ArrayList<>();
