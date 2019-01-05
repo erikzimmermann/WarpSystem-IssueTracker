@@ -19,6 +19,8 @@ WarpSystem:
         In_Category: '&c&l&nWarps&r &c@%CATEGORY%'
 
   Teleport:
+    Animation_After_Teleport:
+      Enabled: true
     Op_Can_Skip_Delay: false
     Delay: 5
     Animation: 17

@@ -161,8 +161,8 @@ public class Teleport {
             return;
         }
 
+        WarpSystem.getInstance().getTeleportManager().playAfterEffects(player);
         if(finishSound != null) finishSound.playSound(player);
-
         if(message == null || message.isEmpty()) return;
 
         if(this.costs > 0) {

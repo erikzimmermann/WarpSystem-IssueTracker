@@ -6,6 +6,7 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.Teleport;
+import de.codingair.warpsystem.spigot.base.utils.effects.RotatingParticleSpiral;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
@@ -50,9 +51,7 @@ public class TeleportManager {
         particles.add(Particle.REDSTONE);
         particles.add(Particle.SNOW_SHOVEL);
         particles.add(Particle.HEART);
-        particles.add(Particle.DRAGON_BREATH);
-        particles.add(Particle.END_ROD);
-        particles.add(Particle.DAMAGE_INDICATOR);
+        particles.add(Particle.PORTAL);
     }
 
     /**
@@ -244,6 +243,12 @@ public class TeleportManager {
         }
 
         return null;
+    }
+
+    public void playAfterEffects(Player player) {
+        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Teleport.Animation_After_Teleport.Enabled", true)) {
+            new RotatingParticleSpiral(player, player.getLocation()).runTaskTimer(WarpSystem.getInstance(), 1, 1);
+        }
     }
 
     public boolean isTeleporting(Player p) {
