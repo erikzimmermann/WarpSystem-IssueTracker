@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class RotatingParticleSpiral extends BukkitRunnable {
-    private static final double CHANGE = 0.1;
+    private static final double CHANGE = 0.2;
     private static final double HEIGHT = 2.4;
 
     private Player player;

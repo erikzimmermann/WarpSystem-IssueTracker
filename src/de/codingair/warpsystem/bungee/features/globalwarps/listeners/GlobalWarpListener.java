@@ -16,8 +16,23 @@ import de.codingair.warpsystem.transfer.utils.PacketListener;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.ServerConnectedEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
 
-public class GlobalWarpListener implements PacketListener {
+import java.util.logging.Level;
+
+public class GlobalWarpListener implements Listener, PacketListener {
+
+    @EventHandler
+    public void onConnect(ServerConnectedEvent e) {
+        if(e.getServer().getInfo().getPlayers().size() <= 1) {
+            //Update it
+            GlobalWarpManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS);
+            manager.synchronize(e.getServer().getInfo());
+        }
+    }
+
     @Override
     public void onReceive(Packet packet, String extra) {
         GlobalWarpManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS);
@@ -64,6 +79,12 @@ public class GlobalWarpListener implements PacketListener {
                 String teleport = ((PrepareTeleportPacket) packet).getTeleportName();
                 String teleportDisplayName = ((PrepareTeleportPacket) packet).getDisplayName();
                 warp = manager.get(teleport);
+
+                if(warp == null) {
+                    WarpSystem.getInstance().getLogger().log(Level.WARNING, "The server \"" + server.getName() + "\" is not up to date. Please reload it!");
+                    return;
+                }
+
                 ServerInfo otherServer = BungeeCord.getInstance().getServerInfo(warp.getServer());
                 ProxiedPlayer p = BungeeCord.getInstance().getPlayer(player);
 
@@ -78,18 +99,15 @@ public class GlobalWarpListener implements PacketListener {
 
                 if(answerIntegerPacket.getValue() != 0) return;
 
-
-                if(p.getServer().getInfo().equals(otherServer)){
+                if(p.getServer().getInfo().equals(otherServer)) {
                     WarpSystem.getInstance().getDataHandler().send(new TeleportPacket(player, warp, teleportDisplayName, ((PrepareTeleportPacket) packet).getCosts()), otherServer);
-                } else {
-                    p.connect(otherServer, (connected, throwable) -> {
-                        if(connected) WarpSystem.getInstance().getDataHandler().send(new TeleportPacket(player, warp, teleportDisplayName, ((PrepareTeleportPacket) packet).getCosts()), otherServer);
-                    });
-                }
+                } else p.connect(otherServer, (connected, throwable) -> {
+                    if(connected) WarpSystem.getInstance().getDataHandler().send(new TeleportPacket(player, warp, teleportDisplayName, ((PrepareTeleportPacket) packet).getCosts()), otherServer);
+                });
                 break;
 
             case RequestGlobalWarpNamesPacket:
-                manager.sendData(server);
+                manager.synchronize(server);
                 break;
         }
     }

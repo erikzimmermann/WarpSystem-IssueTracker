@@ -50,7 +50,7 @@ public class TeleportManager {
             AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) - costs);
         }
 
-        WarpSystem.getInstance().getTeleportManager().teleport(player, warp.getLocation(), warp.getName(), warp.getTeleportCosts(), false, false, warp.getMessage(), isOwner ? null : new Callback<Boolean>() {
+        WarpSystem.getInstance().getTeleportManager().teleport(player, warp.getLocation(), warp.getName(), warp.getTeleportCosts(), false, false, warp.getMessage(), false, isOwner ? null : new Callback<Boolean>() {
             @Override
             public void accept(Boolean teleported) {
                 if(teleported) {

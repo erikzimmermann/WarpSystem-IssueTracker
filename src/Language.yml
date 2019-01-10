@@ -111,6 +111,7 @@ ENG:
   Previous_Page: Previous Page
   Next_Page: Next Page
   GlobalWarp_Created: '&7The GlobalWarp "&b%GLOBAL_WARP%&7" was &acreated successfully&7.'
+  GlobalWarp_Create_No_Dots: '&cGlobalWarp names &lcan''t &ccontain any points!'
   Target_Server: Target-Server
   GUI_Choose_Icon: Choose your IconType
   Warp: Warp
@@ -377,6 +378,7 @@ GER:
   Previous_Page: Vorherige Seite
   Next_Page: 'Nächste Seite'
   GlobalWarp_Created: '&7Der GlobalWarp "&b%GLOBAL_WARP%&7" wurde &aerfolgreich erstellt&7.'
+  GlobalWarp_Create_No_Dots: '&cGlobalWarp-Namen dürfen &lkeine&c Punkte enthalten!'
   Target_Server: Ziel-Server
   GUI_Choose_Icon: 'Wähle deinen Symbol-Typen'
   Warp: Warp

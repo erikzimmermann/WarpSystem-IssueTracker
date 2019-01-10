@@ -57,13 +57,19 @@ public class CGlobalWarps extends CommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
                 Player player = (Player) sender;
+
+                if(argument.contains(".")) {
+                    player.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Create_No_Dots"));
+                    return false;
+                }
+
                 ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).create(argument, player.getLocation(), new Callback<Boolean>() {
                     @Override
                     public void accept(Boolean created) {
                         if(created) {
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Created").replace("%GLOBAL_WARP%", argument));
+                            player.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Created").replace("%GLOBAL_WARP%", argument));
                         } else {
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Create_Name_Already_Exists").replace("%GLOBAL_WARP%", argument));
+                            player.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Create_Name_Already_Exists").replace("%GLOBAL_WARP%", argument));
                         }
                     }
                 });

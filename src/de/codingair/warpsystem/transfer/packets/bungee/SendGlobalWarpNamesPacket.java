@@ -12,12 +12,19 @@ import java.util.List;
 
 public class SendGlobalWarpNamesPacket implements Packet {
     private HashMap<String, String> names = new HashMap<>();
+    private boolean start;
 
     public SendGlobalWarpNamesPacket() {
     }
 
     public SendGlobalWarpNamesPacket(HashMap<String, String> names) {
         this.names = names;
+        this.start = false;
+    }
+
+    public SendGlobalWarpNamesPacket(HashMap<String, String> names, boolean start) {
+        this.names = names;
+        this.start = start;
     }
 
     @Override
@@ -29,6 +36,7 @@ public class SendGlobalWarpNamesPacket implements Packet {
         for(String server : this.names.values()) {
             out.writeUTF(server);
         }
+        out.writeBoolean(this.start);
     }
 
     @Override
@@ -40,9 +48,14 @@ public class SendGlobalWarpNamesPacket implements Packet {
         for(String name : this.names.keySet()) {
             this.names.replace(name, in.readUTF());
         }
+        this.start = in.readBoolean();
     }
 
     public HashMap<String, String> getNames() {
         return names;
+    }
+
+    public boolean isStart() {
+        return start;
     }
 }

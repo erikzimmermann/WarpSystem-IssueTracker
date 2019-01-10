@@ -36,6 +36,7 @@ public class RuleListener implements Listener {
 
     @EventHandler
     public void onBurn(BlockIgniteEvent e) {
+        if(e.getIgnitingBlock() == null) return;
         List<StaticLavaBlock> l = API.getRemovables(StaticLavaBlock.class);
 
         for(StaticLavaBlock lava : l) {
