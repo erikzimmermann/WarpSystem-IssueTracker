@@ -32,11 +32,7 @@ public class GlobalWarpManager implements Manager {
     //              Name,   Server
     private HashMap<String, String> globalWarps = new HashMap<>();
     private boolean globalWarpsOfGUI = false;
-
-    private void loadAllGlobalWarps() {
-        this.getGlobalWarps().clear();
-        WarpSystem.getInstance().getDataHandler().send(new RequestGlobalWarpNamesPacket());
-    }
+    private GlobalWarpListener listener;
 
     public void create(String warpName, Location loc, Callback<Boolean> callback) {
         WarpSystem.getInstance().getDataHandler().send(new PublishGlobalWarpPacket(new SGlobalWarp(warpName, new SLocation(loc.getWorld().getName(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch())), callback));
@@ -71,9 +67,16 @@ public class GlobalWarpManager implements Manager {
     }
 
     public void teleport(Player player, String display, String name, double costs, Callback<PrepareTeleportPacket.Result> callback) {
-        if(name == null) return;
+        if(name == null) {
+            callback.accept(PrepareTeleportPacket.Result.WARP_NOT_EXISTS);
+            return;
+        }
+
         name = getCaseCorrectlyName(name);
-        if(!this.globalWarps.containsKey(name)) return;
+        if(!this.globalWarps.containsKey(name)) {
+            callback.accept(PrepareTeleportPacket.Result.WARP_NOT_EXISTS);
+            return;
+        }
 
         WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportPacket(player.getName(), name, display, costs, new Callback<Integer>() {
             @Override
@@ -92,6 +95,9 @@ public class GlobalWarpManager implements Manager {
         } else if(test instanceof Boolean) {
             globalWarpsOfGUI = (boolean) test;
         }
+
+        WarpSystem.getInstance().getDataHandler().register(listener = new GlobalWarpListener());
+        Bukkit.getPluginManager().registerEvents(listener, WarpSystem.getInstance());
 
         Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
             WarpSystem.getInstance().getLogger().log(Level.INFO, "Looking for a BungeeCord...");
@@ -132,13 +138,15 @@ public class GlobalWarpManager implements Manager {
 
                 if(server != null) {
                     WarpSystem.getInstance().getLogger().log(Level.INFO, "Found a BungeeCord > Init GlobalWarps");
-                    WarpSystem.getInstance().getDataHandler().register(new GlobalWarpListener());
                     WarpSystem.getInstance().getDataHandler().register(new ShortcutPacketListener());
                     WarpSystem.getInstance().setCurrentServer(server);
                     new CGlobalWarps().register(WarpSystem.getInstance());
                     new CGlobalWarp().register(WarpSystem.getInstance());
-                    loadAllGlobalWarps();
-                } else WarpSystem.getInstance().getLogger().log(Level.INFO, "Did not find a BungeeCord > Ignore GlobalWarps");
+                } else {
+                    WarpSystem.getInstance().getLogger().log(Level.INFO, "Did not find a BungeeCord > Ignore GlobalWarps");
+                    WarpSystem.getInstance().getDataHandler().unregister(listener);
+                    HandlerList.unregisterAll(listener);
+                }
             }
         });
     }

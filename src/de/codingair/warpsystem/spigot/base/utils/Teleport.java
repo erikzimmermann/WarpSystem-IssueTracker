@@ -5,6 +5,7 @@ import de.codingair.codingapi.particles.animations.playeranimations.CircleAnimat
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.warpsystem.spigot.api.SpigotAPI;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
@@ -34,6 +35,7 @@ public class Teleport {
     private boolean showMessage;
     private boolean canMove;
     private String message = null;
+    private boolean silent = false;
     private Callback<Boolean> callback;
 
     public Teleport(Player player, String displayName, double costs, boolean showMessage, boolean canMove) {
@@ -86,6 +88,11 @@ public class Teleport {
         this.callback = callback;
     }
 
+    public Teleport(Player player, Location location, String displayName, double costs, String message, boolean canMove, boolean silent, Callback<Boolean> callback) {
+        this(player, location, displayName, costs, message, canMove, callback);
+        this.silent = silent;
+    }
+
     public Teleport(Player player, Location location, String displayName, double costs, boolean showMessage, boolean canMove) {
         this(player, displayName, costs, showMessage, canMove);
         this.location = location;
@@ -128,32 +135,35 @@ public class Teleport {
 
         if(location != null) {
             player.setFallDistance(0F);
-            player.teleport(location);
+            if(silent) SpigotAPI.getInstance().silentTeleport(player, location);
+            else player.teleport(location);
             WarpSystem.getInstance().getTeleportManager().getTeleports().remove(this);
         } else if(this.globalWarpName != null) {
             ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).teleport(getPlayer(), this.displayName, this.globalWarpName, this.costs, new Callback<PrepareTeleportPacket.Result>() {
                 @Override
                 public void accept(PrepareTeleportPacket.Result result) {
+                    WarpSystem.getInstance().getTeleportManager().getTeleports().remove(Teleport.this);
+
                     switch(result) {
                         case TELEPORTED:
-                            WarpSystem.getInstance().getTeleportManager().getTeleports().remove(Teleport.this);
                             if(callback != null) callback.accept(true);
                             break;
 
                         case WARP_NOT_EXISTS:
                             getPlayer().sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists").replace("%GLOBAL_WARP%", globalWarpName));
+                            break;
 
                         case SERVER_NOT_AVAILABLE:
                             getPlayer().sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Server_Is_Not_Online"));
+                            break;
 
                         case PLAYER_ALREADY_ON_SERVER:
                             getPlayer().sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Player_Is_Already_On_Target_Server"));
-
-                        default:
-                            if(AdapterType.getActive() != null) {
-                                AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) + costs);
-                            }
                             break;
+                    }
+
+                    if(result != PrepareTeleportPacket.Result.TELEPORTED && AdapterType.getActive() != null && costs != 0) {
+                        AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) + costs);
                     }
                 }
             });
@@ -166,9 +176,9 @@ public class Teleport {
         if(message == null || message.isEmpty()) return;
 
         if(this.costs > 0) {
-            player.sendMessage(Lang.getPrefix() + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
+            player.sendMessage((message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
         } else if(showMessage) {
-            player.sendMessage(Lang.getPrefix() + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
+            player.sendMessage((message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
         }
 
         if(callback != null) callback.accept(true);

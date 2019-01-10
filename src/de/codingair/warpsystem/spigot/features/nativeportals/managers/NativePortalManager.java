@@ -124,8 +124,7 @@ public class NativePortalManager implements Manager {
             if(NativePortalManager.getInstance().isEditing(player) || API.getRemovable(player, GEditor.class) != null) {
                 player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.8));
                 return;
-            }
-            else if(API.getRemovable(player, GUI.class) != null) return;
+            } else if(API.getRemovable(player, GUI.class) != null) return;
             else if(WarpSystem.getInstance().getTeleportManager().isTeleporting(player)) return;
 
             if(goingToDelete.contains(player.getName())) {

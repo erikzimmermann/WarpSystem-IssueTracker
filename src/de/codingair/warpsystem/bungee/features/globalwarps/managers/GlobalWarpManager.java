@@ -8,6 +8,7 @@ import de.codingair.warpsystem.transfer.packets.bungee.UpdateGlobalWarpPacket;
 import de.codingair.warpsystem.transfer.serializeable.SGlobalWarp;
 import de.codingair.warpsystem.transfer.serializeable.SLocation;
 import de.codingair.warpsystem.utils.Manager;
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.config.Configuration;
 
@@ -17,11 +18,14 @@ import java.util.List;
 
 public class GlobalWarpManager implements Manager {
     private List<SGlobalWarp> globalWarps = new ArrayList<>();
+    private GlobalWarpListener listener;
 
     public boolean load() {
         WarpSystem.getInstance().getFileManager().loadFile("GlobalWarps", "/");
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("GlobalWarps");
         Configuration config = file.getConfig();
+
+        BungeeCord.getInstance().getPluginManager().registerListener(WarpSystem.getInstance(), listener = new GlobalWarpListener());
 
         WarpSystem.log("  > Loading locations of GlobalWarps");
 
@@ -44,14 +48,14 @@ public class GlobalWarpManager implements Manager {
             this.globalWarps.add(warp);
         }
 
-        WarpSystem.getInstance().getDataHandler().register(new GlobalWarpListener());
+        WarpSystem.getInstance().getDataHandler().register(listener);
 
         return true;
     }
 
     @Override
     public void save(boolean saver) {
-        if(!saver) WarpSystem.log("  > Saving locations if GlobalWarps");
+        if(!saver) WarpSystem.log("  > Saving locations of GlobalWarps");
 
         for(SGlobalWarp globalWarp : this.globalWarps) {
             save(globalWarp);
@@ -79,7 +83,7 @@ public class GlobalWarpManager implements Manager {
         }
     }
 
-    public void sendData(ServerInfo info) {
+    public void synchronize(ServerInfo info) {
         if(this.globalWarps.isEmpty()) {
             return;
         }
@@ -102,8 +106,10 @@ public class GlobalWarpManager implements Manager {
 
         if(current.size() > 0) list.add(current);
 
+        boolean start = true;
         for(HashMap<String, String> l : list) {
-            WarpSystem.getInstance().getDataHandler().send(new SendGlobalWarpNamesPacket(l), info);
+            WarpSystem.getInstance().getDataHandler().send(new SendGlobalWarpNamesPacket(l, start), info);
+            start = false;
         }
 
         list.clear();

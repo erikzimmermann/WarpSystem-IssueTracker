@@ -6,11 +6,13 @@ import de.codingair.warpsystem.spigot.api.blocks.utils.StaticBlock;
 import org.bukkit.Location;
 
 public class StaticLavaBlock extends StaticBlock {
-    private boolean spreadFire = true;
-    private boolean hitEntity = true;
+    private boolean spreadFire;
+    private boolean hitEntity;
 
     public StaticLavaBlock(Location location) {
         super(location);
+        spreadFire = false;
+        hitEntity = false;
     }
 
     @Override

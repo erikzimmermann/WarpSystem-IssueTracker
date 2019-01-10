@@ -204,10 +204,14 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, Location location, String displayName, double costs, boolean skip, boolean canMove, String message) {
-        teleport(player, location, displayName, costs, skip, canMove, message, null);
+        teleport(player, location, displayName, costs, skip, canMove, message, false, null);
     }
 
-    public void teleport(Player player, Location location, String displayName, double costs, boolean skip, boolean canMove, String message, Callback<Boolean> callback) {
+    public void teleport(Player player, Location location, String displayName, double costs, boolean skip, boolean canMove, String message, boolean silent) {
+        teleport(player, location, displayName, costs, skip, canMove, message, silent, null);
+    }
+
+    public void teleport(Player player, Location location, String displayName, double costs, boolean skip, boolean canMove, String message, boolean silent, Callback<Boolean> callback) {
         if(isTeleporting(player)) {
             Teleport teleport = getTeleport(player);
             long diff = System.currentTimeMillis() - teleport.getStartTime();
@@ -218,7 +222,7 @@ public class TeleportManager {
 
         player.closeInventory();
 
-        Teleport teleport = new Teleport(player, location, displayName, costs, message, canMove, callback);
+        Teleport teleport = new Teleport(player, location, displayName, costs, message, canMove, silent, callback);
         this.teleports.add(teleport);
 
         if(seconds == 0 || (WarpSystem.OP_CAN_SKIP_DELAY && player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) || skip) teleport.teleport();
