@@ -73,11 +73,11 @@ public class GEditor extends SimpleGUI {
                             warp.apply();
                             
                             if(costs > 0) {
-                                p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Edited_Pay").replace("%NAME%", warp.getName()).replace("%COINS%", costs + ""));
+                                p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Edited_Pay").replace("%TEMP_WARP%", warp.getName()).replace("%COINS%", costs + ""));
                             } else if(costs < 0) {
-                                p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Edited_Refund").replace("%NAME%", warp.getName()).replace("%COINS%", costs + ""));
+                                p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Edited_Refund").replace("%TEMP_WARP%", warp.getName()).replace("%COINS%", costs + ""));
                             } else {
-                                p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Edited").replace("%NAME%", warp.getName()).replace("%COINS%", costs + ""));
+                                p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Edited").replace("%TEMP_WARP%", warp.getName()).replace("%COINS%", costs + ""));
                             }
                         } else Sound.CLICK.playSound(p, 1, 0.7F);
                     }
