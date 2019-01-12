@@ -178,7 +178,7 @@ public class GEditor extends GUI {
             ItemBuilder builder = new ItemBuilder(ready ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA)
                     .setText((ready ? "§a" : "§c") + "§n" + Lang.get("Status"));
 
-            builder.addText("§7" + Lang.get("Name") + ": " + (name == null ? "§c§m-" : name));
+            builder.addText("§7" + Lang.get("Name") + ": \"" + (name == null ? "§c§m-" : ChatColor.translateAlternateColorCodes('&', name)) + "\"");
             builder.addText("§7" + Lang.get("NativePortal_Material") + ": " + (type == null ? "§c§m-" : type.name()));
             builder.addText("§7" + Lang.get("Teleport_Link") + ": " + (warp == null && globalWarp == null ? "§c§m-" : warp == null ? globalWarp : warp.getNameWithoutColor()));
             builder.addText("§7" + Lang.get("Portal_Blocks") + ": " + (portal == null ? "§c0" : portal.getBlocks().size()));
@@ -245,7 +245,7 @@ public class GEditor extends GUI {
                                 initialize(p);
                                 e.setPost(GEditor.this::open);
                             }
-                        }, new ItemBuilder(XMaterial.PAPER).setName(Lang.get("Portal_Name") + "...").getItem());
+                        }, new ItemBuilder(XMaterial.PAPER).setName(name == null ? Lang.get("Portal_Name") + "..." : name).getItem());
                     }
                 }.setOption(option).setCloseOnClick(true));
 
