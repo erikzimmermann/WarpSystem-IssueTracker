@@ -135,8 +135,14 @@ public class Teleport {
 
         if(location != null) {
             player.setFallDistance(0F);
-            if(silent) SpigotAPI.getInstance().silentTeleport(player, location);
-            else player.teleport(location);
+
+            if(location.getWorld() == null) {
+                getPlayer().sendMessage(Lang.getPrefix() + Lang.get("World_Not_Exists"));
+            } else {
+                if(silent) SpigotAPI.getInstance().silentTeleport(player, location);
+                else player.teleport(location);
+            }
+
             WarpSystem.getInstance().getTeleportManager().getTeleports().remove(this);
         } else if(this.globalWarpName != null) {
             ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).teleport(getPlayer(), this.displayName, this.globalWarpName, this.costs, new Callback<PrepareTeleportPacket.Result>() {
