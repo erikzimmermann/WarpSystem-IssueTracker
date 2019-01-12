@@ -337,55 +337,48 @@ public class IconManager implements Manager {
 
     private int getNextFreeSlot(Category category) {
         int slot = 0;
-        List<Integer> unavailable = new ArrayList<>();
-        unavailable.add(0);
-        unavailable.add(8);
-        unavailable.add(45);
-        unavailable.add(53);
 
         boolean available;
 
         do {
             available = true;
 
-            if(slot > 53) break;
-
-            if(unavailable.contains(slot)) {
-                slot++;
+            if(slot > 53) {
                 available = false;
-            } else {
-                if(category == null) {
-                    for(Category c : this.categories) {
-                        if(c.getSlot() == slot) {
-                            slot++;
-                            available = false;
-                            break;
-                        }
-                    }
-                }
+                break;
+            }
 
-                for(Warp warp : getWarps(category)) {
-                    if(warp.getSlot() == slot) {
+            if(category == null) {
+                for(Category c : this.categories) {
+                    if(c.getSlot() == slot) {
                         slot++;
                         available = false;
                         break;
                     }
                 }
+            }
 
-                for(GlobalWarp warp : getGlobalWarps(category)) {
-                    if(warp.getSlot() == slot) {
-                        slot++;
-                        available = false;
-                        break;
-                    }
+            for(Warp warp : getWarps(category)) {
+                if(warp.getSlot() == slot) {
+                    slot++;
+                    available = false;
+                    break;
                 }
+            }
 
-                for(DecoIcon deco : getDecoIcons(category)) {
-                    if(deco.getSlot() == slot) {
-                        slot++;
-                        available = false;
-                        break;
-                    }
+            for(GlobalWarp warp : getGlobalWarps(category)) {
+                if(warp.getSlot() == slot) {
+                    slot++;
+                    available = false;
+                    break;
+                }
+            }
+
+            for(DecoIcon deco : getDecoIcons(category)) {
+                if(deco.getSlot() == slot) {
+                    slot++;
+                    available = false;
+                    break;
                 }
             }
         } while(!available);

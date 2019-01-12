@@ -56,7 +56,6 @@ public class GCreate extends SimpleGUI {
                     @Override
                     public void onClick(InventoryClickEvent e, Player player) {
                         int price = warp.getCosts();
-                        System.out.println("Save: " + price);
                         boolean ready = warp.getName() != null && canPay(p, price);
 
                         if(ready) {
