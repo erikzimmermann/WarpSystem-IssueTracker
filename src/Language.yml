@@ -195,6 +195,7 @@ ENG:
   Teleport_Message: Teleport message
   Teleport_Costs: Teleport costs
   Message: Message
+  World_Not_Exists: '&7The requested world &cdoes not exists&7.'
   GlobalWarp_Not_Exists: '&7The GlobalWarp "&b%GLOBAL_WARP%&7" &cdoes not exist&7.'
   Money_Paid: '&7You have paid &c%AMOUNT% coin(s) &7to teleport to "&b%warp%&7".'
   GlobalWarp_Delete_Help: '&7Use: &e/GlobalWarp delete <name>'
@@ -462,6 +463,7 @@ GER:
   Teleport_Message: Teleportationsnachricht
   Teleport_Costs: Teleportationskosten
   Message: Nachricht
+  World_Not_Exists: '&7Die angeforderte Welt &cexistiert nicht&7.'
   GlobalWarp_Not_Exists: '&7Der GlobalWarp "&b%GLOBAL_WARP%&7" &cexistiert nicht&7.'
   Money_Paid: '&7Du hast &c%AMOUNT% Coin(s) &7bezahlt, um dich nach "&b%warp%&7" zu teleportieren!'
   GlobalWarp_Delete_Help: '&7Benutze: &e/GlobalWarp delete <Name>'
