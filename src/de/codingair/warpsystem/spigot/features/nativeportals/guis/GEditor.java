@@ -282,12 +282,13 @@ public class GEditor extends GUI {
 
                                     Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> {
                                         MessageAPI.stopSendingActionBar(getPlayer());
-                                        reinitialize();
-                                        open();
                                         HandlerList.unregisterAll(this);
 
                                         portal = editor.end();
                                         if(size != portal.getBlocks().size()) changed = true;
+
+                                        reinitialize();
+                                        open();
                                     });
                                 }
                             }
