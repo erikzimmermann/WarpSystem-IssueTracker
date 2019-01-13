@@ -2,8 +2,10 @@ package de.codingair.warpsystem.spigot.features.shortcuts.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.shortcuts.listeners.ShortcutListener;
+import de.codingair.warpsystem.spigot.features.shortcuts.listeners.ShortcutPacketListener;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
@@ -14,11 +16,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShortcutManager implements Manager {
+public class ShortcutManager implements Manager, BungeeFeature {
     private List<Shortcut> shortcuts = new ArrayList<>();
+    private ShortcutPacketListener listener;
 
     @Override
     public boolean load() {
+        WarpSystem.getInstance().getBungeeFeatureList().add(this);
+
         if(WarpSystem.getInstance().getFileManager().getFile("Shortcuts") == null) WarpSystem.getInstance().getFileManager().loadFile("Shortcuts", "/Memory/");
 
         this.shortcuts.clear();
@@ -60,6 +65,19 @@ public class ShortcutManager implements Manager {
         if(!saver) WarpSystem.log("    ...saved " + config.getKeys(false).size() + " Shortcut(s)");
 
         file.saveConfig();
+    }
+
+    @Override
+    public void onConnect() {
+        WarpSystem.getInstance().getDataHandler().register(listener = new ShortcutPacketListener());
+    }
+
+    @Override
+    public void onDisconnect() {
+        if(listener != null) {
+            WarpSystem.getInstance().getDataHandler().unregister(listener);
+            listener = null;
+        }
     }
 
     public Shortcut getShortcut(String displayName) {

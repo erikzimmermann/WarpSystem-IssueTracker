@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.bungee.base.managers;
 
 import de.codingair.warpsystem.bungee.base.WarpSystem;
+import de.codingair.warpsystem.transfer.packets.bungee.InitialPacket;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Listener;
@@ -29,5 +30,9 @@ public class ServerManager implements Listener {
                 });
             }
         }, 0, 5, TimeUnit.SECONDS);
+    }
+
+    public void sendInitialPacket(ServerInfo server) {
+        WarpSystem.getInstance().getDataHandler().send(new InitialPacket(WarpSystem.getInstance().getDescription().getVersion()), server);
     }
 }

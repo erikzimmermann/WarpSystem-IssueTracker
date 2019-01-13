@@ -9,6 +9,7 @@ import de.codingair.codingapi.server.fancymessages.MessageTypes;
 import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CWarpSystem extends CommandBuilder {
+public class CWarpSystem extends CommandBuilder implements BungeeFeature {
     public CWarpSystem() {
         super("WarpSystem", new BaseComponent(WarpSystem.PERMISSION_MODIFY) {
             @Override
@@ -368,9 +369,12 @@ public class CWarpSystem extends CommandBuilder {
                 return false;
             }
         });
+
+        WarpSystem.getInstance().getBungeeFeatureList().add(this);
     }
 
-    public void initBungee() {
+    @Override
+    public void onConnect() {
         if(getComponent("shortcut", "add", "globalwarp") != null) return;
 
         getComponent("shortcut", "add").addChild(new CommandComponent("globalwarp") {
@@ -422,6 +426,11 @@ public class CWarpSystem extends CommandBuilder {
                 return false;
             }
         });
+    }
+
+    @Override
+    public void onDisconnect() {
+        getComponent("shortcut", "add").removeChild("globalwarp");
     }
 
     private static FancyMessage getInfoMessage() {

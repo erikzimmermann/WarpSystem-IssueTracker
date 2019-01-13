@@ -1,9 +1,10 @@
 package de.codingair.warpsystem.spigot.features.globalwarps.managers;
 
-import de.codingair.codingapi.bungeecord.BungeeCordHelper;
 import de.codingair.codingapi.files.ConfigFile;
+import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.commands.CGlobalWarp;
 import de.codingair.warpsystem.spigot.features.globalwarps.commands.CGlobalWarps;
@@ -19,19 +20,18 @@ import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
+import java.util.List;
 
-public class GlobalWarpManager implements Manager {
+public class GlobalWarpManager implements Manager, BungeeFeature {
     //              Name,   Server
     private HashMap<String, String> globalWarps = new HashMap<>();
     private boolean globalWarpsOfGUI = false;
     private GlobalWarpListener listener;
+    private List<CommandBuilder> commandExecutorList = new ArrayList<>();
 
     public void create(String warpName, Location loc, Callback<Boolean> callback) {
         WarpSystem.getInstance().getDataHandler().send(new PublishGlobalWarpPacket(new SGlobalWarp(warpName, new SLocation(loc.getWorld().getName(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch())), callback));
@@ -87,6 +87,8 @@ public class GlobalWarpManager implements Manager {
 
     @Override
     public boolean load() {
+        WarpSystem.getInstance().getBungeeFeatureList().add(this);
+
         ConfigFile config = WarpSystem.getInstance().getFileManager().getFile("Config");
         Object test = config.getConfig().get("WarpSystem.GlobalWarps.Use_Warps_Of_WarpsGUI", null);
         if(test == null) {
@@ -98,29 +100,6 @@ public class GlobalWarpManager implements Manager {
         WarpSystem.getInstance().getDataHandler().register(listener = new GlobalWarpListener());
         Bukkit.getPluginManager().registerEvents(listener, WarpSystem.getInstance());
 
-        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-            WarpSystem.getInstance().getLogger().log(Level.INFO, "Looking for a BungeeCord...");
-
-            if(Bukkit.getOnlinePlayers().isEmpty()) {
-                WarpSystem.getInstance().getLogger().log(Level.INFO, "Needs a player to search. Waiting...");
-
-                Bukkit.getPluginManager().registerEvents(new Listener() {
-                    @EventHandler
-                    public void onJoin(PlayerJoinEvent e) {
-                        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                            if(Bukkit.getOnlinePlayers().isEmpty()) return;
-
-                            WarpSystem.getInstance().getLogger().log(Level.INFO, "Got a player > Searching...");
-                            checkBungee();
-                            HandlerList.unregisterAll(this);
-                        }, 20);
-                    }
-                }, WarpSystem.getInstance());
-            } else {
-                checkBungee();
-            }
-        }, 1L);
-
         return true;
     }
 
@@ -129,26 +108,19 @@ public class GlobalWarpManager implements Manager {
         if(!saver) this.globalWarps.clear();
     }
 
-    private void checkBungee() {
-        BungeeCordHelper.getCurrentServer(WarpSystem.getInstance(), 20 * 10, new Callback<String>() {
-            @Override
-            public void accept(String server) {
-                WarpSystem.getInstance().setOnBungeeCord(server != null);
+    @Override
+    public void onConnect() {
+        this.commandExecutorList.add(new CGlobalWarp());
+        this.commandExecutorList.add(new CGlobalWarps());
+        this.commandExecutorList.forEach(c -> c.register(WarpSystem.getInstance()));
 
-                if(server != null) {
-                    WarpSystem.getInstance().getLogger().log(Level.INFO, "Found a BungeeCord > Init GlobalWarps");
-                    WarpSystem.getInstance().getDataHandler().register(new ShortcutPacketListener());
-                    WarpSystem.getInstance().setCurrentServer(server);
-                    new CGlobalWarps().register(WarpSystem.getInstance());
-                    new CGlobalWarp().register(WarpSystem.getInstance());
-                    if(getGlobalWarps().isEmpty()) WarpSystem.getInstance().getDataHandler().send(new RequestGlobalWarpNamesPacket());
-                } else {
-                    WarpSystem.getInstance().getLogger().log(Level.INFO, "Did not find a BungeeCord > Ignore GlobalWarps");
-                    WarpSystem.getInstance().getDataHandler().unregister(listener);
-                    HandlerList.unregisterAll(listener);
-                }
-            }
-        });
+        if(getGlobalWarps().isEmpty()) WarpSystem.getInstance().getDataHandler().send(new RequestGlobalWarpNamesPacket());
+    }
+
+    @Override
+    public void onDisconnect() {
+        this.commandExecutorList.forEach(c -> c.unregister(WarpSystem.getInstance()));
+        this.commandExecutorList.clear();
     }
 
     public static GlobalWarpManager getInstance() {

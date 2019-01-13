@@ -13,6 +13,7 @@ import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.List;
 
@@ -130,7 +131,21 @@ public class CGlobalWarps extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("list") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                new GGlobalWarpList((Player) sender).open();
+                new GGlobalWarpList((Player) sender, new GGlobalWarpList.Listener() {
+                    @Override
+                    public void onClickOnGlobalWarp(String warp, InventoryClickEvent e) {
+                        WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, warp, warp, 0, true, true, true);
+                    }
+
+                    @Override
+                    public void onClose() {
+                    }
+
+                    @Override
+                    public String getLeftclickDescription() {
+                        return Lang.get("GlobalWarp_List_Leftclick");
+                    }
+                }).open();
                 return false;
             }
         });
