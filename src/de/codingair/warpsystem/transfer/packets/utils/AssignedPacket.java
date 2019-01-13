@@ -36,8 +36,8 @@ public abstract class AssignedPacket implements Packet {
         return uniqueId;
     }
 
-    public void checkUUID(Set<String> taken) {
-        while(taken.contains(this.uniqueId.toString())) {
+    public void checkUUID(Set<UUID> taken) {
+        while(taken.contains(this.uniqueId)) {
             this.uniqueId = UUID.randomUUID();
         }
     }

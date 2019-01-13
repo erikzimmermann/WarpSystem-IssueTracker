@@ -13,14 +13,13 @@ import de.codingair.codingapi.time.Timer;
 import de.codingair.warpsystem.spigot.api.SpigotAPI;
 import de.codingair.warpsystem.spigot.base.commands.CWarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.listeners.CommandListener;
-import de.codingair.warpsystem.spigot.base.listeners.NotifyListener;
-import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
-import de.codingair.warpsystem.spigot.base.listeners.UUIDListener;
+import de.codingair.warpsystem.spigot.base.listeners.*;
 import de.codingair.warpsystem.spigot.base.managers.DataManager;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.managers.UUIDManager;
+import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.UpdateChecker;
+import de.codingair.warpsystem.transfer.packets.spigot.RequestInitialPacket;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -56,7 +55,10 @@ public class WarpSystem extends JavaPlugin {
     public static boolean maintenance = false;
 
     private boolean onBungeeCord = false;
+    private String bungeePluginVersion = null;
     private String server = null;
+    private BungeeBukkitListener packetListener;
+    private List<BungeeFeature> bungeeFeatureList = new ArrayList<>();
 
     private TeleportManager teleportManager = new TeleportManager();
     private FileManager fileManager = new FileManager(this);
@@ -117,6 +119,10 @@ public class WarpSystem extends JavaPlugin {
             log("Loading features");
             this.fileManager.loadAll();
 
+            CWarpSystem cWarpSystem = new CWarpSystem();
+            this.commands.add(cWarpSystem);
+            cWarpSystem.register(this);
+
             boolean createBackup = false;
             this.dataManager = new DataManager();
             if(!this.dataManager.load()) createBackup = true;
@@ -143,10 +149,6 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new CommandListener(), this);
             Bukkit.getPluginManager().registerEvents(new UUIDListener(), this);
 
-            CWarpSystem cWarpSystem = new CWarpSystem();
-            this.commands.add(cWarpSystem);
-            cWarpSystem.register(this);
-
             this.startAutoSaver();
 
             timer.stop();
@@ -166,6 +168,9 @@ public class WarpSystem extends JavaPlugin {
             this.ERROR = false;
 
             this.dataHandler.onEnable();
+            this.dataHandler.send(new RequestInitialPacket());
+            this.dataHandler.register(this.packetListener = new BungeeBukkitListener());
+            Bukkit.getPluginManager().registerEvents(this.packetListener, this);
         } catch(Exception ex) {
             //make error-report
 
@@ -239,7 +244,12 @@ public class WarpSystem extends JavaPlugin {
         this.uuidManager.removeAll();
 
         HandlerList.unregisterAll(this);
+
+        this.bungeeFeatureList.forEach(BungeeFeature::onDisconnect);
+        this.bungeeFeatureList.clear();
+
         this.dataHandler.onDisable();
+        if(this.packetListener != null) this.dataHandler.unregister(this.packetListener);
 
         for(int i = 0; i < this.commands.size(); i++) {
             this.commands.remove(0).unregister(this);
@@ -460,8 +470,10 @@ public class WarpSystem extends JavaPlugin {
     public void setOnBungeeCord(boolean onBungeeCord) {
         this.onBungeeCord = onBungeeCord;
         if(onBungeeCord) {
-            ((CWarpSystem) getCommandBuilder("WarpSystem")).initBungee();
+            this.bungeeFeatureList.forEach(BungeeFeature::onConnect);
             this.uuidManager.downloadAll();
+        } else {
+            this.bungeeFeatureList.forEach(BungeeFeature::onDisconnect);
         }
     }
 
@@ -511,5 +523,17 @@ public class WarpSystem extends JavaPlugin {
 
     public UUIDManager getUUIDManager() {
         return uuidManager;
+    }
+
+    public String getBungeePluginVersion() {
+        return bungeePluginVersion;
+    }
+
+    public void setBungeePluginVersion(String bungeePluginVersion) {
+        this.bungeePluginVersion = bungeePluginVersion;
+    }
+
+    public List<BungeeFeature> getBungeeFeatureList() {
+        return bungeeFeatureList;
     }
 }

@@ -22,7 +22,7 @@ public class BungeeDataHandler implements DataHandler {
     private Plugin plugin;
     private ChannelListener listener = new ChannelListener(this);
     private BungeePacketHandler packetHandler = new BungeePacketHandler(this);
-    private HashMap<String, Callback> callbacks = new HashMap<>();
+    private HashMap<UUID, Callback> callbacks = new HashMap<>();
     private List<PacketListener> listeners = new ArrayList<>();
 
     public BungeeDataHandler(Plugin plugin) {
@@ -53,8 +53,8 @@ public class BungeeDataHandler implements DataHandler {
         }
 
         if(packet instanceof RequestPacket) {
-            if(callbacks.get(((RequestPacket) packet).getUniqueId().toString()) != null) ((RequestPacket) packet).checkUUID(this.callbacks.keySet());
-            callbacks.put(((RequestPacket) packet).getUniqueId().toString(), ((RequestPacket) packet).getCallback());
+            if(callbacks.get(((RequestPacket) packet).getUniqueId()) != null) ((RequestPacket) packet).checkUUID(this.callbacks.keySet());
+            callbacks.put(((RequestPacket) packet).getUniqueId(), ((RequestPacket) packet).getCallback());
         }
 
         try {
@@ -77,7 +77,7 @@ public class BungeeDataHandler implements DataHandler {
         if(packet instanceof AnswerPacket) {
             UUID uniqueId = ((AssignedPacket) packet).getUniqueId();
             Callback callback;
-            if((callback = this.callbacks.remove(uniqueId.toString())) == null) return;
+            if((callback = this.callbacks.remove(uniqueId)) == null) return;
             callback.accept(((AnswerPacket) packet).getValue());
         }
 

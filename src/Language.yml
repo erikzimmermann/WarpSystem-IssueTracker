@@ -32,7 +32,7 @@ ENG:
   Success_Create_Warp: '&aYou have created a &bwarp &asuccessfully.'
   Success_Create_Decoration: '&aYou have created a &bDecoIcon &asuccessfully.'
   Teleporting_Info: '&cTeleport in &l&n%seconds%'
-  Teleported_To: '&7You was teleported to "&b%warp%&7".'
+  Teleported_To: '&7You were teleported to ''&b%warp%&7''.'
   Config: Config
   Maintenance: Maintenance
   Language: Language
@@ -157,6 +157,7 @@ ENG:
   GlobalWarp_Create_Name_Already_Exists: '&7The GlobalWarp "&b%GLOBAL_WARP%&7" &calready exists&7.'
   GlobalWarp_Deleted: '&7The GlobalWarp "&b%GLOBAL_WARP%&7" was &cdeleted&7.'
   GlobalWarp_Deleted_Cancel: '&7The GlobalWarp "&b%GLOBAL_WARP%&7" was &cnot &7deleted.'
+  GlobalWarp_List_Leftclick: '&8» &7Click to teleport yourself to this GlobalWarp'
   Native_Portal_Choose_Warp: '&cChoose a warp'
   Plugin_Reloading: '&cThe plugin will be reloaded now...'
   Success_Plugin_Reloaded: '&aThe plugin has been reloaded.'
@@ -425,6 +426,7 @@ GER:
   GlobalWarp_Create_Name_Already_Exists: '&7Der GlobalWarp "&b%GLOBAL_WARP%&7" &cexistiert bereits&7.'
   GlobalWarp_Deleted: '&7Der GlobalWarp "&b%GLOBAL_WARP%&7" wurde &cgelöscht&7.'
   GlobalWarp_Deleted_Cancel: '&7Der GlobalWarp "&b%GLOBAL_WARP%&7" wurde &cnicht &7gelöscht.'
+  GlobalWarp_List_Leftclick: '&8» &7Klicke hier, um dich dorthin zu teleportieren'
   Native_Portal_Choose_Warp: '&cWähle ein Warp'
   Plugin_Reloading: '&cDas Plugin wird jetzt neu geladen...'
   Success_Plugin_Reloaded: '&aDas Plugin wurde erfolgreich neu geladen.'

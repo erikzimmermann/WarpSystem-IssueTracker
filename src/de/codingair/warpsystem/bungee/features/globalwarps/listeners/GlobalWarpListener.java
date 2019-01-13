@@ -28,6 +28,7 @@ public class GlobalWarpListener implements Listener, PacketListener {
     public void onConnect(ServerConnectedEvent e) {
         if(e.getServer().getInfo().getPlayers().size() <= 1) {
             //Update it
+            WarpSystem.getInstance().getServerManager().sendInitialPacket(e.getServer().getInfo());
             GlobalWarpManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS);
             manager.synchronize(e.getServer().getInfo());
         }
