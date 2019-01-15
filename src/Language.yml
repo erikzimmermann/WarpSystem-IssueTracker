@@ -267,6 +267,10 @@ ENG:
   Import_Start: '&7Warps are going to be imported now...'
   Import_Finish: '&7Warps were &asuccessfully &7imported!'
   Import_Finish_With_Errors: '&7Warps were &cnot &7imported &ccorrectly&7!'
+  Import_Could_Not_Import_Warp: '&7This warp could &cnot &7be imported!'
+  Single_Import_Not_Available: '&7The Single-Import-Feature is &cnot available &7for this plugin!'
+  Import_Choose_New_Name: '&7Would you like to use a new name? &8[%YES% &8| %NO%&8]'
+  Import_Warp_Imported: '&7The warp ''&b%WARP%&7'' have been &asuccessfully &7imported!'
   Expired: Expired
   HiddenWarp_Created: '&7Your HiddenWarp ''&c%WARP%&7'' was created.'
   HiddenWarp_Created_Edit_Info: '&7Click %EDIT% &7to edit advanced options.'
@@ -554,6 +558,10 @@ GER:
   Import_Start: '&7Warps werden nun importiert...'
   Import_Finish: '&7Warps wurden &aerfolgreich &7importiert!'
   Import_Finish_With_Errors: '&7Warps konnten &cnicht korrekt &7importiert werden'
+  Import_Could_Not_Import_Warp: '&7Warp konnte &cnicht &7importiert werden!'
+  Single_Import_Not_Available: '&7Die Single-Import-Funktion ist für dieses Plugin &cnicht verfügbar&7!'
+  Import_Choose_New_Name: '&7Möchtest du einen neuen Namen verwenden? &8[%YES% &8| %NO%&8]'
+  Import_Warp_Imported: '&7Warp ''&b%WARP%&7'' wurde &aerfolgreich &7importiert!'
   Expired: Abgelaufen
   HiddenWarp_Created: '&7Dein HiddenWarp ''&c%WARP%&7'' wurde erstellt.'
   HiddenWarp_Created_Edit_Info: '&7Klicke %EDIT% &7um die erweiterten Einstellungen zu öffnen.'

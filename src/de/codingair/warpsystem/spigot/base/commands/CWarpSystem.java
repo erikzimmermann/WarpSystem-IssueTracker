@@ -1,11 +1,19 @@
 package de.codingair.warpsystem.spigot.base.commands;
 
+import de.codingair.codingapi.player.chat.ChatButton;
+import de.codingair.codingapi.player.chat.SimpleMessage;
+import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
+import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
+import de.codingair.codingapi.player.gui.anvil.AnvilGUI;
+import de.codingair.codingapi.player.gui.anvil.AnvilListener;
 import de.codingair.codingapi.server.commands.BaseComponent;
 import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.codingapi.server.fancymessages.FancyMessage;
 import de.codingair.codingapi.server.fancymessages.MessageTypes;
+import de.codingair.codingapi.tools.items.ItemBuilder;
+import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -14,6 +22,8 @@ import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpMa
 import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
+import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.HiddenWarp;
+import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.managers.HiddenWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.ImportType;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Result;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
@@ -81,7 +91,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
 
         getComponent("shortcut", "add", "warp").addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 for(Warp warp : IconManager.getInstance().getWarps()) {
                     suggestions.add(warp.getIdentifier());
                 }
@@ -96,7 +106,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
 
         getComponent("shortcut", "add", "warp", null).addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
             }
 
             @Override
@@ -132,7 +142,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
 
         getComponent("shortcut", "remove").addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 for(Shortcut shortcut : ShortcutManager.getInstance().getShortcuts()) {
                     suggestions.add(shortcut.getDisplayName());
                 }
@@ -225,7 +235,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
 
         getComponent("report").addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 suggestions.add("GitHub");
                 suggestions.add("Spigot-Forum");
                 suggestions.add("Direct");
@@ -300,7 +310,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
 
         getComponent("reload").addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 suggestions.add("true");
                 suggestions.add("false");
             }
@@ -326,14 +336,14 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
         getBaseComponent().addChild(new CommandComponent("import") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " import §e<CategoryWarps, Essentials>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " import §e<CategoryWarps, Essentials> [Warp]");
                 return false;
             }
         });
 
         getComponent("import").addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 suggestions.add("Essentials");
                 suggestions.add("CategoryWarps");
             }
@@ -355,7 +365,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                 }
 
                 if(type == null) {
-                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " import §e<CategoryWarps, Essentials>");
+                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " import §e<CategoryWarps, Essentials> [Warp]");
                 } else {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Start"));
 
@@ -364,6 +374,97 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish"));
                     } else {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish_With_Errors") + " §8[" + result.name() + "]");
+                    }
+                }
+                return false;
+            }
+        });
+
+        getComponent("import", null).addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
+                switch(args[1].toLowerCase()) {
+                    case "essentials": {
+                        List<String> l = ImportType.ESSENTIALS.loadWarpNames();
+                        suggestions.addAll(l);
+                        l.clear();
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                switch(args[1].toLowerCase()) {
+                    case "essentials": {
+                        HiddenWarp warp = ImportType.ESSENTIALS.loadWarp(argument);
+
+                        if(warp == null) {
+                            sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Could_Not_Import_Warp"));
+                            return false;
+                        }
+
+                        if(IconManager.getInstance().getWarp(warp.getName()) != null || HiddenWarpManager.getInstance().existsWarp(warp.getName())) {
+                            sender.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
+
+                            SimpleMessage simpleMessage = new SimpleMessage(Lang.getPrefix() + Lang.get("Import_Choose_New_Name"), WarpSystem.getInstance());
+
+                            simpleMessage.replace("%YES%", new ChatButton("§a" + Lang.get("Yes"), Lang.get("Click_Hover")) {
+                                @Override
+                                public void onClick(Player player) {
+                                    AnvilGUI.openAnvil(WarpSystem.getInstance(), (Player) sender, new AnvilListener() {
+                                        @Override
+                                        public void onClick(AnvilClickEvent e) {
+                                            e.setCancelled(true);
+                                            e.setClose(false);
+
+                                            String s = e.getInput();
+                                            if(s != null && (s.isEmpty() || s.equalsIgnoreCase("none") || s.equalsIgnoreCase("-") || s.equalsIgnoreCase("null"))) s = null;
+
+                                            if(s == null) {
+                                                sender.sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
+                                                return;
+                                            }
+
+                                            if(IconManager.getInstance().getWarp(s) != null || HiddenWarpManager.getInstance().existsWarp(s)) {
+                                                sender.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
+                                                return;
+                                            }
+
+                                            warp.setName(s);
+                                            HiddenWarpManager.getInstance().addWarp(warp);
+                                            sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Warp_Imported").replace("%WARP%", warp.getName()));
+                                            e.setClose(true);
+                                        }
+
+                                        @Override
+                                        public void onClose(AnvilCloseEvent e) {
+                                            if(e.getSubmittedText() == null)
+                                                sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Could_Not_Import_Warp"));
+                                        }
+                                    }, new ItemBuilder(XMaterial.NAME_TAG).setName(Lang.get("Name") + "...").getItem());
+                                    simpleMessage.destroy();
+                                }
+                            });
+
+                            simpleMessage.replace("%NO%", new ChatButton("§c" + Lang.get("No"), Lang.get("Click_Hover")) {
+                                @Override
+                                public void onClick(Player player) {
+                                    sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Could_Not_Import_Warp"));
+                                    simpleMessage.destroy();
+                                }
+                            });
+
+                            simpleMessage.send((Player) sender);
+                        } else {
+                            HiddenWarpManager.getInstance().addWarp(warp);
+                            sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Warp_Imported").replace("%WARP%", warp.getName()));
+                        }
+                        break;
+                    }
+
+                    default: {
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Single_Import_Not_Available"));
                     }
                 }
                 return false;
@@ -387,7 +488,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
 
         getComponent("shortcut", "add", "globalwarp").addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 suggestions.addAll(GlobalWarpManager.getInstance().getGlobalWarps().keySet());
             }
 
@@ -400,7 +501,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
 
         getComponent("shortcut", "add", "globalwarp", null).addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
 
             }
 

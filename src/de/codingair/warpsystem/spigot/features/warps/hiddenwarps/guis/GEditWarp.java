@@ -81,6 +81,7 @@ public class GEditWarp extends SimpleGUI {
                 @Override
                 public void onClick(AnvilClickEvent e) {
                     e.setCancelled(true);
+                    e.setClose(false);
                     String s = e.getInput();
                     if(s != null && (s.isEmpty() || s.equalsIgnoreCase("none") || s.equalsIgnoreCase("-") || s.equalsIgnoreCase("null"))) s = null;
 
@@ -125,6 +126,7 @@ public class GEditWarp extends SimpleGUI {
                 @Override
                 public void onClick(AnvilClickEvent e) {
                     e.setCancelled(true);
+                    e.setClose(false);
                     String s = e.getInput();
                     if(s != null && (s.isEmpty() || s.equalsIgnoreCase("none") || s.equalsIgnoreCase("-") || s.equalsIgnoreCase("null"))) s = null;
 
@@ -158,6 +160,7 @@ public class GEditWarp extends SimpleGUI {
                 @Override
                 public void onClick(AnvilClickEvent e) {
                     e.setCancelled(true);
+                    e.setClose(false);
                     String s = e.getInput();
                     if(s != null && s.isEmpty()) s = null;
 

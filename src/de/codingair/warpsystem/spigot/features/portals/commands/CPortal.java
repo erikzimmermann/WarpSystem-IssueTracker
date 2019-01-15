@@ -77,7 +77,7 @@ public class CPortal extends CommandBuilder {
 
         getComponent("create").addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
             }
 
             @Override

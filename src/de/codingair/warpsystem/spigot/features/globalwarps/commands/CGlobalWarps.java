@@ -52,7 +52,7 @@ public class CGlobalWarps extends CommandBuilder {
 
         getComponent("create").addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
             }
 
             @Override
@@ -88,7 +88,7 @@ public class CGlobalWarps extends CommandBuilder {
 
         getComponent("delete").addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 suggestions.addAll(((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).getGlobalWarps().keySet());
             }
 

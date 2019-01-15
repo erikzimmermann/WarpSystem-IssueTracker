@@ -2,6 +2,7 @@ package de.codingair.warpsystem.spigot.features.warps.importfilter.filters;
 
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.HiddenWarp;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.CategoryData;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Filter;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Result;
@@ -79,5 +80,15 @@ public class CategoryWarpsFilter implements Filter {
             ex.printStackTrace();
             return Result.ERROR;
         }
+    }
+
+    @Override
+    public List<String> loadWarpNames() {
+        throw new IllegalStateException("Single-Import-Feature not available for CategoryWarps!");
+    }
+
+    @Override
+    public HiddenWarp loadWarp(String link) {
+        throw new IllegalStateException("Single-Import-Feature not available for CategoryWarps!");
     }
 }
