@@ -8,6 +8,7 @@ import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
 import de.codingair.warpsystem.spigot.features.signs.managers.SignManager;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
+import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.managers.HiddenWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.utils.Manager;
 
@@ -22,6 +23,7 @@ public enum FeatureType {
     NATIVE_PORTALS(NativePortalManager.class, Priority.LOW, "NativePortals"),
     SHORTCUTS(ShortcutManager.class, Priority.LOW, "Shortcuts"),
     TEMP_WARPS(TempWarpManager.class, Priority.LOW, "TempWarps"),
+    HIDDEN_WARPS(HiddenWarpManager.class, Priority.HIGH, "HiddenWarps"),
     ;
 
     private Class<? extends Manager> managerClass;

@@ -41,3 +41,14 @@ commands:
     usuage: /TempWarp
     description: A Warp-System-CMD
     aliases: [tw, twarp]
+  setwarp:
+    usuage: /SetWarp
+    description: A Warp-System-CMD
+  deletehiddenwarp:
+    usuage: /DeleteHiddenWarp
+    description: A Warp-System-CMD
+    aliases: [delhiddenwarp, delhwarp]
+  edithiddenwarp:
+    usuage: /EditHiddenWarp
+    description: A Warp-System-CMD
+    aliases: [edithwarp]

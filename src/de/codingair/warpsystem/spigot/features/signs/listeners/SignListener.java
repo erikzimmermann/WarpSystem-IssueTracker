@@ -6,9 +6,11 @@ import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.signs.managers.SignManager;
 import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.GUIListener;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
@@ -139,7 +141,7 @@ public class SignListener implements Listener {
 
                     return new Task();
                 }
-            }).open();
+            }, false, GlobalWarp.class, DecoIcon.class).open();
         }
     }
 

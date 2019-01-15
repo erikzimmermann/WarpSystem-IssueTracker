@@ -29,6 +29,7 @@ WarpSystem:
   Send:
     Teleport_Message:
       Warps: true
+      HiddenWarps: true
       GlobalWarps: true
       NativePortals: true
       Portals: true
@@ -36,6 +37,7 @@ WarpSystem:
 
   Functions:
     Warps: true
+    HiddenWarps: true
     Portals: true
     NativePortals: true
     WarpSigns: true

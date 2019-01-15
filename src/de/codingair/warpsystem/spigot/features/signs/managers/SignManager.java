@@ -72,6 +72,11 @@ public class SignManager implements Manager {
         if(!saver) WarpSystem.log("    ...saved " + data.size() + " WarpSign(s)");
     }
 
+    @Override
+    public void destroy() {
+        this.warpSigns.clear();
+    }
+
     public WarpSign getByLocation(Location location) {
         for(WarpSign warpSign : this.warpSigns) {
             if(warpSign.getLocation().getBlock().getLocation().equals(location.getBlock().getLocation())) return warpSign;

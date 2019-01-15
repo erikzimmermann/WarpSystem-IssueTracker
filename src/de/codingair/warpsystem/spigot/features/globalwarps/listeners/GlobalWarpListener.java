@@ -61,7 +61,7 @@ public class GlobalWarpListener implements Listener, PacketListener {
 
             if(player != null) {
                 if(location.getWorld() == null) {
-                    player.sendMessage(Lang.getPrefix() + "§4World '" + warp.getLoc().getWorld() + "' is missing. Please contact an admin!");
+                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> player.sendMessage(new String[]{" ", Lang.getPrefix() + "§4World '" + warp.getLoc().getWorld() + "' is missing. Please contact an admin!", " "}), 10);
                     return;
                 }
 

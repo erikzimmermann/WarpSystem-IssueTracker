@@ -64,7 +64,7 @@ ENG:
   Icon_Deleted: '&cThe icon was deleted successfully.'
   Leftclick_Move_Icon: '&3Leftclick: &bMove icon'
   Success_Icon_Moved: '&aThe icon was moved successfully.'
-  Name_Already_Exists: '&cThis name already exists.'
+  Name_Already_Exists: '&cThis name is not available.'
   Only_For_Players: '&cThis is only for players!'
   Use: Use
   Success_Files_Reloaded: '&aAll files are reloaded.'
@@ -268,6 +268,19 @@ ENG:
   Import_Finish: '&7Warps were &asuccessfully &7imported!'
   Import_Finish_With_Errors: '&7Warps were &cnot &7imported &ccorrectly&7!'
   Expired: Expired
+  HiddenWarp_Created: '&7Your HiddenWarp ''&c%WARP%&7'' was created.'
+  HiddenWarp_Created_Edit_Info: '&7Click %EDIT% &7to edit advanced options.'
+  HiddenWarp_Created_Edit_Info_EDIT: '&7»&chere&7«'
+  HiddenWarp_Deleted: '&7Your HiddenWarp ''&c%WARP%&7'' was &c&ldeleted&7.'
+  HiddenWarp_Not_Deleted: '&7Your HiddenWarp ''&c%WARP%&7'' was &cnot &7deleted.'
+  HiddenWarp_Confirm_Delete: '&7Are you sure you want to &cdelete &7this Warp?'
+  HiddenWarp_Change_Name: '&8» &7Click here to change the name'
+  HiddenWarp_Change_Permission: '&8» &7Click here to change the permission'
+  HiddenWarp_Change_Price: '&8» &7Click here to set the teleport price'
+  HiddenWarp_Cancel_Edit: '&7Your changed data was &cnot &7saved.'
+  HiddenWarp_Save_Edit: '&7Your changed data was &asaved successfully&7.'
+  HiddenWarp_Edit_Title: '&cEdit HiddenWarp&0: ''&8%WARP%&0'''
+  HiddenWarp_Edit_Permission_Hint: '&7Type &7''&c-&7'' to &creset &7the permission'
 
 
 GER:
@@ -333,7 +346,7 @@ GER:
   Icon_Deleted: '&cDas Symbol wurde erfolgreich gelöscht.'
   Leftclick_Move_Icon: '&3Linksklick: &bSymbol bewegen'
   Success_Icon_Moved: '&aDas Symbol wurde erfolgreich bewegt.'
-  Name_Already_Exists: '&cDieser Name existiert bereits.'
+  Name_Already_Exists: '&cDieser Name ist bereits vergeben.'
   Only_For_Players: '&cDies ist nur für Spieler!'
   Use: Benutze
   Success_Files_Reloaded: '&aAlle Dateien wurden neu geladen.'
