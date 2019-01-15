@@ -1,14 +1,18 @@
 package de.codingair.warpsystem.spigot.features.warps.hiddenwarps.commands;
 
+import de.codingair.codingapi.player.chat.ChatButton;
 import de.codingair.codingapi.player.chat.SimpleMessage;
+import de.codingair.codingapi.serializable.SerializableLocation;
 import de.codingair.codingapi.server.commands.BaseComponent;
 import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
+import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
 import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.HiddenWarp;
 import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.managers.HiddenWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
@@ -66,13 +70,51 @@ public class CSetWarp extends CommandBuilder {
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
                 HiddenWarpManager hManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.HIDDEN_WARPS);
                 if(hManager.existsWarp(argument)) {
-                    //Override
+                    SimpleMessage simpleMessage = new SimpleMessage(Lang.getPrefix() + Lang.get("Warp_Confirm_Overwrite").replace("%WARP%", hManager.getWarp(argument).getName()), WarpSystem.getInstance());
+
+                    simpleMessage.replace("%YES%", new ChatButton(Lang.get("Warp_Confirm_Overwrite_Yes"), Lang.get("Click_Hover")) {
+                        @Override
+                        public void onClick(Player player) {
+                            hManager.getWarp(argument).setLocation(Location.getByLocation(((Player) sender).getLocation()));
+                            sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Overwritten"));
+                            simpleMessage.destroy();
+                        }
+                    });
+
+                    simpleMessage.replace("%NO%", new ChatButton(Lang.get("Warp_Confirm_Overwrite_No"), Lang.get("Click_Hover")) {
+                        @Override
+                        public void onClick(Player player) {
+                            sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Not_Overwritten"));
+                            simpleMessage.destroy();
+                        }
+                    });
+
+                    simpleMessage.send((Player) sender);
                     return false;
                 }
 
                 IconManager iManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
                 if(iManager.getWarp(argument) != null) {
-                    //Override
+                    SimpleMessage simpleMessage = new SimpleMessage(Lang.getPrefix() + Lang.get("Warp_Confirm_Overwrite").replace("%WARP%", iManager.getWarp(argument).getIdentifier()), WarpSystem.getInstance());
+
+                    simpleMessage.replace("%YES%", new ChatButton(Lang.get("Warp_Confirm_Overwrite_Yes"), Lang.get("Click_Hover")) {
+                        @Override
+                        public void onClick(Player player) {
+                            iManager.getWarp(argument).getAction(Action.TELEPORT_TO_WARP).setValue(new SerializableLocation(((Player) sender).getLocation()));
+                            sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Overwritten"));
+                            simpleMessage.destroy();
+                        }
+                    });
+
+                    simpleMessage.replace("%NO%", new ChatButton(Lang.get("Warp_Confirm_Overwrite_No"), Lang.get("Click_Hover")) {
+                        @Override
+                        public void onClick(Player player) {
+                            sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Not_Overwritten"));
+                            simpleMessage.destroy();
+                        }
+                    });
+
+                    simpleMessage.send((Player) sender);
                     return false;
                 }
 
