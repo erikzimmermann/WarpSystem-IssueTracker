@@ -66,7 +66,7 @@ public class CTempWarps extends CommandBuilder {
 
         getComponent("create").addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
             }
 
             @Override
@@ -97,7 +97,7 @@ public class CTempWarps extends CommandBuilder {
 
         getComponent("delete").addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 List<TempWarp> warps = TempWarpManager.getManager().getWarps((Player) sender);
 
                 for(TempWarp warp : warps) {
@@ -125,7 +125,7 @@ public class CTempWarps extends CommandBuilder {
 
         getComponent("edit").addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 List<TempWarp> warps = TempWarpManager.getManager().getWarps((Player) sender);
 
                 for(TempWarp warp : warps) {
@@ -154,7 +154,7 @@ public class CTempWarps extends CommandBuilder {
 
         getComponent("list").addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 for(Player player : Bukkit.getOnlinePlayers()) {
                     suggestions.add(player.getName());
                 }
@@ -222,7 +222,7 @@ public class CTempWarps extends CommandBuilder {
 
         getComponent("info").addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 List<TempWarp> list = TempWarpManager.getManager().getWarps();
                 for(TempWarp warp : list) {
                     suggestions.add(warp.getIdentifier());
@@ -254,7 +254,7 @@ public class CTempWarps extends CommandBuilder {
 
         getComponent("renew").addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 List<TempWarp> warps = TempWarpManager.getManager().getWarps((Player) sender);
 
                 for(TempWarp warp : warps) {

@@ -14,7 +14,6 @@ import org.json.simple.parser.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public class HiddenWarpManager implements Manager {
     private HashMap<String, HiddenWarp> warps = new HashMap<>();

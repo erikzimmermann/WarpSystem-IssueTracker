@@ -51,7 +51,7 @@ public class CWarps extends CommandBuilder {
 
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 for(Category c : manager.getCategories()) {
                     if(!c.hasPermission() || sender.hasPermission(c.getPermission())) suggestions.add(c.getNameWithoutColor());
                 }

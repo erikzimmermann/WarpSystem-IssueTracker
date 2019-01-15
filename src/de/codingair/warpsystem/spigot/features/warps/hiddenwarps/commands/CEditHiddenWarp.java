@@ -46,7 +46,7 @@ public class CEditHiddenWarp extends CommandBuilder {
 
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
-            public void addArguments(CommandSender sender, List<String> suggestions) {
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 for(HiddenWarp value : m.getWarps().values()) {
                     suggestions.add(value.getName());
                 }

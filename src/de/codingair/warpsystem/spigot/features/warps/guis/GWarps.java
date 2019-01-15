@@ -27,6 +27,7 @@ import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Ico
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.IconType;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.GUIListener;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
+import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.managers.HiddenWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -353,7 +354,8 @@ public class GWarps extends GUI {
                                                         }
 
                                                         if(type.equals(IconType.WARP)) {
-                                                            if(manager.existsWarp(input, category)) {
+                                                            String id = input + (category == null ? "" : "@" + category);
+                                                            if(IconManager.getInstance().getWarp(id) != null || HiddenWarpManager.getInstance().existsWarp(id)) {
                                                                 p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                                                                 return;
                                                             }
