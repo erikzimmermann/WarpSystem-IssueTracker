@@ -21,6 +21,7 @@ import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.UpdateChecker;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestInitialPacket;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
+import de.codingair.warpsystem.utils.Manager;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -41,6 +42,7 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_MODIFY = "WarpSystem.Modify";
     public static final String PERMISSION_MODIFY_ICONS = "WarpSystem.Modify.Icons";
     public static final String PERMISSION_MODIFY_GLOBAL_WARPS = "WarpSystem.Modify.GlobalWarps";
+    public static final String PERMISSION_MODIFY_HIDDEN_WARPS = "WarpSystem.Modify.HiddenWarps";
     public static final String PERMISSION_MODIFY_PORTALS = "WarpSystem.Modify.Portals";
     public static final String PERMISSION_MODIFY_NATIVE_PORTALS = "WarpSystem.Modify.NativePortals";
     public static final String PERMISSION_USE = "WarpSystem.Use";
@@ -254,6 +256,8 @@ public class WarpSystem extends JavaPlugin {
         for(int i = 0; i < this.commands.size(); i++) {
             this.commands.remove(0).unregister(this);
         }
+
+        destroy();
     }
 
     public void reload(boolean save) {
@@ -266,6 +270,12 @@ public class WarpSystem extends JavaPlugin {
     private void startAutoSaver() {
         WarpSystem.log("Starting AutoSaver");
         Bukkit.getScheduler().scheduleAsyncRepeatingTask(WarpSystem.getInstance(), () -> save(true), 20 * 60 * 20, 20 * 60 * 20);
+    }
+
+    private void destroy() {
+        this.dataManager.getManagers().forEach(Manager::destroy);
+        this.bungeeFeatureList.clear();
+        this.commands.clear();
     }
 
     private void save(boolean saver) {

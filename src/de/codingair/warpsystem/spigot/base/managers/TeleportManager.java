@@ -113,6 +113,26 @@ public class TeleportManager {
         return true;
     }
 
+    public boolean tryToTeleport(Player player, String permission, Location location, String displayName, double costs, boolean skip, boolean canMove, String message, boolean silent, Callback<Boolean> callback) {
+        if(permission != null && !player.hasPermission(permission)) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"));
+            return false;
+        }
+
+        teleport(player, location, displayName, costs, skip, canMove, message, silent, callback);
+        return true;
+    }
+
+    public boolean tryToTeleport(Player player, String permission, Location location, String displayName, double costs, boolean skip, boolean canMove, boolean message) {
+        if(permission != null && !player.hasPermission(permission)) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"));
+            return false;
+        }
+
+        teleport(player, location, displayName, costs, skip, canMove, message);
+        return true;
+    }
+
     public boolean tryToTeleport(Player player, GlobalWarp warp) {
         if(warp == null) {
             player.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));

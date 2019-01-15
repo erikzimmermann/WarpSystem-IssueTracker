@@ -9,6 +9,7 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
+import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.commands.CWarpHook;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -50,6 +51,7 @@ public class CWarp extends CommandBuilder {
         }.setOnlyPlayers(true), true);
         
         IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
+        CWarpHook hook = new CWarpHook();
 
         try {
             setHighestPriority(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Dominate_In_Commands.Highest_Priority.Warp", true));
@@ -65,6 +67,8 @@ public class CWarp extends CommandBuilder {
                         if(!c.hasPermission() || sender.hasPermission(c.getPermission())) suggestions.add(c.getNameWithoutColor());
                     }
                 } else {
+                    hook.addArguments(sender, suggestions);
+
                     for(Warp warp : manager.getWarps()) {
                         Category c = warp.getCategory();
 
@@ -94,6 +98,10 @@ public class CWarp extends CommandBuilder {
                     }
 
                     argument = argument.replace("_", " ");
+
+                    //Hook for HiddenWarps
+                    if(hook.runCommand(sender, label, argument, args)) return false;
+
                     Category category = null;
                     if(argument.contains("@")) {
                         String[] a = argument.split("@");

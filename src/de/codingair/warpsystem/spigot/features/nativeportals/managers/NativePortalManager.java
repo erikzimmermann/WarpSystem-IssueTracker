@@ -93,6 +93,14 @@ public class NativePortalManager implements Manager {
         if(!saver) WarpSystem.log("    ...saved " + data.size() + " NativePortal(s)");
     }
 
+    @Override
+    public void destroy() {
+        this.goingToDelete.clear();
+        this.goingToEdit.clear();
+        this.noTeleport.clear();
+        this.portals.clear();
+    }
+
     public void hideAll() {
         for(Portal portal : this.portals) {
             portal.setVisible(false);

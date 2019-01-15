@@ -87,6 +87,9 @@ public class GlobalWarpManager implements Manager, BungeeFeature {
 
     @Override
     public boolean load() {
+        this.globalWarps.clear();
+        this.commandExecutorList.clear();
+
         WarpSystem.getInstance().getBungeeFeatureList().add(this);
 
         ConfigFile config = WarpSystem.getInstance().getFileManager().getFile("Config");
@@ -99,13 +102,17 @@ public class GlobalWarpManager implements Manager, BungeeFeature {
 
         WarpSystem.getInstance().getDataHandler().register(listener = new GlobalWarpListener());
         Bukkit.getPluginManager().registerEvents(listener, WarpSystem.getInstance());
-
         return true;
     }
 
     @Override
     public void save(boolean saver) {
-        if(!saver) this.globalWarps.clear();
+    }
+
+    @Override
+    public void destroy() {
+        this.globalWarps.clear();
+        this.commandExecutorList.clear();
     }
 
     @Override

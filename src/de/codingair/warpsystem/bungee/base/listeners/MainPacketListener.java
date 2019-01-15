@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.bungee.base.listeners;
 
 import de.codingair.warpsystem.bungee.base.WarpSystem;
+import de.codingair.warpsystem.transfer.packets.general.BooleanPacket;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
@@ -15,6 +16,7 @@ public class MainPacketListener implements PacketListener {
         switch(PacketType.getByObject(packet)) {
             case RequestInitialPacket: {
                 WarpSystem.getInstance().getServerManager().sendInitialPacket(server);
+                break;
             }
         }
     }

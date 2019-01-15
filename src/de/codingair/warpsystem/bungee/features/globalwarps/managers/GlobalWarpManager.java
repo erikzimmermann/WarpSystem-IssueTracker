@@ -62,6 +62,11 @@ public class GlobalWarpManager implements Manager {
         }
     }
 
+    @Override
+    public void destroy() {
+        this.globalWarps.clear();
+    }
+
     private void save(SGlobalWarp warp) {
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("GlobalWarps");
         Configuration config = file.getConfig();

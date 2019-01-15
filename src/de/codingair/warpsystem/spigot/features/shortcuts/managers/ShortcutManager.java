@@ -68,6 +68,11 @@ public class ShortcutManager implements Manager, BungeeFeature {
     }
 
     @Override
+    public void destroy() {
+        this.shortcuts.clear();
+    }
+
+    @Override
     public void onConnect() {
         WarpSystem.getInstance().getDataHandler().register(listener = new ShortcutPacketListener());
     }

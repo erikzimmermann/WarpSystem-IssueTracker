@@ -157,6 +157,12 @@ public class TempWarpManager implements Manager, Ticker {
     }
 
     @Override
+    public void destroy() {
+        this.warps.clear();
+        this.reserved.clear();
+    }
+
+    @Override
     public void onTick() {
     }
 

@@ -7,6 +7,7 @@ import de.codingair.warpsystem.bungee.base.listeners.MainPacketListener;
 import de.codingair.warpsystem.bungee.base.managers.DataManager;
 import de.codingair.warpsystem.bungee.base.managers.ServerManager;
 import de.codingair.warpsystem.transfer.bungee.BungeeDataHandler;
+import de.codingair.warpsystem.utils.Manager;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -67,11 +68,16 @@ public class WarpSystem extends Plugin {
     public void onDisable() {
         this.dataHandler.onDisable();
         save(false);
+        destroy();
     }
 
     private void startAutoSaver() {
         WarpSystem.log("Starting AutoSaver");
         BungeeCord.getInstance().getScheduler().schedule(this, () -> save(true), 20, 20, TimeUnit.MINUTES);
+    }
+
+    private void destroy() {
+        this.dataManager.getManagers().forEach(Manager::destroy);
     }
 
     private void save(boolean saver) {

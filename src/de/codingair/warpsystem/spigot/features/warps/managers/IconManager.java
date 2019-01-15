@@ -335,6 +335,14 @@ public class IconManager implements Manager {
         file.saveConfig();
     }
 
+    @Override
+    public void destroy() {
+        this.warps.clear();
+        this.categories.clear();
+        this.globalWarps.clear();
+        this.decoIcons.clear();
+    }
+
     private int getNextFreeSlot(Category category) {
         int slot = 0;
 

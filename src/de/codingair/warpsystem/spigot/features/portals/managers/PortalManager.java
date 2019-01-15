@@ -109,6 +109,11 @@ public class PortalManager implements Manager {
         if(!saver) WarpSystem.log("    ...saved " + data.size() + " Portal(s)");
     }
 
+    @Override
+    public void destroy() {
+        this.portals.clear();
+    }
+
     public List<Portal> getPortals() {
         return portals;
     }
