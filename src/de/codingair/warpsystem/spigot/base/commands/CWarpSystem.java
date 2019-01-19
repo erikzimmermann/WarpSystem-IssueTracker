@@ -370,8 +370,10 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Start"));
 
                     Result result;
+                    int size = (IconManager.getInstance() == null ? 0 : IconManager.getInstance().getWarps().size()) + (HiddenWarpManager.getInstance() == null ? 0 : HiddenWarpManager.getInstance().getWarps().size());
                     if((result = type.importData()).isFinished()) {
-                        sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish"));
+                        int amount = (IconManager.getInstance() == null ? 0 : IconManager.getInstance().getWarps().size()) + (HiddenWarpManager.getInstance() == null ? 0 : HiddenWarpManager.getInstance().getWarps().size()) - size;
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish").replace("%AMOUNT%", amount + ""));
                     } else {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish_With_Errors") + " §8[" + result.name() + "]");
                     }
