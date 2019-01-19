@@ -232,6 +232,11 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, Location location, String displayName, double costs, boolean skip, boolean canMove, String message, boolean silent, Callback<Boolean> callback) {
+        if(WarpSystem.maintenance && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Maintenance)) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("Warning_Maintenance"));
+            return;
+        }
+
         if(isTeleporting(player)) {
             Teleport teleport = getTeleport(player);
             long diff = System.currentTimeMillis() - teleport.getStartTime();
