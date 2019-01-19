@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.features.shortcuts.utils;
 
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionIcon;
@@ -25,12 +26,27 @@ public class Shortcut {
         this.globalWarp = globalWarp;
         this.displayName = displayName;
     }
-    
+
     public void run(Player player) {
         if(this.warp != null) {
-            if(warp instanceof Warp) WarpSystem.getInstance().getTeleportManager().tryToTeleport(player, (Warp) warp);
-            else if(warp instanceof GlobalWarp) WarpSystem.getInstance().getTeleportManager().tryToTeleport(player, (GlobalWarp) warp);
+            if(warp instanceof Warp) {
+                if(!player.hasPermission(WarpSystem.PERMISSION_USE_Warps)) {
+                    player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
+                    return;
+                }
+                WarpSystem.getInstance().getTeleportManager().tryToTeleport(player, (Warp) warp);
+            } else if(warp instanceof GlobalWarp) {
+                if(!player.hasPermission(WarpSystem.PERMISSION_USE_GlobalWarps)) {
+                    player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
+                    return;
+                }
+                WarpSystem.getInstance().getTeleportManager().tryToTeleport(player, (GlobalWarp) warp);
+            }
         } else if(globalWarp != null) {
+            if(!player.hasPermission(WarpSystem.PERMISSION_USE_GlobalWarps)) {
+                player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
+                return;
+            }
             WarpSystem.getInstance().getTeleportManager().tryToTeleport(player, globalWarp, displayName, 0);
         }
     }
