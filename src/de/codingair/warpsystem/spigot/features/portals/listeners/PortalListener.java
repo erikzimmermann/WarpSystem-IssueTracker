@@ -25,6 +25,7 @@ public class PortalListener implements Listener {
         PortalManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.PORTALS);
 
         Player player = e.getPlayer();
+
         boolean aboutToEdit = CPortal.aboutToEdit.contains(player.getName());
         boolean aboutToDelete = CPortal.aboutToDelete.contains(player.getName());
 
@@ -56,7 +57,10 @@ public class PortalListener implements Listener {
                         return;
                     }
 
-                    portal.teleportToDestination(player);
+                    if(!player.hasPermission(WarpSystem.PERMISSION_USE_PORTALS)) {
+                        player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
+                        return;
+                    } else portal.teleportToDestination(player);
                 } else if(player.getWorld() == portal.getDestination().getWorld() && e.getFrom().distance(portal.getDestination()) > portal.getTeleportRadius() && e.getTo().distance(portal.getDestination()) <= portal.getTeleportRadius()) {
 
                     if(aboutToEdit) {
@@ -81,7 +85,10 @@ public class PortalListener implements Listener {
                         return;
                     }
 
-                    portal.teleportToStart(player);
+                    if(!player.hasPermission(WarpSystem.PERMISSION_USE_PORTALS)) {
+                        player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
+                        return;
+                    } else portal.teleportToStart(player);
                 }
             } catch(IllegalArgumentException ignored) {
 

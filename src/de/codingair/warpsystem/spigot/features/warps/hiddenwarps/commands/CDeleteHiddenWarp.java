@@ -9,7 +9,6 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
 import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.HiddenWarp;
 import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.managers.HiddenWarpManager;
 import org.bukkit.command.CommandSender;

@@ -5,6 +5,7 @@ import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
 import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
 import de.codingair.warpsystem.spigot.features.nativeportals.PortalEditor;
@@ -129,6 +130,11 @@ public class NativePortalManager implements Manager {
     private void init(Portal portal) {
         portal.getListeners().clear();
         portal.getListeners().add((player) -> {
+            if(!player.hasPermission(WarpSystem.PERMISSION_USE_NATIVE_PORTALS)) {
+                player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
+                return;
+            }
+
             if(NativePortalManager.getInstance().isEditing(player) || API.getRemovable(player, GEditor.class) != null) {
                 player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.8));
                 return;

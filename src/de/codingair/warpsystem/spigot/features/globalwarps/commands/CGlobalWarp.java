@@ -18,7 +18,7 @@ import java.util.List;
 
 public class CGlobalWarp extends CommandBuilder {
     public CGlobalWarp() {
-        super("GlobalWarp", new BaseComponent(WarpSystem.PERMISSION_USE) {
+        super("GlobalWarp", new BaseComponent(WarpSystem.PERMISSION_USE_GlobalWarps) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
