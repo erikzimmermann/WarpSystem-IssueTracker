@@ -37,6 +37,7 @@ public class HiddenWarp {
         this.permission = data.getPermission();
         this.location = SerializableLocationHelper.buildSerializableLocation(data.getWorld(), data.getX(), data.getY(), data.getZ(), data.getYaw(), data.getPitch());
 
+        this.actionList = new ArrayList<>();
         this.created = new Date();
         this.lastChange = new Date();
         this.lastChanger = "System";
