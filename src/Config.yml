@@ -23,6 +23,30 @@ WarpSystem:
       Enabled: true
     Op_Can_Skip_Delay: false
     Delay: 5
+    # Animations:
+    # 0  - FIREWORKS_SPARK
+    # 1  - SUSPENDED_DEPTH
+    # 2  - CRIT
+    # 3  - CRIT_MAGIC
+    # 4  - SMOKE_NORMAL
+    # 5  - SMOKE_LARGE
+    # 6  - SPELL
+    # 7  - SPELL_INSTANT
+    # 8  - SPELL_MOB
+    # 9  - SPELL_WITCH
+    # 10 - DRIP_WATER
+    # 11 - DRIP_LAVA
+    # 12 - VILLAGER_ANGRY
+    # 13 - VILLAGER_HAPPY
+    # 14 - TOWN_AURA
+    # 15 - NOTE
+    # 16 - ENCHANTMENT_TABLE
+    # 17 - FLAME
+    # 18 - CLOUD
+    # 19 - REDSTONE
+    # 20 - SNOW_SHOVEL
+    # 21 - HEART
+    # 22 - PORTAL
     Animation: 17
     Allow_Move: false
 
