@@ -7,11 +7,14 @@ import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.api.SpigotAPI;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.effects.RotatingParticleSpiral;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPacket;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -27,23 +30,25 @@ public class Teleport {
 
     private long startTime = 0;
 
-    private String globalWarpName;
-    private Location location;
+    private Destination destination;
 
     private String displayName;
     private double costs;
     private boolean showMessage;
     private boolean canMove;
-    private String message = null;
-    private boolean silent = false;
+    private String message;
+    private boolean silent;
     private Callback<Boolean> callback;
 
-    public Teleport(Player player, String displayName, double costs, boolean showMessage, boolean canMove) {
+    public Teleport(Player player, Destination destination, String displayName, double costs, String message, boolean canMove, boolean silent, Callback<Boolean> callback) {
         this.player = player;
+        this.destination = destination;
         this.displayName = displayName;
         this.costs = costs;
-        this.showMessage = showMessage;
+        this.message = message;
         this.canMove = canMove;
+        this.silent = silent;
+        this.callback = callback;
 
         if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) this.costs = 0;
 
@@ -70,40 +75,6 @@ public class Teleport {
         };
     }
 
-    public Teleport(Player player, String globalWarp, String displayName, double costs, boolean showMessage, boolean canMove) {
-        this(player, displayName, costs, showMessage, canMove);
-        this.globalWarpName = globalWarp;
-    }
-
-    public Teleport(Player player, Sound finishSound, Sound cancelSound, String globalWarp, String displayName, double costs, boolean showMessage, boolean canMove) {
-        this(player, globalWarp, displayName, costs, showMessage, canMove);
-        this.finishSound = finishSound;
-        this.cancelSound = cancelSound;
-    }
-
-    public Teleport(Player player, Location location, String displayName, double costs, String message, boolean canMove, Callback<Boolean> callback) {
-        this(player, displayName, costs, message != null && !message.isEmpty(), canMove);
-        this.location = location;
-        this.message = message;
-        this.callback = callback;
-    }
-
-    public Teleport(Player player, Location location, String displayName, double costs, String message, boolean canMove, boolean silent, Callback<Boolean> callback) {
-        this(player, location, displayName, costs, message, canMove, callback);
-        this.silent = silent;
-    }
-
-    public Teleport(Player player, Location location, String displayName, double costs, boolean showMessage, boolean canMove) {
-        this(player, displayName, costs, showMessage, canMove);
-        this.location = location;
-    }
-
-    public Teleport(Player player, Sound finishSound, Sound cancelSound, Location location, String displayName, double costs, boolean showMessage, boolean canMove) {
-        this(player, location, displayName, costs, showMessage, canMove);
-        this.finishSound = finishSound;
-        this.cancelSound = cancelSound;
-    }
-
     public void start() {
         if(!animation.isRunning()) {
             this.startTime = System.currentTimeMillis();
@@ -122,80 +93,61 @@ public class Teleport {
         if(sound && cancelSound != null) cancelSound.playSound(player);
 
         if(!finished) {
-            if(AdapterType.getActive() != null) {
-                AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) + this.costs);
-            }
+            payBack();
+            if(callback != null) callback.accept(false);
         }
-
-        if(callback != null) callback.accept(false);
     }
 
     public void teleport() {
+        WarpSystem.getInstance().getTeleportManager().getTeleports().remove(this);
+
         cancel(false, true);
+        if(destination == null) return;
 
-        if(location != null) {
-            player.setFallDistance(0F);
-
-            if(location.getWorld() == null) {
-                getPlayer().sendMessage(Lang.getPrefix() + Lang.get("World_Not_Exists"));
-            } else {
-                if(silent) SpigotAPI.getInstance().silentTeleport(player, location);
-                else player.teleport(location);
+        if(message != null) {
+            if(this.costs > 0) {
+                message = (message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName));
+            } else if(showMessage) {
+                message = (message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName));
             }
+        }
 
-            WarpSystem.getInstance().getTeleportManager().getTeleports().remove(this);
-        } else if(this.globalWarpName != null) {
-            ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).teleport(getPlayer(), this.displayName, this.globalWarpName, this.costs, new Callback<PrepareTeleportPacket.Result>() {
-                @Override
-                public void accept(PrepareTeleportPacket.Result result) {
-                    WarpSystem.getInstance().getTeleportManager().getTeleports().remove(Teleport.this);
-
-                    switch(result) {
-                        case TELEPORTED:
-                            if(callback != null) callback.accept(true);
-                            break;
-
-                        case WARP_NOT_EXISTS:
-                            getPlayer().sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists").replace("%GLOBAL_WARP%", globalWarpName));
-                            break;
-
-                        case SERVER_NOT_AVAILABLE:
-                            getPlayer().sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Server_Is_Not_Online"));
-                            break;
-
-                        case PLAYER_ALREADY_ON_SERVER:
-                            getPlayer().sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Player_Is_Already_On_Target_Server"));
-                            break;
-                    }
-
-                    if(result != PrepareTeleportPacket.Result.TELEPORTED && AdapterType.getActive() != null && costs != 0) {
-                        AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) + costs);
-                    }
-                }
-            });
-
+        if(!destination.teleport(player, message, displayName, silent, costs, callback)) {
+            payBack();
+            if(callback != null) callback.accept(false);
+            player.sendMessage("§cWarps §8» §cError during teleportation! (Teleport threw a false result)");
             return;
         }
 
-        WarpSystem.getInstance().getTeleportManager().playAfterEffects(player);
-        if(finishSound != null) finishSound.playSound(player);
-        if(message == null || message.isEmpty()) return;
-
-        if(this.costs > 0) {
-            player.sendMessage((message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
-        } else if(showMessage) {
-            player.sendMessage((message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
+        if(player.isOnline()) {
+            playAfterEffects(player);
+            if(finishSound != null) finishSound.playSound(player);
         }
+    }
 
-        if(callback != null) callback.accept(true);
+    private void payBack() {
+        if(AdapterType.getActive() != null) {
+            AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) + this.costs);
+        }
+    }
+
+    public void playAfterEffects(Player player) {
+        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Teleport.Animation_After_Teleport.Enabled", true)) {
+            new RotatingParticleSpiral(player, player.getLocation()).runTaskTimer(WarpSystem.getInstance(), 1, 1);
+        }
+    }
+
+    public String simulate(Player player) {
+        if(this.destination == null) throw new IllegalArgumentException("Destination cannot be null!");
+        return this.destination.simulate(player);
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public Location getTo() {
-        return this.location;
+    public Destination getDestination() {
+        return destination;
     }
 
     public Animation getAnimation() {
@@ -240,9 +192,5 @@ public class Teleport {
 
     public void setShowMessage(boolean showMessage) {
         this.showMessage = showMessage;
-    }
-
-    public Location getLocation() {
-        return location;
     }
 }

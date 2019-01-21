@@ -1,6 +1,8 @@
 package de.codingair.warpsystem.spigot.features.warps.hiddenwarps.commands;
 
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.HiddenWarp;
 import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.managers.HiddenWarpManager;
@@ -19,7 +21,7 @@ public class CWarpHook {
         HiddenWarpManager m = WarpSystem.getInstance().getDataManager().getManager(FeatureType.HIDDEN_WARPS);
         if(m.existsWarp(argument)) {
             HiddenWarp warp = m.getWarp(argument);
-            WarpSystem.getInstance().getTeleportManager().tryToTeleport((Player) sender, warp.getPermission(), warp.getLocation(), warp.getName(), warp.getCosts(), false, false,
+            WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, new Destination(warp.getName(), DestinationType.HiddenWarp), warp.getName(), warp.getCosts(),
                     WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.HiddenWarps", true));
 
             return true;

@@ -5,6 +5,8 @@ import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
 import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
@@ -166,9 +168,11 @@ public class NativePortalManager implements Manager {
                 }, 4L);
             } else if(!noTeleport.contains(player)) {
                 if(portal.getWarp() != null) {
-                    WarpSystem.getInstance().getTeleportManager().teleport(player, portal.getWarp(), portal.getDisplayName(), true, true, sendMessage);
+                    WarpSystem.getInstance().getTeleportManager().instantTeleport(player, new Destination(portal.getWarp().getIdentifier(), DestinationType.WarpIcon), portal.getDisplayName(),
+                            WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.NativePortals", true));
                 } else if(portal.getGlobalWarp() != null) {
-                    WarpSystem.getInstance().getTeleportManager().teleport(player, portal.getGlobalWarp(), portal.getDisplayName(), 0, true, true, sendMessage);
+                    WarpSystem.getInstance().getTeleportManager().instantTeleport(player, new Destination(portal.getGlobalWarp(), DestinationType.GlobalWarp), portal.getDisplayName(),
+                            WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.NativePortals", true));
                 }
             }
         });

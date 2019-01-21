@@ -1,10 +1,8 @@
 package de.codingair.warpsystem.spigot.features.warps.hiddenwarps;
 
-import de.codingair.codingapi.serializable.SerializableLocation;
-import de.codingair.codingapi.serializable.SerializableLocationHelper;
+import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.utils.actions.Action;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -19,7 +17,7 @@ public class HiddenWarp {
     private String name;
     private String permission;
     private List<Action> actionList;
-    private SerializableLocation location;
+    private Location location;
 
     private Date created;
     private Date lastChange;
@@ -35,7 +33,7 @@ public class HiddenWarp {
     public HiddenWarp(WarpData data) throws IllegalStateException {
         this.name = data.getName();
         this.permission = data.getPermission();
-        this.location = SerializableLocationHelper.buildSerializableLocation(data.getWorld(), data.getX(), data.getY(), data.getZ(), data.getYaw(), data.getPitch());
+        this.location = new Location(data.getWorld(), data.getX(), data.getY(), data.getZ(), data.getYaw(), data.getPitch());
 
         this.actionList = new ArrayList<>();
         this.created = new Date();
@@ -48,7 +46,7 @@ public class HiddenWarp {
     public HiddenWarp(Player player, String name, String permission) {
         this.name = name;
         this.permission = permission;
-        this.location = new SerializableLocation(player.getLocation());
+        this.location = new Location(player.getLocation());
 
         this.created = new Date();
         this.lastChange = new Date();
@@ -80,11 +78,11 @@ public class HiddenWarp {
     }
 
     public Location getLocation() {
-        return location.getLocation();
+        return location;
     }
 
     public void setLocation(Location location) {
-        this.location = new SerializableLocation(location);
+        this.location = location;
     }
 
     public Date getCreated() {
@@ -131,7 +129,7 @@ public class HiddenWarp {
         json.put("Name", this.name);
         json.put("Permission", this.permission);
         json.put("Actions", JSONArray.toJSONString(this.actionList));
-        json.put("Location", this.location.toString());
+        json.put("Location", this.location.toJSONString(4));
         json.put("Created", this.created.getTime());
         json.put("LastChange", this.lastChange.getTime());
         json.put("LastChanger", this.lastChanger);
@@ -158,7 +156,7 @@ public class HiddenWarp {
             }
         }
 
-        this.location = SerializableLocationHelper.buildSerializableLocation((String) json.get("Location"));
+        this.location = Location.getByJSONString((String) json.get("Location"));
         this.created = new Date(Long.parseLong(json.get("Created") + ""));
         this.lastChange = new Date(Long.parseLong(json.get("LastChange") + ""));
         this.lastChanger = (String) json.get("LastChanger");
@@ -181,5 +179,9 @@ public class HiddenWarp {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public boolean hasPermission() {
+        return this.permission != null;
     }
 }

@@ -57,6 +57,8 @@ WarpSystem:
       GlobalWarps: true
       NativePortals: true
       Portals: true
+      WarpSigns: true
+      TempWarps: true
     Teleport_Cancel_Message: true
 
   Functions:

@@ -17,10 +17,7 @@ import de.codingair.warpsystem.spigot.features.warps.commands.CWarps;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionIconHelper;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionObject;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Icon;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.*;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.CategoryData;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
 import de.codingair.warpsystem.utils.Manager;
@@ -531,6 +528,12 @@ public class IconManager implements Manager {
         }
 
         return icons;
+    }
+
+    public static int getCosts(ActionIcon icon) {
+        ActionObject object = icon.getAction(Action.PAY_MONEY);
+        if(object == null) return 0;
+        else return object.getValue();
     }
 
     public void remove(Icon icon) {
