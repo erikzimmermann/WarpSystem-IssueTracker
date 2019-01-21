@@ -453,7 +453,7 @@ GER:
   Native_Portal_Choose_Warp: '&cWähle ein Warp'
   Plugin_Reloading: '&cDas Plugin wird jetzt neu geladen...'
   Success_Plugin_Reloaded: '&aDas Plugin wurde erfolgreich neu geladen.'
-  Success_Plugin_Reloaded_Without_Saving: '&aDas Plugin wurde erfolgreich neu geladen.'
+  Success_Plugin_Reloaded_Without_Saving: '&aDas Plugin wurde ohne zu speichern neu geladen.'
   Status_Of_Start: 'Status vom Start-Holo: '
   Status_Of_Destination: 'Status vom Destination-Holo: '
   Hologram: Hologramm
