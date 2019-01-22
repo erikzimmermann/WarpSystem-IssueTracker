@@ -180,7 +180,7 @@ public class GEditor extends GUI {
             ItemBuilder builder = new ItemBuilder(ready ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA)
                     .setText((ready ? "§a" : "§c") + "§n" + Lang.get("Status"));
 
-            builder.addText("§7" + Lang.get("Name") + ": \"" + (name == null ? "§c§m-" : ChatColor.translateAlternateColorCodes('&', name)) + "\"");
+            builder.addText("§7" + Lang.get("Name") + ": " + (name == null ? "§c§m-" : "\"" + ChatColor.translateAlternateColorCodes('&', name) + "\""));
             builder.addText("§7" + Lang.get("NativePortal_Material") + ": " + (type == null ? "§c§m-" : type.name()));
             builder.addText("§7" + Lang.get("Teleport_Link") + ": " + (destination == null ? "§c§m-" : ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', destination.getId()))));
             builder.addText("§7" + Lang.get("Portal_Blocks") + ": " + (portal == null ? "§c0" : portal.getBlocks().size()));

@@ -5,18 +5,12 @@ import de.codingair.codingapi.particles.animations.playeranimations.CircleAnimat
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.warpsystem.spigot.api.SpigotAPI;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.effects.RotatingParticleSpiral;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
-import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
-import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPacket;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -55,6 +49,7 @@ public class Teleport {
         this.animation = new CircleAnimation(WarpSystem.getInstance().getTeleportManager().getParticle(), player, WarpSystem.getInstance(), WarpSystem.getInstance().getTeleportManager().getRadius());
         this.runnable = new BukkitRunnable() {
             private int left = WarpSystem.getInstance().getTeleportManager().getSeconds();
+            private String msg = Lang.get("Teleporting_Info");
 
             @Override
             public void run() {
@@ -65,10 +60,7 @@ public class Teleport {
                 }
 
                 player.playSound(player.getLocation(), Sound.NOTE_PIANO.bukkitSound(), 1.5F, 0.5F);
-
-                String msg = Lang.get("Teleporting_Info").replace("%seconds%", left + "");
-
-                MessageAPI.sendActionBar(player, msg);
+                MessageAPI.sendActionBar(player, msg.replace("%seconds%", left + ""));
 
                 left--;
             }
