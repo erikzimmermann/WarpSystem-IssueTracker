@@ -32,8 +32,8 @@ public class GlobalWarpIconAdapter implements DestinationAdapter {
         }
 
         TeleportManager man = null;
-        man.teleport(player, new Destination(warp.getAction(Action.SWITCH_SERVER).getValue(), DestinationType.GlobalWarp), displayName, costs, true, true, message != null, false, null);
-        return true;
+        man.teleport(player, new Destination(warp.getAction(Action.SWITCH_SERVER).getValue(), DestinationType.GlobalWarp), displayName, costs, true, true, message != null, false, callback);
+        return false;
     }
 
     @Override

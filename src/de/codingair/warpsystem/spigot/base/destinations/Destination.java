@@ -12,7 +12,7 @@ public class Destination {
     public Destination(String id, DestinationType type) {
         this.id = id;
         this.type = type;
-        this.adapter = null;
+        this.adapter = type.getInstance();
     }
 
     public Destination(DestinationAdapter adapter) {
@@ -23,14 +23,11 @@ public class Destination {
 
     public boolean teleport(Player player, String message, String displayName, boolean silent, double costs, Callback<Boolean> callback) {
         player.setFallDistance(0F);
-
-        if(this.type.equals(DestinationType.UNKNOWN)) {
-            return adapter.teleport(player, id, displayName, message, silent, costs, callback);
-        } else return type.getInstance().teleport(player, id, displayName, message, silent, costs, callback);
+        return adapter.teleport(player, id, displayName, message, silent, costs, callback);
     }
 
     public String simulate(Player player) {
-        return type.getInstance().simulate(player, this.id);
+        return adapter.simulate(player, this.id);
     }
 
     public String getId() {

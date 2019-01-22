@@ -27,6 +27,8 @@ public enum DestinationType {
     }
 
     public DestinationAdapter getInstance() {
+        if(getAdapter() == null) return null;
+
         try {
             return getAdapter().newInstance();
         } catch(InstantiationException | IllegalAccessException e) {

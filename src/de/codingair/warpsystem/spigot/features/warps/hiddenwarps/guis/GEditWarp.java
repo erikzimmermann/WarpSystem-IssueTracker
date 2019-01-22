@@ -40,7 +40,7 @@ public class GEditWarp extends SimpleGUI {
 
             @Override
             public void onInvCloseEvent(InventoryCloseEvent e) {
-                if(!isClosingForAnvil() && !((GPage) GEditWarp.this.getMain()).saved) p.sendMessage(Lang.getPrefix() + Lang.get("HiddenWarp_Cancel_Edit"));
+                if(!isClosingForAnvil() && !isClosingByButton() && !((GPage) GEditWarp.this.getMain()).saved) p.sendMessage(Lang.getPrefix() + Lang.get("HiddenWarp_Cancel_Edit"));
             }
 
             @Override

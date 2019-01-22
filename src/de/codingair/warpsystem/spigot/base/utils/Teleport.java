@@ -113,9 +113,6 @@ public class Teleport {
         }
 
         if(!destination.teleport(player, message, displayName, silent, costs, callback)) {
-            payBack();
-            if(callback != null) callback.accept(false);
-            player.sendMessage("§cWarps §8» §cError during teleportation! (Teleport threw a false result)");
             return;
         }
 

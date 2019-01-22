@@ -31,13 +31,17 @@ public class GlobalWarpAdapter implements DestinationAdapter {
                         break;
                 }
 
-                if(result != PrepareTeleportPacket.Result.TELEPORTED && AdapterType.getActive() != null && costs != 0) {
-                    AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) + costs);
+                if(result != PrepareTeleportPacket.Result.TELEPORTED) {
+                    if(AdapterType.getActive() != null && costs != 0) {
+                        AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) + costs);
+                    }
+
+                    if(callback != null) callback.accept(true);
                 }
             }
         });
 
-        return true;
+        return false;
     }
 
     @Override

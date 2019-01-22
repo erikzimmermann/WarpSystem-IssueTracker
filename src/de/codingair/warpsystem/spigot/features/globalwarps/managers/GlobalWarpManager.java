@@ -9,7 +9,6 @@ import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.commands.CGlobalWarp;
 import de.codingair.warpsystem.spigot.features.globalwarps.commands.CGlobalWarps;
 import de.codingair.warpsystem.spigot.features.globalwarps.listeners.GlobalWarpListener;
-import de.codingair.warpsystem.spigot.features.shortcuts.listeners.ShortcutPacketListener;
 import de.codingair.warpsystem.transfer.packets.spigot.DeleteGlobalWarpPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.PublishGlobalWarpPacket;
@@ -20,7 +19,6 @@ import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
 
 import java.util.ArrayList;
 import java.util.HashMap;

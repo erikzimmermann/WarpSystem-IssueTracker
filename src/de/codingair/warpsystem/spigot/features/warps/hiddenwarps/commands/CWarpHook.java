@@ -17,7 +17,7 @@ public class CWarpHook {
      * Return true to cancel!
      */
     public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-        if(!FeatureType.HIDDEN_WARPS.isActive()) return false;
+        if(!FeatureType.HIDDEN_WARPS.isActive() || !sender.hasPermission(WarpSystem.PERMISSION_USE_HiddenWarps)) return false;
         HiddenWarpManager m = WarpSystem.getInstance().getDataManager().getManager(FeatureType.HIDDEN_WARPS);
         if(m.existsWarp(argument)) {
             HiddenWarp warp = m.getWarp(argument);
@@ -30,7 +30,7 @@ public class CWarpHook {
     }
 
     public void addArguments(CommandSender sender, List<String> suggestions) {
-        if(!FeatureType.HIDDEN_WARPS.isActive()) return;
+        if(!FeatureType.HIDDEN_WARPS.isActive() || !sender.hasPermission(WarpSystem.PERMISSION_USE_HiddenWarps)) return;
         HiddenWarpManager m = WarpSystem.getInstance().getDataManager().getManager(FeatureType.HIDDEN_WARPS);
         for(HiddenWarp value : m.getWarps().values()) {
             if(value.getPermission() == null || sender.hasPermission(value.getPermission())) {

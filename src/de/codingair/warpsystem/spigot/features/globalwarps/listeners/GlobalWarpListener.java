@@ -19,7 +19,6 @@ import de.codingair.warpsystem.transfer.packets.utils.PacketType;
 import de.codingair.warpsystem.transfer.serializeable.SGlobalWarp;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -63,11 +62,11 @@ public class GlobalWarpListener implements Listener, PacketListener {
 
             if(player != null) {
                 if(location.getWorld() == null) {
-                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> player.sendMessage(new String[]{" ", Lang.getPrefix() + "§4World '" + warp.getLoc().getWorld() + "' is missing. Please contact an admin!", " "}), 10);
+                    player.sendMessage(new String[]{" ", Lang.getPrefix() + "§4World '" + warp.getLoc().getWorld() + "' is missing. Please contact an admin!", " "});
                     return;
                 }
 
-                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(player, new Destination(new LocationAdapter(location)), warpDisplayName, 0, true, true, true, false, null), 2L);
+                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(player, new Destination(new LocationAdapter(location)), warpDisplayName, 0, true, true, true, true, null), 2L);
             }
         }
     }
