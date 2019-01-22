@@ -704,7 +704,7 @@ public class GEditIcon extends GUI {
 
                         @Override
                         public String getLeftclickDescription() {
-                            return ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("GlobalWarp_Leftclick_To_Choose");
+                            return ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("Leftclick_To_Choose");
                         }
                     }).open();
                 }

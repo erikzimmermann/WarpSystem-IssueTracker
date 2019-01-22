@@ -1,10 +1,13 @@
 package de.codingair.warpsystem.spigot.features.shortcuts.utils;
 
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionIcon;
+import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.bukkit.entity.Player;
 
 public class Shortcut {
@@ -34,20 +37,26 @@ public class Shortcut {
                     player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     return;
                 }
-                WarpSystem.getInstance().getTeleportManager().tryToTeleport(player, (Warp) warp);
+
+                WarpSystem.getInstance().getTeleportManager().teleport(player, new Destination(((Warp) warp).getIdentifier(), DestinationType.WarpIcon), warp.getName(), IconManager.getCosts(warp),
+                        WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Warps", true));
             } else if(warp instanceof GlobalWarp) {
                 if(!player.hasPermission(WarpSystem.PERMISSION_USE_GlobalWarps)) {
                     player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     return;
                 }
-                WarpSystem.getInstance().getTeleportManager().tryToTeleport(player, (GlobalWarp) warp);
+
+                WarpSystem.getInstance().getTeleportManager().teleport(player, new Destination(warp.getName(), DestinationType.GlobalWarpIcon), warp.getName(), IconManager.getCosts(warp),
+                        WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true));
             }
         } else if(globalWarp != null) {
             if(!player.hasPermission(WarpSystem.PERMISSION_USE_GlobalWarps)) {
                 player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                 return;
             }
-            WarpSystem.getInstance().getTeleportManager().tryToTeleport(player, globalWarp, displayName, 0);
+
+            WarpSystem.getInstance().getTeleportManager().teleport(player, new Destination(globalWarp, DestinationType.GlobalWarp), displayName, 0,
+                    WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true));
         }
     }
 

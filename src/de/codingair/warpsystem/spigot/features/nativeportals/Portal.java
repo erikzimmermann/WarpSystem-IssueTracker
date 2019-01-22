@@ -2,6 +2,8 @@ package de.codingair.warpsystem.spigot.features.nativeportals;
 
 import de.codingair.codingapi.server.blocks.utils.Axis;
 import de.codingair.codingapi.tools.Area;
+import de.codingair.warpsystem.spigot.base.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalBlock;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalListener;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;
@@ -29,8 +31,7 @@ public class Portal {
     private Location[] cachedEdges = null;
     private Axis cachedAxis = null;
 
-    private Warp warp;
-    private String globalWarp;
+    private Destination destination;
     private String displayName;
 
     public Portal() {
@@ -42,6 +43,7 @@ public class Portal {
         this.type = portal.getType();
         this.blocks = new ArrayList<>(portal.getBlocks());
         this.listeners.addAll(portal.getListeners());
+        this.destination = new Destination(portal.getDestination().getId(), portal.getDestination().getType());
     }
 
     public Portal(PortalType type, List<PortalBlock> blocks) {
@@ -54,10 +56,9 @@ public class Portal {
         this.blocks = new ArrayList<>();
     }
 
-    public Portal(PortalType type, Warp warp, String globalWarp, String displayName, List<PortalBlock> blocks) {
+    public Portal(PortalType type, Destination destination, String displayName, List<PortalBlock> blocks) {
         this.type = type;
-        this.warp = warp;
-        this.globalWarp = globalWarp;
+        this.destination = destination;
         this.displayName = displayName;
         this.blocks = blocks;
     }
@@ -222,8 +223,7 @@ public class Portal {
         JSONObject json = new JSONObject();
 
         json.put("Type", type == null ? null : type.name());
-        json.put("Warp", warp == null ? null : warp.getIdentifier());
-        json.put("GlobalWarp", globalWarp);
+        json.put("Destination", this.destination.toJSONString());
         json.put("Name", displayName);
 
         JSONArray jsonArray = new JSONArray();
@@ -242,8 +242,23 @@ public class Portal {
             JSONObject json = (JSONObject) new JSONParser().parse(s);
 
             PortalType type = json.get("Type") == null ? null : PortalType.valueOf((String) json.get("Type"));
-            Warp warp = json.get("Warp") == null ? null : IconManager.getInstance().getWarp((String) json.get("Warp"));
-            String globalWarp = (String) json.get("GlobalWarp");
+            Destination destination;
+
+            if(json.get("Destination") != null) {
+                //new pattern
+                destination = new Destination((String) json.get("Destination"));
+            } else {
+                //old pattern
+                Warp warp = json.get("Warp") == null ? null : IconManager.getInstance().getWarp((String) json.get("Warp"));
+                String globalWarp = json.get("GlobalWarp") == null ? null : (String) json.get("GlobalWarp");
+
+                if(warp != null) {
+                    destination = new Destination(warp.getIdentifier(), DestinationType.WarpIcon);
+                } else {
+                    destination = new Destination(globalWarp, DestinationType.GlobalWarp);
+                }
+            }
+
             String displayName = (String) json.get("Name");
 
             JSONArray jsonArray = (JSONArray) new JSONParser().parse((String) json.get("Blocks"));
@@ -261,7 +276,7 @@ public class Portal {
                 if(block.getLocation().getWorld() == null) return null;
             }
 
-            return new Portal(type, warp, globalWarp, displayName, blocks);
+            return new Portal(type, destination, displayName, blocks);
         } catch(ParseException e) {
             e.printStackTrace();
             return null;
@@ -280,20 +295,12 @@ public class Portal {
         return new Portal(this);
     }
 
-    public Warp getWarp() {
-        return warp;
+    public Destination getDestination() {
+        return destination;
     }
 
-    public void setWarp(Warp warp) {
-        this.warp = warp;
-    }
-
-    public String getGlobalWarp() {
-        return globalWarp;
-    }
-
-    public void setGlobalWarp(String globalWarp) {
-        this.globalWarp = globalWarp;
+    public void setDestination(Destination destination) {
+        this.destination = destination;
     }
 
     public String getDisplayName() {

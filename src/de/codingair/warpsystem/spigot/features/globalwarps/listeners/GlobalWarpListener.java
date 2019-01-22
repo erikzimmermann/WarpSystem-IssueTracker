@@ -3,6 +3,8 @@ package de.codingair.warpsystem.spigot.features.globalwarps.listeners;
 import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.codingapi.tools.time.TimeMap;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
@@ -17,7 +19,6 @@ import de.codingair.warpsystem.transfer.packets.utils.PacketType;
 import de.codingair.warpsystem.transfer.serializeable.SGlobalWarp;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -61,21 +62,11 @@ public class GlobalWarpListener implements Listener, PacketListener {
 
             if(player != null) {
                 if(location.getWorld() == null) {
-                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> player.sendMessage(new String[]{" ", Lang.getPrefix() + "§4World '" + warp.getLoc().getWorld() + "' is missing. Please contact an admin!", " "}), 10);
+                    player.sendMessage(new String[]{" ", Lang.getPrefix() + "§4World '" + warp.getLoc().getWorld() + "' is missing. Please contact an admin!", " "});
                     return;
                 }
 
-                String message = null;
-                if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message", true) || packet.getCosts() > 0) {
-                    if(packet.getCosts() > 0) {
-                        message = Lang.getPrefix() + Lang.get("Money_Paid").replace("%AMOUNT%", packet.getCosts() + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', warpDisplayName));
-                    } else {
-                        message = Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", ChatColor.translateAlternateColorCodes('&', warpDisplayName));
-                    }
-                }
-
-                String finalMessage = message;
-                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(player, location, warpDisplayName, 0, true, true, finalMessage, true, null), 2L);
+                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(player, new Destination(new LocationAdapter(location)), warpDisplayName, 0, true, true, true, true, null), 2L);
             }
         }
     }

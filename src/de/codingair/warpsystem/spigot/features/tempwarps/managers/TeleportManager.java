@@ -2,6 +2,8 @@ package de.codingair.warpsystem.spigot.features.tempwarps.managers;
 
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
@@ -50,7 +52,7 @@ public class TeleportManager {
             AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) - costs);
         }
 
-        WarpSystem.getInstance().getTeleportManager().teleport(player, warp.getLocation(), warp.getName(), warp.getTeleportCosts(), false, false, warp.getMessage(), false, isOwner ? null : new Callback<Boolean>() {
+        Callback<Boolean> callback = new Callback<Boolean>() {
             @Override
             public void accept(Boolean teleported) {
                 if(teleported) {
@@ -61,7 +63,14 @@ public class TeleportManager {
                     AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) + costs);
                 }
             }
-        });
+        };
+
+        if(warp.getMessage() != null) {
+            WarpSystem.getInstance().getTeleportManager().teleport(player, new Destination(new LocationAdapter(warp.getLocation())), warp.getName(), warp.getTeleportCosts(), false, warp.getMessage(), false, isOwner ? null : callback);
+        } else {
+            WarpSystem.getInstance().getTeleportManager().teleport(player, new Destination(new LocationAdapter(warp.getLocation())), warp.getName(), warp.getTeleportCosts(), false,
+                    WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.TempWarps", true), false, isOwner ? null : callback);
+        }
         return true;
     }
 

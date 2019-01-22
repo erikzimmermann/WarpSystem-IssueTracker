@@ -40,22 +40,6 @@ public class PortalEditor implements Removable {
         this.portal = new Portal(type);
     }
 
-    public PortalEditor(Player player, PortalType type, String display, Warp warp) {
-        this(player);
-        this.backup = null;
-        this.portal = new Portal(type);
-        this.portal.setDisplayName(display);
-        this.portal.setWarp(warp);
-    }
-
-    public PortalEditor(Player player, PortalType type, String display, String globalWarp) {
-        this(player);
-        this.backup = null;
-        this.portal = new Portal(type);
-        this.portal.setDisplayName(display);
-        this.portal.setGlobalWarp(globalWarp);
-    }
-
     public PortalEditor(Player player, Portal portal) {
         this(player);
         this.backup = portal;

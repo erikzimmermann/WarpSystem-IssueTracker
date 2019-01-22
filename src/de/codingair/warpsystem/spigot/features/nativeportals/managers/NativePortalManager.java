@@ -165,11 +165,8 @@ public class NativePortalManager implements Manager {
                     noTeleport.remove(player);
                 }, 4L);
             } else if(!noTeleport.contains(player)) {
-                if(portal.getWarp() != null) {
-                    WarpSystem.getInstance().getTeleportManager().teleport(player, portal.getWarp(), portal.getDisplayName(), true, true, sendMessage);
-                } else if(portal.getGlobalWarp() != null) {
-                    WarpSystem.getInstance().getTeleportManager().teleport(player, portal.getGlobalWarp(), portal.getDisplayName(), 0, true, true, sendMessage);
-                }
+                WarpSystem.getInstance().getTeleportManager().instantTeleport(player, portal.getDestination(), portal.getDisplayName(),
+                        WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.NativePortals", true));
             }
         });
     }
