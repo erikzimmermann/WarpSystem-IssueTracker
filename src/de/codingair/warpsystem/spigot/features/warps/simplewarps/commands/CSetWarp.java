@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.warps.hiddenwarps.commands;
+package de.codingair.warpsystem.spigot.features.warps.simplewarps.commands;
 
 import de.codingair.codingapi.player.chat.ChatButton;
 import de.codingair.codingapi.player.chat.SimpleMessage;
@@ -13,8 +13,8 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
-import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.HiddenWarp;
-import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.managers.HiddenWarpManager;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -55,8 +55,8 @@ public class CSetWarp extends CommandBuilder {
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                HiddenWarpManager hManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.HIDDEN_WARPS);
-                for(HiddenWarp value : hManager.getWarps().values()) {
+                SimpleWarpManager hManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.HIDDEN_WARPS);
+                for(SimpleWarp value : hManager.getWarps().values()) {
                     suggestions.add(value.getName());
                 }
 
@@ -68,7 +68,7 @@ public class CSetWarp extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                HiddenWarpManager hManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.HIDDEN_WARPS);
+                SimpleWarpManager hManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.HIDDEN_WARPS);
                 if(hManager.existsWarp(argument)) {
                     SimpleMessage simpleMessage = new SimpleMessage(Lang.getPrefix() + Lang.get("Warp_Confirm_Overwrite").replace("%WARP%", hManager.getWarp(argument).getName()), WarpSystem.getInstance());
 
@@ -119,15 +119,15 @@ public class CSetWarp extends CommandBuilder {
                 }
 
                 //create
-                HiddenWarp hiddenWarp = new HiddenWarp((Player) sender, argument, null);
-                hManager.addWarp(hiddenWarp);
+                SimpleWarp simpleWarp = new SimpleWarp((Player) sender, argument, null);
+                hManager.addWarp(simpleWarp);
 
-                sender.sendMessage(Lang.getPrefix() + Lang.get("HiddenWarp_Created").replace("%WARP%", ChatColor.translateAlternateColorCodes('&', argument)));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("SimpleWarp_Created").replace("%WARP%", ChatColor.translateAlternateColorCodes('&', argument)));
 
-                SimpleMessage message = new SimpleMessage(Lang.getPrefix() + Lang.get("HiddenWarp_Created_Edit_Info"), WarpSystem.getInstance());
+                SimpleMessage message = new SimpleMessage(Lang.getPrefix() + Lang.get("SimpleWarp_Created_Edit_Info"), WarpSystem.getInstance());
 
-                TextComponent tc = new TextComponent(Lang.get("HiddenWarp_Created_Edit_Info_EDIT"));
-                tc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/edithiddenwarp " + argument));
+                TextComponent tc = new TextComponent(Lang.get("SimpleWarp_Created_Edit_Info_EDIT"));
+                tc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/editwarp " + argument));
                 tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[]{new TextComponent(Lang.get("Click_Hover"))}));
 
                 message.replace("%EDIT%", tc);

@@ -22,8 +22,8 @@ import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpMa
 import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.HiddenWarp;
-import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.managers.HiddenWarpManager;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.ImportType;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Result;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
@@ -370,9 +370,9 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Start"));
 
                     Result result;
-                    int size = (IconManager.getInstance() == null ? 0 : IconManager.getInstance().getWarps().size()) + (HiddenWarpManager.getInstance() == null ? 0 : HiddenWarpManager.getInstance().getWarps().size());
+                    int size = (IconManager.getInstance() == null ? 0 : IconManager.getInstance().getWarps().size()) + (SimpleWarpManager.getInstance() == null ? 0 : SimpleWarpManager.getInstance().getWarps().size());
                     if((result = type.importData()).isFinished()) {
-                        int amount = (IconManager.getInstance() == null ? 0 : IconManager.getInstance().getWarps().size()) + (HiddenWarpManager.getInstance() == null ? 0 : HiddenWarpManager.getInstance().getWarps().size()) - size;
+                        int amount = (IconManager.getInstance() == null ? 0 : IconManager.getInstance().getWarps().size()) + (SimpleWarpManager.getInstance() == null ? 0 : SimpleWarpManager.getInstance().getWarps().size()) - size;
                         sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish").replace("%AMOUNT%", amount + ""));
                     } else {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish_With_Errors") + " §8[" + result.name() + "]");
@@ -399,14 +399,14 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
                 switch(args[1].toLowerCase()) {
                     case "essentials": {
-                        HiddenWarp warp = ImportType.ESSENTIALS.loadWarp(argument);
+                        SimpleWarp warp = ImportType.ESSENTIALS.loadWarp(argument);
 
                         if(warp == null) {
                             sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Could_Not_Import_Warp"));
                             return false;
                         }
 
-                        if(IconManager.getInstance().getWarp(warp.getName()) != null || HiddenWarpManager.getInstance().existsWarp(warp.getName())) {
+                        if(IconManager.getInstance().getWarp(warp.getName()) != null || SimpleWarpManager.getInstance().existsWarp(warp.getName())) {
                             sender.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
 
                             SimpleMessage simpleMessage = new SimpleMessage(Lang.getPrefix() + Lang.get("Import_Choose_New_Name"), WarpSystem.getInstance());
@@ -428,13 +428,13 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                                                 return;
                                             }
 
-                                            if(IconManager.getInstance().getWarp(s) != null || HiddenWarpManager.getInstance().existsWarp(s)) {
+                                            if(IconManager.getInstance().getWarp(s) != null || SimpleWarpManager.getInstance().existsWarp(s)) {
                                                 sender.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                                                 return;
                                             }
 
                                             warp.setName(s);
-                                            HiddenWarpManager.getInstance().addWarp(warp);
+                                            SimpleWarpManager.getInstance().addWarp(warp);
                                             sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Warp_Imported").replace("%WARP%", warp.getName()));
                                             e.setClose(true);
                                         }
@@ -459,7 +459,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
 
                             simpleMessage.send((Player) sender);
                         } else {
-                            HiddenWarpManager.getInstance().addWarp(warp);
+                            SimpleWarpManager.getInstance().addWarp(warp);
                             sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Warp_Imported").replace("%WARP%", warp.getName()));
                         }
                         break;

@@ -19,7 +19,7 @@ import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Icon;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.GUIListener;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
-import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.guis.list.GHiddenWarpList;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.guis.GSimpleWarpList;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -117,19 +117,19 @@ public class PChooseDestination extends Page {
         addButton(new SyncButton(7) {
             @Override
             public ItemStack craftItem() {
-                return new ItemBuilder(XMaterial.ENDER_CHEST).setName("§b" + Lang.get("HiddenWarps")).getItem();
+                return new ItemBuilder(XMaterial.ENDER_CHEST).setName("§b" + Lang.get("SimpleWarps")).getItem();
             }
 
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
-                new GHiddenWarpList(p, new GHiddenWarpList.Listener() {
+                new GSimpleWarpList(p, new GSimpleWarpList.Listener() {
                     boolean got = false;
 
                     @Override
                     public void onClickOnWarp(String warp, InventoryClickEvent e) {
                         got = true;
                         p.closeInventory();
-                        callback.accept(new Destination(warp, DestinationType.HiddenWarp));
+                        callback.accept(new Destination(warp, DestinationType.SimpleWarp));
                     }
 
                     @Override

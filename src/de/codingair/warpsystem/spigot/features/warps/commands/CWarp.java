@@ -11,7 +11,7 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.commands.CWarpHook;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CWarpHook;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

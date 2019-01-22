@@ -44,11 +44,10 @@ commands:
   setwarp:
     usuage: /SetWarp
     description: A Warp-System-CMD
-  deletehiddenwarp:
-    usuage: /DeleteHiddenWarp
+  deletewarp:
+    usuage: /DeleteWarp
     description: A Warp-System-CMD
-    aliases: [delhiddenwarp, delhwarp]
-  edithiddenwarp:
-    usuage: /EditHiddenWarp
+    aliases: [delwarp]
+  editwarp:
+    usuage: /EditWarp
     description: A Warp-System-CMD
-    aliases: [edithwarp]

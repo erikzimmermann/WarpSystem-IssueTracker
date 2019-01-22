@@ -1,7 +1,7 @@
-package de.codingair.warpsystem.spigot.features.warps.hiddenwarps;
+package de.codingair.warpsystem.spigot.features.warps.simplewarps;
 
 import de.codingair.codingapi.tools.Location;
-import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.utils.actions.Action;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.utils.actions.Action;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class HiddenWarp {
+public class SimpleWarp {
     private String name;
     private String permission;
     private List<Action> actionList;
@@ -26,11 +26,11 @@ public class HiddenWarp {
 
     private double costs;
 
-    public HiddenWarp(String s) throws ParseException {
+    public SimpleWarp(String s) throws ParseException {
         apply(s);
     }
 
-    public HiddenWarp(WarpData data) throws IllegalStateException {
+    public SimpleWarp(WarpData data) throws IllegalStateException {
         this.name = data.getName();
         this.permission = data.getPermission();
         this.location = new Location(data.getWorld(), data.getX(), data.getY(), data.getZ(), data.getYaw(), data.getPitch());
@@ -43,7 +43,7 @@ public class HiddenWarp {
         this.teleports = 0;
     }
 
-    public HiddenWarp(Player player, String name, String permission) {
+    public SimpleWarp(Player player, String name, String permission) {
         this.name = name;
         this.permission = permission;
         this.location = new Location(player.getLocation());
@@ -152,7 +152,7 @@ public class HiddenWarp {
             try {
                 this.actionList.add(Action.read(data));
             } catch(ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-                throw new IllegalStateException("Couldn't revive action of HiddenWarp '" + this.name + "'.");
+                throw new IllegalStateException("Couldn't revive action of SimpleWarp '" + this.name + "'.");
             }
         }
 
@@ -164,7 +164,7 @@ public class HiddenWarp {
         this.costs = Double.parseDouble(json.get("Costs") + "");
     }
 
-    public void apply(HiddenWarp warp) {
+    public void apply(SimpleWarp warp) {
         try {
             this.apply(warp.toString());
         } catch(ParseException e) {
@@ -172,9 +172,9 @@ public class HiddenWarp {
         }
     }
 
-    public HiddenWarp clone() {
+    public SimpleWarp clone() {
         try {
-            return new HiddenWarp(toString());
+            return new SimpleWarp(toString());
         } catch(ParseException e) {
             e.printStackTrace();
             return null;

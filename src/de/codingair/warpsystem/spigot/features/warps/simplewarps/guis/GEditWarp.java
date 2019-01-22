@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.warps.hiddenwarps.guis;
+package de.codingair.warpsystem.spigot.features.warps.simplewarps.guis;
 
 import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
@@ -10,8 +10,8 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.HiddenWarp;
-import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.managers.HiddenWarpManager;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 public class GEditWarp extends SimpleGUI {
-    public GEditWarp(Player p, HiddenWarp warp) {
+    public GEditWarp(Player p, SimpleWarp warp) {
         super(p, new GLayout(), new GPage(p, warp), WarpSystem.getInstance());
 
         addListener(new GUIListener() {
@@ -40,7 +40,7 @@ public class GEditWarp extends SimpleGUI {
 
             @Override
             public void onInvCloseEvent(InventoryCloseEvent e) {
-                if(!isClosingForAnvil() && !isClosingByButton() && !((GPage) GEditWarp.this.getMain()).saved) p.sendMessage(Lang.getPrefix() + Lang.get("HiddenWarp_Cancel_Edit"));
+                if(!isClosingForAnvil() && !isClosingByButton() && !((GPage) GEditWarp.this.getMain()).saved) p.sendMessage(Lang.getPrefix() + Lang.get("SimpleWarp_Cancel_Edit"));
             }
 
             @Override
@@ -61,12 +61,12 @@ public class GEditWarp extends SimpleGUI {
     }
 
     private static class GPage extends Page {
-        private HiddenWarp warp;
-        private HiddenWarp clone;
+        private SimpleWarp warp;
+        private SimpleWarp clone;
         private boolean saved = false;
 
-        public GPage(Player p, HiddenWarp warp) {
-            super(p, Lang.get("HiddenWarp_Edit_Title").replace("%WARP%", warp.getName()), false);
+        public GPage(Player p, SimpleWarp warp) {
+            super(p, Lang.get("SimpleWarp_Edit_Title").replace("%WARP%", warp.getName()), false);
             this.warp = warp;
             this.clone = warp.clone();
             initialize(p);
@@ -90,7 +90,7 @@ public class GEditWarp extends SimpleGUI {
                         return;
                     }
 
-                    if(IconManager.getInstance().getWarp(s) != null || !HiddenWarpManager.getInstance().reserveName(s)) {
+                    if(IconManager.getInstance().getWarp(s) != null || !SimpleWarpManager.getInstance().reserveName(s)) {
                         p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                         return;
                     }
@@ -110,7 +110,7 @@ public class GEditWarp extends SimpleGUI {
                 public ItemStack craftItem() {
                     ItemBuilder changeName = new ItemBuilder(XMaterial.NAME_TAG);
                     changeName.setName("§7" + Lang.get("Name") + ": §7\"§b" + ChatColor.translateAlternateColorCodes('&', clone.getName()) + "§7\"");
-                    changeName.addLore("", Lang.get("HiddenWarp_Change_Name"));
+                    changeName.addLore("", Lang.get("SimpleWarp_Change_Name"));
                     return changeName.getItem();
                 }
 
@@ -143,8 +143,8 @@ public class GEditWarp extends SimpleGUI {
                 public ItemStack craftItem() {
                     ItemBuilder permission = new ItemBuilder(XMaterial.REDSTONE);
                     permission.setName("§7" + Lang.get("Permission") + ": " + (clone.getPermission() == null ? "§c§m-" : "§7\"§b" + clone.getPermission() + "§7\""));
-                    if(clone.getPermission() != null) permission.addLore(Lang.get("HiddenWarp_Edit_Permission_Hint"));
-                    permission.addLore("", Lang.get("HiddenWarp_Change_Permission"));
+                    if(clone.getPermission() != null) permission.addLore(Lang.get("SimpleWarp_Edit_Permission_Hint"));
+                    permission.addLore("", Lang.get("SimpleWarp_Change_Permission"));
                     return permission.getItem();
                 }
 
@@ -191,7 +191,7 @@ public class GEditWarp extends SimpleGUI {
                 public ItemStack craftItem() {
                     ItemBuilder price = new ItemBuilder(XMaterial.GOLD_NUGGET);
                     price.setName("§7" + Lang.get("Costs") + "§7: §b" + clone.getCosts() + " " + Lang.get("Coins"));
-                    price.addLore("", Lang.get("HiddenWarp_Change_Price"));
+                    price.addLore("", Lang.get("SimpleWarp_Change_Price"));
                     return price.getItem();
                 }
 
@@ -206,7 +206,7 @@ public class GEditWarp extends SimpleGUI {
             addButton(new Button(0, new ItemBuilder(XMaterial.RED_TERRACOTTA).setName("§8» §c" + Lang.get("Cancel")).getItem()) {
                 @Override
                 public void onClick(InventoryClickEvent e, Player player) {
-                    p.sendMessage(Lang.getPrefix() + Lang.get("HiddenWarp_Cancel_Edit"));
+                    p.sendMessage(Lang.getPrefix() + Lang.get("SimpleWarp_Cancel_Edit"));
                 }
             }.setOption(option).setCloseOnClick(true));
 
@@ -214,9 +214,9 @@ public class GEditWarp extends SimpleGUI {
                 @Override
                 public void onClick(InventoryClickEvent e, Player player) {
                     saved = true;
-                    HiddenWarpManager.getInstance().commitNewName(warp, clone.getName());
+                    SimpleWarpManager.getInstance().commitNewName(warp, clone.getName());
                     warp.apply(clone);
-                    p.sendMessage(Lang.getPrefix() + Lang.get("HiddenWarp_Save_Edit"));
+                    p.sendMessage(Lang.getPrefix() + Lang.get("SimpleWarp_Save_Edit"));
                     p.closeInventory();
                 }
             }.setOption(option));

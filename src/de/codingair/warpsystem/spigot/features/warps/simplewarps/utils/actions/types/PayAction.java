@@ -1,8 +1,8 @@
-package de.codingair.warpsystem.spigot.features.warps.hiddenwarps.utils.actions.types;
+package de.codingair.warpsystem.spigot.features.warps.simplewarps.utils.actions.types;
 
 import de.codingair.warpsystem.spigot.base.utils.money.Adapter;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
-import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.utils.actions.Action;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.utils.actions.Action;
 import org.bukkit.entity.Player;
 
 public class PayAction implements Action {
