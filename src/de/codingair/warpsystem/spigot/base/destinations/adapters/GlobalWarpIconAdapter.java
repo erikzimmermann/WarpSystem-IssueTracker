@@ -38,24 +38,30 @@ public class GlobalWarpIconAdapter implements DestinationAdapter {
 
     @Override
     public String simulate(Player player, String id) {
-        Warp warp = IconManager.getInstance().getWarp(id);
+        GlobalWarp warp = IconManager.getInstance().getGlobalWarp(id);
 
         if(warp == null) {
             return Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS");
         }
 
-        if(warp.getLocation().getWorld() == null) {
-            return Lang.getPrefix() + Lang.get("World_Not_Exists");
+        if(warp.getCategory() != null && warp.getCategory().hasPermission() && !player.hasPermission(warp.getCategory().getPermission())) {
+            return Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category");
+        }
+
+        if(warp.hasPermission() && !player.hasPermission(warp.getPermission())) {
+            return Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp");
+        }
+
+        return null;
+    }
+
+    @Override
+    public double getCosts(String id) {
+        GlobalWarp warp = IconManager.getInstance().getGlobalWarp(id);
+        if(warp == null) {
+            return 0;
         } else {
-            if(warp.getCategory() != null && warp.getCategory().hasPermission() && !player.hasPermission(warp.getCategory().getPermission())) {
-                return Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category");
-            }
-
-            if(warp.hasPermission() && !player.hasPermission(warp.getPermission())) {
-                return Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp");
-            }
-
-            return null;
+            return IconManager.getCosts(warp);
         }
     }
 }

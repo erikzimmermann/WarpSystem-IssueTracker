@@ -48,4 +48,9 @@ public class GlobalWarpAdapter implements DestinationAdapter {
     public String simulate(Player player, String id) {
         return null;
     }
+
+    @Override
+    public double getCosts(String id) {
+        return 0;
+    }
 }

@@ -117,8 +117,9 @@ ENG:
   Warp: Warp
   Category: Category
   GlobalWarp: GlobalWarp
+  GlobalWarps: GlobalWarps
   Decoration: Decoration
-  GlobalWarp_Leftclick_To_Choose: '&3Leftclick: &bChoose'
+  Leftclick_To_Choose: '&3Leftclick: &bChoose'
   Leftclick_Set: '&3Leftclick: &aSet'
   Status: Status
   Enabled: Enabled
@@ -291,7 +292,10 @@ ENG:
   Warp_Confirm_Overwrite_No: '&cNo'
   Warp_Not_Overwritten: '&7Your warp was &cnot &7overwritten.'
   Warp_Overwritten: '&7Your warp has been overwritten &asuccessfully&7.'
-
+  WarpGUI: 'WarpGUI'
+  HiddenWarps: 'HiddenWarps'
+  List: 'List'
+  Choose_A_HiddenWarp: '&bChoose a hidden warp'
 
 GER:
   Menu_Help: '&c&nHilfe'
@@ -409,8 +413,9 @@ GER:
   Warp: Warp
   Category: Kategorie
   GlobalWarp: GlobalWarp
+  GlobalWarps: GlobalWarps
   Decoration: Dekoration
-  GlobalWarp_Leftclick_To_Choose: '&3Linksklick: &bWählen'
+  Leftclick_To_Choose: '&3Linksklick: &bWählen'
   Leftclick_Set: '&3Linksklick: &aSetzen'
   Status: Status
   Enabled: Aktiviert
@@ -583,3 +588,7 @@ GER:
   Warp_Confirm_Overwrite_No: '&cNein'
   Warp_Not_Overwritten: '&7Dein Warp wurde &cnicht &7überschrieben.'
   Warp_Overwritten: '&7Dein Warp wurde &aerfolgreich &7überschrieben.'
+  WarpGUI: 'WarpGUI'
+  HiddenWarps: 'HiddenWarps'
+  List: 'Liste'
+  Choose_A_HiddenWarp: '&bWähle einen verstecken Warp'

@@ -64,4 +64,11 @@ public class HiddenWarpAdapter implements DestinationAdapter {
             return null;
         }
     }
+
+    @Override
+    public double getCosts(String id) {
+        HiddenWarp warp = HiddenWarpManager.getInstance().getWarp(id);
+        if(warp == null) return 0;
+        else return warp.getCosts();
+    }
 }

@@ -63,10 +63,6 @@ public class GWarps extends GUI {
     private boolean canEdit = true;
     private List<Class<? extends Icon>> hide = new ArrayList<>();
 
-    private static String getTitle(Category category, Player p) {
-        return getTitle(category, null, p);
-    }
-
     private static String getTitle(Category category, GUIListener listener, Player player) {
         FileConfiguration config = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig();
         String key = player.hasPermission(WarpSystem.PERMISSION_ADMIN) ? "Admin" : "User";
@@ -188,17 +184,17 @@ public class GWarps extends GUI {
                         if(e.isShiftClick()) {
                             IconManager.getInstance().setBackground(getPlayer().getInventory().getItem(getPlayer().getInventory().getHeldItemSlot()));
                             reinitialize();
-                            setTitle(getTitle(GWarps.this.category, getPlayer()));
+                            setTitle(getTitle(GWarps.this.category, listener, getPlayer()));
                         } else {
                             editing = !editing;
                             reinitialize();
-                            setTitle(getTitle(GWarps.this.category, getPlayer()));
+                            setTitle(getTitle(GWarps.this.category, listener, getPlayer()));
                         }
                     } else {
                         if(e.isShiftClick()) {
                             showMenu = !showMenu;
                             reinitialize();
-                            setTitle(getTitle(GWarps.this.category, getPlayer()));
+                            setTitle(getTitle(GWarps.this.category, listener, getPlayer()));
                         } else {
                             p.closeInventory();
                             new GConfig(p, category, editing).open();
@@ -215,7 +211,7 @@ public class GWarps extends GUI {
                 public void onClick(InventoryClickEvent e) {
                     GWarps.this.category = null;
                     reinitialize();
-                    setTitle(getTitle(GWarps.this.category, getPlayer()));
+                    setTitle(getTitle(GWarps.this.category, listener, getPlayer()));
                 }
             }.setOption(option));
         }
@@ -395,7 +391,7 @@ public class GWarps extends GUI {
 
                                                                 @Override
                                                                 public String getLeftclickDescription() {
-                                                                    return ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("GlobalWarp_Leftclick_To_Choose");
+                                                                    return ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("Leftclick_To_Choose");
                                                                 }
                                                             }).open());
                                                         } else e.setPost(() -> new GEditIcon(p, category, item, input, slot, type).open());
@@ -483,6 +479,15 @@ public class GWarps extends GUI {
             addButton(new ItemButton(icon.getSlot(), iconBuilder.getItem()) {
                 @Override
                 public void onClick(InventoryClickEvent e) {
+                    if(listener != null) {
+                        Task task = listener.onClickOnIcon(icon, editing);
+
+                        if(task != null) {
+                            task.runTask(p, editing);
+                            return;
+                        }
+                    }
+
                     if(editing) {
                         if(e.isLeftClick()) {
                             if(moving) {
@@ -512,13 +517,13 @@ public class GWarps extends GUI {
                                 if(icon instanceof Category && (cursorIcon instanceof Warp || cursorIcon instanceof GlobalWarp || cursorIcon instanceof DecoIcon)) {
                                     GWarps.this.category = (Category) icon;
                                     reinitialize();
-                                    setTitle(getTitle(GWarps.this.category, getPlayer()));
+                                    setTitle(getTitle(GWarps.this.category, listener, getPlayer()));
                                 }
                             } else {
                                 if(e.isShiftClick() && icon instanceof Category) {
                                     GWarps.this.category = (Category) icon;
                                     reinitialize();
-                                    setTitle(getTitle(GWarps.this.category, getPlayer()));
+                                    setTitle(getTitle(GWarps.this.category, listener, getPlayer()));
                                     return;
                                 }
 
@@ -549,7 +554,7 @@ public class GWarps extends GUI {
                             case CATEGORY:
                                 GWarps.this.category = (Category) icon;
                                 reinitialize();
-                                setTitle(getTitle(GWarps.this.category, getPlayer()));
+                                setTitle(getTitle(GWarps.this.category, listener, getPlayer()));
                                 break;
 
                             case WARP:
@@ -583,7 +588,7 @@ public class GWarps extends GUI {
             cursor = null;
             cursorIcon = null;
             reinitialize();
-            setTitle(getTitle(GWarps.this.category, getPlayer()));
+            setTitle(getTitle(GWarps.this.category, listener, getPlayer()));
         }
 
         this.moving = moving;

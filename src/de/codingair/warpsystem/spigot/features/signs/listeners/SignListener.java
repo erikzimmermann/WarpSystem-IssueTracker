@@ -2,21 +2,15 @@ package de.codingair.warpsystem.spigot.features.signs.listeners;
 
 import de.codingair.codingapi.player.gui.sign.SignGUI;
 import de.codingair.codingapi.player.gui.sign.SignTools;
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.destinations.Destination;
-import de.codingair.warpsystem.spigot.base.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.signs.managers.SignManager;
 import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
-import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.guis.utils.GUIListener;
-import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
-import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
+import de.codingair.warpsystem.spigot.features.utils.guis.choosedestination.ChooseDestinationGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -74,13 +68,13 @@ public class SignListener implements Listener {
                     return;
                 }
 
-                WarpSystem.getInstance().getTeleportManager().teleport(e.getPlayer(), new Destination(sign.getWarp().getIdentifier(), DestinationType.WarpIcon), sign.getWarp().getName(), IconManager.getCosts(sign.getWarp()),
+                WarpSystem.getInstance().getTeleportManager().teleport(e.getPlayer(), sign.getDestination(), sign.getDestination().getId(), sign.getDestination().getCosts(),
                         WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.WarpSigns", true));
             }
         }
     }
 
-    @EventHandler(ignoreCancelled = false, priority = EventPriority.LOWEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onBreak(BlockBreakEvent e) {
         SignManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIGNS);
 
@@ -101,7 +95,7 @@ public class SignListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = false, priority = EventPriority.LOWEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlace(SignChangeEvent e) {
         SignManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIGNS);
         if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY) || !e.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
@@ -110,19 +104,10 @@ public class SignListener implements Listener {
             e.getPlayer().sendMessage(" ");
             e.getPlayer().sendMessage(Lang.getPrefix() + "§7" + Lang.get("WarpSign_Choose_Warp"));
             e.getPlayer().sendMessage(" ");
-            new GWarps(e.getPlayer(), null, false, new GUIListener() {
-                @Override
-                public String getTitle() {
-                    return Lang.get("WarpSign_Choose_Warp_GUI");
-                }
 
+            new ChooseDestinationGUI(e.getPlayer(), Lang.get("WarpSign_Choose_Warp_GUI"), new Callback<Destination>() {
                 @Override
-                public void onClose() {
-
-                }
-
-                @Override
-                public Task onClickOnWarp(Warp warp, boolean editing) {
+                public void accept(Destination destination) {
                     Sign s = (Sign) e.getBlock().getState();
                     SignTools.updateSign(s, new String[] {"", "§4§n" + Lang.get("Description"), "", ""});
 
@@ -144,13 +129,11 @@ public class SignListener implements Listener {
                             }
                         }.open();
 
-                        WarpSign sign = new WarpSign(Location.getByLocation(s.getLocation()), warp);
+                        WarpSign sign = new WarpSign(Location.getByLocation(s.getLocation()), destination);
                         manager.getWarpSigns().add(sign);
                     }, 2L);
-
-                    return new Task();
                 }
-            }, false, GlobalWarp.class, DecoIcon.class).open();
+            }).open();
         }
     }
 

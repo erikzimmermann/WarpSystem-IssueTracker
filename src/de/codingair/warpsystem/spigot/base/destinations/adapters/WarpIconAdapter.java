@@ -73,4 +73,14 @@ public class WarpIconAdapter implements DestinationAdapter {
             return null;
         }
     }
+
+    @Override
+    public double getCosts(String id) {
+        Warp warp = IconManager.getInstance().getWarp(id);
+        if(warp == null) {
+            return 0;
+        } else {
+            return IconManager.getCosts(warp);
+        }
+    }
 }

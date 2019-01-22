@@ -52,4 +52,9 @@ public class LocationAdapter implements DestinationAdapter {
     public Location getLocation() {
         return location;
     }
+
+    @Override
+    public double getCosts(String id) {
+        return 0;
+    }
 }

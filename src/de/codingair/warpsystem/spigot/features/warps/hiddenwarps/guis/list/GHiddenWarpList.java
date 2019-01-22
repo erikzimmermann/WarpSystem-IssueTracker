@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.globalwarps.guis;
+package de.codingair.warpsystem.spigot.features.warps.hiddenwarps.guis.list;
 
 import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
@@ -16,6 +16,8 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
+import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.HiddenWarp;
+import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.managers.HiddenWarpManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -28,9 +30,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GGlobalWarpList extends GUI {
+public class GHiddenWarpList extends GUI {
     public interface Listener {
-        void onClickOnGlobalWarp(String warp, InventoryClickEvent e);
+        void onClickOnWarp(String warp, InventoryClickEvent e);
 
         void onClose();
 
@@ -45,12 +47,10 @@ public class GGlobalWarpList extends GUI {
     }
 
     private static String TITLE(int page) {
-        return ChatColor.RED + Lang.get("GlobalWarps") + " " + ChatColor.GRAY + "- " + ChatColor.RED + Lang.get("List") + " " + ChatColor.GRAY + "(" + page + "/" + (MAX_PAGE() + 1) + ")";
+        return ChatColor.RED + Lang.get("HiddenWarps") + " " + ChatColor.GRAY + "- " + ChatColor.RED + Lang.get("List") + " " + ChatColor.GRAY + "(" + page + "/" + (MAX_PAGE() + 1) + ")";
     }
 
-    private static void addGlobalWarps(GGlobalWarpList gui, String globalWarp, String underline) {
-        GlobalWarpManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS);
-
+    private static void addWarp(GHiddenWarpList gui, String warp, String underline) {
         ItemButtonOption option = new ItemButtonOption();
         option.setClickSound(Sound.CLICK.bukkitSound());
 
@@ -58,11 +58,7 @@ public class GGlobalWarpList extends GUI {
         if(slot < 0 || slot > 53) return;
 
         ItemStack icon;
-        ItemBuilder builder = new ItemBuilder(getIcon(globalWarp));
-
-        if(underline != null) {
-            builder.setName(de.codingair.codingapi.utils.ChatColor.GRAY + "\"" + de.codingair.codingapi.utils.ChatColor.RESET + de.codingair.codingapi.utils.ChatColor.highlight(globalWarp, underline, "§n") + de.codingair.codingapi.utils.ChatColor.GRAY + "\" (" + Lang.get("Target_Server") + ": \"" + de.codingair.codingapi.utils.ChatColor.highlight(manager.getGlobalWarps().get(globalWarp), underline, "§n", "§7") + "\")");
-        }
+        ItemBuilder builder = new ItemBuilder(getIcon(warp, underline));
 
         if(gui.getClickListener() != null && gui.getClickListener().getLeftclickDescription() != null) builder.setLore("", gui.getClickListener().getLeftclickDescription());
 
@@ -72,7 +68,7 @@ public class GGlobalWarpList extends GUI {
             @Override
             public void onClick(InventoryClickEvent e) {
                 gui.button = true;
-                if(gui.getClickListener() != null) gui.getClickListener().onClickOnGlobalWarp(globalWarp, e);
+                if(gui.getClickListener() != null) gui.getClickListener().onClickOnWarp(warp, e);
                 gui.button = false;
             }
         }.setOption(option));
@@ -83,18 +79,18 @@ public class GGlobalWarpList extends GUI {
     private int page = 0;
     private boolean button = false;
 
-    public GGlobalWarpList(Player p) {
+    public GHiddenWarpList(Player p) {
         super(p, TITLE(1), 54, WarpSystem.getInstance());
     }
 
-    public GGlobalWarpList(Player p, String search) {
+    public GHiddenWarpList(Player p, String search) {
         super(p, TITLE(1), 54, WarpSystem.getInstance(), false);
 
         this.searching = search;
         initialize(p);
     }
 
-    public GGlobalWarpList(Player p, Listener listener) {
+    public GHiddenWarpList(Player p, Listener listener) {
         super(p, TITLE(1), 54, WarpSystem.getInstance(), false);
         this.listener = listener;
         initialize(p);
@@ -144,7 +140,7 @@ public class GGlobalWarpList extends GUI {
             }
         });
 
-        GlobalWarpManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS);
+        HiddenWarpManager manager = HiddenWarpManager.getInstance();
 
         ItemStack ph = new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem();
         ItemBuilder search = new ItemBuilder(Material.COMPASS).setName(ChatColor.RED.toString() + (searching == null ? "" : ChatColor.UNDERLINE) + Lang.get("Search"));
@@ -212,28 +208,51 @@ public class GGlobalWarpList extends GUI {
             }
         }.setOption(option).setCloseOnClick(false));
 
-        List<String> globalWarps;
+        List<String> warps = new ArrayList<>();
         if(searching == null) {
-            globalWarps = new ArrayList<>(manager.getGlobalWarps().keySet());
+            for(HiddenWarp value : manager.getWarps().values()) {
+                warps.add(value.getName());
+            }
         } else {
-            globalWarps = new ArrayList<>();
+            warps = new ArrayList<>();
 
-            manager.getGlobalWarps().forEach((warp, server) -> {
-                if(ChatColor.stripColor(warp).toLowerCase().contains(searching.toLowerCase()) || server.toLowerCase().contains(searching.toLowerCase())) {
-                    globalWarps.add(warp);
+            for(HiddenWarp value : manager.getWarps().values()) {
+                if(ChatColor.stripColor(value.getName()).toLowerCase().contains(searching.toLowerCase())) {
+                    warps.add(value.getName());
                 }
-            });
+            }
         }
 
         for(int i = page * 44; i < 44 + page * 44; i++) {
-            if(globalWarps.size() <= i) break;
+            if(warps.size() <= i) break;
 
-            addGlobalWarps(this, globalWarps.get(i), searching);
+            addWarp(this, warps.get(i), searching);
         }
     }
 
-    public static ItemStack getIcon(String name) {
-        GlobalWarpManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS);
-        return new ItemBuilder(Material.ENDER_CHEST).setName(de.codingair.codingapi.utils.ChatColor.GRAY + "\"" + de.codingair.codingapi.utils.ChatColor.RESET + name + de.codingair.codingapi.utils.ChatColor.GRAY + "\" (" + Lang.get("Target_Server") + ": \"" + manager.getGlobalWarps().get(name) + "\")").getItem();
+    public static ItemStack getIcon(String name, String underline) {
+        HiddenWarpManager manager = HiddenWarpManager.getInstance();
+        HiddenWarp warp = manager.getWarp(name);
+
+        String world = warp.getLocation().getWorldName();
+        double x = round(warp.getLocation().getX());
+        double y = round(warp.getLocation().getY());
+        double z = round(warp.getLocation().getZ());
+        float yaw = round(warp.getLocation().getYaw());
+        float pitch = round(warp.getLocation().getPitch());
+
+        return new ItemBuilder(XMaterial.ENDER_PEARL).setName(
+                de.codingair.codingapi.utils.ChatColor.GRAY + "\"" + de.codingair.codingapi.utils.ChatColor.RESET
+                        + de.codingair.codingapi.utils.ChatColor.highlight(name, underline, "§n")
+                        + de.codingair.codingapi.utils.ChatColor.GRAY + "\" "
+                        + "(\"" + world + "\", " + x + ", " + y + ", " + z + ", " + yaw + ", " + pitch + ")").getItem();
+    }
+
+    private static double round(double d) {
+        return ((double) (int) (d * 100)) / 100;
+    }
+
+    private static float round(float d) {
+        return ((float) (int) (d * 100)) / 100;
     }
 }

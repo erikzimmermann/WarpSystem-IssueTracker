@@ -14,6 +14,8 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
@@ -25,8 +27,10 @@ import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Icon;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Head;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
+import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.guis.list.GHiddenWarpList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -50,8 +54,7 @@ public class GEditor extends GUI {
     private String name;
     private PortalType type;
 
-    private Warp warp;
-    private String globalWarp;
+    private Destination destination;
     private boolean changed = false;
 
     public GEditor(Player p) {
@@ -69,8 +72,7 @@ public class GEditor extends GUI {
         if(this.backup != null) {
             this.name = this.backup.getDisplayName();
             this.type = this.backup.getType();
-            this.warp = this.backup.getWarp();
-            this.globalWarp = this.backup.getGlobalWarp();
+            this.destination = this.backup.getDestination();
 
             this.backup.setVisible(false);
             this.portal = backup.clone();
@@ -174,13 +176,13 @@ public class GEditor extends GUI {
         String endPortal = Lang.get("End_Portal");
 
         if(menu != Menu.CLOSE) {
-            boolean ready = name != null && type != null && (warp != null || globalWarp != null) && portal != null && !portal.getBlocks().isEmpty();
+            boolean ready = name != null && type != null && destination != null && portal != null && !portal.getBlocks().isEmpty();
             ItemBuilder builder = new ItemBuilder(ready ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA)
                     .setText((ready ? "§a" : "§c") + "§n" + Lang.get("Status"));
 
             builder.addText("§7" + Lang.get("Name") + ": \"" + (name == null ? "§c§m-" : ChatColor.translateAlternateColorCodes('&', name)) + "\"");
             builder.addText("§7" + Lang.get("NativePortal_Material") + ": " + (type == null ? "§c§m-" : type.name()));
-            builder.addText("§7" + Lang.get("Teleport_Link") + ": " + (warp == null && globalWarp == null ? "§c§m-" : warp == null ? globalWarp : warp.getNameWithoutColor()));
+            builder.addText("§7" + Lang.get("Teleport_Link") + ": " + (destination == null ? "§c§m-" : ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', destination.getId()))));
             builder.addText("§7" + Lang.get("Portal_Blocks") + ": " + (portal == null ? "§c0" : portal.getBlocks().size()));
 
             builder.addText("");
@@ -194,15 +196,13 @@ public class GEditor extends GUI {
                         if(backup == null) {
                             portal.setType(type);
                             portal.setDisplayName(name);
-                            portal.setGlobalWarp(globalWarp);
-                            portal.setWarp(warp);
+                            portal.setDestination(destination);
                             NativePortalManager.getInstance().addPortal(portal);
                         } else {
                             backup.apply(portal);
                             backup.setType(type);
                             backup.setDisplayName(name);
-                            backup.setGlobalWarp(globalWarp);
-                            backup.setWarp(warp);
+                            backup.setDestination(destination);
 
                             portal.clear();
                             backup.setVisible(true);
@@ -355,8 +355,8 @@ public class GEditor extends GUI {
                 }.setOption(option));
                 break;
 
-            case TYPE:
-                addButton(new ItemButton(WarpSystem.getInstance().isOnBungeeCord() ? 3 : 4, 2, new ItemBuilder(XMaterial.ENDER_PEARL).setName("§8» §b" + Lang.get("Choose_A_Warp")).getItem()) {
+            case TYPE: {
+                addButton(new ItemButton(WarpSystem.getInstance().isOnBungeeCord() ? 2 : 3, 2, new ItemBuilder(XMaterial.ENDER_PEARL).setName("§8» §b" + Lang.get("Choose_A_Warp")).getItem()) {
                     @Override
                     public void onClick(InventoryClickEvent e) {
                         new GWarps(getPlayer(), null, false, new de.codingair.warpsystem.spigot.features.warps.guis.utils.GUIListener() {
@@ -368,9 +368,9 @@ public class GEditor extends GUI {
 
                             @Override
                             public Task onClickOnWarp(Warp warp, boolean editing) {
-
-                                if(GEditor.this.warp != warp) {
-                                    GEditor.this.warp = warp;
+                                Destination next = new Destination(warp.getIdentifier(), DestinationType.WarpIcon);
+                                if(destination == null || !destination.equals(next)) {
+                                    destination = next;
                                     changed = true;
                                 }
 
@@ -389,14 +389,15 @@ public class GEditor extends GUI {
                 }.setOption(option).setCloseOnClick(true));
 
                 if(WarpSystem.getInstance().isOnBungeeCord()) {
-                    addButton(new ItemButton(5, 2, new ItemBuilder(XMaterial.ENDER_CHEST).setName("§8» §b" + Lang.get("Choose_A_GlobalWarp")).getItem()) {
+                    addButton(new ItemButton(4, 2, new ItemBuilder(XMaterial.ENDER_CHEST).setName("§8» §b" + Lang.get("Choose_A_GlobalWarp")).getItem()) {
                         @Override
                         public void onClick(InventoryClickEvent e) {
                             new GGlobalWarpList(p, new GGlobalWarpList.Listener() {
                                 @Override
                                 public void onClickOnGlobalWarp(String warp, InventoryClickEvent e) {
-                                    if(GEditor.this.globalWarp == null || !GEditor.this.globalWarp.equals(warp)) {
-                                        GEditor.this.globalWarp = warp;
+                                    Destination next = new Destination(warp, DestinationType.GlobalWarp);
+                                    if(destination == null || !destination.equals(next)) {
+                                        destination = next;
                                         changed = true;
                                     }
 
@@ -412,13 +413,44 @@ public class GEditor extends GUI {
 
                                 @Override
                                 public String getLeftclickDescription() {
-                                    return ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("GlobalWarp_Leftclick_To_Choose");
+                                    return ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("Leftclick_To_Choose");
                                 }
                             }).open();
                         }
                     }.setOption(option).setCloseOnClick(true));
                 }
+
+                addButton(new ItemButton(WarpSystem.getInstance().isOnBungeeCord() ? 6 : 5, 2, new ItemBuilder(XMaterial.ENDER_EYE).setName("§8» §b" + Lang.get("Choose_A_HiddenWarp")).getItem()) {
+                    @Override
+                    public void onClick(InventoryClickEvent e) {
+                        new GHiddenWarpList(p, new GHiddenWarpList.Listener() {
+                            @Override
+                            public void onClickOnWarp(String warp, InventoryClickEvent e) {
+                                Destination next = new Destination(warp, DestinationType.HiddenWarp);
+                                if(destination == null || !destination.equals(next)) {
+                                    destination = next;
+                                    changed = true;
+                                }
+
+                                p.closeInventory();
+                            }
+
+                            @Override
+                            public void onClose() {
+                                menu = Menu.MAIN;
+                                reinitialize();
+                                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), GEditor.this::open, 1);
+                            }
+
+                            @Override
+                            public String getLeftclickDescription() {
+                                return ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("Leftclick_To_Choose");
+                            }
+                        }).open();
+                    }
+                }.setOption(option).setCloseOnClick(true));
                 break;
+            }
 
             case CLOSE:
                 setItem(4, 0, new ItemBuilder(XMaterial.NETHER_STAR.parseMaterial()).setText(TextAlignment.lineBreak(Lang.get("Sure_That_You_Want_To_Loose_Your_Data"), 100)).getItem());
