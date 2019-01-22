@@ -1,13 +1,11 @@
 package de.codingair.warpsystem.spigot.features.warps.importfilter.filters;
 
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.HiddenWarp;
-import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.managers.HiddenWarpManager;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Filter;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Result;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
-import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -29,11 +27,11 @@ public class EssentialsFilter implements Filter {
                 FileConfiguration config = YamlConfiguration.loadConfiguration(w);
                 WarpData warpData = getData(config);
 
-                HiddenWarp warp = new HiddenWarp(warpData);
-                if(HiddenWarpManager.getInstance().existsWarp(warpData.getName())) {
+                SimpleWarp warp = new SimpleWarp(warpData);
+                if(SimpleWarpManager.getInstance().existsWarp(warpData.getName())) {
                     if(result != Result.ERROR) result = Result.UNAVAILABLE_NAME;
                 } else {
-                    HiddenWarpManager.getInstance().addWarp(warp);
+                    SimpleWarpManager.getInstance().addWarp(warp);
                 }
             }
 
@@ -74,12 +72,12 @@ public class EssentialsFilter implements Filter {
     }
 
     @Override
-    public HiddenWarp loadWarp(String link) {
+    public SimpleWarp loadWarp(String link) {
         File target = new File(WarpSystem.getInstance().getDataFolder().getParent() + "/Essentials/warps/" + link.toLowerCase() + ".yml");
         if(!target.exists()) return null;
 
         FileConfiguration config = YamlConfiguration.loadConfiguration(target);
         WarpData warpData = getData(config);
-        return new HiddenWarp(warpData);
+        return new SimpleWarp(warpData);
     }
 }

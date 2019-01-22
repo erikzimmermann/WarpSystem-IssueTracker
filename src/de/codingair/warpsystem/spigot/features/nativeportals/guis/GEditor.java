@@ -22,15 +22,13 @@ import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.Glo
 import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
 import de.codingair.warpsystem.spigot.features.nativeportals.PortalEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
-import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalBlock;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Icon;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Head;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
-import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.guis.list.GHiddenWarpList;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.guis.GSimpleWarpList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -420,13 +418,13 @@ public class GEditor extends GUI {
                     }.setOption(option).setCloseOnClick(true));
                 }
 
-                addButton(new ItemButton(WarpSystem.getInstance().isOnBungeeCord() ? 6 : 5, 2, new ItemBuilder(XMaterial.ENDER_EYE).setName("§8» §b" + Lang.get("Choose_A_HiddenWarp")).getItem()) {
+                addButton(new ItemButton(WarpSystem.getInstance().isOnBungeeCord() ? 6 : 5, 2, new ItemBuilder(XMaterial.ENDER_EYE).setName("§8» §b" + Lang.get("Choose_A_SimpleWarp")).getItem()) {
                     @Override
                     public void onClick(InventoryClickEvent e) {
-                        new GHiddenWarpList(p, new GHiddenWarpList.Listener() {
+                        new GSimpleWarpList(p, new GSimpleWarpList.Listener() {
                             @Override
                             public void onClickOnWarp(String warp, InventoryClickEvent e) {
-                                Destination next = new Destination(warp, DestinationType.HiddenWarp);
+                                Destination next = new Destination(warp, DestinationType.SimpleWarp);
                                 if(destination == null || !destination.equals(next)) {
                                     destination = next;
                                     changed = true;

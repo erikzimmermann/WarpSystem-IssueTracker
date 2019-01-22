@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.warps.hiddenwarps.utils.actions;
+package de.codingair.warpsystem.spigot.features.warps.simplewarps.utils.actions;
 
 import org.bukkit.entity.Player;
 
@@ -14,7 +14,7 @@ public interface Action {
         String className = data[0];
         String commit = data[1];
 
-        Class<? extends Action> actionClass = (Class<? extends Action>) Class.forName("de.codingair.warpsystem.spigot.features.warps.hiddenwarps.utils.actions.types." + className);
+        Class<? extends Action> actionClass = (Class<? extends Action>) Class.forName("de.codingair.warpsystem.spigot.features.warps.simplewarps.utils.actions.types." + className);
 
         Action action = actionClass.newInstance();
         action.byString(commit);

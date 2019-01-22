@@ -1,11 +1,11 @@
 package de.codingair.warpsystem.spigot.features.warps.importfilter;
 
-import de.codingair.warpsystem.spigot.features.warps.hiddenwarps.HiddenWarp;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
 
 import java.util.List;
 
 public interface Filter {
     Result importData();
     List<String> loadWarpNames();
-    HiddenWarp loadWarp(String link);
+    SimpleWarp loadWarp(String link);
 }
