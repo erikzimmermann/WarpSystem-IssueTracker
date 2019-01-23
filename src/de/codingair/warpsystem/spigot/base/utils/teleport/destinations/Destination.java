@@ -1,7 +1,10 @@
-package de.codingair.warpsystem.spigot.base.destinations;
+package de.codingair.warpsystem.spigot.base.utils.teleport.destinations;
 
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.warpsystem.spigot.base.destinations.adapters.DestinationAdapter;
+import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.DestinationAdapter;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
@@ -44,16 +47,20 @@ public class Destination {
                 type == that.type;
     }
 
-    public boolean teleport(Player player, String message, String displayName, boolean silent, double costs, Callback<Boolean> callback) {
+    public boolean teleport(Player player, String message, String displayName, boolean silent, double costs, Callback<TeleportResult> callback) {
         player.setFallDistance(0F);
         return adapter.teleport(player, id, displayName, message, silent, costs, callback);
+    }
+
+    public Location buildLocation() {
+        return adapter.buildLocation(id);
     }
 
     public double getCosts() {
         return adapter.getCosts(id);
     }
 
-    public String simulate(Player player) {
+    public SimulatedTeleportResult simulate(Player player) {
         return adapter.simulate(player, this.id);
     }
 

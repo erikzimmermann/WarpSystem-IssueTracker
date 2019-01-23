@@ -1,8 +1,9 @@
 package de.codingair.warpsystem.spigot.features.warps.simplewarps.commands;
 
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.destinations.Destination;
-import de.codingair.warpsystem.spigot.base.destinations.DestinationType;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
@@ -21,7 +22,7 @@ public class CWarpHook {
         SimpleWarpManager m = WarpSystem.getInstance().getDataManager().getManager(FeatureType.HIDDEN_WARPS);
         if(m.existsWarp(argument)) {
             SimpleWarp warp = m.getWarp(argument);
-            WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, new Destination(warp.getName(), DestinationType.SimpleWarp), warp.getName(), warp.getCosts(),
+            WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, Origin.SimpleWarp, new Destination(warp.getName(), DestinationType.SimpleWarp), warp.getName(), warp.getCosts(),
                     WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.HiddenWarps", true));
 
             return true;

@@ -1,6 +1,6 @@
-package de.codingair.warpsystem.spigot.base.destinations;
+package de.codingair.warpsystem.spigot.base.utils.teleport.destinations;
 
-import de.codingair.warpsystem.spigot.base.destinations.adapters.*;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.*;
 
 public enum DestinationType {
     UNKNOWN(-1, null),

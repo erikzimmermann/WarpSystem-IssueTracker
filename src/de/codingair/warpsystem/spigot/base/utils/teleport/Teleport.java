@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.base.utils;
+package de.codingair.warpsystem.spigot.base.utils.teleport;
 
 import de.codingair.codingapi.particles.animations.Animation;
 import de.codingair.codingapi.particles.animations.playeranimations.CircleAnimation;
@@ -6,7 +6,7 @@ import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.effects.RotatingParticleSpiral;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
@@ -27,17 +27,19 @@ public class Teleport {
     private Destination destination;
 
     private String displayName;
+    private int seconds;
     private double costs;
     private boolean showMessage;
     private boolean canMove;
     private String message;
     private boolean silent;
-    private Callback<Boolean> callback;
+    private Callback<TeleportResult> callback;
 
-    public Teleport(Player player, Destination destination, String displayName, double costs, String message, boolean canMove, boolean silent, Callback<Boolean> callback) {
+    public Teleport(Player player, Destination destination, String displayName, int seconds, double costs, String message, boolean canMove, boolean silent, Callback<TeleportResult> callback) {
         this.player = player;
         this.destination = destination;
         this.displayName = displayName;
+        this.seconds = seconds;
         this.costs = costs;
         this.message = message;
         this.canMove = canMove;
@@ -48,7 +50,7 @@ public class Teleport {
 
         this.animation = new CircleAnimation(WarpSystem.getInstance().getTeleportManager().getParticle(), player, WarpSystem.getInstance(), WarpSystem.getInstance().getTeleportManager().getRadius());
         this.runnable = new BukkitRunnable() {
-            private int left = WarpSystem.getInstance().getTeleportManager().getSeconds();
+            private int left = seconds;
             private String msg = Lang.get("Teleporting_Info");
 
             @Override
@@ -86,7 +88,7 @@ public class Teleport {
 
         if(!finished) {
             payBack();
-            if(callback != null) callback.accept(false);
+            if(callback != null) callback.accept(TeleportResult.CANCELLED);
         }
     }
 
@@ -126,7 +128,7 @@ public class Teleport {
         }
     }
 
-    public String simulate(Player player) {
+    public SimulatedTeleportResult simulate(Player player) {
         if(this.destination == null) throw new IllegalArgumentException("Destination cannot be null!");
         return this.destination.simulate(player);
     }
@@ -181,5 +183,9 @@ public class Teleport {
 
     public void setShowMessage(boolean showMessage) {
         this.showMessage = showMessage;
+    }
+
+    public int getSeconds() {
+        return seconds;
     }
 }

@@ -7,8 +7,9 @@ import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.destinations.Destination;
-import de.codingair.warpsystem.spigot.base.destinations.DestinationType;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
@@ -136,7 +137,7 @@ public class CGlobalWarps extends CommandBuilder {
                 new GGlobalWarpList((Player) sender, new GGlobalWarpList.Listener() {
                     @Override
                     public void onClickOnGlobalWarp(String warp, InventoryClickEvent e) {
-                        WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, new Destination(warp, DestinationType.GlobalWarp), warp, 0, true, true,
+                        WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, Origin.GlobalWarp, new Destination(warp, DestinationType.GlobalWarp), warp, 0, true, true,
                                 WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true), false, null);
                     }
 

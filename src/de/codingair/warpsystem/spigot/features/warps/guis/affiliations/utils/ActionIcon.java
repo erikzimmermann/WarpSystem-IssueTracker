@@ -2,8 +2,9 @@ package de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils;
 
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.destinations.Destination;
-import de.codingair.warpsystem.spigot.base.destinations.DestinationType;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
@@ -131,7 +132,7 @@ public abstract class ActionIcon extends Icon implements Serializable {
                 double costs = getAction(Action.PAY_MONEY) == null ? 0 : getAction(Action.PAY_MONEY).getValue();
                 if(p.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) costs = 0;
 
-                WarpSystem.getInstance().getTeleportManager().teleport(p, new Destination(server, DestinationType.GlobalWarp), getName(), costs);
+                WarpSystem.getInstance().getTeleportManager().teleport(p, Origin.GlobalWarpIcon, new Destination(server, DestinationType.GlobalWarp), getName(), costs);
                 break;
             }
 
@@ -141,7 +142,7 @@ public abstract class ActionIcon extends Icon implements Serializable {
                 double costs = getAction(Action.PAY_MONEY) == null ? 0 : getAction(Action.PAY_MONEY).getValue();
                 if(p.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) costs = 0;
 
-                WarpSystem.getInstance().getTeleportManager().teleport(p, new Destination(getName(), DestinationType.WarpIcon), getName(), costs);
+                WarpSystem.getInstance().getTeleportManager().teleport(p, Origin.WarpIcon, new Destination(getName(), DestinationType.WarpIcon), getName(), costs);
                 break;
             }
 

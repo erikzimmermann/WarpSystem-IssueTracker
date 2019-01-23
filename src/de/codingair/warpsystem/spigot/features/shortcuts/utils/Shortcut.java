@@ -1,8 +1,9 @@
 package de.codingair.warpsystem.spigot.features.shortcuts.utils;
 
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.destinations.Destination;
-import de.codingair.warpsystem.spigot.base.destinations.DestinationType;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
@@ -38,7 +39,7 @@ public class Shortcut {
                     return;
                 }
 
-                WarpSystem.getInstance().getTeleportManager().teleport(player, new Destination(((Warp) warp).getIdentifier(), DestinationType.WarpIcon), warp.getName(), IconManager.getCosts(warp),
+                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.ShortCut, new Destination(((Warp) warp).getIdentifier(), DestinationType.WarpIcon), warp.getName(), IconManager.getCosts(warp),
                         WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Warps", true));
             } else if(warp instanceof GlobalWarp) {
                 if(!player.hasPermission(WarpSystem.PERMISSION_USE_GlobalWarps)) {
@@ -46,7 +47,7 @@ public class Shortcut {
                     return;
                 }
 
-                WarpSystem.getInstance().getTeleportManager().teleport(player, new Destination(warp.getName(), DestinationType.GlobalWarpIcon), warp.getName(), IconManager.getCosts(warp),
+                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.ShortCut, new Destination(warp.getName(), DestinationType.GlobalWarpIcon), warp.getName(), IconManager.getCosts(warp),
                         WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true));
             }
         } else if(globalWarp != null) {
@@ -55,7 +56,7 @@ public class Shortcut {
                 return;
             }
 
-            WarpSystem.getInstance().getTeleportManager().teleport(player, new Destination(globalWarp, DestinationType.GlobalWarp), displayName, 0,
+            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.ShortCut, new Destination(globalWarp, DestinationType.GlobalWarp), displayName, 0,
                     WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true));
         }
     }

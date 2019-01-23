@@ -1,8 +1,10 @@
-package de.codingair.warpsystem.spigot.base.destinations.adapters;
+package de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters;
 
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.api.SpigotAPI;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -15,16 +17,16 @@ public class LocationAdapter implements DestinationAdapter {
     }
 
     @Override
-    public boolean teleport(Player player, String id, String displayName, String message, boolean silent, double costs, Callback<Boolean> callback) {
+    public boolean teleport(Player player, String id, String displayName, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
         if(this.location == null) {
             player.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
-            if(callback != null) callback.accept(false);
+            if(callback != null) callback.accept(TeleportResult.DESTINATION_DOES_NOT_EXIST);
             return false;
         }
 
         if(this.location.getWorld() == null) {
             player.sendMessage(Lang.getPrefix() + Lang.get("World_Not_Exists"));
-            if(callback != null) callback.accept(false);
+            if(callback != null) callback.accept(TeleportResult.WORLD_DOES_NOT_EXIST);
             return false;
         } else {
             if(silent) SpigotAPI.getInstance().silentTeleport(player, location);
@@ -33,28 +35,29 @@ public class LocationAdapter implements DestinationAdapter {
             if(message != null)
                 player.sendMessage((message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
 
-            if(callback != null) callback.accept(true);
+            if(callback != null) callback.accept(TeleportResult.TELEPORTED);
             return true;
         }
     }
 
     @Override
-    public String simulate(Player player, String id) {
+    public SimulatedTeleportResult simulate(Player player, String id) {
         if(this.location == null) {
-            return Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS");
+            return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"), TeleportResult.DESTINATION_DOES_NOT_EXIST);
         }
 
         if(this.location.getWorld() == null) {
-            return Lang.getPrefix() + Lang.get("World_Not_Exists");
-        } else return null;
-    }
-
-    public Location getLocation() {
-        return location;
+            return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("World_Not_Exists"), TeleportResult.WORLD_DOES_NOT_EXIST);
+        } else return new SimulatedTeleportResult(null, TeleportResult.TELEPORTED);
     }
 
     @Override
     public double getCosts(String id) {
         return 0;
+    }
+
+    @Override
+    public Location buildLocation(String id) {
+        return location.clone();
     }
 }
