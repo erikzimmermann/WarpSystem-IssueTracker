@@ -3,11 +3,21 @@ package de.codingair.warpsystem.spigot.base.managers;
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.warpsystem.spigot.api.events.PlayerGlobalWarpEvent;
+import de.codingair.warpsystem.spigot.api.events.PlayerWarpEvent;
+import de.codingair.warpsystem.spigot.api.events.utils.GlobalWarp;
+import de.codingair.warpsystem.spigot.api.events.utils.Warp;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.Teleport;
+import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Teleport;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
+import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -73,43 +83,43 @@ public class TeleportManager {
         WarpSystem.getInstance().getFileManager().getFile("Config").saveConfig();
     }
 
-    public void teleport(Player player, Destination destination, String displayName, double costs) {
-        teleport(player, destination, displayName, costs, null);
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs) {
+        teleport(player, origin, destination, displayName, costs, null);
     }
 
-    public void teleport(Player player, Destination destination, String displayName, double costs, boolean message) {
-        teleport(player, destination, displayName, costs, false, this.canMove, message, false, null);
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean message) {
+        teleport(player, origin, destination, displayName, costs, false, this.canMove, message, false, null);
     }
 
-    public void teleport(Player player, Destination destination, String displayName, double costs, Callback<Boolean> callback) {
-        teleport(player, destination, displayName, costs, false, this.canMove, true, false, callback);
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, costs, false, this.canMove, true, false, callback);
     }
 
-    public void instantTeleport(Player player, Destination destination, String displayName) {
-        teleport(player, destination, displayName, 0, true, true, true, false, null);
+    public void instantTeleport(Player player, Origin origin, Destination destination, String displayName) {
+        teleport(player, origin, destination, displayName, 0, true, true, true, false, null);
     }
 
-    public void instantTeleport(Player player, Destination destination, String displayName, boolean message) {
-        teleport(player, destination, displayName, 0, true, true, message, false, null);
+    public void instantTeleport(Player player, Origin origin, Destination destination, String displayName, boolean message) {
+        teleport(player, origin, destination, displayName, 0, true, true, message, false, null);
     }
 
-    public void teleport(Player player, Destination destination, String displayName, double costs, boolean skip, boolean message, boolean silent, Callback<Boolean> callback) {
-        teleport(player, destination, displayName, costs, skip, this.canMove, message, silent, callback);
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean message, boolean silent, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, costs, skip, this.canMove, message, silent, callback);
     }
 
-    public void teleport(Player player, Destination destination, String displayName, double costs, boolean skip, boolean canMove, boolean message, boolean silent, Callback<Boolean> callback) {
-        teleport(player, destination, displayName, costs, skip, canMove, message ?
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, boolean message, boolean silent, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, costs, skip, canMove, message ?
                 costs > 0 ?
                         Lang.getPrefix() + Lang.get("Money_Paid")
                         : Lang.getPrefix() + Lang.get("Teleported_To")
                 : null, silent, callback);
     }
 
-    public void teleport(Player player, Destination destination, String displayName, double costs, boolean skip, String message, boolean silent, Callback<Boolean> callback) {
-        teleport(player, destination, displayName, costs, skip, this.canMove, message, silent, callback);
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, String message, boolean silent, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, costs, skip, this.canMove, message, silent, callback);
     }
 
-    public void teleport(Player player, Destination destination, String displayName, double costs, boolean skip, boolean canMove, String message, boolean silent, Callback<Boolean> callback) {
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, String message, boolean silent, Callback<TeleportResult> callback) {
         if(WarpSystem.maintenance && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Maintenance)) {
             player.sendMessage(Lang.getPrefix() + Lang.get("Warning_Maintenance"));
             return;
@@ -123,12 +133,65 @@ public class TeleportManager {
             return;
         }
 
-        Teleport teleport = new Teleport(player, destination, displayName, costs, message, canMove, silent, callback);
+        int seconds = this.seconds;
+        Callback<TeleportResult> resultCallback = null;
 
-        String simulated = teleport.simulate(player);
-        if(simulated != null) {
-            player.sendMessage(simulated);
-            if(callback != null) callback.accept(false);
+        //Call events
+
+        if(origin != Origin.GlobalWarp || destination.getType() != DestinationType.UNKNOWN) {
+            if(destination.getType() == DestinationType.GlobalWarp) {
+                String name = GlobalWarpManager.getInstance().getCaseCorrectlyName(destination.getId());
+                String server = GlobalWarpManager.getInstance().getGlobalWarps().get(name);
+
+                PlayerGlobalWarpEvent event = new PlayerGlobalWarpEvent(player, new GlobalWarp(name, server), origin, displayName, message, seconds, costs);
+                Bukkit.getPluginManager().callEvent(event);
+
+                if(event.isCancelled()) {
+                    if(callback != null) callback.accept(TeleportResult.CANCELLED_BY_SYSTEM);
+                    if(event.getTeleportResultCallback() != null) event.getTeleportResultCallback().accept(TeleportResult.CANCELLED_BY_SYSTEM);
+                    return;
+                }
+
+                resultCallback = event.getTeleportResultCallback();
+                costs = event.getCosts();
+                seconds = event.getSeconds();
+                displayName = event.getDisplayName();
+                message = event.getMessage();
+            } else if(destination.getType() != DestinationType.GlobalWarpIcon) {
+                Warp.Type type = Warp.Type.GUIWarp;
+                if(origin == Origin.TempWarp) type = Warp.Type.TempWarp;
+                else if(destination.getType() == DestinationType.SimpleWarp) type = Warp.Type.SimpleWarp;
+
+                PlayerWarpEvent event = new PlayerWarpEvent(player, new Warp(destination.buildLocation(), destination.getId(), type), origin, displayName, message, seconds, costs);
+                Bukkit.getPluginManager().callEvent(event);
+
+                if(event.isCancelled()) {
+                    if(callback != null) callback.accept(TeleportResult.CANCELLED_BY_SYSTEM);
+                    if(event.getTeleportResultCallback() != null) event.getTeleportResultCallback().accept(TeleportResult.CANCELLED_BY_SYSTEM);
+                    return;
+                }
+
+                resultCallback = event.getTeleportResultCallback();
+                costs = event.getCosts();
+                seconds = event.getSeconds();
+                displayName = event.getDisplayName();
+                message = event.getMessage();
+            }
+        }
+
+        Callback<TeleportResult> finalResultCallback = resultCallback;
+        Teleport teleport = new Teleport(player, destination, displayName, seconds, costs, message, canMove, silent, new Callback<TeleportResult>() {
+            @Override
+            public void accept(TeleportResult object) {
+                if(callback != null) callback.accept(object);
+                if(finalResultCallback != null) finalResultCallback.accept(object);
+            }
+        });
+
+        SimulatedTeleportResult simulated = teleport.simulate(player);
+        if(simulated.getError() != null) {
+            player.sendMessage(simulated.getError());
+            if(callback != null) callback.accept(simulated.getResult());
             return;
         }
 
@@ -139,7 +202,7 @@ public class TeleportManager {
                 double bank = AdapterType.getActive().getMoney(player);
 
                 if(bank < costs) {
-                    if(callback != null) callback.accept(false);
+                    if(callback != null) callback.accept(TeleportResult.NOT_ENOUGH_MONEY);
                     player.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money").replace("%AMOUNT%", (costs % ((int) costs) == 0 ? (int) costs : costs) + ""));
                     return;
                 }

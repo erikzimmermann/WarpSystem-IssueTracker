@@ -5,8 +5,9 @@ import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.destinations.Destination;
-import de.codingair.warpsystem.spigot.base.destinations.DestinationType;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
@@ -114,7 +115,7 @@ public class CWarp extends CommandBuilder {
 
                     Warp warp = manager.getWarp(argument, category);
 
-                    WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, new Destination(warp.getIdentifier(), DestinationType.WarpIcon), warp.getName(), IconManager.getCosts(warp),
+                    WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, Origin.Warp, new Destination(warp.getIdentifier(), DestinationType.WarpIcon), warp.getName(), IconManager.getCosts(warp),
                             WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Warps", true));
                 }
                 return false;

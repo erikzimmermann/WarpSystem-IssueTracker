@@ -2,8 +2,8 @@ package de.codingair.warpsystem.spigot.features.nativeportals;
 
 import de.codingair.codingapi.server.blocks.utils.Axis;
 import de.codingair.codingapi.tools.Area;
-import de.codingair.warpsystem.spigot.base.destinations.Destination;
-import de.codingair.warpsystem.spigot.base.destinations.DestinationType;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalBlock;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalListener;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;

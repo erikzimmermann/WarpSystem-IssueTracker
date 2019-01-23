@@ -2,8 +2,10 @@ package de.codingair.warpsystem.spigot.features.tempwarps.managers;
 
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.destinations.Destination;
-import de.codingair.warpsystem.spigot.base.destinations.adapters.LocationAdapter;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
@@ -52,10 +54,10 @@ public class TeleportManager {
             AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) - costs);
         }
 
-        Callback<Boolean> callback = new Callback<Boolean>() {
+        Callback<TeleportResult> callback = new Callback<TeleportResult>() {
             @Override
-            public void accept(Boolean teleported) {
-                if(teleported) {
+            public void accept(TeleportResult teleported) {
+                if(teleported == TeleportResult.TELEPORTED) {
                     Player owner = warp.getOnlineOwner();
                     if(owner == null) warp.setInactiveSales(warp.getInactiveSales() + costs);
                     else AdapterType.getActive().setMoney(owner, AdapterType.getActive().getMoney(owner) + costs);
@@ -66,9 +68,9 @@ public class TeleportManager {
         };
 
         if(warp.getMessage() != null) {
-            WarpSystem.getInstance().getTeleportManager().teleport(player, new Destination(new LocationAdapter(warp.getLocation())), warp.getName(), warp.getTeleportCosts(), false, warp.getMessage(), false, isOwner ? null : callback);
+            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TempWarp, new Destination(new LocationAdapter(warp.getLocation())), warp.getName(), warp.getTeleportCosts(), false, warp.getMessage(), false, isOwner ? null : callback);
         } else {
-            WarpSystem.getInstance().getTeleportManager().teleport(player, new Destination(new LocationAdapter(warp.getLocation())), warp.getName(), warp.getTeleportCosts(), false,
+            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TempWarp, new Destination(new LocationAdapter(warp.getLocation())), warp.getName(), warp.getTeleportCosts(), false,
                     WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.TempWarps", true), false, isOwner ? null : callback);
         }
         return true;

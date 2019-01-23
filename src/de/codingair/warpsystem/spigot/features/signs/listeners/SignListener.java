@@ -5,7 +5,8 @@ import de.codingair.codingapi.player.gui.sign.SignTools;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.signs.managers.SignManager;
@@ -68,7 +69,7 @@ public class SignListener implements Listener {
                     return;
                 }
 
-                WarpSystem.getInstance().getTeleportManager().teleport(e.getPlayer(), sign.getDestination(), sign.getDestination().getId(), sign.getDestination().getCosts(),
+                WarpSystem.getInstance().getTeleportManager().teleport(e.getPlayer(), Origin.WarpSign, sign.getDestination(), sign.getDestination().getId(), sign.getDestination().getCosts(),
                         WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.WarpSigns", true));
             }
         }

@@ -1,33 +1,36 @@
-package de.codingair.warpsystem.spigot.base.destinations.adapters;
+package de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters;
 
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.api.SpigotAPI;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.utils.actions.Action;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class SimpleWarpAdapter implements DestinationAdapter {
     @Override
-    public boolean teleport(Player player, String id, String displayName, String message, boolean silent, double costs, Callback<Boolean> callback) {
+    public boolean teleport(Player player, String id, String displayName, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
         SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(id);
 
         if(warp == null) {
             player.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
-            if(callback != null) callback.accept(false);
+            if(callback != null) callback.accept(TeleportResult.DESTINATION_DOES_NOT_EXIST);
             return false;
         }
 
         if(warp.getLocation().getWorld() == null) {
             player.sendMessage(Lang.getPrefix() + Lang.get("World_Not_Exists"));
-            if(callback != null) callback.accept(false);
+            if(callback != null) callback.accept(TeleportResult.WORLD_DOES_NOT_EXIST);
             return false;
         } else {
             if(warp.hasPermission() && !player.hasPermission(warp.getPermission())) {
                 player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"));
-                if(callback != null) callback.accept(false);
+                if(callback != null) callback.accept(TeleportResult.NO_PERMISSION);
                 return false;
             }
 
@@ -41,27 +44,27 @@ public class SimpleWarpAdapter implements DestinationAdapter {
             if(message != null)
                 player.sendMessage((message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
 
-            if(callback != null) callback.accept(true);
+            if(callback != null) callback.accept(TeleportResult.TELEPORTED);
             return true;
         }
     }
 
     @Override
-    public String simulate(Player player, String id) {
+    public SimulatedTeleportResult simulate(Player player, String id) {
         SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(id);
 
         if(warp == null) {
-            return Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS");
+            return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"), TeleportResult.DESTINATION_DOES_NOT_EXIST);
         }
 
         if(warp.getLocation().getWorld() == null) {
-            return Lang.getPrefix() + Lang.get("World_Not_Exists");
+            return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("World_Not_Exists"), TeleportResult.WORLD_DOES_NOT_EXIST);
         } else {
             if(warp.hasPermission() && !player.hasPermission(warp.getPermission())) {
-                return Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp");
+                return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"), TeleportResult.NO_PERMISSION);
             }
 
-            return null;
+            return new SimulatedTeleportResult(null, TeleportResult.TELEPORTED);
         }
     }
 
@@ -70,5 +73,11 @@ public class SimpleWarpAdapter implements DestinationAdapter {
         SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(id);
         if(warp == null) return 0;
         else return warp.getCosts();
+    }
+
+    @Override
+    public Location buildLocation(String id) {
+        SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(id);
+        return warp == null ? null : warp.getLocation().clone();
     }
 }
