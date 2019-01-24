@@ -3,7 +3,7 @@ author: CodingAir
 version: 3.1.7
 description: WarpSystem
 main: de.codingair.warpsystem.spigot.base.WarpSystem
-softdepend: [Multiverse-Core, Vault, Essentials]
+softdepend: [Multiverse-Core, Vault, Essentials, MultiWorld]
 api-version: 1.13
 
 commands:
