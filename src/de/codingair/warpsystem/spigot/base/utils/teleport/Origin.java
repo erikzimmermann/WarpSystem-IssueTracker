@@ -10,5 +10,6 @@ public enum Origin {
     WarpSign,
     EffectPortal,
     NativePortal,
-    ShortCut
+    ShortCut,
+    CommandBlock
 }

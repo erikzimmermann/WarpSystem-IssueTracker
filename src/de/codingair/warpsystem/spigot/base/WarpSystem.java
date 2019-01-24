@@ -187,6 +187,9 @@ public class WarpSystem extends JavaPlugin {
             this.dataHandler.send(new RequestInitialPacket());
             this.dataHandler.register(this.packetListener = new BungeeBukkitListener());
             Bukkit.getPluginManager().registerEvents(this.packetListener, this);
+
+            if(fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Functions.CommandBlocks", true))
+                Bukkit.getPluginManager().registerEvents(new CommandBlockListener(), this);
         } catch(Exception ex) {
             //make error-report
 
