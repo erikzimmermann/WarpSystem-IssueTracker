@@ -59,6 +59,7 @@ WarpSystem:
       Portals: true
       WarpSigns: true
       TempWarps: true
+      CommandBlocks: true
     Teleport_Cancel_Message: true
 
   Functions:
@@ -70,6 +71,9 @@ WarpSystem:
     GlobalWarps: true
     Shortcuts: true
     TempWarps: true
+    #Available commands: '/warp <warp>' or '/globalwarp <warp>'
+    #Activates when a player is within 5 blocks of a CommandBlock and the CommandBlock is active
+    CommandBlocks: true
 
   TempWarps:
     #Permission to set the available amount of TempWarps: "WarpSystem.TempWarps.2" (Example for a maximum of 2 TempWarps)
