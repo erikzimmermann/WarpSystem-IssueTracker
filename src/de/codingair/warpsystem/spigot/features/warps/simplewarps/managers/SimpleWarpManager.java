@@ -120,6 +120,6 @@ public class SimpleWarpManager implements Manager {
     }
 
     public static SimpleWarpManager getInstance() {
-        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.HIDDEN_WARPS);
+        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
     }
 }

@@ -55,7 +55,7 @@ public class CSetWarp extends CommandBuilder {
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                SimpleWarpManager hManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.HIDDEN_WARPS);
+                SimpleWarpManager hManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
                 for(SimpleWarp value : hManager.getWarps().values()) {
                     suggestions.add(value.getName());
                 }
@@ -68,7 +68,7 @@ public class CSetWarp extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                SimpleWarpManager hManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.HIDDEN_WARPS);
+                SimpleWarpManager hManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
                 if(hManager.existsWarp(argument)) {
                     SimpleMessage simpleMessage = new SimpleMessage(Lang.getPrefix() + Lang.get("Warp_Confirm_Overwrite").replace("%WARP%", hManager.getWarp(argument).getName()), WarpSystem.getInstance());
 
