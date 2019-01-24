@@ -43,7 +43,7 @@ public class CDeleteWarp extends CommandBuilder {
 
         setHighestPriority(true);
 
-        SimpleWarpManager m = WarpSystem.getInstance().getDataManager().getManager(FeatureType.HIDDEN_WARPS);
+        SimpleWarpManager m = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
 
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override

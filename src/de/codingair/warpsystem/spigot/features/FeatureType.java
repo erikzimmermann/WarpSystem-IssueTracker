@@ -23,7 +23,7 @@ public enum FeatureType {
     NATIVE_PORTALS(NativePortalManager.class, Priority.LOW, "NativePortals"),
     SHORTCUTS(ShortcutManager.class, Priority.LOW, "Shortcuts"),
     TEMP_WARPS(TempWarpManager.class, Priority.LOW, "TempWarps"),
-    HIDDEN_WARPS(SimpleWarpManager.class, Priority.HIGH, "HiddenWarps"),
+    SIMPLE_WARPS(SimpleWarpManager.class, Priority.HIGH, "SimpleWarps"),
     ;
 
     private Class<? extends Manager> managerClass;

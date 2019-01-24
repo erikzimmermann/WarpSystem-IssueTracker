@@ -18,12 +18,12 @@ public class CWarpHook {
      * Return true to cancel!
      */
     public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-        if(!FeatureType.HIDDEN_WARPS.isActive() || !sender.hasPermission(WarpSystem.PERMISSION_USE_HiddenWarps)) return false;
-        SimpleWarpManager m = WarpSystem.getInstance().getDataManager().getManager(FeatureType.HIDDEN_WARPS);
+        if(!FeatureType.SIMPLE_WARPS.isActive() || !sender.hasPermission(WarpSystem.PERMISSION_USE_SimpleWarps)) return false;
+        SimpleWarpManager m = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
         if(m.existsWarp(argument)) {
             SimpleWarp warp = m.getWarp(argument);
             WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, Origin.SimpleWarp, new Destination(warp.getName(), DestinationType.SimpleWarp), warp.getName(), warp.getCosts(),
-                    WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.HiddenWarps", true));
+                    WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.SimpleWarps", true));
 
             return true;
         }
@@ -31,8 +31,8 @@ public class CWarpHook {
     }
 
     public void addArguments(CommandSender sender, List<String> suggestions) {
-        if(!FeatureType.HIDDEN_WARPS.isActive() || !sender.hasPermission(WarpSystem.PERMISSION_USE_HiddenWarps)) return;
-        SimpleWarpManager m = WarpSystem.getInstance().getDataManager().getManager(FeatureType.HIDDEN_WARPS);
+        if(!FeatureType.SIMPLE_WARPS.isActive() || !sender.hasPermission(WarpSystem.PERMISSION_USE_SimpleWarps)) return;
+        SimpleWarpManager m = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
         for(SimpleWarp value : m.getWarps().values()) {
             if(value.getPermission() == null || sender.hasPermission(value.getPermission())) {
                 suggestions.add(value.getName());
