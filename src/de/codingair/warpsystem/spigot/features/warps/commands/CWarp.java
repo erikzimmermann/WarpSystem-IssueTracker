@@ -21,7 +21,7 @@ import java.util.List;
 
 public class CWarp extends CommandBuilder {
     public CWarp() {
-        super("Warp", new BaseComponent(WarpSystem.PERMISSION_USE_Warps) {
+        super("Warp", new BaseComponent(WarpSystem.PERMISSION_USE_WARPS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));

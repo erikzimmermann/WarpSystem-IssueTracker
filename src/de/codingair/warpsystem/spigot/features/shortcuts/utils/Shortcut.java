@@ -34,7 +34,7 @@ public class Shortcut {
     public void run(Player player) {
         if(this.warp != null) {
             if(warp instanceof Warp) {
-                if(!player.hasPermission(WarpSystem.PERMISSION_USE_Warps)) {
+                if(!player.hasPermission(WarpSystem.PERMISSION_USE_WARPS)) {
                     player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     return;
                 }
@@ -42,7 +42,7 @@ public class Shortcut {
                 WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.ShortCut, new Destination(((Warp) warp).getIdentifier(), DestinationType.WarpIcon), warp.getName(), IconManager.getCosts(warp),
                         WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Warps", true));
             } else if(warp instanceof GlobalWarp) {
-                if(!player.hasPermission(WarpSystem.PERMISSION_USE_GlobalWarps)) {
+                if(!player.hasPermission(WarpSystem.PERMISSION_USE_GLOBAL_WARPS)) {
                     player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     return;
                 }
@@ -51,7 +51,7 @@ public class Shortcut {
                         WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true));
             }
         } else if(globalWarp != null) {
-            if(!player.hasPermission(WarpSystem.PERMISSION_USE_GlobalWarps)) {
+            if(!player.hasPermission(WarpSystem.PERMISSION_USE_GLOBAL_WARPS)) {
                 player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                 return;
             }
