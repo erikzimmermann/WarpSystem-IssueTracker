@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CTempWarps extends CommandBuilder {
     public CTempWarps() {
-        super("TempWarps", new BaseComponent(WarpSystem.PERMISSION_USE_TempWarps) {
+        super("TempWarps", new BaseComponent(WarpSystem.PERMISSION_USE_TEMP_WARPS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));

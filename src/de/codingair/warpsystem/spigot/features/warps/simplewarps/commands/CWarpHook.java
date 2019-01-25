@@ -18,7 +18,7 @@ public class CWarpHook {
      * Return true to cancel!
      */
     public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-        if(!FeatureType.SIMPLE_WARPS.isActive() || !sender.hasPermission(WarpSystem.PERMISSION_USE_SimpleWarps)) return false;
+        if(!FeatureType.SIMPLE_WARPS.isActive() || !sender.hasPermission(WarpSystem.PERMISSION_USE_SIMPLE_WARPS)) return false;
         SimpleWarpManager m = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
         if(m.existsWarp(argument)) {
             SimpleWarp warp = m.getWarp(argument);
@@ -31,7 +31,7 @@ public class CWarpHook {
     }
 
     public void addArguments(CommandSender sender, List<String> suggestions) {
-        if(!FeatureType.SIMPLE_WARPS.isActive() || !sender.hasPermission(WarpSystem.PERMISSION_USE_SimpleWarps)) return;
+        if(!FeatureType.SIMPLE_WARPS.isActive() || !sender.hasPermission(WarpSystem.PERMISSION_USE_SIMPLE_WARPS)) return;
         SimpleWarpManager m = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
         for(SimpleWarp value : m.getWarps().values()) {
             if(value.getPermission() == null || sender.hasPermission(value.getPermission())) {

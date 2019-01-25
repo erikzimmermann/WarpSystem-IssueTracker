@@ -18,7 +18,7 @@ import java.util.List;
 
 public class CDeleteWarp extends CommandBuilder {
     public CDeleteWarp() {
-        super("DeleteWarp", new BaseComponent(WarpSystem.PERMISSION_MODIFY_HIDDEN_WARPS) {
+        super("DeleteWarp", new BaseComponent(WarpSystem.PERMISSION_MODIFY_SIMPLE_WARPS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));

@@ -6,7 +6,6 @@ import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
 import org.bukkit.command.CommandSender;
@@ -16,7 +15,7 @@ import java.util.List;
 
 public class CTempWarp extends CommandBuilder {
     public CTempWarp() {
-        super("TempWarp", new BaseComponent(WarpSystem.PERMISSION_USE_TempWarps) {
+        super("TempWarp", new BaseComponent(WarpSystem.PERMISSION_USE_TEMP_WARPS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));

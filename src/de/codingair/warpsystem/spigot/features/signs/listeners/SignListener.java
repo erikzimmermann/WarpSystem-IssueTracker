@@ -37,7 +37,7 @@ public class SignListener implements Listener {
             SignManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIGNS);
             WarpSign sign = manager.getByLocation(s.getLocation());
             if(sign != null) {
-                if(e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_WarpSigns) && e.getPlayer().getGameMode().equals(GameMode.CREATIVE) && e.getPlayer().getItemInHand().getType().equals(Material.SIGN)) {
+                if(e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_WARP_SIGNS) && e.getPlayer().getGameMode().equals(GameMode.CREATIVE) && e.getPlayer().getItemInHand().getType().equals(Material.SIGN)) {
                     String[] lines = s.getLines();
                     for(int i = 0; i < 4; i++) {
                         lines[i] = lines[i].replace("§", "&");
@@ -64,7 +64,7 @@ public class SignListener implements Listener {
                     return;
                 }
 
-                if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_USE_WarpSigns)) {
+                if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_USE_WARP_SIGNS)) {
                     e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     return;
                 }
