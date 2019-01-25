@@ -162,7 +162,7 @@ ENG:
   Native_Portal_Choose_Warp: '&cChoose a warp'
   Plugin_Reloading: '&cThe plugin will be reloaded now...'
   Success_Plugin_Reloaded: '&aThe plugin has been reloaded.'
-  Success_Plugin_Reloaded_Without_Saving: '&The plugin has been reloaded without saving.'
+  Success_Plugin_Reloaded_Without_Saving: '&aThe plugin has been reloaded without saving.'
   Status_Of_Start: 'Status of Start-Holo: '
   Status_Of_Destination: 'Status of Destination-Holo: '
   Hologram: Hologram
