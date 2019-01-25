@@ -3,7 +3,7 @@ package de.codingair.warpsystem.bungee.base;
 import de.codingair.codingapi.bungeecord.files.FileManager;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
-import de.codingair.warpsystem.bungee.base.listeners.MainPacketListener;
+import de.codingair.warpsystem.bungee.base.listeners.MainListener;
 import de.codingair.warpsystem.bungee.base.managers.DataManager;
 import de.codingair.warpsystem.bungee.base.managers.ServerManager;
 import de.codingair.warpsystem.transfer.bungee.BungeeDataHandler;
@@ -40,7 +40,9 @@ public class WarpSystem extends Plugin {
         log(" ");
         log("Initialize SpigotConnector");
         this.dataHandler.onEnable();
-        this.dataHandler.register(new MainPacketListener());
+        MainListener listener = new MainListener();
+        BungeeCord.getInstance().getPluginManager().registerListener(this, listener);
+        this.dataHandler.register(listener);
         this.serverManager.run();
 
         log("Loading features");
