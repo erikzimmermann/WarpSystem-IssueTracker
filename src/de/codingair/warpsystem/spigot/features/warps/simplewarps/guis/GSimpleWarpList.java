@@ -40,10 +40,10 @@ public class GSimpleWarpList extends GUI {
     }
 
     private static int MAX_PAGE() {
-        GlobalWarpManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS);
-        if(manager.getGlobalWarps().isEmpty()) return 0;
+        SimpleWarpManager manager = SimpleWarpManager.getInstance();
+        if(manager.getWarps().isEmpty()) return 0;
 
-        return (int) (Math.ceil((double) manager.getGlobalWarps().size() / 44.0) - 1);
+        return (int) (Math.ceil((double) manager.getWarps().size() / 44.0) - 1);
     }
 
     private static String TITLE(int page) {
@@ -182,6 +182,7 @@ public class GSimpleWarpList extends GUI {
                     searching = null;
                     reinitialize();
                 } else if(e.isLeftClick()) {
+                    setClosingByButton(true);
                     p.closeInventory();
 
                     AnvilGUI.openAnvil(WarpSystem.getInstance(), p, new AnvilListener() {
