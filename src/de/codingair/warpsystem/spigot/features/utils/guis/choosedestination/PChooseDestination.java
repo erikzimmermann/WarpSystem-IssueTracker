@@ -40,7 +40,7 @@ public class PChooseDestination extends Page {
         option.setClickSound(Sound.CLICK.bukkitSound());
         option.setCloseOnClick(true);
 
-        addButton(new SyncButton(1) {
+        addButton(new SyncButton(WarpSystem.getInstance().isOnBungeeCord() ? 1 : 2) {
             @Override
             public ItemStack craftItem() {
                 return new ItemBuilder(XMaterial.CHEST).setName("§b" + Lang.get("WarpGUI")).getItem();
@@ -84,39 +84,41 @@ public class PChooseDestination extends Page {
             }
         }.setOption(option));
 
-        addButton(new SyncButton(4) {
-            @Override
-            public ItemStack craftItem() {
-                return new ItemBuilder(XMaterial.ENDER_CHEST).setName("§b" + Lang.get("GlobalWarps")).getItem();
-            }
+        if(WarpSystem.getInstance().isOnBungeeCord()) {
+            addButton(new SyncButton(4) {
+                @Override
+                public ItemStack craftItem() {
+                    return new ItemBuilder(XMaterial.ENDER_CHEST).setName("§b" + Lang.get("GlobalWarps")).getItem();
+                }
 
-            @Override
-            public void onClick(InventoryClickEvent e, Player player) {
-                new GGlobalWarpList(p, new GGlobalWarpList.Listener() {
-                    boolean got = false;
+                @Override
+                public void onClick(InventoryClickEvent e, Player player) {
+                    new GGlobalWarpList(p, new GGlobalWarpList.Listener() {
+                        boolean got = false;
 
-                    @Override
-                    public void onClickOnGlobalWarp(String warp, InventoryClickEvent e) {
-                        got = true;
-                        p.closeInventory();
-                        callback.accept(new Destination(warp, DestinationType.GlobalWarp));
-                    }
+                        @Override
+                        public void onClickOnGlobalWarp(String warp, InventoryClickEvent e) {
+                            got = true;
+                            p.closeInventory();
+                            callback.accept(new Destination(warp, DestinationType.GlobalWarp));
+                        }
 
-                    @Override
-                    public void onClose() {
-                        if(got) return;
-                        Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> getLast().open());
-                    }
+                        @Override
+                        public void onClose() {
+                            if(got) return;
+                            Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> getLast().open());
+                        }
 
-                    @Override
-                    public String getLeftclickDescription() {
-                        return Lang.get("Leftclick_To_Choose");
-                    }
-                }).open();
-            }
-        }.setOption(option));
+                        @Override
+                        public String getLeftclickDescription() {
+                            return Lang.get("Leftclick_To_Choose");
+                        }
+                    }).open();
+                }
+            }.setOption(option));
+        }
 
-        addButton(new SyncButton(7) {
+        addButton(new SyncButton(WarpSystem.getInstance().isOnBungeeCord() ? 7 : 6) {
             @Override
             public ItemStack craftItem() {
                 return new ItemBuilder(XMaterial.ENDER_CHEST).setName("§b" + Lang.get("SimpleWarps")).getItem();
