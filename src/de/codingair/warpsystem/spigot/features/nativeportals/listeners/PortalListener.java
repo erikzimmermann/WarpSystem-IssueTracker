@@ -35,8 +35,10 @@ public class PortalListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPortal(PlayerPortalEvent e) {
-        if(NativePortalManager.getInstance().getNoTeleport().contains(e.getPlayer()) || NativePortalManager.getInstance().isEditing(e.getPlayer()) || WarpSystem.getInstance().getTeleportManager().isTeleporting(e.getPlayer())
-                || API.getRemovables(e.getPlayer(), GEditor.class) != null) {
+        if(NativePortalManager.getInstance().getNoTeleport().contains(e.getPlayer())
+                || NativePortalManager.getInstance().isEditing(e.getPlayer())
+                || WarpSystem.getInstance().getTeleportManager().isTeleporting(e.getPlayer())
+                || API.getRemovable(e.getPlayer(), GEditor.class) != null) {
             e.setCancelled(true);
             return;
         }
