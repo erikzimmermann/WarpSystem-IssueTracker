@@ -63,10 +63,12 @@ public class PChooseDestination extends Page {
                                 got = true;
                                 p.closeInventory();
                                 callback.accept(new Destination(((Warp) icon).getIdentifier(), DestinationType.WarpIcon));
+                                return new Task();
                             } else if(icon instanceof GlobalWarp) {
                                 got = true;
                                 p.closeInventory();
                                 callback.accept(new Destination(icon.getName(), DestinationType.GlobalWarpIcon));
+                                return new Task();
                             }
                         }
 
