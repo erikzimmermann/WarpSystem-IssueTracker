@@ -43,6 +43,7 @@ public class Destination {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         Destination that = (Destination) o;
+        if(id == null) return that.id == null && type == that.type;
         return id.equals(that.id) &&
                 type == that.type;
     }
