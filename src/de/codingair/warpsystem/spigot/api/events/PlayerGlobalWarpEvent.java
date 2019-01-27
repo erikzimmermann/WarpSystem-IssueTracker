@@ -8,12 +8,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerEvent;
 
-public class PlayerGlobalWarpEvent extends Event implements Cancellable {
+public class PlayerGlobalWarpEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled = false;
 
-    private Player player;
     private GlobalWarp warp;
     private Origin origin;
     private String displayName;
@@ -23,7 +23,7 @@ public class PlayerGlobalWarpEvent extends Event implements Cancellable {
     private Callback<TeleportResult> teleportResultCallback;
 
     public PlayerGlobalWarpEvent(Player player, GlobalWarp warp, Origin origin, String displayName, String message, int seconds, double costs) {
-        this.player = player;
+        super(player);
         this.warp = warp;
         this.origin = origin;
         this.displayName = displayName;
@@ -70,10 +70,6 @@ public class PlayerGlobalWarpEvent extends Event implements Cancellable {
 
     public void setCosts(double costs) {
         this.costs = costs < 0 ? 0 : costs;
-    }
-
-    public Player getPlayer() {
-        return player;
     }
 
     @Override

@@ -142,8 +142,9 @@ public class TeleportManager {
         int seconds = this.seconds;
         Callback<TeleportResult> resultCallback = null;
 
-        //Call events
+        if((WarpSystem.OP_CAN_SKIP_DELAY && player.isOp()) || player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) seconds = 0;
 
+        //Call events
         if(origin != Origin.GlobalWarp || destination.getType() != DestinationType.UNKNOWN) {
             if(destination.getType() == DestinationType.GlobalWarp) {
                 String name = GlobalWarpManager.getInstance().getCaseCorrectlyName(destination.getId());
@@ -218,7 +219,7 @@ public class TeleportManager {
             } else this.teleports.add(teleport);
         } else this.teleports.add(teleport);
 
-        if(seconds == 0 || (WarpSystem.OP_CAN_SKIP_DELAY && player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) || skip) teleport.teleport();
+        if(seconds == 0 || skip) teleport.teleport();
         else teleport.start();
     }
 
