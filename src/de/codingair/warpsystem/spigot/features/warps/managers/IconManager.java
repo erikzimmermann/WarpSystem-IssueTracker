@@ -340,6 +340,10 @@ public class IconManager implements Manager {
         this.decoIcons.clear();
     }
 
+    public boolean boundToWorld() {
+        return WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.GUI.Bound_to_world", false);
+    }
+
     private int getNextFreeSlot(Category category) {
         int slot = 0;
 

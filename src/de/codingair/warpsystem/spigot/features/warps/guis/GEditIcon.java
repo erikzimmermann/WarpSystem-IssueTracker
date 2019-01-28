@@ -408,6 +408,7 @@ public class GEditIcon extends GUI {
                     switch(type) {
                         case WARP:
                             Warp warp = new Warp(name, item, slot, permission, category, new ActionObject(Action.TELEPORT_TO_WARP, new SerializableLocation(p.getLocation())));
+                            if(IconManager.getInstance().boundToWorld()) warp.addAction(new ActionObject(Action.BOUND_TO_WORLD, p.getLocation().getWorld().getName()));
                             if(GEditIcon.this.command != null) warp.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
                             if(GEditIcon.this.costs > 0) warp.addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
                             warp.setDisabled(disabled);
@@ -419,6 +420,7 @@ public class GEditIcon extends GUI {
 
                         case CATEGORY:
                             Category category = new Category(name, item, slot, permission);
+                            if(IconManager.getInstance().boundToWorld()) category.addAction(new ActionObject(Action.BOUND_TO_WORLD, p.getLocation().getWorld().getName()));
                             if(GEditIcon.this.command != null) category.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
                             if(GEditIcon.this.costs > 0) category.addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
                             category.setDisabled(disabled);
@@ -430,6 +432,7 @@ public class GEditIcon extends GUI {
 
                         case GLOBAL_WARP:
                             GlobalWarp gWarp = new GlobalWarp(name, item, slot, permission, GEditIcon.this.category, new ActionObject(Action.SWITCH_SERVER, extra));
+                            if(IconManager.getInstance().boundToWorld()) gWarp.addAction(new ActionObject(Action.BOUND_TO_WORLD, p.getLocation().getWorld().getName()));
                             if(GEditIcon.this.command != null) gWarp.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
                             if(GEditIcon.this.costs > 0) gWarp.addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
                             gWarp.setDisabled(disabled);
@@ -441,6 +444,7 @@ public class GEditIcon extends GUI {
 
                         case DECORATION:
                             DecoIcon deco = new DecoIcon(name, item, slot, permission, GEditIcon.this.category);
+                            if(IconManager.getInstance().boundToWorld()) deco.addAction(new ActionObject(Action.BOUND_TO_WORLD, p.getLocation().getWorld().getName()));
                             if(GEditIcon.this.command != null) deco.addAction(new ActionObject(Action.RUN_COMMAND, GEditIcon.this.command));
                             if(GEditIcon.this.costs > 0) deco.addAction(new ActionObject(Action.PAY_MONEY, GEditIcon.this.costs));
                             manager.getDecoIcons().add(deco);
