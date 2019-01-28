@@ -22,7 +22,7 @@ public class CommandListener implements Listener {
             e.setCancelled(true);
             String feature = getFeatureName(command);
 
-            if(e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY) && feature != null) {
+            if(e.getPlayer().hasPermission(WarpSystem.PERMISSION_NOTIFY) && feature != null) {
                 if(feature.equalsIgnoreCase("GlobalWarps")) {
                     e.getPlayer().sendMessage(new String[] {Lang.getPrefix() + "§7You have to §cinstall§7 this plugin §con your BungeeCord", "§7and enable '§4§l" + feature + "§7' in the Config.yml to use this command!"});
                 } else {

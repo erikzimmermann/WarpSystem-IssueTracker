@@ -51,3 +51,48 @@ commands:
   editwarp:
     usuage: /EditWarp
     description: A Warp-System-CMD
+
+permissions:
+  WarpSystem:
+    default: op
+    description: Default start of each permission node
+    children:
+      WarpSystem.Notify: true
+      WarpSystem.Modify.*: true
+      WarpSystem.Use.*: true
+      WarpSystem.ByPass.*: true
+      WarpSystem.Admin: true
+  WarpSystem.Admin:
+    description: Permission to be an admin (for different gui-size e.g.)
+  WarpSystem.Notify:
+    description: Notify for warnings or new updates
+  WarpSystem.Modify.*:
+    description: Notify for warnings or new updates
+    children:
+      WarpSystem.Modify: true
+      WarpSystem.Modify.Icons: true
+      WarpSystem.Modify.WarpSigns: true
+      WarpSystem.Modify.GlobalWarps: true
+      WarpSystem.Modify.SimpleWarps: true
+      WarpSystem.Modify.Portals: true
+      WarpSystem.Modify.NativePortals: true
+  WarpSystem.Use.*:
+    description: Player can use features
+    children:
+      WarpSystem.Use.Warps: true
+      WarpSystem.Use.WarpSigns: true
+      WarpSystem.Use.TempWarps: true
+      WarpSystem.Use.GlobalWarps: true
+      WarpSystem.Use.SimpleWarps: true
+      WarpSystem.Use.Portals: true
+      WarpSystem.Use.NativePortals: true
+  WarpSystem.ByPass.*:
+    description: Permission to bypass different things
+    children:
+      WarpSystem.ByPass.Teleport.*: true
+      WarpSystem.ByPass.Maintenance: true
+  WarpSystem.ByPass.Teleport.*:
+    description: Permission to bypass teleport parameters
+    children:
+      WarpSystem.ByPass.Teleport.Costs: true
+      WarpSystem.ByPass.Teleport.Delay: true
