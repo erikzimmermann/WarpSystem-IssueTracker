@@ -21,14 +21,11 @@ import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpMa
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionIcon;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Icon;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.IconType;
+import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.*;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.GUIListener;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -61,6 +58,7 @@ public class GWarps extends GUI {
 
     private GUIListener listener;
     private boolean canEdit = true;
+    private String world;
     private List<Class<? extends Icon>> hide = new ArrayList<>();
 
     private static String getTitle(Category category, GUIListener listener, Player player) {
@@ -87,11 +85,16 @@ public class GWarps extends GUI {
     }
 
     public GWarps(Player p, Category category, boolean editing, GUIListener guiListener, boolean canEdit, Class<? extends Icon>... without) {
+        this(p, category, editing, guiListener, canEdit, p.getLocation().getWorld().getName(), without);
+    }
+
+    public GWarps(Player p, Category category, boolean editing, GUIListener guiListener, boolean canEdit, String world, Class<? extends Icon>... without) {
         super(p, getTitle(category, guiListener, p), getSize(p), WarpSystem.getInstance(), false);
         this.listener = guiListener;
         this.category = category;
         this.editing = editing;
         this.canEdit = canEdit;
+        this.world = IconManager.getInstance().boundToWorld() ? world : null;
         this.hide = without == null ? new ArrayList<>() : Arrays.asList(without);
 
         Listener listener;
@@ -216,32 +219,48 @@ public class GWarps extends GUI {
             }.setOption(option));
         }
 
-        for(Warp warp : manager.getWarps(category)) {
-            if((editing || (!warp.hasPermission() || p.hasPermission(warp.getPermission()))) && this.cursorIcon != warp) {
-                addToGUI(p, warp);
-            }
+        List<Warp> wIcons = manager.getWarps(category);
+        for(Warp icon : wIcons) {
+            ActionObject bound = icon.getAction(Action.BOUND_TO_WORLD);
+
+            if((bound == null && world == null) || (bound != null && world != null && world.equals(bound.getValue()))
+                    && (editing || (!icon.hasPermission() || p.hasPermission(icon.getPermission())))
+                    && this.cursorIcon != icon) addToGUI(p, icon);
         }
+        wIcons.clear();
 
         if(WarpSystem.getInstance().isOnBungeeCord()) {
-            for(GlobalWarp warp : manager.getGlobalWarps(category)) {
-                if((editing || (!warp.hasPermission() || p.hasPermission(warp.getPermission()))) && this.cursorIcon != warp) {
-                    addToGUI(p, warp);
-                }
+            List<GlobalWarp> gIcons = manager.getGlobalWarps(category);
+            for(GlobalWarp icon : gIcons) {
+                ActionObject bound = icon.getAction(Action.BOUND_TO_WORLD);
+
+                if((bound == null && world == null) || (bound != null && world != null && world.equals(bound.getValue()))
+                        && (editing || (!icon.hasPermission() || p.hasPermission(icon.getPermission())))
+                        && this.cursorIcon != icon) addToGUI(p, icon);
             }
+            gIcons.clear();
         }
 
-        for(DecoIcon icon : manager.getDecoIcons(category)) {
-            if(this.cursorIcon != icon) {
-                addToGUI(p, icon);
-            }
+        List<DecoIcon> dIcons = manager.getDecoIcons(category);
+        for(DecoIcon icon : dIcons) {
+            ActionObject bound = icon.getAction(Action.BOUND_TO_WORLD);
+
+            if((bound == null && world == null) || (bound != null && world != null && world.equals(bound.getValue()))
+                    && (editing || (!icon.hasPermission() || p.hasPermission(icon.getPermission())))
+                    && this.cursorIcon != icon) addToGUI(p, icon);
         }
+        dIcons.clear();
 
         if(category == null) {
-            for(Category c : manager.getCategories()) {
-                if(editing || (!c.hasPermission() || p.hasPermission(c.getPermission()))) {
-                    addToGUI(p, c);
-                }
+            List<Category> cIcons = manager.getCategories();
+            for(Category icon : cIcons) {
+                ActionObject bound = icon.getAction(Action.BOUND_TO_WORLD);
+
+                if((bound == null && world == null) || (bound != null && world != null && world.equals(bound.getValue()))
+                        && (editing || (!icon.hasPermission() || p.hasPermission(icon.getPermission())))
+                        && this.cursorIcon != icon) addToGUI(p, icon);
             }
+            cIcons.clear();
         }
 
         for(int i = 0; i < size; i++) {

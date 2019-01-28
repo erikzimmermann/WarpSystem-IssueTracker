@@ -8,7 +8,8 @@ public enum Action {
     OPEN_CATEGORY(1, Category.class, Priority.LOW),
     TELEPORT_TO_WARP(2, SerializableLocation.class, Priority.LOW),
     SWITCH_SERVER(3, String.class, Priority.LOW),
-    PAY_MONEY(4, Double.class, Priority.HIGHEST)
+    PAY_MONEY(4, Double.class, Priority.HIGHEST),
+    BOUND_TO_WORLD(5, String.class, Priority.LOW),
     ;
 
     private int id;

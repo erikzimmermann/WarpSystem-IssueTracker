@@ -5,6 +5,9 @@ WarpSystem:
     Permission: 'WarpSystem.Admin'
 
   GUI:
+    # false: The WarpGUI is identical on the entire server in all worlds
+    # true: The WarpGUI is different in every world
+    Bound_to_world: false
     Admin:
       # The number must be between inclusive 9 and inclusive 54 and must be divisible by 9.
       Size: 54
