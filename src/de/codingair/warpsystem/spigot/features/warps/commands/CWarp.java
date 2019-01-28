@@ -5,15 +5,15 @@ import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
-import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CWarpHook;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CWarpHook;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -114,6 +114,11 @@ public class CWarp extends CommandBuilder {
                     }
 
                     Warp warp = manager.getWarp(argument, category);
+
+                    if(warp == null) {
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
+                        return false;
+                    }
 
                     WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, Origin.Warp, new Destination(warp.getIdentifier(), DestinationType.WarpIcon), warp.getName(), IconManager.getCosts(warp),
                             WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Warps", true));
