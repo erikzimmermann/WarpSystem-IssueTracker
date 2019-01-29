@@ -4,7 +4,9 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
+import de.codingair.warpsystem.spigot.features.globalwarps.commands.CGlobalWarp;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
+import de.codingair.warpsystem.spigot.features.warps.commands.CWarp;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
@@ -33,44 +35,40 @@ public class CommandBlockListener implements Listener {
 
             PluginCommand command = Bukkit.getPluginCommand(cmd);
             if(command == null) return;
-            if(command.getPlugin().getName().equals(WarpSystem.getInstance().getDescription().getName()) && arg != null) {
+            if(command.getExecutor() instanceof CWarp || command.getExecutor() instanceof CGlobalWarp) {
                 Location location = ((BlockCommandSender) e.getSender()).getBlock().getLocation().add(0.5, 0, 0.5);
                 Player player = getNearest(location, 5);
                 if(player == null) return;
 
-                switch(command.getName().toLowerCase()) {
-                    case "warp": {
-                        if(SimpleWarpManager.getInstance() != null) {
-                            SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(arg);
-                            if(warp != null) {
-                                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.CommandBlock, new Destination(warp.getName(), DestinationType.SimpleWarp), warp.getName(), 0, true, true,
-                                        WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.CommandBlocks", true), false, null);
-                                return;
-                            }
+                if(command.getExecutor() instanceof CWarp) {
+                    if(SimpleWarpManager.getInstance() != null) {
+                        SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(arg);
+                        if(warp != null) {
+                            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.CommandBlock, new Destination(warp.getName(), DestinationType.SimpleWarp), warp.getName(), 0, true, true,
+                                    WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.CommandBlocks", true), false, null);
+                            return;
                         }
-
-                        if(IconManager.getInstance() != null) {
-                            Warp warp = IconManager.getInstance().getWarp(arg);
-                            if(warp != null) {
-                                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.CommandBlock, new Destination(warp.getName(), DestinationType.WarpIcon), warp.getName(), 0, true, true,
-                                        WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.CommandBlocks", true), false, null);
-                                return;
-                            }
-                        }
-                        break;
                     }
 
-                    case "globalwarp": {
-                        String name = arg;
-
-                        if(GlobalWarpManager.getInstance() != null) {
-                            if(GlobalWarpManager.getInstance().exists(name)) {
-                                name = GlobalWarpManager.getInstance().getCaseCorrectlyName(name);
-                                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.CommandBlock, new Destination(name, DestinationType.GlobalWarp), name, 0, true, true,
-                                        WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.CommandBlocks", true), false, null);
-                            }
+                    if(IconManager.getInstance() != null) {
+                        Warp warp = IconManager.getInstance().getWarp(arg);
+                        if(warp != null) {
+                            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.CommandBlock, new Destination(warp.getName(), DestinationType.WarpIcon), warp.getName(), 0, true, true,
+                                    WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.CommandBlocks", true), false, null);
+                            return;
                         }
-                        break;
+                    }
+                }
+
+                if(command.getExecutor() instanceof CGlobalWarp) {
+                    String name = arg;
+
+                    if(GlobalWarpManager.getInstance() != null) {
+                        if(GlobalWarpManager.getInstance().exists(name)) {
+                            name = GlobalWarpManager.getInstance().getCaseCorrectlyName(name);
+                            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.CommandBlock, new Destination(name, DestinationType.GlobalWarp), name, 0, true, true,
+                                    WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.CommandBlocks", true), false, null);
+                        }
                     }
                 }
             }
