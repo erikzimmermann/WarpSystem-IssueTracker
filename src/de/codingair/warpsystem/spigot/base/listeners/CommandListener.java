@@ -1,6 +1,5 @@
 package de.codingair.warpsystem.spigot.base.listeners;
 
-import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.Bukkit;
@@ -8,6 +7,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.plugin.Plugin;
 
 public class CommandListener implements Listener {
 
@@ -18,7 +18,7 @@ public class CommandListener implements Listener {
 
         PluginCommand command = Bukkit.getPluginCommand(cmd);
         if(command == null) return;
-        if(command.getPlugin().getName().equals(WarpSystem.getInstance().getDescription().getName()) && !(command.getExecutor() instanceof CommandBuilder)) {
+        if(command.getExecutor() instanceof Plugin && ((Plugin) command.getExecutor()).getName().equals(WarpSystem.getInstance().getName())) {
             e.setCancelled(true);
             String feature = getFeatureName(command);
 

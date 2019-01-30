@@ -83,12 +83,8 @@ public class TempWarpManager implements Manager, Ticker {
 
         Bukkit.getPluginManager().registerEvents(new TempWarpListener(), WarpSystem.getInstance());
 
-        CTempWarp tempWarp = new CTempWarp();
-        CTempWarps tempWarps = new CTempWarps();
-        WarpSystem.getInstance().getCommands().add(tempWarp);
-        WarpSystem.getInstance().getCommands().add(tempWarps);
-        tempWarp.register(WarpSystem.getInstance());
-        tempWarps.register(WarpSystem.getInstance());
+        new CTempWarp().register(WarpSystem.getInstance());
+        new CTempWarps().register(WarpSystem.getInstance());
 
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
         FileConfiguration config = file.getConfig();
