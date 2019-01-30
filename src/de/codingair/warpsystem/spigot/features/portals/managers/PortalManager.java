@@ -80,9 +80,7 @@ public class PortalManager implements Manager {
         file.saveConfig();
 
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Portals", true)) {
-            CPortal cPortal = new CPortal();
-            WarpSystem.getInstance().getCommands().add(cPortal);
-            cPortal.register(WarpSystem.getInstance());
+            new CPortal().register(WarpSystem.getInstance());
         }
 
 

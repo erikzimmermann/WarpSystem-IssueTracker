@@ -212,14 +212,8 @@ public class IconManager implements Manager {
         }
 
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Warps", true)) {
-            CWarp cWarp = new CWarp();
-            CWarps cWarps = new CWarps();
-
-            WarpSystem.getInstance().getCommands().add(cWarp);
-            WarpSystem.getInstance().getCommands().add(cWarps);
-
-            cWarp.register(WarpSystem.getInstance());
-            cWarps.register(WarpSystem.getInstance());
+            new CWarp().register(WarpSystem.getInstance());
+            new CWarps().register(WarpSystem.getInstance());
         }
 
         int changes = 0;

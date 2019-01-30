@@ -5,15 +5,11 @@ import de.codingair.codingapi.bungeecord.BungeeCordHelper;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.files.FileManager;
 import de.codingair.codingapi.server.Version;
-import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.fancymessages.FancyMessage;
 import de.codingair.codingapi.server.fancymessages.MessageTypes;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
-import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.api.SpigotAPI;
-import de.codingair.warpsystem.spigot.api.events.PlayerGlobalWarpEvent;
-import de.codingair.warpsystem.spigot.api.events.PlayerWarpEvent;
 import de.codingair.warpsystem.spigot.base.commands.CWarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.*;
@@ -22,7 +18,6 @@ import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.managers.UUIDManager;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.UpdateChecker;
-import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestInitialPacket;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
 import de.codingair.warpsystem.utils.Manager;
@@ -32,9 +27,9 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
+import org.bukkit.plugin.InvalidDescriptionException;
+import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
@@ -89,7 +84,6 @@ public class WarpSystem extends JavaPlugin {
     private boolean old = false;
     private boolean ERROR = true;
 
-    private List<CommandBuilder> commands = new ArrayList<>();
     private boolean shouldSave = true;
 
     private SpigotDataHandler dataHandler = new SpigotDataHandler(this);
@@ -97,10 +91,11 @@ public class WarpSystem extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
+
         try {
             checkOldDirectory();
 
-            instance = this;
             API.getInstance().onEnable(this);
             SpigotAPI.getInstance().onEnable(this);
 
@@ -135,7 +130,6 @@ public class WarpSystem extends JavaPlugin {
             this.fileManager.loadAll();
 
             CWarpSystem cWarpSystem = new CWarpSystem();
-            this.commands.add(cWarpSystem);
             cWarpSystem.register(this);
 
             boolean createBackup = false;
@@ -189,7 +183,7 @@ public class WarpSystem extends JavaPlugin {
 
             if(fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Functions.CommandBlocks", true))
                 Bukkit.getPluginManager().registerEvents(new CommandBlockListener(), this);
-        } catch(Exception ex) {
+        } catch(Throwable ex) {
             //make error-report
 
             if(!getDataFolder().exists()) {
@@ -269,18 +263,17 @@ public class WarpSystem extends JavaPlugin {
         this.dataHandler.onDisable();
         if(this.packetListener != null) this.dataHandler.unregister(this.packetListener);
 
-        for(int i = 0; i < this.commands.size(); i++) {
-            this.commands.remove(0).unregister(this);
-        }
-
         destroy();
     }
 
     public void reload(boolean save) {
         this.shouldSave = save;
 
-        Bukkit.getPluginManager().disablePlugin(WarpSystem.getInstance());
-        Bukkit.getPluginManager().enablePlugin(WarpSystem.getInstance());
+        try {
+            API.getInstance().reload(this);
+        } catch(InvalidDescriptionException | InvalidPluginException e) {
+            e.printStackTrace();
+        }
     }
 
     private void startAutoSaver() {
@@ -291,7 +284,6 @@ public class WarpSystem extends JavaPlugin {
     private void destroy() {
         this.dataManager.getManagers().forEach(Manager::destroy);
         this.bungeeFeatureList.clear();
-        this.commands.clear();
     }
 
     private void save(boolean saver) {
@@ -531,20 +523,8 @@ public class WarpSystem extends JavaPlugin {
         this.server = server;
     }
 
-    public List<CommandBuilder> getCommands() {
-        return commands;
-    }
-
     public int getLatestVersionId() {
         return latestVersionId;
-    }
-
-    public CommandBuilder getCommandBuilder(String command) {
-        for(CommandBuilder commandBuilder : this.commands) {
-            if(commandBuilder.getName().equalsIgnoreCase(command)) return commandBuilder;
-        }
-
-        return null;
     }
 
     public UUIDManager getUUIDManager() {
