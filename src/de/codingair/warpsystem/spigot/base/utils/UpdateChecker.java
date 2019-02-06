@@ -94,20 +94,21 @@ public class UpdateChecker {
             return false;
         }
 
-        needsUpdate = false;
-        double currentVersion = Double.parseDouble(WarpSystem.getInstance().getDescription().getVersion().replace(".", "").replace("|", "."));
-        double remoteVersion = Double.parseDouble(this.version.replace(".", "").replace("|", "."));
+        needsUpdate = !WarpSystem.getInstance().getDescription().getVersion().equals(this.version);
+        if(needsUpdate) checkUpdateInfo();
+        return needsUpdate && !notStable();
+    }
 
-        if(remoteVersion > currentVersion) {
-            needsUpdate = true;
+    public boolean notStable() {
+        if(this.updateInfo == null) {
             checkUpdateInfo();
-        }
-
-        return needsUpdate;
+            return notStable();
+        } else return this.updateInfo.toLowerCase().startsWith("not stable");
     }
 
     public String checkUpdateInfo() {
         if(!needsUpdate) return null;
+        if(updateInfo != null) return updateInfo.toLowerCase().startsWith("not stable") ? null : updateInfo;
 
         String url = this.link;
         url = url.replace("/history", "/updates");
@@ -141,6 +142,7 @@ public class UpdateChecker {
                 if(line.contains("updateContainer")) atUpdates = true;
             }
 
+            if(updateInfo.toLowerCase().startsWith("not stable")) return null;
             return updateInfo;
         } catch(Exception ex) {
             return null;

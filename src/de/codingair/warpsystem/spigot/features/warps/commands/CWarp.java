@@ -100,10 +100,10 @@ public class CWarp extends CommandBuilder {
                         return false;
                     }
 
-                    argument = argument.replace("_", " ");
-
                     //Hook for HiddenWarps
                     if(hook.runCommand(sender, label, argument, args)) return false;
+
+                    argument = argument.replace("_", " ");
 
                     Category category = null;
                     if(argument.contains("@")) {

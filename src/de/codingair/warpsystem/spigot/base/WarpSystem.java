@@ -460,8 +460,8 @@ public class WarpSystem extends JavaPlugin {
                 message.addMessages("                         §c§l§n" + getDescription().getName() + " §c- §l" + getDescription().getVersion());
                 message.addMessages("");
                 message.addMessages("    §7Hey there,");
-                message.addMessages("    §7This is the first time for this server running my latest");
-                message.addMessages("    §7version! If you're struggling with all the §cnew stuff§7, run");
+                message.addMessages("    §7This is the first time for this server running my §l" + getDescription().getVersion() + "§7!");
+                message.addMessages("    §7If you're struggling with all the §cnew stuff§7, run");
                 message.addMessages("    §7\"§c/WarpSystem news§7\". And if you'll find some new §cbugs§7,");
                 message.addMessages("    §7please run \"§c/WarpSystem report§7\" to report the bug!");
                 message.addMessages("");
