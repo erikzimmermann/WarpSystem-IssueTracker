@@ -260,7 +260,6 @@ public class GWarps extends GUI {
                         && (editing || (!icon.hasPermission() || p.hasPermission(icon.getPermission())))
                         && this.cursorIcon != icon) addToGUI(p, icon);
             }
-            cIcons.clear();
         }
 
         for(int i = 0; i < size; i++) {
