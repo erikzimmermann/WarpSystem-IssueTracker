@@ -51,6 +51,9 @@ commands:
   editwarp:
     usuage: /EditWarp
     description: A Warp-System-CMD
+  randomtp:
+    usuage: /RandomTP
+    description: A Warp-System-CMD
 
 permissions:
   WarpSystem:

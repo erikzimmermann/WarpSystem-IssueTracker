@@ -77,6 +77,7 @@ WarpSystem:
     #Available commands: '/warp <warp>' or '/globalwarp <warp>'
     #Activates when a player is within 5 blocks of a CommandBlock and the CommandBlock is active
     CommandBlocks: true
+    RandomTeleport: true
 
   TempWarps:
     #Permission to set the available amount of TempWarps: "WarpSystem.TempWarps.2" (Example for a maximum of 2 TempWarps)
@@ -123,12 +124,3 @@ WarpSystem:
       #true: '/warp' opens the WarpGUI
       #false: '/warp <warp>' teleports you to warps
       GUI: false
-
-  # true: block all commands of other plugin, which have this command
-  # false: ignore
-  Dominate_In_Commands:
-    Highest_Priority:
-      Warp: true
-      Warps: true
-      WarpSystem: true
-      Portal: true

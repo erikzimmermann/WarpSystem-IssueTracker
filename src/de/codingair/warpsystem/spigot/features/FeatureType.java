@@ -5,11 +5,12 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
 import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
+import de.codingair.warpsystem.spigot.features.randomteleports.managers.RandomTeleporterManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
 import de.codingair.warpsystem.spigot.features.signs.managers.SignManager;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.utils.Manager;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public enum FeatureType {
     SHORTCUTS(ShortcutManager.class, Priority.LOW, "Shortcuts"),
     TEMP_WARPS(TempWarpManager.class, Priority.LOW, "TempWarps"),
     SIMPLE_WARPS(SimpleWarpManager.class, Priority.HIGH, "SimpleWarps"),
+    RANDOM_TELEPORTS(RandomTeleporterManager.class, Priority.DISABLED, "RandomTeleports"),
     ;
 
     private Class<? extends Manager> managerClass;
@@ -67,6 +69,7 @@ public enum FeatureType {
         HIGHEST,
         HIGH,
         LOW,
-        LOWEST
+        LOWEST,
+        DISABLED
     }
 }
