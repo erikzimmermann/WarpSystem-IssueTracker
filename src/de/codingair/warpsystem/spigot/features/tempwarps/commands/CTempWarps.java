@@ -7,6 +7,8 @@ import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.tools.Location;
+import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
@@ -14,6 +16,7 @@ import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockBreakEvent;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -78,6 +81,11 @@ public class CTempWarps extends CommandBuilder {
                     if(current == 0) {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     } else sender.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Maximum_of_Warps").replace("%AMOUNT%", current + ""));
+                    return false;
+                }
+
+                if(TempWarpManager.getManager().isProtectedRegions() && isProtected((Player) sender)) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Create_Protected"));
                     return false;
                 }
 
@@ -270,6 +278,13 @@ public class CTempWarps extends CommandBuilder {
                 return false;
             }
         });
+    }
+
+    private boolean isProtected(Player player) {
+        PermissionPlayer check = new PermissionPlayer(player);
+        BlockBreakEvent event = new BlockBreakEvent(player.getLocation().getBlock(), check);
+        Bukkit.getPluginManager().callEvent(event);
+        return event.isCancelled();
     }
 
     private static void drawList(Player player, String owner, List<TempWarp> list) {
