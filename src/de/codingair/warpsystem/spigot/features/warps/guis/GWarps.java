@@ -41,6 +41,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -221,6 +222,7 @@ public class GWarps extends GUI {
 
         List<Warp> wIcons = manager.getWarps(category);
         for(Warp icon : wIcons) {
+            if(!icon.hasPermission() && (hideAll(p) || hideAll(p, "Warp")) && !editing) continue;
             ActionObject bound = icon.getAction(Action.BOUND_TO_WORLD);
 
             if((bound == null && world == null) || (bound != null && world != null && world.equals(bound.getValue()))
@@ -232,6 +234,7 @@ public class GWarps extends GUI {
         if(WarpSystem.getInstance().isOnBungeeCord()) {
             List<GlobalWarp> gIcons = manager.getGlobalWarps(category);
             for(GlobalWarp icon : gIcons) {
+                if(!icon.hasPermission() && (hideAll(p) || hideAll(p, "GlobalWarp")) && !editing) continue;
                 ActionObject bound = icon.getAction(Action.BOUND_TO_WORLD);
 
                 if((bound == null && world == null) || (bound != null && world != null && world.equals(bound.getValue()))
@@ -243,6 +246,7 @@ public class GWarps extends GUI {
 
         List<DecoIcon> dIcons = manager.getDecoIcons(category);
         for(DecoIcon icon : dIcons) {
+            if(!icon.hasPermission() && (hideAll(p) || hideAll(p, "Deco")) && !editing) continue;
             ActionObject bound = icon.getAction(Action.BOUND_TO_WORLD);
 
             if((bound == null && world == null) || (bound != null && world != null && world.equals(bound.getValue()))
@@ -254,6 +258,7 @@ public class GWarps extends GUI {
         if(category == null) {
             List<Category> cIcons = manager.getCategories();
             for(Category icon : cIcons) {
+                if(!icon.hasPermission() && (hideAll(p) || hideAll(p, "Category")) && !editing) continue;
                 ActionObject bound = icon.getAction(Action.BOUND_TO_WORLD);
 
                 if((bound == null && world == null) || (bound != null && world != null && world.equals(bound.getValue()))
@@ -619,5 +624,21 @@ public class GWarps extends GUI {
                 setItem(i, new ItemBuilder(getItem(i)).setLore("", Lang.get("Leftclick_Move_Icon")).getItem());
             }
         }
+    }
+
+    private boolean hideAll(Player player) {
+        for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
+            String perm = effectivePermission.getPermission();
+            if(perm.equalsIgnoreCase(WarpSystem.PERMISSION_HIDE_ALL_ICONS)) return true;
+        }
+        return false;
+    }
+
+    private boolean hideAll(Player player, String type) {
+        for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
+            String perm = effectivePermission.getPermission();
+            if(perm.equalsIgnoreCase(WarpSystem.PERMISSION_HIDE_ALL_ICONS + "." + type)) return true;
+        }
+        return false;
     }
 }
