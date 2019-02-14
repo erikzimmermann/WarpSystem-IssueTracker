@@ -25,7 +25,7 @@ public enum FeatureType {
     SHORTCUTS(ShortcutManager.class, Priority.LOW, "Shortcuts"),
     TEMP_WARPS(TempWarpManager.class, Priority.LOW, "TempWarps"),
     SIMPLE_WARPS(SimpleWarpManager.class, Priority.HIGH, "SimpleWarps"),
-    RANDOM_TELEPORTS(RandomTeleporterManager.class, Priority.DISABLED, "RandomTeleports"),
+    RANDOM_TELEPORTS(RandomTeleporterManager.class, Priority.HIGH, "RandomTeleports"),
     ;
 
     private Class<? extends Manager> managerClass;

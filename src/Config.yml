@@ -124,3 +124,63 @@ WarpSystem:
       #true: '/warp' opens the WarpGUI
       #false: '/warp <warp>' teleports you to warps
       GUI: false
+
+  #The standard and max amount of random teleports will be configured with permissions:
+  # "warpsystem.randomteleporters.free.1" » This permissions means, that the player with that permission has a standard amount of 1 free random teleports
+  # "warpsystem.randomteleporters.max.2" » This permissions means, that the player with that permission has a max amount of 2 random teleports, so he could buy one, if it's enabled
+  RandomTeleport:
+    #Costs for one extra teleport (buyable with commands)
+    Buyable:
+      Enabled: true
+      Costs: 500
+    Range:
+      Min: 1000
+      Max: 10000
+    Support:
+      #If enabled, the player will be teleported to a random position, which is not in a protected region
+      ProtectedRegions: true
+      #If enabled, the player will be teleported to a random position, in one of the listed biomes
+      Biome:
+        Enabled: true
+        #Names can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html
+        BiomeList:
+          - OCEAN
+          - PLAINS
+          - DESERT
+          - EXTREME_HILLS
+          - FOREST
+          - TAIGA
+          - SWAMPLAND
+          - RIVER
+          - HELL
+          - SKY
+          - FROZEN_OCEAN
+          - FROZEN_RIVER
+          - ICE_FLATS
+          - ICE_MOUNTAINS
+          - MUSHROOM_ISLAND
+          - MUSHROOM_ISLAND_SHORE
+          - BEACHES
+          - DESERT_HILLS
+          - FOREST_HILLS
+          - TAIGA_HILLS
+          - SMALLER_EXTREME_HILLS
+          - JUNGLE
+          - JUNGLE_HILLS
+          - JUNGLE_EDGE
+          - DEEP_OCEAN
+          - STONE_BEACH
+          - COLD_BEACH
+          - BIRCH_FOREST
+          - BIRCH_FOREST_HILLS
+          - ROOFED_FOREST
+          - TAIGA_COLD
+          - TAIGA_COLD_HILLS
+          - REDWOOD_TAIGA
+          - REDWOOD_TAIGA_HILLS
+          - EXTREME_HILLS_WITH_TREES
+          - SAVANNA
+          - SAVANNA_ROCK
+          - MESA
+          - MESA_ROCK
+          - MESA_CLEAR_ROCK

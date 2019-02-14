@@ -2,13 +2,16 @@ package de.codingair.warpsystem.spigot.features.randomteleports.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.files.loader.UTFConfig;
+import de.codingair.codingapi.server.Sound;
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.randomteleports.commands.CRandomTP;
 import de.codingair.warpsystem.spigot.features.randomteleports.listeners.InteractListener;
-import de.codingair.warpsystem.spigot.features.randomteleports.utils.RandomTeleporter;
+import de.codingair.warpsystem.spigot.features.randomteleports.utils.RandomLocationCalculator;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Biome;
@@ -21,49 +24,35 @@ import java.util.List;
 import java.util.UUID;
 
 public class RandomTeleporterManager implements Manager {
-    public static boolean hasPermission(Player player) {
-        if(player.isOp()) return true;
-
-        int teleports = getInstance().getTeleport(player) + 1;
-        for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
-            String perm = effectivePermission.getPermission();
-
-            if(perm.toLowerCase().startsWith("warpsystem.randomteleporters.")) {
-                int amount = Integer.parseInt(perm.substring(29));
-                if(amount >= teleports) return true;
-            }
-
-        }
-
-        return false;
-    }
-    public static String PERMISSION(int amount) { return "WarpSystem.RandomTeleporters." + amount; }
-    private int costs;
+    private boolean buyable;
+    private double costs;
     private double minRange;
     private double maxRange;
-    private boolean worldGuardSupport;
-    private List<Biome> biomeList = new ArrayList<>();
+    private boolean protectedRegions;
+    private List<Biome> biomeList;
+    private List<Player> searching = new ArrayList<>();
 
     private List<Location> interactBlocks = new ArrayList<>();
     private InteractListener listener = new InteractListener();
 
     @Override
     public boolean load() {
+        if(WarpSystem.getInstance().getFileManager().getFile("PlayData") == null) WarpSystem.getInstance().getFileManager().loadFile("PlayData", "/Memory/");
         if(WarpSystem.getInstance().getFileManager().getFile("Config") == null) WarpSystem.getInstance().getFileManager().loadFile("Config", "/");
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
         UTFConfig config = file.getConfig();
 
         WarpSystem.log("  > Loading RandomTeleporters");
-        Bukkit.getPluginManager().registerEvents(this.listener, WarpSystem.getInstance());
-        new CRandomTP().register(WarpSystem.getInstance());
 
-        this.costs = config.getInt("WarpSystem.RandomTeleport.Costs", 500);
+        this.buyable = config.getBoolean("WarpSystem.RandomTeleport.Buyable.Enabled", true);
+        this.costs = config.getDouble("WarpSystem.RandomTeleport.Buyable.Costs", 500.0);
         this.minRange = config.getDouble("WarpSystem.RandomTeleport.Range.Min", 1000);
         this.maxRange = config.getDouble("WarpSystem.RandomTeleport.Range.Max", 10000);
 
-        this.worldGuardSupport = config.getBoolean("WarpSystem.RandomTeleport.Support.WorldGuard", true);
+        this.protectedRegions = config.getBoolean("WarpSystem.RandomTeleport.Support.ProtectedRegions", true);
         if(config.getBoolean("WarpSystem.RandomTeleport.Support.Biome.Enabled", true)) {
             List<String> configBiomes = config.getStringList("WarpSystem.RandomTeleport.Support.Biome.BiomeList");
+            biomeList = new ArrayList<>();
 
             if(configBiomes == null || configBiomes.isEmpty()) {
                 for(Biome value : Biome.values()) {
@@ -72,10 +61,11 @@ public class RandomTeleporterManager implements Manager {
                 }
             } else {
                 for(String biome : configBiomes) {
-                    try {
-                        Biome b = Biome.valueOf(biome);
-                        if(b != Biome.VOID) this.biomeList.add(b);
-                    } catch(Throwable ignored) {
+                    for(Biome value : Biome.values()) {
+                        if(value.name().equalsIgnoreCase(biome) && !biomeList.contains(value)) {
+                            biomeList.add(value);
+                            break;
+                        }
                     }
                 }
             }
@@ -89,6 +79,9 @@ public class RandomTeleporterManager implements Manager {
         for(String s : interactBlocks) {
             this.interactBlocks.add(Location.getByJSONString(s));
         }
+
+        Bukkit.getPluginManager().registerEvents(this.listener, WarpSystem.getInstance());
+        new CRandomTP().register(WarpSystem.getInstance());
 
         WarpSystem.log("    ...got " + this.interactBlocks.size() + " InteractBlock(s)");
         return true;
@@ -114,33 +107,153 @@ public class RandomTeleporterManager implements Manager {
     @Override
     public void destroy() {
         this.interactBlocks.clear();
-        this.biomeList.clear();
+        if(this.biomeList != null) this.biomeList.clear();
         HandlerList.unregisterAll(this.listener);
     }
 
+    public boolean canBuy(Player player) {
+        int bought = RandomTeleporterManager.getInstance().getBoughtTeleports(player);
+        int free = RandomTeleporterManager.getInstance().getFreeTeleportAmount(player);
+        int max = RandomTeleporterManager.getInstance().getMaxTeleportAmount(player);
+
+        return max - free - bought > 0;
+    }
+
+    public boolean canTeleport(Player player) {
+        UUID u = WarpSystem.getInstance().getUUIDManager().get(player);
+        int bought = RandomTeleporterManager.getInstance().getBoughtTeleports(u);
+        int teleports = RandomTeleporterManager.getInstance().getTeleports(u);
+        int free = RandomTeleporterManager.getInstance().getFreeTeleportAmount(player);
+
+        return free + bought - teleports > 0;
+    }
+
+    public int getMaxTeleportAmount(Player player) {
+        if(player.isOp()) return -1;
+
+        for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
+            String perm = effectivePermission.getPermission();
+
+            if(perm.toLowerCase().startsWith("warpsystem.*")
+                    || perm.toLowerCase().startsWith("warpsystem.randomteleporters.*")) return -1;
+
+            if(perm.toLowerCase().startsWith("warpsystem.randomteleporters.max.")) {
+                String s = perm.substring(33);
+                if(s.equals("*")) return -1;
+
+                try {
+                    return Integer.parseInt(s);
+                } catch(Throwable ignored) {
+                }
+            }
+
+        }
+
+        return 0;
+    }
+
+    public int getFreeTeleportAmount(Player player) {
+        if(player.isOp()) return -1;
+
+        for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
+            String perm = effectivePermission.getPermission();
+
+            if(perm.toLowerCase().startsWith("warpsystem.*")
+                    || perm.toLowerCase().startsWith("warpsystem.randomteleporters.*")) return -1;
+
+            if(perm.toLowerCase().startsWith("warpsystem.randomteleporters.free.")) {
+                String s = perm.substring(34);
+                if(s.equals("*")) return -1;
+
+                try {
+                    return Integer.parseInt(s);
+                } catch(Throwable ignored) {
+                }
+            }
+        }
+
+        return 0;
+    }
+
     public void tryToTeleport(Player player) {
-        if(!hasPermission(player)) {
+        if(!canTeleport(player)) {
             player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_No_Teleports_Left"));
             return;
         }
 
-        RandomTeleporter t = new RandomTeleporter(player);
-        Thread thread = new Thread(t);
-        thread.start();
+        if(searching.contains(player)) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Already_Searching"));
+            return;
+        }
+
+        searching.add(player);
+
+        RandomLocationCalculator t = new RandomLocationCalculator(player, new Callback<Location>() {
+            @Override
+            public void accept(Location loc) {
+                if(loc == null) {
+                    //no location found, try again
+                    player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_No_Location_Found"));
+                } else {
+                    //teleported
+                    UUID uuid = WarpSystem.getInstance().getUUIDManager().get(player);
+                    setTeleports(uuid, getTeleports(uuid) + 1);
+                    player.teleport(loc);
+                    Sound.ENDERMAN_TELEPORT.playSound(player);
+                    player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Teleported"));
+                }
+
+                searching.remove(player);
+            }
+        });
+        Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), t);
     }
 
-    public int getTeleport(Player player) {
+    public void setTeleports(Player player, int teleports) {
+        setTeleports(WarpSystem.getInstance().getUUIDManager().get(player), teleports);
+    }
+
+    public void setTeleports(UUID uuid, int teleports) {
+        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("PlayData");
+        UTFConfig config = file.getConfig();
+        config.set("RandomTeleporter." + uuid.toString() + ".Teleports", teleports);
+        file.saveConfig();
+    }
+
+    public int getTeleports(Player player) {
         return getTeleports(WarpSystem.getInstance().getUUIDManager().get(player));
     }
 
     public int getTeleports(UUID uuid) {
-        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
+        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("PlayData");
         UTFConfig config = file.getConfig();
 
-        return config.getInt("RandomTeleporter.Teleports." + uuid.toString(), 0);
+        return config.getInt("RandomTeleporter." + uuid.toString() + ".Teleports", 0);
     }
 
-    public int getCosts() {
+    public void setBoughtTeleports(Player player, int teleports) {
+        setBoughtTeleports(WarpSystem.getInstance().getUUIDManager().get(player), teleports);
+    }
+
+    public void setBoughtTeleports(UUID uuid, int teleports) {
+        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("PlayData");
+        UTFConfig config = file.getConfig();
+        config.set("RandomTeleporter." + uuid.toString() + ".Bought", teleports);
+        file.saveConfig();
+    }
+
+    public int getBoughtTeleports(Player player) {
+        return getBoughtTeleports(WarpSystem.getInstance().getUUIDManager().get(player));
+    }
+
+    public int getBoughtTeleports(UUID uuid) {
+        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("PlayData");
+        UTFConfig config = file.getConfig();
+
+        return config.getInt("RandomTeleporter." + uuid.toString() + ".Bought", 0);
+    }
+
+    public double getCosts() {
         return costs;
     }
 
@@ -152,8 +265,8 @@ public class RandomTeleporterManager implements Manager {
         return maxRange;
     }
 
-    public boolean isWorldGuardSupport() {
-        return worldGuardSupport;
+    public boolean isProtectedRegions() {
+        return protectedRegions;
     }
 
     public List<Biome> getBiomeList() {
@@ -170,5 +283,9 @@ public class RandomTeleporterManager implements Manager {
 
     public static RandomTeleporterManager getInstance() {
         return ((RandomTeleporterManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.RANDOM_TELEPORTS));
+    }
+
+    public boolean isBuyable() {
+        return buyable && AdapterType.canEnable();
     }
 }

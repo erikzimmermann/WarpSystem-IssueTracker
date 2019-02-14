@@ -56,46 +56,48 @@ commands:
     description: A Warp-System-CMD
 
 permissions:
-  WarpSystem:
+  warpsystem:
     default: op
     description: Default start of each permission node
     children:
-      WarpSystem.Notify: true
-      WarpSystem.Modify.*: true
-      WarpSystem.Use.*: true
-      WarpSystem.ByPass.*: true
-      WarpSystem.Admin: true
-  WarpSystem.Admin:
+      warpsystem.notify: true
+      warpsystem.modify.*: true
+      warpsystem.use.*: true
+      warpsystem.bypass.*: true
+      warpsystem.Admin: true
+  warpsystem.Admin:
     description: Permission to be an admin (for different gui-size e.g.)
-  WarpSystem.Notify:
-    description: Notify for warnings or new updates
-  WarpSystem.Modify.*:
-    description: Notify for warnings or new updates
+  warpsystem.notify:
+    description: notify for warnings or new updates
+  warpsystem.modify.*:
+    description: notify for warnings or new updates
     children:
-      WarpSystem.Modify: true
-      WarpSystem.Modify.Icons: true
-      WarpSystem.Modify.WarpSigns: true
-      WarpSystem.Modify.GlobalWarps: true
-      WarpSystem.Modify.SimpleWarps: true
-      WarpSystem.Modify.Portals: true
-      WarpSystem.Modify.NativePortals: true
-  WarpSystem.Use.*:
+      warpsystem.modify: true
+      warpsystem.modify.icons: true
+      warpsystem.modify.warpSigns: true
+      warpsystem.modify.globalwarps: true
+      warpsystem.modify.simplewarps: true
+      warpsystem.modify.portals: true
+      warpsystem.modify.nativePortals: true
+      warpsystem.modify.randomTeleporters: true
+  warpsystem.use.*:
     description: Player can use features
     children:
-      WarpSystem.Use.Warps: true
-      WarpSystem.Use.WarpSigns: true
-      WarpSystem.Use.TempWarps: true
-      WarpSystem.Use.GlobalWarps: true
-      WarpSystem.Use.SimpleWarps: true
-      WarpSystem.Use.Portals: true
-      WarpSystem.Use.NativePortals: true
-  WarpSystem.ByPass.*:
+      warpsystem.use.warps: true
+      warpsystem.use.warpSigns: true
+      warpsystem.use.tempwarps: true
+      warpsystem.use.globalwarps: true
+      warpsystem.use.simplewarps: true
+      warpsystem.use.portals: true
+      warpsystem.use.nativePortals: true
+      warpsystem.use.randomTeleporters: true
+  warpsystem.bypass.*:
     description: Permission to bypass different things
     children:
-      WarpSystem.ByPass.Teleport.*: true
-      WarpSystem.ByPass.Maintenance: true
-  WarpSystem.ByPass.Teleport.*:
+      warpsystem.bypass.teleport.*: true
+      warpsystem.bypass.maintenance: true
+  warpsystem.bypass.Teleport.*:
     description: Permission to bypass teleport parameters
     children:
-      WarpSystem.ByPass.Teleport.Costs: true
-      WarpSystem.ByPass.Teleport.Delay: true
+      warpsystem.bypass.teleport.costs: true
+      warpsystem.bypass.teleport.delay: true
