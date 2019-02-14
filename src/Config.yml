@@ -115,6 +115,9 @@ WarpSystem:
       CostsPerInterval: 5
       PublicCosts: 5
       MessageCosts: 5
+    Support:
+      #If enabled, the player can't create TempWarps in regions, where he cannot build
+      ProtectedRegions: false
 
   GlobalWarps:
     Use_Warps_Of_WarpsGUI: false

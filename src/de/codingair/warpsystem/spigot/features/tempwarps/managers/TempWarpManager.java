@@ -78,6 +78,7 @@ public class TempWarpManager implements Manager, Ticker {
     private int nameChangeCosts;
     private int messageChangeCosts;
     private int inactiveTime;
+    private boolean protectedRegions;
     private List<Integer> inactiveReminds;
     private boolean refund;
 
@@ -117,6 +118,7 @@ public class TempWarpManager implements Manager, Ticker {
         this.nameChangeCosts = config.getInt("WarpSystem.TempWarps.Name.Edit_Costs", 50);
         this.inactiveReminds = config.getIntegerList("WarpSystem.TempWarps.Inactive.Reminds");
         this.refund = config.getBoolean("WarpSystem.TempWarps.Refund", true);
+        this.protectedRegions = config.getBoolean("WarpSystem.TempWarps.Support.ProtectedRegions", false);
 
         String timeUnit = config.getString("WarpSystem.TempWarps.Time.Interval", "m");
         TimeUnit unit = getTimeUnitOfString(timeUnit);
@@ -538,5 +540,9 @@ public class TempWarpManager implements Manager, Ticker {
 
     public boolean isRefund() {
         return refund;
+    }
+
+    public boolean isProtectedRegions() {
+        return protectedRegions;
     }
 }
