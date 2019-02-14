@@ -41,16 +41,29 @@ public class TempWarpManager implements Manager, Ticker {
             String perm = effectivePermission.getPermission();
 
             if(perm.toLowerCase().startsWith("warpsystem.tempwarps.")) {
-                int amount = Integer.parseInt(perm.substring(21));
-                if(amount >= warps) return true;
+                String s = perm.substring(21);
+                if(s.equals("*")) return true;
+
+                try {
+                    int amount = Integer.parseInt(s);
+                    if(amount >= warps) return true;
+                } catch(Throwable ingored) {
+                }
             }
 
         }
 
         return false;
     }
-    public static String PERMISSION(int amount) { return "WarpSystem.TempWarps." + amount; }
-    public static String ERROR_NOT_AVAILABLE(String name) { return "§8[§4§lERROR§4 - WarpSystem§8] §cThe TempWarp is not available. Check the info of §n" + name + "§c and take a look to the worlds!"; }
+
+    public static String PERMISSION(int amount) {
+        return "WarpSystem.TempWarps." + amount;
+    }
+
+    public static String ERROR_NOT_AVAILABLE(String name) {
+        return "§8[§4§lERROR§4 - WarpSystem§8] §cThe TempWarp is not available. Check the info of §n" + name + "§c and take a look to the worlds!";
+    }
+
     private List<EmptyTempWarp> reserved = new ArrayList<>();
     private List<TempWarp> warps = new ArrayList<>();
 

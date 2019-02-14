@@ -12,6 +12,8 @@ public class DataManager {
 
     public DataManager() {
         for(FeatureType.Priority value : FeatureType.Priority.values()) {
+            if(value == FeatureType.Priority.DISABLED) continue;
+
             for(FeatureType ft : FeatureType.values(value)) {
                 if(!ft.isActive()) continue;
 

@@ -47,6 +47,7 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_MODIFY_SIMPLE_WARPS = "WarpSystem.Modify.SimpleWarps";
     public static final String PERMISSION_MODIFY_PORTALS = "WarpSystem.Modify.Portals";
     public static final String PERMISSION_MODIFY_NATIVE_PORTALS = "WarpSystem.Modify.NativePortals";
+    public static final String PERMISSION_MODIFY_RANDOM_TELEPORTER = "WarpSystem.Modify.RandomTeleporters";
     public static final String PERMISSION_USE_WARPS = "WarpSystem.Use.Warps";
     public static final String PERMISSION_USE_WARP_SIGNS = "WarpSystem.Use.WarpSigns";
     public static final String PERMISSION_USE_GLOBAL_WARPS = "WarpSystem.Use.GlobalWarps";
@@ -54,6 +55,7 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_USE_TEMP_WARPS = "WarpSystem.Use.TempWarps";
     public static final String PERMISSION_USE_PORTALS = "WarpSystem.Use.Portals";
     public static final String PERMISSION_USE_NATIVE_PORTALS = "WarpSystem.Use.NativePortals";
+    public static final String PERMISSION_USE_RANDOM_TELEPORTER = "WarpSystem.Use.RandomTeleporters";
     public static final String PERMISSION_ByPass_Maintenance = "WarpSystem.ByPass.Maintenance";
     public static final String PERMISSION_ByPass_Teleport_Costs = "WarpSystem.ByPass.Teleport.Costs";
     public static final String PERMISSION_ByPass_Teleport_Delay = "WarpSystem.ByPass.Teleport.Delay";
