@@ -135,6 +135,7 @@ ENG:
   Native_Portals: '&cNative Portals &7- &cEditor'
   Water_Portal: '&bWater portal'
   Lava_Portal: '&cLava portal'
+  Air_Portal: '&eAir portal'
   Nether_Portal: '&4Nether portal'
   End_Portal: '&9End portal'
   NativePortal_Material: Portal material
@@ -451,6 +452,7 @@ GER:
   Native_Portals: '&cNative Portals &7- &cEditor'
   Water_Portal: '&bWasser-Portal'
   Lava_Portal: '&cLava-Portal'
+  Air_Portal: '&eLuft-Portal'
   Nether_Portal: '&4Nether-Portal'
   End_Portal: '&9End-Portal'
   NativePortal_Material: Portal-Material
