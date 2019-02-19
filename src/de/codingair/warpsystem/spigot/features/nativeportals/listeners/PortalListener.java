@@ -14,7 +14,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityPortalEnterEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
@@ -38,19 +37,18 @@ public class PortalListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void onPortal(EntityPortalEvent e) {
-        if(e.getEntity() instanceof Player) {
-            Player player = (Player) e.getEntity();
-            if(NativePortalManager.getInstance().getNoTeleport().contains(player)
-                    || NativePortalManager.getInstance().isEditing(player)
-                    || WarpSystem.getInstance().getTeleportManager().isTeleporting(player)
-                    || API.getRemovable(player, GEditor.class) != null) {
-                e.setCancelled(true);
-                return;
-            }
+    public void onPortal(PlayerPortalEvent e) {
+        Player player = e.getPlayer();
+        if(NativePortalManager.getInstance().getNoTeleport().contains(player)
+                || NativePortalManager.getInstance().isEditing(player)
+                || WarpSystem.getInstance().getTeleportManager().isTeleporting(player)
+                || API.getRemovable(player, GEditor.class) != null) {
+            e.setCancelled(true);
         }
+    }
 
-
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onPortal(EntityPortalEvent e) {
         if(e.getEntity() instanceof LivingEntity) {
             LivingEntity le = (LivingEntity) e.getEntity();
 

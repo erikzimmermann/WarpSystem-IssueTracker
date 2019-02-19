@@ -170,6 +170,7 @@ public class GEditor extends GUI {
 
         String waterPortal = Lang.get("Water_Portal");
         String lavaPortal = Lang.get("Lava_Portal");
+        String airPortal = Lang.get("Air_Portal");
         String netherPortal = Lang.get("Nether_Portal");
         String endPortal = Lang.get("End_Portal");
 
@@ -314,6 +315,20 @@ public class GEditor extends GUI {
                     @Override
                     public void onClick(InventoryClickEvent e) {
                         PortalType next = PortalType.LAVA;
+                        if(type != next) {
+                            changed = true;
+                            type = next;
+                        }
+
+                        menu = Menu.MAIN;
+                        reinitialize();
+                    }
+                }.setOption(option));
+
+                addButton(new ItemButton(4, 2, new ItemBuilder(XMaterial.WHITE_STAINED_GLASS_PANE).setName("§8» §b" + airPortal).getItem()) {
+                    @Override
+                    public void onClick(InventoryClickEvent e) {
+                        PortalType next = PortalType.AIR;
                         if(type != next) {
                             changed = true;
                             type = next;
