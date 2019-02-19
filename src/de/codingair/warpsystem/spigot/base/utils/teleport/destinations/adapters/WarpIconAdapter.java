@@ -90,6 +90,6 @@ public class WarpIconAdapter implements DestinationAdapter {
     @Override
     public Location buildLocation(String id) {
         Warp warp = IconManager.getInstance().getWarp(id);
-        return warp == null ? null : warp.getLocation().clone();
+        return warp == null ? null : (warp.getLocation() == null ? null : warp.getLocation().clone());
     }
 }
