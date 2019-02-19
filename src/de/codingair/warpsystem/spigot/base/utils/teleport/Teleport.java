@@ -4,6 +4,7 @@ import de.codingair.codingapi.particles.animations.Animation;
 import de.codingair.codingapi.particles.animations.playeranimations.CircleAnimation;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.server.Sound;
+import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
@@ -19,7 +20,6 @@ public class Teleport {
     private Animation animation;
     private BukkitRunnable runnable;
 
-    private Sound finishSound = Sound.ENDERMAN_TELEPORT;
     private Sound cancelSound = Sound.ITEM_BREAK;
 
     private long startTime = 0;
@@ -28,19 +28,23 @@ public class Teleport {
 
     private String displayName;
     private int seconds;
+    private SoundData teleportSound;
     private double costs;
     private boolean showMessage;
     private boolean canMove;
     private String message;
     private boolean silent;
+    private boolean afterEffects;
     private Callback<TeleportResult> callback;
 
-    public Teleport(Player player, Destination destination, String displayName, int seconds, double costs, String message, boolean canMove, boolean silent, Callback<TeleportResult> callback) {
+    public Teleport(Player player, Destination destination, String displayName, int seconds, double costs, String message, boolean canMove, boolean silent, SoundData teleportSound, boolean afterEffects, Callback<TeleportResult> callback) {
         this.player = player;
         this.destination = destination;
         this.displayName = displayName;
         this.seconds = seconds;
         this.costs = costs;
+        this.teleportSound = teleportSound;
+        this.afterEffects = afterEffects;
         this.message = message;
         this.canMove = canMove;
         this.silent = silent;
@@ -111,8 +115,8 @@ public class Teleport {
         }
 
         if(player.isOnline()) {
-            playAfterEffects(player);
-            if(finishSound != null) finishSound.playSound(player);
+            if(afterEffects) playAfterEffects(player);
+            if(teleportSound != null) teleportSound.play(player);
         }
     }
 
@@ -149,12 +153,12 @@ public class Teleport {
         return runnable;
     }
 
-    public Sound getFinishSound() {
-        return finishSound;
+    public SoundData getTeleportSound() {
+        return teleportSound;
     }
 
-    public void setFinishSound(Sound finishSound) {
-        this.finishSound = finishSound;
+    public void setTeleportSound(SoundData teleportSound) {
+        this.teleportSound = teleportSound;
     }
 
     public Sound getCancelSound() {

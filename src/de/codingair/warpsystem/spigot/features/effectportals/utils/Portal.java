@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.portals.utils;
+package de.codingair.warpsystem.spigot.features.effectportals.utils;
 
 
 import de.codingair.codingapi.API;
@@ -14,8 +14,11 @@ import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
+import de.codingair.warpsystem.spigot.features.effectportals.managers.PortalManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -29,7 +32,7 @@ import java.util.UUID;
 public class Portal implements Removable {
     private final UUID uniqueId = UUID.randomUUID();
     private Location start;
-    private Location destination;
+    private Destination destination;
 
     private AnimationType animationType;
     private Particle particle;
@@ -54,13 +57,13 @@ public class Portal implements Removable {
     private boolean disabled = false;
 
     public Portal(Portal portal) {
-        this(portal.getStart(), portal.getDestination(), portal.getAnimationType(), portal.getAnimationHeight(), portal.getParticle(), portal.getTeleportRadius(), portal.getStartName(), portal.getDestinationName(), portal.getTeleportSound(), 2.2, portal.isStartHoloStatus(), portal.isDestinationHoloStatus());
+        this(portal.getStart(), new Destination().apply(portal.getDestination()), portal.getAnimationType(), portal.getAnimationHeight(), portal.getParticle(), portal.getTeleportRadius(), portal.getStartName(), portal.getDestinationName(), portal.getTeleportSound(), 2.2, portal.isStartHoloStatus(), portal.isDestinationHoloStatus());
 
         this.hologramHeight = portal.getHologramHeight();
         this.permission = portal.getPermission();
     }
 
-    public Portal(Location start, Location destination, AnimationType animationType, double animationHeight, Particle particle, double teleportRadius, String startName, String destinationName, SoundData teleportSound, double
+    public Portal(Location start, Destination destination, AnimationType animationType, double animationHeight, Particle particle, double teleportRadius, String startName, String destinationName, SoundData teleportSound, double
             hologramHeight, boolean startHoloStatus, boolean destinationHoloStatus) {
         this.start = start;
         this.destination = destination;
@@ -79,17 +82,17 @@ public class Portal implements Removable {
 
     public void add(Player player) {
         this.startHolo.addPlayer(player);
-        this.destinationHolo.addPlayer(player);
+        if(this.destinationHolo != null) this.destinationHolo.addPlayer(player);
     }
 
     public void remove(Player player) {
         this.startHolo.removePlayer(player);
-        this.destinationHolo.removePlayer(player);
+        if(this.destinationHolo != null) this.destinationHolo.removePlayer(player);
     }
 
     public void applyAttrs(Portal portal) {
         this.start = portal.getStart().clone();
-        this.destination = portal.getDestination().clone();
+        this.destination.apply(portal.getDestination());
         this.animationType = portal.getAnimationType();
         this.animationHeight = portal.getAnimationHeight();
         this.particle = portal.getParticle();
@@ -113,25 +116,41 @@ public class Portal implements Removable {
     public void updateHolograms() {
         if(this.disabled) return;
 
-        if(this.startHolo == null) this.startHolo = new Hologram(this.start.clone().add(0, this.hologramHeight, 0), WarpSystem.getInstance(), ChatColor.translateAlternateColorCodes('&', startName.replace("_", " ")));
+        org.bukkit.Location destination = null;
+        if(this.destination.getAdapter() instanceof PortalDestinationAdapter) {
+            destination = this.destination.buildLocation();
+        }
+
+        if(this.startHolo == null)
+            this.startHolo = new Hologram(this.start.clone().add(0, this.hologramHeight, 0), WarpSystem.getInstance(), ChatColor.translateAlternateColorCodes('&', startName.replace("_", " ")));
         else {
             this.startHolo.teleport(this.start.clone().add(0, this.hologramHeight, 0));
             this.startHolo.setText(ChatColor.translateAlternateColorCodes('&', startName.replace("_", " ")));
         }
         this.startHolo.setVisible(this.startHoloStatus);
 
-        if(this.destinationHolo == null) this.destinationHolo = new Hologram(this.destination.clone().add(0, this.hologramHeight, 0), WarpSystem.getInstance(), ChatColor.translateAlternateColorCodes('&', destinationName.replace("_", " ")));
-        else {
-            this.destinationHolo.teleport(this.destination.clone().add(0, this.hologramHeight, 0));
-            this.destinationHolo.setText(ChatColor.translateAlternateColorCodes('&', destinationName.replace("_", " ")));
+        if(destination != null) {
+            if(this.destinationHolo == null)
+                this.destinationHolo = new Hologram(destination.clone().add(0, this.hologramHeight, 0), WarpSystem.getInstance(), ChatColor.translateAlternateColorCodes('&', destinationName.replace("_", " ")));
+            else {
+                this.destinationHolo.teleport(destination.clone().add(0, this.hologramHeight, 0));
+                this.destinationHolo.setText(ChatColor.translateAlternateColorCodes('&', destinationName.replace("_", " ")));
+            }
+            this.destinationHolo.setVisible(this.destinationHoloStatus);
+        } else {
+            if(this.destinationHolo != null) {
+                this.destinationHolo.destroy();
+                this.destinationHolo = null;
+            }
         }
-        this.destinationHolo.setVisible(this.destinationHoloStatus);
 
         this.startHolo.update();
-        this.destinationHolo.update();
-
         this.startHolo.addAll();
-        this.destinationHolo.addAll();
+
+        if(this.destinationHolo != null) {
+            this.destinationHolo.update();
+            this.destinationHolo.addAll();
+        }
     }
 
     public void updateAnimations() {
@@ -139,34 +158,39 @@ public class Portal implements Removable {
         if(this.startAnim != null && this.startAnim.isRunning()) this.startAnim.setRunning(false);
         if(this.destinationAnim != null && this.destinationAnim.isRunning()) this.destinationAnim.setRunning(false);
 
+        org.bukkit.Location destination = null;
+        if(this.destination.getAdapter() instanceof PortalDestinationAdapter) {
+            destination = this.destination.buildLocation();
+        } else if(this.destinationAnim != null) this.destinationAnim = null;
+
         switch(animationType) {
             case SINUS: {
                 this.startAnim = new SinusAnimation(particle, start, this.teleportRadius, this.animationHeight);
-                this.destinationAnim = new SinusAnimation(particle, destination, this.teleportRadius, this.animationHeight);
+                if(destination != null) this.destinationAnim = new SinusAnimation(particle, destination, this.teleportRadius, this.animationHeight);
                 break;
             }
 
             case CIRCLE: {
                 this.startAnim = new CircleAnimation(particle, this.teleportRadius, this.animationHeight, start);
-                this.destinationAnim = new CircleAnimation(particle, this.teleportRadius, this.animationHeight, destination);
+                if(destination != null) this.destinationAnim = new CircleAnimation(particle, this.teleportRadius, this.animationHeight, destination);
                 break;
             }
 
             case ROTATING_CIRCLE: {
                 this.startAnim = new RotatingCircleAnimation(particle, this.teleportRadius, this.animationHeight, start);
-                this.destinationAnim = new RotatingCircleAnimation(particle, this.teleportRadius, this.animationHeight, destination);
+                if(destination != null) this.destinationAnim = new RotatingCircleAnimation(particle, this.teleportRadius, this.animationHeight, destination);
                 break;
             }
 
             case PULSING_CIRCLE: {
                 this.startAnim = new PulsingCircleAnimation(particle, this.teleportRadius, this.animationHeight, start, 15);
-                this.destinationAnim = new PulsingCircleAnimation(particle, this.teleportRadius, this.animationHeight, destination, 15);
+                if(destination != null) this.destinationAnim = new PulsingCircleAnimation(particle, this.teleportRadius, this.animationHeight, destination, 15);
                 break;
             }
         }
 
         this.startAnim.setRunning(running);
-        this.destinationAnim.setRunning(running);
+        if(this.destinationAnim != null) this.destinationAnim.setRunning(running);
     }
 
     @Override
@@ -198,7 +222,8 @@ public class Portal implements Removable {
         return start;
     }
 
-    public Location getDestination() {
+    public Destination getDestination() {
+        if(destination == null) this.destination = new Destination();
         return destination;
     }
 
@@ -227,10 +252,10 @@ public class Portal implements Removable {
 
         if(running) {
             this.startHolo.addAll();
-            this.destinationHolo.addAll();
+            if(this.destinationHolo != null) this.destinationHolo.addAll();
         } else {
             this.startHolo.removeAll();
-            this.destinationHolo.removeAll();
+            if(this.destinationHolo != null) this.destinationHolo.removeAll();
         }
 
         if(running) API.addRemovable(this);
@@ -336,26 +361,24 @@ public class Portal implements Removable {
 
         player.teleport(this.start);
 
-        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Portals", true)) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", this.startName));
-        }
-
-        if(this.teleportSound != null) this.teleportSound.play(player);
+        WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.EffectPortal, new Destination(new LocationAdapter(this.start)), this.destinationName, 0, true, true,
+                WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Portals", true) ?
+                        Lang.getPrefix() + Lang.get("Teleported_To") : null,
+                false, this.teleportSound, false, null);
     }
 
     public void teleportToDestination(Player player) {
+        if(this.destination == null || this.destination.getAdapter() == null || this.destination.getId() == null) return;
+
         if(this.permission != null && !player.hasPermission(this.permission)) {
             player.sendMessage(Lang.getPrefix() + Lang.get("Portal_Insufficient_Permissions"));
             return;
         }
 
-        player.teleport(this.destination);
-
-        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Portals", true)) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("Teleported_To").replace("%warp%", this.destinationName));
-        }
-
-        if(this.teleportSound != null) this.teleportSound.play(player);
+        WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.EffectPortal, this.destination, this.startName, 0, true, true,
+                WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Portals", true) ?
+                        Lang.getPrefix() + Lang.get("Teleported_To") : null,
+                false, this.teleportSound, !(this.destination.getAdapter() instanceof PortalDestinationAdapter), null);
     }
 
     public boolean isRegistered() {
@@ -371,7 +394,7 @@ public class Portal implements Removable {
         JSONObject json = new JSONObject();
 
         json.put("Start", this.start.toJSONString(4));
-        json.put("Destination", this.destination.toJSONString(4));
+        json.put("Destination", this.destination.toJSONString());
         json.put("AnimationType", this.animationType.name());
         json.put("AnimationHeight", this.getAnimationHeight());
         json.put("Particle", this.particle.name());
@@ -394,7 +417,14 @@ public class Portal implements Removable {
             JSONObject json = (JSONObject) new JSONParser().parse(code);
 
             Location start = Location.getByJSONString((String) json.get("Start"));
-            Location destination = Location.getByJSONString((String) json.get("Destination"));
+
+            Destination destination;
+            try {
+                destination = new Destination((String) json.get("Destination"));
+            } catch(Throwable ex) {
+                destination = new Destination((String) json.get("Destination"), new PortalDestinationAdapter());
+            }
+
             AnimationType animationType = AnimationType.valueOf((String) json.get("AnimationType"));
             double animationHeight = Double.parseDouble(json.get("AnimationHeight") + "");
             Particle particle = Particle.valueOf((String) json.get("Particle"));

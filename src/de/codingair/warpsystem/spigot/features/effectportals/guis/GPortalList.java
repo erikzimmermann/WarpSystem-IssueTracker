@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.portals.guis;
+package de.codingair.warpsystem.spigot.features.effectportals.guis;
 
 import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
@@ -14,9 +14,9 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
-import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
-import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
+import de.codingair.warpsystem.spigot.features.effectportals.PortalEditor;
+import de.codingair.warpsystem.spigot.features.effectportals.utils.Portal;
+import de.codingair.warpsystem.spigot.features.effectportals.managers.PortalManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

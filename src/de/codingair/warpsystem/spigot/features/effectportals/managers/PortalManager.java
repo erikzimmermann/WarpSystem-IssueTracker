@@ -1,10 +1,10 @@
-package de.codingair.warpsystem.spigot.features.portals.managers;
+package de.codingair.warpsystem.spigot.features.effectportals.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.features.portals.commands.CPortal;
-import de.codingair.warpsystem.spigot.features.portals.listeners.PortalListener;
-import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
+import de.codingair.warpsystem.spigot.features.effectportals.listeners.PortalListener;
+import de.codingair.warpsystem.spigot.features.effectportals.utils.Portal;
+import de.codingair.warpsystem.spigot.features.effectportals.commands.CPortal;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 
@@ -64,7 +64,7 @@ public class PortalManager implements Manager {
 
         WarpSystem.log("    > Verify that worlds are available");
         for(Portal portal : this.portals) {
-            if(portal.getStart().getWorld() == null || portal.getDestination().getWorld() == null) {
+            if(portal.getStart().getWorld() == null) {
                 portal.setDisabled(true);
                 success = false;
             }
@@ -97,7 +97,7 @@ public class PortalManager implements Manager {
         List<String> data = new ArrayList<>();
 
         for(Portal portal : this.portals) {
-            if(portal.getStart().getWorld() == null || portal.getDestination().getWorld() == null) continue;
+            if(portal.getStart().getWorld() == null) continue;
             data.add(portal.toJSONString());
         }
 

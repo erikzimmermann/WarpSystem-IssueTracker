@@ -73,13 +73,14 @@ ENG:
   PORTAL_GO_TO_PORTAL: '&7You have 30 seconds to go into a portal.'
   Apply_Delete_No: '&7No, &akeep it&7.'
   Question_Delete_Portal: '&7Do you really want to &cdelete &7this portal?'
-  Apply_Delete_Yes: '&7Yes,&4delete&7.'
+  Apply_Delete_Yes: '&7Yes, &4delete&7.'
   Delete_Portal_Successfully: '&7The portal has been &cdeleted &7successfully.'
   PORTAL_CREATE_HELP: '&7Use: &e/portal create <Position-Name>'
   PORTAL_CREATE_FIRST_SAVED: '&7The first position has been saved.'
   PORTAL_CREATE_NEXT: '&7Run this command at the next required position again.'
   Teleport_Radius: Teleport-Radius
   Animation_Height: Animation-Height
+  Destination: Destination
   Animation_Type: Animation-Type
   Particle_Effect: Particle-Effect
   Hologram_Height: Hologram-Height
@@ -296,6 +297,7 @@ ENG:
   Warp_Overwritten: '&7Your warp has been overwritten &asuccessfully&7.'
   WarpGUI: 'WarpGUI'
   SimpleWarps: 'SimpleWarps'
+  SimpleWarp: 'SimpleWarp'
   List: 'List'
   Choose_A_SimpleWarp: '&bChoose a SimpleWarp'
   RandomTP_Already_Searching: '&7Your random position is already being searched.'
@@ -317,6 +319,8 @@ ENG:
   RandomTP_Buy_No: '&cNo'
   RandomTP_Buy_Cancelled: '&cYou didn''t buy a random teleport.'
   RandomTP_Buy_Finished: '&7You bought a random teleport for %AMOUNT% coin(s).'
+  Effect_Portal: 'Effect portal'
+  Existing_Warps: 'Existing warps'
 
 GER:
   Menu_Help: '&c&nHilfe'
@@ -397,6 +401,7 @@ GER:
   PORTAL_CREATE_NEXT: '&7Führe diesen Befehl erneut an der gewünschten Zielposition aus.'
   Teleport_Radius: Teleport-Radius
   Animation_Height: 'Animations-Höhe'
+  Destination: 'Ziel'
   Animation_Type: Animations-Typ
   Particle_Effect: Partikel-Effekt
   Hologram_Height: 'Hologram-Höhe'
@@ -613,6 +618,7 @@ GER:
   Warp_Overwritten: '&7Dein Warp wurde &aerfolgreich &7überschrieben.'
   WarpGUI: 'WarpGUI'
   SimpleWarps: 'SimpleWarps'
+  SimpleWarp: 'SimpleWarp'
   List: 'Liste'
   Choose_A_SimpleWarp: '&bWähle einen SimpleWarp'
   RandomTP_Already_Searching: '&7Deine zufällige Position wird bereits gesucht.'
@@ -634,3 +640,5 @@ GER:
   RandomTP_Buy_No: '&cNein'
   RandomTP_Buy_Cancelled: '&cDu hast keine zufällige Teleportation gekauft.'
   RandomTP_Buy_Finished: '&7Du hast eine zufällige Teleportation für %AMOUNT% Coin(s) gekauft.'
+  Effect_Portal: 'Effekt Portal'
+  Existing_Warps: 'Bestehende Warps'

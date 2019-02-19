@@ -14,10 +14,18 @@ public class Destination {
     private DestinationType type;
     private DestinationAdapter adapter;
 
+    public Destination() {
+    }
+
     public Destination(String id, DestinationType type) {
         this.id = id;
         this.type = type;
         this.adapter = type.getInstance();
+    }
+
+    public Destination(String id, DestinationAdapter adapter) {
+        this(adapter);
+        this.id = id;
     }
 
     public Destination(DestinationAdapter adapter) {
@@ -38,14 +46,11 @@ public class Destination {
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-        Destination that = (Destination) o;
-        if(id == null) return that.id == null && type == that.type;
-        return id.equals(that.id) &&
-                type == that.type;
+    public Destination apply(Destination destination) {
+        this.id = destination.id;
+        this.adapter = destination.adapter;
+        this.type = destination.type;
+        return this;
     }
 
     public boolean teleport(Player player, String message, String displayName, boolean silent, double costs, Callback<TeleportResult> callback) {
@@ -69,8 +74,24 @@ public class Destination {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public DestinationType getType() {
         return type;
+    }
+
+    public void setType(DestinationType type) {
+        this.type = type;
+    }
+
+    public DestinationAdapter getAdapter() {
+        return adapter;
+    }
+
+    public void setAdapter(DestinationAdapter adapter) {
+        this.adapter = adapter;
     }
 
     public String toJSONString() {
@@ -81,5 +102,15 @@ public class Destination {
         json.add(id);
 
         return json.toJSONString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        Destination that = (Destination) o;
+        if(id == null) return that.id == null && type == that.type;
+        return id.equals(that.id) &&
+                type == that.type;
     }
 }

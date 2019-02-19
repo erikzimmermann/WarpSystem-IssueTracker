@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.portals.commands;
+package de.codingair.warpsystem.spigot.features.effectportals.commands;
 
 import de.codingair.codingapi.server.commands.BaseComponent;
 import de.codingair.codingapi.server.commands.CommandBuilder;
@@ -9,8 +9,8 @@ import de.codingair.codingapi.tools.TimeList;
 import de.codingair.codingapi.utils.Node;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
-import de.codingair.warpsystem.spigot.features.portals.guis.GPortalList;
+import de.codingair.warpsystem.spigot.features.effectportals.PortalEditor;
+import de.codingair.warpsystem.spigot.features.effectportals.guis.GPortalList;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -20,7 +20,6 @@ import java.util.List;
 public class CPortal extends CommandBuilder {
     public static TimeList<String> aboutToEdit = new TimeList<>();
     public static TimeList<String> aboutToDelete = new TimeList<>();
-    private HashMap<String, Node<String, Location>> locations = new HashMap<>();
 
     public CPortal() {
         super("Portal", new BaseComponent(WarpSystem.PERMISSION_MODIFY_PORTALS) {
@@ -82,17 +81,7 @@ public class CPortal extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                if(locations.containsKey(sender.getName())) {
-                    Node<String, Location> first = locations.remove(sender.getName());
-                    Node<String, Location> second = new Node<>(args[1], Location.getByLocation(((Player) sender).getLocation().clone()));
-
-                    new PortalEditor((Player) sender, first, second).start();
-                } else {
-                    locations.put(sender.getName(), new Node<>(args[1], Location.getByLocation(((Player) sender).getLocation().clone())));
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_CREATE_FIRST_SAVED"));
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_CREATE_NEXT"));
-                }
-
+                new PortalEditor((Player) sender, new Node<>(args[1], Location.getByLocation(((Player) sender).getLocation()))).start();
                 return false;
             }
         });

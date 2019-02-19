@@ -2,6 +2,8 @@ package de.codingair.warpsystem.spigot.base.managers;
 
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
+import de.codingair.codingapi.server.Sound;
+import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.api.events.PlayerGlobalWarpEvent;
 import de.codingair.warpsystem.spigot.api.events.PlayerWarpEvent;
@@ -120,6 +122,14 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, String message, boolean silent, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, costs, skip, canMove, message, silent, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, String message, boolean silent, SoundData teleportSound, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, costs, skip, canMove, message, silent, teleportSound, true, callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, String message, boolean silent, SoundData teleportSound, boolean afterEffects, Callback<TeleportResult> callback) {
         if(WarpSystem.maintenance && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Maintenance)) {
             player.sendMessage(Lang.getPrefix() + Lang.get("Warning_Maintenance"));
             return;
@@ -187,7 +197,7 @@ public class TeleportManager {
         }
 
         Callback<TeleportResult> finalResultCallback = resultCallback;
-        Teleport teleport = new Teleport(player, destination, displayName, seconds, costs, message, canMove, silent, new Callback<TeleportResult>() {
+        Teleport teleport = new Teleport(player, destination, displayName, seconds, costs, message, canMove, false, teleportSound, afterEffects, new Callback<TeleportResult>() {
             @Override
             public void accept(TeleportResult object) {
                 if(callback != null) callback.accept(object);

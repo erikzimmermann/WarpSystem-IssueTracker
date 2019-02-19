@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.portals;
+package de.codingair.warpsystem.spigot.features.effectportals;
 
 import de.codingair.codingapi.player.gui.inventory.guis.ConfirmGUI;
 import de.codingair.codingapi.tools.Callback;
