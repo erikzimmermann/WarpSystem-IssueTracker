@@ -112,20 +112,24 @@ public class RandomTeleporterManager implements Manager {
     }
 
     public boolean canBuy(Player player) {
-        int bought = RandomTeleporterManager.getInstance().getBoughtTeleports(player);
-        int free = RandomTeleporterManager.getInstance().getFreeTeleportAmount(player);
-        int max = RandomTeleporterManager.getInstance().getMaxTeleportAmount(player);
+        if(player.isOp()) return true;
 
-        return max - free - bought > 0;
+        int bought = getInstance().getBoughtTeleports(player);
+        int free = getInstance().getFreeTeleportAmount(player);
+        int max = getInstance().getMaxTeleportAmount(player);
+
+        return max == -1 || max - free - bought > 0;
     }
 
     public boolean canTeleport(Player player) {
-        UUID u = WarpSystem.getInstance().getUUIDManager().get(player);
-        int bought = RandomTeleporterManager.getInstance().getBoughtTeleports(u);
-        int teleports = RandomTeleporterManager.getInstance().getTeleports(u);
-        int free = RandomTeleporterManager.getInstance().getFreeTeleportAmount(player);
+        if(player.isOp()) return true;
 
-        return free + bought - teleports > 0;
+        UUID u = WarpSystem.getInstance().getUUIDManager().get(player);
+        int bought = getInstance().getBoughtTeleports(u);
+        int teleports = getInstance().getTeleports(u);
+        int free = getInstance().getFreeTeleportAmount(player);
+
+        return free == -1 || free + bought - teleports > 0;
     }
 
     public int getMaxTeleportAmount(Player player) {
@@ -197,7 +201,7 @@ public class RandomTeleporterManager implements Manager {
                 } else {
                     //teleported
                     UUID uuid = WarpSystem.getInstance().getUUIDManager().get(player);
-                    setTeleports(uuid, getTeleports(uuid) + 1);
+                    if(!player.isOp()) setTeleports(uuid, getTeleports(uuid) + 1);
                     player.teleport(loc);
                     Sound.ENDERMAN_TELEPORT.playSound(player);
                     player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Teleported"));
