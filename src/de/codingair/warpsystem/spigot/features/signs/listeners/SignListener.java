@@ -109,6 +109,8 @@ public class SignListener implements Listener {
             new ChooseDestinationGUI(e.getPlayer(), Lang.get("WarpSign_Choose_Warp_GUI"), new Callback<Destination>() {
                 @Override
                 public void accept(Destination destination) {
+                    if(destination == null) return;
+
                     Sign s = (Sign) e.getBlock().getState();
                     SignTools.updateSign(s, new String[] {"", "§4§n" + Lang.get("Description"), "", ""});
 
