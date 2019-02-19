@@ -4,7 +4,7 @@ import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
-import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
+import de.codingair.warpsystem.spigot.features.effectportals.managers.PortalManager;
 import de.codingair.warpsystem.spigot.features.randomteleports.managers.RandomTeleporterManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
 import de.codingair.warpsystem.spigot.features.signs.managers.SignManager;

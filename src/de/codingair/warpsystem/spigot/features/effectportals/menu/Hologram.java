@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.portals.menu;
+package de.codingair.warpsystem.spigot.features.effectportals.menu;
 
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
@@ -12,7 +12,7 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.portals.PortalEditor;
+import de.codingair.warpsystem.spigot.features.effectportals.PortalEditor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

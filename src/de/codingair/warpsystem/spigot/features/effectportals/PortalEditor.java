@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.portals;
+package de.codingair.warpsystem.spigot.features.effectportals;
 
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.particles.Particle;
@@ -15,10 +15,11 @@ import de.codingair.codingapi.utils.Node;
 import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
-import de.codingair.warpsystem.spigot.features.portals.menu.Menu;
-import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
+import de.codingair.warpsystem.spigot.features.effectportals.managers.PortalManager;
+import de.codingair.warpsystem.spigot.features.effectportals.menu.Menu;
+import de.codingair.warpsystem.spigot.features.effectportals.utils.Portal;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -28,11 +29,15 @@ import java.util.UUID;
 
 public class PortalEditor implements Removable {
     public static String PLUS_MINUS(String s) {
-        return ChatColor.YELLOW.toString() + "+ " + ChatColor.GRAY + Lang.get("Leftclick") + " | " + ChatColor.RED + s + ChatColor.GRAY + " | " + ChatColor.GRAY + Lang.get("Rightclick") + " " + ChatColor.YELLOW + "-";
+        return ACTION_BAR(s, "+", "-");
     }
 
     public static String NEXT_PREVIOUS(String s) {
-        return ChatColor.YELLOW.toString() + "« " + ChatColor.GRAY + Lang.get("Leftclick") + " | " + ChatColor.RED + s + ChatColor.GRAY + " | " + ChatColor.GRAY + Lang.get("Rightclick") + " " + ChatColor.YELLOW + "»";
+        return ACTION_BAR(s, "«", "»");
+    }
+
+    public static String ACTION_BAR(String s, String left, String right) {
+        return ChatColor.YELLOW.toString() + left + ChatColor.GRAY + " " + Lang.get("Leftclick") + " | " + ChatColor.RED + s + ChatColor.GRAY + " | " + ChatColor.GRAY + Lang.get("Rightclick") + " " + ChatColor.YELLOW + right;
     }
 
     private final UUID uniqueId = UUID.randomUUID();
@@ -63,9 +68,9 @@ public class PortalEditor implements Removable {
         menu = new Menu(this.player, this);
     }
 
-    public PortalEditor(Player player, Node<String, Location> first, Node<String, Location> second) {
+    public PortalEditor(Player player, Node<String, Location> first) {
         this.player = player;
-        this.portal = new Portal(first.getValue(), second.getValue(), AnimationType.CIRCLE, 1, WarpSystem.getInstance().getTeleportManager().getParticles().get(0), 1, first.getKey(), second.getKey(), new SoundData(Sound.ENDERMAN_TELEPORT, 1, 1), 2.2, true, true);
+        this.portal = new Portal(first.getValue(), new Destination(), AnimationType.CIRCLE, 1, WarpSystem.getInstance().getTeleportManager().getParticles().get(0), 1, first.getKey(), null, new SoundData(Sound.ENDERMAN_TELEPORT, 1, 1), 2.2, true, true);
         menu = new Menu(this.player, this);
     }
 
