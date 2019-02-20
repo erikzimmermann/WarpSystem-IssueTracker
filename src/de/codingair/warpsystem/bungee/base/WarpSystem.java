@@ -3,6 +3,7 @@ package de.codingair.warpsystem.bungee.base;
 import de.codingair.codingapi.bungeecord.files.FileManager;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
+import de.codingair.warpsystem.bungee.base.language.Lang;
 import de.codingair.warpsystem.bungee.base.listeners.MainListener;
 import de.codingair.warpsystem.bungee.base.managers.DataManager;
 import de.codingair.warpsystem.bungee.base.managers.ServerManager;
@@ -41,6 +42,14 @@ public class WarpSystem extends Plugin {
         log("Status:");
         log(" ");
         log("Initialize SpigotConnector");
+
+        this.fileManager.loadFile("Config", "/", "bungee/");
+        try {
+            Lang.initPreDefinedLanguages(this);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
         this.dataHandler.onEnable();
         MainListener listener = new MainListener();
         BungeeCord.getInstance().getPluginManager().registerListener(this, listener);

@@ -1,11 +1,12 @@
 package de.codingair.warpsystem.bungee.features.teleport;
 
 import de.codingair.warpsystem.bungee.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.bungee.base.language.Lang;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPlayerToCoordsPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPlayerToPlayerPacket;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
@@ -53,19 +54,17 @@ public class CTeleport extends Command {
                 }
             } else {
                 //HELP
-                //TODO: translate
-                sender.sendMessage("§cUse: /tp <player> [player] | /tp [player] <x> <y> <z>");
+                p.sendMessage(new TextComponent(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tp <§eplayer§7> [§eplayer§7] §c" + Lang.get("Or") + " §7/tp [§eplayer§7] <§ex§7> <§ey§7> <§ez§7>"));
             }
         } catch(NumberFormatException ex) {
             //HELP
-            //TODO: translate
-            sender.sendMessage("§cUse: /tp <player> [player] | /tp [player] <x> <y> <z>");
+            p.sendMessage(new TextComponent(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tp <§eplayer§7> [§eplayer§7] §c" + Lang.get("Or") + " §7/tp [§eplayer§7] <§ex§7> <§ey§7> <§ez§7>"));
         }
     }
 
     private void tp(ProxiedPlayer gate, ProxiedPlayer player, double x, double y, double z) {
-        if(gate == null || player == null) {
-            //Not online!
+        if(player == null) {
+            gate.sendMessage(new TextComponent(Lang.getPrefix() + Lang.get("Player_is_not_online")));
             return;
         }
 
@@ -74,8 +73,8 @@ public class CTeleport extends Command {
     }
 
     private void tp(ProxiedPlayer gate, ProxiedPlayer player, ProxiedPlayer target) {
-        if(gate == null || player == null || target == null) {
-            //Not online!
+        if(player == null || target == null) {
+            gate.sendMessage(new TextComponent(Lang.getPrefix() + Lang.get("Player_is_not_online")));
             return;
         }
 

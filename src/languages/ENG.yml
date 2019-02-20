@@ -30,6 +30,8 @@ Success_Create_Warp: '&aYou have created a &bwarp &asuccessfully.'
 Success_Create_Decoration: '&aYou have created a &bDecoIcon &asuccessfully.'
 Teleporting_Info: '&cTeleport in &l&n%seconds%'
 Teleported_To: '&7You were teleported to ''&b%warp%&7''.'
+Teleported_To_By: '&7You were teleported to ''&b%warp%&7'' by ''&b%gate%&7''.'
+Teleported_Player_Info: '&7You teleported ''&b%player%&7'' to ''&b%warp%&7''.'
 Config: Config
 Maintenance: Maintenance
 Language: Language
@@ -318,3 +320,4 @@ RandomTP_Buy_Cancelled: '&cYou didn''t buy a random teleport.'
 RandomTP_Buy_Finished: '&7You bought a random teleport for %AMOUNT% coin(s).'
 Effect_Portal: 'Effect portal'
 Existing_Warps: 'Existing warps'
+Or: 'or'
