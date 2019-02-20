@@ -121,8 +121,8 @@ public class WarpSystem extends JavaPlugin {
             log("MC-Version: " + Version.getVersion().getVersionName());
             log(" ");
 
-            if(this.fileManager.getFile("Language") == null) this.fileManager.loadFile("Language", "/");
             if(this.fileManager.getFile("Config") == null) this.fileManager.loadFile("Config", "/");
+            Lang.initPreDefinedLanguages(this);
 
             PERMISSION_ADMIN = this.fileManager.getFile("Config").getConfig().getString("WarpSystem.Admin.Permission", "WarpSystem.Admin");
 

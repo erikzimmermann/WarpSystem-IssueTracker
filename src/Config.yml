@@ -1,5 +1,6 @@
 ~Config
 WarpSystem:
+  Language: ENG
   Maintenance: false
   Admin:
     Permission: 'WarpSystem.Admin'
