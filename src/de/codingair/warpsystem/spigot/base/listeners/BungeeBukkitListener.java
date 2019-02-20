@@ -1,15 +1,14 @@
 package de.codingair.warpsystem.spigot.base.listeners;
 
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.transfer.packets.bungee.InitialPacket;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -17,6 +16,11 @@ import java.util.logging.Level;
 
 public class BungeeBukkitListener implements PacketListener, Listener {
     private String[] notice = null;
+
+    @EventHandler
+    public void onMessage(PlayerCommandPreprocessEvent e) {
+        e.getPlayer().sendMessage("Test");
+    }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {

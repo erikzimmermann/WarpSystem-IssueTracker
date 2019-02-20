@@ -11,5 +11,6 @@ public enum Origin {
     EffectPortal,
     NativePortal,
     ShortCut,
-    CommandBlock
+    CommandBlock,
+    TeleportCommand
 }

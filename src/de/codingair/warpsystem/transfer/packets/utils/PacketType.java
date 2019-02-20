@@ -22,6 +22,8 @@ public enum PacketType {
     PerformCommandPacket(17, PerformCommandPacket.class),
     RequestUUIDPacket(18, RequestUUIDPacket.class),
     SendUUIDPacket(19, SendUUIDPacket.class),
+    TeleportPlayerToPlayerPacket(20, TeleportPlayerToPlayerPacket.class),
+    TeleportPlayerToCoordsPacket(21, TeleportPlayerToCoordsPacket.class),
 
     BooleanPacket(100, BooleanPacket.class),
     IntegerPacket(101, IntegerPacket.class),

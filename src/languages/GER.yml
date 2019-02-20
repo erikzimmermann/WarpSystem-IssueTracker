@@ -29,7 +29,9 @@ Name: Name
 Success_Create_Warp: '&aDu hast erfolgreich einen &bWarp &aerstellt.'
 Success_Create_Decoration: '&aDu hast erfolgreich ein &bDekosymbol &aerstellt.'
 Teleporting_Info: '&cTeleportation in &l&n%seconds% &cSekunden.'
-Teleported_To: '&7Du wurdest zum Warp "&b%warp%&7" teleportiert.'
+Teleported_To: '&7Du wurdest zu "&b%warp%&7" teleportiert.'
+Teleported_To_By: '&7Du wurdest von "&b%gate%&7" zu "&b%warp%&7" teleportiert.'
+Teleported_Player_Info: '&7Du hast "&b%player%&7" zu "&b%warp%&7" teleportiert.'
 Config: Konfiguration
 Maintenance: Wartung
 Language: Sprache
@@ -318,3 +320,4 @@ RandomTP_Buy_Cancelled: '&cDu hast keine zufällige Teleportation gekauft.'
 RandomTP_Buy_Finished: '&7Du hast eine zufällige Teleportation für %AMOUNT% Coin(s) gekauft.'
 Effect_Portal: 'Effekt Portal'
 Existing_Warps: 'Bestehende Warps'
+Or: 'oder'

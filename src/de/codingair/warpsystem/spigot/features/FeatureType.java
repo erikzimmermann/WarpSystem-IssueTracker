@@ -8,6 +8,7 @@ import de.codingair.warpsystem.spigot.features.effectportals.managers.PortalMana
 import de.codingair.warpsystem.spigot.features.randomteleports.managers.RandomTeleporterManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
 import de.codingair.warpsystem.spigot.features.signs.managers.SignManager;
+import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
@@ -26,6 +27,7 @@ public enum FeatureType {
     TEMP_WARPS(TempWarpManager.class, Priority.LOW, "TempWarps"),
     SIMPLE_WARPS(SimpleWarpManager.class, Priority.HIGH, "SimpleWarps"),
     RANDOM_TELEPORTS(RandomTeleporterManager.class, Priority.HIGH, "RandomTeleports"),
+    TELEPORT_COMMAND(TeleportCommandManager.class, Priority.ALWAYS_ON, "TeleportCommand"),
     ;
 
     private Class<? extends Manager> managerClass;
@@ -47,6 +49,7 @@ public enum FeatureType {
     }
 
     public boolean isActive() {
+        if(getPriority() == Priority.ALWAYS_ON) return true;
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
         return file.getConfig().getBoolean("WarpSystem.Functions." + getName(), true);
     }
@@ -66,6 +69,7 @@ public enum FeatureType {
     }
 
     public enum Priority {
+        ALWAYS_ON,
         HIGHEST,
         HIGH,
         LOW,
