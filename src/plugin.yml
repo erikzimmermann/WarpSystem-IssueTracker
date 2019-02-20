@@ -54,6 +54,10 @@ commands:
   randomtp:
     usuage: /RandomTP
     description: A Warp-System-CMD
+  teleport:
+    usuage: /teleport <player> [player]
+    description: A Warp-System-CMD
+    aliases: [tp]
 
 permissions:
   warpsystem:

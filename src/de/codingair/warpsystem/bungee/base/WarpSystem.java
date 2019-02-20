@@ -19,6 +19,8 @@ import java.nio.channels.FileChannel;
 import java.util.concurrent.TimeUnit;
 
 public class WarpSystem extends Plugin {
+    public static final String PERMISSION_TELEPORT_COMMAND = "WarpSystem.TeleportCommand";
+
     private static WarpSystem instance;
     private BungeeDataHandler dataHandler = new BungeeDataHandler(this);
     private FileManager fileManager = new FileManager(this);

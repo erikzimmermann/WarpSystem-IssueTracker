@@ -33,6 +33,8 @@ ENG:
   Success_Create_Decoration: '&aYou have created a &bDecoIcon &asuccessfully.'
   Teleporting_Info: '&cTeleport in &l&n%seconds%'
   Teleported_To: '&7You were teleported to ''&b%warp%&7''.'
+  Teleported_To_By: '&7You were teleported to ''&b%warp%&7'' by ''&b%gate%&7''.'
+  Teleported_Player_Info: '&7You teleported ''&b%player%&7'' to ''&b%warp%&7''.'
   Config: Config
   Maintenance: Maintenance
   Language: Language
@@ -353,7 +355,9 @@ GER:
   Success_Create_Warp: '&aDu hast erfolgreich einen &bWarp &aerstellt.'
   Success_Create_Decoration: '&aDu hast erfolgreich ein &bDekosymbol &aerstellt.'
   Teleporting_Info: '&cTeleportation in &l&n%seconds% &cSekunden.'
-  Teleported_To: '&7Du wurdest zum Warp "&b%warp%&7" teleportiert.'
+  Teleported_To: '&7Du wurdest zu "&b%warp%&7" teleportiert.'
+  Teleported_To_By: '&7Du wurdest von "&b%gate%&7" zu "&b%warp%&7" teleportiert.'
+  Teleported_Player_Info: '&7Du hast "&b%player%&7" zu "&b%warp%&7" teleportiert.'
   Config: Konfiguration
   Maintenance: Wartung
   Language: Sprache
