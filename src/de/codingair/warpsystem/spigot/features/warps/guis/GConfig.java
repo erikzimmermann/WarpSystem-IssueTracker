@@ -115,33 +115,6 @@ public class GConfig extends GUI {
             }
         }.setOption(option));
 
-        ItemBuilder lang = new ItemBuilder(Material.BOOK).setName("§c§n" + Lang.get("Language"));
-        lang.setLore("§8" + Lang.get("Current") + ": §7" + Lang.getCurrentLanguage());
-        lang.addLore("", Lang.get("Leftclick_Prev_Lang"));
-        lang.addLore(Lang.get("Rightclick_Next_Lang"));
-
-        addButton(new ItemButton(3, lang.getItem()) {
-            @Override
-            public void onClick(InventoryClickEvent e) {
-                if(e.isLeftClick()) {
-                    int prevId = Lang.getLanguageId(Lang.getCurrentLanguage()) - 1;
-                    if(prevId < 0) prevId = Lang.getLanguages().size() - 1;
-
-                    Lang.setCurrentLanguage(Lang.getLanguage(prevId));
-                } else {
-                    int nextId = Lang.getLanguageId(Lang.getCurrentLanguage()) + 1;
-                    if(nextId >= Lang.getLanguages().size()) nextId = 0;
-
-                    Lang.setCurrentLanguage(Lang.getLanguage(nextId));
-                }
-
-                p.sendMessage(Lang.getPrefix() + Lang.get("Success_Changed_Lang").replace("%lang%", Lang.getCurrentLanguage()));
-
-                reinitialize();
-                setTitle("§c§l§nWarps§r §7- §6" + Lang.get("Config"));
-            }
-        }.setOption(option).setOnlyLeftClick(false));
-
         ItemBuilder anim = new ItemBuilder(Material.GLOWSTONE_DUST).setName("§c§n" + Lang.get("Animation"));
         anim.setLore("§8" + Lang.get("Current") + ": §7" + WarpSystem.getInstance().getTeleportManager().getParticle().name());
         anim.addLore("", Lang.get("Shift_Leftclick_Show_Animation"));
