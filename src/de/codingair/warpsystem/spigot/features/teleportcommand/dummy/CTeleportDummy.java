@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.teleportcommand;
+package de.codingair.warpsystem.spigot.features.teleportcommand.dummy;
 
 import de.codingair.codingapi.server.commands.BaseComponent;
 import de.codingair.codingapi.server.commands.CommandBuilder;

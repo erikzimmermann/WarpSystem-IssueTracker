@@ -17,7 +17,7 @@ public class MainListener implements Listener, PacketListener {
 
     @EventHandler
     public void onConnect(ServerConnectedEvent e) {
-        if(e.getServer().getInfo().getPlayers().size() <= 1) {
+        if(e.getServer().getInfo().getPlayers().size() == 0) {
             //Update it
             WarpSystem.getInstance().getServerManager().sendInitialPacket(e.getServer().getInfo());
         }

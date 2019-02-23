@@ -60,6 +60,7 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_ByPass_Maintenance = "WarpSystem.ByPass.Maintenance";
     public static final String PERMISSION_ByPass_Teleport_Costs = "WarpSystem.ByPass.Teleport.Costs";
     public static final String PERMISSION_ByPass_Teleport_Delay = "WarpSystem.ByPass.Teleport.Delay";
+    public static final String PERMISSION_TELEPORT_COMMAND = "WarpSystem.TeleportCommand";
     public static String PERMISSION_ADMIN = "WarpSystem.Admin";
     public static boolean OP_CAN_SKIP_DELAY = false;
 

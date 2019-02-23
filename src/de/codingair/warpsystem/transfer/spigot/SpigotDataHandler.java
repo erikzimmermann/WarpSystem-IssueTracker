@@ -122,7 +122,7 @@ public class SpigotDataHandler implements DataHandler {
     }
 
     public void register(PacketListener listener) {
-        this.listeners.add(listener);
+        if(!this.listeners.contains(listener)) this.listeners.add(listener);
     }
 
     public void unregister(PacketListener listener) {
