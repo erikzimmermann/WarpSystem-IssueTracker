@@ -15,6 +15,9 @@ public class Destination {
     private DestinationAdapter adapter;
 
     public Destination() {
+        id = null;
+        type = DestinationType.UNKNOWN;
+        adapter = null;
     }
 
     public Destination(String id, DestinationType type) {
