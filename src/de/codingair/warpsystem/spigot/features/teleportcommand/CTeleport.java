@@ -9,6 +9,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -95,7 +96,7 @@ public class CTeleport extends CommandBuilder {
             int deep = args.length - 1;
 
             if(args[deep].isEmpty()) {
-                if(deep == 1 && Character.isDigit(args[0].charAt(0)) && BungeeCord.getInstance().getPlayer(args[0]) == null) return suggestions;
+                if(deep == 1 && Character.isDigit(args[0].charAt(0)) && Bukkit.getPlayer(args[0]) == null) return suggestions;
                 if(deep == 0 || deep == 1) {
                     for(Player player : Bukkit.getOnlinePlayers()) {
                         suggestions.add(player.getName());
