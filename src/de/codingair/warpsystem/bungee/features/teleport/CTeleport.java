@@ -78,15 +78,13 @@ public class CTeleport extends Command {
             return;
         }
 
-        Runnable runnable = () -> {
-            TeleportPlayerToPlayerPacket packet = new TeleportPlayerToPlayerPacket(gate.getName(), player.getName(), target.getName());
-            WarpSystem.getInstance().getDataHandler().send(packet, target.getServer().getInfo());
-        };
-
-        if(!player.getServer().equals(target.getServer())) {
+        TeleportPlayerToPlayerPacket packet = new TeleportPlayerToPlayerPacket(gate.getName(), player.getName(), target.getName());
+        if(!player.getServer().getInfo().equals(target.getServer().getInfo())) {
             player.connect(target.getServer().getInfo(), (connected, throwable) -> {
-                if(connected) runnable.run();
+                if(connected)
+                    WarpSystem.getInstance().getDataHandler().send(packet, target.getServer().getInfo());
             });
-        } else runnable.run();
+        } else
+            WarpSystem.getInstance().getDataHandler().send(packet, target.getServer().getInfo());
     }
 }

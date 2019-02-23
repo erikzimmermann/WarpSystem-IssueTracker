@@ -18,11 +18,6 @@ public class BungeeBukkitListener implements PacketListener, Listener {
     private String[] notice = null;
 
     @EventHandler
-    public void onMessage(PlayerCommandPreprocessEvent e) {
-        e.getPlayer().sendMessage("Test");
-    }
-
-    @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
             if(notice != null && (e.getPlayer().hasPermission(WarpSystem.PERMISSION_NOTIFY) || e.getPlayer().isOp())) e.getPlayer().sendMessage(notice);

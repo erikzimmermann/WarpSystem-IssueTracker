@@ -197,7 +197,7 @@ public class TeleportManager {
         }
 
         Callback<TeleportResult> finalResultCallback = resultCallback;
-        Teleport teleport = new Teleport(player, destination, displayName, seconds, costs, message, canMove, false, teleportSound, afterEffects, new Callback<TeleportResult>() {
+        Teleport teleport = new Teleport(player, destination, displayName, seconds, costs, message, canMove, silent, teleportSound, afterEffects, new Callback<TeleportResult>() {
             @Override
             public void accept(TeleportResult object) {
                 if(callback != null) callback.accept(object);
@@ -212,7 +212,9 @@ public class TeleportManager {
             return;
         }
 
-        player.closeInventory();
+        try {
+            player.closeInventory();
+        } catch(Throwable ignored) {}
 
         if(costs > 0) {
             if(!player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs) && AdapterType.getActive() != null) {

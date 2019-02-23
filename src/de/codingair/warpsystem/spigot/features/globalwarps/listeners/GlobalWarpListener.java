@@ -3,10 +3,10 @@ package de.codingair.warpsystem.spigot.features.globalwarps.listeners;
 import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.codingapi.tools.time.TimeMap;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
-import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
@@ -26,7 +26,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.ArrayList;
@@ -41,11 +40,6 @@ public class GlobalWarpListener implements Listener, PacketListener {
         join(e.getPlayer());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onLogin(PlayerLoginEvent e) {
-        join(e.getPlayer());
-    }
-
     @EventHandler(priority = EventPriority.LOWEST)
     public void onTeleport(PlayerTeleportEvent e) {
         if(noTeleport.contains(e.getPlayer())) e.setCancelled(true);
@@ -55,7 +49,7 @@ public class GlobalWarpListener implements Listener, PacketListener {
         TeleportPacket packet = teleport.remove(player.getName());
 
         if(packet != null) {
-            noTeleport.add(player, 1);
+            noTeleport.add(player, 3);
 
             SGlobalWarp warp = packet.getWarp();
             Location location = new Location(Bukkit.getWorld(warp.getLoc().getWorld()), warp.getLoc().getX(), warp.getLoc().getY(), warp.getLoc().getZ(), warp.getLoc().getYaw(), warp.getLoc().getPitch());
