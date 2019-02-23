@@ -16,6 +16,7 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.effectportals.managers.PortalManager;
@@ -394,7 +395,7 @@ public class Portal implements Removable {
         JSONObject json = new JSONObject();
 
         json.put("Start", this.start.toJSONString(4));
-        json.put("Destination", this.destination.toJSONString());
+        json.put("Destination", this.destination.getType() == DestinationType.UNKNOWN ? null : this.destination.toJSONString());
         json.put("AnimationType", this.animationType.name());
         json.put("AnimationHeight", this.getAnimationHeight());
         json.put("Particle", this.particle.name());
@@ -419,18 +420,21 @@ public class Portal implements Removable {
             Location start = Location.getByJSONString((String) json.get("Start"));
 
             Destination destination;
-            try {
-                destination = new Destination((String) json.get("Destination"));
-            } catch(Throwable ex) {
-                destination = new Destination((String) json.get("Destination"), new PortalDestinationAdapter());
+            if(json.get("Destination") == null) destination = new Destination();
+            else {
+                try {
+                    destination = new Destination((String) json.get("Destination"));
+                } catch(Throwable ex) {
+                    destination = new Destination((String) json.get("Destination"), new PortalDestinationAdapter());
+                }
             }
 
             AnimationType animationType = AnimationType.valueOf((String) json.get("AnimationType"));
             double animationHeight = Double.parseDouble(json.get("AnimationHeight") + "");
             Particle particle = Particle.valueOf((String) json.get("Particle"));
             double teleportDistance = Double.parseDouble(json.get("TeleportRadius") + "");
-            String messageToStart = (String) json.get("StartName");
-            String messageToDestination = (String) json.get("DestinationName");
+            String startName = (String) json.get("StartName");
+            String destinationName = json.get("DestinationName") == null ? null :(String) json.get("DestinationName");
             double hologramHeight = Double.parseDouble(json.get("HologramHeight") + "");
             Sound sound = Sound.valueOf((String) json.get("TeleportSound"));
             float soundVolume = Float.parseFloat(json.get("TeleportSoundVolume") + "");
@@ -439,7 +443,7 @@ public class Portal implements Removable {
             boolean destinationHoloStatus = json.get("DestinationHoloStatus") == null || Boolean.parseBoolean(json.get("DestinationHoloStatus") + "");
             String permission = json.get("Permission") == null ? null : (String) json.get("Permission");
 
-            Portal portal = new Portal(start, destination, animationType, animationHeight, particle, teleportDistance, messageToStart, messageToDestination, new SoundData(sound, soundVolume, soundPitch), hologramHeight, startHoloStatus, destinationHoloStatus);
+            Portal portal = new Portal(start, destination, animationType, animationHeight, particle, teleportDistance, startName, destinationName, new SoundData(sound, soundVolume, soundPitch), hologramHeight, startHoloStatus, destinationHoloStatus);
             portal.setPermission(permission);
             return portal;
         } catch(ParseException e) {

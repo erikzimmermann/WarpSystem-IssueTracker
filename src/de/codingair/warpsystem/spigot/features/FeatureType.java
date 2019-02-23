@@ -50,6 +50,7 @@ public enum FeatureType {
 
     public boolean isActive() {
         if(getPriority() == Priority.ALWAYS_ON) return true;
+        if(getPriority() == Priority.DISABLED) return false;
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
         return file.getConfig().getBoolean("WarpSystem.Functions." + getName(), true);
     }
