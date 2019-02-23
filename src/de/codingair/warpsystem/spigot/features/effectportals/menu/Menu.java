@@ -19,6 +19,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.features.effectportals.PortalEditor;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.PortalDestinationAdapter;
 import de.codingair.warpsystem.spigot.features.utils.guis.choosedestination.ChooseDestinationGUI;
+import net.minecraft.server.v1_9_R1.SoundEffects;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -76,71 +77,105 @@ public class Menu extends HotbarGUI {
                 if(clickType.name().contains("LEFT")) {
                     //Set destination portal
 
-                    AnvilGUI.openAnvil(WarpSystem.getInstance(), player, new AnvilListener() {
-                        @Override
-                        public void onClick(AnvilClickEvent e) {
-                            e.setClose(false);
-                            e.setCancelled(true);
+                    if(editor.getPortal().getDestination().getType() == DestinationType.EffectPortal) {
+                        editor.getPortal().getDestination().setId(null);
+                        editor.getPortal().getDestination().setAdapter(null);
+                        editor.getPortal().getDestination().setType(DestinationType.UNKNOWN);
+                        editor.getPortal().setDestinationName(null);
 
-                            if(e.getSlot() == AnvilSlot.OUTPUT) {
-                                if(e.getInput() == null) {
-                                    player.sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
-                                    return;
+                        editor.getPortal().update();
+                        updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §c-");
+                        onUnhover(gui, ic, ic, player);
+                        onHover(gui, ic, ic, player);
+                    } else {
+                        AnvilGUI.openAnvil(WarpSystem.getInstance(), player, new AnvilListener() {
+                            @Override
+                            public void onClick(AnvilClickEvent e) {
+                                e.setClose(false);
+                                e.setCancelled(true);
+
+                                if(e.getSlot() == AnvilSlot.OUTPUT) {
+                                    if(e.getInput() == null) {
+                                        player.sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
+                                        return;
+                                    }
+
+                                    String input = e.getInput().replace(" ", "_");
+
+                                    editor.getPortal().getDestination().setId(Location.getByLocation(player.getLocation()).toJSONString(4));
+                                    editor.getPortal().getDestination().setAdapter(new PortalDestinationAdapter());
+                                    editor.getPortal().getDestination().setType(DestinationType.EffectPortal);
+                                    editor.getPortal().setDestinationName(input);
+
+                                    editor.getPortal().update();
+                                    onUnhover(gui, ic, ic, player);
+                                    onHover(gui, ic, ic, player);
+
+                                    updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §e" + Lang.get("Effect_Portal"));
+
+                                    e.setClose(true);
+                                }
+                            }
+
+                            @Override
+                            public void onClose(AnvilCloseEvent e) {
+                            }
+                        }, new ItemBuilder(XMaterial.PAPER).setName(Lang.get("Name") + "...").getItem());
+                    }
+                } else if(clickType.name().contains("RIGHT")) {
+                    if(editor.getPortal().getDestination().getType() != DestinationType.EffectPortal && editor.getPortal().getDestination().getAdapter() != null) {
+                        editor.getPortal().getDestination().setId(null);
+                        editor.getPortal().getDestination().setAdapter(null);
+                        editor.getPortal().getDestination().setType(DestinationType.UNKNOWN);
+                        editor.getPortal().setDestinationName(null);
+
+                        editor.getPortal().update();
+                        updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §c-");
+                        onUnhover(gui, ic, ic, player);
+                        onHover(gui, ic, ic, player);
+                    } else {
+                        new ChooseDestinationGUI(player, Lang.get("WarpSign_Choose_Warp_GUI"), new Callback<Destination>() {
+                            @Override
+                            public void accept(Destination destination) {
+                                if(destination == null) return;
+                                editor.getPortal().getDestination().apply(destination);
+                                editor.getPortal().update();
+                                onUnhover(gui, ic, ic, player);
+                                onHover(gui, ic, ic, player);
+
+                                String dest = null;
+                                switch(editor.getPortal().getDestination().getType()) {
+                                    case WarpIcon:
+                                        dest = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("Warp") + "§8)";
+                                        break;
+
+                                    case SimpleWarp:
+                                        dest = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("SimpleWarp") + "§8)";
+                                        break;
+
+                                    case GlobalWarp:
+                                    case GlobalWarpIcon:
+                                        dest = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("GlobalWarp") + "§8)";
+                                        break;
                                 }
 
-                                String input = e.getInput().replace(" ", "_");
-
-                                editor.getPortal().getDestination().setId(Location.getByLocation(player.getLocation()).toJSONString(4));
-                                editor.getPortal().getDestination().setAdapter(new PortalDestinationAdapter());
-                                editor.getPortal().getDestination().setType(DestinationType.EffectPortal);
-                                editor.getPortal().setDestinationName(input);
-
-                                editor.getPortal().update();
-
-                                updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §e" + Lang.get("Effect_Portal"));
-
-                                e.setClose(true);
+                                updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §e" + (dest == null ? "§c-" : dest));
                             }
-                        }
-
-                        @Override
-                        public void onClose(AnvilCloseEvent e) {
-                        }
-                    }, new ItemBuilder(XMaterial.PAPER).setName(Lang.get("Name") + "...").getItem());
-                } else if(clickType.name().contains("RIGHT")) {
-                    new ChooseDestinationGUI(player, Lang.get("WarpSign_Choose_Warp_GUI"), new Callback<Destination>() {
-                        @Override
-                        public void accept(Destination destination) {
-                            if(destination == null) return;
-                            editor.getPortal().getDestination().apply(destination);
-                            editor.getPortal().update();
-
-                            String dest = null;
-                            switch(editor.getPortal().getDestination().getType()) {
-                                case WarpIcon:
-                                    dest = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("Warp") + "§8)";
-                                    break;
-
-                                case SimpleWarp:
-                                    dest = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("SimpleWarp") + "§8)";
-                                    break;
-
-                                case GlobalWarp:
-                                case GlobalWarpIcon:
-                                    dest = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("GlobalWarp") + "§8)";
-                                    break;
-                            }
-
-                            updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §e" + (dest == null ? "§c-" : dest));
-                        }
-                    }).open();
+                        }).open();
+                    }
                 }
             }
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(),
-                        PortalEditor.ACTION_BAR(Lang.get("Destination"), Lang.get("Effect_Portal"), Lang.get("Existing_Warps"))
+                MessageAPI.sendActionBar(getPlayer(), PortalEditor.ACTION_BAR(
+                        Lang.get("Destination"),
+                        editor.getPortal().getDestination().getType() == DestinationType.EffectPortal ?
+                                "§c" + Lang.get("Remove") :
+                                Lang.get("Effect_Portal"),
+                        editor.getPortal().getDestination().getType() != DestinationType.EffectPortal && editor.getPortal().getDestination().getAdapter() != null ?
+                                "§c" + Lang.get("Remove") :
+                                Lang.get("Existing_Warps"))
                         , WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
