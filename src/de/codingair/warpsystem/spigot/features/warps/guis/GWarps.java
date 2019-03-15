@@ -205,7 +205,6 @@ public class GWarps extends GUI {
                             reinitialize();
                             setTitle(getTitle(GWarps.this.category, listener, getPlayer()));
                         } else {
-                            p.closeInventory();
                             new GConfig(p, category, editing).open();
                         }
                     }
@@ -273,8 +272,6 @@ public class GWarps extends GUI {
                                 p.sendMessage(Lang.getPrefix() + Lang.get("No_Item_In_Hand"));
                                 return;
                             }
-
-                            p.closeInventory();
 
                             Callback<Boolean> callback = new Callback<Boolean>() {
                                 @Override
@@ -458,7 +455,6 @@ public class GWarps extends GUI {
                                     e.setCurrentItem(new ItemStack(Material.AIR));
                                     setMoving(true, e.getSlot());
                                 } else {
-                                    p.closeInventory();
                                     new GEditor(p, icon).open();
                                 }
                             }
@@ -476,8 +472,6 @@ public class GWarps extends GUI {
                                     setTitle(getTitle(GWarps.this.category, listener, getPlayer()));
                                     return;
                                 }
-
-                                p.closeInventory();
 
                                 new IconDeleteGUI(p, new Callback<Boolean>() {
                                     @Override

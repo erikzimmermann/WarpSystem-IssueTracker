@@ -90,15 +90,15 @@ public class PDestination extends PMain {
                         public void onClickOnWarp(String warp, InventoryClickEvent e) {
                             getIcon().addAction(new WarpAction(new Destination(warp, DestinationType.SimpleWarp)));
                             update();
-                            p.closeInventory();
-                            Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                                getLast().open();
-                                getLast().setClosingForAnvil(false);
-                            }, 2L);
+
+                            getLast().open();
+                            getLast().setClosingForAnvil(false);
                         }
 
                         @Override
                         public void onClose() {
+                            getLast().open();
+                            getLast().setClosingForAnvil(false);
                         }
 
                         @Override
@@ -141,15 +141,15 @@ public class PDestination extends PMain {
                             public void onClickOnGlobalWarp(String warp, InventoryClickEvent e) {
                                 getIcon().addAction(new WarpAction(new Destination(warp, DestinationType.GlobalWarp)));
                                 update();
-                                p.closeInventory();
-                                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                                    getLast().open();
-                                    getLast().setClosingForAnvil(false);
-                                }, 2L);
+
+                                getLast().open();
+                                getLast().setClosingForAnvil(false);
                             }
 
                             @Override
                             public void onClose() {
+                                getLast().open();
+                                getLast().setClosingForAnvil(false);
                             }
 
                             @Override
