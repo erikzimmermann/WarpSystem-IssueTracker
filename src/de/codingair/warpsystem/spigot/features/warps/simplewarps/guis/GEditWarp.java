@@ -12,7 +12,6 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
-import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -90,7 +89,7 @@ public class GEditWarp extends SimpleGUI {
                         return;
                     }
 
-                    if(IconManager.getInstance().getWarp(s) != null || !SimpleWarpManager.getInstance().reserveName(s)) {
+                    if(!SimpleWarpManager.getInstance().reserveName(s)) {
                         p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                         return;
                     }

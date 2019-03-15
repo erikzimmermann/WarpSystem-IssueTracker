@@ -7,8 +7,6 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.features.globalwarps.commands.CGlobalWarp;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.commands.CWarp;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import org.bukkit.Bukkit;
@@ -45,15 +43,6 @@ public class CommandBlockListener implements Listener {
                         SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(arg);
                         if(warp != null) {
                             WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.CommandBlock, new Destination(warp.getName(), DestinationType.SimpleWarp), warp.getName(), 0, true, true,
-                                    WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.CommandBlocks", true), false, null);
-                            return;
-                        }
-                    }
-
-                    if(IconManager.getInstance() != null) {
-                        Warp warp = IconManager.getInstance().getWarp(arg);
-                        if(warp != null) {
-                            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.CommandBlock, new Destination(warp.getName(), DestinationType.WarpIcon), warp.getName(), 0, true, true,
                                     WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.CommandBlocks", true), false, null);
                             return;
                         }

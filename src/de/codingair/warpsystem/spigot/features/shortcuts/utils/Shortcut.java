@@ -12,69 +12,48 @@ import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.bukkit.entity.Player;
 
 public class Shortcut {
-    private ActionIcon warp;
-    private String globalWarp;
+    private Destination destination;
     private String displayName;
 
-    public Shortcut(Warp warp, String displayName) {
-        this.warp = warp;
-        this.displayName = displayName;
-    }
-
-    public Shortcut(GlobalWarp warp, String displayName) {
-        this.warp = warp;
-        this.displayName = displayName;
-    }
-
-    public Shortcut(String globalWarp, String displayName) {
-        this.globalWarp = globalWarp;
+    public Shortcut(Destination destination, String displayName) {
+        this.destination = destination;
         this.displayName = displayName;
     }
 
     public void run(Player player) {
-        if(this.warp != null) {
-            if(warp instanceof Warp) {
-                if(!player.hasPermission(WarpSystem.PERMISSION_USE_WARPS)) {
+        if(this.destination != null) {
+            if(destination.getType() == DestinationType.SimpleWarp) {
+                if(!player.hasPermission(WarpSystem.PERMISSION_USE_SIMPLE_WARPS)) {
                     player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     return;
                 }
 
-                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.ShortCut, new Destination(((Warp) warp).getIdentifier(), DestinationType.WarpIcon), warp.getName(), IconManager.getCosts(warp),
+                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.ShortCut, destination, destination.getId(), 0,
                         WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Warps", true));
-            } else if(warp instanceof GlobalWarp) {
+            } else if(destination.getType() == DestinationType.GlobalWarp) {
                 if(!player.hasPermission(WarpSystem.PERMISSION_USE_GLOBAL_WARPS)) {
                     player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     return;
                 }
 
-                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.ShortCut, new Destination(warp.getName(), DestinationType.GlobalWarpIcon), warp.getName(), IconManager.getCosts(warp),
+                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.ShortCut, destination, destination.getId(), 0,
                         WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true));
             }
-        } else if(globalWarp != null) {
-            if(!player.hasPermission(WarpSystem.PERMISSION_USE_GLOBAL_WARPS)) {
-                player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
-                return;
-            }
-
-            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.ShortCut, new Destination(globalWarp, DestinationType.GlobalWarp), displayName, 0,
-                    WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true));
         }
     }
 
     public boolean isActive() {
-        if(this.warp instanceof GlobalWarp || this.globalWarp != null) {
+        if(this.destination == null || this.destination.getAdapter() == null) return false;
+
+        if(this.destination.getType() == DestinationType.GlobalWarp) {
             return WarpSystem.getInstance().isOnBungeeCord();
         }
 
         return true;
     }
 
-    public ActionIcon getWarp() {
-        return warp;
-    }
-
-    public String getGlobalWarp() {
-        return globalWarp;
+    public Destination getDestination() {
+        return destination;
     }
 
     public String getDisplayName() {

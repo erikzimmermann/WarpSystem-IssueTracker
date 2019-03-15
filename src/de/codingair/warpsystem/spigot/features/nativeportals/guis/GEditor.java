@@ -369,40 +369,8 @@ public class GEditor extends GUI {
                 break;
 
             case TYPE: {
-                addButton(new ItemButton(WarpSystem.getInstance().isOnBungeeCord() ? 2 : 3, 2, new ItemBuilder(XMaterial.ENDER_PEARL).setName("§8» §b" + Lang.get("Choose_A_Warp")).getItem()) {
-                    @Override
-                    public void onClick(InventoryClickEvent e) {
-                        new GWarps(getPlayer(), null, false, new de.codingair.warpsystem.spigot.features.warps.guis.utils.GUIListener() {
-
-                            @Override
-                            public String getTitle() {
-                                return Lang.get("Native_Portal_Choose_Warp");
-                            }
-
-                            @Override
-                            public Task onClickOnWarp(Warp warp, boolean editing) {
-                                Destination next = new Destination(warp.getIdentifier(), DestinationType.WarpIcon);
-                                if(destination == null || !destination.equals(next)) {
-                                    destination = next;
-                                    changed = true;
-                                }
-
-                                p.closeInventory();
-                                return new Task();
-                            }
-
-                            @Override
-                            public void onClose() {
-                                menu = Menu.MAIN;
-                                reinitialize();
-                                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), GEditor.this::open, 1);
-                            }
-                        }, false, GlobalWarp.class, DecoIcon.class).open();
-                    }
-                }.setOption(option).setCloseOnClick(true));
-
                 if(WarpSystem.getInstance().isOnBungeeCord()) {
-                    addButton(new ItemButton(4, 2, new ItemBuilder(XMaterial.ENDER_CHEST).setName("§8» §b" + Lang.get("Choose_A_GlobalWarp")).getItem()) {
+                    addButton(new ItemButton(3, 2, new ItemBuilder(XMaterial.ENDER_CHEST).setName("§8» §b" + Lang.get("Choose_A_GlobalWarp")).getItem()) {
                         @Override
                         public void onClick(InventoryClickEvent e) {
                             new GGlobalWarpList(p, new GGlobalWarpList.Listener() {
@@ -433,7 +401,7 @@ public class GEditor extends GUI {
                     }.setOption(option).setCloseOnClick(true));
                 }
 
-                addButton(new ItemButton(WarpSystem.getInstance().isOnBungeeCord() ? 6 : 5, 2, new ItemBuilder(XMaterial.ENDER_EYE).setName("§8» §b" + Lang.get("Choose_A_SimpleWarp")).getItem()) {
+                addButton(new ItemButton(WarpSystem.getInstance().isOnBungeeCord() ? 5 : 4, 2, new ItemBuilder(XMaterial.ENDER_EYE).setName("§8» §b" + Lang.get("Choose_A_SimpleWarp")).getItem()) {
                     @Override
                     public void onClick(InventoryClickEvent e) {
                         new GSimpleWarpList(p, new GSimpleWarpList.Listener() {

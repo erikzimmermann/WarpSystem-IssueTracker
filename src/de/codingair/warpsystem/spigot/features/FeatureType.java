@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum FeatureType {
-    WARPS(IconManager.class, Priority.HIGH, "Warps"),
+    WARPS(IconManager.class, Priority.HIGHEST, "Warps"),
     GLOBAL_WARPS(GlobalWarpManager.class, Priority.LOW, "GlobalWarps"),
     SIGNS(SignManager.class, Priority.LOWEST, "WarpSigns"),
     PORTALS(PortalManager.class, Priority.LOW, "Portals"),

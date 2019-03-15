@@ -55,16 +55,11 @@ public class Menu extends HotbarGUI {
                 destination = Lang.get("Effect_Portal");
             } else {
                 switch(editor.getPortal().getDestination().getType()) {
-                    case WarpIcon:
-                        destination = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("Warp") + "§8)";
-                        break;
-
                     case SimpleWarp:
                         destination = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("SimpleWarp") + "§8)";
                         break;
 
                     case GlobalWarp:
-                    case GlobalWarpIcon:
                         destination = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("GlobalWarp") + "§8)";
                         break;
                 }
@@ -145,16 +140,11 @@ public class Menu extends HotbarGUI {
 
                                 String dest = null;
                                 switch(editor.getPortal().getDestination().getType()) {
-                                    case WarpIcon:
-                                        dest = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("Warp") + "§8)";
-                                        break;
-
                                     case SimpleWarp:
                                         dest = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("SimpleWarp") + "§8)";
                                         break;
 
                                     case GlobalWarp:
-                                    case GlobalWarpIcon:
                                         dest = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("GlobalWarp") + "§8)";
                                         break;
                                 }

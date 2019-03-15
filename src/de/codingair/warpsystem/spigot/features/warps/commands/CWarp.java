@@ -6,16 +6,11 @@ import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
+import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CWarpHook;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -66,27 +61,18 @@ public class CWarp extends CommandBuilder {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
-                    for(Category c : manager.getCategories()) {
+                    for(Icon c : manager.getCategories()) {
                         if(!c.hasPermission() || sender.hasPermission(c.getPermission())) suggestions.add(c.getNameWithoutColor());
                     }
                 } else {
                     hook.addArguments(sender, suggestions);
-
-                    for(Warp warp : manager.getWarps()) {
-                        Category c = warp.getCategory();
-
-                        if(!warp.getNameWithoutColor().isEmpty()) {
-                            if((c == null || !c.hasPermission() || sender.hasPermission(c.getPermission())) && (!warp.hasPermission() || sender.hasPermission(warp.getPermission())))
-                                suggestions.add(warp.getNameWithoutColor().replace(" ", "_") + (warp.isInCategory() ? "@" + warp.getCategory().getNameWithoutColor() : ""));
-                        }
-                    }
                 }
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
                 if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
-                    Category category = manager.getCategory(argument);
+                    Icon category = manager.getCategory(argument);
 
                     if(category != null && category.hasPermission() && !sender.hasPermission(category.getPermission())) {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category"));
@@ -100,28 +86,7 @@ public class CWarp extends CommandBuilder {
                         return false;
                     }
 
-                    //Hook for HiddenWarps
                     if(hook.runCommand(sender, label, argument, args)) return false;
-
-                    argument = argument.replace("_", " ");
-
-                    Category category = null;
-                    if(argument.contains("@")) {
-                        String[] a = argument.split("@");
-
-                        category = manager.getCategory(a[1]);
-                        argument = a[0];
-                    }
-
-                    Warp warp = manager.getWarp(argument, category);
-
-                    if(warp == null) {
-                        sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
-                        return false;
-                    }
-
-                    WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, Origin.Warp, new Destination(warp.getIdentifier(), DestinationType.WarpIcon), warp.getName(), IconManager.getCosts(warp),
-                            WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Warps", true));
                 }
                 return false;
             }

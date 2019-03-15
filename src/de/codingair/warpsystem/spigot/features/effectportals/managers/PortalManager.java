@@ -62,7 +62,7 @@ public class PortalManager implements Manager {
             duplicates.clear();
         }
 
-        WarpSystem.log("    > Verify that worlds are available");
+//        WarpSystem.log("    > Verify that worlds are available");
         for(Portal portal : this.portals) {
             if(portal.getStart().getWorld() == null) {
                 portal.setDisabled(true);
@@ -70,7 +70,7 @@ public class PortalManager implements Manager {
             }
         }
 
-        WarpSystem.log("    > Verify that portals are enabled");
+//        WarpSystem.log("    > Verify that portals are enabled");
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Portals", true)) {
             this.portals.forEach(p -> p.setRunning(true));
         }

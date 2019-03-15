@@ -6,7 +6,7 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.effectportals.PortalDeleteGUI;
+import de.codingair.warpsystem.spigot.features.effectportals.guis.PortalDeleteGUI;
 import de.codingair.warpsystem.spigot.features.effectportals.PortalEditor;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.Portal;
 import de.codingair.warpsystem.spigot.features.effectportals.commands.CPortal;
