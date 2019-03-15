@@ -129,7 +129,7 @@ public class TempWarpManager implements Manager, Ticker {
 
         this.config = new TempWarpConfig(unit, durationCosts, durationSteps, publicCosts, messageCosts);
 
-        WarpSystem.log("    > Loading Warps");
+//        WarpSystem.log("    > Loading Warps");
         this.warps.clear();
 
         if(WarpSystem.getInstance().getFileManager().getFile("TempWarps") == null) WarpSystem.getInstance().getFileManager().loadFile("TempWarps", "/Memory/");
@@ -140,7 +140,7 @@ public class TempWarpManager implements Manager, Ticker {
             this.warps.add(TempWarp.getByJSONString(s));
         }
 
-        WarpSystem.log("      ...got " + this.warps.size() + " TempWarp(s)");
+        WarpSystem.log("    ...got " + this.warps.size() + " TempWarp(s)");
         return true;
     }
 

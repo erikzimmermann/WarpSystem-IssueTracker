@@ -12,7 +12,7 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
+import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -27,12 +27,12 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class GConfig extends GUI {
-    private Category category;
+    private Icon category;
 
     private boolean editMode;
     private boolean close = false;
 
-    public GConfig(Player p, Category category, boolean editMode) {
+    public GConfig(Player p, Icon category, boolean editMode) {
         super(p, "§c§l§nWarps§r §7- §6" + Lang.get("Config"), 9, WarpSystem.getInstance(), false);
 
         this.category = category;

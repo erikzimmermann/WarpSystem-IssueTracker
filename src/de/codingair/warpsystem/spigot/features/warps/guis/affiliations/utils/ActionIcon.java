@@ -103,7 +103,7 @@ public abstract class ActionIcon extends Icon implements Serializable {
         switch(action.getAction()) {
             case OPEN_CATEGORY:
                 Category category = action.getValue();
-                new GWarps(p, category, editor).open();
+//                new GWarps(p, category, editor).open();
                 break;
 
             case RUN_COMMAND:
@@ -142,7 +142,7 @@ public abstract class ActionIcon extends Icon implements Serializable {
                 double costs = getAction(Action.PAY_MONEY) == null ? 0 : getAction(Action.PAY_MONEY).getValue();
                 if(p.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) costs = 0;
 
-                WarpSystem.getInstance().getTeleportManager().teleport(p, Origin.WarpIcon, new Destination(((Warp) this).getIdentifier(), DestinationType.WarpIcon), getName(), costs);
+//                WarpSystem.getInstance().getTeleportManager().teleport(p, Origin.WarpIcon, new Destination(((Warp) this).getIdentifier(), DestinationType.WarpIcon), getName(), costs);
                 break;
             }
 

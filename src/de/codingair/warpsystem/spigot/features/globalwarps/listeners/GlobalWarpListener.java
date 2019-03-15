@@ -6,12 +6,15 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
+import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
+import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.types.WarpAction;
 import de.codingair.warpsystem.transfer.packets.bungee.SendGlobalWarpNamesPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.UpdateGlobalWarpPacket;
@@ -88,17 +91,13 @@ public class GlobalWarpListener implements Listener, PacketListener {
                     case DELETE:
                         ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).getGlobalWarps().remove(((UpdateGlobalWarpPacket) packet).getName());
 
-                        List<GlobalWarp> delete = new ArrayList<>();
-                        for(GlobalWarp warpIcon : manager.getGlobalWarps()) {
-                            String name = warpIcon.getAction(Action.SWITCH_SERVER).getValue();
-                            if(name.equalsIgnoreCase(((UpdateGlobalWarpPacket) packet).getName())) delete.add(warpIcon);
+                        for(Icon warpIcon : manager.getIcons()) {
+                            if(warpIcon.getAction(de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.Action.WARP) != null) {
+                                if(warpIcon.getAction(WarpAction.class).getValue().getType() == DestinationType.GlobalWarp &&
+                                        warpIcon.getAction(WarpAction.class).getValue().getId().equalsIgnoreCase(((UpdateGlobalWarpPacket) packet).getName()))
+                                warpIcon.getAction(WarpAction.class).setValue(null);
+                            }
                         }
-
-                        for(GlobalWarp globalWarp : delete) {
-                            manager.getGlobalWarps().remove(globalWarp);
-                        }
-
-                        delete.clear();
                         break;
                 }
                 break;

@@ -44,7 +44,7 @@ public class Warp extends ActionIcon implements Serializable {
 
     public Warp(SWarp s) {
         super(s);
-        this.category = ((IconManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS)).getCategory(s.getCategory());
+//        this.category = ((IconManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS)).getCategory(s.getCategory());
     }
 
     public String getIdentifier() {

@@ -425,7 +425,7 @@ public class Portal implements Removable {
                 try {
                     destination = new Destination((String) json.get("Destination"));
                 } catch(Throwable ex) {
-                    destination = new Destination((String) json.get("Destination"), new PortalDestinationAdapter());
+                    destination = new Destination((String) json.get("Destination"), DestinationType.EffectPortal);
                 }
             }
 

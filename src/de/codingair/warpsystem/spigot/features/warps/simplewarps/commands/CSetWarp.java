@@ -59,11 +59,6 @@ public class CSetWarp extends CommandBuilder {
                 for(SimpleWarp value : hManager.getWarps().values()) {
                     suggestions.add(value.getName());
                 }
-
-                IconManager iManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
-                for(Warp warp : iManager.getWarps()) {
-                    suggestions.add(warp.getIdentifier());
-                }
             }
 
             @Override
@@ -76,31 +71,6 @@ public class CSetWarp extends CommandBuilder {
                         @Override
                         public void onClick(Player player) {
                             hManager.getWarp(argument).setLocation(Location.getByLocation(((Player) sender).getLocation()));
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Overwritten"));
-                            simpleMessage.destroy();
-                        }
-                    });
-
-                    simpleMessage.replace("%NO%", new ChatButton(Lang.get("Warp_Confirm_Overwrite_No"), Lang.get("Click_Hover")) {
-                        @Override
-                        public void onClick(Player player) {
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Not_Overwritten"));
-                            simpleMessage.destroy();
-                        }
-                    });
-
-                    simpleMessage.send((Player) sender);
-                    return false;
-                }
-
-                IconManager iManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
-                if(iManager.getWarp(argument) != null) {
-                    SimpleMessage simpleMessage = new SimpleMessage(Lang.getPrefix() + Lang.get("Warp_Confirm_Overwrite").replace("%WARP%", iManager.getWarp(argument).getIdentifier()), WarpSystem.getInstance());
-
-                    simpleMessage.replace("%YES%", new ChatButton(Lang.get("Warp_Confirm_Overwrite_Yes"), Lang.get("Click_Hover")) {
-                        @Override
-                        public void onClick(Player player) {
-                            iManager.getWarp(argument).getAction(Action.TELEPORT_TO_WARP).setValue(new SerializableLocation(((Player) sender).getLocation()));
                             sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Overwritten"));
                             simpleMessage.destroy();
                         }

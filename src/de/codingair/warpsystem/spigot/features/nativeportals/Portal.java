@@ -9,6 +9,8 @@ import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalListene
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
@@ -249,11 +251,11 @@ public class Portal {
                 destination = new Destination((String) json.get("Destination"));
             } else {
                 //old pattern
-                Warp warp = json.get("Warp") == null ? null : IconManager.getInstance().getWarp((String) json.get("Warp"));
+                SimpleWarp warp = json.get("Warp") == null ? null : SimpleWarpManager.getInstance().getWarp((String) json.get("Warp"));
                 String globalWarp = json.get("GlobalWarp") == null ? null : (String) json.get("GlobalWarp");
 
                 if(warp != null) {
-                    destination = new Destination(warp.getIdentifier(), DestinationType.WarpIcon);
+                    destination = new Destination(warp.getName(), DestinationType.SimpleWarp);
                 } else {
                     destination = new Destination(globalWarp, DestinationType.GlobalWarp);
                 }

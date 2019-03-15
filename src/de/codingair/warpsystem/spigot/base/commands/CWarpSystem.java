@@ -18,15 +18,16 @@ import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.ImportType;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Result;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -92,9 +93,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
         getComponent("shortcut", "add", "warp").addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                for(Warp warp : IconManager.getInstance().getWarps()) {
-                    suggestions.add(warp.getIdentifier());
-                }
+                suggestions.addAll(SimpleWarpManager.getInstance().getWarps().keySet());
             }
 
             @Override
@@ -112,22 +111,21 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
                 String warpId = args[3];
-                String shortcut = argument;
 
-                Warp warp = IconManager.getInstance().getWarp(warpId);
+                SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(warpId);
 
                 if(warp == null) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
                     return false;
                 }
 
-                if(ShortcutManager.getInstance().getShortcut(shortcut) != null) {
+                if(ShortcutManager.getInstance().getShortcut(argument) != null) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_already_exists"));
                     return false;
                 }
 
-                ShortcutManager.getInstance().getShortcuts().add(new Shortcut(warp, shortcut));
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_created").replace("%SHORTCUT%", shortcut));
+                ShortcutManager.getInstance().getShortcuts().add(new Shortcut(new Destination(warp.getName(), DestinationType.SimpleWarp), argument));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_created").replace("%SHORTCUT%", argument));
                 return false;
             }
         });
@@ -178,7 +176,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                 }
 
                 for(Shortcut shortcut : ShortcutManager.getInstance().getShortcuts()) {
-                    message.add("  §7(" + (shortcut.getWarp() == null ? "Global warp" : "Warp") + ") §b" + (shortcut.getWarp() == null ? shortcut.getGlobalWarp() : shortcut.getWarp().getNameWithoutColor()) + " §7« \"§e" + shortcut.getDisplayName() + "§7\"");
+                    message.add("  §7(" + (shortcut.getDestination().getType() + ") §b" + shortcut.getDestination().getId() + " §7« \"§e" + shortcut.getDisplayName() + "§7\""));
                 }
 
                 Collections.sort(message);
@@ -299,7 +297,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 try {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Plugin_Reloading"));
-                    WarpSystem.getInstance().reload(true);
+                    WarpSystem.getInstance().reload(false);
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Plugin_Reloaded"));
                 } catch(Exception ex) {
                     ex.printStackTrace();
@@ -370,9 +368,9 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Start"));
 
                     Result result;
-                    int size = (IconManager.getInstance() == null ? 0 : IconManager.getInstance().getWarps().size()) + (SimpleWarpManager.getInstance() == null ? 0 : SimpleWarpManager.getInstance().getWarps().size());
+                    int size = (IconManager.getInstance() == null ? 0 : IconManager.getInstance().getIcons().size()) + (SimpleWarpManager.getInstance() == null ? 0 : SimpleWarpManager.getInstance().getWarps().size());
                     if((result = type.importData()).isFinished()) {
-                        int amount = (IconManager.getInstance() == null ? 0 : IconManager.getInstance().getWarps().size()) + (SimpleWarpManager.getInstance() == null ? 0 : SimpleWarpManager.getInstance().getWarps().size()) - size;
+                        int amount = (IconManager.getInstance() == null ? 0 : IconManager.getInstance().getIcons().size()) + (SimpleWarpManager.getInstance() == null ? 0 : SimpleWarpManager.getInstance().getWarps().size()) - size;
                         sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish").replace("%AMOUNT%", amount + ""));
                     } else {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish_With_Errors") + " §8[" + result.name() + "]");
@@ -406,7 +404,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                             return false;
                         }
 
-                        if(IconManager.getInstance().getWarp(warp.getName()) != null || SimpleWarpManager.getInstance().existsWarp(warp.getName())) {
+                        if(IconManager.getInstance().getIcon(warp.getName()) != null || SimpleWarpManager.getInstance().existsWarp(warp.getName())) {
                             sender.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
 
                             SimpleMessage simpleMessage = new SimpleMessage(Lang.getPrefix() + Lang.get("Import_Choose_New_Name"), WarpSystem.getInstance());
@@ -428,7 +426,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                                                 return;
                                             }
 
-                                            if(IconManager.getInstance().getWarp(s) != null || SimpleWarpManager.getInstance().existsWarp(s)) {
+                                            if(IconManager.getInstance().getIcon(s) != null || SimpleWarpManager.getInstance().existsWarp(s)) {
                                                 sender.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                                                 return;
                                             }
@@ -524,7 +522,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                     return false;
                 }
 
-                ShortcutManager.getInstance().getShortcuts().add(new Shortcut(globalWarp, shortcut));
+                ShortcutManager.getInstance().getShortcuts().add(new Shortcut(new Destination(globalWarp, DestinationType.GlobalWarp), shortcut));
                 sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_created").replace("%SHORTCUT%", shortcut));
                 return false;
             }

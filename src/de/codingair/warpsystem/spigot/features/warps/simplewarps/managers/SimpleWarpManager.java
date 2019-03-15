@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SimpleWarpManager implements Manager {
+    private static SimpleWarpManager instance = null;
     private HashMap<String, SimpleWarp> warps = new HashMap<>();
     private List<String> reservedNames = new ArrayList<>();
     private List<CommandBuilder> commands = new ArrayList<>();
@@ -120,6 +121,8 @@ public class SimpleWarpManager implements Manager {
     }
 
     public static SimpleWarpManager getInstance() {
-        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
+        if(instance == null) instance = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
+        if(instance == null) instance = new SimpleWarpManager();
+        return instance;
     }
 }

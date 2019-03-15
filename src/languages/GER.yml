@@ -8,9 +8,6 @@ Edit_Mode_Set_Category: '&3Rechtsklick: &bKategorie setzen'
 Menu_Help_Leftclick_Edit_Mode: '&3Linksklick: &bBearbeitungs-Modus verlassen'
 Command: Befehl
 Permission: Berechtigung
-Shift_Leftclick_Edit: '&7Shift-Linksklick: Bewegen'
-Leftclick_Edit: '&7Linksklick: Bearbeiten'
-Rightclick_Delete: '&7Rechtsklick: Löschen'
 Item_Editing: Item-Bearbeitung
 Change_Name: '&7» Klicke hier, um den Namen zu ändern.'
 Cancel: Abbrechen
@@ -27,6 +24,7 @@ Leftclick_Remove: '&3Linksklick: &cEntfernen'
 Line: Linie
 Name: Name
 Success_Create_Warp: '&aDu hast erfolgreich einen &bWarp &aerstellt.'
+Success_Create_Icon: '&aDu hast erfolgreich ein &bIcon &aerstellt.'
 Success_Create_Decoration: '&aDu hast erfolgreich ein &bDekosymbol &aerstellt.'
 Teleporting_Info: '&cTeleportation in &l&n%seconds% &cSekunden.'
 Teleported_To: '&7Du wurdest zu "&b%warp%&7" teleportiert.'
@@ -101,7 +99,6 @@ Move_Help: '&7Bewegen: Rechtsklick auf Kategorien um dort hin zu wechseln.'
 Edit_Mode_Set_Icon: '&3Linksklick: &bIcon setzen'
 Coins: Coin(s)
 Costs: Kosten
-Shift_Rightclick_Edit: '&7Shift-Rechtsklick: öffnen'
 WarpSign_Choose_Warp: 'Wähle ein Warp für das Warp-Schild aus!'
 WarpSign_Choose_Warp_GUI: '&4&lWähle ein Warp!'
 WarpSign_Finish: Das Warp-Schild wurde erfolgreich gesetzt!
@@ -123,7 +120,6 @@ Leftclick_To_Choose: '&3Linksklick: &bWählen'
 Leftclick_Set: '&3Linksklick: &aSetzen'
 Status: Status
 Enabled: Aktiviert
-Disable_This_Icon: '&3Linksklick: &c&lDeaktiviere dieses Icon'
 GlobalWarp_Current_Warp: '&7Aktuell: &b%GlobalWarp%'
 Leftclick_Change: '&3Linksklick: &aändern'
 Success_Create_GlobalWarp: '&aDu hast erfolgreich ein &bGlobalWarp &aerstellt.'
@@ -171,7 +167,6 @@ Teleport: Teleportation
 No_Permission: '&cDu hast keine Berechtigungen für diese Aktion!'
 Enter_Name: '&cBitte gib einen Namen ein.'
 Disabled: Deaktiviert
-Leftclick_Enable_This_Icon: '&3Linksklick: &a&lAktiviere dieses Icon'
 Icon_Is_Disabled: '&4Dieses Icon ist &l&ndeaktiviert&4!'
 Player_Cannot_Use_System: '&cSie dürfen keine Warps benutzen!'
 Player_Is_Already_Teleporting: '&cDu wirst bereits teleportiert!'
@@ -322,3 +317,20 @@ Effect_Portal: 'Effekt Portal'
 Existing_Warps: 'Bestehende Warps'
 Or: 'oder'
 Remove: 'Entfernen'
+Appearance: 'Aussehen'
+Options: 'Optionen'
+Set: 'Setzen'
+Change: 'Ändern'
+Icon: 'Icon'
+Add: 'Hinzufügen'
+Item: 'Item'
+Change_Item: 'Item wechseln'
+Cant_Change_Item: 'Dein gehaltenes Item ist das gleiche wie das des Icons.'
+Enable_This_Icon: 'Aktiviere dieses Icon'
+Disable_This_Icon: 'Deaktiviere dieses Icon'
+Commands: 'Befehle'
+Move: 'Bewegen'
+Edit: 'Bearbeiten'
+Open: 'Öffnen'
+Shift_Leftclick: 'Shift-Linksklick'
+Shift_Rightclick: 'Shift-Rechtsklick'

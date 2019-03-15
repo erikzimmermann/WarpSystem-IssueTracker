@@ -56,7 +56,7 @@ WarpSystem:
 
   Send:
     Teleport_Message:
-      Warps: true
+      WarpGUI: true
       SimpleWarps: true
       GlobalWarps: true
       NativePortals: true

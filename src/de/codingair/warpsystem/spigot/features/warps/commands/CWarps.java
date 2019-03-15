@@ -11,6 +11,7 @@ import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
+import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -52,14 +53,14 @@ public class CWarps extends CommandBuilder {
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                for(Category c : manager.getCategories()) {
+                for(Icon c : manager.getCategories()) {
                     if(!c.hasPermission() || sender.hasPermission(c.getPermission())) suggestions.add(c.getNameWithoutColor());
                 }
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                Category category = manager.getCategory(argument);
+                Icon category = manager.getCategory(argument);
 
                 if(category != null && category.hasPermission() && !sender.hasPermission(category.getPermission())) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category"));
@@ -72,7 +73,7 @@ public class CWarps extends CommandBuilder {
         });
     }
 
-    static void run(CommandSender sender, Category category) {
+    static void run(CommandSender sender, Icon category) {
         Player p = (Player) sender;
 
         if(!WarpSystem.activated) return;

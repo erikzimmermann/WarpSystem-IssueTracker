@@ -42,17 +42,7 @@ public class TeleportManager {
         }
 
         int costs = warp.getTeleportCosts();
-        boolean isOwner;
-
-        if(!(isOwner = warp.isOwner(player))) {
-            if(AdapterType.getActive().getMoney(player) < costs) {
-                //not enough money
-                player.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money").replace("%AMOUNT%", warp.getTeleportCosts() + ""));
-                return false;
-            }
-
-            AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) - costs);
-        }
+        boolean isOwner = warp.isOwner(player);
 
         Callback<TeleportResult> callback = new Callback<TeleportResult>() {
             @Override
@@ -61,8 +51,6 @@ public class TeleportManager {
                     Player owner = warp.getOnlineOwner();
                     if(owner == null) warp.setInactiveSales(warp.getInactiveSales() + costs);
                     else AdapterType.getActive().setMoney(owner, AdapterType.getActive().getMoney(owner) + costs);
-                } else {
-                    AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) + costs);
                 }
             }
         };

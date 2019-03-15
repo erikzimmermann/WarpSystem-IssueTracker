@@ -5,8 +5,8 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
+import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -50,8 +50,8 @@ public class WarpSign {
                  destination = new Destination((String) json.get("Destination"));
             } else if(json.get("Warp") != null) {
                 //Old pattern
-                Warp warp = manager.getWarp((String) json.get("Warp"), json.get("Category") == null ? null : manager.getCategory((String) json.get("Category")));
-                destination = new Destination(warp.getIdentifier(), DestinationType.WarpIcon);
+                Icon warp = manager.getIcon((String) json.get("Warp"));
+                destination = new Destination(warp.getName(), DestinationType.SimpleWarp);
             } else throw new IllegalStateException("Couldn't find a pattern to recreate a WarpSign!");
 
             return new WarpSign(loc, destination);

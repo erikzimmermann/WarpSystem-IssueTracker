@@ -93,6 +93,10 @@ public class TeleportManager {
         teleport(player, origin, destination, displayName, costs, false, this.canMove, message, false, null);
     }
 
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean message, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, costs, false, this.canMove, message, false, callback);
+    }
+
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, Callback<TeleportResult> callback) {
         teleport(player, origin, destination, displayName, costs, false, this.canMove, true, false, callback);
     }
@@ -161,25 +165,6 @@ public class TeleportManager {
                 String server = GlobalWarpManager.getInstance().getGlobalWarps().get(name);
 
                 PlayerGlobalWarpEvent event = new PlayerGlobalWarpEvent(player, new GlobalWarp(name, server), origin, displayName, message, seconds, costs);
-                Bukkit.getPluginManager().callEvent(event);
-
-                if(event.isCancelled()) {
-                    if(callback != null) callback.accept(TeleportResult.CANCELLED_BY_SYSTEM);
-                    if(event.getTeleportResultCallback() != null) event.getTeleportResultCallback().accept(TeleportResult.CANCELLED_BY_SYSTEM);
-                    return;
-                }
-
-                resultCallback = event.getTeleportResultCallback();
-                costs = event.getCosts();
-                seconds = event.getSeconds();
-                displayName = event.getDisplayName();
-                message = event.getMessage();
-            } else if(destination.getType() != DestinationType.GlobalWarpIcon) {
-                Warp.Type type = Warp.Type.GUIWarp;
-                if(origin == Origin.TempWarp) type = Warp.Type.TempWarp;
-                else if(destination.getType() == DestinationType.SimpleWarp) type = Warp.Type.SimpleWarp;
-
-                PlayerWarpEvent event = new PlayerWarpEvent(player, new Warp(destination.buildLocation(), destination.getId(), type), origin, displayName, message, seconds, costs);
                 Bukkit.getPluginManager().callEvent(event);
 
                 if(event.isCancelled()) {

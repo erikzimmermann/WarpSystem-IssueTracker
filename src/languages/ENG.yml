@@ -8,11 +8,9 @@ Edit_Mode_Set_Category: '&3Rightclick: &bSet Category'
 Menu_Help_Leftclick_Edit_Mode: '&3Leftclick: &bQuit Edit-Mode'
 Command: Command
 Permission: Permission
-Shift_Leftclick_Edit: '&7Shift-Leftclick: Move'
-Leftclick_Edit: '&7Leftclick: Configure'
-Rightclick_Delete: '&7Rightclick: Delete'
 Item_Editing: Item-Editing
 Change_Name: '&7» Click here to change the name.'
+Change_Name_Short: 'Change the name'
 Cancel: Cancel
 Ready: Ready
 Not_Ready: 'Not ready'
@@ -27,6 +25,7 @@ Leftclick_Remove: '&3Leftclick: &cRemove'
 Line: Line
 Name: Name
 Success_Create_Warp: '&aYou have created a &bwarp &asuccessfully.'
+Success_Create_Icon: '&7You have &asuccessfully &7added an icon.'
 Success_Create_Decoration: '&aYou have created a &bDecoIcon &asuccessfully.'
 Teleporting_Info: '&cTeleport in &l&n%seconds%'
 Teleported_To: '&7You were teleported to ''&b%warp%&7''.'
@@ -101,7 +100,6 @@ Move_Help: '&7Moving: Rightclick on categories to switch to it.'
 Edit_Mode_Set_Icon: '&3Leftclick: &bSet Icon'
 Coins: Coin(s)
 Costs: Costs
-Shift_Rightclick_Edit: '&7Shift-Rightclick: Open'
 WarpSign_Choose_Warp: Choose a warp for the sign!
 WarpSign_Choose_Warp_GUI: '&4&lChoose a warp!'
 WarpSign_Finish: The WarpSign was set successfully!
@@ -123,7 +121,6 @@ Leftclick_To_Choose: '&3Leftclick: &bChoose'
 Leftclick_Set: '&3Leftclick: &aSet'
 Status: Status
 Enabled: Enabled
-Disable_This_Icon: '&3Leftclick: &c&lDisable this icon'
 GlobalWarp_Current_Warp: '&7Current: &b%GlobalWarp%'
 Leftclick_Change: '&3Leftclick: &aChange'
 Success_Create_GlobalWarp: '&aYou have created a &bGlobalWarp &asuccessfully.'
@@ -171,7 +168,6 @@ Teleport: Teleport
 No_Permission: '&cYou don''t have permissions for that action!'
 Enter_Name: '&cPlease enter a name.'
 Disabled: Disabled
-Leftclick_Enable_This_Icon: '&3Leftclick: &a&lEnable this icon'
 Icon_Is_Disabled: '&4This icon is &l&ndisabled&4!'
 Player_Cannot_Use_System: '&cYou are not allowed to use warps!'
 Player_Is_Already_Teleporting: '&cYou are already teleporting!'
@@ -322,3 +318,20 @@ Effect_Portal: 'Effect portal'
 Existing_Warps: 'Existing warps'
 Or: 'or'
 Remove: 'Remove'
+Appearance: 'Appearance'
+Options: 'Options'
+Set: 'Set'
+Change: 'Change'
+Icon: 'Icon'
+Add: 'Add'
+Item: 'Item'
+Change_Item: 'Change item'
+Cant_Change_Item: 'Your held item equals the item of the icon.'
+Enable_This_Icon: 'Enable this icon'
+Disable_This_Icon: 'Disable this icon'
+Commands: 'Commands'
+Move: 'Move'
+Edit: 'Configure'
+Open: 'Open'
+Shift_Leftclick: 'Shift-Leftclick'
+Shift_Rightclick: 'Shift-Rightclick'

@@ -5,9 +5,9 @@ import de.codingair.warpsystem.spigot.features.effectportals.utils.PortalDestina
 
 public enum DestinationType {
     UNKNOWN(-1, null),
-    WarpIcon(0, WarpIconAdapter.class),
+    WarpIcon(0, SimpleWarpAdapter.class),
     SimpleWarp(1, SimpleWarpAdapter.class),
-    GlobalWarpIcon(2, GlobalWarpIconAdapter.class),
+    GlobalWarpIcon(2, GlobalWarpAdapter.class),
     GlobalWarp(3, GlobalWarpAdapter.class),
     EffectPortal(4, PortalDestinationAdapter.class),
     ;

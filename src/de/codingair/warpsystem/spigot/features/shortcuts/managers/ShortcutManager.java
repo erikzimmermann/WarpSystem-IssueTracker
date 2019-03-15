@@ -3,12 +3,12 @@ package de.codingair.warpsystem.spigot.features.shortcuts.managers;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.shortcuts.listeners.ShortcutListener;
 import de.codingair.warpsystem.spigot.features.shortcuts.listeners.ShortcutPacketListener;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -34,12 +34,22 @@ public class ShortcutManager implements Manager, BungeeFeature {
         WarpSystem.log("  > Loading Shortcuts");
 
         for(String key : config.getKeys(false)) {
+            String dest = config.getString(key + ".Destination");
+
+            //Old
             String warpId = config.getString(key + ".WarpId", null);
             String globalWarp = config.getString(key + ".GlobalWarp", null);
 
-            Warp warp = warpId == null ? null : IconManager.getInstance().getWarp(warpId);
+            Destination destination;
+            if(dest != null) {
+                destination = new Destination(dest);
+            } else if(warpId != null) {
+                destination = new Destination(warpId, DestinationType.SimpleWarp);
+            } else if(globalWarp != null) {
+                destination = new Destination(globalWarp, DestinationType.GlobalWarp);
+            } else continue;
 
-            this.shortcuts.add(warp == null ? new Shortcut(globalWarp, key) : new Shortcut(warp, key));
+            this.shortcuts.add(new Shortcut(destination, key));
         }
 
         WarpSystem.log("     ...got " + this.shortcuts.size() + " Shortcut(s)");
@@ -58,8 +68,7 @@ public class ShortcutManager implements Manager, BungeeFeature {
         for(String key : config.getKeys(false)) config.set(key, null);
 
         for(Shortcut sc : this.shortcuts) {
-            config.set(sc.getDisplayName() + ".WarpId", sc.getWarp() == null ? null : ((Warp) sc.getWarp()).getIdentifier());
-            config.set(sc.getDisplayName() + ".GlobalWarp", sc.getGlobalWarp());
+            config.set(sc.getDisplayName() + ".Destination", sc.getDestination() == null ? null : sc.getDestination().toJSONString());
         }
 
         if(!saver) WarpSystem.log("    ...saved " + config.getKeys(false).size() + " Shortcut(s)");
