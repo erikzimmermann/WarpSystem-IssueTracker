@@ -7,9 +7,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public interface DestinationAdapter {
-    boolean teleport(Player player, String id, String displayName, String message, boolean silent, double costs, Callback<TeleportResult> callback);
+    boolean teleport(Player player, String id, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback);
 
-    SimulatedTeleportResult simulate(Player player, String id);
+    SimulatedTeleportResult simulate(Player player, String id, boolean checkPermission);
 
     double getCosts(String id);
 

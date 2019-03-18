@@ -5,6 +5,7 @@ public enum Origin {
     GlobalWarpIcon,
     GlobalWarp,
     SimpleWarp,
+    DirectSimpleWarp,
     Warp,
     TempWarp,
     WarpSign,

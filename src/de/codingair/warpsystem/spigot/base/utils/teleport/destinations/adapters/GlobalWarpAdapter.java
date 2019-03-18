@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 
 public class GlobalWarpAdapter implements DestinationAdapter {
     @Override
-    public boolean teleport(Player player, String id, String displayName, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
+    public boolean teleport(Player player, String id, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
         GlobalWarpManager.getInstance().teleport(player, displayName, id, costs, new Callback<PrepareTeleportPacket.Result>() {
             @Override
             public void accept(PrepareTeleportPacket.Result result) {
@@ -48,7 +48,7 @@ public class GlobalWarpAdapter implements DestinationAdapter {
     }
 
     @Override
-    public SimulatedTeleportResult simulate(Player player, String id) {
+    public SimulatedTeleportResult simulate(Player player, String id, boolean checkPermission) {
         return new SimulatedTeleportResult(null, TeleportResult.TELEPORTED);
     }
 
