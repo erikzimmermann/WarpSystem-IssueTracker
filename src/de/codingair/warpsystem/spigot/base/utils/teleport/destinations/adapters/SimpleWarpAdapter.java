@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 
 public class SimpleWarpAdapter implements DestinationAdapter {
     @Override
-    public boolean teleport(Player player, String id, String displayName, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
+    public boolean teleport(Player player, String id, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
         SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(id);
 
         if(warp == null) {
@@ -28,7 +28,7 @@ public class SimpleWarpAdapter implements DestinationAdapter {
             if(callback != null) callback.accept(TeleportResult.WORLD_DOES_NOT_EXIST);
             return false;
         } else {
-            if(warp.hasPermission() && !player.hasPermission(warp.getPermission())) {
+            if(checkPermission && warp.hasPermission() && !player.hasPermission(warp.getPermission())) {
                 player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"));
                 if(callback != null) callback.accept(TeleportResult.NO_PERMISSION);
                 return false;
@@ -50,7 +50,7 @@ public class SimpleWarpAdapter implements DestinationAdapter {
     }
 
     @Override
-    public SimulatedTeleportResult simulate(Player player, String id) {
+    public SimulatedTeleportResult simulate(Player player, String id, boolean checkPermission) {
         SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(id);
 
         if(warp == null) {
@@ -60,7 +60,7 @@ public class SimpleWarpAdapter implements DestinationAdapter {
         if(warp.getLocation().getWorld() == null) {
             return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("World_Not_Exists"), TeleportResult.WORLD_DOES_NOT_EXIST);
         } else {
-            if(warp.hasPermission() && !player.hasPermission(warp.getPermission())) {
+            if(checkPermission && warp.hasPermission() && !player.hasPermission(warp.getPermission())) {
                 return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"), TeleportResult.NO_PERMISSION);
             }
 

@@ -56,9 +56,9 @@ public class Destination {
         return this;
     }
 
-    public boolean teleport(Player player, String message, String displayName, boolean silent, double costs, Callback<TeleportResult> callback) {
+    public boolean teleport(Player player, String message, String displayName, boolean checkPermission, boolean silent, double costs, Callback<TeleportResult> callback) {
         player.setFallDistance(0F);
-        return adapter.teleport(player, id, displayName, message, silent, costs, callback);
+        return adapter.teleport(player, id, displayName, checkPermission, message, silent, costs, callback);
     }
 
     public Location buildLocation() {
@@ -69,8 +69,8 @@ public class Destination {
         return adapter.getCosts(id);
     }
 
-    public SimulatedTeleportResult simulate(Player player) {
-        return adapter.simulate(player, this.id);
+    public SimulatedTeleportResult simulate(Player player, boolean checkPermission) {
+        return adapter.simulate(player, this.id, checkPermission);
     }
 
     public String getId() {

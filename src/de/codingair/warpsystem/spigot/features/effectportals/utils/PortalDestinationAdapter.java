@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 
 public class PortalDestinationAdapter implements DestinationAdapter {
     @Override
-    public boolean teleport(Player player, String id, String displayName, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
+    public boolean teleport(Player player, String id, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
         Location location = buildLocation(id);
 
         if(location == null) {
@@ -38,7 +38,7 @@ public class PortalDestinationAdapter implements DestinationAdapter {
     }
 
     @Override
-    public SimulatedTeleportResult simulate(Player player, String id) {
+    public SimulatedTeleportResult simulate(Player player, String id, boolean checkPermission) {
         return new SimulatedTeleportResult(null, TeleportResult.TELEPORTED);
     }
 

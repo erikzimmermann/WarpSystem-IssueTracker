@@ -7,6 +7,7 @@ import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.effects.RotatingParticleSpiral;
@@ -26,6 +27,7 @@ public class Teleport {
 
     private Destination destination;
 
+    private String permission;
     private String displayName;
     private int seconds;
     private SoundData teleportSound;
@@ -37,10 +39,11 @@ public class Teleport {
     private boolean afterEffects;
     private Callback<TeleportResult> callback;
 
-    public Teleport(Player player, Destination destination, String displayName, int seconds, double costs, String message, boolean canMove, boolean silent, SoundData teleportSound, boolean afterEffects, Callback<TeleportResult> callback) {
+    public Teleport(Player player, Destination destination, String displayName, String permission, int seconds, double costs, String message, boolean canMove, boolean silent, SoundData teleportSound, boolean afterEffects, Callback<TeleportResult> callback) {
         this.player = player;
         this.destination = destination;
         this.displayName = displayName;
+        this.permission = permission;
         this.seconds = seconds;
         this.costs = costs;
         this.teleportSound = teleportSound;
@@ -110,7 +113,7 @@ public class Teleport {
             }
         }
 
-        if(!destination.teleport(player, message, displayName, silent, costs, callback)) {
+        if(!destination.teleport(player, message, displayName, this.permission == null || !this.permission.equals(TeleportManager.NO_PERMISSION), silent, costs, callback)) {
             return;
         }
 
@@ -134,7 +137,8 @@ public class Teleport {
 
     public SimulatedTeleportResult simulate(Player player) {
         if(this.destination == null) throw new IllegalArgumentException("Destination cannot be null!");
-        return this.destination.simulate(player);
+        if(this.permission != null && !this.permission.equals(TeleportManager.NO_PERMISSION) && !player.hasPermission(this.permission)) return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"), TeleportResult.NO_PERMISSION);
+        return this.destination.simulate(player, this.permission == null || !this.permission.equals(TeleportManager.NO_PERMISSION));
     }
 
     public Player getPlayer() {
@@ -191,5 +195,13 @@ public class Teleport {
 
     public int getSeconds() {
         return seconds;
+    }
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public void setPermission(String permission) {
+        this.permission = permission;
     }
 }

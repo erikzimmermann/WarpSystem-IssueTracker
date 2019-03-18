@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TeleportManager {
+    public static final String NO_PERMISSION = "%NO_PERMISSION%";
     private List<Particle> particles = new ArrayList<>();
     private List<Teleport> teleports = new ArrayList<>();
 
@@ -134,6 +135,22 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, String message, boolean silent, SoundData teleportSound, boolean afterEffects, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, null, costs, skip, canMove, message, silent, teleportSound, true, callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, String message, boolean silent, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, permission, costs, skip, this.canMove, message, silent, callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, String message, boolean silent, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message, silent, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, String message, boolean silent, SoundData teleportSound, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message, silent, teleportSound, true, callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, String message, boolean silent, SoundData teleportSound, boolean afterEffects, Callback<TeleportResult> callback) {
         if(WarpSystem.maintenance && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Maintenance)) {
             player.sendMessage(Lang.getPrefix() + Lang.get("Warning_Maintenance"));
             return;
@@ -182,7 +199,7 @@ public class TeleportManager {
         }
 
         Callback<TeleportResult> finalResultCallback = resultCallback;
-        Teleport teleport = new Teleport(player, destination, displayName, seconds, costs, message, canMove, silent, teleportSound, afterEffects, new Callback<TeleportResult>() {
+        Teleport teleport = new Teleport(player, destination, displayName, permission, seconds, costs, message, canMove, silent, teleportSound, afterEffects, new Callback<TeleportResult>() {
             @Override
             public void accept(TeleportResult object) {
                 if(callback != null) callback.accept(object);
