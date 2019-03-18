@@ -190,8 +190,12 @@ public class Portal implements Removable {
             }
         }
 
+        this.startAnim.setMaxDistance(PortalManager.getInstance().getMaxParticleDistance());
         this.startAnim.setRunning(running);
-        if(this.destinationAnim != null) this.destinationAnim.setRunning(running);
+        if(this.destinationAnim != null) {
+            this.destinationAnim.setMaxDistance(PortalManager.getInstance().getMaxParticleDistance());
+            this.destinationAnim.setRunning(running);
+        }
     }
 
     @Override
