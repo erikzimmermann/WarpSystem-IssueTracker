@@ -170,16 +170,14 @@ public class GWarps extends GUI {
             ItemBuilder builder = new ItemBuilder(Material.NETHER_STAR).setName(Lang.get("Menu_Help"));
 
             if(editing) {
-                builder.setLore("§0",
-                        Lang.get("Menu_Help_Leftclick_Edit_Mode"));
+                builder.setLore("§0", "§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Quit_Edit_Mode"));
             } else {
-                builder.setLore("§0",
-                        Lang.get("Menu_Help_Leftclick"));
+                builder.setLore("§0", "§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Edit_Mode"));
             }
             builder.addLore(Lang.get("Menu_Help_Shift_Leftclick"));
             builder.addLore("");
-            builder.addLore(Lang.get("Menu_Help_Rightclick"));
-            builder.addLore(Lang.get("Menu_Help_Shift_Rightclick_Show_Icon"));
+            builder.addLore("§3" + Lang.get("Rightclick") + ": §b" + Lang.get("Options"));
+            builder.addLore("§3" + Lang.get("Shift_Rightclick") + ": §b" + Lang.get("Show_Icon"));
 
             builder.addEnchantment(Enchantment.DAMAGE_ALL, 1);
             builder.setHideEnchantments(true);

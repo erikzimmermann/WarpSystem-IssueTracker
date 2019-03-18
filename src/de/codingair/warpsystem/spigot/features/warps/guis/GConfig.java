@@ -117,9 +117,9 @@ public class GConfig extends GUI {
 
         ItemBuilder anim = new ItemBuilder(Material.GLOWSTONE_DUST).setName("§c§n" + Lang.get("Animation"));
         anim.setLore("§8" + Lang.get("Current") + ": §7" + WarpSystem.getInstance().getTeleportManager().getParticle().name());
-        anim.addLore("", Lang.get("Shift_Leftclick_Show_Animation"));
-        anim.addLore(Lang.get("Leftclick_Prev_Animation"));
-        anim.addLore(Lang.get("Rightclick_Next_Animation"));
+        anim.addLore("", "§3" + Lang.get("Shift_Leftclick") + ": §b" + Lang.get("Show"));
+        anim.addLore("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Previous_Animation"));
+        anim.addLore("§3" + Lang.get("Rightclick") + ": §b" + Lang.get("Next_Animation"));
 
         addButton(new ItemButton(5, anim.getItem()) {
             @Override

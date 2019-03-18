@@ -154,13 +154,13 @@ public class PAppearance extends PMain {
                 }
 
                 List<String> lore2 = new ArrayList<>();
-                if(lore != null && !lore.isEmpty()) lore2.add(Lang.get("Rightclick_Reset_Lines"));
+                if(lore != null && !lore.isEmpty()) lore2.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Reset_Lines"));
 
                 return new ItemBuilder(XMaterial.PAPER)
                         .setName("§6§n" + Lang.get("Description"))
                         .setLore("§3" + Lang.get("Current") + ": " + (lore == null || lore.isEmpty() ? "§c" + Lang.get("Not_Set") : ""))
                         .addLore(lore)
-                        .addLore("", Lang.get("Leftclick_Add_Line"))
+                        .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Add_Line"))
                         .addLore(lore2)
                         .getItem();
             }
