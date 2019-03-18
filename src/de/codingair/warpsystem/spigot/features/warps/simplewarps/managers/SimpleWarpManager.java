@@ -8,6 +8,7 @@ import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CDeleteWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CEditWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CSetWarp;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CWarp;
 import de.codingair.warpsystem.utils.Manager;
 import org.json.simple.parser.ParseException;
 
@@ -19,7 +20,6 @@ public class SimpleWarpManager implements Manager {
     private static SimpleWarpManager instance = null;
     private HashMap<String, SimpleWarp> warps = new HashMap<>();
     private List<String> reservedNames = new ArrayList<>();
-    private List<CommandBuilder> commands = new ArrayList<>();
     private ConfigFile file;
 
     @Override
@@ -46,10 +46,10 @@ public class SimpleWarpManager implements Manager {
 
         WarpSystem.log("    ...got " + warps.size() + " SimpleWarp(s)");
 
-        this.commands.add(new CSetWarp());
-        this.commands.add(new CEditWarp());
-        this.commands.add(new CDeleteWarp());
-        this.commands.forEach(c -> c.register(WarpSystem.getInstance()));
+        new CWarp().register(WarpSystem.getInstance());
+        new CSetWarp().register(WarpSystem.getInstance());
+        new CEditWarp().register(WarpSystem.getInstance());
+        new CDeleteWarp().register(WarpSystem.getInstance());
 
         return !errors;
     }
@@ -71,8 +71,6 @@ public class SimpleWarpManager implements Manager {
 
     @Override
     public void destroy() {
-        this.commands.forEach(c -> c.unregister(WarpSystem.getInstance()));
-        this.commands.clear();
         this.warps.clear();
     }
 
