@@ -305,6 +305,9 @@ public class IconManager implements Manager {
 
         ActionIconHelper.load = false;
         new CWarps().register(WarpSystem.getInstance());
+        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false) && !FeatureType.SIMPLE_WARPS.isActive()) {
+            new CWarp().register(WarpSystem.getInstance());
+        }
 
         if(!success) {
             TextComponent base = new TextComponent(Lang.getPrefix() + "§cTry to use WarpSystem ");
