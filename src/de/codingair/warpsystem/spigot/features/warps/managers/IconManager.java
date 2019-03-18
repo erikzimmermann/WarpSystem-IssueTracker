@@ -12,7 +12,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
-import de.codingair.warpsystem.spigot.features.warps.commands.CWarp;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CWarp;
 import de.codingair.warpsystem.spigot.features.warps.commands.CWarps;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
@@ -304,11 +304,7 @@ public class IconManager implements Manager {
         }
 
         ActionIconHelper.load = false;
-
-        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Warps", true)) {
-            new CWarp().register(WarpSystem.getInstance());
-            new CWarps().register(WarpSystem.getInstance());
-        }
+        new CWarps().register(WarpSystem.getInstance());
 
         if(!success) {
             TextComponent base = new TextComponent(Lang.getPrefix() + "§cTry to use WarpSystem ");
