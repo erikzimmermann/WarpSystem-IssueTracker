@@ -25,7 +25,6 @@ WarpSystem:
   Teleport:
     Animation_After_Teleport:
       Enabled: true
-    Op_Can_Skip_Delay: false
     Delay: 5
     # Animations:
     # 0  - FIREWORKS_SPARK
@@ -119,6 +118,10 @@ WarpSystem:
     Support:
       #If enabled, the player can't create TempWarps in regions, where he cannot build
       ProtectedRegions: false
+
+  EffectPortals:
+    #Max distance between particle and player
+    ParticleDistance: 70.0
 
   Commands:
     Warp:

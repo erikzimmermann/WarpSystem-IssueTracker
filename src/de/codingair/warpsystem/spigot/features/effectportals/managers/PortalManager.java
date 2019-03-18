@@ -2,9 +2,11 @@ package de.codingair.warpsystem.spigot.features.effectportals.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.effectportals.listeners.PortalListener;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.Portal;
 import de.codingair.warpsystem.spigot.features.effectportals.commands.CPortal;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 
@@ -12,7 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PortalManager implements Manager {
+    private static PortalManager instance;
     private List<Portal> portals = new ArrayList<>();
+    private double maxParticleDistance = 70D;
 
     @Override
     public boolean load() {
@@ -83,6 +87,7 @@ public class PortalManager implements Manager {
             new CPortal().register(WarpSystem.getInstance());
         }
 
+        this.maxParticleDistance = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getDouble("WarpSystem.EffectPortals.ParticleDistance", 100.0);
 
         Bukkit.getPluginManager().registerEvents(new PortalListener(), WarpSystem.getInstance());
 
@@ -114,5 +119,15 @@ public class PortalManager implements Manager {
 
     public List<Portal> getPortals() {
         return portals;
+    }
+
+    public double getMaxParticleDistance() {
+        return maxParticleDistance;
+    }
+
+    public static PortalManager getInstance() {
+        if(instance == null) instance = WarpSystem.getInstance().getDataManager().getManager(FeatureType.PORTALS);
+        if(instance == null) instance = new PortalManager();
+        return instance;
     }
 }
