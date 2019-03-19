@@ -250,7 +250,7 @@ public class Icon implements Serializable {
     }
 
     public ItemStack getItem() {
-        return new ItemBuilder(item).setName(this.name == null ? null : "§r" + ChatColor.translateAlternateColorCodes('&', this.name)).getItem();
+        return new ItemBuilder(item).setName(this.name == null ? null : "§r" + ChatColor.translateAlternateColorCodes('&', this.name)).checkFirstLine().getItem();
     }
 
     public ItemBuilder getItemBuilder() {
