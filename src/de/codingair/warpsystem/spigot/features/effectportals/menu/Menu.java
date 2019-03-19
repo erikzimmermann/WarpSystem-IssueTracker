@@ -19,6 +19,8 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.features.effectportals.PortalEditor;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.PortalDestinationAdapter;
 import de.codingair.warpsystem.spigot.features.utils.guis.choosedestination.ChooseDestinationGUI;
+import de.codingair.warpsystem.spigot.features.warps.guis.editor.pages.PDestination;
+import de.codingair.warpsystem.transfer.packets.spigot.RequestServerStatusPacket;
 import net.minecraft.server.v1_9_R1.SoundEffects;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -67,6 +69,8 @@ public class Menu extends HotbarGUI {
         }
 
         setItem(4, new ItemComponent(new ItemBuilder(XMaterial.REDSTONE).setName("§7" + Lang.get("Destination") + ": §e" + (destination == null ? "§c-" : destination)).getItem(), new ItemListener() {
+            private boolean removed = false;
+
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 if(clickType.name().contains("LEFT")) {
@@ -106,6 +110,7 @@ public class Menu extends HotbarGUI {
                                     onUnhover(gui, ic, ic, player);
                                     onHover(gui, ic, ic, player);
 
+                                    removed = true;
                                     updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §e" + Lang.get("Effect_Portal"));
 
                                     e.setClose(true);
@@ -125,11 +130,12 @@ public class Menu extends HotbarGUI {
                         editor.getPortal().setDestinationName(null);
 
                         editor.getPortal().update();
+                        removed = true;
                         updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §c-");
                         onUnhover(gui, ic, ic, player);
                         onHover(gui, ic, ic, player);
                     } else {
-                        new ChooseDestinationGUI(player, Lang.get("WarpSign_Choose_Warp_GUI"), new Callback<Destination>() {
+                        new ChooseDestinationGUI(player, new Callback<Destination>() {
                             @Override
                             public void accept(Destination destination) {
                                 if(destination == null) return;
@@ -146,6 +152,23 @@ public class Menu extends HotbarGUI {
 
                                     case GlobalWarp:
                                         dest = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("GlobalWarp") + "§8)";
+                                        break;
+
+                                    case Server:
+                                        removed = false;
+                                        dest = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("Server") + " §7- " + Lang.get("Pinging") + "...§8)";
+                                        WarpSystem.getInstance().getDataHandler().send(new RequestServerStatusPacket(editor.getPortal().getDestination().getId(), new Callback<Boolean>() {
+                                            @Override
+                                            public void accept(Boolean online) {
+                                                if(removed) {
+                                                    removed = false;
+                                                    return;
+                                                }
+
+                                                String newName = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("Server") + " §7- " + (online ? "§a" + Lang.get("Online") : "§c" + Lang.get("Offline")) + "§8)";
+                                                updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §e" + newName);
+                                            }
+                                        }));
                                         break;
                                 }
 

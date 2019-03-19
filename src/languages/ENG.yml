@@ -90,7 +90,6 @@ Set_Icon: 'Set Icon'
 Coins: Coin(s)
 Costs: Costs
 WarpSign_Choose_Warp: Choose a warp for the sign!
-WarpSign_Choose_Warp_GUI: '&4&lChoose a warp!'
 WarpSign_Finish: The WarpSign was set successfully!
 Teleport_Cancelled: '&cThe teleport was cancelled.'
 WarpSign_Removed: '&7The WarpSign was &cremoved&7!'
@@ -129,13 +128,11 @@ NativePortals_Set_Blocks: Set teleport blocks
 Portal_Name: Portal name
 Drop_To_Leave: '&cDrop the item to go to the menu'
 Choose_A_Warp: '&bChoose a warp'
-Choose_A_GlobalWarp: '&bChoose a global warp'
+Choose_A_GlobalWarp: '&bChoose a GlobalWarp'
 NativePortals_Confirm_Close: '&cNative Portals &7- &4Save?'
 Sure_That_You_Want_To_Loose_Your_Data: '&7Are you sure that you &cdon''t &7want to &csave &7your changes?'
 Close: Close
 Save: Save
-GlobalWarp_Server_Is_Not_Online: '&cThe target server is not online!'
-GlobalWarp_Player_Is_Already_On_Target_Server: '&cYou are already on the target server.'
 Go_To_NativePortal: '&7You have 30 seconds to go into a native portal.'
 GlobalWarp_Create_Name_Already_Exists: '&7The GlobalWarp "&b%GLOBAL_WARP%&7" &calready exists&7.'
 GlobalWarp_Deleted: '&7The GlobalWarp "&b%GLOBAL_WARP%&7" was &cdeleted&7.'
@@ -313,3 +310,12 @@ Edit: 'Configure'
 Open: 'Open'
 Shift_Leftclick: 'Shift-Leftclick'
 Shift_Rightclick: 'Shift-Rightclick'
+Server: 'Server'
+Pinging: 'Pinging'
+Online: 'Online'
+Offline: 'Offline'
+Refresh: 'Refresh'
+Choose_A_Destination: '&cChoose a destination'
+Choose_A_Server: '&bChoose a Server'
+Server_Is_Not_Online: '&cThe target server is not online!'
+Player_Is_Already_On_Target_Server: '&cYou are already on the target server.'

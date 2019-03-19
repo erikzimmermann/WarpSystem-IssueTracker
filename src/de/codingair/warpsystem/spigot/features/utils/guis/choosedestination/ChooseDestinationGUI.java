@@ -21,6 +21,10 @@ import java.util.List;
 public class ChooseDestinationGUI extends SimpleGUI {
     private Callback<Destination> callback;
 
+    public ChooseDestinationGUI(Player p, Callback<Destination> callback) {
+        this(p, Lang.get("Choose_A_Destination"), callback);
+    }
+
     public ChooseDestinationGUI(Player p, String title, Callback<Destination> callback) {
         super(p, new PChooseDestination(p, title, callback), WarpSystem.getInstance());
 

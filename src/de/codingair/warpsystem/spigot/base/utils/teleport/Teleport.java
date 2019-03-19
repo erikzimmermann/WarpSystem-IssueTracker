@@ -32,7 +32,6 @@ public class Teleport {
     private int seconds;
     private SoundData teleportSound;
     private double costs;
-    private boolean showMessage;
     private boolean canMove;
     private String message;
     private boolean silent;
@@ -108,7 +107,7 @@ public class Teleport {
         if(message != null) {
             if(this.costs > 0) {
                 message = (message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName));
-            } else if(showMessage) {
+            } else {
                 message = (message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName));
             }
         }
@@ -137,7 +136,8 @@ public class Teleport {
 
     public SimulatedTeleportResult simulate(Player player) {
         if(this.destination == null) throw new IllegalArgumentException("Destination cannot be null!");
-        if(this.permission != null && !this.permission.equals(TeleportManager.NO_PERMISSION) && !player.hasPermission(this.permission)) return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"), TeleportResult.NO_PERMISSION);
+        if(this.permission != null && !this.permission.equals(TeleportManager.NO_PERMISSION) && !player.hasPermission(this.permission))
+            return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"), TeleportResult.NO_PERMISSION);
         return this.destination.simulate(player, this.permission == null || !this.permission.equals(TeleportManager.NO_PERMISSION));
     }
 
@@ -183,14 +183,6 @@ public class Teleport {
 
     public void setCanMove(boolean canMove) {
         this.canMove = canMove;
-    }
-
-    public boolean isShowMessage() {
-        return showMessage;
-    }
-
-    public void setShowMessage(boolean showMessage) {
-        this.showMessage = showMessage;
     }
 
     public int getSeconds() {

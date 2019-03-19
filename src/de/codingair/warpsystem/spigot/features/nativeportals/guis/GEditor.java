@@ -1,10 +1,7 @@
 package de.codingair.warpsystem.spigot.features.nativeportals.guis;
 
 import de.codingair.codingapi.player.MessageAPI;
-import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
-import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
-import de.codingair.codingapi.player.gui.anvil.AnvilGUI;
-import de.codingair.codingapi.player.gui.anvil.AnvilListener;
+import de.codingair.codingapi.player.gui.anvil.*;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
 import de.codingair.codingapi.player.gui.inventory.gui.GUIListener;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
@@ -14,20 +11,15 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
-import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
-import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
 import de.codingair.warpsystem.spigot.features.nativeportals.PortalEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;
-import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Head;
-import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.guis.GSimpleWarpList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -181,7 +173,27 @@ public class GEditor extends GUI {
 
             builder.addText("§7" + Lang.get("Name") + ": " + (name == null ? "§c§m-" : "\"" + ChatColor.translateAlternateColorCodes('&', name) + "\""));
             builder.addText("§7" + Lang.get("NativePortal_Material") + ": " + (type == null ? "§c§m-" : type.name()));
-            builder.addText("§7" + Lang.get("Teleport_Link") + ": " + (destination == null || destination.getId() == null ? "§c§m-" : ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', destination.getId()))));
+
+            String teleportType = null;
+            if(destination != null && destination.getId() != null) {
+                switch(destination.getType()) {
+                    case SimpleWarp: {
+                        teleportType = Lang.get("SimpleWarp");
+                        break;
+                    }
+
+                    case GlobalWarp: {
+                        teleportType = Lang.get("GlobalWarp");
+                        break;
+                    }
+
+                    case Server: {
+                        teleportType = Lang.get("Server");
+                        break;
+                    }
+                }
+            }
+            builder.addText("§7" + Lang.get("Teleport_Link") + ": " + (destination == null || destination.getId() == null ? "§c§m-" : ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', destination.getId())) + " §8(§7" + teleportType + "§8)"));
             builder.addText("§7" + Lang.get("Portal_Blocks") + ": " + (portal == null ? "§c0" : portal.getBlocks().size()));
 
             builder.addText("");
@@ -369,39 +381,7 @@ public class GEditor extends GUI {
                 break;
 
             case TYPE: {
-                if(WarpSystem.getInstance().isOnBungeeCord()) {
-                    addButton(new ItemButton(3, 2, new ItemBuilder(XMaterial.ENDER_CHEST).setName("§8» §b" + Lang.get("Choose_A_GlobalWarp")).getItem()) {
-                        @Override
-                        public void onClick(InventoryClickEvent e) {
-                            new GGlobalWarpList(p, new GGlobalWarpList.Listener() {
-                                @Override
-                                public void onClickOnGlobalWarp(String warp, InventoryClickEvent e) {
-                                    Destination next = new Destination(warp, DestinationType.GlobalWarp);
-                                    if(destination == null || !destination.equals(next)) {
-                                        destination = next;
-                                        changed = true;
-                                    }
-
-                                    p.closeInventory();
-                                }
-
-                                @Override
-                                public void onClose() {
-                                    menu = Menu.MAIN;
-                                    reinitialize();
-                                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), GEditor.this::open, 1);
-                                }
-
-                                @Override
-                                public String getLeftclickDescription() {
-                                    return ChatColor.DARK_GRAY + "» §3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose");
-                                }
-                            }).open();
-                        }
-                    }.setOption(option).setCloseOnClick(true));
-                }
-
-                addButton(new ItemButton(WarpSystem.getInstance().isOnBungeeCord() ? 5 : 4, 2, new ItemBuilder(XMaterial.ENDER_EYE).setName("§8» §b" + Lang.get("Choose_A_SimpleWarp")).getItem()) {
+                addButton(new ItemButton(WarpSystem.getInstance().isOnBungeeCord() ? 2 : 4, 2, new ItemBuilder(XMaterial.ENDER_PEARL).setName("§8» §b" + Lang.get("Choose_A_SimpleWarp")).getItem()) {
                     @Override
                     public void onClick(InventoryClickEvent e) {
                         new GSimpleWarpList(p, new GSimpleWarpList.Listener() {
@@ -430,6 +410,73 @@ public class GEditor extends GUI {
                         }).open();
                     }
                 }.setOption(option).setCloseOnClick(true));
+
+                if(WarpSystem.getInstance().isOnBungeeCord()) {
+                    addButton(new ItemButton(4, 2, new ItemBuilder(XMaterial.ENDER_EYE).setName("§8» §b" + Lang.get("Choose_A_GlobalWarp")).getItem()) {
+                        @Override
+                        public void onClick(InventoryClickEvent e) {
+                            new GGlobalWarpList(p, new GGlobalWarpList.Listener() {
+                                @Override
+                                public void onClickOnGlobalWarp(String warp, InventoryClickEvent e) {
+                                    Destination next = new Destination(warp, DestinationType.GlobalWarp);
+                                    if(destination == null || !destination.equals(next)) {
+                                        destination = next;
+                                        changed = true;
+                                    }
+
+                                    p.closeInventory();
+                                }
+
+                                @Override
+                                public void onClose() {
+                                    menu = Menu.MAIN;
+                                    reinitialize();
+                                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), GEditor.this::open, 1);
+                                }
+
+                                @Override
+                                public String getLeftclickDescription() {
+                                    return ChatColor.DARK_GRAY + "» §3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose");
+                                }
+                            }).open();
+                        }
+                    }.setOption(option).setCloseOnClick(true));
+
+                    addButton(new ItemButton(6, 2, new ItemBuilder(XMaterial.ENDER_CHEST).setName("§8» §b" + Lang.get("Choose_A_Server")).getItem()) {
+                        @Override
+                        public void onClick(InventoryClickEvent e) {
+                            AnvilGUI.openAnvil(WarpSystem.getInstance(), p, new AnvilListener() {
+                                @Override
+                                public void onClick(AnvilClickEvent e) {
+                                    if(!e.getSlot().equals(AnvilSlot.OUTPUT)) return;
+
+                                    String input = e.getInput();
+
+                                    if(input == null) {
+                                        e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
+                                        return;
+                                    }
+
+                                    e.setClose(true);
+                                    Destination next = new Destination(input, DestinationType.Server);
+                                    if(destination == null || !destination.equals(next)) {
+                                        destination = next;
+                                        changed = true;
+                                    }
+                                }
+
+                                @Override
+                                public void onClose(AnvilCloseEvent e) {
+                                    if(e.getSubmittedText() != null) {
+                                        menu = Menu.MAIN;
+                                        reinitialize();
+                                        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), GEditor.this::open, 1);
+                                    }
+                                }
+                            }, new ItemBuilder(XMaterial.PAPER).setName(Lang.get("Server") + "...").getItem());
+                        }
+                    }.setOption(option).setCloseOnClick(true));
+                }
                 break;
             }
 

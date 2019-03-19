@@ -11,6 +11,7 @@ public enum PacketType {
     DeployIconPacket(2, DeployIconPacket.class),
     InitialPacket(3, InitialPacket.class),
     RequestInitialPacket(4, RequestInitialPacket.class),
+    RequestServerStatusPacket(5, RequestServerStatusPacket.class),
 
     PublishGlobalWarpPacket(10, PublishGlobalWarpPacket.class),
     PrepareTeleportPacket(11, PrepareTeleportPacket.class),
@@ -24,6 +25,8 @@ public enum PacketType {
     SendUUIDPacket(19, SendUUIDPacket.class),
     TeleportPlayerToPlayerPacket(20, TeleportPlayerToPlayerPacket.class),
     TeleportPlayerToCoordsPacket(21, TeleportPlayerToCoordsPacket.class),
+    PrepareServerSwitchPacket(22, PrepareServerSwitchPacket.class),
+    PrepareLoginMessagePacket(23, PrepareLoginMessagePacket.class),
 
     BooleanPacket(100, BooleanPacket.class),
     IntegerPacket(101, IntegerPacket.class),

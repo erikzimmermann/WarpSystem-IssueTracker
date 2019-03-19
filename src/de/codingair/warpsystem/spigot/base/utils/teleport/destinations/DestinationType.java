@@ -10,6 +10,7 @@ public enum DestinationType {
     GlobalWarpIcon(2, GlobalWarpAdapter.class),
     GlobalWarp(3, GlobalWarpAdapter.class),
     EffectPortal(4, PortalDestinationAdapter.class),
+    Server(5, ServerAdapter.class),
     ;
 
     private int id;
