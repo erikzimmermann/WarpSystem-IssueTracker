@@ -209,11 +209,11 @@ public class PAppearance extends PMain {
                 ItemStack sparkle;
                 if(getIcon().getItemBuilder().getEnchantments() == null || getIcon().getItemBuilder().getEnchantments().size() == 0) {
                     sparkle = new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle"))
-                            .setLore("", Lang.get("Leftclick_Enable"))
+                            .setLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Enable"))
                             .getItem();
                 } else {
                     sparkle = new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle"))
-                            .setLore("", Lang.get("Leftclick_Disable"))
+                            .setLore("", "§3" + Lang.get("Leftclick") + ": §c" + Lang.get("Disable"))
                             .getItem();
                 }
 

@@ -66,7 +66,7 @@ public class PChooseDestination extends Page {
 
                     @Override
                     public String getLeftclickDescription() {
-                        return Lang.get("Leftclick_To_Choose");
+                        return "§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose");
                     }
                 }).open();
             }
@@ -98,7 +98,7 @@ public class PChooseDestination extends Page {
 
                     @Override
                     public String getLeftclickDescription() {
-                        return Lang.get("Leftclick_To_Choose");
+                        return "§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose");
                     }
                 }).open();
             }

@@ -89,9 +89,9 @@ public class GConfig extends GUI {
         ItemBuilder maintenance = new ItemBuilder(Material.BEACON).setName("§c§l§n" + Lang.get("Maintenance"));
 
         if(!WarpSystem.maintenance)
-            maintenance.setLore("", Lang.get("Leftclick_Enable"));
+            maintenance.setLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Enable"));
         else
-            maintenance.setLore("", Lang.get("Leftclick_Disable"));
+            maintenance.setLore("", "§3" + Lang.get("Leftclick") + ": §c" + Lang.get("Disable"));
 
         addButton(new ItemButton(2, maintenance.getItem()) {
             @Override
@@ -107,9 +107,9 @@ public class GConfig extends GUI {
                 ItemBuilder maintenance = new ItemBuilder(Material.BEACON).setName("§c§l§n" + Lang.get("Maintenance"));
 
                 if(!WarpSystem.maintenance)
-                    maintenance.setLore("", Lang.get("Leftclick_Maintenance_On"));
+                    maintenance.setLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Enable"));
                 else
-                    maintenance.setLore("", Lang.get("Leftclick_Maintenance_Off"));
+                    maintenance.setLore("", "§3" + Lang.get("Leftclick") + ": §c" + Lang.get("Disable"));
 
                 setItem(maintenance.getItem());
             }
@@ -187,9 +187,9 @@ public class GConfig extends GUI {
         ItemBuilder movingAllowed = new ItemBuilder(Material.LEATHER_BOOTS).setHideStandardLore(true).setName("§c§n" + Lang.get("Walking_During_Teleports"));
 
         if(!WarpSystem.getInstance().getTeleportManager().isCanMove())
-            movingAllowed.setLore("", Lang.get("Leftclick_Enable"));
+            movingAllowed.setLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Enable"));
         else
-            movingAllowed.setLore("", Lang.get("Leftclick_Disable"));
+            movingAllowed.setLore("", "§3" + Lang.get("Leftclick") + ": §c" + Lang.get("Disable"));
 
         addButton(new ItemButton(6, movingAllowed.getItem()) {
             @Override
@@ -206,9 +206,9 @@ public class GConfig extends GUI {
                 ItemBuilder movingAllowed = new ItemBuilder(Material.LEATHER_BOOTS).setHideStandardLore(true).setName("§c§n" + Lang.get("Walking_During_Teleports"));
 
                 if(!WarpSystem.getInstance().getTeleportManager().isCanMove())
-                    movingAllowed.setLore("", Lang.get("Leftclick_Enable"));
+                    movingAllowed.setLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Enable"));
                 else
-                    movingAllowed.setLore("", Lang.get("Leftclick_Disable"));
+                    movingAllowed.setLore("", "§3" + Lang.get("Leftclick") + ": §c" + Lang.get("Disable"));
 
                 setItem(movingAllowed.getItem());
             }
@@ -216,8 +216,8 @@ public class GConfig extends GUI {
 
         ItemBuilder delay = new ItemBuilder(XMaterial.CLOCK).setName("§c§n" + Lang.get("Teleport_Delay"));
         delay.setLore("§8" + Lang.get("Current") + ": §7" + WarpSystem.getInstance().getTeleportManager().getSeconds());
-        delay.addLore("", Lang.get("Leftclick_Reduce"));
-        delay.addLore(Lang.get("Rightclick_Enlarge"));
+        delay.addLore("", "§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Reduce"));
+        delay.addLore("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Enlarge"));
 
         addButton(new ItemButton(7, delay.getItem()) {
             @Override
@@ -240,8 +240,8 @@ public class GConfig extends GUI {
 
                 ItemBuilder delay = new ItemBuilder(XMaterial.CLOCK).setName("§c§n" + Lang.get("Teleport_Delay"));
                 delay.setLore("§8" + Lang.get("Current") + ": §7" + WarpSystem.getInstance().getTeleportManager().getSeconds());
-                delay.addLore("", Lang.get("Leftclick_Reduce"));
-                delay.addLore(Lang.get("Rightclick_Enlarge"));
+                delay.addLore("", "§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Reduce"));
+                delay.addLore("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Enlarge"));
                 setItem(delay.getItem());
             }
         }.setOption(option).setOnlyLeftClick(false));

@@ -82,7 +82,7 @@ public class ChooseDestinationGUI extends SimpleGUI {
 
                 @Override
                 public String getLeftclickDescription() {
-                    return Lang.get("Leftclick_To_Choose");
+                    return "§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose");
                 }
             }).open();
         }

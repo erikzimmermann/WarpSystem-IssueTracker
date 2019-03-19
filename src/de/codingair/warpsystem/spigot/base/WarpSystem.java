@@ -106,8 +106,6 @@ public class WarpSystem extends JavaPlugin {
 
             timer.start();
 
-            latestVersionId = UpdateChecker.getLatestVersionID();
-
             log(" ");
             log("__________________________________________________________");
             log(" ");
@@ -176,6 +174,7 @@ public class WarpSystem extends JavaPlugin {
             activated = true;
             Bukkit.getScheduler().runTaskLaterAsynchronously(WarpSystem.getInstance(), () -> {
                 updateAvailable = WarpSystem.this.updateChecker.needsUpdate();
+                latestVersionId = UpdateChecker.getLatestVersionID();
                 WarpSystem.getInstance().notifyPlayers(null);
             }, 20L);
 

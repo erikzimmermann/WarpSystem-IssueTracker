@@ -159,7 +159,7 @@ public class GWarps extends GUI {
 
         if(editing) {
             noneBuilder = new ItemBuilder(Material.BARRIER).setHideStandardLore(true)
-                    .setName(Lang.get("Edit_Mode_Set_Icon"));
+                    .setName("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Set_Icon"));
         } else {
             noneBuilder = new ItemBuilder(IconManager.getInstance().getBackground()).setHideName(true).setHideStandardLore(true).setHideEnchantments(true);
         }
@@ -174,7 +174,7 @@ public class GWarps extends GUI {
             } else {
                 builder.setLore("§0", "§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Edit_Mode"));
             }
-            builder.addLore(Lang.get("Menu_Help_Shift_Leftclick"));
+            builder.addLore("§3" + Lang.get("Shift_Leftclick") + ": §b" + Lang.get("Set_Background"));
             builder.addLore("");
             builder.addLore("§3" + Lang.get("Rightclick") + ": §b" + Lang.get("Options"));
             builder.addLore("§3" + Lang.get("Shift_Rightclick") + ": §b" + Lang.get("Show_Icon"));
@@ -529,7 +529,7 @@ public class GWarps extends GUI {
             for(int i = 0; i < getSize(); i++) {
                 if(i == slot || getItem(i) == null || getItem(i).getType().equals(Material.AIR)) continue;
 
-                setItem(i, new ItemBuilder(getItem(i)).setLore("", Lang.get("Leftclick_Move_Icon")).getItem());
+                setItem(i, new ItemBuilder(getItem(i)).setLore("", "§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Move_Icon")).getItem());
             }
         }
     }

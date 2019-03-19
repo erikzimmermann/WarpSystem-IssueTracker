@@ -43,7 +43,7 @@ public class Teleport extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Permission"), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), "§7" + Lang.get("Leftclick") + ": §e" + Lang.get("Change_Permission"), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
