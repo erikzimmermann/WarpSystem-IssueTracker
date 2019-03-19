@@ -237,7 +237,7 @@ public class IconManager implements Manager {
             if(SimpleWarpManager.getInstance().getWarp(c.getIdentifier()) == null) {
                 Location dest = (Location) loc.getLocation();
                 SimpleWarpManager.getInstance().addWarp(
-                        new SimpleWarp(new WarpData(c.getIdentifier(), null, c.getPermission(), dest.getWorldName(), dest.getX(), dest.getY(), dest.getZ(), dest.getYaw(), dest.getPitch()))
+                        new SimpleWarp(new WarpData(c.getIdentifier().replace(" ", "_"), null, c.getPermission(), dest.getWorldName(), dest.getX(), dest.getY(), dest.getZ(), dest.getYaw(), dest.getPitch()))
                 );
                 created = true;
             }
@@ -250,12 +250,9 @@ public class IconManager implements Manager {
 
             ActionObject bound = c.getAction(Action.BOUND_TO_WORLD);
             String world = bound == null ? null : bound.getValue();
-            if(world != null) {
-                System.out.println(c.getNameWithoutColor() + " is a world bounded warp!");
-            }
 
             List<de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.ActionObject> actions = new ArrayList<>();
-            if(created) actions.add(new WarpAction(new Destination(c.getIdentifier(), DestinationType.SimpleWarp)));
+            if(created) actions.add(new WarpAction(new Destination(c.getIdentifier().replace(" ", "_"), DestinationType.SimpleWarp)));
             if(s != null) actions.add(new CommandAction(s));
             if(world != null) actions.add(new BoundAction(world));
             if(amount > 0) actions.add(new CostsAction(amount));
