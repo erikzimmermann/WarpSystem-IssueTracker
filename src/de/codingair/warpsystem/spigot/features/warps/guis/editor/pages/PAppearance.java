@@ -98,13 +98,24 @@ public class PAppearance extends PMain {
             public ItemStack craftItem() {
                 return new ItemBuilder(XMaterial.NAME_TAG)
                         .setName("§6§n" + Lang.get("Name"))
-                        .setLore("§3" + Lang.get("Current") + ": " + (getIcon().getName() == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + ChatColor.translateAlternateColorCodes('&', getIcon().getName()) + "§7'"), "", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Name_Short"))
+                        .setLore("§3" + Lang.get("Current") + ": " + (getIcon().getName() == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + ChatColor.translateAlternateColorCodes('&', getIcon().getName()) + "§7'"),
+                                "", (getIcon().getName() == null ? "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Set_Name") : "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Name_Short")),
+                                (getIcon().getName() == null ? null : "§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove")))
                         .getItem();
             }
 
             @Override
             public ItemStack craftAnvilItem() {
                 return new ItemBuilder(Material.PAPER).setName(getIcon().getName() == null ? Lang.get("Name") + "..." : getIcon().getName()).getItem();
+            }
+
+            @Override
+            public void onOtherClick(InventoryClickEvent e) {
+                if(e.getClick() == ClickType.RIGHT) {
+                    getIcon().setName(null);
+                    getShowIcon().update();
+                    update();
+                }
             }
 
             @Override
@@ -115,6 +126,14 @@ public class PAppearance extends PMain {
 
                 if(input == null) {
                     e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
+                    return;
+                }
+
+                if(getBackup() != null && getBackup().getName().equals(input)) {
+                    e.setClose(true);
+                    getIcon().setName(e.getInput());
+                    getShowIcon().update();
+                    update();
                     return;
                 }
 
@@ -139,7 +158,7 @@ public class PAppearance extends PMain {
             @Override
             public void onClose(AnvilCloseEvent e) {
             }
-        }.setOption(option));
+        }.setOption(option).setOnlyLeftClick(false));
 
         addButton(new SyncAnvilGUIButton(3, 2, ClickType.LEFT) {
             @Override
