@@ -394,7 +394,7 @@ public class GEditor extends GUI {
 
                                 @Override
                                 public String getLeftclickDescription() {
-                                    return ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("Leftclick_To_Choose");
+                                    return ChatColor.DARK_GRAY + "» §3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose");
                                 }
                             }).open();
                         }
@@ -425,7 +425,7 @@ public class GEditor extends GUI {
 
                             @Override
                             public String getLeftclickDescription() {
-                                return ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("Leftclick_To_Choose");
+                                return ChatColor.DARK_GRAY + "» §3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose");
                             }
                         }).open();
                     }

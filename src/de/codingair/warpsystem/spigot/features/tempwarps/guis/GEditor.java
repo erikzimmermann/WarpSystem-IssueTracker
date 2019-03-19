@@ -120,7 +120,7 @@ public class GEditor extends SimpleGUI {
                     public ItemStack craftItem() {
                         ItemBuilder builder = new ItemBuilder(XMaterial.NAME_TAG)
                                 .setName("§7" + Lang.get("Name") + ": " + (warp.getName() == null ? "§c" + Lang.get("Not_Set") : "\"§b" + warp.getName() + "§7\"") + "")
-                                .setLore("", Lang.get("Change_Name"));
+                                .setLore("", Lang.get("Change_Name_Long"));
 
                         if(warp.getName() == null) {
                             builder.addEnchantment(Enchantment.DAMAGE_ALL, 1);
@@ -199,8 +199,8 @@ public class GEditor extends SimpleGUI {
 
                         builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp) ? "§a" : "§c") + (warp.getDuration() * TempWarpManager.getManager().getConfig().getDurationCosts()) + " " + Lang.get("Coins"));
                         builder.addLore("");
-                        if(warp.getDuration() > TempWarpManager.getManager().getMinTime()) builder.addLore(Lang.get("Leftclick_Reduce"));
-                        if(warp.getDuration() < TempWarpManager.getManager().getMaxTime()) builder.addLore(Lang.get("Rightclick_Enlarge"));
+                        if(warp.getDuration() > TempWarpManager.getManager().getMinTime()) builder.addLore("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Reduce"));
+                        if(warp.getDuration() < TempWarpManager.getManager().getMaxTime()) builder.addLore("§3" + Lang.get("Rightclick") + ": §b" + Lang.get("Enlarge"));
 
                         return builder.getItem();
                     }
@@ -314,8 +314,8 @@ public class GEditor extends SimpleGUI {
                                 TempWarpManager.getManager().calculateTeleportCosts(warp.getTeleportCosts()) - TempWarpManager.getManager().calculateTeleportCosts(warp.backupped().getTeleportCosts())
                                 ) + "").replace(".0", "")) + " " + Lang.get("Coins"));
                         builder.addLore("");
-                        if(warp.getTeleportCosts() > 0) builder.addLore(Lang.get("Leftclick_Reduce"));
-                        if(warp.getTeleportCosts() < TempWarpManager.getManager().getMaxTeleportCosts()) builder.addLore(Lang.get("Rightclick_Enlarge"));
+                        if(warp.getTeleportCosts() > 0) builder.addLore("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Reduce"));
+                        if(warp.getTeleportCosts() < TempWarpManager.getManager().getMaxTeleportCosts()) builder.addLore("§3" + Lang.get("Rightclick") + ": §b" + Lang.get("Enlarge"));
 
                         return builder.getItem();
                     }

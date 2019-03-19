@@ -154,13 +154,13 @@ public class PAppearance extends PMain {
                 }
 
                 List<String> lore2 = new ArrayList<>();
-                if(lore != null && !lore.isEmpty()) lore2.add(Lang.get("Rightclick_Reset_Lines"));
+                if(lore != null && !lore.isEmpty()) lore2.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Reset_Lines"));
 
                 return new ItemBuilder(XMaterial.PAPER)
                         .setName("§6§n" + Lang.get("Description"))
                         .setLore("§3" + Lang.get("Current") + ": " + (lore == null || lore.isEmpty() ? "§c" + Lang.get("Not_Set") : ""))
                         .addLore(lore)
-                        .addLore("", Lang.get("Leftclick_Add_Line"))
+                        .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Add_Line"))
                         .addLore(lore2)
                         .getItem();
             }
@@ -209,11 +209,11 @@ public class PAppearance extends PMain {
                 ItemStack sparkle;
                 if(getIcon().getItemBuilder().getEnchantments() == null || getIcon().getItemBuilder().getEnchantments().size() == 0) {
                     sparkle = new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle"))
-                            .setLore("", Lang.get("Leftclick_Enable"))
+                            .setLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Enable"))
                             .getItem();
                 } else {
                     sparkle = new ItemBuilder(Material.BLAZE_POWDER).setName("§6§n" + Lang.get("Sparkle"))
-                            .setLore("", Lang.get("Leftclick_Disable"))
+                            .setLore("", "§3" + Lang.get("Leftclick") + ": §c" + Lang.get("Disable"))
                             .getItem();
                 }
 

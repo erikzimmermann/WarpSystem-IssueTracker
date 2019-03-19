@@ -81,7 +81,7 @@ public class GPortalList extends GUI {
             builder.setName(name.toString());
         }
 
-        builder.setLore("", ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("Portal_List_Leftclick_To_Edit"));
+        builder.setLore("", ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + Lang.get("Leftclick") + ": " + Lang.get("Edit"));
         icon = builder.getItem();
 
         gui.addButton(new ItemButton(slot, icon) {

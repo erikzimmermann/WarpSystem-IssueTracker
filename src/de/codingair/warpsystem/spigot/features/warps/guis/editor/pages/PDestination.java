@@ -103,7 +103,7 @@ public class PDestination extends PMain {
 
                         @Override
                         public String getLeftclickDescription() {
-                            return Lang.get("Leftclick_To_Choose");
+                            return "§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose");
                         }
                     }).open();
                 } else if(e.isRightClick()) {
@@ -154,7 +154,7 @@ public class PDestination extends PMain {
 
                             @Override
                             public String getLeftclickDescription() {
-                                return Lang.get("Leftclick_To_Choose");
+                                return "§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose");
                             }
                         }).open();
                     } else if(e.isRightClick()) {
