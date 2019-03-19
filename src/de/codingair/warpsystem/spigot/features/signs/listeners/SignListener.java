@@ -106,7 +106,7 @@ public class SignListener implements Listener {
             e.getPlayer().sendMessage(Lang.getPrefix() + "§7" + Lang.get("WarpSign_Choose_Warp"));
             e.getPlayer().sendMessage(" ");
 
-            new ChooseDestinationGUI(e.getPlayer(), Lang.get("WarpSign_Choose_Warp_GUI"), new Callback<Destination>() {
+            new ChooseDestinationGUI(e.getPlayer(), new Callback<Destination>() {
                 @Override
                 public void accept(Destination destination) {
                     if(destination == null) return;

@@ -45,6 +45,13 @@ public class PortalListener implements Listener {
                 || API.getRemovable(player, GEditor.class) != null) {
             e.setCancelled(true);
         }
+
+        for(Portal portal : NativePortalManager.getInstance().getPortals()) {
+            if(portal.isInPortal(player, e.getTo()) || portal.isInPortal(player, e.getFrom())) {
+                e.setCancelled(true);
+                return;
+            }
+        }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)

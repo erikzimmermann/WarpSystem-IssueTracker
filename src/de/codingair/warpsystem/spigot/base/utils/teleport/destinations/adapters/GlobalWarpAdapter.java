@@ -32,7 +32,7 @@ public class GlobalWarpAdapter implements DestinationAdapter {
                         break;
 
                     case SERVER_NOT_AVAILABLE:
-                        player.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Server_Is_Not_Online"));
+                        player.sendMessage(Lang.getPrefix() + Lang.get("Server_Is_Not_Online"));
 
                         if(AdapterType.getActive() != null && costs != 0) {
                             AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) + costs);

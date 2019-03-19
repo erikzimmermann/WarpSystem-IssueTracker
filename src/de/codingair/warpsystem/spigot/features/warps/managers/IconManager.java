@@ -498,7 +498,7 @@ public class IconManager implements Manager {
         name = ChatColor.stripColor(name);
 
         for(Icon icon : this.icons) {
-            if(icon.isCategory()) continue;
+            if(icon.isCategory() || icon.getName() == null) continue;
             if(ChatColor.stripColor(icon.getName()).equalsIgnoreCase(name)) return icon;
         }
 

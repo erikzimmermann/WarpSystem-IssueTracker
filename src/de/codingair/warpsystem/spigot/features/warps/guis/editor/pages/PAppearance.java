@@ -98,7 +98,7 @@ public class PAppearance extends PMain {
             public ItemStack craftItem() {
                 return new ItemBuilder(XMaterial.NAME_TAG)
                         .setName("§6§n" + Lang.get("Name"))
-                        .setLore("§3" + Lang.get("Current") + ": §7'§r" + ChatColor.translateAlternateColorCodes('&', getIcon().getName()) + "§7'", "", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Name_Short"))
+                        .setLore("§3" + Lang.get("Current") + ": " + (getIcon().getName() == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + ChatColor.translateAlternateColorCodes('&', getIcon().getName()) + "§7'"), "", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Name_Short"))
                         .getItem();
             }
 
