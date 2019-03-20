@@ -41,7 +41,7 @@ public class Teleport {
     public Teleport(Player player, Destination destination, String displayName, String permission, int seconds, double costs, String message, boolean canMove, boolean silent, SoundData teleportSound, boolean afterEffects, Callback<TeleportResult> callback) {
         this.player = player;
         this.destination = destination;
-        this.displayName = displayName;
+        this.displayName = displayName == null ? null : displayName.replace("_", " ");
         this.permission = permission;
         this.seconds = seconds;
         this.costs = costs;
