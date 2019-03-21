@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.base.managers;
 import de.codingair.codingapi.player.data.UUIDFetcher;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.time.TimeMap;
+import de.codingair.warpsystem.spigot.api.events.PlayerFinalJoinEvent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestUUIDPacket;
 import org.bukkit.Bukkit;
@@ -34,11 +35,11 @@ public class UUIDManager {
                     if(!uniqueIds.containsKey(player.getName())) uniqueIds.put(player.getName(), uniqueId);
                     else uniqueIds.replace(player.getName(), uniqueId);
 
-                    WarpSystem.getInstance().getHeadManager().update(player);
+                    Bukkit.getPluginManager().callEvent(new PlayerFinalJoinEvent(player, uniqueId));
                 }
             }));
         } else {
-            WarpSystem.getInstance().getHeadManager().update(player);
+            Bukkit.getPluginManager().callEvent(new PlayerFinalJoinEvent(player, player.getUniqueId()));
         }
     }
 

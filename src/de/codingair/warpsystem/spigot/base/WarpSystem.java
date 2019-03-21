@@ -162,6 +162,7 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new NotifyListener(), this);
             Bukkit.getPluginManager().registerEvents(new CommandListener(), this);
             Bukkit.getPluginManager().registerEvents(new UUIDListener(), this);
+            Bukkit.getPluginManager().registerEvents(new HeadListener(), this);
 
             this.startAutoSaver();
 

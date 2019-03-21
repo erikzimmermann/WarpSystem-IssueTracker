@@ -57,9 +57,9 @@ public class TeleportManager {
         };
 
         if(warp.getMessage() != null) {
-            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TempWarp, new Destination(new LocationAdapter(warp.getLocation())), warp.getName(), warp.getTeleportCosts(), false, ChatColor.translateAlternateColorCodes('&', warp.getMessage()), false, isOwner ? null : callback);
+            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TempWarp, new Destination(new LocationAdapter(warp.getLocation())), warp.getName(), isOwner ? 0 : warp.getTeleportCosts(), false, ChatColor.translateAlternateColorCodes('&', warp.getMessage()), false, isOwner ? null : callback);
         } else {
-            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TempWarp, new Destination(new LocationAdapter(warp.getLocation())), warp.getName(), warp.getTeleportCosts(), false,
+            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TempWarp, new Destination(new LocationAdapter(warp.getLocation())), warp.getName(), isOwner ? 0 : warp.getTeleportCosts(), false,
                     WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.TempWarps", true), false, isOwner ? null : callback);
         }
         return true;
