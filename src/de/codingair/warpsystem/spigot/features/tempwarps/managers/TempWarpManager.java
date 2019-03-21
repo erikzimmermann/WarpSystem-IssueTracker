@@ -309,20 +309,28 @@ public class TempWarpManager implements Manager, Ticker {
     }
 
     public List<TempWarp> getWarps(Player player) {
+        return getWarps(player, false);
+    }
+
+    public List<TempWarp> getWarps(Player player, boolean onlyPrivate) {
         UUID uniqueId = WarpSystem.getInstance().getUUIDManager().get(player);
         if(uniqueId == null) return new ArrayList<>();
 
-        return getWarps(uniqueId);
+        return getWarps(uniqueId, onlyPrivate);
     }
 
     public List<TempWarp> getWarps(UUID uniqueId) {
+        return getWarps(uniqueId, false);
+    }
+
+    public List<TempWarp> getWarps(UUID uniqueId, boolean onlyPrivate) {
         List<TempWarp> correct = new ArrayList<>();
         if(uniqueId == null) return correct;
 
         List<TempWarp> warps = new ArrayList<>(this.warps);
 
         for(TempWarp warp : warps) {
-            if(warp.getOwner().equals(uniqueId)) correct.add(warp);
+            if(warp.getOwner().equals(uniqueId) && (!onlyPrivate || !warp.isPublic())) correct.add(warp);
         }
 
         warps.clear();
@@ -435,11 +443,15 @@ public class TempWarpManager implements Manager, Ticker {
     }
 
     public List<TempWarp> getActiveWarps() {
+        return getActiveWarps(true);
+    }
+
+    public List<TempWarp> getActiveWarps(boolean all) {
         List<TempWarp> f = getWarps();
         List<TempWarp> warps = getWarps();
 
         for(TempWarp warp : warps) {
-            if(warp.isExpired()) f.remove(warp);
+            if(warp.isExpired() || (!all && !warp.isPublic())) f.remove(warp);
         }
 
         warps.clear();

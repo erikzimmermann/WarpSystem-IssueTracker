@@ -9,6 +9,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class TeleportManager {
@@ -56,7 +57,7 @@ public class TeleportManager {
         };
 
         if(warp.getMessage() != null) {
-            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TempWarp, new Destination(new LocationAdapter(warp.getLocation())), warp.getName(), warp.getTeleportCosts(), false, warp.getMessage(), false, isOwner ? null : callback);
+            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TempWarp, new Destination(new LocationAdapter(warp.getLocation())), warp.getName(), warp.getTeleportCosts(), false, ChatColor.translateAlternateColorCodes('&', warp.getMessage()), false, isOwner ? null : callback);
         } else {
             WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TempWarp, new Destination(new LocationAdapter(warp.getLocation())), warp.getName(), warp.getTeleportCosts(), false,
                     WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.TempWarps", true), false, isOwner ? null : callback);

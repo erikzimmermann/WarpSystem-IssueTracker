@@ -33,8 +33,12 @@ public class UUIDManager {
                 public void accept(UUID uniqueId) {
                     if(!uniqueIds.containsKey(player.getName())) uniqueIds.put(player.getName(), uniqueId);
                     else uniqueIds.replace(player.getName(), uniqueId);
+
+                    WarpSystem.getInstance().getHeadManager().update(player);
                 }
             }));
+        } else {
+            WarpSystem.getInstance().getHeadManager().update(player);
         }
     }
 
