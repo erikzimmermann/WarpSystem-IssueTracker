@@ -11,6 +11,7 @@ import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.features.tempwarps.guis.GTempWarpList;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
 import org.bukkit.Bukkit;
@@ -153,9 +154,10 @@ public class CTempWarps extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("list") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                List<TempWarp> list = TempWarpManager.getManager().getWarps((Player) sender);
-                drawList((Player) sender, sender.getName(), list);
-                list.clear();
+                new GTempWarpList((Player) sender).open();
+//                List<TempWarp> list = TempWarpManager.getManager().getWarps((Player) sender);
+//                drawList((Player) sender, sender.getName(), list);
+//                list.clear();
                 return false;
             }
         });

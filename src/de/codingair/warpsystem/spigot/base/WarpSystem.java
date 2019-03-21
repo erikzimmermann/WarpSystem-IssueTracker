@@ -14,6 +14,7 @@ import de.codingair.warpsystem.spigot.base.commands.CWarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.*;
 import de.codingair.warpsystem.spigot.base.managers.DataManager;
+import de.codingair.warpsystem.spigot.base.managers.HeadManager;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.managers.UUIDManager;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
@@ -78,6 +79,7 @@ public class WarpSystem extends JavaPlugin {
     private TeleportManager teleportManager = new TeleportManager();
     private FileManager fileManager = new FileManager(this);
     private DataManager dataManager;
+    private HeadManager headManager = new HeadManager();
 
     private UpdateChecker updateChecker = new UpdateChecker("https://www.spigotmc.org/resources/warpsystem-gui.29595/history");
     private int latestVersionId = -1;
@@ -545,5 +547,9 @@ public class WarpSystem extends JavaPlugin {
 
     public List<BungeeFeature> getBungeeFeatureList() {
         return bungeeFeatureList;
+    }
+
+    public HeadManager getHeadManager() {
+        return headManager;
     }
 }
