@@ -15,13 +15,15 @@ public class Vault implements Adapter {
 
     @Override
     public double getMoney(Player player) {
-        if(economy == null) return 0;
+        if(economy == null) {
+            if(!setupEconomy()) return 0;
+        }
         return this.economy.getBalance(player);
     }
 
     @Override
     public void setMoney(Player player, double amount) {
-        if(economy == null) return;
+        if(economy == null && !setupEconomy()) return;
 
         double diff = amount - getMoney(player);
         if(diff > 0) this.economy.depositPlayer(player, diff);

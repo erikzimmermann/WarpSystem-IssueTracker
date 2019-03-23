@@ -71,13 +71,13 @@ public class GTempWarpList extends GUI {
             @Override
             public ItemStack craftItem() {
                 ItemBuilder builder = new ItemBuilder(head.buildItem());
-                String name = "§3" + Lang.get("Name")+": " + de.codingair.codingapi.utils.ChatColor.highlight("§b" + tempWarp.getName(), underline, "§e§n", "§r", true);
+                String name = de.codingair.codingapi.utils.ChatColor.highlight("§6" + tempWarp.getName(), underline, "§e§n", "§r", true);
                 builder.setName(name);
 
-                builder.setLore("§3" + Lang.get("Owner") + ": " +  de.codingair.codingapi.utils.ChatColor.highlight("§7" + tempWarp.getLastKnownName(), underline, "§e§n", "§r", true));
-                builder.addLore("§3" + Lang.get("Online") + ": §7" + TempWarpManager.getManager().convertInTimeFormat(new Date().getTime() - tempWarp.getBornDate().getTime(), TimeUnit.MILLISECONDS));
-                if(tempWarp.getTeleportCosts() > 0) builder.addLore("§3" + Lang.get("Costs") + ": §7" + tempWarp.getTeleportCosts() + " " + Lang.get("Coins"));
-                builder.addLore("", "§7» " + Lang.get("Teleport"));
+                builder.setLore("§8" + Lang.get("Owner") + ": " + de.codingair.codingapi.utils.ChatColor.highlight("§8" + tempWarp.getLastKnownName(), underline, "§e§n", "§r", true));
+                builder.addLore("§8" + Lang.get("Online") + ": " + TempWarpManager.getManager().convertInTimeFormat(new Date().getTime() - tempWarp.getBornDate().getTime(), TimeUnit.MILLISECONDS));
+                if(tempWarp.getTeleportCosts() > 0) builder.addLore("§8" + Lang.get("Costs") + ": " + tempWarp.getTeleportCosts() + " " + Lang.get("Coins"));
+//                builder.addLore("", "§8» " + Lang.get("Teleport"));
                 return builder.getItem();
             }
 
