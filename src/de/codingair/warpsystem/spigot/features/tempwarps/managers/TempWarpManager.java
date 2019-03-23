@@ -300,6 +300,7 @@ public class TempWarpManager implements Manager, Ticker {
         for(TempWarp warp : correct) {
             warp.setLastKnownName(player.getName());
             inactiveSales += warp.getInactiveSales();
+            warp.setInactiveSales(0);
         }
 
         AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) + inactiveSales);

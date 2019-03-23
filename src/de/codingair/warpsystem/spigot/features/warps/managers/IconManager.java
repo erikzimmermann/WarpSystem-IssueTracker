@@ -513,12 +513,6 @@ public class IconManager implements Manager {
         return icons;
     }
 
-    public static int getCosts(ActionIcon icon) {
-        ActionObject object = icon.getAction(Action.PAY_MONEY);
-        if(object == null) return 0;
-        else return object.getValue();
-    }
-
     public void remove(Icon icon) {
         if(icon.isCategory()) {
             List<Icon> warps = getIcons(icon);
