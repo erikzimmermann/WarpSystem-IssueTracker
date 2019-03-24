@@ -14,6 +14,7 @@ import de.codingair.codingapi.server.fancymessages.FancyMessage;
 import de.codingair.codingapi.server.fancymessages.MessageTypes;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -293,14 +294,21 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
         });
 
         getBaseComponent().addChild(new CommandComponent("reload") {
+            TimeList<CommandSender> confirm = new TimeList<>();
+
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                try {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Plugin_Reloading"));
-                    WarpSystem.getInstance().reload(false);
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Plugin_Reloaded"));
-                } catch(Exception ex) {
-                    ex.printStackTrace();
+                if(confirm.contains(sender)) {
+                    try {
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Plugin_Reloading"));
+                        WarpSystem.getInstance().reload(false);
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Plugin_Reloaded"));
+                    } catch(Exception ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    sender.sendMessage(Lang.getPrefix() + "§7" +Lang.get("Unsaved_Changes"));
+                    confirm.add(sender, 10);
                 }
                 return false;
             }
