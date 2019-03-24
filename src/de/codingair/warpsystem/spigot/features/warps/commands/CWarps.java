@@ -54,6 +54,7 @@ public class CWarps extends CommandBuilder {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 for(Icon c : manager.getCategories()) {
+                    if(c.getName() == null) continue;
                     if(!c.hasPermission() || sender.hasPermission(c.getPermission())) suggestions.add(c.getNameWithoutColor());
                 }
             }

@@ -322,3 +322,5 @@ Player_Is_Already_On_Target_Server: '&cDu befindest dich bereits auf dem Ziel-Se
 TempWarps: 'TempWarps'
 Owner: 'Inhaber'
 Click_For_Teleport: '&7» Klicke hier, um dich zu dieser Position zu teleportieren.'
+Ends_In: 'Endet in'
+Deleted_In: 'Gelöscht in'

@@ -77,7 +77,15 @@ public class GTempWarpList extends GUI {
                 builder.setLore("§8" + Lang.get("Owner") + ": " + de.codingair.codingapi.utils.ChatColor.highlight("§8" + tempWarp.getLastKnownName(), underline, "§e§n", "§r", true));
                 builder.addLore("§8" + Lang.get("Online") + ": " + TempWarpManager.getManager().convertInTimeFormat(new Date().getTime() - tempWarp.getBornDate().getTime(), TimeUnit.MILLISECONDS));
                 if(tempWarp.getTeleportCosts() > 0) builder.addLore("§8" + Lang.get("Costs") + ": " + tempWarp.getTeleportCosts() + " " + Lang.get("Coins"));
-//                builder.addLore("", "§8» " + Lang.get("Teleport"));
+
+                if(tempWarp.isOwner(gui.getPlayer())) {
+                    if(tempWarp.isExpired()) {
+                        long time = tempWarp.getExpireDate().getTime() + TimeUnit.MILLISECONDS.convert(TempWarpManager.getManager().getInactiveTime(), TimeUnit.SECONDS) - new Date().getTime();
+                        builder.addLore("", "§8" + Lang.get("Deleted_In") + ": " + TempWarpManager.getManager().convertInTimeFormat(time + 950, TimeUnit.MILLISECONDS));
+                    } else {
+                        builder.addLore("", "§8" + Lang.get("Ends_In") + ": " + TempWarpManager.getManager().convertInTimeFormat(tempWarp.getLeftTime() + 950, TimeUnit.MILLISECONDS));
+                    }
+                }
                 return builder.getItem();
             }
 
@@ -100,48 +108,6 @@ public class GTempWarpList extends GUI {
 
         this.searching = search;
         setBuffering(true);
-
-        addListener(new GUIListener() {
-            private BukkitTask task = null;
-
-            @Override
-            public void onInvClickEvent(InventoryClickEvent e) {
-
-            }
-
-            @Override
-            public void onInvOpenEvent(InventoryOpenEvent e) {
-                task = Bukkit.getScheduler().runTaskTimer(WarpSystem.getInstance(), () -> {
-                    for(ItemButton value : getButtons().values()) {
-                        if(value instanceof SyncButton) {
-                            ((SyncButton) value).update();
-                        }
-                    }
-
-                    p.updateInventory();
-                }, 20, 20);
-            }
-
-            @Override
-            public void onInvCloseEvent(InventoryCloseEvent e) {
-                if(task != null) task.cancel();
-            }
-
-            @Override
-            public void onInvDragEvent(InventoryDragEvent e) {
-
-            }
-
-            @Override
-            public void onMoveToTopInventory(ItemStack item, int oldRawSlot, List<Integer> newRawSlots) {
-
-            }
-
-            @Override
-            public void onCollectToCursor(ItemStack item, List<Integer> oldRawSlots, int newRawSlot) {
-
-            }
-        });
 
         initialize(p);
     }
