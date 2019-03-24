@@ -70,7 +70,7 @@ public class GWarps extends GUI {
         String key = player.hasPermission(WarpSystem.PERMISSION_ADMIN) ? "Admin" : "User";
 
         return listener == null || listener.getTitle() == null ?
-                ChatColor.translateAlternateColorCodes('&', (category == null ?
+                ChatColor.translateAlternateColorCodes('&', (category == null || category.getName() == null ?
                         config.getString("WarpSystem.GUI." + key + ".Title.Standard", "&c&l&nWarps&r") :
                         config.getString("WarpSystem.GUI." + key + ".Title.In_Category", "&c&l&nWarps&r &c@%CATEGORY%").replace("%CATEGORY%", category.getNameWithoutColor())))
                 : listener.getTitle();

@@ -75,7 +75,7 @@ public class GEditor extends SimpleGUI {
                             if(costs > 0) {
                                 p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Edited_Pay").replace("%TEMP_WARP%", warp.getName()).replace("%COINS%", costs + ""));
                             } else if(costs < 0) {
-                                p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Edited_Refund").replace("%TEMP_WARP%", warp.getName()).replace("%COINS%", costs + ""));
+                                p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Edited_Refund").replace("%TEMP_WARP%", warp.getName()).replace("%COINS%", -costs + ""));
                             } else {
                                 p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Edited").replace("%TEMP_WARP%", warp.getName()).replace("%COINS%", costs + ""));
                             }

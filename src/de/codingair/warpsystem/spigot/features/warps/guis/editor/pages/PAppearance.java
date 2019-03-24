@@ -106,7 +106,7 @@ public class PAppearance extends PMain {
 
             @Override
             public ItemStack craftAnvilItem() {
-                return new ItemBuilder(Material.PAPER).setName(getIcon().getName() == null ? Lang.get("Name") + "..." : getIcon().getName()).getItem();
+                return new ItemBuilder(Material.PAPER).setName(getIcon().getName() == null ? Lang.get("Name") + "..." : getIcon().getName().replace("§", "&")).getItem();
             }
 
             @Override

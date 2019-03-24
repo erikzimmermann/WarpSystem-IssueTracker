@@ -3,6 +3,8 @@ package de.codingair.warpsystem.spigot.features.tempwarps.managers;
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
+import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
+import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.utils.Ticker;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -13,6 +15,7 @@ import de.codingair.warpsystem.spigot.features.tempwarps.commands.CTempWarps;
 import de.codingair.warpsystem.spigot.features.tempwarps.guis.GCreate;
 import de.codingair.warpsystem.spigot.features.tempwarps.guis.GDelete;
 import de.codingair.warpsystem.spigot.features.tempwarps.guis.GEditor;
+import de.codingair.warpsystem.spigot.features.tempwarps.guis.GTempWarpList;
 import de.codingair.warpsystem.spigot.features.tempwarps.listeners.TempWarpListener;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.EmptyTempWarp;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
@@ -181,9 +184,25 @@ public class TempWarpManager implements Manager, Ticker {
     public void onSecond() {
         List<TempWarp> warps = new ArrayList<>(this.warps);
 
+        List<GTempWarpList> lists = API.getRemovables(GTempWarpList.class);
+        for(GTempWarpList list : lists) {
+            for(ItemButton button : list.getButtons().values()) {
+                if(button instanceof SyncButton) {
+                    ((SyncButton) button).update();
+                }
+            }
+
+            list.getPlayer().updateInventory();
+        }
+
         for(TempWarp warp : warps) {
+            if(warp.isBeingEdited()) continue;
             if(warp.isExpired()) {
-                if(warp.getLeftTime() >= -1050L) {
+                if(-warp.getLeftTime() <= 1000) {
+                    for(GTempWarpList list : lists) {
+                        list.reinitialize();
+                    }
+
                     Player p = warp.getOnlineOwner();
                     if(p != null)
                         p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_expiring").replace("%TEMP_WARP%", warp.getName()).replace("%TIME_LEFT%", convertInTimeFormat(getInactiveTime(), TimeUnit.SECONDS)));
@@ -200,13 +219,16 @@ public class TempWarpManager implements Manager, Ticker {
                     }
                 }
 
-                Date inactive = new Date(warp.getEndDate().getTime() + TimeUnit.MILLISECONDS.convert(this.inactiveTime, TimeUnit.SECONDS));
+                Date inactive = new Date(warp.getExpireDate().getTime() + TimeUnit.MILLISECONDS.convert(this.inactiveTime, TimeUnit.SECONDS));
 
                 if(inactive.before(new Date())) {
                     //Delete
                     this.warps.remove(warp);
                     Player player = warp.getOnlineOwner();
                     if(player != null) {
+                        GTempWarpList list = API.getRemovable(player, GTempWarpList.class);
+                        if(list != null) list.reinitialize();
+
                         GUI gui = API.getRemovable(player, GCreate.class);
                         if(gui != null) gui.close();
                         gui = API.getRemovable(player, GDelete.class);
@@ -218,6 +240,7 @@ public class TempWarpManager implements Manager, Ticker {
             }
         }
 
+        lists.clear();
         warps.clear();
     }
 
@@ -400,7 +423,7 @@ public class TempWarpManager implements Manager, Ticker {
             builder.append(min).append("m");
         }
 
-        if(sec > 0) {
+        if(sec > 0 || (sec == 0 && builder.toString().isEmpty())) {
             if(!builder.toString().isEmpty()) builder.append(", ");
             builder.append(sec).append("s");
         }
