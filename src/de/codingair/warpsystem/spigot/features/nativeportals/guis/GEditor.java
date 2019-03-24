@@ -473,7 +473,7 @@ public class GEditor extends GUI {
                                         Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), GEditor.this::open, 1);
                                     }
                                 }
-                            }, new ItemBuilder(XMaterial.PAPER).setName(Lang.get("Server") + "...").getItem());
+                            }, new ItemBuilder(XMaterial.PAPER).setName(destination != null && destination.getType() == DestinationType.Server ? destination.getId() : Lang.get("Server") + "...").getItem());
                         }
                     }.setOption(option).setCloseOnClick(true));
                 }

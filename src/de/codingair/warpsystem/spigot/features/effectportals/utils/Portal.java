@@ -438,7 +438,7 @@ public class Portal implements Removable {
             Particle particle = Particle.valueOf((String) json.get("Particle"));
             double teleportDistance = Double.parseDouble(json.get("TeleportRadius") + "");
             String startName = (String) json.get("StartName");
-            String destinationName = json.get("DestinationName") == null ? null :(String) json.get("DestinationName");
+            String destinationName = json.get("DestinationName") == null ? null : (String) json.get("DestinationName");
             double hologramHeight = Double.parseDouble(json.get("HologramHeight") + "");
             Sound sound = Sound.valueOf((String) json.get("TeleportSound"));
             float soundVolume = Float.parseFloat(json.get("TeleportSoundVolume") + "");
