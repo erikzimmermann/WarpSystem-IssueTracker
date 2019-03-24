@@ -18,6 +18,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerCommandEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommandBlockListener implements Listener {
 
     @EventHandler
@@ -25,25 +28,55 @@ public class CommandBlockListener implements Listener {
         if(e.getSender() instanceof BlockCommandSender) {
             String cmd = e.getCommand().replaceFirst("/", "");
             String arg = null;
+            String specific = null;
+
             if(cmd.contains(" ")) {
                 String[] a = cmd.split(" ");
                 cmd = a[0];
                 if(a.length > 1) arg = a[1];
+                if(a.length > 2) specific = a[2];
             }
 
             PluginCommand command = Bukkit.getPluginCommand(cmd);
             if(command == null) return;
             if(command.getExecutor() instanceof CWarp || command.getExecutor() instanceof CGlobalWarp) {
+                List<Player> players = new ArrayList<>();
                 Location location = ((BlockCommandSender) e.getSender()).getBlock().getLocation().add(0.5, 0, 0.5);
-                Player player = getNearest(location, 5);
-                if(player == null) return;
+
+                if(specific == null) {
+                    Player player = getNearest(location, -1);
+                    if(player != null) players.add(player);
+                } else {
+                    switch(specific.toLowerCase()) {
+                        case "@a": {
+                            players.addAll(Bukkit.getOnlinePlayers());
+                            break;
+                        }
+
+                        case "@r": {
+                            if(Bukkit.getOnlinePlayers().isEmpty()) break;
+                            Player player = Bukkit.getOnlinePlayers().toArray(new Player[0])[(int) (Math.random() * Bukkit.getOnlinePlayers().size())];
+                            if(player != null) players.add(player);
+                            break;
+                        }
+                        default: {
+                            Player player = getNearest(location, -1);
+                            if(player != null) players.add(player);
+                            break;
+                        }
+                    }
+                }
+
+                if(players.isEmpty()) return;
 
                 if(command.getExecutor() instanceof CWarp) {
                     if(SimpleWarpManager.getInstance() != null) {
                         SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(arg);
                         if(warp != null) {
-                            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.CommandBlock, new Destination(warp.getName(), DestinationType.SimpleWarp), warp.getName(), 0, true, true,
-                                    WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.CommandBlocks", true), false, null);
+                            for(Player player : players) {
+                                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.CommandBlock, new Destination(warp.getName(), DestinationType.SimpleWarp), warp.getName(), 0, true, true,
+                                        WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.CommandBlocks", true), false, null);
+                            }
                             return;
                         }
                     }
@@ -55,11 +88,15 @@ public class CommandBlockListener implements Listener {
                     if(GlobalWarpManager.getInstance() != null) {
                         if(GlobalWarpManager.getInstance().exists(name)) {
                             name = GlobalWarpManager.getInstance().getCaseCorrectlyName(name);
-                            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.CommandBlock, new Destination(name, DestinationType.GlobalWarp), name, 0, true, true,
-                                    WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.CommandBlocks", true), false, null);
+
+                            for(Player player : players) {
+                                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.CommandBlock, new Destination(name, DestinationType.GlobalWarp), name, 0, true, true,
+                                        WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.CommandBlocks", true), false, null);
+                            }
                         }
                     }
                 }
+
             }
         }
     }
@@ -71,7 +108,7 @@ public class CommandBlockListener implements Listener {
         for(Player player : Bukkit.getOnlinePlayers()) {
             if(player.getLocation().getWorld().equals(from.getWorld())) {
                 double d = player.getLocation().distance(from);
-                if(d <= maxDistance && (distance == -1 || d < distance)) {
+                if((maxDistance == -1 || d <= maxDistance) && (distance == -1 || d < distance)) {
                     nearest = player;
                     distance = d;
                 }
