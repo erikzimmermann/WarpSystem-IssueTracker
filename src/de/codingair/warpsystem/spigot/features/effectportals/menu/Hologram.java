@@ -44,7 +44,7 @@ public class Hologram extends HotbarGUI {
                     menu.getEditor().doAction(PortalEditor.Action.DECREASE_HOLOGRAM_HEIGHT);
                 }
 
-                updateDisplayName(getItem(2), "§7" + Lang.get("Hologram_Height")+": §e" + menu.getEditor().getPortal().getHologramHeight());
+                updateDisplayName(getItem(2), "§7" + Lang.get("Hologram_Height") + ": §e" + menu.getEditor().getPortal().getHologramHeight());
             }
 
             @Override
@@ -62,7 +62,7 @@ public class Hologram extends HotbarGUI {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 //Start-Name
-                menu.getEditor().doAction(PortalEditor.Action.CHANGE_START_NAME, () -> updateDisplayName(getItem(4), "§7"+Lang.get("Start_Name")+": '§r" + menu.getEditor().getPortal().getStartName()+"§7'"));
+                menu.getEditor().doAction(PortalEditor.Action.CHANGE_START_NAME, () -> updateDisplayName(getItem(4), "§7" + Lang.get("Start_Name") + ": '§r" + menu.getEditor().getPortal().getStartName() + "§7'"));
             }
 
             @Override
@@ -111,7 +111,7 @@ public class Hologram extends HotbarGUI {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 //Goal-Name
-                menu.getEditor().doAction(PortalEditor.Action.CHANGE_DESTINATION_NAME, () -> updateDisplayName(getItem(7), "§7"+Lang.get("Goal_Name")+": '§r" + menu.getEditor().getPortal().getDestinationName()+"§7'"));
+                menu.getEditor().doAction(PortalEditor.Action.CHANGE_DESTINATION_NAME, () -> updateDisplayName(getItem(7), "§7" + Lang.get("Goal_Name") + ": '§r" + menu.getEditor().getPortal().getDestinationName() + "§7'"));
             }
 
             @Override

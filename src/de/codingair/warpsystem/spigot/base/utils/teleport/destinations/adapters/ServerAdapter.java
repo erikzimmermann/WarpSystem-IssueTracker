@@ -25,7 +25,7 @@ public class ServerAdapter implements DestinationAdapter {
             public void accept(Integer result) {
                 if(callback != null) {
                     if(result == 0) callback.accept(TeleportResult.TELEPORTED);
-                    else if(result == 1) callback.accept(TeleportResult.ERROR);
+                    else if(result == 1) callback.accept(TeleportResult.SERVER_NOT_AVAILABLE);
                     else if(result == 2) callback.accept(TeleportResult.ALREADY_ON_TARGET_SERVER);
                     else if(result == 3) callback.accept(TeleportResult.SERVER_NOT_AVAILABLE);
                     else if(result == 4) callback.accept(TeleportResult.ERROR);
@@ -33,7 +33,7 @@ public class ServerAdapter implements DestinationAdapter {
 
                 if(result == 2)
                     player.sendMessage(Lang.getPrefix() + Lang.get("Player_Is_Already_On_Target_Server"));
-                else if(result == 3)
+                else if(result == 1 || result == 3)
                     player.sendMessage(Lang.getPrefix() + Lang.get("Server_Is_Not_Online"));
             }
         }));
