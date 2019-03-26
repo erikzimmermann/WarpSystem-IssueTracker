@@ -3,20 +3,28 @@ package de.codingair.warpsystem.spigot.features.teleportcommand;
 import de.codingair.codingapi.server.commands.BaseComponent;
 import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
+import de.codingair.codingapi.server.reflections.IReflection;
+import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
-import net.md_5.bungee.BungeeCord;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.SimplePluginManager;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class CTeleport extends CommandBuilder {
     public CTeleport() {
@@ -63,17 +71,57 @@ public class CTeleport extends CommandBuilder {
 
                         if(args.length == 3) {
                             //Teleport sender to coords
-                            double x = args[0].replace(",", ".").contains(".") ? Double.parseDouble(args[0].replace(",", ".")) : Integer.parseInt(args[0]);
-                            double y = args[1].replace(",", ".").contains(".") ? Double.parseDouble(args[1].replace(",", ".")) : Integer.parseInt(args[1]);
-                            double z = args[2].replace(",", ".").contains(".") ? Double.parseDouble(args[2].replace(",", ".")) : Integer.parseInt(args[2]);
+                            double x = 0;
+                            double y = 0;
+                            double z = 0;
+
+                            if(args[0].contains("~")) {
+                                x = ((Player) sender).getLocation().getX();
+                                args[0] = args[0].replace(",", ".").replace("~", "");
+                            }
+
+                            if(args[1].contains("~")) {
+                                y = ((Player) sender).getLocation().getY();
+                                args[1] = args[1].replace(",", ".").replace("~", "");
+                            }
+
+                            if(args[2].contains("~")) {
+                                z = ((Player) sender).getLocation().getZ();
+                                args[2] = args[2].replace(",", ".").replace("~", "");
+                            }
+
+                            if(!args[0].isEmpty()) x += args[0].contains(".") ? Double.parseDouble(args[0]) : Integer.parseInt(args[0]);
+                            if(!args[1].isEmpty()) y += args[1].contains(".") ? Double.parseDouble(args[1]) : Integer.parseInt(args[1]);
+                            if(!args[2].isEmpty()) z += args[2].contains(".") ? Double.parseDouble(args[2]) : Integer.parseInt(args[2]);
+                            
                             tp(p, p, x, y, z);
                         } else {
                             //Teleport 0 to coords
                             Player player = Bukkit.getPlayer(args[0]);
 
-                            double x = args[1].replace(",", ".").contains(".") ? Double.parseDouble(args[1].replace(",", ".")) : Integer.parseInt(args[1]);
-                            double y = args[2].replace(",", ".").contains(".") ? Double.parseDouble(args[2].replace(",", ".")) : Integer.parseInt(args[2]);
-                            double z = args[3].replace(",", ".").contains(".") ? Double.parseDouble(args[3].replace(",", ".")) : Integer.parseInt(args[3]);
+                            double x = 0;
+                            double y = 0;
+                            double z = 0;
+
+                            if(args[1].contains("~")) {
+                                x = ((Player) sender).getLocation().getX();
+                                args[1] = args[1].replace(",", ".").replace("~", "");
+                            }
+
+                            if(args[2].contains("~")) {
+                                y = ((Player) sender).getLocation().getY();
+                                args[2] = args[2].replace(",", ".").replace("~", "");
+                            }
+
+                            if(args[3].contains("~")) {
+                                z = ((Player) sender).getLocation().getZ();
+                                args[3] = args[3].replace(",", ".").replace("~", "");
+                            }
+
+                            if(!args[1].isEmpty()) x += args[1].contains(".") ? Double.parseDouble(args[1]) : Integer.parseInt(args[1]);
+                            if(!args[2].isEmpty()) y += args[2].contains(".") ? Double.parseDouble(args[2]) : Integer.parseInt(args[2]);
+                            if(!args[3].isEmpty()) z += args[3].contains(".") ? Double.parseDouble(args[3]) : Integer.parseInt(args[3]);
+
                             tp(p, player, x, y, z);
                         }
                     } else {
@@ -92,6 +140,14 @@ public class CTeleport extends CommandBuilder {
         setHighestPriority(true);
 
         setOwnTabCompleter((commandSender, command, s, args) -> {
+            if(commandSender instanceof Player) {
+                Player p = (Player) commandSender;
+                Block b = p.getTargetBlock((Set<Material>) null, 10);
+                if(b.getType() == XMaterial.COMMAND_BLOCK.parseMaterial()) {
+                    return new ArrayList<>();
+                }
+            }
+
             List<String> suggestions = new ArrayList<>();
             int deep = args.length - 1;
 

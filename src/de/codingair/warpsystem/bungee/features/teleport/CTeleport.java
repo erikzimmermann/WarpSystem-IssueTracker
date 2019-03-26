@@ -9,6 +9,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import org.bukkit.entity.Player;
 
 public class CTeleport extends Command {
     public CTeleport() {
@@ -39,18 +40,67 @@ public class CTeleport extends Command {
 
                 if(args.length == 3) {
                     //Teleport sender to coords
-                    double x = args[0].replace(",", ".").contains(".") ? Double.parseDouble(args[0].replace(",", ".")) : Integer.parseInt(args[0]);
-                    double y = args[1].replace(",", ".").contains(".") ? Double.parseDouble(args[1].replace(",", ".")) : Integer.parseInt(args[1]);
-                    double z = args[2].replace(",", ".").contains(".") ? Double.parseDouble(args[2].replace(",", ".")) : Integer.parseInt(args[2]);
-                    tp(p, p, x, y, z);
+
+                    double x = 0;
+                    double y = 0;
+                    double z = 0;
+
+                    boolean relativeX = false;
+                    boolean relativeY = false;
+                    boolean relativeZ = false;
+
+                    if(args[0].contains("~")) {
+                        relativeX = true;
+                        args[0] = args[0].replace(",", ".").replace("~", "");
+                    }
+
+                    if(args[1].contains("~")) {
+                        relativeY = true;
+                        args[1] = args[1].replace(",", ".").replace("~", "");
+                    }
+
+                    if(args[2].contains("~")) {
+                        relativeZ = true;
+                        args[2] = args[2].replace(",", ".").replace("~", "");
+                    }
+
+                    if(!args[0].isEmpty()) x += args[0].contains(".") ? Double.parseDouble(args[0]) : Integer.parseInt(args[0]);
+                    if(!args[1].isEmpty()) y += args[1].contains(".") ? Double.parseDouble(args[1]) : Integer.parseInt(args[1]);
+                    if(!args[2].isEmpty()) z += args[2].contains(".") ? Double.parseDouble(args[2]) : Integer.parseInt(args[2]);
+
+                    tp(p, p, x, y, z, relativeX, relativeY, relativeZ);
                 } else {
                     //Teleport 0 to coords
                     ProxiedPlayer player = BungeeCord.getInstance().getPlayer(args[0]);
 
-                    double x = args[1].replace(",", ".").contains(".") ? Double.parseDouble(args[1].replace(",", ".")) : Integer.parseInt(args[1]);
-                    double y = args[2].replace(",", ".").contains(".") ? Double.parseDouble(args[2].replace(",", ".")) : Integer.parseInt(args[2]);
-                    double z = args[3].replace(",", ".").contains(".") ? Double.parseDouble(args[3].replace(",", ".")) : Integer.parseInt(args[3]);
-                    tp(p, player, x, y, z);
+                    double x = 0;
+                    double y = 0;
+                    double z = 0;
+
+                    boolean relativeX = false;
+                    boolean relativeY = false;
+                    boolean relativeZ = false;
+
+                    if(args[1].contains("~")) {
+                        relativeX = true;
+                        args[1] = args[1].replace(",", ".").replace("~", "");
+                    }
+
+                    if(args[2].contains("~")) {
+                        relativeY = true;
+                        args[2] = args[2].replace(",", ".").replace("~", "");
+                    }
+
+                    if(args[3].contains("~")) {
+                        relativeZ = true;
+                        args[3] = args[3].replace(",", ".").replace("~", "");
+                    }
+
+                    if(!args[1].isEmpty()) x += args[1].contains(".") ? Double.parseDouble(args[1]) : Integer.parseInt(args[1]);
+                    if(!args[2].isEmpty()) y += args[2].contains(".") ? Double.parseDouble(args[2]) : Integer.parseInt(args[2]);
+                    if(!args[3].isEmpty()) z += args[3].contains(".") ? Double.parseDouble(args[3]) : Integer.parseInt(args[3]);
+
+                    tp(p, player, x, y, z, relativeX, relativeY, relativeZ);
                 }
             } else {
                 //HELP
@@ -62,13 +112,13 @@ public class CTeleport extends Command {
         }
     }
 
-    private void tp(ProxiedPlayer gate, ProxiedPlayer player, double x, double y, double z) {
+    private void tp(ProxiedPlayer gate, ProxiedPlayer player, double x, double y, double z, boolean relativeX, boolean relativeY, boolean relativeZ) {
         if(player == null) {
             gate.sendMessage(new TextComponent(Lang.getPrefix() + Lang.get("Player_is_not_online")));
             return;
         }
 
-        TeleportPlayerToCoordsPacket packet = new TeleportPlayerToCoordsPacket(gate.getName(), player.getName(), x, y, z);
+        TeleportPlayerToCoordsPacket packet = new TeleportPlayerToCoordsPacket(gate.getName(), player.getName(), x, y, z, relativeX, relativeY, relativeZ);
         WarpSystem.getInstance().getDataHandler().send(packet, player.getServer().getInfo());
     }
 
