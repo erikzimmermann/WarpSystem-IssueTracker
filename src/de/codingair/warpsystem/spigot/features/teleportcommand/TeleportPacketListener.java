@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.teleportcommand.dummy;
+package de.codingair.warpsystem.spigot.features.teleportcommand;
 
 import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.codingapi.tools.time.TimeMap;
@@ -50,23 +50,20 @@ public class TeleportPacketListener implements Listener, PacketListener {
                 if(gate != null && player != null && other != null) {
                     if(gate != player) gate.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", player.getName()).replace("%warp%", other.getName()));
 
-
-                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                        WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TeleportCommand, new Destination(new LocationAdapter(other.getLocation())),
-                                other.getName(), 0, true,
-                                gate == player ?
-                                        Lang.get("Teleported_To") :
-                                        Lang.get("Teleported_To_By").replace("%gate%", gate.getName()),
-                                true, null);
-                    }, 2L);
+                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TeleportCommand, new Destination(new LocationAdapter(other.getLocation())),
+                            other.getName(), 0, true,
+                            gate == player ?
+                                    Lang.get("Teleported_To") :
+                                    Lang.get("Teleported_To_By").replace("%gate%", gate.getName()),
+                            true, null), 2L);
                 }
             } else if(packet instanceof TeleportPlayerToCoordsPacket) {
                 TeleportPlayerToCoordsPacket tpPacket = (TeleportPlayerToCoordsPacket) packet;
 
                 Player gate = Bukkit.getPlayer(tpPacket.getGate());
-                double x = tpPacket.getX();
-                double y = tpPacket.getY();
-                double z = tpPacket.getZ();
+                double x = (tpPacket.isRelativeX() ? gate.getLocation().getX() : 0) + tpPacket.getX();
+                double y = (tpPacket.isRelativeY() ? gate.getLocation().getY() : 0) + tpPacket.getY();
+                double z = (tpPacket.isRelativeZ() ? gate.getLocation().getZ() : 0) + tpPacket.getZ();
                 String destination = "x=" + x + ", y=" + y + ", z=" + z;
 
                 if(gate != null && player != null) {
@@ -120,9 +117,9 @@ public class TeleportPacketListener implements Listener, PacketListener {
 
                 Player gate = Bukkit.getPlayer(tpPacket.getGate());
                 Player player = Bukkit.getPlayer(tpPacket.getPlayer());
-                double x = tpPacket.getX();
-                double y = tpPacket.getY();
-                double z = tpPacket.getZ();
+                double x = (tpPacket.isRelativeX() ? gate.getLocation().getX() : 0) + tpPacket.getX();
+                double y = (tpPacket.isRelativeY() ? gate.getLocation().getY() : 0) + tpPacket.getY();
+                double z = (tpPacket.isRelativeZ() ? gate.getLocation().getZ() : 0) + tpPacket.getZ();
                 String destination = "x=" + x + ", y=" + y + ", z=" + z;
 
                 if(gate != null && player != null) {

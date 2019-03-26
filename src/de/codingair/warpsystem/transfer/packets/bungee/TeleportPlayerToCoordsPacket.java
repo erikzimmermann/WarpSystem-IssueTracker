@@ -9,16 +9,20 @@ import java.io.IOException;
 public class TeleportPlayerToCoordsPacket implements Packet {
     private String gate, player;
     private double x, y, z;
+    private boolean relativeX, relativeY, relativeZ;
 
     public TeleportPlayerToCoordsPacket() {
     }
 
-    public TeleportPlayerToCoordsPacket(String gate, String player, double x, double y, double z) {
+    public TeleportPlayerToCoordsPacket(String gate, String player, double x, double y, double z, boolean relativeX, boolean relativeY, boolean relativeZ) {
         this.gate = gate;
         this.player = player;
         this.x = x;
         this.y = y;
         this.z = z;
+        this.relativeX = relativeX;
+        this.relativeY = relativeY;
+        this.relativeZ = relativeZ;
     }
 
     @Override
@@ -28,6 +32,9 @@ public class TeleportPlayerToCoordsPacket implements Packet {
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);
+        out.writeBoolean(this.relativeX);
+        out.writeBoolean(this.relativeY);
+        out.writeBoolean(this.relativeZ);
     }
 
     @Override
@@ -37,6 +44,9 @@ public class TeleportPlayerToCoordsPacket implements Packet {
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
+        this.relativeX = in.readBoolean();
+        this.relativeY = in.readBoolean();
+        this.relativeZ = in.readBoolean();
     }
 
     public String getGate() {
@@ -57,5 +67,17 @@ public class TeleportPlayerToCoordsPacket implements Packet {
 
     public double getZ() {
         return z;
+    }
+
+    public boolean isRelativeX() {
+        return relativeX;
+    }
+
+    public boolean isRelativeY() {
+        return relativeY;
+    }
+
+    public boolean isRelativeZ() {
+        return relativeZ;
     }
 }
