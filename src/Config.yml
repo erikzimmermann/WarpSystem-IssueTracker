@@ -123,6 +123,10 @@ WarpSystem:
     #Max distance between particle and player
     ParticleDistance: 70.0
 
+  SimpleWarps:
+    #Adds on every created warp the standard permission: 'WarpSystem.Warps.<WarpName>'
+    Add_Permission_On_Creation: true
+
   Commands:
     Warp:
       #true: '/warp' opens the WarpGUI
