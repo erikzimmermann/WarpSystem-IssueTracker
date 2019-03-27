@@ -11,6 +11,7 @@ import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CEditW
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CSetWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CWarp;
 import de.codingair.warpsystem.utils.Manager;
+import org.bukkit.ChatColor;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
@@ -77,6 +78,8 @@ public class SimpleWarpManager implements Manager {
 
     public void addWarp(SimpleWarp warp) {
         if(existsWarp(warp.getName())) return;
+        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.SimpleWarps.Add_Permission_On_Creation", true) && warp.getPermission() == null)
+            warp.setPermission("WarpSystem.Warps." + ChatColor.stripColor(warp.getName()));
         this.warps.put(warp.getName().toLowerCase(), warp);
     }
 
