@@ -111,7 +111,7 @@ public class Animation extends HotbarGUI {
         }));
 
         String s = menu.getEditor().getPortal().getParticle().getName();
-        s = s.substring(0, 1).toUpperCase() + s.substring(1, s.length());
+        s = s.substring(0, 1).toUpperCase() + s.substring(1);
 
         setItem(5, new ItemComponent(new ItemBuilder(Material.NETHER_STAR)
                 .setName("§7" + Lang.get("Particle_Effect") + ": '§e" + s + "§7'")
@@ -126,7 +126,7 @@ public class Animation extends HotbarGUI {
                 }
 
                 String s_ = menu.getEditor().getPortal().getParticle().getName();
-                s_ = s_.substring(0, 1).toUpperCase() + s_.substring(1, s_.length());
+                s_ = s_.substring(0, 1).toUpperCase() + s_.substring(1);
                 updateDisplayName(getItem(5), "§7" + Lang.get("Particle_Effect") + ": '§e" + s_ + "§7'");
             }
 

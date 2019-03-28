@@ -49,6 +49,10 @@ public class CTeleport extends Command {
                     boolean relativeY = false;
                     boolean relativeZ = false;
 
+                    args[0] = args[0].replace(",", ".");
+                    args[1] = args[1].replace(",", ".");
+                    args[2] = args[2].replace(",", ".");
+
                     if(args[0].contains("~")) {
                         relativeX = true;
                         args[0] = args[0].replace(",", ".").replace("~", "");
@@ -81,19 +85,23 @@ public class CTeleport extends Command {
                     boolean relativeY = false;
                     boolean relativeZ = false;
 
+                    args[1] = args[1].replace(",", ".");
+                    args[2] = args[2].replace(",", ".");
+                    args[3] = args[3].replace(",", ".");
+
                     if(args[1].contains("~")) {
                         relativeX = true;
-                        args[1] = args[1].replace(",", ".").replace("~", "");
+                        args[1] = args[1].replace("~", "");
                     }
 
                     if(args[2].contains("~")) {
                         relativeY = true;
-                        args[2] = args[2].replace(",", ".").replace("~", "");
+                        args[2] = args[2].replace("~", "");
                     }
 
                     if(args[3].contains("~")) {
                         relativeZ = true;
-                        args[3] = args[3].replace(",", ".").replace("~", "");
+                        args[3] = args[3].replace("~", "");
                     }
 
                     if(!args[1].isEmpty()) x += args[1].contains(".") ? Double.parseDouble(args[1]) : Integer.parseInt(args[1]);
