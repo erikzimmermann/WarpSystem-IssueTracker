@@ -75,19 +75,23 @@ public class CTeleport extends CommandBuilder {
                             double y = 0;
                             double z = 0;
 
+                            args[0] = args[0].replace(",", ".");
+                            args[1] = args[1].replace(",", ".");
+                            args[2] = args[2].replace(",", ".");
+
                             if(args[0].contains("~")) {
                                 x = ((Player) sender).getLocation().getX();
-                                args[0] = args[0].replace(",", ".").replace("~", "");
+                                args[0] = args[0].replace("~", "");
                             }
 
                             if(args[1].contains("~")) {
                                 y = ((Player) sender).getLocation().getY();
-                                args[1] = args[1].replace(",", ".").replace("~", "");
+                                args[1] = args[1].replace("~", "");
                             }
 
                             if(args[2].contains("~")) {
                                 z = ((Player) sender).getLocation().getZ();
-                                args[2] = args[2].replace(",", ".").replace("~", "");
+                                args[2] = args[2].replace("~", "");
                             }
 
                             if(!args[0].isEmpty()) x += args[0].contains(".") ? Double.parseDouble(args[0]) : Integer.parseInt(args[0]);
@@ -102,6 +106,10 @@ public class CTeleport extends CommandBuilder {
                             double x = 0;
                             double y = 0;
                             double z = 0;
+
+                            args[1] = args[1].replace(",", ".");
+                            args[2] = args[2].replace(",", ".");
+                            args[3] = args[3].replace(",", ".");
 
                             if(args[1].contains("~")) {
                                 x = ((Player) sender).getLocation().getX();
