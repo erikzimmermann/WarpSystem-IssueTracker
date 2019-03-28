@@ -15,6 +15,8 @@ public class Lang {
         List<String> languages = new ArrayList<>();
         languages.add("ENG.yml");
         languages.add("GER.yml");
+        languages.add("ES.yml");
+        languages.add("FRA.yml");
 
         File folder = new File(plugin.getDataFolder(), "/Languages/");
         if(!folder.exists()) mkDir(folder);
