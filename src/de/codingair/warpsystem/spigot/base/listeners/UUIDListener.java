@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.base.listeners;
 
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -11,7 +12,7 @@ public class UUIDListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent e) {
-        WarpSystem.getInstance().getUUIDManager().download(e.getPlayer());
+        if(Bukkit.getOnlinePlayers().size() > 1) WarpSystem.getInstance().getUUIDManager().download(e.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
