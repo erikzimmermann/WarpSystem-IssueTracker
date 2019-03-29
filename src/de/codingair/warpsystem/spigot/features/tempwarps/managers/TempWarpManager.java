@@ -43,6 +43,7 @@ public class TempWarpManager implements Manager, Ticker {
         for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
             String perm = effectivePermission.getPermission();
 
+            if(perm.equals("*") || perm.equalsIgnoreCase("warpsystem.*")) return true;
             if(perm.toLowerCase().startsWith("warpsystem.tempwarps.")) {
                 String s = perm.substring(21);
                 if(s.equals("*")) return true;
