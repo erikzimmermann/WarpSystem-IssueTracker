@@ -138,7 +138,7 @@ public class RandomTeleporterManager implements Manager {
         for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
             String perm = effectivePermission.getPermission();
 
-            if(perm.toLowerCase().startsWith("warpsystem.*")
+            if(perm.equals("*") || perm.toLowerCase().startsWith("warpsystem.*")
                     || perm.toLowerCase().startsWith("warpsystem.randomteleporters.*")) return -1;
 
             if(perm.toLowerCase().startsWith("warpsystem.randomteleporters.max.")) {
@@ -162,7 +162,7 @@ public class RandomTeleporterManager implements Manager {
         for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
             String perm = effectivePermission.getPermission();
 
-            if(perm.toLowerCase().startsWith("warpsystem.*")
+            if(perm.equals("*") || perm.toLowerCase().startsWith("warpsystem.*")
                     || perm.toLowerCase().startsWith("warpsystem.randomteleporters.*")) return -1;
 
             if(perm.toLowerCase().startsWith("warpsystem.randomteleporters.free.")) {
