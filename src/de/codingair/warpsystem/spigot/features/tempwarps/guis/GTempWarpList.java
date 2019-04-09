@@ -1,12 +1,10 @@
 package de.codingair.warpsystem.spigot.features.tempwarps.guis;
 
-import com.earth2me.essentials.Warps;
 import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilGUI;
 import de.codingair.codingapi.player.gui.anvil.AnvilListener;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
-import de.codingair.codingapi.player.gui.inventory.gui.GUIListener;
 import de.codingair.codingapi.player.gui.inventory.gui.Skull;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
@@ -17,22 +15,13 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.api.players.Head;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.effectportals.PortalEditor;
-import de.codingair.warpsystem.spigot.features.effectportals.managers.PortalManager;
-import de.codingair.warpsystem.spigot.features.effectportals.utils.Portal;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -108,6 +97,7 @@ public class GTempWarpList extends GUI {
 
         this.searching = search;
         setBuffering(true);
+        setUseFallbackGUI(true);
 
         initialize(p);
     }
@@ -156,6 +146,7 @@ public class GTempWarpList extends GUI {
                     searching = null;
                     reinitialize();
                 } else if(e.isLeftClick()) {
+                    setClosingForAnvil(true);
                     p.closeInventory();
 
                     AnvilGUI.openAnvil(WarpSystem.getInstance(), p, new AnvilListener() {
