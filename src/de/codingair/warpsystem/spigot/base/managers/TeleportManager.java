@@ -173,7 +173,7 @@ public class TeleportManager {
         int seconds = this.seconds;
         Callback<TeleportResult> resultCallback = null;
 
-        if((WarpSystem.OP_CAN_SKIP_DELAY && player.isOp()) || player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) seconds = 0;
+        if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) seconds = 0;
 
         //Call events
         if(origin != Origin.GlobalWarp || destination.getType() != DestinationType.UNKNOWN) {

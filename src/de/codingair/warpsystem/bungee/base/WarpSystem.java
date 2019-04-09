@@ -20,7 +20,7 @@ import java.nio.channels.FileChannel;
 import java.util.concurrent.TimeUnit;
 
 public class WarpSystem extends Plugin {
-    public static final String PERMISSION_TELEPORT_COMMAND = "WarpSystem.TeleportCommand";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND = "WarpSystem.Use.TeleportCommand";
 
     private static WarpSystem instance;
     private BungeeDataHandler dataHandler = new BungeeDataHandler(this);
