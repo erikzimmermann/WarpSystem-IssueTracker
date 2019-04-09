@@ -68,6 +68,7 @@ public class WarpSystem extends JavaPlugin {
     private static WarpSystem instance;
     public static boolean activated = false;
     public static boolean maintenance = false;
+    private final boolean premium = true;
 
     private boolean onBungeeCord = false;
     private String bungeePluginVersion = null;
@@ -80,8 +81,7 @@ public class WarpSystem extends JavaPlugin {
     private DataManager dataManager;
     private HeadManager headManager = new HeadManager();
 
-    private UpdateChecker updateChecker = new UpdateChecker("https://www.spigotmc.org/resources/warpsystem-gui.29595/history");
-    private int latestVersionId = -1;
+    private UpdateChecker updateChecker = new UpdateChecker();
     private boolean runningFirstTime = false;
 
     private Timer timer = new Timer();
@@ -175,7 +175,6 @@ public class WarpSystem extends JavaPlugin {
             activated = true;
             Bukkit.getScheduler().runTaskLaterAsynchronously(WarpSystem.getInstance(), () -> {
                 updateAvailable = WarpSystem.this.updateChecker.needsUpdate();
-                latestVersionId = UpdateChecker.getLatestVersionID();
                 WarpSystem.getInstance().notifyPlayers(null);
             }, 20L);
 
@@ -427,20 +426,18 @@ public class WarpSystem extends JavaPlugin {
                 TextComponent click = new TextComponent("§chere");
                 TextComponent tc1 = new TextComponent("§7«!");
 
-                click.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/warps-portals-and-warpsigns-warp-system-only-gui.29595/update?update=" + latestVersionId));
+                click.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, getUpdateChecker().getDownload()));
                 click.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
 
                 tc0.addExtra(click);
                 tc0.addExtra(tc1);
                 tc0.setColor(ChatColor.GRAY);
 
-                int updateId = WarpSystem.getInstance().getLatestVersionId();
-
                 TextComponent command0 = new TextComponent(Lang.getPrefix() + "§7Run \"§c/WarpSystem news§7\" or click »");
                 TextComponent command1 = new TextComponent("§chere");
                 TextComponent command2 = new TextComponent("§7« to read all new stuff!");
 
-                command1.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/warps-portals-and-warpsigns-warp-system-only-gui.29595/update?update=" + updateId));
+                command1.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, getUpdateChecker().getDownload()));
                 command1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
 
                 command0.addExtra(command1);
@@ -526,8 +523,8 @@ public class WarpSystem extends JavaPlugin {
         this.server = server;
     }
 
-    public int getLatestVersionId() {
-        return latestVersionId;
+    public UpdateChecker getUpdateChecker() {
+        return updateChecker;
     }
 
     public UUIDManager getUUIDManager() {
@@ -548,5 +545,9 @@ public class WarpSystem extends JavaPlugin {
 
     public HeadManager getHeadManager() {
         return headManager;
+    }
+
+    public final boolean isPremium() {
+        return premium;
     }
 }

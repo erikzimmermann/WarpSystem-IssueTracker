@@ -3,73 +3,26 @@ package de.codingair.warpsystem.spigot.base.utils;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
 public class UpdateChecker {
-    private String link;
-    private URL url;
     private String version = null;
     private String download = null;
     private String updateInfo = null;
 
+    private final static String premium = "https://www.spigotmc.org/resources/premium-warps-portals-and-more-warp-teleport-system-1-8-1-13.66035/updates";
+    private final static String free = "https://www.spigotmc.org/resources/warps-portals-and-more-warp-teleport-system-1-8-1-13.29595/updates";
+
     private boolean needsUpdate = false;
 
-    public UpdateChecker(String url) {
-        this.link = url;
-
-        try {
-            this.url = new URL(url);
-        } catch(MalformedURLException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static int getLatestVersionID() {
-        try {
-            URL url = new URL("https://www.spigotmc.org/resources/warps-portals-and-warpsigns-warp-system-only-gui.29595/updates");
-
-            URLConnection con = url.openConnection();
-            con.setRequestProperty("User-Agent", "Mozilla/5.0");
-            con.setConnectTimeout(5000);
-            con.connect();
-
-            BufferedReader input = new BufferedReader(new InputStreamReader(con.getInputStream()));
-
-            int status = 0;
-
-            String line;
-            while((line = input.readLine()) != null) {
-                switch(status) {
-                    case 0:
-                        if(line.equals("<div class=\"updateContainer\">")) status = 1;
-                        break;
-                    case 1:
-                        if(line.startsWith("<li class=\"primaryContent messageSimple resourceUpdate\" id=\"")) {
-                            String part = line.replace("<li class=\"primaryContent messageSimple resourceUpdate\" id=\"", "").split("\"")[0].split("-")[1];
-                            return Integer.parseInt(part);
-                        }
-                        break;
-                }
-            }
-
-            return -1;
-        } catch(IOException e) {
-            return -1;
-        }
-    }
-
     public boolean needsUpdate() {
-        if(this.url == null) return false;
-
         this.version = null;
         this.download = null;
 
         try {
-            URLConnection con = this.url.openConnection();
+            URLConnection con = new URL((WarpSystem.getInstance().isPremium() ? premium : free).replace("/updates", "/history")).openConnection();
             con.setRequestProperty("User-Agent", "Mozilla/5.0");
             con.setConnectTimeout(5000);
             con.connect();
@@ -78,13 +31,10 @@ public class UpdateChecker {
 
             String line;
             while((line = input.readLine()) != null) {
-
                 if(this.version != null && this.download != null) break;
 
                 if(line.contains("<td class=\"version\">") && this.version == null) {
                     this.version = line.split(">")[1].split("<")[0];
-                } else if(line.contains("<td class=\"dataOptions download\">") && download == null) {
-                    this.download = "https://www.spigotmc.org/" + line.split("href=\"")[1].split("\"")[0];
                 }
             }
 
@@ -109,8 +59,7 @@ public class UpdateChecker {
         if(!needsUpdate) return null;
         if(updateInfo != null) return updateInfo.toLowerCase().startsWith("not stable") ? null : updateInfo;
 
-        String url = this.link;
-        url = url.replace("/history", "/updates");
+        String url = WarpSystem.getInstance().isPremium() ? premium : free;
 
         try {
             URLConnection con = new URL(url).openConnection();
@@ -129,6 +78,8 @@ public class UpdateChecker {
 
                 if(atUpdates) {
                     if(atInfo) {
+                        this.download = "https://www.spigotmc.org/" + line.substring(9, line.indexOf('>') - 1);
+
                         line = line.replace("</a>", "");
                         line = line.substring(line.lastIndexOf(">") + 1);
                         updateInfo = line;
@@ -154,10 +105,6 @@ public class UpdateChecker {
 
     public String getVersion() {
         return version;
-    }
-
-    public URL getUrl() {
-        return url;
     }
 
     public String getUpdateInfo() {

@@ -206,14 +206,12 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
         getBaseComponent().addChild(new CommandComponent("news") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                int updateId = WarpSystem.getInstance().getLatestVersionId();
-
                 Player p = (Player) sender;
                 TextComponent tc0 = new TextComponent(Lang.getPrefix() + "§7Click »");
                 TextComponent click = new TextComponent("§chere");
                 TextComponent tc1 = new TextComponent("§7« to read all new stuff!");
 
-                click.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/warps-portals-and-warpsigns-warp-system-only-gui.29595/update?update=" + updateId));
+                click.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, WarpSystem.getInstance().getUpdateChecker().getDownload()));
                 click.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
 
                 tc0.addExtra(click);
