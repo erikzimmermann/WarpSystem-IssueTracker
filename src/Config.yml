@@ -75,7 +75,7 @@ WarpSystem:
     Shortcuts: true
     TempWarps: true
     #Available commands: '/warp <warp>' or '/globalwarp <warp>'
-    #Activates when a player is within 5 blocks of a CommandBlock and the CommandBlock is active
+    #Required for '/tp' command for CommandBlocks (CommandBlocks with tp commands inside don't work, if you turn this to false)
     CommandBlocks: true
     RandomTeleport: true
 
