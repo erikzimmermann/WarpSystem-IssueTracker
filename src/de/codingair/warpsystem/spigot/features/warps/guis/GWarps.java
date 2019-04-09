@@ -6,7 +6,6 @@ import de.codingair.codingapi.player.gui.inventory.gui.InterfaceListener;
 import de.codingair.codingapi.player.gui.inventory.gui.Skull;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
-import de.codingair.codingapi.player.gui.inventory.guis.ConfirmGUI;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.Callback;
@@ -16,9 +15,6 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
-import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
-import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.guis.editor.GEditor;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.GUIListener;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
@@ -28,7 +24,6 @@ import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.Act
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.types.BoundAction;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.types.CommandAction;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.types.CostsAction;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -166,7 +161,7 @@ public class GWarps extends GUI {
 
         ItemStack none = noneBuilder.getItem();
 
-        if(p.hasPermission(WarpSystem.PERMISSION_MODIFY_ICONS) && showMenu && canEdit) {
+        if(p.hasPermission(WarpSystem.PERMISSION_MODIFY_WARP_GUI) && showMenu && canEdit) {
             ItemBuilder builder = new ItemBuilder(Material.NETHER_STAR).setName(Lang.get("Menu_Help"));
 
             if(editing) {

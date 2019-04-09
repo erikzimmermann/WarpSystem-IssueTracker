@@ -42,14 +42,14 @@ import java.util.logging.Level;
 public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_NOTIFY = "WarpSystem.Notify";
     public static final String PERMISSION_MODIFY = "WarpSystem.Modify";
-    public static final String PERMISSION_MODIFY_ICONS = "WarpSystem.Modify.Icons";
+    public static final String PERMISSION_MODIFY_WARP_GUI = "WarpSystem.Modify.WarpGUI";
     public static final String PERMISSION_MODIFY_WARP_SIGNS = "WarpSystem.Modify.WarpSigns";
     public static final String PERMISSION_MODIFY_GLOBAL_WARPS = "WarpSystem.Modify.GlobalWarps";
     public static final String PERMISSION_MODIFY_SIMPLE_WARPS = "WarpSystem.Modify.SimpleWarps";
     public static final String PERMISSION_MODIFY_PORTALS = "WarpSystem.Modify.Portals";
     public static final String PERMISSION_MODIFY_NATIVE_PORTALS = "WarpSystem.Modify.NativePortals";
     public static final String PERMISSION_MODIFY_RANDOM_TELEPORTER = "WarpSystem.Modify.RandomTeleporters";
-    public static final String PERMISSION_USE_WARPS = "WarpSystem.Use.Warps";
+    public static final String PERMISSION_USE_WARP_GUI = "WarpSystem.Use.WarpGUI";
     public static final String PERMISSION_HIDE_ALL_ICONS = "WarpGUI.HideAll";
     public static final String PERMISSION_USE_WARP_SIGNS = "WarpSystem.Use.WarpSigns";
     public static final String PERMISSION_USE_GLOBAL_WARPS = "WarpSystem.Use.GlobalWarps";
@@ -61,10 +61,9 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_ByPass_Maintenance = "WarpSystem.ByPass.Maintenance";
     public static final String PERMISSION_ByPass_Teleport_Costs = "WarpSystem.ByPass.Teleport.Costs";
     public static final String PERMISSION_ByPass_Teleport_Delay = "WarpSystem.ByPass.Teleport.Delay";
-    public static final String PERMISSION_TELEPORT_COMMAND = "WarpSystem.TeleportCommand";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND = "WarpSystem.Use.TeleportCommand";
     public static final String PERMISSION_SIMPLE_WARPS_DIRECT_TELEPORT = "WarpSystem.SimpleWarp.DirectTeleport";
     public static String PERMISSION_ADMIN = "WarpSystem.Admin";
-    public static boolean OP_CAN_SKIP_DELAY = false;
 
     private static WarpSystem instance;
     public static boolean activated = false;
@@ -156,7 +155,6 @@ public class WarpSystem extends JavaPlugin {
             }
 
             maintenance = fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Maintenance", false);
-            OP_CAN_SKIP_DELAY = fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Teleport.Op_Can_Skip_Delay", false);
 
             Bukkit.getPluginManager().registerEvents(new TeleportListener(), this);
             Bukkit.getPluginManager().registerEvents(new NotifyListener(), this);
@@ -250,7 +248,6 @@ public class WarpSystem extends JavaPlugin {
         teleportManager.getTeleports().forEach(t -> t.cancel(false, false));
 
         //Disable all functions
-        OP_CAN_SKIP_DELAY = false;
         activated = false;
         maintenance = false;
         onBungeeCord = false;
@@ -318,7 +315,6 @@ public class WarpSystem extends JavaPlugin {
                 if(!saver) log("Saving options");
                 fileManager.getFile("Config").loadConfig();
                 fileManager.getFile("Config").getConfig().set("WarpSystem.Maintenance", maintenance);
-                fileManager.getFile("Config").getConfig().set("WarpSystem.Teleport.Op_Can_Skip_Delay", OP_CAN_SKIP_DELAY);
 
                 if(!saver) log("Saving features");
                 this.dataManager.save(saver);

@@ -3,7 +3,6 @@ package de.codingair.warpsystem.spigot.features.teleportcommand;
 import de.codingair.codingapi.server.commands.BaseComponent;
 import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
-import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -14,21 +13,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.SimplePluginManager;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 public class CTeleport extends CommandBuilder {
     public CTeleport() {
-        super("teleport", new BaseComponent(WarpSystem.PERMISSION_TELEPORT_COMMAND) {
+        super("teleport", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));

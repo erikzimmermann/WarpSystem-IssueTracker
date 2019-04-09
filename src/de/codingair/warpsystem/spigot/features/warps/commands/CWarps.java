@@ -9,7 +9,6 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
 import org.bukkit.command.CommandSender;
@@ -19,7 +18,7 @@ import java.util.List;
 
 public class CWarps extends CommandBuilder {
     public CWarps() {
-        super("Warps", new BaseComponent(WarpSystem.PERMISSION_USE_WARPS) {
+        super("Warps", new BaseComponent(WarpSystem.PERMISSION_USE_WARP_GUI) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
