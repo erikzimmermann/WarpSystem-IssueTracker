@@ -22,9 +22,7 @@ import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.Act
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.guis.GSimpleWarpList;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestServerStatusPacket;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -97,7 +95,7 @@ public class PDestination extends PMain {
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
                 if(e.isLeftClick()) {
-                    getLast().setClosingForAnvil(true);
+                    getLast().setClosingForGUI(true);
                     new GSimpleWarpList(p, new GSimpleWarpList.Listener() {
                         @Override
                         public void onClickOnWarp(String warp, InventoryClickEvent e) {
@@ -106,13 +104,13 @@ public class PDestination extends PMain {
                             update();
 
                             getLast().open();
-                            getLast().setClosingForAnvil(false);
+                            getLast().setClosingForGUI(false);
                         }
 
                         @Override
                         public void onClose() {
                             getLast().open();
-                            getLast().setClosingForAnvil(false);
+                            getLast().setClosingForGUI(false);
                         }
 
                         @Override
@@ -152,7 +150,7 @@ public class PDestination extends PMain {
                 @Override
                 public void onClick(InventoryClickEvent e, Player player) {
                     if(e.isLeftClick()) {
-                        getLast().setClosingForAnvil(true);
+                        getLast().setClosingForGUI(true);
                         new GGlobalWarpList(p, new GGlobalWarpList.Listener() {
                             @Override
                             public void onClickOnGlobalWarp(String warp, InventoryClickEvent e) {
@@ -161,13 +159,13 @@ public class PDestination extends PMain {
                                 update();
 
                                 getLast().open();
-                                getLast().setClosingForAnvil(false);
+                                getLast().setClosingForGUI(false);
                             }
 
                             @Override
                             public void onClose() {
                                 getLast().open();
-                                getLast().setClosingForAnvil(false);
+                                getLast().setClosingForGUI(false);
                             }
 
                             @Override

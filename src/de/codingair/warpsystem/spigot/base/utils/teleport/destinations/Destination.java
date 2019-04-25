@@ -116,4 +116,12 @@ public class Destination {
         return id.equals(that.id) &&
                 type == that.type;
     }
+
+    public Destination clone() {
+        Destination  destination = new Destination();
+        destination.id = id;
+        destination.type = type;
+        destination.adapter = adapter;
+        return destination;
+    }
 }

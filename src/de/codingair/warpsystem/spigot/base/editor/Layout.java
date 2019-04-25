@@ -1,13 +1,12 @@
-package de.codingair.warpsystem.spigot.features.warps.guis.editor;
+package de.codingair.warpsystem.spigot.base.editor;
 
-import de.codingair.codingapi.player.gui.inventory.gui.simple.Layout;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class LEditor extends Layout {
-    LEditor() {
+public class Layout extends de.codingair.codingapi.player.gui.inventory.gui.simple.Layout {
+    public Layout() {
         super(27);
     }
 
