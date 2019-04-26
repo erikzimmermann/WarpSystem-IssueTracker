@@ -97,7 +97,7 @@ public class PDestination extends PMain {
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
                 if(e.isLeftClick()) {
-                    getLast().setClosingForAnvil(true);
+                    getLast().setClosingForGUI(true);
                     new GSimpleWarpList(p, new GSimpleWarpList.Listener() {
                         @Override
                         public void onClickOnWarp(String warp, InventoryClickEvent e) {
@@ -106,13 +106,13 @@ public class PDestination extends PMain {
                             update();
 
                             getLast().open();
-                            getLast().setClosingForAnvil(false);
+                            getLast().setClosingForGUI(false);
                         }
 
                         @Override
                         public void onClose() {
                             getLast().open();
-                            getLast().setClosingForAnvil(false);
+                            getLast().setClosingForGUI(false);
                         }
 
                         @Override
@@ -152,7 +152,7 @@ public class PDestination extends PMain {
                 @Override
                 public void onClick(InventoryClickEvent e, Player player) {
                     if(e.isLeftClick()) {
-                        getLast().setClosingForAnvil(true);
+                        getLast().setClosingForGUI(true);
                         new GGlobalWarpList(p, new GGlobalWarpList.Listener() {
                             @Override
                             public void onClickOnGlobalWarp(String warp, InventoryClickEvent e) {
@@ -161,13 +161,13 @@ public class PDestination extends PMain {
                                 update();
 
                                 getLast().open();
-                                getLast().setClosingForAnvil(false);
+                                getLast().setClosingForGUI(false);
                             }
 
                             @Override
                             public void onClose() {
                                 getLast().open();
-                                getLast().setClosingForAnvil(false);
+                                getLast().setClosingForGUI(false);
                             }
 
                             @Override

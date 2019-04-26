@@ -146,7 +146,7 @@ public class GTempWarpList extends GUI {
                     searching = null;
                     reinitialize();
                 } else if(e.isLeftClick()) {
-                    setClosingForAnvil(true);
+                    setClosingForGUI(true);
                     p.closeInventory();
 
                     AnvilGUI.openAnvil(WarpSystem.getInstance(), p, new AnvilListener() {
