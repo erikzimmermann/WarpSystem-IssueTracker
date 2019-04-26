@@ -39,7 +39,7 @@ public class GEditor extends SimpleGUI {
 
             @Override
             public void onInvCloseEvent(InventoryCloseEvent e) {
-                if(isClosingByButton() || isClosingForAnvil() || isClosingByOperation()) return;
+                if(isClosingByButton() || isClosingForGUI() || isClosingByOperation()) return;
                 Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> new GWarps(p, category, true).open());
             }
 
@@ -80,7 +80,7 @@ public class GEditor extends SimpleGUI {
 
             @Override
             public void onInvCloseEvent(InventoryCloseEvent e) {
-                if(isClosingByButton() || isClosingForAnvil() || isClosingByOperation()) return;
+                if(isClosingByButton() || isClosingForGUI() || isClosingByOperation()) return;
                 Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> new GWarps(p, toEdit.getCategory(), true).open());
             }
 
