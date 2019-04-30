@@ -325,3 +325,6 @@ Click_For_Teleport: '&7» Klicke hier, um dich zu dieser Position zu teleportier
 Ends_In: 'Endet in'
 Deleted_In: 'Gelöscht in'
 Unsaved_Changes: '&7Möglicherweise gibt es nicht gespeicherte Änderungen. Speichere mit ''&e/ws reload true&7'' oder führe diesen Befehl zur Bestätigung erneut aus.'
+WarpSigns: 'WarpSigns'
+Finish: 'Fertig'
+Changes_have_been_saved: 'Deine Änderungen wurden gesichert.'

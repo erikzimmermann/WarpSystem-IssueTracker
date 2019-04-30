@@ -5,9 +5,9 @@ import de.codingair.codingapi.player.gui.inventory.gui.simple.SimpleGUI;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.editor.Layout;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
 import de.codingair.warpsystem.spigot.features.warps.guis.editor.pages.PAppearance;
-import de.codingair.warpsystem.spigot.features.warps.guis.editor.pages.PMain;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,7 +21,7 @@ import java.util.List;
 
 public class GEditor extends SimpleGUI {
     public GEditor(Player p, String name, int slot, Icon category, ItemStack item, boolean isCategory) {
-        super(p, new LEditor(), new PAppearance(p, item, name, slot, category, isCategory), WarpSystem.getInstance());
+        super(p, new Layout(), new PAppearance(p, item, name, slot, category, isCategory), WarpSystem.getInstance());
 
 //        setOpenSound(new SoundData(Sound.LEVEL_UP, 0.7F, 1F));
         setCancelSound(new SoundData(Sound.ITEM_BREAK, 0.7F, 1F));
@@ -62,7 +62,7 @@ public class GEditor extends SimpleGUI {
     }
 
     public GEditor(Player p, Icon toEdit) {
-        super(p, new LEditor(), new PAppearance(p, toEdit), WarpSystem.getInstance());
+        super(p, new Layout(), new PAppearance(p, toEdit), WarpSystem.getInstance());
 
 //        setOpenSound(new SoundData(Sound.LEVEL_UP, 0.7F, 1F));
         setCancelSound(new SoundData(Sound.ITEM_BREAK, 0.7F, 1F));

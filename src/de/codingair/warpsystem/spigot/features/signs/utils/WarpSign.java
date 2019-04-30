@@ -14,10 +14,21 @@ import org.json.simple.parser.ParseException;
 public class WarpSign {
     private Location location;
     private Destination destination;
+    private String permission;
+
+    public WarpSign(Location location) {
+        this.location = location;
+    }
 
     public WarpSign(Location location, Destination destination) {
         this.location = location;
         this.destination = destination;
+    }
+
+    public WarpSign(Location location, Destination destination, String permission) {
+        this.location = location;
+        this.destination = destination;
+        this.permission = permission;
     }
 
     public Location getLocation() {
@@ -32,7 +43,8 @@ public class WarpSign {
         JSONObject json = new JSONObject();
 
         json.put("Loc", this.location.toJSONString(0));
-        json.put("Destination", this.destination.toJSONString());
+        json.put("Destination", this.destination == null || this.destination.getType() == DestinationType.UNKNOWN || this.destination.getType() == null ? null : this.destination.toJSONString());
+        json.put("Permissions", this.permission);
 
         return json.toJSONString();
     }
@@ -44,7 +56,7 @@ public class WarpSign {
             JSONObject json = (JSONObject) new JSONParser().parse(s);
 
             Location loc = Location.getByJSONString((String) json.get("Loc"));
-            Destination destination;
+            Destination destination = null;
             if(json.get("Destination") != null) {
                 //New pattern
                  destination = new Destination((String) json.get("Destination"));
@@ -52,12 +64,30 @@ public class WarpSign {
                 //Old pattern
                 Icon warp = manager.getIcon((String) json.get("Warp"));
                 destination = new Destination(warp.getName(), DestinationType.SimpleWarp);
-            } else throw new IllegalStateException("Couldn't find a pattern to recreate a WarpSign!");
+            }
 
-            return new WarpSign(loc, destination);
+            String permissions = json.get("Permissions") == null ? null : (String) json.get("Permissions");
+
+            return new WarpSign(loc, destination, permissions);
         } catch(ParseException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public void setDestination(Destination destination) {
+        this.destination = destination;
+    }
+
+    public void setPermission(String permission) {
+        this.permission = permission;
+    }
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public WarpSign clone() {
+        return new WarpSign(this.location.clone(), this.destination != null ? this.destination.clone() : null, this.permission);
     }
 }
