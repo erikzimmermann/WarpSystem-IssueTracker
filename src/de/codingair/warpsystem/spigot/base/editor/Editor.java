@@ -1,7 +1,9 @@
 package de.codingair.warpsystem.spigot.base.editor;
 
+import de.codingair.codingapi.player.gui.inventory.gui.GUIListener;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
+import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Page;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SimpleGUI;
 import de.codingair.codingapi.server.Sound;
@@ -12,8 +14,13 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.List;
 
 public class Editor<C> extends SimpleGUI {
     private PageItem[] pages;
@@ -29,6 +36,43 @@ public class Editor<C> extends SimpleGUI {
         this.backup = backup;
         this.showIcon = showIcon;
 
+        update();
+
+        addListener(new GUIListener() {
+            @Override
+            public void onInvClickEvent(InventoryClickEvent e) {
+
+            }
+
+            @Override
+            public void onInvOpenEvent(InventoryOpenEvent e) {
+
+            }
+
+            @Override
+            public void onInvCloseEvent(InventoryCloseEvent e) {
+                if(isClosingForGUI() || isClosingByButton() || isClosingByOperation()) return;
+                backup.cancel(clone);
+            }
+
+            @Override
+            public void onInvDragEvent(InventoryDragEvent e) {
+
+            }
+
+            @Override
+            public void onMoveToTopInventory(ItemStack item, int oldRawSlot, List<Integer> newRawSlots) {
+
+            }
+
+            @Override
+            public void onCollectToCursor(ItemStack item, List<Integer> oldRawSlots, int newRawSlot) {
+
+            }
+        });
+    }
+
+    private void update() {
         updatePageItems();
         updateShowIcon();
         initControllButtons();
@@ -43,6 +87,7 @@ public class Editor<C> extends SimpleGUI {
         addButton(new ItemButton(8, new ItemBuilder(XMaterial.RED_TERRACOTTA).setName("§c" + Lang.get("Cancel")).getItem()) {
             @Override
             public void onClick(InventoryClickEvent e) {
+                backup.cancel(clone);
             }
         }.setOption(option));
 
@@ -56,16 +101,28 @@ public class Editor<C> extends SimpleGUI {
     }
 
     public void updatePageItems() {
+        ItemButtonOption option = new ItemButtonOption();
+        option.setOnlyLeftClick(true);
+        option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1));
+
         int slot = 1;
 
         for(PageItem page : pages) {
             ItemBuilder item = new ItemBuilder(page.getPageItem());
+            Page link = null;
+
             if(page == getCurrent()) {
                 item.addEnchantment(Enchantment.DAMAGE_ALL, 1);
                 item.setHideEnchantments(true);
-            }
+            } else link = page;
 
-            setItem(slot++, item.getItem());
+            Button b = new Button(slot++, item.getItem()) {
+                @Override
+                public void onClick(InventoryClickEvent e, Player player) {
+                }
+            }.setOption(option);
+            b.setLink(link);
+            addButton(b);
         }
     }
 
@@ -76,9 +133,14 @@ public class Editor<C> extends SimpleGUI {
     @Override
     public void changePage(Page page, boolean update) {
         super.changePage(page, false);
-        updatePageItems();
-        updateShowIcon();
+        update();
         if(update) getPlayer().updateInventory();
+    }
+
+    @Override
+    public void reinitialize() {
+        super.reinitialize();
+        update();
     }
 
     public Backup<C> getBackup() {

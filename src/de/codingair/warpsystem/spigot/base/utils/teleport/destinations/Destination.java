@@ -41,8 +41,8 @@ public class Destination {
         try {
             JSONArray json = (JSONArray) new JSONParser().parse(data);
 
-            this.type = DestinationType.valueOf((String) json.get(0));
-            this.id = (String) json.get(1);
+            this.type = json.get(0) == null ? null : DestinationType.valueOf((String) json.get(0));
+            this.id = json.get(1) == null ? null : (String) json.get(1);
             this.adapter = type.getInstance();
         } catch(Exception ex) {
             throw new IllegalArgumentException("Wrong serialized data!");
@@ -57,6 +57,7 @@ public class Destination {
     }
 
     public boolean teleport(Player player, String message, String displayName, boolean checkPermission, boolean silent, double costs, Callback<TeleportResult> callback) {
+        if(adapter == null) return false;
         player.setFallDistance(0F);
         return adapter.teleport(player, id, displayName, checkPermission, message, silent, costs, callback);
     }
@@ -66,7 +67,7 @@ public class Destination {
     }
 
     public double getCosts() {
-        return adapter.getCosts(id);
+        return adapter == null ? 0 : adapter.getCosts(id);
     }
 
     public SimulatedTeleportResult simulate(Player player, boolean checkPermission) {
@@ -101,7 +102,7 @@ public class Destination {
         if(this.type == DestinationType.UNKNOWN) throw new IllegalArgumentException("Cannot serialize unknown destination!");
 
         JSONArray json = new JSONArray();
-        json.add(type.name());
+        json.add(type == null ? null : type.name());
         json.add(id);
 
         return json.toJSONString();
@@ -118,7 +119,7 @@ public class Destination {
     }
 
     public Destination clone() {
-        Destination  destination = new Destination();
+        Destination destination = new Destination();
         destination.id = id;
         destination.type = type;
         destination.adapter = adapter;
