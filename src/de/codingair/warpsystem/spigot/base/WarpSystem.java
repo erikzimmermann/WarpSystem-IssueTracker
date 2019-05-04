@@ -81,7 +81,7 @@ public class WarpSystem extends JavaPlugin {
     private DataManager dataManager;
     private HeadManager headManager = new HeadManager();
 
-    private UpdateChecker updateChecker = new UpdateChecker();
+    private UpdateChecker updateChecker;
     private boolean runningFirstTime = false;
 
     private Timer timer = new Timer();
@@ -98,6 +98,7 @@ public class WarpSystem extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        this.updateChecker = new UpdateChecker();
 
         try {
             checkOldDirectory();
@@ -111,11 +112,6 @@ public class WarpSystem extends JavaPlugin {
             log("__________________________________________________________");
             log(" ");
             log("                       WarpSystem [" + getDescription().getVersion() + "]");
-            if(updateAvailable) {
-                log(" ");
-                log("New update available [v" + updateChecker.getVersion() + " - " + WarpSystem.this.updateChecker.getUpdateInfo() + "].");
-                log("Download it on\n\n" + updateChecker.getDownload() + "\n");
-            }
             log(" ");
             log("Status:");
             log(" ");
@@ -175,6 +171,17 @@ public class WarpSystem extends JavaPlugin {
             activated = true;
             Bukkit.getScheduler().runTaskLaterAsynchronously(WarpSystem.getInstance(), () -> {
                 updateAvailable = WarpSystem.this.updateChecker.needsUpdate();
+
+                if(updateAvailable) {
+                    String v = updateChecker.getVersion();
+                    if(!v.startsWith("v")) v = "v" + v;
+
+                    log("-----< WarpSystem >-----");
+                    log("New update available [" + v + " - " + WarpSystem.this.updateChecker.getUpdateInfo() + "].");
+                    log("Download it on\n\n" + updateChecker.getDownload() + "\n");
+                    log("------------------------");
+                }
+
                 WarpSystem.getInstance().notifyPlayers(null);
             }, 20L);
 
@@ -301,7 +308,7 @@ public class WarpSystem extends JavaPlugin {
                 log("                       WarpSystem [" + getDescription().getVersion() + "]");
                 if(updateAvailable) {
                     log(" ");
-                    log("New update available [v" + updateChecker.getVersion() + " - " + WarpSystem.this.updateChecker.getUpdateInfo() + "]. Download it on \n\n" + updateChecker.getDownload() + "\n");
+                    log("New update available [" + updateChecker.getVersion() + " - " + WarpSystem.this.updateChecker.getUpdateInfo() + "]. Download it on \n\n" + updateChecker.getDownload() + "\n");
                 }
                 log(" ");
                 log("Status:");
@@ -422,7 +429,10 @@ public class WarpSystem extends JavaPlugin {
             }
         } else {
             if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && WarpSystem.updateAvailable) {
-                TextComponent tc0 = new TextComponent(Lang.getPrefix() + "§7A new update is available §8[§bv" + WarpSystem.getInstance().updateChecker.getVersion() + "§8 - §b" + WarpSystem.getInstance().updateChecker.getUpdateInfo() + "§8]§7. Download it §7»");
+                String v = updateChecker.getVersion();
+                if(!v.startsWith("v")) v = "v" + v;
+
+                TextComponent tc0 = new TextComponent(Lang.getPrefix() + "§7A new update is available §8[§b" + v + "§8 - §b" + WarpSystem.getInstance().updateChecker.getUpdateInfo() + "§8]§7. Download it §7»");
                 TextComponent click = new TextComponent("§chere");
                 TextComponent tc1 = new TextComponent("§7«!");
 
