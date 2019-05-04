@@ -14,6 +14,7 @@ import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
@@ -366,7 +367,7 @@ public class Portal implements Removable {
 
         player.teleport(this.start);
 
-        WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.EffectPortal, new Destination(new LocationAdapter(this.start)), this.destinationName, 0, true, true,
+        WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.EffectPortal, new Destination(new LocationAdapter(this.start)), this.destinationName, getPermission() == null ? TeleportManager.NO_PERMISSION : getPermission(), 0, true, true,
                 WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Portals", true) ?
                         Lang.getPrefix() + Lang.get("Teleported_To") : null,
                 false, this.teleportSound, false, null);
@@ -380,7 +381,7 @@ public class Portal implements Removable {
             return;
         }
 
-        WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.EffectPortal, this.destination, this.startName, 0, true, true,
+        WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.EffectPortal, this.destination, this.startName, getPermission() == null ? TeleportManager.NO_PERMISSION : getPermission(), 0, true, true,
                 WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Portals", true) ?
                         Lang.getPrefix() + Lang.get("Teleported_To") : null,
                 false, this.teleportSound, !(this.destination.getAdapter() instanceof PortalDestinationAdapter), null);
