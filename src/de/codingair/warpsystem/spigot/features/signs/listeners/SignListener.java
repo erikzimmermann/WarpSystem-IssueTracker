@@ -4,6 +4,7 @@ import de.codingair.codingapi.API;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -47,14 +48,14 @@ public class SignListener implements Listener {
                     return;
                 }
 
-                if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_USE_WARP_SIGNS) || (sign.getPermission() != null && !e.getPlayer().hasPermission(sign.getPermission()))) {
+                if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_USE_WARP_SIGNS)) {
                     e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     return;
                 }
 
                 if(sign.getDestination() == null || sign.getDestination().getId() == null) return;
 
-                WarpSystem.getInstance().getTeleportManager().teleport(e.getPlayer(), Origin.WarpSign, sign.getDestination(), sign.getDestination().getId(), sign.getDestination().getCosts(),
+                WarpSystem.getInstance().getTeleportManager().teleport(e.getPlayer(), Origin.WarpSign, sign.getDestination(), sign.getDestination().getId(), (sign.getPermission() == null ? TeleportManager.NO_PERMISSION : sign.getPermission()), sign.getDestination().getCosts(),
                         WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.WarpSigns", true));
             }
         }

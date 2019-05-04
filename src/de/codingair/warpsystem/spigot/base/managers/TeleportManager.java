@@ -94,8 +94,16 @@ public class TeleportManager {
         teleport(player, origin, destination, displayName, costs, false, this.canMove, message, false, null);
     }
 
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean message) {
+        teleport(player, origin, destination, displayName, permission, costs, false, this.canMove, message, false, null);
+    }
+
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean message, Callback<TeleportResult> callback) {
         teleport(player, origin, destination, displayName, costs, false, this.canMove, message, false, callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean message, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, permission, costs, false, this.canMove, message, false, callback);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, Callback<TeleportResult> callback) {
@@ -115,11 +123,15 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, boolean message, boolean silent, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, null, costs, skip, canMove, message, silent, callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, boolean message, boolean silent, Callback<TeleportResult> callback) {
         teleport(player, origin, destination, displayName, costs, skip, canMove, message ?
                 costs > 0 ?
                         Lang.getPrefix() + Lang.get("Money_Paid")
                         : Lang.getPrefix() + Lang.get("Teleported_To")
-                : null, silent, callback);
+                : permission, silent, callback);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, String message, boolean silent, Callback<TeleportResult> callback) {

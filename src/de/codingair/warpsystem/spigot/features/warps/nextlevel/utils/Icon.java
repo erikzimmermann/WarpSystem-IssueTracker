@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.features.warps.nextlevel.utils;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
@@ -76,7 +77,7 @@ public class Icon implements Serializable {
 
         if(getAction(Action.WARP) != null) {
             double costs = getAction(CostsAction.class) == null ? 0 : getAction(CostsAction.class).getValue();
-            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.WarpIcon, getAction(WarpAction.class).getValue(), getAction(WarpAction.class).getValue().getId(), costs, WarpSystem.getInstance()
+            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.WarpIcon, getAction(WarpAction.class).getValue(), getAction(WarpAction.class).getValue().getId(), TeleportManager.NO_PERMISSION, costs, WarpSystem.getInstance()
                     .getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.WarpGUI", true), new Callback<TeleportResult>() {
                 @Override
                 public void accept(TeleportResult result) {
