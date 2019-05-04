@@ -270,7 +270,12 @@ public class GWarps extends GUI {
                                 @Override
                                 public void accept(Boolean category) {
                                     if(category == null) {
-                                        Bukkit.getScheduler().runTask(WarpSystem.getInstance(), GWarps.this::open);
+                                        Bukkit.getScheduler().runTask(WarpSystem.getInstance(), new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                GWarps.this.open();
+                                            }
+                                        });
                                         return;
                                     }
 

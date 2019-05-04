@@ -19,9 +19,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.features.effectportals.PortalEditor;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.PortalDestinationAdapter;
 import de.codingair.warpsystem.spigot.features.utils.guis.choosedestination.ChooseDestinationGUI;
-import de.codingair.warpsystem.spigot.features.warps.guis.editor.pages.PDestination;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestServerStatusPacket;
-import net.minecraft.server.v1_9_R1.SoundEffects;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -48,7 +46,7 @@ public class Menu extends HotbarGUI {
     private void init() {
         setItem(0, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
         setItem(1, new ItemComponent(new ItemBuilder(Material.REDSTONE).setName("§7» §e" + Lang.get("Animation") + "§7 «").getItem()).setLink(this.animation));
-        setItem(2, new ItemComponent(new ItemBuilder(Material.SIGN).setName("§7» §e" + Lang.get("Hologram") + "§7 «").getItem()).setLink(this.hologram));
+        setItem(2, new ItemComponent(new ItemBuilder(XMaterial.OAK_SIGN).setName("§7» §e" + Lang.get("Hologram") + "§7 «").getItem()).setLink(this.hologram));
         setItem(3, new ItemComponent(new ItemBuilder(Material.ENDER_PEARL).setName("§7» §e" + Lang.get("Teleport") + "§7 «").getItem()).setLink(this.teleport));
 
         String destination = null;

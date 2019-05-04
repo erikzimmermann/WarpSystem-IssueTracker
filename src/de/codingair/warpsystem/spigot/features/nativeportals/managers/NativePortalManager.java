@@ -150,7 +150,12 @@ public class NativePortalManager implements Manager {
 
                 Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
                     GEditor editor = new GEditor(player, portal, GEditor.Menu.DELETE);
-                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), editor::open, 2L);
+                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), new Runnable() {
+                        @Override
+                        public void run() {
+                            editor.open();
+                        }
+                    }, 1L);
                     noTeleport.remove(player);
                 }, 4L);
 
@@ -162,7 +167,12 @@ public class NativePortalManager implements Manager {
 
                 Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
                     GEditor editor = new GEditor(player, portal);
-                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), editor::open, 2L);
+                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), new Runnable() {
+                        @Override
+                        public void run() {
+                            editor.open();
+                        }
+                    }, 1L);
                     noTeleport.remove(player);
                 }, 4L);
             } else if(!noTeleport.contains(player)) {

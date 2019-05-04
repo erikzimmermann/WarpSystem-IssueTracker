@@ -4,7 +4,6 @@ import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilSlot;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
-import de.codingair.codingapi.player.gui.inventory.gui.simple.SignGUIButton;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncAnvilGUIButton;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncSignGUIButton;
 import de.codingair.codingapi.server.Sound;
@@ -28,11 +27,13 @@ import java.util.List;
 
 public class OptionPage extends PageItem {
     private WarpSign sign;
+    private Sign s;
 
     public OptionPage(Player p, WarpSign sign) {
         super(p, WarpSignGUI.getMainTitle(), new ItemBuilder(XMaterial.COMMAND_BLOCK).setName("§6§n" + Lang.get("Options")).getItem(), false);
 
         this.sign = sign;
+        s = (Sign) sign.getLocation().getBlock().getState();
 
         initialize(p);
     }
@@ -45,8 +46,12 @@ public class OptionPage extends PageItem {
         option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1));
 
         addButton(new SyncSignGUIButton(19, sign.getLocation(), true) {
+            private String[] lines = s.getLines();
+
             @Override
             public void onSignChangeEvent(String[] lines) {
+                this.lines = lines;
+                ((WarpSignGUI.ShowIcon) getLast().getShowIcon()).applyLines(lines);
                 update();
             }
 
@@ -56,8 +61,7 @@ public class OptionPage extends PageItem {
 
                 builder.setLore("§3" + Lang.get("Current") + ":");
 
-                Sign s = (Sign) sign.getLocation().getBlock().getState();
-                for(String line : s.getLines()) {
+                for(String line : lines == null ? s.getLines() : lines) {
                     builder.addLore("§7- '§r" + (line == null ? "" : ChatColor.translateAlternateColorCodes('&', line)) + "§7'");
                 }
 
