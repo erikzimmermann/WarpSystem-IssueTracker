@@ -99,7 +99,7 @@ public class UpdateChecker {
                 BufferedReader input = new BufferedReader(new InputStreamReader(con.getInputStream()));
 
                 updateInfo = null;
-                download = "https://www.spigotmc.org/resources/premium-warps-portals-and-more-warp-teleport-system-1-8-1-13.66035/download?version=";
+                download = "https://www.spigotmc.org/resources/premium-warps-portals-and-more-warp-teleport-system-1-8-1-13.66035/update?update=";
 
                 String line;
                 while((line = input.readLine()) != null) {
@@ -116,7 +116,6 @@ public class UpdateChecker {
                 if(updateInfo.toLowerCase().startsWith("not stable")) return null;
                 return updateInfo;
             } catch(Exception ex) {
-                ex.printStackTrace();
                 return null;
             }
         }
