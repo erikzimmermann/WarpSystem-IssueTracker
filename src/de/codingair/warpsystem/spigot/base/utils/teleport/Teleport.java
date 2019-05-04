@@ -7,11 +7,11 @@ import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.utils.effects.RotatingParticleSpiral;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -112,7 +112,7 @@ public class Teleport {
             }
         }
 
-        if(!destination.teleport(player, message, displayName, this.permission == null || !this.permission.equals(TeleportManager.NO_PERMISSION), silent, costs, callback)) {
+        if(!destination.teleport(player, message, displayName, this.permission == null, silent, costs, callback)) {
             return;
         }
 
@@ -138,7 +138,7 @@ public class Teleport {
         if(this.destination == null) throw new IllegalArgumentException("Destination cannot be null!");
         if(this.permission != null && !this.permission.equals(TeleportManager.NO_PERMISSION) && !player.hasPermission(this.permission))
             return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"), TeleportResult.NO_PERMISSION);
-        return this.destination.simulate(player, this.permission == null || !this.permission.equals(TeleportManager.NO_PERMISSION));
+        return this.destination.simulate(player, this.permission == null);
     }
 
     public Player getPlayer() {

@@ -41,8 +41,6 @@ public class OptionPage extends PageItem {
     @Override
     public void initialize(Player p) {
         ItemButtonOption option = new ItemButtonOption();
-        option.setOnlyLeftClick(true);
-        option.setCloseOnClick(true);
         option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1));
 
         addButton(new SyncSignGUIButton(19, sign.getLocation(), true) {
@@ -69,7 +67,7 @@ public class OptionPage extends PageItem {
 
                 return builder.getItem();
             }
-        }.setOption(option));
+        }.setOption(option).setOnlyLeftClick(true));
 
         addButton(new SyncAnvilGUIButton(2, 2, ClickType.LEFT) {
             @Override
