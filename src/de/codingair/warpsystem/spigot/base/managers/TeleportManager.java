@@ -127,11 +127,11 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, boolean message, boolean silent, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, costs, skip, canMove, message ?
+        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message ?
                 costs > 0 ?
                         Lang.getPrefix() + Lang.get("Money_Paid")
                         : Lang.getPrefix() + Lang.get("Teleported_To")
-                : permission, silent, callback);
+                : null, silent, callback);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, String message, boolean silent, Callback<TeleportResult> callback) {
@@ -228,7 +228,8 @@ public class TeleportManager {
 
         try {
             player.closeInventory();
-        } catch(Throwable ignored) {}
+        } catch(Throwable ignored) {
+        }
 
         if(costs > 0) {
             if(!player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs) && AdapterType.getActive() != null) {
