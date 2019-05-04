@@ -1,10 +1,8 @@
 package de.codingair.warpsystem.spigot.features.signs.listeners;
 
 import de.codingair.codingapi.API;
-import de.codingair.codingapi.player.gui.sign.SignGUI;
-import de.codingair.codingapi.player.gui.sign.SignTools;
-import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
+import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
@@ -13,11 +11,8 @@ import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.signs.guis.WarpSignGUI;
 import de.codingair.warpsystem.spigot.features.signs.managers.SignManager;
 import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
-import de.codingair.warpsystem.spigot.features.utils.guis.choosedestination.ChooseDestinationGUI;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -39,7 +34,7 @@ public class SignListener implements Listener {
             SignManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIGNS);
             WarpSign sign = manager.getByLocation(s.getLocation());
             if(sign != null) {
-                if(e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_WARP_SIGNS) && e.getPlayer().getGameMode().equals(GameMode.CREATIVE) && e.getPlayer().getItemInHand().getType().equals(Material.SIGN)) {
+                if(e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_WARP_SIGNS) && e.getPlayer().getGameMode().equals(GameMode.CREATIVE) && e.getPlayer().getItemInHand().getType().name().toLowerCase().contains("sign")) {
                     String[] lines = s.getLines();
                     for(int i = 0; i < 4; i++) {
                         lines[i] = lines[i].replace("§", "&");
@@ -52,10 +47,12 @@ public class SignListener implements Listener {
                     return;
                 }
 
-                if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_USE_WARP_SIGNS) || !e.getPlayer().hasPermission(sign.getPermission())) {
+                if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_USE_WARP_SIGNS) || (sign.getPermission() != null && !e.getPlayer().hasPermission(sign.getPermission()))) {
                     e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     return;
                 }
+
+                if(sign.getDestination() == null || sign.getDestination().getId() == null) return;
 
                 WarpSystem.getInstance().getTeleportManager().teleport(e.getPlayer(), Origin.WarpSign, sign.getDestination(), sign.getDestination().getId(), sign.getDestination().getCosts(),
                         WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.WarpSigns", true));

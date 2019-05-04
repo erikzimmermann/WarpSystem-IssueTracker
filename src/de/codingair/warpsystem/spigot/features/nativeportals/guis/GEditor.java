@@ -400,7 +400,12 @@ public class GEditor extends GUI {
                             public void onClose() {
                                 menu = Menu.MAIN;
                                 reinitialize();
-                                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), GEditor.this::open, 1);
+                                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        GEditor.this.open();
+                                    }
+                                }, 1);
                             }
 
                             @Override
@@ -431,7 +436,12 @@ public class GEditor extends GUI {
                                 public void onClose() {
                                     menu = Menu.MAIN;
                                     reinitialize();
-                                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), GEditor.this::open, 1);
+                                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            GEditor.this.open();
+                                        }
+                                    }, 1);
                                 }
 
                                 @Override
@@ -469,8 +479,12 @@ public class GEditor extends GUI {
                                 public void onClose(AnvilCloseEvent e) {
                                     if(e.getSubmittedText() != null) {
                                         menu = Menu.MAIN;
-                                        reinitialize();
-                                        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), GEditor.this::open, 1);
+                                        reinitialize();Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                GEditor.this.open();
+                                            }
+                                        }, 1);
                                     }
                                 }
                             }, new ItemBuilder(XMaterial.PAPER).setName(destination != null && destination.getType() == DestinationType.Server ? destination.getId() : Lang.get("Server") + "...").getItem());

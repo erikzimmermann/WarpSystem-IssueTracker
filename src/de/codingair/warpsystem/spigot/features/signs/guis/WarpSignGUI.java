@@ -13,6 +13,7 @@ import de.codingair.warpsystem.spigot.features.signs.guis.pages.OptionPage;
 import de.codingair.warpsystem.spigot.features.signs.managers.SignManager;
 import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -44,20 +45,31 @@ public class WarpSignGUI extends Editor<WarpSign> {
 
                 SignTools.updateSign(s, backupLines);
             }
-        }, new ShowIcon() {
-            @Override
-            public ItemStack buildIcon() {
-                ItemBuilder builder = new ItemBuilder(XMaterial.SIGN);
+        }, new ShowIcon(((Sign) sign.getLocation().getBlock().getState()).getLines()), new OptionPage(p, clone), new DestinationPage(p, getMainTitle(), clone.getDestination()));
 
-                Sign s = (Sign) sign.getLocation().getBlock().getState();
-                for(String line : s.getLines()) {
-                    builder.addText("§7'§r" + ChatColor.translateAlternateColorCodes('&', line) + "§7'");
-                }
+    }
 
-                return builder.getItem();
+    public static class ShowIcon implements de.codingair.warpsystem.spigot.base.editor.ShowIcon {
+        private String[] lines;
+
+        public ShowIcon(String[] lines) {
+            this.lines = lines;
+        }
+
+        public void applyLines(String[] lines) {
+            this.lines = lines;
+        }
+
+        @Override
+        public ItemStack buildIcon() {
+            ItemBuilder builder = new ItemBuilder(XMaterial.OAK_SIGN);
+
+            for(String line : lines) {
+                builder.addText("§7'§r" + ChatColor.translateAlternateColorCodes('&', line) + "§7'");
             }
-        }, new OptionPage(p, clone), new DestinationPage(p, getMainTitle(), clone.getDestination()));
 
+            return builder.getItem();
+        }
     }
 
     public static String getMainTitle() {

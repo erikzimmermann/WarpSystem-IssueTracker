@@ -138,12 +138,12 @@ public class PAppearance extends PMain {
                 }
 
                 if(getIcon().isCategory()) {
-                    if(IconManager.getInstance().existsCategory(input)) {
+                    if(!getIcon().getName().equalsIgnoreCase(input) && IconManager.getInstance().existsCategory(input)) {
                         p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                         return;
                     }
                 } else {
-                    if(IconManager.getInstance().existsIcon(input)) {
+                    if(!getIcon().getName().equalsIgnoreCase(input) && IconManager.getInstance().existsIcon(input)) {
                         p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                         return;
                     }
