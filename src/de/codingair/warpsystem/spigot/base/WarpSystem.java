@@ -443,23 +443,9 @@ public class WarpSystem extends JavaPlugin {
                 tc0.addExtra(tc1);
                 tc0.setColor(ChatColor.GRAY);
 
-                TextComponent command0 = new TextComponent(Lang.getPrefix() + "§7Run \"§c/WarpSystem news§7\" or click »");
-                TextComponent command1 = new TextComponent("§chere");
-                TextComponent command2 = new TextComponent("§7« to read all new stuff!");
-
-                command1.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, getUpdateChecker().getDownload()));
-                command1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
-
-                command0.addExtra(command1);
-                command0.addExtra(command2);
-                command0.setColor(ChatColor.GRAY);
-
                 player.sendMessage("");
                 player.sendMessage("");
                 player.spigot().sendMessage(tc0);
-                player.sendMessage("");
-                player.spigot().sendMessage(command0);
-                player.sendMessage("");
                 player.sendMessage("");
             } else if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && this.runningFirstTime) {
                 ConfigFile file = fileManager.getFile("Config");
