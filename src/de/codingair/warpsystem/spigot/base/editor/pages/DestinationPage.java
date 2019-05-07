@@ -52,7 +52,7 @@ public class DestinationPage extends PageItem {
                 String name = null;
                 if(destination.getType() == DestinationType.SimpleWarp) name = destination.getId();
 
-                List<String> lore = destination.getId() == null ? null : new ArrayList<>();
+                List<String> lore = name == null ? null : new ArrayList<>();
                 if(lore != null) lore.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));
 
                 return new ItemBuilder(XMaterial.ENDER_PEARL).setName("§6§n" + Lang.get("SimpleWarps"))
@@ -73,6 +73,11 @@ public class DestinationPage extends PageItem {
                             destination.setType(DestinationType.SimpleWarp);
                             destination.setAdapter(DestinationType.SimpleWarp.getInstance());
                             update();
+
+                            if(WarpSystem.getInstance().isOnBungeeCord()) {
+                                ((SyncButton) getButton(2, 2)).update();
+                                ((SyncButton) getButton(3, 2)).update();
+                            }
 
                             getLast().open();
                             getLast().setClosingForGUI(false);
@@ -110,7 +115,7 @@ public class DestinationPage extends PageItem {
                     String name = null;
                     if(destination.getType() == DestinationType.GlobalWarp) name = destination.getId();
 
-                    List<String> lore = destination.getId() == null ? null : new ArrayList<>();
+                    List<String> lore = name == null ? null : new ArrayList<>();
                     if(lore != null) lore.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));
 
                     return new ItemBuilder(XMaterial.ENDER_EYE).setName("§6§n" + Lang.get("GlobalWarps"))
@@ -131,6 +136,9 @@ public class DestinationPage extends PageItem {
                                 destination.setType(DestinationType.GlobalWarp);
                                 destination.setAdapter(DestinationType.GlobalWarp.getInstance());
                                 update();
+
+                                ((SyncButton) getButton(1, 2)).update();
+                                ((SyncButton) getButton(3, 2)).update();
 
                                 getLast().open();
                                 getLast().setClosingForGUI(false);
@@ -165,7 +173,7 @@ public class DestinationPage extends PageItem {
                     String name = null;
                     if(destination.getType() == DestinationType.Server) name = destination.getId();
 
-                    List<String> lore = destination.getId() == null ? null : new ArrayList<>();
+                    List<String> lore = name == null ? null : new ArrayList<>();
                     if(lore != null) {
                         lore.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));
                         lore.add("");
