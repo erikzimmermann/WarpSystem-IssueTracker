@@ -43,7 +43,7 @@ public class GTempWarpList extends GUI {
     }
 
     private static String TITLE(Player player, int page) {
-        return ChatColor.RED + Lang.get("TempWarps") + " " + ChatColor.GRAY + "- " + ChatColor.RED + "List " + ChatColor.GRAY + "(" + page + "/" + (MAX_PAGE(player) + 1) + ")";
+        return ChatColor.RED + Lang.get("TempWarps") + " " + ChatColor.GRAY + "- " + ChatColor.RED + Lang.get("List") + " " + ChatColor.GRAY + "(" + page + "/" + (MAX_PAGE(player) + 1) + ")";
     }
 
     private static void add(GTempWarpList gui, TempWarp tempWarp, String underline) {
