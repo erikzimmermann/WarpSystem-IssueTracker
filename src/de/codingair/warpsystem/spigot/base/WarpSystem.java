@@ -69,6 +69,8 @@ public class WarpSystem extends JavaPlugin {
     public static boolean activated = false;
     public static boolean maintenance = false;
     private final boolean premium = true;
+    public static final int PREMIUM_THREAD_ID = 369986;
+    public static final int FREE_THREAD_ID = 182037;
 
     private boolean onBungeeCord = false;
     private String bungeePluginVersion = null;
@@ -170,7 +172,7 @@ public class WarpSystem extends JavaPlugin {
 
             activated = true;
             Bukkit.getScheduler().runTaskLaterAsynchronously(WarpSystem.getInstance(), () -> {
-                updateAvailable = WarpSystem.this.updateChecker.needsUpdate();
+                updateAvailable = WarpSystem.this.updateChecker.read();
 
                 if(updateAvailable) {
                     String v = updateChecker.getVersion();
