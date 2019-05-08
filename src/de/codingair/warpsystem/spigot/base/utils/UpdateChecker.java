@@ -22,8 +22,8 @@ public class UpdateChecker {
         this.adapter = WarpSystem.getInstance().isPremium() ? new PremiumUpdateChecker() : new FreeUpdateChecker();
     }
 
-    public boolean needsUpdate() {
-        return adapter.needsUpdate();
+    public boolean read() {
+        return adapter.read();
     }
 
     public String getDownload() {
@@ -39,13 +39,14 @@ public class UpdateChecker {
     }
 
     private interface UpdateCheckerAdapter {
-        boolean needsUpdate();
+        boolean read();
     }
 
     private class PremiumUpdateChecker implements UpdateCheckerAdapter {
         @Override
-        public boolean needsUpdate() {
+        public boolean read() {
             version = null;
+            updateInfo = null;
             download = null;
 
             try {
@@ -58,10 +59,19 @@ public class UpdateChecker {
 
                 String line;
                 while((line = input.readLine()) != null) {
-                    if(version != null && download != null) break;
-
-                    if(line.contains("<a href=\"/CodingAir/WarpSystem-IssueTracker/tree/") && version == null) {
-                        version = line.split("/tree/")[1].split("\"")[0];
+                    if(version == null) {
+                        if(line.contains("<a href=\"/CodingAir/WarpSystem-IssueTracker/tree/") && version == null) {
+                            version = line.split("/tree/")[1].split("\"")[0];
+                        }
+                    } else if(updateInfo == null) {
+                        if(line.contains("<a href=\"/CodingAir/WarpSystem-IssueTracker/releases/tag/" + version + "\">")) {
+                            updateInfo = line.split(">")[1].split("<")[0];
+                        }
+                    } else {
+                        if(line.contains("Download id: ")) {
+                            download = "https://www.spigotmc.org/resources/premium-warps-portals-and-more-warp-teleport-system-1-8-1-13.66035/update?update=" + line.split(": ")[1].split("<")[0];
+                            break;
+                        }
                     }
                 }
 
@@ -75,56 +85,21 @@ public class UpdateChecker {
             String newV = version.startsWith("v") ? version.replaceFirst("v", "") : version;
 
             needsUpdate = !current.equals(newV);
-            if(needsUpdate) checkUpdateInfo();
             return needsUpdate && !notStable();
         }
 
-        public boolean notStable() {
-            if(updateInfo == null) {
-                checkUpdateInfo();
+        boolean notStable() {
+            if(version == null) {
+                read();
                 return notStable();
             } else return updateInfo.toLowerCase().startsWith("not stable");
-        }
-
-        public String checkUpdateInfo() {
-            if(!needsUpdate) return null;
-            if(updateInfo != null) return updateInfo.toLowerCase().startsWith("not stable") ? null : updateInfo;
-
-            try {
-                URLConnection con = new URL(premium).openConnection();
-                con.setRequestProperty("User-Agent", "Mozilla/5.0");
-                con.setConnectTimeout(5000);
-                con.connect();
-
-                BufferedReader input = new BufferedReader(new InputStreamReader(con.getInputStream()));
-
-                updateInfo = null;
-                download = "https://www.spigotmc.org/resources/premium-warps-portals-and-more-warp-teleport-system-1-8-1-13.66035/update?update=";
-
-                String line;
-                while((line = input.readLine()) != null) {
-                    if(line.contains("<a href=\"/CodingAir/WarpSystem-IssueTracker/releases/tag/" + version + "\">")) {
-                        updateInfo = line.split(">")[1].split("<")[0];
-                    }
-
-                    if(line.contains("Download id: ")) {
-                        download += line.split(": ")[1].split("<")[0];
-                        break;
-                    }
-                }
-
-                if(updateInfo.toLowerCase().startsWith("not stable")) return null;
-                return updateInfo;
-            } catch(Exception ex) {
-                return null;
-            }
         }
     }
 
     private class FreeUpdateChecker implements UpdateCheckerAdapter {
 
         @Override
-        public boolean needsUpdate() {
+        public boolean read() {
             version = null;
             download = null;
 

@@ -207,6 +207,12 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 Player p = (Player) sender;
+
+                if(WarpSystem.getInstance().getUpdateChecker().getDownload() == null) {
+                    p.sendMessage(Lang.getPrefix() + "§cFetching data... Please try again.");
+                    return false;
+                }
+
                 TextComponent tc0 = new TextComponent(Lang.getPrefix() + "§7Click »");
                 TextComponent click = new TextComponent("§chere");
                 TextComponent tc1 = new TextComponent("§7« to read all new stuff!");
@@ -246,7 +252,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                         TextComponent link = new TextComponent("§chere");
                         TextComponent base1 = new TextComponent("§7« to report the bug to §cGitHub§7.");
 
-                        link.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/CodingAir/WarpSystem/issues/new"));
+                        link.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/CodingAir/WarpSystem-IssueTracker/issues/new"));
                         link.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
 
                         base.addExtra(link);
@@ -260,7 +266,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                         link = new TextComponent("§chere");
                         base1 = new TextComponent("§7« to report the bug to the §6SpigotMc-Forum§7.");
 
-                        link.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/threads/warps-portals-and-warpsigns-warp-system-only-gui.182037/page-9999"));
+                        link.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/threads/" + (WarpSystem.getInstance().isPremium() ? "Premium" : "Free") + "-WarpSystem." + (WarpSystem.getInstance().isPremium() ? WarpSystem.PREMIUM_THREAD_ID : WarpSystem.FREE_THREAD_ID) + "/page-9999"));
                         link.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
 
                         base.addExtra(link);
@@ -305,7 +311,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                         ex.printStackTrace();
                     }
                 } else {
-                    sender.sendMessage(Lang.getPrefix() + "§7" +Lang.get("Unsaved_Changes"));
+                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Unsaved_Changes"));
                     confirm.add(sender, 10);
                 }
                 return false;
