@@ -50,6 +50,13 @@ public class CTempWarps extends CommandBuilder {
             }
         }, true);
 
+//        getBaseComponent().addChild(new CommandComponent("keys", ) {
+//            @Override
+//            public boolean runCommand(CommandSender sender, String label, String[] args) {
+//                return false;
+//            }
+//        });
+
         getBaseComponent().addChild(new CommandComponent("create") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
