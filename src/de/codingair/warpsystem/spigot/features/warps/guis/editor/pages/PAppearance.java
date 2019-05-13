@@ -99,7 +99,7 @@ public class PAppearance extends PMain {
                 return new ItemBuilder(XMaterial.NAME_TAG)
                         .setName("§6§n" + Lang.get("Name"))
                         .setLore("§3" + Lang.get("Current") + ": " + (getIcon().getName() == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + ChatColor.translateAlternateColorCodes('&', getIcon().getName()) + "§7'"),
-                                "", (getIcon().getName() == null ? "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Set_Name") : "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Name_Short")),
+                                "", (getIcon().getName() == null ? "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Set_Name") : "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Name")),
                                 (getIcon().getName() == null ? null : "§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove")))
                         .getItem();
             }
@@ -138,12 +138,12 @@ public class PAppearance extends PMain {
                 }
 
                 if(getIcon().isCategory()) {
-                    if(!getIcon().getName().equalsIgnoreCase(input) && IconManager.getInstance().existsCategory(input)) {
+                    if((getIcon().getName() == null || !getIcon().getName().equalsIgnoreCase(input)) && IconManager.getInstance().existsCategory(input)) {
                         p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                         return;
                     }
                 } else {
-                    if(!getIcon().getName().equalsIgnoreCase(input) && IconManager.getInstance().existsIcon(input)) {
+                    if((getIcon().getName() == null || !getIcon().getName().equalsIgnoreCase(input)) && IconManager.getInstance().existsIcon(input)) {
                         p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                         return;
                     }
