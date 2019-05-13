@@ -25,6 +25,17 @@ public class Key {
         return name;
     }
 
+    public String getStrippedName() {
+        return ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name));
+    }
+
+    /**
+     * Only, if the key wasn't added already!
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public int getTime() {
         return time;
     }

@@ -2,22 +2,31 @@ package de.codingair.warpsystem.spigot.features.tempwarps.commands;
 
 import de.codingair.codingapi.player.chat.ChatButton;
 import de.codingair.codingapi.player.chat.SimpleMessage;
+import de.codingair.codingapi.player.gui.anvil.*;
 import de.codingair.codingapi.server.commands.BaseComponent;
 import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.codingapi.tools.Location;
+import de.codingair.codingapi.tools.items.ItemBuilder;
+import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.tempwarps.guis.GTempWarpList;
+import de.codingair.warpsystem.spigot.features.tempwarps.guis.keys.KeyList;
+import de.codingair.warpsystem.spigot.features.tempwarps.guis.keys.TemplateGUI;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
+import de.codingair.warpsystem.spigot.features.tempwarps.utils.Key;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,22 +49,227 @@ public class CTempWarps extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, edit, list, info, renew>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<" + (sender.hasPermission(WarpSystem.PERMISSION_MODIFY_TEMP_WARPS) ? "keys, " : "") + "create, delete, edit, list, info, renew>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, edit, list, info, renew>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<" + (sender.hasPermission(WarpSystem.PERMISSION_MODIFY_TEMP_WARPS) ? "keys, " : "") + "create, delete, edit, list, info, renew>");
                 return false;
             }
         }, true);
 
-//        getBaseComponent().addChild(new CommandComponent("keys", ) {
-//            @Override
-//            public boolean runCommand(CommandSender sender, String label, String[] args) {
-//                return false;
-//            }
-//        });
+        getBaseComponent().addChild(new CommandComponent("keys") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                if(sender.hasPermission(WarpSystem.PERMISSION_MODIFY_TEMP_WARPS))
+                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " keys §e<create, edit, give, delete, list>");
+
+                sender.sendMessage(Lang.getPrefix() + Lang.get("TempWarps_Keys_Info").replace("%AMOUNT%", TempWarpManager.getManager().getKeys((Player) sender).size() + ""));
+                return false;
+            }
+        });
+
+        getComponent("keys").addChild(new CommandComponent("create", WarpSystem.PERMISSION_MODIFY_TEMP_WARPS) {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                Player player = (Player) sender;
+
+                ItemStack item = player.getInventory().getItem(player.getInventory().getHeldItemSlot());
+                if(item == null || item.getType() == Material.AIR) item = new ItemBuilder(XMaterial.TRIPWIRE_HOOK).getItem();
+                else item = item.clone();
+                ItemStack finalItem = item;
+
+                AnvilGUI.openAnvil(WarpSystem.getInstance(), (Player) sender, new AnvilListener() {
+                    @Override
+                    public void onClick(AnvilClickEvent e) {
+                        if(!e.getSlot().equals(AnvilSlot.OUTPUT)) return;
+                        String input = e.getInput();
+
+                        if(input == null) {
+                            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
+                            return;
+                        }
+
+                        if(TempWarpManager.getManager().getTemplate(ChatColor.translateAlternateColorCodes('&', input)) != null) {
+                            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
+                            return;
+                        }
+
+                        e.setClose(true);
+                    }
+
+                    @Override
+                    public void onClose(AnvilCloseEvent e) {
+                        if(e.isSubmitted()) {
+                            Key key = new Key(ChatColor.translateAlternateColorCodes('&', e.getSubmittedText()), TempWarpManager.getManager().getMinTime(), finalItem);
+                            e.setPost(() -> new TemplateGUI(e.getPlayer(), key, key.clone()).open());
+                        }
+                    }
+                }, new ItemBuilder(XMaterial.NAME_TAG).setName(Lang.get("Name") + "...").getItem());
+                return false;
+            }
+        });
+
+        getComponent("keys").addChild(new CommandComponent("edit", WarpSystem.PERMISSION_MODIFY_TEMP_WARPS) {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " keys edit §e<name>");
+                return false;
+            }
+        });
+
+        getComponent("keys", "edit").addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
+                for(Key template : TempWarpManager.getManager().getTemplates()) {
+                    suggestions.add(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', template.getName())));
+                }
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                Key key = TempWarpManager.getManager().getTemplate(argument);
+
+                if(key == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Key_Name_Does_Not_Exist"));
+                    return false;
+                }
+
+                new TemplateGUI((Player) sender, key, key.clone()).open();
+                return false;
+            }
+        });
+
+        getComponent("keys").addChild(new CommandComponent("give", WarpSystem.PERMISSION_MODIFY_TEMP_WARPS) {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " keys give §e<player>");
+                return false;
+            }
+        });
+
+        getComponent("keys", "give").addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
+                for(Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    suggestions.add(onlinePlayer.getName());
+                }
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " keys give " + argument + " §e<key>");
+                return false;
+            }
+        });
+
+        getComponent("keys", "give", null).addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
+                for(Key template : TempWarpManager.getManager().getTemplates()) {
+                    suggestions.add(template.getStrippedName());
+                }
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                Key template = TempWarpManager.getManager().getTemplate(argument);
+
+                if(template == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Key_Name_Does_Not_Exist"));
+                    return false;
+                }
+
+                Player player = Bukkit.getPlayer(args[2]);
+
+                if(player == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
+                    return false;
+                }
+
+                if(!TempWarpManager.getManager().giveKey(WarpSystem.getInstance().getUUIDManager().get(player), 1, template.getStrippedName())) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Keys_Not_More_Than").replace("%AMOUNT%", TempWarpManager.MAX_KEYS + ""));
+                    return false;
+                }
+
+                player.sendMessage(Lang.getPrefix() + Lang.get("TempWarps_Player_Got_Key")
+                        .replace("%KEY%", template.getName())
+                        .replace("%DURATION%", TempWarpManager.getManager().convertInTimeFormat(template.getTime(), TempWarpManager.getManager().getConfig().getUnit())));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Key_sent_to_player").replace("%PLAYER%", player.getName()));
+                return false;
+            }
+        });
+
+        getComponent("keys").addChild(new CommandComponent("delete", WarpSystem.PERMISSION_MODIFY_TEMP_WARPS) {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " keys delete §e<name>");
+                return false;
+            }
+        });
+
+        getComponent("keys", "delete").addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
+                for(Key template : TempWarpManager.getManager().getTemplates()) {
+                    suggestions.add(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', template.getName())));
+                }
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                Key key = TempWarpManager.getManager().getTemplate(argument);
+
+                if(key == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Key_Name_Does_Not_Exist"));
+                    return false;
+                }
+
+                SimpleMessage message = new SimpleMessage(Lang.getPrefix() + Lang.get("Key_Template_Delete_Confirmation").replace("%NAME%", key.getStrippedName()), WarpSystem.getInstance());
+
+                message.replace("%NO%", new ChatButton(Lang.get("No_Keep"), Lang.get("Click_Hover")) {
+                    @Override
+                    public void onClick(Player player) {
+                        message.destroy();
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Key_Template_Not_Deleted"));
+                    }
+                });
+
+                message.replace("%YES%", new ChatButton(Lang.get("Yes_Delete"), Lang.get("Click_Hover")) {
+                    @Override
+                    public void onClick(Player player) {
+                        message.destroy();
+                        TempWarpManager.getManager().removeTemplate(key);
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Key_Template_Deleted"));
+                    }
+                });
+
+                message.setTimeOut(20);
+                message.send((Player) sender);
+
+                return false;
+            }
+        });
+
+        getComponent("keys").addChild(new CommandComponent("list", WarpSystem.PERMISSION_MODIFY_TEMP_WARPS) {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                new KeyList((Player) sender) {
+                    @Override
+                    public void onClick(Key key, ClickType clickType) {
+                        new TemplateGUI((Player) sender, key, key.clone()).open();
+                    }
+
+                    @Override
+                    public void buildItemDescription(List<String> lore) {
+                        lore.add("");
+                        lore.add("§8» §7" + Lang.get("Edit"));
+                    }
+                }.open();
+                return false;
+            }
+        });
 
         getBaseComponent().addChild(new CommandComponent("create") {
             @Override

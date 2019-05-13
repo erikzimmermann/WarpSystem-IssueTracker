@@ -10,11 +10,13 @@ import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.EmptyTempWarp;
+import de.codingair.warpsystem.spigot.features.tempwarps.utils.Key;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
@@ -27,7 +29,37 @@ import java.util.Date;
 public class GCreate extends SimpleGUI {
     private TempWarp warp;
 
+    private static Key getKeyWithLowerDuraton(Player player, int duration) {
+        Key biggest = null;
+
+        for(String k : TempWarpManager.getManager().getKeys(player)) {
+            Key key = TempWarpManager.getManager().getTemplate(k);
+
+            if(key.getTime() >= duration) continue;
+            if(biggest == null || key.getTime() > biggest.getTime()) biggest = key;
+        }
+
+        return biggest;
+    }
+
+    private static Key getKeyWithHigherDuraton(Player player, int duration) {
+        Key smallest = null;
+
+        for(String k : TempWarpManager.getManager().getKeys(player)) {
+            Key key = TempWarpManager.getManager().getTemplate(k);
+
+            if(key.getTime() <= duration) continue;
+            if(smallest == null || key.getTime() < smallest.getTime()) smallest = key;
+        }
+
+        return smallest;
+    }
+
     public GCreate(Player p, TempWarp warp) {
+        this(p, warp, null);
+    }
+
+    public GCreate(Player p, TempWarp warp, Value<Key> key) {
         super(p, new StandardLayout(), new Page(p, Lang.get(!(warp instanceof EmptyTempWarp) && warp.isExpired() ? "TempWarp_Reactivate" : "TempWarp_Create"), null) {
             @Override
             public void initialize(Player p) {
@@ -64,7 +96,9 @@ public class GCreate extends SimpleGUI {
                             Sound.CLICK.playSound(p);
 
                             if(warp instanceof EmptyTempWarp) {
-                                TempWarpManager.getManager().activate(((EmptyTempWarp) warp).convert());
+                                TempWarp finalWarp = ((EmptyTempWarp) warp).convert();
+                                if(key != null) finalWarp.setCreatorKey(key.getValue().getName());
+                                TempWarpManager.getManager().activate(finalWarp);
                                 p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Created").replace("%NAME%", warp.getName()).replace("%PRICE%", price + ""));
                             } else {
                                 warp.renew();
@@ -72,6 +106,10 @@ public class GCreate extends SimpleGUI {
                             }
 
                             AdapterType.getActive().setMoney(p, AdapterType.getActive().getMoney(p) - warp.getCosts());
+
+                            if(key != null) {
+                                TempWarpManager.getManager().getKeys(p).remove(key.getValue().getStrippedName());
+                            }
                         } else Sound.CLICK.playSound(p, 1, 0.7F);
                     }
                 }.setOption(option).setClickSound(null));
@@ -136,46 +174,66 @@ public class GCreate extends SimpleGUI {
 
                     @Override
                     public void onClick(InventoryClickEvent e, Player player) {
-                        if(last == 0) last = new Date().getTime();
+                        if(key == null && last == 0) last = new Date().getTime();
 
                         if(e.isLeftClick()) {
-                            if(direction != 1) {
-                                increase = 1;
-                                direction = 1;
+                            if(key != null) {
+                                Key k = getKeyWithLowerDuraton(player, key.getValue().getTime());
+                                if(k == null) {
+                                    Sound.CLICK.playSound(p, 1, 0.7F);
+                                } else {
+                                    key.setValue(k);
+                                    Sound.CLICK.playSound(p);
+                                }
                             } else {
-                                if(new Date().getTime() - last < 250L) increase += 2;
-                                else increase = 1;
+                                if(direction != 1) {
+                                    increase = 1;
+                                    direction = 1;
+                                } else {
+                                    if(new Date().getTime() - last < 250L) increase += 2;
+                                    else increase = 1;
 
-                                last = new Date().getTime();
+                                    last = new Date().getTime();
+                                }
+
+                                warp.setDuration(warp.getDuration() - TempWarpManager.getManager().getConfig().getDurationSteps() * increase);
+                                if(warp.getDuration() < TempWarpManager.getManager().getMinTime()) {
+                                    warp.setDuration(TempWarpManager.getManager().getMinTime());
+
+                                    Sound.CLICK.playSound(p, 1, 0.7F);
+                                    increase = 1;
+                                } else Sound.CLICK.playSound(p);
                             }
-
-                            warp.setDuration(warp.getDuration() - TempWarpManager.getManager().getConfig().getDurationSteps() * increase);
-                            if(warp.getDuration() < TempWarpManager.getManager().getMinTime()) {
-                                warp.setDuration(TempWarpManager.getManager().getMinTime());
-
-                                Sound.CLICK.playSound(p, 1, 0.7F);
-                                increase = 1;
-                            } else Sound.CLICK.playSound(p);
 
                             updatePage();
                         } else if(e.isRightClick()) {
-                            if(direction != 2) {
-                                increase = 1;
-                                direction = 2;
+                            if(key != null) {
+                                Key k = getKeyWithHigherDuraton(player, key.getValue().getTime());
+                                if(k == null) {
+                                    Sound.CLICK.playSound(p, 1, 0.7F);
+                                } else {
+                                    key.setValue(k);
+                                    Sound.CLICK.playSound(p);
+                                }
                             } else {
-                                if(new Date().getTime() - last < 250L) increase += 2;
-                                else increase = 1;
+                                if(direction != 2) {
+                                    increase = 1;
+                                    direction = 2;
+                                } else {
+                                    if(new Date().getTime() - last < 250L) increase += 2;
+                                    else increase = 1;
 
-                                last = new Date().getTime();
+                                    last = new Date().getTime();
+                                }
+
+                                warp.setDuration(warp.getDuration() + TempWarpManager.getManager().getConfig().getDurationSteps() * increase);
+                                if(warp.getDuration() > TempWarpManager.getManager().getMaxTime()) {
+                                    warp.setDuration(TempWarpManager.getManager().getMaxTime());
+
+                                    Sound.CLICK.playSound(p, 1, 0.7F);
+                                    increase = 1;
+                                } else Sound.CLICK.playSound(p);
                             }
-
-                            warp.setDuration(warp.getDuration() + TempWarpManager.getManager().getConfig().getDurationSteps() * increase);
-                            if(warp.getDuration() > TempWarpManager.getManager().getMaxTime()) {
-                                warp.setDuration(TempWarpManager.getManager().getMaxTime());
-
-                                Sound.CLICK.playSound(p, 1, 0.7F);
-                                increase = 1;
-                            } else Sound.CLICK.playSound(p);
 
                             updatePage();
                         }
@@ -184,12 +242,24 @@ public class GCreate extends SimpleGUI {
                     @Override
                     public ItemStack craftItem() {
                         ItemBuilder builder = new ItemBuilder(XMaterial.CLOCK).setName("§7" + Lang.get("Active_Time") + ": " + (warp.getDuration() <= 0 ? "§c" + Lang.get("Not_Set") : "§b" + TempWarpManager.getManager().convertInTimeFormat(warp.getDuration(), TempWarpManager.getManager().getConfig().getUnit())
-                                + (warp.getDuration() == TempWarpManager.getManager().getMinTime() ? " §7(§c" + Lang.get("Minimum") + "§7)" : warp.getDuration() == TempWarpManager.getManager().getMaxTime() ? " §7(§c" + Lang.get("Maximum") + "§7)" : "")));
+                                + (key != null ? " §7(" + Lang.get("Key") + ": §e" + key.getValue().getName() + "§7)" : (warp.getDuration() == TempWarpManager.getManager().getMinTime() ? " §7(§c" + Lang.get("Minimum") + "§7)" : warp.getDuration() == TempWarpManager.getManager().getMaxTime() ? " §7(§c" + Lang.get("Maximum") + "§7)" : ""))));
 
-                        builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp.getCosts()) ? "§a" : "§c") + (warp.getDuration() * TempWarpManager.getManager().getConfig().getDurationCosts()) + " " + Lang.get("Coins"));
-                        builder.addLore("");
-                        if(warp.getDuration() > TempWarpManager.getManager().getMinTime()) builder.addLore("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Reduce"));
-                        if(warp.getDuration() < TempWarpManager.getManager().getMaxTime()) builder.addLore("§3" + Lang.get("Rightclick") + ": §b" + Lang.get("Enlarge"));
+                        if(key == null)
+                            builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp.getCosts()) ? "§a" : "§c") + (warp.getDuration() * TempWarpManager.getManager().getConfig().getDurationCosts()) + " " + Lang.get("Coins"));
+
+                        if(key == null || getKeyWithLowerDuraton(p, key.getValue().getTime()) != null) {
+                            if(warp.getDuration() > TempWarpManager.getManager().getMinTime()) {
+                                if(builder.getLore().isEmpty()) builder.addLore("");
+                                builder.addLore("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Reduce"));
+                            }
+                        }
+
+                        if(key == null || getKeyWithHigherDuraton(p, key.getValue().getTime()) != null) {
+                            if(warp.getDuration() < TempWarpManager.getManager().getMaxTime()) {
+                                if(builder.getLore().isEmpty()) builder.addLore("");
+                                builder.addLore("§3" + Lang.get("Rightclick") + ": §b" + Lang.get("Enlarge"));
+                            }
+                        }
 
                         return builder.getItem();
                     }
@@ -203,6 +273,8 @@ public class GCreate extends SimpleGUI {
 
                             warp.setPublic(!warp.isPublic());
                             updatePage();
+                        } else {
+                            player.sendMessage(Lang.getPrefix() + Lang.get("TempWarps_Toggle_Without_Name"));
                         }
                     }
 
@@ -214,7 +286,8 @@ public class GCreate extends SimpleGUI {
                                         "§c" + Lang.get("Private")
                                 ));
 
-                        builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp.getCosts()) ? "§a" : "§c") + (warp.isPublic() ? TempWarpManager.getManager().getConfig().getPublicCosts() : 0) + " " + Lang.get("Coins"));
+                        if(warp.isPublic() && TempWarpManager.getManager().getConfig().getPublicCosts() > 0)
+                            builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp.getCosts()) ? "§a" : "§c") + (warp.isPublic() ? TempWarpManager.getManager().getConfig().getPublicCosts() : 0) + " " + Lang.get("Coins"));
                         builder.addLore("", Lang.get("Click_Toggle"));
 
                         return builder.getItem();
@@ -254,7 +327,8 @@ public class GCreate extends SimpleGUI {
 
                         builder.setText("§7" + Lang.get("Teleport_Message") + ": " + (warp.getMessage() == null ? "§c" + Lang.get("Not_Set") : "\"§f" + ChatColor.translateAlternateColorCodes('&', warp.getMessage()) + "§7\""), 100);
 
-                        builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp.getCosts()) ? "§a" : "§c") + (warp.getMessage() != null ? TempWarpManager.getManager().getConfig().getMessageCosts() : 0) + " " + Lang.get("Coins"));
+                        if(warp.getMessage() != null && TempWarpManager.getManager().getConfig().getMessageCosts() > 0)
+                            builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp.getCosts()) ? "§a" : "§c") + (warp.getMessage() != null ? TempWarpManager.getManager().getConfig().getMessageCosts() : 0) + " " + Lang.get("Coins"));
                         builder.addLore("", Lang.get("Change_Message"));
 
                         return builder.getItem();
@@ -297,7 +371,8 @@ public class GCreate extends SimpleGUI {
                         ItemBuilder builder = new ItemBuilder(XMaterial.GOLD_NUGGET).setName("§7" + Lang.get("Teleport_Costs") + ": §b" + warp.getTeleportCosts() + " " + Lang.get("Coins")
                                 + (warp.getTeleportCosts() == 0 ? " §7(§c" + Lang.get("Minimum") + "§7)" : warp.getTeleportCosts() == TempWarpManager.getManager().getMaxTeleportCosts() ? " §7(§c" + Lang.get("Maximum") + "§7)" : ""));
 
-                        builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp.getCosts()) ? "§a" : "§c") + ((TempWarpManager.getManager().calculateTeleportCosts(warp.getTeleportCosts()) + "").replace(".0", "")) + " " + Lang.get("Coins"));
+                        if(TempWarpManager.getManager().calculateTeleportCosts(warp.getTeleportCosts()) > 0)
+                            builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp.getCosts()) ? "§a" : "§c") + ((TempWarpManager.getManager().calculateTeleportCosts(warp.getTeleportCosts()) + "").replace(".0", "")) + " " + Lang.get("Coins"));
                         builder.addLore("");
                         if(warp.getTeleportCosts() > 0) builder.addLore("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Reduce"));
                         if(warp.getTeleportCosts() < TempWarpManager.getManager().getMaxTeleportCosts()) builder.addLore("§3" + Lang.get("Rightclick") + ": §b" + Lang.get("Enlarge"));

@@ -6,6 +6,7 @@ import de.codingair.codingapi.player.gui.inventory.gui.GUI;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.utils.Ticker;
+import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
@@ -32,7 +33,6 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
 
 public class TempWarpManager implements Manager, Ticker {
     public static boolean hasPermission(Player player) {
@@ -72,6 +72,7 @@ public class TempWarpManager implements Manager, Ticker {
 
     private List<Key> templates = new ArrayList<>();
     private HashMap<UUID, List<String>> keyList = new HashMap<>();
+    public static final int MAX_KEYS = 10;
 
     private int minTime;
     private int maxTime;
@@ -148,6 +149,12 @@ public class TempWarpManager implements Manager, Ticker {
             this.warps.add(TempWarp.getByJSONString(s));
         }
 
+        loadTemplates();
+
+        for(Player player : Bukkit.getOnlinePlayers()) {
+            loadKeys(player);
+        }
+
         WarpSystem.log("    ...got " + this.warps.size() + " TempWarp(s)");
         return true;
     }
@@ -157,14 +164,17 @@ public class TempWarpManager implements Manager, Ticker {
         if(!AdapterType.canEnable()) return;
 
         if(!saver) WarpSystem.log("  > Saving TempWarps");
-        if(!saver) WarpSystem.log("    > Saving Warps");
 
         FileConfiguration config = configFile.getConfig();
 
         List<String> data = new ArrayList<>();
-
         for(TempWarp warp : this.warps) {
             data.add(warp.toJSONString());
+        }
+
+        saveTemplates();
+        for(Player player : Bukkit.getOnlinePlayers()) {
+            saveAndRemoveKeys(player);
         }
 
         config.set("Warps", data);
@@ -199,6 +209,12 @@ public class TempWarpManager implements Manager, Ticker {
         saveKeys(WarpSystem.getInstance().getUUIDManager().get(player));
     }
 
+    public void saveAndRemoveKeys(Player player) {
+        UUID uuid = WarpSystem.getInstance().getUUIDManager().get(player);
+        saveKeys(uuid);
+        this.keyList.remove(uuid);
+    }
+
     public void saveKeys(UUID uniqueId) {
         saveKeys(uniqueId, true);
     }
@@ -225,15 +241,49 @@ public class TempWarpManager implements Manager, Ticker {
         saveKeys(uniqueId);
     }
 
+    public void loadTemplates() {
+        FileConfiguration config = configFile.getConfig();
+
+        List<String> data = config.getStringList("Keys.Templates");
+        if(data == null) return;
+
+        for(String s : data) {
+            Key k = Key.getByJSONString(s);
+            if(k != null && getTemplate(k.getName()) == null) this.templates.add(k);
+        }
+    }
+
+    public void saveTemplates() {
+        FileConfiguration config = configFile.getConfig();
+
+        List<String> data = new ArrayList<>();
+        for(Key key : this.templates) {
+            data.add(key.toJSONString());
+        }
+        if(data.isEmpty()) data = null;
+        config.set("Keys.Templates", data);
+        configFile.saveConfig();
+    }
+
     public Key getTemplate(String name) {
-        return this.templates.stream().filter(k -> k.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+        return this.templates.stream().filter(k -> k.getStrippedName().equalsIgnoreCase(ChatColor.stripColor(name))).findFirst().orElse(null);
+    }
+
+    public List<Key> getTemplates() {
+        return templates;
+    }
+
+    public boolean addTemplate(Key key) {
+        if(getTemplate(key.getName()) != null) return false;
+        this.templates.add(key);
+        return true;
     }
 
     public boolean removeTemplate(Key key) {
         if(!this.templates.remove(key)) return false;
 
         for(List<String> value : this.keyList.values()) {
-            while(value.remove(key.getName()));
+            while(value.remove(key.getStrippedName()));
         }
 
         for(UUID uuid : this.keyList.keySet()) {
@@ -249,13 +299,18 @@ public class TempWarpManager implements Manager, Ticker {
         if(key == null) return false;
 
         List<String> keys = getKeys(uniqueId);
+
+        if(keys != null && keys.size() >= MAX_KEYS) {
+            return false;
+        }
+
         if(keys == null) {
             keys = new ArrayList<>();
             this.keyList.put(uniqueId, keys);
         }
 
         for(int i = 0; i < amount; i++) {
-            keys.add(key.getName());
+            keys.add(key.getStrippedName());
         }
         return true;
     }
@@ -325,11 +380,25 @@ public class TempWarpManager implements Manager, Ticker {
     }
 
     public void create(Player player, String... args) {
+        Value<Key> value = null;
+        if(keys) {
+            List<String> keyList = TempWarpManager.getManager().getKeys(player);
+            if(keyList == null || keyList.isEmpty()) {
+                player.sendMessage(Lang.getPrefix() + Lang.get("TempWarps_No_Key"));
+                return;
+            }
+
+            Key key = getTemplate(keyList.get(0));
+            value = new Value<>(key);
+        }
+
         EmptyTempWarp warp = new EmptyTempWarp(player);
-        warp.setDuration(minTime);
+
+        if(keys) warp.setDuration(value.getValue().getTime());
+        else warp.setDuration(minTime);
         if(args.length > 0 && !isReserved(player.getName() + "." + args[0])) warp.setName(args[0]);
 
-        new GCreate(player, warp).open();
+        new GCreate(player, warp, value).open();
     }
 
     public void edit(Player player, String name) {
@@ -349,6 +418,18 @@ public class TempWarpManager implements Manager, Ticker {
     }
 
     public void reactivate(Player player, String name) {
+        Value<Key> value = null;
+        if(keys) {
+            List<String> keyList = TempWarpManager.getManager().getKeys(player);
+            if(keyList == null || keyList.isEmpty()) {
+                player.sendMessage(Lang.getPrefix() + Lang.get("TempWarps_No_Key"));
+                return;
+            }
+
+            Key key = getTemplate(keyList.get(0));
+            value = new Value<>(key);
+        }
+
         TempWarp warp = TempWarpManager.getManager().getWarp(name, player);
 
         if(warp == null) {
@@ -371,7 +452,7 @@ public class TempWarpManager implements Manager, Ticker {
             return;
         }
 
-        new GCreate(player, warp).open();
+        new GCreate(player, warp, value).open();
     }
 
     public void delete(Player player, String name) {

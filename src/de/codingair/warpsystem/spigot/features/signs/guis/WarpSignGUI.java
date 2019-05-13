@@ -4,16 +4,14 @@ import de.codingair.codingapi.player.gui.sign.SignTools;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.editor.Backup;
-import de.codingair.warpsystem.spigot.base.editor.Editor;
-import de.codingair.warpsystem.spigot.base.editor.ShowIcon;
-import de.codingair.warpsystem.spigot.base.editor.pages.DestinationPage;
+import de.codingair.warpsystem.spigot.base.guis.editor.Backup;
+import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
+import de.codingair.warpsystem.spigot.base.guis.editor.pages.DestinationPage;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.signs.guis.pages.OptionPage;
 import de.codingair.warpsystem.spigot.features.signs.managers.SignManager;
 import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -49,7 +47,7 @@ public class WarpSignGUI extends Editor<WarpSign> {
 
     }
 
-    public static class ShowIcon implements de.codingair.warpsystem.spigot.base.editor.ShowIcon {
+    public static class ShowIcon implements de.codingair.warpsystem.spigot.base.guis.editor.ShowIcon {
         private String[] lines;
 
         public ShowIcon(String[] lines) {
@@ -73,6 +71,6 @@ public class WarpSignGUI extends Editor<WarpSign> {
     }
 
     public static String getMainTitle() {
-        return "§c§l" + Lang.get("WarpSigns");
+        return Editor.TITLE_COLOR + Lang.get("WarpSigns");
     }
 }

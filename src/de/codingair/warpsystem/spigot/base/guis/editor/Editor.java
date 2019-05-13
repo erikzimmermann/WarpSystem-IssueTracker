@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.base.editor;
+package de.codingair.warpsystem.spigot.base.guis.editor;
 
 import de.codingair.codingapi.player.gui.inventory.gui.GUIListener;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
@@ -23,6 +23,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.List;
 
 public class Editor<C> extends SimpleGUI {
+    public static final String ITEM_TITLE_COLOR = "§6§n";
+    public static final String TITLE_COLOR = "§c§l§n";
+
     private PageItem[] pages;
     private C clone;
     private Backup<C> backup;
@@ -147,7 +150,7 @@ public class Editor<C> extends SimpleGUI {
         return backup;
     }
 
-    public C getClone() {
+    public C getKey() {
         return clone;
     }
 

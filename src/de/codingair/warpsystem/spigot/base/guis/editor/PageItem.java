@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.base.editor;
+package de.codingair.warpsystem.spigot.base.guis.editor;
 
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Page;
 import org.bukkit.entity.Player;
