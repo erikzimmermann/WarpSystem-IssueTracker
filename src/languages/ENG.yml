@@ -6,7 +6,6 @@ Quit_Edit_Mode: 'Quit Edit-Mode'
 Command: Command
 Permission: Permission
 Item_Editing: Item-Editing
-Change_Name_Short: 'Change the name'
 Cancel: Cancel
 Ready: Ready
 Not_Ready: 'Not ready'

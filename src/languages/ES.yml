@@ -6,7 +6,6 @@ Quit_Edit_Mode: 'Modo-Editor rapido'
 Command: Comando
 Permission: Permiso
 Item_Editing: Editor-Item
-Change_Name_Short: 'Cambiar el nombre'
 Cancel: Cancelar
 Ready: Listo
 Not_Ready: 'No esta listo'
