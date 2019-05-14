@@ -268,7 +268,6 @@ public class WarpSystem extends JavaPlugin {
         ERROR = true;
         shouldSave = true;
         BungeeCordHelper.bungeeMessenger = null;
-        this.uuidManager.removeAll();
 
         HandlerList.unregisterAll(this);
 
@@ -279,6 +278,7 @@ public class WarpSystem extends JavaPlugin {
         if(this.packetListener != null) this.dataHandler.unregister(this.packetListener);
 
         destroy();
+        this.uuidManager.removeAll();
     }
 
     public void reload(boolean save) {

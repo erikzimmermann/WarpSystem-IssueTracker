@@ -223,12 +223,13 @@ public class TempWarpManager implements Manager, Ticker {
     }
 
     public void saveKeys(UUID uniqueId, boolean saveFile) {
+        if(uniqueId == null) return;
         FileConfiguration config = configFile.getConfig();
 
         List<String> data = getKeys(uniqueId);
         if(data != null && data.isEmpty()) data = null;
         config.set("Keys." + uniqueId.toString(), data);
-        configFile.saveConfig();
+        if(saveFile) configFile.saveConfig();
     }
 
     public List<String> getKeys(Player player) {
