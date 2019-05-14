@@ -6,6 +6,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UpdateChecker {
     private String version = null;
@@ -38,6 +40,20 @@ public class UpdateChecker {
         return updateInfo;
     }
 
+    private String decodeNumericEntities(String s) {
+        StringBuffer sb = new StringBuffer();
+        Matcher m = Pattern.compile("\\&#(\\d+);").matcher(s);
+
+        while(m.find()) {
+            int uc = Integer.parseInt(m.group(1));
+            m.appendReplacement(sb, "");
+            sb.appendCodePoint(uc);
+        }
+
+        m.appendTail(sb);
+        return sb.toString();
+    }
+
     private interface UpdateCheckerAdapter {
         boolean read();
     }
@@ -59,6 +75,8 @@ public class UpdateChecker {
 
                 String line;
                 while((line = input.readLine()) != null) {
+                    line = decodeNumericEntities(line);
+
                     if(version == null) {
                         if(line.contains("<a href=\"/CodingAir/WarpSystem-IssueTracker/tree/") && version == null) {
                             version = line.split("/tree/")[1].split("\"")[0];
@@ -113,6 +131,8 @@ public class UpdateChecker {
 
                 String line;
                 while((line = input.readLine()) != null) {
+                    line = decodeNumericEntities(line);
+
                     if(version != null && download != null) break;
 
                     if(line.contains("<td class=\"version\">") && version == null) {
@@ -155,6 +175,7 @@ public class UpdateChecker {
 
                 String line;
                 while((line = input.readLine()) != null) {
+                    line = decodeNumericEntities(line);
 
                     if(atUpdates) {
                         if(atInfo) {
