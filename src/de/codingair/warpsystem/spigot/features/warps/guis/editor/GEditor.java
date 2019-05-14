@@ -5,7 +5,7 @@ import de.codingair.codingapi.player.gui.inventory.gui.simple.SimpleGUI;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.editor.Layout;
+import de.codingair.warpsystem.spigot.base.guis.editor.Layout;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
 import de.codingair.warpsystem.spigot.features.warps.guis.editor.pages.PAppearance;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;

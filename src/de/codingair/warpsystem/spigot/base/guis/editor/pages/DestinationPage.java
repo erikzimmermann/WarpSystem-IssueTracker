@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.base.editor.pages;
+package de.codingair.warpsystem.spigot.base.guis.editor.pages;
 
 import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
@@ -12,7 +12,8 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.editor.PageItem;
+import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
+import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
@@ -36,7 +37,7 @@ public class DestinationPage extends PageItem {
     private Destination destination;
 
     public DestinationPage(Player player, String title, Destination destination) {
-        super(player, title, new ItemBuilder(XMaterial.ENDER_PEARL).setName("§6§n" + Lang.get("Destination")).getItem(), false);
+        super(player, title, new ItemBuilder(XMaterial.ENDER_PEARL).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Destination")).getItem(), false);
         this.destination = destination == null ? new Destination() : destination;
         initialize(player);
     }
@@ -55,7 +56,7 @@ public class DestinationPage extends PageItem {
                 List<String> lore = name == null ? null : new ArrayList<>();
                 if(lore != null) lore.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));
 
-                return new ItemBuilder(XMaterial.ENDER_PEARL).setName("§6§n" + Lang.get("SimpleWarps"))
+                return new ItemBuilder(XMaterial.ENDER_PEARL).setName(Editor.ITEM_TITLE_COLOR + Lang.get("SimpleWarps"))
                         .setLore("§3" + Lang.get("Current") + ": " + (name == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + ChatColor.translateAlternateColorCodes('&', name) + "§7'"),
                                 "", "§3" + Lang.get("Leftclick") + ": §a" + (name == null ? Lang.get("Set") : Lang.get("Change")))
                         .addLore(lore)
@@ -118,7 +119,7 @@ public class DestinationPage extends PageItem {
                     List<String> lore = name == null ? null : new ArrayList<>();
                     if(lore != null) lore.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));
 
-                    return new ItemBuilder(XMaterial.ENDER_EYE).setName("§6§n" + Lang.get("GlobalWarps"))
+                    return new ItemBuilder(XMaterial.ENDER_EYE).setName(Editor.ITEM_TITLE_COLOR + Lang.get("GlobalWarps"))
                             .setLore("§3" + Lang.get("Current") + ": " + (name == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + ChatColor.translateAlternateColorCodes('&', name) + "§7'"),
                                     "", "§3" + Lang.get("Leftclick") + ": §a" + (name == null ? Lang.get("Set") : Lang.get("Change")))
                             .addLore(lore)
@@ -201,7 +202,7 @@ public class DestinationPage extends PageItem {
                         onlineStatus.add("§3" + Lang.get("Status") + ": " + (pinging ? "§7" + Lang.get("Pinging") + "..." : (online ? "§a" + Lang.get("Online") : "§c" + Lang.get("Offline"))));
                     }
 
-                    ItemStack item = new ItemBuilder(XMaterial.ENDER_CHEST).setName("§6§n" + Lang.get("Server"))
+                    ItemStack item = new ItemBuilder(XMaterial.ENDER_CHEST).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Server"))
                             .setLore("§3" + Lang.get("Current") + ": " + (name == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + ChatColor.translateAlternateColorCodes('&', name) + "§7'"))
                             .addLore(onlineStatus)
                             .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + (name == null ? Lang.get("Set") : Lang.get("Change")))

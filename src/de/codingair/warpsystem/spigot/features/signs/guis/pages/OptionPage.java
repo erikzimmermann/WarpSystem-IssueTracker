@@ -11,7 +11,8 @@ import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
-import de.codingair.warpsystem.spigot.base.editor.PageItem;
+import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
+import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.signs.guis.WarpSignGUI;
 import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
@@ -22,7 +23,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class OptionPage extends PageItem {
@@ -30,7 +30,7 @@ public class OptionPage extends PageItem {
     private Sign s;
 
     public OptionPage(Player p, WarpSign sign) {
-        super(p, WarpSignGUI.getMainTitle(), new ItemBuilder(XMaterial.COMMAND_BLOCK).setName("§6§n" + Lang.get("Options")).getItem(), false);
+        super(p, WarpSignGUI.getMainTitle(), new ItemBuilder(XMaterial.COMMAND_BLOCK).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Options")).getItem(), false);
 
         this.sign = sign;
         s = (Sign) sign.getLocation().getBlock().getState();

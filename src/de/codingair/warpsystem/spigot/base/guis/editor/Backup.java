@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.base.editor;
+package de.codingair.warpsystem.spigot.base.guis.editor;
 
 public abstract class Backup<T> {
     private T backup;
