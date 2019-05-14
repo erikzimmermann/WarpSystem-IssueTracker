@@ -127,7 +127,7 @@ WarpSystem:
     Support:
       #If enabled, the player can't create TempWarps in regions, where he cannot build
       ProtectedRegions: false
-    #If enabled, players won't be able to buy TempWarp. The only way to create TempWarps is with keys then. Create templates and give your players keys with the "/twarps keys" command!
+    #If enabled, players won't be able to buy TempWarps. The only way to create TempWarps then is with keys (1x Key = 1x TempWarp). Create templates and give your players keys with the "/twarps keys" command!
     Keys: false
 
   EffectPortals:
