@@ -51,7 +51,7 @@ public class POptions extends PageItem {
                     return new ItemBuilder(XMaterial.NAME_TAG)
                             .setName("§6§n" + Lang.get("Name"))
                             .setLore("§3" + Lang.get("Current") + ": " + (clone.getName() == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + ChatColor.translateAlternateColorCodes('&', clone.getName()) + "§7'"),
-                                    "", (clone.getName() == null ? "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Set_Name") : "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Name_Short")))
+                                    "", (clone.getName() == null ? "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Set_Name") : "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Name")))
                             .getItem();
                 }
 
