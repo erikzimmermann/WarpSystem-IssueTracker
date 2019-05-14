@@ -78,20 +78,20 @@ Pitch: Point
 Entering_Portal_Editor: '&7Vous êtes désormais dans l''éditeur de portail.'
 Portal_Created: '&7Le portail a été créé.'
 Portal_Not_Created: '&7Le portail n''a &cpas &7été créé.'
-Portal_Save_Changes: '&7Les changements ont été sauvegardé.'
+Portal_Save_Changes: '&7Les changements ont été sauvegardés.'
 Portal_Delete_Changes: '&7The changes have &cnot &7been saved.'
 PORTAL_HELP: '&7Utilise: &eportal <create, edit, delete>'
 Delete_Portal_Cancel: '&7Le portail n''a &4pas &7été &csupprimé&7.'
 Change_Name_Long: '&7» Cliquez ici pour changer le nom.'
 Change_Name: 'Changer le nom'
-Move_Help: '&7Déplacer: Clique droit sur la catégorie pour la modifier en cela.'
+Move_Help: '&7Déplacer: Clique droit sur la catégorie pour la modifier comme ceci.'
 Set_Icon: 'Définir l''icône'
 Coins: Point(s)
 Costs: Coût
 WarpSign_Choose_Warp: 'Choisissez un warp pour la pancarte!'
 WarpSign_Choose_Warp_GUI: '&4&lChoisissez un warp!'
 WarpSign_Finish: 'La WarpSign a bien été positionné!'
-Teleport_Cancelled: '&cLa téléportation a été annulé.'
+Teleport_Cancelled: '&cLa téléportation a été annulée.'
 WarpSign_Removed: '&7La WarpSign a été &csupprimé&7!'
 Search: Recherche...
 Previous_Page: 'Page précédente'
@@ -106,7 +106,7 @@ GlobalWarp: Warp global
 GlobalWarps: Warps global
 Decoration: Decoration
 Choose: 'Choisissez'
-Status: Statuts
+Status: Statut
 Enabled: Activé
 Success_Create_GlobalWarp: '&aVous avez bien créé un &bWarp global.'
 GlobalWarp_Does_Not_Exist: '&cCe Warp global n''existe pas.'
@@ -144,10 +144,10 @@ Native_Portal_Choose_Warp: '&cChoisissez un warp'
 Plugin_Reloading: '&cRedémarrage du plugin ...'
 Success_Plugin_Reloaded: '&aLe plugin a bien été redémarré.'
 Success_Plugin_Reloaded_Without_Saving: '&aLe plugin a bien été redémarré sans sauvegarde.'
-Status_Of_Start: 'Statuts de Start-Holo: '
-Status_Of_Destination: 'Statuts de Destination-Holo: '
+Status_Of_Start: 'Statut de Start-Holo: '
+Status_Of_Destination: 'Statut de Destination-Holo: '
 Hologram: Hologramme
-Teleport: Teleportation
+Teleport: Téléportation
 No_Permission: '&cVous n''avez pas la permission de faire ceci!'
 Enter_Name: '&cMerci d''entrer un nom.'
 Disabled: Désactivé
@@ -172,7 +172,7 @@ TempWarp_Reactivate: '&cTemp Warps &7- &cRéactiver'
 TempWarp_Create: '&cTemp Warps &7- &cCréer'
 TempWarp_Delete: '&cTemp Warps &7- &cSupprimer'
 Set_Name: 'Définir le nom'
-Duration: Duration
+Duration: Durée
 Private: Privé
 Teleport_Message: 'Message de téléportation'
 Teleport_Costs: 'Coût de téléportation'
@@ -191,17 +191,17 @@ Player_Cannot_Use_Category: '&cVous n''êtes pas autorisé à ouvrir cette caté
 Warning_Maintenance: '&cLe système de warp est actuellement en maintenance, merci d''essayer plus tard.'
 Not_Enough_Money: '&7Vous avez besoin d''au moins &c%AMOUNT% point(s) &7pour vous téléporter à cette position!'
 GlobalWarps_Not_Available: '&cIl n''y a pas de warps globaux qui peuvent être lié!'
-Move_To_Open_Editor: '&cDéplace pour ouvrir &nl''éditeur de configuration&r'
+Move_To_Open_Editor: '&cDéplace toi pour ouvrir &nl''éditeur de configuration&r'
 No_Item_In_Hand: '&cVous avez besoin de tenir un item!'
 Enter_Correct_Name: '&cMerci de ne pas utiliser le symbole "@".'
 Enter_Lore: '&cMerci d''entrer une description.'
 Enter_Command: '&cMerci d''entrer une commande.'
 Enter_Permission: '&cMerci d''entrer une permission.'
 Enter_A_Positive_Number: '&cMerci d''entrer un nombre positif!'
-TempWarp_is_private: '&7Ce warp est &cprivée &7!'
+TempWarp_is_private: '&7Ce warp est &cprivé &7!'
 TempWarp_is_expired: '&7Ce warp a &cexpiré &7!'
 TempWarp_is_not_expired: '&7Ce warp n''est pas &cexpiré&7!'
-Public: Publique
+Public: Public
 TempWarp_Message_Too_Long_Too_Short: '&7La taille de votre message doit être entre &c%MIN% &7et &c%MAX%&7!'
 TempWarp_was_deleted: '&7Votre TempWarp "&c%WARP%&7" a été &csupprimé définitivement&7.'
 TempWarp_no_access: '&cVous n''avez pas la permission d''accéder à ce TempWarp.'
@@ -232,8 +232,8 @@ TempWarp_Renew_Finished: '&7Votre TempWarp "&b%TEMP_WARP%&7" a été &aréactiv�
 TempWarp_Inactive_Win: '&7Vous avez otebnu &b%AMOUNT% point(s) &7par TempWarps pendant que vous étiez hors-ligne.'
 TempWarp_No_Warps: '&7Vous n''avez &cpas &7assez de TempWarps!'
 TempWarp_No_Warps_Other: '&7Ce joueur &cn''a &7pas assez de TempWarps!'
-TempWarp_Maximum_of_Warps: '&7Vous ne pouvez &cpas &7créé plus de &b%AMOUNT% &7TempWarp(s)!'
-TempWarp_Create_Protected: '&cVous ne pouvez pas créé de TempWarp ici!'
+TempWarp_Maximum_of_Warps: '&7Vous ne pouvez &cpas &7créer plus de &b%AMOUNT% &7TempWarp(s)!'
+TempWarp_Create_Protected: '&cVous ne pouvez pas créer de TempWarp ici!'
 Remaining: 'restant'
 TempWarp_You_have_n_Warps: '&7Vous avez un total de &b%AMOUNT% TempWarp(s)'
 TempWarp_Player_have_n_Warps: '&7Le joueur &b%PLAYER% &7a un total de &b%AMOUNT% TempWarp(s)'
