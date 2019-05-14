@@ -5,6 +5,8 @@ import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
+import de.codingair.codingapi.tools.items.ItemBuilder;
+import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.Ticker;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -29,6 +31,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.*;
@@ -73,6 +76,7 @@ public class TempWarpManager implements Manager, Ticker {
     private List<Key> templates = new ArrayList<>();
     private HashMap<UUID, List<String>> keyList = new HashMap<>();
     public static final int MAX_KEYS = 10;
+    public static final ItemStack KEY_ITEM = new ItemBuilder(XMaterial.TRIPWIRE_HOOK).getItem();;
 
     private int minTime;
     private int maxTime;
@@ -105,9 +109,6 @@ public class TempWarpManager implements Manager, Ticker {
 
         Bukkit.getPluginManager().registerEvents(new TempWarpListener(), WarpSystem.getInstance());
 
-        new CTempWarp().register(WarpSystem.getInstance());
-        new CTempWarps().register(WarpSystem.getInstance());
-
         configFile = WarpSystem.getInstance().getFileManager().getFile("Config");
         FileConfiguration config = configFile.getConfig();
 
@@ -138,7 +139,6 @@ public class TempWarpManager implements Manager, Ticker {
 
         this.config = new TempWarpConfig(unit, durationCosts, durationSteps, publicCosts, messageCosts);
 
-//        WarpSystem.log("    > Loading Warps");
         this.warps.clear();
 
         if(WarpSystem.getInstance().getFileManager().getFile("TempWarps") == null) WarpSystem.getInstance().getFileManager().loadFile("TempWarps", "/Memory/");
@@ -154,6 +154,9 @@ public class TempWarpManager implements Manager, Ticker {
         for(Player player : Bukkit.getOnlinePlayers()) {
             loadKeys(player);
         }
+
+        new CTempWarp().register(WarpSystem.getInstance());
+        new CTempWarps().register(WarpSystem.getInstance());
 
         WarpSystem.log("    ...got " + this.warps.size() + " TempWarp(s)");
         return true;
@@ -283,7 +286,7 @@ public class TempWarpManager implements Manager, Ticker {
         if(!this.templates.remove(key)) return false;
 
         for(List<String> value : this.keyList.values()) {
-            while(value.remove(key.getStrippedName()));
+            while(value.remove(key.getStrippedName())) ;
         }
 
         for(UUID uuid : this.keyList.keySet()) {
@@ -341,6 +344,8 @@ public class TempWarpManager implements Manager, Ticker {
                     Player p = warp.getOnlineOwner();
                     if(p != null)
                         p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_expiring").replace("%TEMP_WARP%", warp.getName()).replace("%TIME_LEFT%", convertInTimeFormat(getInactiveTime(), TimeUnit.SECONDS)));
+                    else
+                        warp.setNotify(true);
                 }
 
                 for(Integer remind : this.inactiveReminds) {

@@ -30,6 +30,7 @@ public class TempWarp {
     private String message;
     private int teleportCosts;
     private String creatorKey = null;
+    private boolean notify = false;
 
     private int paid;
     private int inactiveSales = 0;
@@ -295,6 +296,7 @@ public class TempWarp {
         json.put("Paid", this.paid);
         json.put("InactiveSales", this.inactiveSales);
         json.put("Key", this.creatorKey);
+        json.put("Notify", this.notify);
 
         return json.toJSONString();
     }
@@ -318,9 +320,11 @@ public class TempWarp {
             int paid = Integer.parseInt(json.get("Paid") + "");
             int inactiveSales = Integer.parseInt(json.get("InactiveSales") + "");
             String creatorKey = json.get("Key") == null ? null : (String) json.get("Key");
+            boolean notify = json.get("Notify") != null && (boolean) json.get("Notify");
 
             TempWarp warp = new TempWarp(lastKnownName, owner, location, name, teleportMessage, bornDate, startDate, endDate, expireDate, timeIntervals, isPublic, teleportCosts, paid, inactiveSales);
             warp.setCreatorKey(creatorKey);
+            warp.setNotify(notify);
             return warp;
         } catch(ParseException e) {
             e.printStackTrace();
@@ -354,5 +358,13 @@ public class TempWarp {
 
     public void setCreatorKey(String creatorKey) {
         this.creatorKey = creatorKey;
+    }
+
+    public boolean isNotify() {
+        return notify;
+    }
+
+    public void setNotify(boolean notify) {
+        this.notify = notify;
     }
 }

@@ -13,6 +13,12 @@ public class UUIDListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent e) {
         if(Bukkit.getOnlinePlayers().size() > 1) WarpSystem.getInstance().getUUIDManager().download(e.getPlayer());
+        else {
+            Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
+                if(!WarpSystem.getInstance().getUUIDManager().isCached(e.getPlayer().getName()))
+                    WarpSystem.getInstance().getUUIDManager().download(e.getPlayer());
+            }, 10);
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
