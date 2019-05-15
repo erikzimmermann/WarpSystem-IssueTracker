@@ -1,9 +1,9 @@
-package de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions;
+package de.codingair.warpsystem.spigot.base.utils.featureobjects.actions;
 
-import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.types.BoundAction;
-import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.types.CommandAction;
-import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.types.CostsAction;
-import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.types.WarpAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.BoundAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 
 public enum Action {
     WARP(0, WarpAction.class),

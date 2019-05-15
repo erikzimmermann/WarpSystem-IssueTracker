@@ -4,17 +4,16 @@ import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.codingapi.tools.time.TimeMap;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
-import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.types.WarpAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.transfer.packets.bungee.SendGlobalWarpNamesPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.UpdateGlobalWarpPacket;
@@ -30,9 +29,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GlobalWarpListener implements Listener, PacketListener {
     private TimeMap<String, TeleportPacket> teleport = new TimeMap<>();
@@ -92,7 +88,7 @@ public class GlobalWarpListener implements Listener, PacketListener {
                         ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).getGlobalWarps().remove(((UpdateGlobalWarpPacket) packet).getName());
 
                         for(Icon warpIcon : manager.getIcons()) {
-                            if(warpIcon.getAction(de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.Action.WARP) != null) {
+                            if(warpIcon.getAction(Action.WARP) != null) {
                                 if(warpIcon.getAction(WarpAction.class).getValue().getType() == DestinationType.GlobalWarp &&
                                         warpIcon.getAction(WarpAction.class).getValue().getId().equalsIgnoreCase(((UpdateGlobalWarpPacket) packet).getName()))
                                 warpIcon.getAction(WarpAction.class).setValue(null);
