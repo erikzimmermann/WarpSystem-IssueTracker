@@ -75,7 +75,7 @@ public class FeatureObject implements Serializable {
     }
 
     @Override
-    public void read(JSONObject json) throws Exception {
+    public boolean read(JSONObject json) throws Exception {
         destroy();
 
         this.disabled = Boolean.parseBoolean(json.get("disabled") + "");
@@ -123,6 +123,8 @@ public class FeatureObject implements Serializable {
                 }
             }
         }
+
+        return true;
     }
 
     @Override

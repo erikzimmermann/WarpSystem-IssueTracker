@@ -74,7 +74,7 @@ public class Icon extends FeatureObject {
     }
 
     @Override
-    public void read(JSONObject json) throws Exception {
+    public boolean read(JSONObject json) throws Exception {
         super.read(json);
 
         this.name = json.get("name") == null ? null : (String) json.get("name");
@@ -85,6 +85,7 @@ public class Icon extends FeatureObject {
         this.isCategory = Boolean.parseBoolean(json.get("isCategory") + "");
 
         this.category = json.get("category") == null ? null : IconManager.getInstance().getCategory((String) json.get("category"));
+        return true;
     }
 
     @Override

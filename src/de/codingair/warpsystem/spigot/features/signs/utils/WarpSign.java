@@ -48,7 +48,7 @@ public class WarpSign extends FeatureObject {
     }
 
     @Override
-    public void read(JSONObject json) throws Exception {
+    public boolean read(JSONObject json) throws Exception {
         super.read(json);
 
         if(json.get("Loc") != null) {
@@ -73,6 +73,8 @@ public class WarpSign extends FeatureObject {
         if(json.get("Permissions") != null) {
             setPermission((String) json.get("Permissions"));
         }
+
+        return true;
     }
 
     @Override
@@ -98,7 +100,9 @@ public class WarpSign extends FeatureObject {
 
     @Override
     public boolean equals(Object o) {
-        return super.equals(o) && o instanceof WarpSign && Objects.equals(this.location, ((WarpSign) o).location);
+        return super.equals(o) &&
+                o instanceof WarpSign &&
+                Objects.equals(this.location, ((WarpSign) o).location);
     }
 
     public void setDestination(Destination destination) {

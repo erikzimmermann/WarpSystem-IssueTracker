@@ -2,6 +2,9 @@ package de.codingair.warpsystem.spigot.features.nativeportals;
 
 import de.codingair.codingapi.server.blocks.utils.Axis;
 import de.codingair.codingapi.tools.Area;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalBlock;
@@ -20,11 +23,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-public class Portal {
+public class Portal extends FeatureObject {
     private PortalType type;
     private List<PortalBlock> blocks;
     private boolean visible = false;
@@ -33,7 +34,6 @@ public class Portal {
     private Location[] cachedEdges = null;
     private Axis cachedAxis = null;
 
-    private Destination destination;
     private String displayName;
 
     public Portal() {
@@ -42,10 +42,10 @@ public class Portal {
     }
 
     public Portal(Portal portal) {
+        super(portal);
         this.type = portal.getType();
         this.blocks = new ArrayList<>(portal.getBlocks());
         this.listeners.addAll(portal.getListeners());
-        this.destination = portal.getDestination() == null ? null : new Destination(portal.getDestination().getId(), portal.getDestination().getType());
     }
 
     public Portal(PortalType type, List<PortalBlock> blocks) {
@@ -59,13 +59,112 @@ public class Portal {
     }
 
     public Portal(PortalType type, Destination destination, String displayName, List<PortalBlock> blocks) {
+        super(null, false, new WarpAction(destination));
         this.type = type;
-        this.destination = destination;
         this.displayName = displayName;
         this.blocks = blocks;
     }
 
-    public void apply(Portal portal) {
+    @Override
+    public boolean read(JSONObject json) throws Exception {
+        super.read(json);
+
+        if(json.get("Type") != null) {
+            this.type = PortalType.valueOf((String) json.get("Type"));
+        } else if(json.get("type") != null) {
+            this.type = PortalType.valueOf((String) json.get("type"));
+        }
+
+        Destination destination = null;
+
+        if(json.get("Destination") != null) {
+            //new pattern
+            destination = new Destination((String) json.get("Destination"));
+        } else if(json.get("Warp") != null || json.get("GlobalWarp") != null) {
+            //old pattern
+            SimpleWarp warp = json.get("Warp") == null ? null : SimpleWarpManager.getInstance().getWarp((String) json.get("Warp"));
+            String globalWarp = json.get("GlobalWarp") == null ? null : (String) json.get("GlobalWarp");
+
+            if(warp != null) {
+                destination = new Destination(warp.getName(), DestinationType.SimpleWarp);
+            } else {
+                destination = new Destination(globalWarp, DestinationType.GlobalWarp);
+            }
+        }
+
+        if(destination != null) addAction(new WarpAction(destination));
+
+        if(json.get("Name") != null) {
+            this.displayName = (String) json.get("Name");
+        } else if(json.get("name") != null) {
+            this.displayName = (String) json.get("name");
+        }
+
+        JSONArray jsonArray = null;
+        if(json.get("Blocks") != null) {
+            jsonArray = (JSONArray) new JSONParser().parse((String) json.get("Blocks"));
+        } else if(json.get("blocks") != null) {
+            jsonArray = (JSONArray) new JSONParser().parse((String) json.get("blocks"));
+        }
+
+        this.blocks = new ArrayList<>();
+
+        if(jsonArray != null) {
+            for(Object o : jsonArray) {
+                String data = (String) o;
+                Location loc = de.codingair.codingapi.tools.Location.getByJSONString(data);
+
+                if(loc == null || loc.getWorld() == null) {
+                    destroy();
+                    return false;
+                }
+
+                blocks.add(new PortalBlock(loc));
+            }
+
+            for(PortalBlock block : blocks) {
+                if(block.getLocation().getWorld() == null) {
+                    destroy();
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public void write(JSONObject json) {
+        super.write(json);
+
+        json.put("type", type == null ? null : type.name());
+        json.put("name", displayName);
+
+        JSONArray jsonArray = new JSONArray();
+
+        for(PortalBlock block : this.blocks) {
+            jsonArray.add(block.getLocation().toJSONString(4));
+        }
+
+        json.put("blocks", jsonArray.toJSONString());
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+
+        this.type = null;
+        this.cachedEdges = null;
+        this.cachedAxis = null;
+        this.blocks.clear();
+        this.listeners.clear();
+    }
+
+    @Override
+    public void apply(FeatureObject object) {
+        super.apply(object);
+
+        Portal portal = (Portal) object;
         boolean visible = isVisible();
         if(visible) setVisible(false);
 
@@ -76,9 +175,19 @@ public class Portal {
         this.type = portal.getType();
         this.listeners.clear();
         this.listeners.addAll(portal.getListeners());
-        this.destination = portal.getDestination();
 
         if(visible) setVisible(true);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof Portal)) return false;
+        Portal portal = (Portal) o;
+
+        return super.equals(o) &&
+                blocks.equals(portal.blocks) &&
+                listeners.equals(portal.listeners) &&
+                type == portal.type;
     }
 
     public boolean isInPortal(LivingEntity entity) {
@@ -222,70 +331,6 @@ public class Portal {
         this.cachedAxis = null;
     }
 
-    public String toJSONString() {
-        JSONObject json = new JSONObject();
-
-        json.put("Type", type == null ? null : type.name());
-        json.put("Destination", this.destination.toJSONString());
-        json.put("Name", displayName);
-
-        JSONArray jsonArray = new JSONArray();
-
-        for(PortalBlock block : this.blocks) {
-            jsonArray.add(block.getLocation().toJSONString(4));
-        }
-
-        json.put("Blocks", jsonArray.toJSONString());
-
-        return json.toJSONString();
-    }
-
-    public static Portal fromJSONString(String s) {
-        try {
-            JSONObject json = (JSONObject) new JSONParser().parse(s);
-
-            PortalType type = json.get("Type") == null ? null : PortalType.valueOf((String) json.get("Type"));
-            Destination destination;
-
-            if(json.get("Destination") != null) {
-                //new pattern
-                destination = new Destination((String) json.get("Destination"));
-            } else {
-                //old pattern
-                SimpleWarp warp = json.get("Warp") == null ? null : SimpleWarpManager.getInstance().getWarp((String) json.get("Warp"));
-                String globalWarp = json.get("GlobalWarp") == null ? null : (String) json.get("GlobalWarp");
-
-                if(warp != null) {
-                    destination = new Destination(warp.getName(), DestinationType.SimpleWarp);
-                } else {
-                    destination = new Destination(globalWarp, DestinationType.GlobalWarp);
-                }
-            }
-
-            String displayName = (String) json.get("Name");
-
-            JSONArray jsonArray = (JSONArray) new JSONParser().parse((String) json.get("Blocks"));
-            List<PortalBlock> blocks = new ArrayList<>();
-            for(Object o : jsonArray) {
-                String data = (String) o;
-                Location loc = de.codingair.codingapi.tools.Location.getByJSONString(data);
-
-                if(loc == null || loc.getWorld() == null) return null;
-
-                blocks.add(new PortalBlock(loc));
-            }
-
-            for(PortalBlock block : blocks) {
-                if(block.getLocation().getWorld() == null) return null;
-            }
-
-            return new Portal(type, destination, displayName, blocks);
-        } catch(ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public List<PortalBlock> getBlocks() {
         return Collections.unmodifiableList(this.blocks);
     }
@@ -299,11 +344,11 @@ public class Portal {
     }
 
     public Destination getDestination() {
-        return destination;
+        return hasAction(Action.WARP) ? ((WarpAction) getAction(Action.WARP)).getValue() : null;
     }
 
     public void setDestination(Destination destination) {
-        this.destination = destination;
+        addAction(new WarpAction(destination));
     }
 
     public String getDisplayName() {
