@@ -82,42 +82,45 @@ public class FeatureObject implements Serializable {
         this.permission = json.get("permission") == null ? null : (String) json.get("permission");
 
         this.actions = new ArrayList<>();
-        JSONArray actionList;
-        try {
-            actionList = (JSONArray) new JSONParser().parse((String) json.get("actions"));
-        } catch(ParseException e) {
-            throw new IconReadException("Could not parse action list.", e);
-        }
 
-        for(Object o : actionList) {
-            String data = (String) o;
-            JSONObject j;
+        if(json.get("actions") != null) {
+            JSONArray actionList;
             try {
-                j = (JSONObject) new JSONParser().parse(data);
+                actionList = (JSONArray) new JSONParser().parse((String) json.get("actions"));
             } catch(ParseException e) {
-                throw new IconReadException("Could not parse action object.", e);
+                throw new IconReadException("Could not parse action list.", e);
             }
 
-            int id = Integer.parseInt(j.get("id") + "");
-            Object value = j.get("value");
-            String validData = value instanceof String ? (String) value : null;
-
-            Action a = Action.getById(id);
-            if(a != null) {
-                ActionObject<?> ao;
+            for(Object o : actionList) {
+                String data = (String) o;
+                JSONObject j;
                 try {
-                    ao = a.getClazz().newInstance();
-                } catch(InstantiationException | IllegalAccessException e) {
-                    throw new IconReadException("Could not initialize action object instance.", e);
+                    j = (JSONObject) new JSONParser().parse(data);
+                } catch(ParseException e) {
+                    throw new IconReadException("Could not parse action object.", e);
                 }
 
-                try {
-                    ao.read(validData);
-                } catch(Exception e) {
-                    throw new ActionObjectReadException("Could not read ActionObject properly.", e);
-                }
+                int id = Integer.parseInt(j.get("id") + "");
+                Object value = j.get("value");
+                String validData = value instanceof String ? (String) value : null;
 
-                this.actions.add(ao);
+                Action a = Action.getById(id);
+                if(a != null) {
+                    ActionObject<?> ao;
+                    try {
+                        ao = a.getClazz().newInstance();
+                    } catch(InstantiationException | IllegalAccessException e) {
+                        throw new IconReadException("Could not initialize action object instance.", e);
+                    }
+
+                    try {
+                        ao.read(validData);
+                    } catch(Exception e) {
+                        throw new ActionObjectReadException("Could not read ActionObject properly.", e);
+                    }
+
+                    this.actions.add(ao);
+                }
             }
         }
     }
@@ -184,6 +187,10 @@ public class FeatureObject implements Serializable {
         }
 
         return null;
+    }
+
+    public boolean hasAction(Action action) {
+        return getAction(action) != null;
     }
 
     public boolean removeAction(Action action) {
