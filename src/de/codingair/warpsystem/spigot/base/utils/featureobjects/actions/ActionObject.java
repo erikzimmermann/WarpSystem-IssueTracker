@@ -1,9 +1,11 @@
-package de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions;
+package de.codingair.warpsystem.spigot.base.utils.featureobjects.actions;
 
-import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Serializable;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.Serializable;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONObject;
 
-public abstract class ActionObject<T> implements Serializable {
+public abstract class ActionObject<T> {
     private Action type;
     private T value;
 
@@ -33,7 +35,9 @@ public abstract class ActionObject<T> implements Serializable {
         this.value = value;
     }
 
-    @Override
+    public abstract void read(String data);
+    public abstract String write();
+
     public void destroy() {
         if(this.value instanceof Serializable) {
             ((Serializable) this.value).destroy();

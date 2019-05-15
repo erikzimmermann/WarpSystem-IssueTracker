@@ -17,6 +17,8 @@ import de.codingair.warpsystem.spigot.features.nativeportals.listeners.PortalLis
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,11 +62,16 @@ public class NativePortalManager implements Manager {
         WarpSystem.log("  > Loading NativePortals");
         int fails = 0;
         for(String s : file.getConfig().getStringList("NativePortals")) {
-            Portal p = Portal.fromJSONString(s);
-            if(p != null) addPortal(p);
-            else {
-                fails++;
-                success = false;
+            Portal p = new Portal();
+            try {
+                p.read((JSONObject) new JSONParser().parse(s));
+                if(p != null) addPortal(p);
+                else {
+                    fails++;
+                    success = false;
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -84,7 +91,9 @@ public class NativePortalManager implements Manager {
         List<String> data = new ArrayList<>();
 
         for(Portal portal : this.portals) {
-            data.add(portal.toJSONString());
+            JSONObject json = new JSONObject();
+            portal.write(json);
+            data.add(json.toJSONString());
         }
 
         if(!saver) hideAll();
@@ -176,8 +185,7 @@ public class NativePortalManager implements Manager {
                     noTeleport.remove(player);
                 }, 4L);
             } else if(!noTeleport.contains(player)) {
-                WarpSystem.getInstance().getTeleportManager().instantTeleport(player, Origin.NativePortal, portal.getDestination(), portal.getDisplayName(),
-                        WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.NativePortals", true));
+                portal.perform(player);
             }
         });
     }

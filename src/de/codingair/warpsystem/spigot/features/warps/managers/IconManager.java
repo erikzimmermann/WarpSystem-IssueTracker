@@ -18,17 +18,16 @@ import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionIcon;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionIconHelper;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionObject;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.CategoryData;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.exceptions.IconReadException;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
-import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.types.BoundAction;
-import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.types.CommandAction;
-import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.types.CostsAction;
-import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.types.WarpAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.BoundAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.utils.Manager;
@@ -45,6 +44,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,13 +125,18 @@ public class IconManager implements Manager {
         icons.clear();
         List<String> iconList = config.getStringList("Icons");
         for(String s : iconList) {
-            Icon icon = new Icon();
             try {
-                icon.read(s);
-                icons.add(icon);
-            } catch(IconReadException e) {
+                JSONObject json = (JSONObject) new JSONParser().parse(s);
+                Icon icon = new Icon();
+                try {
+                    icon.read(json);
+                    icons.add(icon);
+                } catch(IconReadException e) {
+                    e.printStackTrace();
+                    success = false;
+                }
+            } catch(Exception e) {
                 e.printStackTrace();
-                success = false;
             }
         }
 
@@ -221,7 +228,7 @@ public class IconManager implements Manager {
             ActionObject bound = c.getAction(Action.BOUND_TO_WORLD);
             String world = bound == null ? null : bound.getValue();
 
-            List<de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.ActionObject> actions = new ArrayList<>();
+            List<de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject> actions = new ArrayList<>();
             if(s != null) actions.add(new CommandAction(s));
             if(world != null) actions.add(new BoundAction(world));
 
@@ -251,7 +258,7 @@ public class IconManager implements Manager {
             ActionObject bound = c.getAction(Action.BOUND_TO_WORLD);
             String world = bound == null ? null : bound.getValue();
 
-            List<de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.ActionObject> actions = new ArrayList<>();
+            List<de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject> actions = new ArrayList<>();
             if(created) actions.add(new WarpAction(new Destination(c.getIdentifier().replace(" ", "_"), DestinationType.SimpleWarp)));
             if(s != null) actions.add(new CommandAction(s));
             if(world != null) actions.add(new BoundAction(world));
@@ -273,7 +280,7 @@ public class IconManager implements Manager {
             ActionObject bound = c.getAction(Action.BOUND_TO_WORLD);
             String world = bound == null ? null : bound.getValue();
 
-            List<de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.ActionObject> actions = new ArrayList<>();
+            List<de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject> actions = new ArrayList<>();
             actions.add(new WarpAction(new Destination(gWarp, DestinationType.GlobalWarp)));
             if(s != null) actions.add(new CommandAction(s));
             if(world != null) actions.add(new BoundAction(world));
@@ -292,7 +299,7 @@ public class IconManager implements Manager {
             ActionObject bound = c.getAction(Action.BOUND_TO_WORLD);
             String world = bound == null ? null : bound.getValue();
 
-            List<de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.ActionObject> actions = new ArrayList<>();
+            List<de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject> actions = new ArrayList<>();
             if(s != null) actions.add(new CommandAction(s));
             if(world != null) actions.add(new BoundAction(world));
             if(amount > 0) actions.add(new CostsAction(amount));
@@ -360,7 +367,9 @@ public class IconManager implements Manager {
         if(!saver) WarpSystem.log("    > Saving Icons");
         List<String> icons = new ArrayList<>();
         for(Icon icon : this.icons) {
-            icons.add(icon.write());
+            JSONObject json = new JSONObject();
+            icon.write(json);
+            icons.add(json.toJSONString());
         }
         config.set("Icons", icons);
         if(!saver) WarpSystem.log("      ...saved " + icons.size() + " Icon(s)");

@@ -18,8 +18,8 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
-import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.Action;
-import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.types.WarpAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.guis.GSimpleWarpList;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestServerStatusPacket;
 import org.bukkit.ChatColor;

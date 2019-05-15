@@ -3,12 +3,13 @@ package de.codingair.warpsystem.spigot.features.effectportals.managers;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.effectportals.commands.CPortal;
 import de.codingair.warpsystem.spigot.features.effectportals.listeners.PortalListener;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.Portal;
-import de.codingair.warpsystem.spigot.features.effectportals.commands.CPortal;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,13 @@ public class PortalManager implements Manager {
         if(!file.getConfig().getStringList("Teleporters").isEmpty()) {
             WarpSystem.log("  > Loading Portals (from Teleporters)");
             for(String s : file.getConfig().getStringList("Teleporters")) {
-                this.portals.add(Portal.getByJSONString(s));
+                Portal portal = new Portal();
+                try {
+                    portal.read((JSONObject) new JSONParser().parse(s));
+                    this.portals.add(portal);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             WarpSystem.log("     ...got " + this.portals.size() + " Portal(s)");
@@ -41,7 +48,13 @@ public class PortalManager implements Manager {
 
         WarpSystem.log("  > Loading Portals (from Portals)");
         for(String s : file.getConfig().getStringList("Portals")) {
-            this.portals.add(Portal.getByJSONString(s));
+            Portal portal = new Portal();
+            try {
+                portal.read((JSONObject) new JSONParser().parse(s));
+                this.portals.add(portal);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
         }
 
         WarpSystem.log("     ...got " + (portals.size() - temp) + " Portal(s)");
@@ -103,7 +116,9 @@ public class PortalManager implements Manager {
 
         for(Portal portal : this.portals) {
             if(portal.getStart().getWorld() == null) continue;
-            data.add(portal.toJSONString());
+            JSONObject json = new JSONObject();
+            portal.write(json);
+            data.add(json.toJSONString());
         }
 
         file.getConfig().set("Portals", data);

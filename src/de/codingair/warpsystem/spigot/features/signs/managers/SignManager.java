@@ -9,6 +9,8 @@ import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +30,12 @@ public class SignManager implements Manager {
         List<String> data = file.getConfig().getStringList("WarpSigns");
         if(data != null) {
             for(String s : data) {
-                WarpSign warpSign = WarpSign.fromJSONString(s);
+                WarpSign warpSign = new WarpSign();
+                try {
+                    warpSign.read((JSONObject) new JSONParser().parse(s));
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
 
                 if(warpSign != null) {
                     if(warpSign.getLocation() != null && warpSign.getLocation().getWorld() != null && warpSign.getLocation().getBlock() != null) {
@@ -64,7 +71,9 @@ public class SignManager implements Manager {
 
         List<String> data = new ArrayList<>();
         for(WarpSign s : this.warpSigns) {
-            data.add(s.toJSONString());
+            JSONObject json = new JSONObject();
+            s.write(json);
+            data.add(json.toJSONString());
         }
 
         file.getConfig().set("WarpSigns", data);

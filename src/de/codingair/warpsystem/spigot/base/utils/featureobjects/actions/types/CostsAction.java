@@ -1,10 +1,10 @@
-package de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.types;
+package de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types;
 
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
-import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.Action;
-import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.ActionObject;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject;
 import org.bukkit.entity.Player;
 
 public class CostsAction extends ActionObject<Double> {

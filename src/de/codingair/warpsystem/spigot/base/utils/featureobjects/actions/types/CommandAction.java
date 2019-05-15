@@ -1,9 +1,9 @@
-package de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.types;
+package de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types;
 
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.Action;
-import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.actions.ActionObject;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject;
 import de.codingair.warpsystem.transfer.packets.spigot.PerformCommandPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
