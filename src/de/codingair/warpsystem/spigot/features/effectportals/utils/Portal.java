@@ -8,6 +8,7 @@ import de.codingair.codingapi.particles.animations.standalone.*;
 import de.codingair.codingapi.player.Hologram;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.utils.ChatColor;
@@ -15,7 +16,13 @@ import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
@@ -31,10 +38,9 @@ import org.json.simple.parser.ParseException;
 
 import java.util.UUID;
 
-public class Portal implements Removable {
+public class Portal extends FeatureObject implements Removable {
     private final UUID uniqueId = UUID.randomUUID();
     private Location start;
-    private Destination destination;
 
     private AnimationType animationType;
     private Particle particle;
@@ -55,20 +61,18 @@ public class Portal implements Removable {
     private String destinationName;
     private SoundData teleportSound;
 
-    private String permission;
-    private boolean disabled = false;
+    public Portal() {
+    }
 
     public Portal(Portal portal) {
-        this(portal.getStart(), new Destination().apply(portal.getDestination()), portal.getAnimationType(), portal.getAnimationHeight(), portal.getParticle(), portal.getTeleportRadius(), portal.getStartName(), portal.getDestinationName(), portal.getTeleportSound(), 2.2, portal.isStartHoloStatus(), portal.isDestinationHoloStatus());
-
-        this.hologramHeight = portal.getHologramHeight();
-        this.permission = portal.getPermission();
+        this(portal.getStart(), new Destination().apply(portal.getDestination()), portal.getAnimationType(), portal.getAnimationHeight(), portal.getParticle(), portal.getTeleportRadius(), portal.getStartName(), portal.getDestinationName(), portal.getTeleportSound(), portal.getHologramHeight(), portal.isStartHoloStatus(), portal.isDestinationHoloStatus(), portal.getPermission());
     }
 
     public Portal(Location start, Destination destination, AnimationType animationType, double animationHeight, Particle particle, double teleportRadius, String startName, String destinationName, SoundData teleportSound, double
-            hologramHeight, boolean startHoloStatus, boolean destinationHoloStatus) {
+            hologramHeight, boolean startHoloStatus, boolean destinationHoloStatus, String permission) {
+        super(permission, false, new WarpAction(destination));
+
         this.start = start;
-        this.destination = destination;
         this.animationType = animationType;
         this.animationHeight = animationHeight;
         this.particle = particle;
@@ -82,6 +86,99 @@ public class Portal implements Removable {
         this.destinationHoloStatus = destinationHoloStatus;
     }
 
+    @Override
+    public boolean read(JSONObject json) throws Exception {
+        super.read(json);
+                
+        this.start = Location.getByJSONString((String) json.get("Start"));
+
+        if(json.get("Destination") != null) {
+            Destination destination;
+            try {
+                destination = new Destination((String) json.get("Destination"));
+            } catch(Throwable ex) {
+                destination = new Destination((String) json.get("Destination"), DestinationType.EffectPortal);
+            }
+            
+            addAction(new WarpAction(destination));
+        }
+
+        if(json.get("AnimationType") != null) {
+            this.animationType = AnimationType.valueOf((String) json.get("AnimationType"));
+            this.animationHeight = Double.parseDouble(json.get("AnimationHeight") + "");
+            this.particle = Particle.valueOf((String) json.get("Particle"));
+            this.teleportRadius = Double.parseDouble(json.get("TeleportRadius") + "");
+            this.startName = (String) json.get("StartName");
+            this.destinationName = json.get("DestinationName") == null ? null : (String) json.get("DestinationName");
+            this.hologramHeight = Double.parseDouble(json.get("HologramHeight") + "");
+            this.startHoloStatus = json.get("StartHoloStatus") == null || Boolean.parseBoolean(json.get("StartHoloStatus") + "");
+            this.destinationHoloStatus = json.get("DestinationHoloStatus") == null || Boolean.parseBoolean(json.get("DestinationHoloStatus") + "");
+
+            Sound sound = Sound.valueOf((String) json.get("TeleportSound"));
+            float soundVolume = Float.parseFloat(json.get("TeleportSoundVolume") + "");
+            float soundPitch = Float.parseFloat(json.get("TeleportSoundPitch") + "");
+
+            this.teleportSound = new SoundData(sound, soundVolume, soundPitch);
+        } else {
+            this.animationType = AnimationType.valueOf((String) json.get("animationtype"));
+            this.animationHeight = Double.parseDouble(json.get("animationheight") + "");
+            this.particle = Particle.valueOf((String) json.get("particle"));
+            this.teleportRadius = Double.parseDouble(json.get("teleportradius") + "");
+            this.startName = (String) json.get("startname");
+            this.destinationName = json.get("destinationname") == null ? null : (String) json.get("destinationname");
+            this.hologramHeight = Double.parseDouble(json.get("hologramheight") + "");
+            this.startHoloStatus = json.get("startholostatus") == null || Boolean.parseBoolean(json.get("startholostatus") + "");
+            this.destinationHoloStatus = json.get("destinationholostatus") == null || Boolean.parseBoolean(json.get("destinationholostatus") + "");
+
+            Sound sound = Sound.valueOf((String) json.get("TeleportSound"));
+            float soundVolume = Float.parseFloat(json.get("TeleportSoundVolume") + "");
+            float soundPitch = Float.parseFloat(json.get("TeleportSoundPitch") + "");
+
+            this.teleportSound = new SoundData(sound, soundVolume, soundPitch);
+        }
+
+        return true;
+    }
+
+    @Override
+    public void write(JSONObject json) {
+        super.write(json);
+
+        json.put("start", this.start.toJSONString(4));
+        json.put("animationtype", this.animationType.name());
+        json.put("animationheight", this.getAnimationHeight());
+        json.put("particle", this.particle.name());
+        json.put("teleportradius", this.teleportRadius);
+        json.put("startname", this.startName);
+        json.put("destinationname", this.destinationName);
+        json.put("teleportsound", this.teleportSound.getSound().name());
+        json.put("teleportsoundvolume", this.teleportSound.getVolume());
+        json.put("teleportsoundpitch", this.teleportSound.getPitch());
+        json.put("hologramgeight", this.getHologramHeight());
+        json.put("startgolostatus", this.startHoloStatus);
+        json.put("destinationgolostatus", this.destinationHoloStatus);
+    }
+
+    @Override
+    public void apply(FeatureObject object) {
+        super.apply(object);
+
+        Portal portal = (Portal) object;
+                
+        this.start = portal.getStart().clone();
+        this.animationType = portal.getAnimationType();
+        this.animationHeight = portal.getAnimationHeight();
+        this.particle = portal.getParticle();
+        this.teleportRadius = portal.getTeleportRadius();
+        this.startName = portal.getStartName();
+        this.destinationName = portal.getDestinationName();
+        this.hologramHeight = portal.getHologramHeight();
+        this.teleportSound = portal.getTeleportSound();
+
+        this.startHoloStatus = portal.isStartHoloStatus();
+        this.destinationHoloStatus = portal.isDestinationHoloStatus();
+    }
+
     public void add(Player player) {
         this.startHolo.addPlayer(player);
         if(this.destinationHolo != null) this.destinationHolo.addPlayer(player);
@@ -92,35 +189,18 @@ public class Portal implements Removable {
         if(this.destinationHolo != null) this.destinationHolo.removePlayer(player);
     }
 
-    public void applyAttrs(Portal portal) {
-        this.start = portal.getStart().clone();
-        this.destination.apply(portal.getDestination());
-        this.animationType = portal.getAnimationType();
-        this.animationHeight = portal.getAnimationHeight();
-        this.particle = portal.getParticle();
-        this.teleportRadius = portal.getTeleportRadius();
-        this.startName = portal.getStartName();
-        this.destinationName = portal.getDestinationName();
-        this.hologramHeight = portal.getHologramHeight();
-        this.teleportSound = portal.getTeleportSound();
-        this.permission = portal.getPermission();
-
-        this.startHoloStatus = portal.isStartHoloStatus();
-        this.destinationHoloStatus = portal.isDestinationHoloStatus();
-    }
-
     public void update() {
-        if(this.disabled) return;
+        if(isDisabled()) return;
         updateAnimations();
         updateHolograms();
     }
 
     public void updateHolograms() {
-        if(this.disabled) return;
+        if(isDisabled()) return;
 
         org.bukkit.Location destination = null;
-        if(this.destination.getAdapter() instanceof PortalDestinationAdapter) {
-            destination = this.destination.buildLocation();
+        if(getDestination().getAdapter() instanceof PortalDestinationAdapter) {
+            destination = getDestination().buildLocation();
         }
 
         if(this.startHolo == null)
@@ -156,13 +236,13 @@ public class Portal implements Removable {
     }
 
     public void updateAnimations() {
-        if(this.disabled) return;
+        if(isDisabled()) return;
         if(this.startAnim != null && this.startAnim.isRunning()) this.startAnim.setRunning(false);
         if(this.destinationAnim != null && this.destinationAnim.isRunning()) this.destinationAnim.setRunning(false);
 
         org.bukkit.Location destination = null;
-        if(this.destination.getAdapter() instanceof PortalDestinationAdapter) {
-            destination = this.destination.buildLocation();
+        if(getDestination().getAdapter() instanceof PortalDestinationAdapter) {
+            destination = getDestination().buildLocation();
         } else if(this.destinationAnim != null) this.destinationAnim = null;
 
         switch(animationType) {
@@ -229,8 +309,7 @@ public class Portal implements Removable {
     }
 
     public Destination getDestination() {
-        if(destination == null) this.destination = new Destination();
-        return destination;
+        return hasAction(Action.WARP) ? getAction(WarpAction.class).getValue() : null;
     }
 
     public boolean isRunning() {
@@ -238,7 +317,7 @@ public class Portal implements Removable {
     }
 
     public void setRunning(boolean running) {
-        if(this.running == running || this.disabled) return;
+        if(this.running == running || isDisabled()) return;
         update();
 
         this.running = running;
@@ -360,31 +439,44 @@ public class Portal implements Removable {
     }
 
     public void teleportToStart(Player player) {
-        if(this.permission != null && !player.hasPermission(this.permission)) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("Portal_Insufficient_Permissions"));
-            return;
-        }
-
-        player.teleport(this.start);
-
-        WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.EffectPortal, new Destination(new LocationAdapter(this.start)), this.destinationName, getPermission() == null ? TeleportManager.NO_PERMISSION : getPermission(), 0, true, true,
-                WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Portals", true) ?
-                        Lang.getPrefix() + Lang.get("Teleported_To") : null,
-                false, this.teleportSound, false, null);
+        perform(player, true);
     }
 
     public void teleportToDestination(Player player) {
-        if(this.destination == null || this.destination.getAdapter() == null || this.destination.getId() == null) return;
+        perform(player);
+    }
 
-        if(this.permission != null && !player.hasPermission(this.permission)) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("Portal_Insufficient_Permissions"));
-            return;
+    @Override
+    public FeatureObject perform(Player player) {
+        return perform(player, false);
+    }
+
+    public FeatureObject perform(Player player, boolean toStart) {
+        if(getActions() == null) return this;
+
+        if(getAction(Action.WARP) != null) {
+            double costs = getAction(CostsAction.class) == null ? 0 : getAction(CostsAction.class).getValue();
+
+            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.EffectPortal, toStart ? new Destination(new LocationAdapter(this.start)) : getAction(WarpAction.class).getValue(), getAction(WarpAction.class).getValue().getId(), TeleportManager.NO_PERMISSION, costs, WarpSystem.getInstance()
+                    .getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.WarpGUI", true), true, WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Portals", true) ?
+                    Lang.getPrefix() + Lang.get("Teleported_To") : null, false, this.teleportSound, !(getDestination().getAdapter() instanceof PortalDestinationAdapter), new Callback<TeleportResult>() {
+                @Override
+                public void accept(TeleportResult result) {
+                    if(result == TeleportResult.TELEPORTED) {
+                        for(ActionObject action : getActions()) {
+                            if(action.getType() == Action.WARP || action.getType() == Action.COSTS) continue;
+                            action.perform(player);
+                        }
+                    }
+                }
+            });
+        } else if(getAction(Action.COSTS) == null || getAction(Action.COSTS).perform(player)) {
+            for(ActionObject action : getActions()) {
+                if(action.getType() == Action.WARP || action.getType() == Action.COSTS) continue;
+                action.perform(player);
+            }
         }
-
-        WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.EffectPortal, this.destination, this.startName, getPermission() == null ? TeleportManager.NO_PERMISSION : getPermission(), 0, true, true,
-                WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Portals", true) ?
-                        Lang.getPrefix() + Lang.get("Teleported_To") : null,
-                false, this.teleportSound, !(this.destination.getAdapter() instanceof PortalDestinationAdapter), null);
+        return this;
     }
 
     public boolean isRegistered() {
@@ -394,75 +486,6 @@ public class Portal implements Removable {
         }
 
         return false;
-    }
-
-    public String toJSONString() {
-        JSONObject json = new JSONObject();
-
-        json.put("Start", this.start.toJSONString(4));
-        json.put("Destination", this.destination.getType() == DestinationType.UNKNOWN ? null : this.destination.toJSONString());
-        json.put("AnimationType", this.animationType.name());
-        json.put("AnimationHeight", this.getAnimationHeight());
-        json.put("Particle", this.particle.name());
-        json.put("TeleportRadius", this.teleportRadius);
-        json.put("StartName", this.startName);
-        json.put("DestinationName", this.destinationName);
-        json.put("TeleportSound", this.teleportSound.getSound().name());
-        json.put("TeleportSoundVolume", this.teleportSound.getVolume());
-        json.put("TeleportSoundPitch", this.teleportSound.getPitch());
-        json.put("HologramHeight", this.getHologramHeight());
-        json.put("StartHoloStatus", this.startHoloStatus);
-        json.put("DestinationHoloStatus", this.destinationHoloStatus);
-        json.put("Permission", this.permission);
-
-        return json.toJSONString();
-    }
-
-    public static Portal getByJSONString(String code) {
-        try {
-            JSONObject json = (JSONObject) new JSONParser().parse(code);
-
-            Location start = Location.getByJSONString((String) json.get("Start"));
-
-            Destination destination;
-            if(json.get("Destination") == null) destination = new Destination();
-            else {
-                try {
-                    destination = new Destination((String) json.get("Destination"));
-                } catch(Throwable ex) {
-                    destination = new Destination((String) json.get("Destination"), DestinationType.EffectPortal);
-                }
-            }
-
-            AnimationType animationType = AnimationType.valueOf((String) json.get("AnimationType"));
-            double animationHeight = Double.parseDouble(json.get("AnimationHeight") + "");
-            Particle particle = Particle.valueOf((String) json.get("Particle"));
-            double teleportDistance = Double.parseDouble(json.get("TeleportRadius") + "");
-            String startName = (String) json.get("StartName");
-            String destinationName = json.get("DestinationName") == null ? null : (String) json.get("DestinationName");
-            double hologramHeight = Double.parseDouble(json.get("HologramHeight") + "");
-            Sound sound = Sound.valueOf((String) json.get("TeleportSound"));
-            float soundVolume = Float.parseFloat(json.get("TeleportSoundVolume") + "");
-            float soundPitch = Float.parseFloat(json.get("TeleportSoundPitch") + "");
-            boolean startHoloStatus = json.get("StartHoloStatus") == null || Boolean.parseBoolean(json.get("StartHoloStatus") + "");
-            boolean destinationHoloStatus = json.get("DestinationHoloStatus") == null || Boolean.parseBoolean(json.get("DestinationHoloStatus") + "");
-            String permission = json.get("Permission") == null ? null : (String) json.get("Permission");
-
-            Portal portal = new Portal(start, destination, animationType, animationHeight, particle, teleportDistance, startName, destinationName, new SoundData(sound, soundVolume, soundPitch), hologramHeight, startHoloStatus, destinationHoloStatus);
-            portal.setPermission(permission);
-            return portal;
-        } catch(ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public String getPermission() {
-        return permission;
-    }
-
-    public void setPermission(String permission) {
-        this.permission = permission;
     }
 
     public ItemStack getIcon() {
@@ -483,13 +506,5 @@ public class Portal implements Removable {
 
     public void setDestinationHoloStatus(boolean destinationHoloStatus) {
         this.destinationHoloStatus = destinationHoloStatus;
-    }
-
-    public boolean isDisabled() {
-        return disabled;
-    }
-
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
     }
 }

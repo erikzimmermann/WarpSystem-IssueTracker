@@ -70,7 +70,7 @@ public class PortalEditor implements Removable {
 
     public PortalEditor(Player player, Node<String, Location> first) {
         this.player = player;
-        this.portal = new Portal(first.getValue(), new Destination(), AnimationType.CIRCLE, 1, WarpSystem.getInstance().getTeleportManager().getParticles().get(0), 1, first.getKey(), null, new SoundData(Sound.ENDERMAN_TELEPORT, 1, 1), 2.2, true, true);
+        this.portal = new Portal(first.getValue(), new Destination(), AnimationType.CIRCLE, 1, WarpSystem.getInstance().getTeleportManager().getParticles().get(0), 1, first.getKey(), null, new SoundData(Sound.ENDERMAN_TELEPORT, 1, 1), 2.2, true, true, null);
         menu = new Menu(this.player, this);
     }
 
@@ -323,7 +323,7 @@ public class PortalEditor implements Removable {
     public void finish() {
         PortalManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.PORTALS);
         if(finished) return;
-        if(this.backupPortal != null) this.backupPortal.applyAttrs(this.portal);
+        if(this.backupPortal != null) this.backupPortal.apply(this.portal);
 
         exit(true);
 
