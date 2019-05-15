@@ -456,8 +456,9 @@ public class Portal extends FeatureObject implements Removable {
 
         if(getAction(Action.WARP) != null) {
             double costs = getAction(CostsAction.class) == null ? 0 : getAction(CostsAction.class).getValue();
+            String displayName = toStart ? this.destinationName : this.startName;
 
-            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.EffectPortal, toStart ? new Destination(new LocationAdapter(this.start)) : getAction(WarpAction.class).getValue(), getAction(WarpAction.class).getValue().getId(), TeleportManager.NO_PERMISSION, costs, WarpSystem.getInstance()
+            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.EffectPortal, toStart ? new Destination(new LocationAdapter(this.start)) : getAction(WarpAction.class).getValue(), displayName, TeleportManager.NO_PERMISSION, costs, WarpSystem.getInstance()
                     .getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.WarpGUI", true), true, WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Portals", true) ?
                     Lang.getPrefix() + Lang.get("Teleported_To") : null, false, this.teleportSound, !(getDestination().getAdapter() instanceof PortalDestinationAdapter), new Callback<TeleportResult>() {
                 @Override
