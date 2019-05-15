@@ -55,8 +55,7 @@ public class SignListener implements Listener {
 
                 if(sign.getDestination() == null || sign.getDestination().getId() == null) return;
 
-                WarpSystem.getInstance().getTeleportManager().teleport(e.getPlayer(), Origin.WarpSign, sign.getDestination(), sign.getDestination().getId(), (sign.getPermission() == null ? TeleportManager.NO_PERMISSION : sign.getPermission()), sign.getDestination().getCosts(),
-                        WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.WarpSigns", true));
+                sign.perform(e.getPlayer());
             }
         }
     }
