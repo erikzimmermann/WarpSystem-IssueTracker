@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.base.utils.featureobjects;
 
+import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
@@ -10,6 +11,7 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.Co
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.exceptions.IconReadException;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
@@ -49,12 +51,18 @@ public class FeatureObject implements Serializable {
     }
 
     public FeatureObject perform(Player player) {
+        return perform(player, getAction(WarpAction.class).getValue().getId(), getAction(WarpAction.class).getValue(), null, false, true);
+    }
+
+    public FeatureObject perform(Player player, String destName, Destination dest, SoundData sound, boolean skip, boolean afterEffects) {
         if(this.actions == null) return this;
 
         if(getAction(Action.WARP) != null) {
+            Origin origin = Origin.getByClass(this);
+
             double costs = getAction(CostsAction.class) == null ? 0 : getAction(CostsAction.class).getValue();
-            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.getByClass(this), getAction(WarpAction.class).getValue(), getAction(WarpAction.class).getValue().getId(), TeleportManager.NO_PERMISSION, costs, WarpSystem.getInstance()
-                    .getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.WarpGUI", true), new Callback<TeleportResult>() {
+            WarpSystem.getInstance().getTeleportManager().teleport(player, origin, dest, destName, this.permission == null ? TeleportManager.NO_PERMISSION : permission, costs, skip, skip, WarpSystem.getInstance()
+                    .getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message." + origin.getConfigName(), true), false, sound, afterEffects, new Callback<TeleportResult>() {
                 @Override
                 public void accept(TeleportResult result) {
                     if(result == TeleportResult.TELEPORTED) {

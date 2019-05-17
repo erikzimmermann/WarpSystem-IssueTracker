@@ -134,12 +134,12 @@ public class PortalEditor implements Removable {
                 AnvilGUI.openAnvil(WarpSystem.getInstance(), player, new AnvilListener() {
                     @Override
                     public void onClick(AnvilClickEvent e) {
-                        e.setCancelled(true);
                         String input = e.getInput();
 
-                        if(input != null && input.equalsIgnoreCase("NONE")) input = null;
+                        if(input != null && input.equalsIgnoreCase("NONE") && input.equalsIgnoreCase("NULL")) input = null;
 
                         portal.setPermission(input);
+                        e.setClose(true);
                     }
 
                     @Override
