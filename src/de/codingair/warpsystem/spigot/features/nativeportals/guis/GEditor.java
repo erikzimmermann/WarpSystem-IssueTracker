@@ -502,7 +502,7 @@ public class GEditor extends GUI {
                     public void onClick(InventoryClickEvent e) {
                         menu = Menu.MAIN;
                         reinitialize(Lang.get("Native_Portals"));
-                        getPlayer().updateInventory();
+                        GUI.updateInventory(getPlayer());
                     }
                 }.setOption(option));
 
