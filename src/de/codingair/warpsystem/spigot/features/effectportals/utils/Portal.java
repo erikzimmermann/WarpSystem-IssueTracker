@@ -89,8 +89,6 @@ public class Portal extends FeatureObject implements Removable {
     @Override
     public boolean read(JSONObject json) throws Exception {
         super.read(json);
-                
-        this.start = Location.getByJSONString((String) json.get("Start"));
 
         if(json.get("Destination") != null) {
             Destination destination;
@@ -103,7 +101,9 @@ public class Portal extends FeatureObject implements Removable {
             addAction(new WarpAction(destination));
         }
 
-        if(json.get("AnimationType") != null) {
+        if(json.get("Start") != null) {
+            this.start = Location.getByJSONString((String) json.get("Start"));
+
             this.animationType = AnimationType.valueOf((String) json.get("AnimationType"));
             this.animationHeight = Double.parseDouble(json.get("AnimationHeight") + "");
             this.particle = Particle.valueOf((String) json.get("Particle"));
@@ -120,6 +120,8 @@ public class Portal extends FeatureObject implements Removable {
 
             this.teleportSound = new SoundData(sound, soundVolume, soundPitch);
         } else {
+            this.start = Location.getByJSONString((String) json.get("start"));
+
             this.animationType = AnimationType.valueOf((String) json.get("animationtype"));
             this.animationHeight = Double.parseDouble(json.get("animationheight") + "");
             this.particle = Particle.valueOf((String) json.get("particle"));
@@ -130,9 +132,9 @@ public class Portal extends FeatureObject implements Removable {
             this.startHoloStatus = json.get("startholostatus") == null || Boolean.parseBoolean(json.get("startholostatus") + "");
             this.destinationHoloStatus = json.get("destinationholostatus") == null || Boolean.parseBoolean(json.get("destinationholostatus") + "");
 
-            Sound sound = Sound.valueOf((String) json.get("TeleportSound"));
-            float soundVolume = Float.parseFloat(json.get("TeleportSoundVolume") + "");
-            float soundPitch = Float.parseFloat(json.get("TeleportSoundPitch") + "");
+            Sound sound = Sound.valueOf((String) json.get("teleportsound"));
+            float soundVolume = Float.parseFloat(json.get("teleportsoundvolume") + "");
+            float soundPitch = Float.parseFloat(json.get("teleportsoundpitch") + "");
 
             this.teleportSound = new SoundData(sound, soundVolume, soundPitch);
         }
@@ -154,9 +156,9 @@ public class Portal extends FeatureObject implements Removable {
         json.put("teleportsound", this.teleportSound.getSound().name());
         json.put("teleportsoundvolume", this.teleportSound.getVolume());
         json.put("teleportsoundpitch", this.teleportSound.getPitch());
-        json.put("hologramgeight", this.getHologramHeight());
-        json.put("startgolostatus", this.startHoloStatus);
-        json.put("destinationgolostatus", this.destinationHoloStatus);
+        json.put("hologramheight", this.getHologramHeight());
+        json.put("startholostatus", this.startHoloStatus);
+        json.put("destinationholostatus", this.destinationHoloStatus);
     }
 
     @Override
@@ -452,31 +454,7 @@ public class Portal extends FeatureObject implements Removable {
     }
 
     public FeatureObject perform(Player player, boolean toStart) {
-        if(getActions() == null) return this;
-
-        if(getAction(Action.WARP) != null) {
-            double costs = getAction(CostsAction.class) == null ? 0 : getAction(CostsAction.class).getValue();
-            String displayName = toStart ? this.destinationName : this.startName;
-
-            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.EffectPortal, toStart ? new Destination(new LocationAdapter(this.start)) : getAction(WarpAction.class).getValue(), displayName, TeleportManager.NO_PERMISSION, costs, WarpSystem.getInstance()
-                    .getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.WarpGUI", true), true, WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Portals", true) ?
-                    Lang.getPrefix() + Lang.get("Teleported_To") : null, false, this.teleportSound, !(getDestination().getAdapter() instanceof PortalDestinationAdapter), new Callback<TeleportResult>() {
-                @Override
-                public void accept(TeleportResult result) {
-                    if(result == TeleportResult.TELEPORTED) {
-                        for(ActionObject action : getActions()) {
-                            if(action.getType() == Action.WARP || action.getType() == Action.COSTS) continue;
-                            action.perform(player);
-                        }
-                    }
-                }
-            });
-        } else if(getAction(Action.COSTS) == null || getAction(Action.COSTS).perform(player)) {
-            for(ActionObject action : getActions()) {
-                if(action.getType() == Action.WARP || action.getType() == Action.COSTS) continue;
-                action.perform(player);
-            }
-        }
+        super.perform(player, toStart ? this.destinationName : this.startName, toStart ? new Destination(new LocationAdapter(this.start)) : getAction(WarpAction.class).getValue(), this.teleportSound, true, !(getDestination().getAdapter() instanceof PortalDestinationAdapter));
         return this;
     }
 

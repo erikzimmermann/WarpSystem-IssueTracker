@@ -129,7 +129,7 @@ public class PAppearance extends PMain {
                     return;
                 }
 
-                if(getBackup() != null && getBackup().getName().equals(input)) {
+                if(getBackup() != null && getBackup().getName() != null && getBackup().getName().equals(input)) {
                     e.setClose(true);
                     getIcon().setName(e.getInput());
                     getShowIcon().update();

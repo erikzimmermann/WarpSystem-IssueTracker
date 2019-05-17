@@ -127,11 +127,19 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, boolean message, boolean silent, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message, silent, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, boolean message, boolean silent, SoundData soundData, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message, silent, soundData, true, callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, boolean message, boolean silent, SoundData soundData, boolean afterEffects, Callback<TeleportResult> callback) {
         teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message ?
                 costs > 0 ?
                         Lang.getPrefix() + Lang.get("Money_Paid")
                         : Lang.getPrefix() + Lang.get("Teleported_To")
-                : null, silent, callback);
+                : null, silent, soundData, afterEffects, callback);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, String message, boolean silent, Callback<TeleportResult> callback) {
@@ -222,6 +230,11 @@ public class TeleportManager {
         SimulatedTeleportResult simulated = teleport.simulate(player);
         if(simulated.getError() != null) {
             player.sendMessage(simulated.getError());
+            if(callback != null) callback.accept(simulated.getResult());
+            return;
+        }
+
+        if(simulated.getResult() == TeleportResult.NO_ADAPTER) {
             if(callback != null) callback.accept(simulated.getResult());
             return;
         }

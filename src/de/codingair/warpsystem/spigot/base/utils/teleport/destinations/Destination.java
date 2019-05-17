@@ -71,6 +71,7 @@ public class Destination {
     }
 
     public SimulatedTeleportResult simulate(Player player, boolean checkPermission) {
+        if(adapter == null) return new SimulatedTeleportResult(null, TeleportResult.NO_ADAPTER);
         return adapter.simulate(player, this.id, checkPermission);
     }
 

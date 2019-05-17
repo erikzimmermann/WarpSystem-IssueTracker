@@ -5,29 +5,30 @@ import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
 
 public enum Origin {
-    WarpIcon(Icon.class),
+    WarpIcon(Icon.class, "WarpGUI"),
     GlobalWarpIcon,
     GlobalWarp,
     SimpleWarp,
     DirectSimpleWarp,
     Warp,
     TempWarp,
-    WarpSign(WarpSign.class),
-    EffectPortal(de.codingair.warpsystem.spigot.features.effectportals.utils.Portal.class),
-    NativePortal(de.codingair.warpsystem.spigot.features.nativeportals.Portal.class),
+    WarpSign(WarpSign.class, "WarpSigns"),
+    EffectPortal(de.codingair.warpsystem.spigot.features.effectportals.utils.Portal.class, "Portals"),
+    NativePortal(de.codingair.warpsystem.spigot.features.nativeportals.Portal.class, "NativePortals"),
     ShortCut,
     CommandBlock,
     TeleportCommand,
-    UNKNOWN
-    ;
+    UNKNOWN;
 
     private Class<? extends FeatureObject> clazz = null;
+    private String configName = null;
 
     Origin() {
     }
 
-    Origin(Class<? extends FeatureObject> clazz) {
+    Origin(Class<? extends FeatureObject> clazz, String configName) {
         this.clazz = clazz;
+        this.configName = configName;
     }
 
     public static Origin getByClass(FeatureObject clazz) {
@@ -36,5 +37,13 @@ public enum Origin {
         }
 
         return UNKNOWN;
+    }
+
+    public Class<? extends FeatureObject> getClazz() {
+        return clazz;
+    }
+
+    public String getConfigName() {
+        return configName;
     }
 }
