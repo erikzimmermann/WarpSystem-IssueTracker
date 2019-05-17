@@ -79,7 +79,7 @@ public class GCreate extends SimpleGUI {
 
                         builder.setName("§7" + Lang.get("Status") + ": " + (ready ? "§a" + Lang.get("Ready") : "§c" + Lang.get("Not_Ready")));
 
-                        builder.addLore("", "§7" + Lang.get("Price") + ": " + (canPay(p, price) ? "§a" : "§c") + price + " " + Lang.get("Coins"));
+                        if(price != 0) builder.addLore("", "§7" + Lang.get("Price") + ": " + (canPay(p, price) ? "§a" : "§c") + price + " " + Lang.get("Coins"));
                         if(ready) builder.addLore("", Lang.get(expired ? "TempWarp_Click_Renew" : "TempWarp_Click_Buy").replace("%PRICE%", price + ""));
 
                         return builder.getItem();
