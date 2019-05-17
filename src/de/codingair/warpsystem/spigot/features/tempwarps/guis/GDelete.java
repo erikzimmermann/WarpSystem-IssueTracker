@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.features.tempwarps.guis;
 
+import de.codingair.codingapi.player.gui.inventory.gui.GUI;
 import de.codingair.codingapi.player.gui.inventory.gui.GUIListener;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
@@ -115,7 +116,7 @@ public class GDelete extends SimpleGUI {
             @Override
             public void onTick(Object item, int timeLeft) {
                 setItem(4, new ItemBuilder(XMaterial.NETHER_STAR).setText(Lang.get("TempWarp_Confirm_Delete").replace("%COINS%", getRefund(warp) + ""), 100).getItem());
-                getPlayer().updateInventory();
+                GUI.updateInventory(getPlayer());
             }
         });
     }

@@ -13,6 +13,10 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.BoundAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.editor.GEditor;
@@ -20,10 +24,6 @@ import de.codingair.warpsystem.spigot.features.warps.guis.utils.GUIListener;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.BoundAction;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -119,7 +119,11 @@ public class GWarps extends GUI {
         addListener(new InterfaceListener() {
             @Override
             public void onInvClickEvent(InventoryClickEvent e) {
-
+                if(e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) {
+                    e.setCursor(new ItemStack(Material.AIR));
+                    setMoving(false, e.getSlot());
+                    e.setCancelled(true);
+                }
             }
 
             @Override
@@ -242,7 +246,7 @@ public class GWarps extends GUI {
         for(int i = 0; i < size; i++) {
             if(editing) {
                 final int slot = i;
-                if(slot == oldSlot && !cursorIcon.isCategory() && cursorIcon.getCategory() == this.category) continue;
+                if(slot == oldSlot && cursorIcon != null && !cursorIcon.isCategory() && cursorIcon.getCategory() == this.category) continue;
 
                 if(getItem(i) == null || getItem(i).getType().equals(Material.AIR)) {
                     addButton(new ItemButton(i, none.clone()) {
@@ -437,11 +441,14 @@ public class GWarps extends GUI {
                     if(editing) {
                         if(e.isLeftClick()) {
                             if(moving) {
+                                Icon otherCat = null;
                                 if(!cursorIcon.isCategory()) {
+                                    otherCat = cursorIcon.getCategory();
                                     cursorIcon.setCategory(GWarps.this.category);
                                 }
 
                                 icon.setSlot(oldSlot);
+                                icon.setCategory(otherCat);
                                 cursorIcon.setSlot(e.getSlot());
                                 e.setCursor(new ItemStack(Material.AIR));
                                 setMoving(false, e.getSlot());

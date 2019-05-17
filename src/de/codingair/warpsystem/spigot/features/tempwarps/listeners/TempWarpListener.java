@@ -52,7 +52,7 @@ public class TempWarpListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        TempWarpManager.getManager().saveAndRemoveKeys(e.getPlayer());
+        TempWarpManager.getManager().saveAndRemoveKeys(e.getPlayer(), true);
     }
 
 }

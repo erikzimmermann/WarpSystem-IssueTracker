@@ -177,7 +177,7 @@ public class TempWarpManager implements Manager, Ticker {
 
         saveTemplates();
         for(Player player : Bukkit.getOnlinePlayers()) {
-            saveAndRemoveKeys(player);
+            saveAndRemoveKeys(player, false);
         }
 
         config.set("Warps", data);
@@ -208,13 +208,13 @@ public class TempWarpManager implements Manager, Ticker {
         if(keys != null && !keys.isEmpty()) this.keyList.put(uniqueId, keys);
     }
 
-    public void saveKeys(Player player) {
-        saveKeys(WarpSystem.getInstance().getUUIDManager().get(player));
+    public void saveKeys(Player player, boolean saveFile) {
+        saveKeys(WarpSystem.getInstance().getUUIDManager().get(player), saveFile);
     }
 
-    public void saveAndRemoveKeys(Player player) {
+    public void saveAndRemoveKeys(Player player, boolean saveFile) {
         UUID uuid = WarpSystem.getInstance().getUUIDManager().get(player);
-        saveKeys(uuid);
+        saveKeys(uuid, saveFile);
         this.keyList.remove(uuid);
     }
 
@@ -331,7 +331,7 @@ public class TempWarpManager implements Manager, Ticker {
                 }
             }
 
-            list.getPlayer().updateInventory();
+            GUI.updateInventory(list.getPlayer());
         }
 
         for(TempWarp warp : warps) {

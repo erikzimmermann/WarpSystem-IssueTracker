@@ -90,6 +90,8 @@ public class Icon extends FeatureObject {
 
     @Override
     public void write(JSONObject json) {
+        super.write(json);
+
         ItemBuilder builder = new ItemBuilder(this.item);
         json.put("name", this.name);
         json.put("item", builder.toJSONString());
