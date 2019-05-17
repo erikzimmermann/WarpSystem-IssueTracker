@@ -53,7 +53,7 @@ public class GEditor extends SimpleGUI {
                         builder.setName("§7" + Lang.get("Status") + ": " + (ready ? "§a" + Lang.get("Ready") : "§c" + Lang.get("Not_Ready")));
 
                         int costs = warp.getCosts() - warp.backupped().getCosts();
-                        builder.addLore("", "§7" + Lang.get("Price") + ": " + (canPay(p, warp) ? "§a" : "§c") + costs + " " + Lang.get("Coins"));
+                        if(costs != 0) builder.addLore("", "§7" + Lang.get("Price") + ": " + (canPay(p, warp) ? "§a" : "§c") + costs + " " + Lang.get("Coins"));
                         if(ready) builder.addLore("", Lang.get("TempWarp_Click_Buy").replace("%PRICE%", costs + ""));
 
                         return builder.getItem();
