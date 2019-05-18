@@ -6,10 +6,12 @@ import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOpti
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Page;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SimpleGUI;
+import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -20,10 +22,13 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Editor<C> extends SimpleGUI {
     public static final String ITEM_TITLE_COLOR = "§6§n";
+    public static final String ITEM_SUB_TITLE_COLOR = "§3";
     public static final String TITLE_COLOR = "§c§l§n";
 
     private PageItem[] pages;
@@ -31,10 +36,17 @@ public class Editor<C> extends SimpleGUI {
     private Backup<C> backup;
     private ShowIcon showIcon;
 
-    public Editor(Player p, JavaPlugin plugin, C clone, Backup<C> backup, ShowIcon showIcon, PageItem... pages) {
-        super(p, new Layout(), pages[0], plugin);
+    public Editor(Player p, C clone, Backup<C> backup, ShowIcon showIcon, PageItem... pages) {
+        super(p, new Layout(), pages[0], WarpSystem.getInstance());
 
-        this.pages = pages;
+        List<PageItem> temp = new ArrayList<>();
+        for(PageItem page : pages) {
+            if(page != null) temp.add(page);
+        }
+
+        this.pages = temp.toArray(new PageItem[0]);
+        temp.clear();
+
         this.clone = clone;
         this.backup = backup;
         this.showIcon = showIcon;
@@ -81,24 +93,53 @@ public class Editor<C> extends SimpleGUI {
         initControllButtons();
     }
 
+    public void updateControllButtons() {
+        if(getButtonAt(8) == null) {
+            initControllButtons();
+            return;
+        }
+
+        ((SyncButton) getButtonAt(8)).update();
+        ((SyncButton) getButtonAt(8, 2)).update();
+    }
+
     public void initControllButtons() {
         ItemButtonOption option = new ItemButtonOption();
         option.setOnlyLeftClick(true);
-        option.setCloseOnClick(true);
         option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1));
 
-        addButton(new ItemButton(8, new ItemBuilder(XMaterial.RED_TERRACOTTA).setName("§c" + Lang.get("Cancel")).getItem()) {
+        addButton(new SyncButton(8) {
             @Override
-            public void onClick(InventoryClickEvent e) {
-                backup.cancel(clone);
+            public ItemStack craftItem() {
+                boolean cancel = canCancel();
+                return new ItemBuilder(cancel ? XMaterial.RED_TERRACOTTA : XMaterial.LIGHT_GRAY_TERRACOTTA).setName((cancel ? "§c" : "§7") + Lang.get("Cancel")).getItem();
+            }
+
+            @Override
+            public void onClick(InventoryClickEvent e, Player player) {
+                if(canCancel()){
+                    setClosingByButton(true);
+                    player.closeInventory();
+                    backup.cancel(clone);
+                }
             }
         }.setOption(option));
 
-        addButton(new ItemButton(8, 2, new ItemBuilder(XMaterial.LIME_TERRACOTTA).setName("§a" + Lang.get("Finish")).getItem()) {
+        addButton(new SyncButton(8, 2) {
             @Override
-            public void onClick(InventoryClickEvent e) {
-                backup.applyTo(clone);
-                getPlayer().sendMessage(Lang.getPrefix() + "§a" + Lang.get("Changes_have_been_saved"));
+            public ItemStack craftItem() {
+                boolean finish = canFinish();
+                return new ItemBuilder(finish ? XMaterial.LIME_TERRACOTTA : XMaterial.LIGHT_GRAY_TERRACOTTA).setName((finish ? "§a" : "§7") + Lang.get("Finish")).getItem();
+            }
+
+            @Override
+            public void onClick(InventoryClickEvent e, Player player) {
+                if(canFinish()){
+                    setClosingByButton(true);
+                    player.closeInventory();
+                    backup.applyTo(clone);
+                    getPlayer().sendMessage(Lang.getPrefix() + "§a" + Lang.get("Changes_have_been_saved"));
+                }
             }
         }.setOption(option));
     }
@@ -127,6 +168,14 @@ public class Editor<C> extends SimpleGUI {
             b.setLink(link);
             addButton(b);
         }
+    }
+
+    public boolean canFinish() {
+        return true;
+    }
+
+    public boolean canCancel() {
+        return true;
     }
 
     public void updateShowIcon() {

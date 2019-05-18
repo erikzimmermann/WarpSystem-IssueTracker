@@ -27,4 +27,9 @@ public class BoundAction extends ActionObject<String> {
     public boolean perform(Player player) {
         return true;
     }
+
+    @Override
+    public boolean usable() {
+        return getValue() != null;
+    }
 }

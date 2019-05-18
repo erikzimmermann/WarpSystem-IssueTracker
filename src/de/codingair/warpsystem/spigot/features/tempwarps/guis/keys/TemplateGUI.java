@@ -1,6 +1,5 @@
 package de.codingair.warpsystem.spigot.features.tempwarps.guis.keys;
 
-import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.Backup;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
@@ -11,7 +10,7 @@ public class TemplateGUI extends Editor<Key> {
     private Key clone;
 
     public TemplateGUI(Player p, Key original, Key clone) {
-        super(p, WarpSystem.getInstance(), clone, new Backup<Key>(original) {
+        super(p, clone, new Backup<Key>(original) {
             @Override
             public void applyTo(Key value) {
                 original.setTime(value.getTime());

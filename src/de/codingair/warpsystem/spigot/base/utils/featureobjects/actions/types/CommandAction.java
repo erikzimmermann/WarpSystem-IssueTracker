@@ -68,4 +68,9 @@ public class CommandAction extends ActionObject<List<String>> {
 
         return true;
     }
+
+    @Override
+    public boolean usable() {
+        return getValue() != null;
+    }
 }

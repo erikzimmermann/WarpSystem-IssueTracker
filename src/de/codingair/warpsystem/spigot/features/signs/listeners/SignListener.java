@@ -44,7 +44,10 @@ public class SignListener implements Listener {
 
                     s.update(true, true);
 
-                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> new WarpSignGUI(e.getPlayer(), sign, sign.clone()).open(), 1L);
+                    WarpSign clone = sign.clone();
+                    if(clone.getDestination() == null) clone.setDestination(new Destination());
+
+                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> new WarpSignGUI(e.getPlayer(), sign, clone).open(), 1L);
                     return;
                 }
 

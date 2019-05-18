@@ -106,7 +106,8 @@ public class WarpSign extends FeatureObject {
     }
 
     public void setDestination(Destination destination) {
-        addAction(new WarpAction(destination));
+        if(destination == null) removeAction(Action.WARP);
+        else addAction(new WarpAction(destination));
     }
 
     public WarpSign clone() {

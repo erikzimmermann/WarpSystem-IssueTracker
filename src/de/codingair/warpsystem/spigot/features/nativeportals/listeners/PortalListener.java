@@ -4,7 +4,7 @@ import de.codingair.codingapi.API;
 import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
-import de.codingair.warpsystem.spigot.features.nativeportals.guis.GEditor;
+import de.codingair.warpsystem.spigot.features.nativeportals.guis.NPEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
@@ -42,7 +42,7 @@ public class PortalListener implements Listener {
         if(NativePortalManager.getInstance().getNoTeleport().contains(player)
                 || NativePortalManager.getInstance().isEditing(player)
                 || WarpSystem.getInstance().getTeleportManager().isTeleporting(player)
-                || API.getRemovable(player, GEditor.class) != null) {
+                || API.getRemovable(player, NPEditor.class) != null) {
             e.setCancelled(true);
         }
 
