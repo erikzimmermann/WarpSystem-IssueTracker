@@ -3,15 +3,17 @@ package de.codingair.warpsystem.spigot.features.nativeportals.managers;
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
 import de.codingair.warpsystem.spigot.features.nativeportals.PortalEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.commands.CNativePortals;
-import de.codingair.warpsystem.spigot.features.nativeportals.guis.GEditor;
+import de.codingair.warpsystem.spigot.features.nativeportals.guis.DeleteGUI;
+import de.codingair.warpsystem.spigot.features.nativeportals.guis.NPEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.listeners.EditorListener;
 import de.codingair.warpsystem.spigot.features.nativeportals.listeners.PortalListener;
 import de.codingair.warpsystem.utils.Manager;
@@ -145,7 +147,7 @@ public class NativePortalManager implements Manager {
                 return;
             }
 
-            if(NativePortalManager.getInstance().isEditing(player) || API.getRemovable(player, GEditor.class) != null) {
+            if(NativePortalManager.getInstance().isEditing(player) || API.getRemovable(player, NPEditor.class) != null) {
                 player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.8));
                 return;
             } else if(API.getRemovable(player, GUI.class) != null) return;
@@ -158,13 +160,21 @@ public class NativePortalManager implements Manager {
                 player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.8));
 
                 Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                    GEditor editor = new GEditor(player, portal, GEditor.Menu.DELETE);
-                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), new Runnable() {
+                    portal.setEditMode(true);
+
+                    new DeleteGUI(player, new Callback<Boolean>() {
                         @Override
-                        public void run() {
-                            editor.open();
+                        public void accept(Boolean delete) {
+                            if(delete) {
+                                portal.clear();
+                                NativePortalManager.getInstance().getPortals().remove(portal);
+                                player.sendMessage(Lang.getPrefix() + Lang.get("NativePortal_Deleted"));
+                            } else {
+                                portal.setEditMode(false);
+                                player.sendMessage(Lang.getPrefix() + Lang.get("NativePortal_Not_Deleted"));
+                            }
                         }
-                    }, 1L);
+                    }, null).open();
                     noTeleport.remove(player);
                 }, 4L);
 
@@ -175,13 +185,13 @@ public class NativePortalManager implements Manager {
                 player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.8));
 
                 Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                    GEditor editor = new GEditor(player, portal);
-                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), new Runnable() {
-                        @Override
-                        public void run() {
-                            editor.open();
-                        }
-                    }, 1L);
+                    portal.setVisible(false);
+                    Portal clone = portal.clone();
+                    if(clone.getDestination() == null) clone.setDestination(new Destination());
+                    clone.setEditMode(true);
+                    clone.setVisible(true);
+
+                    new NPEditor(player, portal, clone).open();
                     noTeleport.remove(player);
                 }, 4L);
             } else if(!noTeleport.contains(player)) {

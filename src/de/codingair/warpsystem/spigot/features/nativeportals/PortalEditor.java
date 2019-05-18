@@ -20,6 +20,7 @@ import java.util.UUID;
 public class PortalEditor implements Removable {
     public static final ItemBuilder PORTAL_ITEM = new ItemBuilder(XMaterial.END_STONE).setName(Lang.get("NativePortalEditor_Place_Blocks"));
 
+    private boolean ended = false;
     private final UUID uniqueId = UUID.randomUUID();
     private Player player;
     private Portal backup;
@@ -35,13 +36,15 @@ public class PortalEditor implements Removable {
     }
 
     public PortalEditor(Player player, PortalType type) {
-        this(player);
+        this.player = player;
+        API.addRemovable(this);
         this.backup = null;
         this.portal = new Portal(type);
     }
 
     public PortalEditor(Player player, Portal portal) {
-        this(player);
+        this.player = player;
+        API.addRemovable(this);
         this.backup = portal;
         this.portal = portal.clone();
     }
@@ -85,6 +88,9 @@ public class PortalEditor implements Removable {
     }
 
     public Portal end() {
+        if(ended) return null;
+        ended = true;
+
         this.player.getInventory().setItem(this.player.getInventory().getHeldItemSlot(), old == null ? new ItemStack(Material.AIR) : old);
         this.player.updateInventory();
         this.portal.setType(this.type);
@@ -93,6 +99,7 @@ public class PortalEditor implements Removable {
 
         if(backup != null) {
             this.backup.apply(portal);
+
             portal.setVisible(false);
             backup.setVisible(true);
 

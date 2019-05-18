@@ -31,4 +31,9 @@ public class WarpAction extends ActionObject<Destination> {
     public boolean perform(Player player) {
         return true;
     }
+
+    @Override
+    public boolean usable() {
+        return getValue() != null && getValue().getId() != null;
+    }
 }

@@ -27,6 +27,8 @@ import java.util.*;
 
 public class Portal extends FeatureObject {
     private PortalType type;
+    private boolean editMode = false;
+
     private List<PortalBlock> blocks;
     private boolean visible = false;
     private List<PortalListener> listeners = new ArrayList<>();
@@ -45,7 +47,11 @@ public class Portal extends FeatureObject {
         super(portal);
         this.type = portal.getType();
         this.blocks = new ArrayList<>(portal.getBlocks());
+
+        this.listeners.clear();
         this.listeners.addAll(portal.getListeners());
+
+        this.displayName = portal.getDisplayName();
     }
 
     public Portal(PortalType type, List<PortalBlock> blocks) {
@@ -301,7 +307,7 @@ public class Portal extends FeatureObject {
 
     public void setType(PortalType type) {
         if(this.type != type) {
-            if(isVisible()) {
+            if(isVisible() && !editMode) {
                 setVisible(false);
                 this.type = type;
                 setVisible(true);
@@ -348,7 +354,8 @@ public class Portal extends FeatureObject {
     }
 
     public void setDestination(Destination destination) {
-        addAction(new WarpAction(destination));
+        if(destination == null) removeAction(Action.WARP);
+        else addAction(new WarpAction(destination));
     }
 
     public String getDisplayName() {
@@ -357,5 +364,14 @@ public class Portal extends FeatureObject {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public boolean isEditMode() {
+        return editMode;
+    }
+
+    public void setEditMode(boolean editMode) {
+        this.editMode = editMode;
+        update();
     }
 }

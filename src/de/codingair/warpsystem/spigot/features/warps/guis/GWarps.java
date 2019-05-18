@@ -17,7 +17,9 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.BoundAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.editor.GEditor;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.GUIListener;
@@ -345,8 +347,14 @@ public class GWarps extends GUI {
                                         @Override
                                         public void onClose(AnvilCloseEvent e) {
                                             if(e.isSubmitted())
-                                                e.setPost(() -> new GEditor(p, input, slot, GWarps.this.category, item, category).open());
-                                            else {
+                                                e.setPost(() -> {
+                                                    Icon icon = new Icon(input, item, GWarps.this.category, slot, null);
+                                                    icon.setCategory(category);
+
+                                                    Icon clone = icon.clone().addAction(new WarpAction(new Destination()));
+                                                    new GEditor(p, icon, clone).open();
+                                                });
+                                            else{
                                                 Sound.ITEM_BREAK.playSound(p);
                                                 e.setPost(() -> new GWarps(p, GWarps.this.category, editing).open());
                                             }
@@ -441,6 +449,7 @@ public class GWarps extends GUI {
                     if(editing) {
                         if(e.isLeftClick()) {
                             if(moving) {
+                                if(icon.isCategory() && icon.getCategory() != cursorIcon.getCategory()) return;
                                 Icon otherCat = null;
                                 if(!cursorIcon.isCategory()) {
                                     otherCat = cursorIcon.getCategory();
@@ -460,7 +469,10 @@ public class GWarps extends GUI {
                                     e.setCurrentItem(new ItemStack(Material.AIR));
                                     setMoving(true, e.getSlot());
                                 } else {
-                                    new GEditor(p, icon).open();
+                                    Icon clone = icon.clone();
+                                    if(!clone.hasAction(Action.WARP)) clone.addAction(new WarpAction(new Destination()));
+
+                                    new GEditor(p, icon, clone).open();
                                 }
                             }
                         } else if(e.isRightClick()) {

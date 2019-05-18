@@ -43,4 +43,6 @@ public abstract class ActionObject<T> {
             ((Serializable) this.value).destroy();
         }
     }
+
+    public abstract boolean usable();
 }

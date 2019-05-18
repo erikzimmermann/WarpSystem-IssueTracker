@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.base.utils.featureobjects;
 
+import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -30,12 +31,13 @@ public class FeatureObject implements Serializable {
     private boolean disabled = false;
 
     public FeatureObject() {
+        this.actions = new ArrayList<>();
     }
 
     public FeatureObject(String permission, boolean disabled, List<ActionObject> actions) {
         this.permission = permission;
         this.disabled = disabled;
-        this.actions = actions;
+        this.actions = actions == null ? new ArrayList<>() : actions;
     }
 
     public FeatureObject(String permission, boolean disabled, ActionObject... actions) {
@@ -45,13 +47,13 @@ public class FeatureObject implements Serializable {
     }
 
     public FeatureObject(FeatureObject featureObject) {
-        this.actions = new ArrayList<>(featureObject.actions);
+        this.actions = featureObject.actions == null ? new ArrayList<>() : new ArrayList<>(featureObject.actions);
         this.permission = featureObject.permission;
         this.disabled = featureObject.disabled;
     }
 
     public FeatureObject perform(Player player) {
-        return perform(player, hasAction(Action.WARP) ? getAction(WarpAction.class).getValue().getId() : null, hasAction(Action.WARP) ? getAction(WarpAction.class).getValue() : null, null, false, true);
+        return perform(player, hasAction(Action.WARP) ? getAction(WarpAction.class).getValue().getId() : null, hasAction(Action.WARP) ? getAction(WarpAction.class).getValue() : null, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), false, true);
     }
 
     public FeatureObject perform(Player player, String destName, Destination dest, SoundData sound, boolean skip, boolean afterEffects) {
@@ -89,7 +91,7 @@ public class FeatureObject implements Serializable {
         this.disabled = Boolean.parseBoolean(json.get("disabled") + "");
         this.permission = json.get("permission") == null ? null : (String) json.get("permission");
 
-        this.actions = new ArrayList<>();
+        if(this.actions == null) this.actions = new ArrayList<>();
 
         if(json.get("actions") != null) {
             JSONArray actionList;
@@ -161,7 +163,6 @@ public class FeatureObject implements Serializable {
         if(this.actions != null) {
             this.actions.forEach(ActionObject::destroy);
             this.actions.clear();
-            this.actions = null;
         }
     }
 
@@ -170,7 +171,18 @@ public class FeatureObject implements Serializable {
 
         this.disabled = object.disabled;
         this.permission = object.permission;
-        this.actions = object.actions;
+        this.actions = object.actions == null ? new ArrayList<>() : new ArrayList<>(object.actions);
+        checkActionList();
+    }
+
+    public void checkActionList() {
+        List<ActionObject> l = new ArrayList<>(this.actions);
+
+        for(ActionObject object : l) {
+            if(!object.usable()) this.actions.remove(object);
+        }
+
+        l.clear();
     }
 
     @Override

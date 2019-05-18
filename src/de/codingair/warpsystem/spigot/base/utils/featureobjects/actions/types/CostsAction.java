@@ -47,4 +47,9 @@ public class CostsAction extends ActionObject<Double> {
         AdapterType.getActive().setMoney(player, bank - prize);
         return true;
     }
+
+    @Override
+    public boolean usable() {
+        return getValue() != null;
+    }
 }

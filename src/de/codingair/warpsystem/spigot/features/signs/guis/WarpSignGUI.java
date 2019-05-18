@@ -3,7 +3,6 @@ package de.codingair.warpsystem.spigot.features.signs.guis;
 import de.codingair.codingapi.player.gui.sign.SignTools;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
-import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.Backup;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.pages.DestinationPage;
@@ -19,13 +18,12 @@ import org.bukkit.inventory.ItemStack;
 public class WarpSignGUI extends Editor<WarpSign> {
 
     public WarpSignGUI(Player p, WarpSign sign, WarpSign clone) {
-        super(p, WarpSystem.getInstance(), clone, new Backup<WarpSign>(sign) {
+        super(p, clone, new Backup<WarpSign>(sign) {
             private String[] backupLines = ((Sign) sign.getLocation().getBlock().getState()).getLines();
 
             @Override
             public void applyTo(WarpSign clone) {
-                sign.setDestination(clone.getDestination());
-                sign.setPermission(clone.getPermission());
+                sign.apply(clone);
 
                 if(SignManager.getInstance().getByLocation(sign.getLocation()) == null) {
                     SignManager.getInstance().getWarpSigns().add(sign);

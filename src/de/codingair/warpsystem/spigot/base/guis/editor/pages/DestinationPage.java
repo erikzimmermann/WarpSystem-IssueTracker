@@ -38,7 +38,7 @@ public class DestinationPage extends PageItem {
 
     public DestinationPage(Player player, String title, Destination destination) {
         super(player, title, new ItemBuilder(XMaterial.ENDER_PEARL).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Destination")).getItem(), false);
-        this.destination = destination == null ? new Destination() : destination;
+        this.destination = destination;
         initialize(player);
     }
 
