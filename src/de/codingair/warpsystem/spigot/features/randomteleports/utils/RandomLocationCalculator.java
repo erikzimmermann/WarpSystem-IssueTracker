@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.features.randomteleports.utils;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.randomteleports.managers.RandomTeleporterManager;
 import org.bukkit.Bukkit;
@@ -27,15 +28,21 @@ public class RandomLocationCalculator implements Runnable {
 
     @Override
     public void run() {
-        Location location = calculate(this.player);
+        Location location = null;
+        try {
+            location = calculate(this.player);
+        } catch(InterruptedException e) {
+            e.printStackTrace();
+        }
         if(location != null) {
             location.setX(location.getBlockX() + 0.5);
+            location.setY(location.getBlockY() + 0.5);
             location.setZ(location.getBlockZ() + 0.5);
         }
         callback.accept(location);
     }
 
-    private Location calculate(Player player) {
+    private Location calculate(Player player) throws InterruptedException {
         start = System.currentTimeMillis();
         Location location = new Location(player.getLocation());
         double x = player.getLocation().getX();
@@ -120,7 +127,7 @@ public class RandomLocationCalculator implements Runnable {
         }
     }
 
-    private boolean correct(Location location) {
+    private boolean correct(Location location) throws InterruptedException {
         if(RandomTeleporterManager.getInstance().getBiomeList() != null && !RandomTeleporterManager.getInstance().getBiomeList().contains(location.getBlock().getBiome())) return false;
         if(RandomTeleporterManager.getInstance().isProtectedRegions() && isProtected(location)) return false;
 
@@ -131,9 +138,20 @@ public class RandomLocationCalculator implements Runnable {
         return !below.getBlock().getType().name().toLowerCase().contains("lava");
     }
 
-    private boolean isProtected(Location location) {
-        BlockBreakEvent event = new BlockBreakEvent(location.getBlock(), this.check);
-        Bukkit.getPluginManager().callEvent(event);
-        return event.isCancelled();
+    private boolean isProtected(Location location) throws InterruptedException {
+        synchronized(this) {
+            BlockBreakEvent event = new BlockBreakEvent(location.getBlock(), this.check);
+
+            Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> {
+                Bukkit.getPluginManager().callEvent(event);
+
+                synchronized(RandomLocationCalculator.this) {
+                    RandomLocationCalculator.this.notify();
+                }
+            });
+
+            this.wait();
+            return event.isCancelled();
+        }
     }
 }

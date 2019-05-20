@@ -202,9 +202,12 @@ public class RandomTeleporterManager implements Manager {
                     //teleported
                     UUID uuid = WarpSystem.getInstance().getUUIDManager().get(player);
                     if(!player.isOp()) setTeleports(uuid, getTeleports(uuid) + 1);
-                    player.teleport(loc);
-                    Sound.ENDERMAN_TELEPORT.playSound(player);
-                    player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Teleported"));
+
+                    Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> {
+                        player.teleport(loc);
+                        Sound.ENDERMAN_TELEPORT.playSound(player);
+                        player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Teleported"));
+                    });
                 }
 
                 searching.remove(player);
