@@ -5,6 +5,7 @@ import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CommandButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CostsButton;
@@ -18,7 +19,7 @@ public class PFunctions extends PageItem {
     private Icon icon;
 
     public PFunctions(Player p, Icon icon) {
-        super(p, "§c§n" + Lang.get("Item_Editing"), new ItemBuilder(XMaterial.COMMAND_BLOCK).setName("§6§n" + Lang.get("Options")).getItem(), false);
+        super(p, Editor.TITLE_COLOR + Lang.get("Item_Editing"), new ItemBuilder(XMaterial.COMMAND_BLOCK).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Options")).getItem(), false);
 
         this.icon = icon;
         initialize(p);

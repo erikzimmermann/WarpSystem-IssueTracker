@@ -11,6 +11,7 @@ import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.Value;
+import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.NameButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -32,7 +33,7 @@ public class PAppearance extends PageItem {
     private Icon icon;
     
     public PAppearance(Player p, Icon icon) {
-        super(p, "§c§n" + Lang.get("Item_Editing"), new ItemBuilder(XMaterial.ITEM_FRAME).setName("§6§n" + Lang.get("Appearance")).getItem(), false);
+        super(p, Editor.TITLE_COLOR + Lang.get("Item_Editing"), new ItemBuilder(XMaterial.ITEM_FRAME).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Appearance")).getItem(), false);
         
         this.icon = icon;
         this.startName = this.icon.getName();

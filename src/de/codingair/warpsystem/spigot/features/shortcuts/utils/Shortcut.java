@@ -1,51 +1,56 @@
 package de.codingair.warpsystem.spigot.features.shortcuts.utils;
 
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
-import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionIcon;
-import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
+import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONObject;
 
-public class Shortcut {
-    private Destination destination;
+public class Shortcut extends FeatureObject {
     private String displayName;
 
+    public Shortcut() {
+    }
+
+    public Shortcut(Shortcut shortcut) {
+        super(shortcut);
+        this.displayName = shortcut.getDisplayName();
+    }
+
     public Shortcut(Destination destination, String displayName) {
-        this.destination = destination;
+        super(null, false, new WarpAction(destination));
         this.displayName = displayName;
     }
 
-    public void run(Player player) {
-        if(this.destination != null) {
-            if(destination.getType() == DestinationType.SimpleWarp) {
-                if(!player.hasPermission(WarpSystem.PERMISSION_USE_SIMPLE_WARPS)) {
-                    player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
-                    return;
-                }
+    @Override
+    public boolean read(JSONObject json) throws Exception {
+        this.displayName = (String) json.get("Name");
+        return super.read(json);
+    }
 
-                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.ShortCut, destination, destination.getId(), 0,
-                        WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Warps", true));
-            } else if(destination.getType() == DestinationType.GlobalWarp) {
-                if(!player.hasPermission(WarpSystem.PERMISSION_USE_GLOBAL_WARPS)) {
-                    player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
-                    return;
-                }
+    @Override
+    public void write(JSONObject json) {
+        json.put("Name", this.displayName);
+        super.write(json);
+    }
 
-                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.ShortCut, destination, destination.getId(), 0,
-                        WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true));
-            }
+    @Override
+    public void apply(FeatureObject object) {
+        super.apply(object);
+
+        if(object instanceof Shortcut) {
+            this.displayName = ((Shortcut) object).displayName;
         }
     }
 
     public boolean isActive() {
-        if(this.destination == null || this.destination.getAdapter() == null) return false;
+        if(getDestination() == null || getDestination().getAdapter() == null) return false;
 
-        if(this.destination.getType() == DestinationType.GlobalWarp) {
+        if(getDestination().getType() == DestinationType.GlobalWarp) {
             return WarpSystem.getInstance().isOnBungeeCord();
         }
 
@@ -53,10 +58,18 @@ public class Shortcut {
     }
 
     public Destination getDestination() {
-        return destination;
+        return hasAction(Action.WARP) ? ((WarpAction) getAction(Action.WARP)).getValue() : null;
     }
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public Shortcut clone() {
+        return new Shortcut(this);
     }
 }

@@ -38,7 +38,6 @@ public class WarpSignGUI extends Editor<WarpSign> {
             public void cancel(WarpSign value) {
                 Sign s = ((Sign) sign.getLocation().getBlock().getState());
 
-
                 SignTools.updateSign(s, backupLines);
             }
         }, new ShowIcon(((Sign) sign.getLocation().getBlock().getState()).getLines()), new OptionPage(p, clone), new DestinationPage(p, getMainTitle(), clone.getDestination()));
