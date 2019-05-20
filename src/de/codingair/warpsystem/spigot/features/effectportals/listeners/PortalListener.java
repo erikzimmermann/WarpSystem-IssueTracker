@@ -61,7 +61,7 @@ public class PortalListener implements Listener {
                     player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     return;
                 } else portal.teleportToDestination(player);
-            } else if(portal.getDestination().getAdapter() instanceof PortalDestinationAdapter) {
+            } else if(portal.getDestination() != null && portal.getDestination().getAdapter() instanceof PortalDestinationAdapter) {
                 Location destination = portal.getDestination().buildLocation();
 
                 if(player.getWorld() == destination.getWorld() && e.getFrom().distance(destination) > portal.getTeleportRadius() && e.getTo().distance(destination) <= portal.getTeleportRadius()) {

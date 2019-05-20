@@ -13,11 +13,15 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.guis.GSimpleWarpList;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 public class PChooseDestination extends Page {
     private Callback<Destination> callback;
@@ -42,27 +46,28 @@ public class PChooseDestination extends Page {
 
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
-                new GSimpleWarpList(p, new GSimpleWarpList.Listener() {
+                new GSimpleWarpList(p) {
                     boolean got = false;
 
                     @Override
-                    public void onClickOnWarp(String warp, InventoryClickEvent e) {
+                    public void onClick(SimpleWarp warp, ClickType clickType) {
                         got = true;
-                        p.closeInventory();
-                        callback.accept(new Destination(warp, DestinationType.SimpleWarp));
+                        getPlayer().closeInventory();
+                        callback.accept(new Destination(warp.getName(), DestinationType.SimpleWarp));
                     }
 
                     @Override
                     public void onClose() {
                         if(got) return;
-                        Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> getLast().open());
+                        getLast().open();
                     }
 
                     @Override
-                    public String getLeftclickDescription() {
-                        return "§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose");
+                    public void buildItemDescription(List<String> lore) {
+                        lore.add("");
+                        lore.add("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose"));
                     }
-                }).open();
+                }.open();
             }
         }.setOption(option));
 
@@ -74,11 +79,11 @@ public class PChooseDestination extends Page {
 
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
-                new GGlobalWarpList(p, new GGlobalWarpList.Listener() {
+                new GGlobalWarpList(player){
                     boolean got = false;
 
                     @Override
-                    public void onClickOnGlobalWarp(String warp, InventoryClickEvent e) {
+                    public void onClick(String warp, ClickType clickType) {
                         got = true;
                         p.closeInventory();
                         callback.accept(new Destination(warp, DestinationType.GlobalWarp));
@@ -87,14 +92,15 @@ public class PChooseDestination extends Page {
                     @Override
                     public void onClose() {
                         if(got) return;
-                        Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> getLast().open());
+                        getLast().open();
                     }
 
                     @Override
-                    public String getLeftclickDescription() {
-                        return "§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose");
+                    public void buildItemDescription(List<String> lore) {
+                        lore.add("");
+                        lore.add("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose"));
                     }
-                }).open();
+                }.open();
             }
         }.setOption(option));
 

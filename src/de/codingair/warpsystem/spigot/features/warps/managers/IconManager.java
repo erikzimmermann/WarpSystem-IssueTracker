@@ -49,7 +49,9 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class IconManager implements Manager {
     private static ItemBuilder STANDARD_ITEM() {
@@ -139,8 +141,6 @@ public class IconManager implements Manager {
                 e.printStackTrace();
             }
         }
-
-        WarpSystem.log("      ...got " + iconList.size() + " " + (iconList.size() == 1 ? "Icon" : "Icons"));
 
 //        WarpSystem.log("    > Loading Categories");
         List<Category> categories = new ArrayList<>();
@@ -350,7 +350,70 @@ public class IconManager implements Manager {
             }
         }
 
+        int icons = this.icons.size();
+        clean();
+        if(icons > this.icons.size()) {
+            WarpSystem.log("      ...cleaned " + (icons - this.icons.size()) + " (total) icon(s)");
+        }
+
+        WarpSystem.log("      ...got " + this.icons.size() + " " + (this.icons.size() == 1 ? "Icon" : "Icons"));
         return success;
+    }
+
+    private void clean() {
+        Icon[] cats = new Icon[54];
+        int remove = 0;
+
+        List<Icon> icons = new ArrayList<>(this.icons);
+        List<String> names = new ArrayList<>();
+
+        for(Icon icon : icons) {
+            if(!icon.isCategory()) continue;
+
+            if(names.contains(icon.getName())) {
+                remove++;
+                this.icons.remove(icon);
+            } else names.add(icon.getName());
+        }
+
+        names.clear();
+
+        if(remove > 0) System.out.println("      ...cleaned " + remove + " category duplicates");
+        remove = 0;
+
+        icons.clear();
+        icons.addAll(getCategories());
+        for(Icon i : icons) {
+            Icon other = cats[i.getSlot()];
+            if(other != null) {
+                List<Icon> subOther = getIcons(other);
+                List<Icon> subI = getIcons(i);
+
+                if(subOther.size() < subI.size()) {
+                    remove++;
+                    remove(other);
+                    cats[i.getSlot()] = i;
+                } else {
+                    remove++;
+                    remove(i);
+                }
+
+                subOther.clear();
+                subI.clear();
+            } else cats[i.getSlot()] = i;
+        }
+
+        icons.clear();
+        icons.addAll(getIcons(null));
+
+        for(Icon icon : icons) {
+            if(icon.isCategory()) continue;
+
+            if(cats[icon.getSlot()] != null) remove(icon);
+            else cats[icon.getSlot()] = icon;
+        }
+
+        icons.clear();
     }
 
     public void save(boolean saver) {
@@ -516,7 +579,7 @@ public class IconManager implements Manager {
         List<Icon> icons = new ArrayList<>();
 
         for(Icon icon : this.icons) {
-            if((category == null && icon.getCategory() == null) || (category != null && category.equals(icon.getCategory()))) icons.add(icon);
+            if(Objects.equals(category, icon.getCategory())) icons.add(icon);
         }
 
         return icons;

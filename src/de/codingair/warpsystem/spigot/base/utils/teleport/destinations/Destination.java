@@ -50,6 +50,13 @@ public class Destination {
     }
 
     public Destination apply(Destination destination) {
+        if(destination == null) {
+            this.id = null;
+            this.adapter = null;
+            this.type = null;
+            return this;
+        }
+
         this.id = destination.id;
         this.adapter = destination.adapter;
         this.type = destination.type;

@@ -22,11 +22,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PList<E> extends Page {
     private static final int[] slots = {0, 1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 14, 15, 18, 19, 20, 21, 22, 23, 24};
     private List<ListItem<E>> items;
+    private List<ListItem<E>> backup;
+
     private boolean searchable;
     private String title;
     private Player player;
@@ -49,15 +52,28 @@ public class PList<E> extends Page {
     }
 
     public void initList(List<ListItem<E>> items) {
+        this.backup = new ArrayList<>(items);
         this.items = items;
         setTitle(TITLE(), true);
         initialize(player);
     }
 
     public void updateListItems() {
+        this.items.clear();
+        for(ListItem<E> i : this.backup) {
+            if(getSearching() == null || i.isSearched(getSearching())) this.items.add(i);
+        }
+
         for(int slot : slots) {
             ((SyncButton) getButton(slot)).update();
         }
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        this.items.clear();
+        this.backup.clear();
     }
 
     private int MAX_PAGE() {
@@ -155,7 +171,7 @@ public class PList<E> extends Page {
                                     getLast().open();
                                 });
                             }
-                        }, new ItemBuilder(Material.PAPER).setName(Lang.get("Search") + "...").getItem());
+                        }, new ItemBuilder(Material.PAPER).setName(Lang.get("Search")).getItem());
                     }
                 }
             }.setOption(option).setOnlyLeftClick(false));
@@ -170,5 +186,9 @@ public class PList<E> extends Page {
                 updateListItems();
             }
         }.setOption(option));
+    }
+
+    public String getSearching() {
+        return searching;
     }
 }

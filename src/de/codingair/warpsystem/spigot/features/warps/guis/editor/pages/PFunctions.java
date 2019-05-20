@@ -18,7 +18,7 @@ public class PFunctions extends PageItem {
     private Icon icon;
 
     public PFunctions(Player p, Icon icon) {
-        super(p, "§c§l§n" + Lang.get("Item_Editing"), new ItemBuilder(XMaterial.COMMAND_BLOCK).setName("§6§n" + Lang.get("Options")).getItem(), false);
+        super(p, "§c§n" + Lang.get("Item_Editing"), new ItemBuilder(XMaterial.COMMAND_BLOCK).setName("§6§n" + Lang.get("Options")).getItem(), false);
 
         this.icon = icon;
         initialize(p);

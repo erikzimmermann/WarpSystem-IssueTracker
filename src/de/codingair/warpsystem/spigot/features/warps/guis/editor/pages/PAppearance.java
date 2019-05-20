@@ -32,7 +32,7 @@ public class PAppearance extends PageItem {
     private Icon icon;
     
     public PAppearance(Player p, Icon icon) {
-        super(p, "§c§l§n" + Lang.get("Item_Editing"), new ItemBuilder(XMaterial.ITEM_FRAME).setName("§6§n" + Lang.get("Appearance")).getItem(), false);
+        super(p, "§c§n" + Lang.get("Item_Editing"), new ItemBuilder(XMaterial.ITEM_FRAME).setName("§6§n" + Lang.get("Appearance")).getItem(), false);
         
         this.icon = icon;
         this.startName = this.icon.getName();

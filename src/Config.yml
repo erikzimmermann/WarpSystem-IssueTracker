@@ -13,14 +13,14 @@ WarpSystem:
       # The number must be between inclusive 9 and inclusive 54 and must be divisible by 9.
       Size: 54
       Title:
-        Standard: '&c&l&nWarps&r'
-        In_Category: '&c&l&nWarps&r &c@%CATEGORY%'
+        Standard: '&c&nWarps&r'
+        In_Category: '&c&nWarps&r &c@%CATEGORY%'
     User:
       # The number must be between inclusive 9 and inclusive 54 and must be divisible by 9.
       Size: 54
       Title:
-        Standard: '&c&l&nWarps&r'
-        In_Category: '&c&l&nWarps&r &c@%CATEGORY%'
+        Standard: '&c&nWarps&r'
+        In_Category: '&c&nWarps&r &c@%CATEGORY%'
 
   Teleport:
     Animation_After_Teleport:
