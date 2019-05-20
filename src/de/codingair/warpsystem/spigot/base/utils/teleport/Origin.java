@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport;
 
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
+import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
 
@@ -15,7 +16,7 @@ public enum Origin {
     WarpSign(WarpSign.class, "WarpSigns"),
     EffectPortal(de.codingair.warpsystem.spigot.features.effectportals.utils.Portal.class, "Portals"),
     NativePortal(de.codingair.warpsystem.spigot.features.nativeportals.Portal.class, "NativePortals"),
-    ShortCut,
+    ShortCut(Shortcut.class, "Shortcuts"),
     CommandBlock,
     TeleportCommand,
     UNKNOWN;

@@ -12,6 +12,7 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.NameButton;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.PermissionButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
 import de.codingair.warpsystem.spigot.features.nativeportals.PortalEditor;
@@ -102,5 +103,7 @@ public class PAppearance extends PageItem {
                 }, WarpSystem.getInstance());
             }
         }.setOption(option));
+
+        addButton(new PermissionButton(3, 2, portal).setOption(option));
     }
 }
