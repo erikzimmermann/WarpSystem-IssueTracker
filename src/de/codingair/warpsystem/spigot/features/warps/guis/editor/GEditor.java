@@ -39,6 +39,6 @@ public class GEditor extends de.codingair.warpsystem.spigot.base.guis.editor.Edi
                 public ItemStack buildIcon() {
                     return clone.getItem();
                 }
-            }, new PAppearance(p, clone), new PFunctions(p, clone), icon.isCategory() ? null : new DestinationPage(p, "§c§l§n" + Lang.get("Item_Editing"), clone.getAction(WarpAction.class).getValue()));
+            }, new PAppearance(p, clone), new PFunctions(p, clone), icon.isCategory() ? null : new DestinationPage(p, "§c§n" + Lang.get("Item_Editing"), clone.getAction(WarpAction.class).getValue()));
     }
 }

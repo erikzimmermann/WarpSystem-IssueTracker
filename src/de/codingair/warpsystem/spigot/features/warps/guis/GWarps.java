@@ -68,8 +68,8 @@ public class GWarps extends GUI {
 
         return listener == null || listener.getTitle() == null ?
                 ChatColor.translateAlternateColorCodes('&', (category == null || category.getName() == null ?
-                        config.getString("WarpSystem.GUI." + key + ".Title.Standard", "&c&l&nWarps&r") :
-                        config.getString("WarpSystem.GUI." + key + ".Title.In_Category", "&c&l&nWarps&r &c@%CATEGORY%").replace("%CATEGORY%", category.getNameWithoutColor())))
+                        config.getString("WarpSystem.GUI." + key + ".Title.Standard", "&c&nWarps&r") :
+                        config.getString("WarpSystem.GUI." + key + ".Title.In_Category", "&c&nWarps&r &c@%CATEGORY%").replace("%CATEGORY%", category.getNameWithoutColor())))
                 : listener.getTitle();
     }
 

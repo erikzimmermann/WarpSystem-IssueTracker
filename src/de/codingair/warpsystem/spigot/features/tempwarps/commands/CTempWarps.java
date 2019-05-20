@@ -284,6 +284,10 @@ public class CTempWarps extends CommandBuilder {
                                 lore.add("");
                                 lore.add("§8» §7" + Lang.get("Edit"));
                             }
+
+                            @Override
+                            public void onClose() {
+                            }
                         }.open();
                     } else sender.sendMessage(Lang.getPrefix() + "§cThe console can only give keys away.");
                     return false;

@@ -201,7 +201,7 @@ public class Portal extends FeatureObject implements Removable {
         if(isDisabled()) return;
 
         org.bukkit.Location destination = null;
-        if(getDestination().getAdapter() instanceof PortalDestinationAdapter) {
+        if(getDestination() != null && getDestination().getAdapter() instanceof PortalDestinationAdapter) {
             destination = getDestination().buildLocation();
         }
 
@@ -243,7 +243,7 @@ public class Portal extends FeatureObject implements Removable {
         if(this.destinationAnim != null && this.destinationAnim.isRunning()) this.destinationAnim.setRunning(false);
 
         org.bukkit.Location destination = null;
-        if(getDestination().getAdapter() instanceof PortalDestinationAdapter) {
+        if(getDestination() != null && getDestination().getAdapter() instanceof PortalDestinationAdapter) {
             destination = getDestination().buildLocation();
         } else if(this.destinationAnim != null) this.destinationAnim = null;
 
@@ -454,6 +454,7 @@ public class Portal extends FeatureObject implements Removable {
     }
 
     public FeatureObject perform(Player player, boolean toStart) {
+        if(getDestination() == null) return this;
         super.perform(player, toStart ? this.destinationName : this.startName, toStart ? new Destination(new LocationAdapter(this.start)) : getAction(WarpAction.class).getValue(), this.teleportSound, true, !(getDestination().getAdapter() instanceof PortalDestinationAdapter));
         return this;
     }

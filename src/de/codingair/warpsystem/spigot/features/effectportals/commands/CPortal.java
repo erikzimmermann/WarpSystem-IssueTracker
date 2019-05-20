@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.features.effectportals.commands;
 
+import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.commands.BaseComponent;
 import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
@@ -10,11 +11,12 @@ import de.codingair.codingapi.utils.Node;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.effectportals.PortalEditor;
-import de.codingair.warpsystem.spigot.features.effectportals.guis.GPortalList;
+import de.codingair.warpsystem.spigot.features.effectportals.guis.GEffectPortalList;
+import de.codingair.warpsystem.spigot.features.effectportals.utils.Portal;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class CPortal extends CommandBuilder {
@@ -54,11 +56,27 @@ public class CPortal extends CommandBuilder {
 
 
         //LIST
-
         getBaseComponent().addChild(new CommandComponent("list") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                new GPortalList((Player) sender).open();
+                new GEffectPortalList((Player) sender) {
+                    @Override
+                    public void onClick(Portal value, ClickType clickType) {
+                        ((Player) sender).teleport(value.getStart());
+                        Sound.ENDERMAN_TELEPORT.playSound((Player) sender);
+                        new PortalEditor((Player) sender, value).start();
+                    }
+
+                    @Override
+                    public void onClose() {
+                    }
+
+                    @Override
+                    public void buildItemDescription(List<String> lore) {
+                        lore.add("");
+                        lore.add("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Edit"));
+                    }
+                }.open();
                 return false;
             }
         });

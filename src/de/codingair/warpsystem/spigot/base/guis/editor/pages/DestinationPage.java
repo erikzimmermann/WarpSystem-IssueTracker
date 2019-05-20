@@ -18,6 +18,7 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.guis.GSimpleWarpList;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestServerStatusPacket;
 import org.bukkit.ChatColor;
@@ -67,34 +68,34 @@ public class DestinationPage extends PageItem {
             public void onClick(InventoryClickEvent e, Player player) {
                 if(e.isLeftClick()) {
                     getLast().setClosingForGUI(true);
-                    new GSimpleWarpList(p, new GSimpleWarpList.Listener() {
+                    new GSimpleWarpList(p) {
                         @Override
-                        public void onClickOnWarp(String warp, InventoryClickEvent e) {
-                            destination.setId(warp);
+                        public void onClick(SimpleWarp value, ClickType clickType) {
+                            destination.setId(value.getName());
                             destination.setType(DestinationType.SimpleWarp);
                             destination.setAdapter(DestinationType.SimpleWarp.getInstance());
                             update();
 
                             if(WarpSystem.getInstance().isOnBungeeCord()) {
-                                ((SyncButton) getButton(2, 2)).update();
-                                ((SyncButton) getButton(3, 2)).update();
+                                ((SyncButton) DestinationPage.this.getButton(2, 2)).update();
+                                ((SyncButton) DestinationPage.this.getButton(3, 2)).update();
                             }
 
+                            this.setClosingForGUI(true);
                             getLast().open();
-                            getLast().setClosingForGUI(false);
                         }
 
                         @Override
                         public void onClose() {
                             getLast().open();
-                            getLast().setClosingForGUI(false);
                         }
 
                         @Override
-                        public String getLeftclickDescription() {
-                            return "§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose");
+                        public void buildItemDescription(List<String> lore) {
+                            lore.add("");
+                            lore.add("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose"));
                         }
-                    }).open();
+                    }.open();
                 } else if(e.isRightClick()) {
                     destination.setId(null);
                     destination.setAdapter(null);
@@ -130,32 +131,32 @@ public class DestinationPage extends PageItem {
                 public void onClick(InventoryClickEvent e, Player player) {
                     if(e.isLeftClick()) {
                         getLast().setClosingForGUI(true);
-                        new GGlobalWarpList(p, new GGlobalWarpList.Listener() {
+                        new GGlobalWarpList(player){
                             @Override
-                            public void onClickOnGlobalWarp(String warp, InventoryClickEvent e) {
+                            public void onClick(String warp, ClickType clickType) {
                                 destination.setId(warp);
                                 destination.setType(DestinationType.GlobalWarp);
                                 destination.setAdapter(DestinationType.GlobalWarp.getInstance());
                                 update();
 
-                                ((SyncButton) getButton(1, 2)).update();
-                                ((SyncButton) getButton(3, 2)).update();
+                                ((SyncButton) DestinationPage.this.getButton(1, 2)).update();
+                                ((SyncButton) DestinationPage.this.getButton(3, 2)).update();
 
+                                this.setClosingForGUI(true);
                                 getLast().open();
-                                getLast().setClosingForGUI(false);
                             }
 
                             @Override
                             public void onClose() {
                                 getLast().open();
-                                getLast().setClosingForGUI(false);
                             }
 
                             @Override
-                            public String getLeftclickDescription() {
-                                return "§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose");
+                            public void buildItemDescription(List<String> lore) {
+                                lore.add("");
+                                lore.add("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose"));
                             }
-                        }).open();
+                        }.open();
                     } else if(e.isRightClick()) {
                         destination.setId(null);
                         destination.setAdapter(null);

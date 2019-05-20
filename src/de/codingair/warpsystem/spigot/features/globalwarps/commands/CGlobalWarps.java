@@ -16,7 +16,7 @@ import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.ClickType;
 
 import java.util.List;
 
@@ -134,9 +134,9 @@ public class CGlobalWarps extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("list") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                new GGlobalWarpList((Player) sender, new GGlobalWarpList.Listener() {
+                new GGlobalWarpList((Player) sender){
                     @Override
-                    public void onClickOnGlobalWarp(String warp, InventoryClickEvent e) {
+                    public void onClick(String warp, ClickType clickType) {
                         WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, Origin.GlobalWarp, new Destination(warp, DestinationType.GlobalWarp), warp, 0, true, true,
                                 WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true), false, null);
                     }
@@ -146,10 +146,11 @@ public class CGlobalWarps extends CommandBuilder {
                     }
 
                     @Override
-                    public String getLeftclickDescription() {
-                        return Lang.get("GlobalWarp_List_Leftclick");
+                    public void buildItemDescription(List<String> lore) {
+                        lore.add("");
+                        lore.add(Lang.get("GlobalWarp_List_Leftclick"));
                     }
-                }).open();
+                }.open();
                 return false;
             }
         });
