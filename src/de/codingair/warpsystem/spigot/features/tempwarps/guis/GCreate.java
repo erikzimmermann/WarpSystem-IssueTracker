@@ -105,7 +105,7 @@ public class GCreate extends SimpleGUI {
                                 p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Renew_Finished").replace("%TEMP_WARP%", warp.getName()).replace("%COINS%", price + ""));
                             }
 
-                            AdapterType.getActive().setMoney(p, AdapterType.getActive().getMoney(p) - warp.getCosts());
+                            AdapterType.getActive().withdraw(p, warp.getCosts());
 
                             if(key != null) {
                                 TempWarpManager.getManager().getKeys(p).remove(key.getValue().getStrippedName());

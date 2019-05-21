@@ -255,7 +255,7 @@ public class TeleportManager {
                 }
 
                 this.teleports.add(teleport);
-                AdapterType.getActive().setMoney(player, bank - costs);
+                AdapterType.getActive().withdraw(player, costs);
             } else this.teleports.add(teleport);
         } else this.teleports.add(teleport);
 

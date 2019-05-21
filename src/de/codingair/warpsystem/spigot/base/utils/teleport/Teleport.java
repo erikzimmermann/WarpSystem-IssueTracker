@@ -124,7 +124,7 @@ public class Teleport {
 
     private void payBack() {
         if(AdapterType.getActive() != null) {
-            AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) + this.costs);
+            AdapterType.getActive().deposit(player, this.costs);
         }
     }
 

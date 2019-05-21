@@ -69,7 +69,7 @@ public class GEditor extends SimpleGUI {
                             Sound.CLICK.playSound(p);
 
                             int costs = warp.getCosts() - warp.backupped().getCosts();
-                            if(costs != 0) AdapterType.getActive().setMoney(p, AdapterType.getActive().getMoney(p) - warp.getCosts());
+                            if(costs != 0) AdapterType.getActive().withdraw(p, warp.getCosts());
                             warp.apply();
 
                             if(costs > 0) {

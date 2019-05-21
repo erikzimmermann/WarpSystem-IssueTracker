@@ -161,7 +161,7 @@ public abstract class ActionIcon extends Icon implements Serializable {
                     return true;
                 }
 
-                AdapterType.getActive().setMoney(p, bank - prize);
+                AdapterType.getActive().withdraw(p, prize);
                 break;
         }
 

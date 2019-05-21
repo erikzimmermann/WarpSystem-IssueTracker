@@ -44,7 +44,7 @@ public class CostsAction extends ActionObject<Double> {
             return false;
         }
 
-        AdapterType.getActive().setMoney(player, bank - prize);
+        AdapterType.getActive().withdraw(player, prize);
         return true;
     }
 
