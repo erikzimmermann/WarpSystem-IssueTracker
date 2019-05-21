@@ -9,7 +9,7 @@ import java.net.URLConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class UpdateChecker {
+public class UpdateNotifier {
     private String version = null;
     private String download = null;
     private String updateInfo = null;
@@ -20,7 +20,7 @@ public class UpdateChecker {
     private boolean needsUpdate = false;
     private UpdateCheckerAdapter adapter;
 
-    public UpdateChecker() {
+    public UpdateNotifier() {
         this.adapter = WarpSystem.getInstance().isPremium() ? new PremiumUpdateChecker() : new FreeUpdateChecker();
     }
 

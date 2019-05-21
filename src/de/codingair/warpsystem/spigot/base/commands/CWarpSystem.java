@@ -229,7 +229,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 Player p = (Player) sender;
 
-                if(WarpSystem.getInstance().getUpdateChecker().getDownload() == null) {
+                if(WarpSystem.getInstance().getUpdateNotifier().getDownload() == null) {
                     p.sendMessage(Lang.getPrefix() + "§cFetching data... Please try again.");
                     return false;
                 }
@@ -238,7 +238,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                 TextComponent click = new TextComponent("§chere");
                 TextComponent tc1 = new TextComponent("§7« to read all new stuff!");
 
-                click.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, WarpSystem.getInstance().getUpdateChecker().getDownload()));
+                click.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, WarpSystem.getInstance().getUpdateNotifier().getDownload()));
                 click.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
 
                 tc0.addExtra(click);

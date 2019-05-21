@@ -7,9 +7,9 @@ import de.codingair.codingapi.files.FileManager;
 import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.server.fancymessages.FancyMessage;
 import de.codingair.codingapi.server.fancymessages.MessageTypes;
-import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
+import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.api.SpigotAPI;
 import de.codingair.warpsystem.spigot.base.commands.CWarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -19,7 +19,7 @@ import de.codingair.warpsystem.spigot.base.managers.HeadManager;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.managers.UUIDManager;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
-import de.codingair.warpsystem.spigot.base.utils.UpdateChecker;
+import de.codingair.warpsystem.spigot.base.utils.UpdateNotifier;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestInitialPacket;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
 import de.codingair.warpsystem.utils.Manager;
@@ -30,10 +30,10 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
@@ -86,7 +86,7 @@ public class WarpSystem extends JavaPlugin {
     private DataManager dataManager;
     private HeadManager headManager = new HeadManager();
 
-    private UpdateChecker updateChecker;
+    private UpdateNotifier updateNotifier;
     private boolean runningFirstTime = false;
 
     private Timer timer = new Timer();
@@ -103,7 +103,7 @@ public class WarpSystem extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        this.updateChecker = new UpdateChecker();
+        this.updateNotifier = new UpdateNotifier();
 
         try {
             checkOldDirectory();
@@ -174,21 +174,7 @@ public class WarpSystem extends JavaPlugin {
             log(" ");
 
             activated = true;
-            Bukkit.getScheduler().runTaskLaterAsynchronously(WarpSystem.getInstance(), () -> {
-                updateAvailable = WarpSystem.this.updateChecker.read();
-
-                if(updateAvailable) {
-                    String v = updateChecker.getVersion();
-                    if(!v.startsWith("v")) v = "v" + v;
-
-                    log("-----< WarpSystem >-----");
-                    log("New update available [" + v + " - " + WarpSystem.this.updateChecker.getUpdateInfo() + "].");
-                    log("Download it on\n\n" + updateChecker.getDownload() + "\n");
-                    log("------------------------");
-                }
-
-                WarpSystem.getInstance().notifyPlayers(null);
-            }, 20L);
+            startUpdateNotifier();
 
             this.ERROR = false;
 
@@ -281,6 +267,31 @@ public class WarpSystem extends JavaPlugin {
         this.uuidManager.removeAll();
     }
 
+    public void startUpdateNotifier() {
+        Value<BukkitTask> task = new Value<>(null);
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                updateAvailable = WarpSystem.this.updateNotifier.read();
+
+                if(updateAvailable) {
+                    String v = updateNotifier.getVersion();
+                    if(!v.startsWith("v")) v = "v" + v;
+
+                    log("-----< WarpSystem >-----");
+                    log("New update available [" + v + " - " + WarpSystem.this.updateNotifier.getUpdateInfo() + "].");
+                    log("Download it on\n\n" + updateNotifier.getDownload() + "\n");
+                    log("------------------------");
+
+                    WarpSystem.getInstance().notifyPlayers(null);
+                    task.getValue().cancel();
+                }
+            }
+        };
+
+        task.setValue(Bukkit.getScheduler().runTaskTimerAsynchronously(WarpSystem.getInstance(), runnable, 20L, 5 * 60 * 20L));
+    }
+
     public void reload(boolean save) {
         this.shouldSave = save;
 
@@ -313,7 +324,7 @@ public class WarpSystem extends JavaPlugin {
                 log("                       WarpSystem [" + getDescription().getVersion() + "]");
                 if(updateAvailable) {
                     log(" ");
-                    log("New update available [" + updateChecker.getVersion() + " - " + WarpSystem.this.updateChecker.getUpdateInfo() + "]. Download it on \n\n" + updateChecker.getDownload() + "\n");
+                    log("New update available [" + updateNotifier.getVersion() + " - " + WarpSystem.this.updateNotifier.getUpdateInfo() + "]. Download it on \n\n" + updateNotifier.getDownload() + "\n");
                 }
                 log(" ");
                 log("Status:");
@@ -434,14 +445,14 @@ public class WarpSystem extends JavaPlugin {
             }
         } else {
             if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && WarpSystem.updateAvailable) {
-                String v = updateChecker.getVersion();
+                String v = updateNotifier.getVersion();
                 if(!v.startsWith("v")) v = "v" + v;
 
-                TextComponent tc0 = new TextComponent(Lang.getPrefix() + "§7A new update is available §8[§b" + v + "§8 - §b" + WarpSystem.getInstance().updateChecker.getUpdateInfo() + "§8]§7. Download it §7»");
+                TextComponent tc0 = new TextComponent(Lang.getPrefix() + "§7A new update is available §8[§b" + v + "§8 - §b" + WarpSystem.getInstance().updateNotifier.getUpdateInfo() + "§8]§7. Download it §7»");
                 TextComponent click = new TextComponent("§chere");
                 TextComponent tc1 = new TextComponent("§7«!");
 
-                click.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, getUpdateChecker().getDownload()));
+                click.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, getUpdateNotifier().getDownload()));
                 click.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
 
                 tc0.addExtra(click);
@@ -524,8 +535,8 @@ public class WarpSystem extends JavaPlugin {
         this.server = server;
     }
 
-    public UpdateChecker getUpdateChecker() {
-        return updateChecker;
+    public UpdateNotifier getUpdateNotifier() {
+        return updateNotifier;
     }
 
     public UUIDManager getUUIDManager() {
