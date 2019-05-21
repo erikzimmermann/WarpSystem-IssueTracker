@@ -51,7 +51,7 @@ public class TeleportManager {
                 if(teleported == TeleportResult.TELEPORTED) {
                     Player owner = warp.getOnlineOwner();
                     if(owner == null) warp.setInactiveSales(warp.getInactiveSales() + costs);
-                    else AdapterType.getActive().setMoney(owner, AdapterType.getActive().getMoney(owner) + costs);
+                    else AdapterType.getActive().deposit(owner, costs);
                 }
             }
         };

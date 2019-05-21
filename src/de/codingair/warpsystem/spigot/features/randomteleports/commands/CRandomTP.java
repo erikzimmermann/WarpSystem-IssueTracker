@@ -112,7 +112,7 @@ public class CRandomTP extends CommandBuilder {
                                 double bank = AdapterType.getActive().getMoney((Player) sender);
 
                                 if(bank >= costs) {
-                                    AdapterType.getActive().setMoney(player, bank - costs);
+                                    AdapterType.getActive().withdraw(player, costs);
                                     UUID u = WarpSystem.getInstance().getUUIDManager().get((Player) sender);
                                     RandomTeleporterManager.getInstance().setBoughtTeleports(u, RandomTeleporterManager.getInstance().getBoughtTeleports(u) + 1);
                                     sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Buy_Finished").replace("%AMOUNT%", (costs + "").endsWith(".0") ? (costs + "").substring(0, (costs + "").length() - 2) : (costs + "")));

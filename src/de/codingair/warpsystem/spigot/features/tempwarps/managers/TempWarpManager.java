@@ -11,6 +11,7 @@ import de.codingair.codingapi.utils.Ticker;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.money.Adapter;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.tempwarps.commands.CTempWarp;
@@ -486,16 +487,17 @@ public class TempWarpManager implements Manager, Ticker {
 
     public void updateWarps(Player player) {
         List<TempWarp> correct = getWarps(player);
+        Adapter adapter = AdapterType.getActive();
 
-        int inactiveSales = 0;
-        for(TempWarp warp : correct) {
-            warp.setLastKnownName(player.getName());
-            inactiveSales += warp.getInactiveSales();
-            warp.setInactiveSales(0);
-        }
+        if(adapter != null && adapter.isReady()) {
+            int inactiveSales = 0;
+            for(TempWarp warp : correct) {
+                warp.setLastKnownName(player.getName());
+                inactiveSales += warp.getInactiveSales();
+                warp.setInactiveSales(0);
+            }
 
-        if(inactiveSales > 0) {
-            AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) + inactiveSales);
+            adapter.deposit(player, inactiveSales);
             player.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Inactive_Win").replace("%AMOUNT%", inactiveSales + ""));
         }
 

@@ -57,7 +57,7 @@ public class GDelete extends SimpleGUI {
                         TempWarpManager.getManager().delete(warp);
 
                         int costs = getRefund(warp);
-                        AdapterType.getActive().setMoney(p, AdapterType.getActive().getMoney(p) + costs);
+                        AdapterType.getActive().deposit(p, costs);
 
                         if(costs > 0) {
                             p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Deleted_Refund").replace("%TEMP_WARP%", warp.getName()).replace("%COINS%", costs + ""));

@@ -25,7 +25,7 @@ public class GlobalWarpAdapter implements DestinationAdapter {
                         player.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists").replace("%GLOBAL_WARP%", id));
 
                         if(AdapterType.getActive() != null && costs != 0) {
-                            AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) + costs);
+                            AdapterType.getActive().deposit(player, costs);
                         }
 
                         if(callback != null) callback.accept(TeleportResult.DESTINATION_DOES_NOT_EXIST);
@@ -35,7 +35,7 @@ public class GlobalWarpAdapter implements DestinationAdapter {
                         player.sendMessage(Lang.getPrefix() + Lang.get("Server_Is_Not_Online"));
 
                         if(AdapterType.getActive() != null && costs != 0) {
-                            AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) + costs);
+                            AdapterType.getActive().deposit(player, costs);
                         }
 
                         if(callback != null) callback.accept(TeleportResult.SERVER_NOT_AVAILABLE);

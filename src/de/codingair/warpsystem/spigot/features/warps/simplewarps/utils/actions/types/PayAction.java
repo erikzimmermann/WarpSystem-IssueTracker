@@ -18,7 +18,7 @@ public class PayAction implements Action {
     @Override
     public void onRun(Player player) {
         Adapter a = AdapterType.getActive();
-        if(a != null) a.setMoney(player, a.getMoney(player) - coins);
+        if(a != null) a.withdraw(player, coins);
     }
 
     @Override
