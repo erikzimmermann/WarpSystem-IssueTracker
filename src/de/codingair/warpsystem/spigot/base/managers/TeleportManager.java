@@ -6,10 +6,9 @@ import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.api.events.PlayerGlobalWarpEvent;
-import de.codingair.warpsystem.spigot.api.events.PlayerWarpEvent;
 import de.codingair.warpsystem.spigot.api.events.utils.GlobalWarp;
-import de.codingair.warpsystem.spigot.api.events.utils.Warp;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.utils.options.GeneralOptions;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Teleport;
@@ -31,11 +30,9 @@ public class TeleportManager {
     private List<Particle> particles = new ArrayList<>();
     private List<Teleport> teleports = new ArrayList<>();
 
-    private boolean canMove = false;
-    private int seconds = 5;
     private int particleId = 0;
     private double radius = 1.5;
-    private boolean showMessage = true;
+    private GeneralOptions options;
 
     public TeleportManager() {
         particles.add(Particle.FIREWORKS_SPARK);
@@ -68,11 +65,10 @@ public class TeleportManager {
      */
     public boolean load() {
         boolean success = true;
+        
+        this.options = WarpSystem.getOptions(GeneralOptions.class);
 
         this.particleId = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Animation", 17);
-        this.seconds = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Delay", 5);
-        this.canMove = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Teleport.Allow_Move", false);
-        this.showMessage = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true);
         return success;
     }
 
@@ -80,8 +76,6 @@ public class TeleportManager {
         FileConfiguration config = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig();
 
         config.set("WarpSystem.Teleport.Animation", this.particleId);
-        config.set("WarpSystem.Teleport.Delay", this.seconds);
-        config.set("WarpSystem.Teleport.Allow_Move", this.canMove);
 
         WarpSystem.getInstance().getFileManager().getFile("Config").saveConfig();
     }
@@ -91,23 +85,23 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean message) {
-        teleport(player, origin, destination, displayName, costs, false, this.canMove, message, false, null);
+        teleport(player, origin, destination, displayName, costs, false, this.options.isAllowMove(), message, false, null);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean message) {
-        teleport(player, origin, destination, displayName, permission, costs, false, this.canMove, message, false, null);
+        teleport(player, origin, destination, displayName, permission, costs, false, this.options.isAllowMove(), message, false, null);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean message, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, costs, false, this.canMove, message, false, callback);
+        teleport(player, origin, destination, displayName, costs, false, this.options.isAllowMove(), message, false, callback);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean message, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, permission, costs, false, this.canMove, message, false, callback);
+        teleport(player, origin, destination, displayName, permission, costs, false, this.options.isAllowMove(), message, false, callback);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, costs, false, this.canMove, true, false, callback);
+        teleport(player, origin, destination, displayName, costs, false, this.options.isAllowMove(), true, false, callback);
     }
 
     public void instantTeleport(Player player, Origin origin, Destination destination, String displayName) {
@@ -119,7 +113,7 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean message, boolean silent, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, costs, skip, this.canMove, message, silent, callback);
+        teleport(player, origin, destination, displayName, costs, skip, this.options.isAllowMove(), message, silent, callback);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, boolean message, boolean silent, Callback<TeleportResult> callback) {
@@ -143,7 +137,7 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, String message, boolean silent, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, costs, skip, this.canMove, message, silent, callback);
+        teleport(player, origin, destination, displayName, costs, skip, this.options.isAllowMove(), message, silent, callback);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, String message, boolean silent, Callback<TeleportResult> callback) {
@@ -159,7 +153,7 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, String message, boolean silent, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, permission, costs, skip, this.canMove, message, silent, callback);
+        teleport(player, origin, destination, displayName, permission, costs, skip, this.options.isAllowMove(), message, silent, callback);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, String message, boolean silent, Callback<TeleportResult> callback) {
@@ -190,7 +184,7 @@ public class TeleportManager {
             return;
         }
 
-        int seconds = this.seconds;
+        int seconds = this.options.getTeleportDelay();
         Callback<TeleportResult> resultCallback = null;
 
         if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) seconds = 0;
@@ -285,26 +279,6 @@ public class TeleportManager {
 
     public boolean isTeleporting(Player p) {
         return getTeleport(p) != null;
-    }
-
-    public boolean isCanMove() {
-        return canMove;
-    }
-
-    public boolean isShowMessage() {
-        return showMessage;
-    }
-
-    public void setCanMove(boolean canMove) {
-        this.canMove = canMove;
-    }
-
-    public int getSeconds() {
-        return seconds;
-    }
-
-    public void setSeconds(int seconds) {
-        this.seconds = seconds;
     }
 
     public int getParticleId() {
