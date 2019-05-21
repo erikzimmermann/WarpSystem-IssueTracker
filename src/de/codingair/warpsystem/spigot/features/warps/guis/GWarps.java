@@ -12,6 +12,7 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.guis.options.OptionsGUI;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.BoundAction;
@@ -204,7 +205,7 @@ public class GWarps extends GUI {
                             reinitialize();
                             setTitle(getTitle(GWarps.this.category, listener, getPlayer()));
                         } else {
-                            new GConfig(p, category, editing).open();
+                            new OptionsGUI(getPlayer()).open();
                         }
                     }
                 }

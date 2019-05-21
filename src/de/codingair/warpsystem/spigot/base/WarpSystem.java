@@ -20,6 +20,9 @@ import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.managers.UUIDManager;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.UpdateNotifier;
+import de.codingair.warpsystem.spigot.base.utils.options.GeneralOptions;
+import de.codingair.warpsystem.spigot.base.utils.options.OptionBundle;
+import de.codingair.warpsystem.spigot.base.utils.options.Options;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestInitialPacket;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
 import de.codingair.warpsystem.utils.Manager;
@@ -75,6 +78,8 @@ public class WarpSystem extends JavaPlugin {
     public static final int PREMIUM_THREAD_ID = 369986;
     public static final int FREE_THREAD_ID = 182037;
 
+    private OptionBundle options;
+
     private boolean onBungeeCord = false;
     private String bungeePluginVersion = null;
     private String server = null;
@@ -102,16 +107,18 @@ public class WarpSystem extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        timer.start();
+
         instance = this;
         this.updateNotifier = new UpdateNotifier();
+
+        loadOptions();
 
         try {
             checkOldDirectory();
 
             API.getInstance().onEnable(this);
             SpigotAPI.getInstance().onEnable(this);
-
-            timer.start();
 
             log(" ");
             log("__________________________________________________________");
@@ -267,7 +274,21 @@ public class WarpSystem extends JavaPlugin {
         this.uuidManager.removeAll();
     }
 
-    public void startUpdateNotifier() {
+    private void loadOptions() {
+        if(this.options == null) this.options = new OptionBundle(new GeneralOptions());
+        this.options.read();
+    }
+
+    public void reloadOptions(boolean save) {
+        if(save) this.options.write();
+        this.options.read();
+    }
+
+    public void saveOptions() {
+        this.options.write();
+    }
+
+    private void startUpdateNotifier() {
         Value<BukkitTask> task = new Value<>(null);
         Runnable runnable = new Runnable() {
             @Override
@@ -337,6 +358,7 @@ public class WarpSystem extends JavaPlugin {
                 if(!saver) log("Saving options");
                 fileManager.getFile("Config").loadConfig();
                 fileManager.getFile("Config").getConfig().set("WarpSystem.Maintenance", maintenance);
+                this.options.write();
 
                 if(!saver) log("Saving features");
                 this.dataManager.save(saver);
@@ -561,5 +583,19 @@ public class WarpSystem extends JavaPlugin {
 
     public final boolean isPremium() {
         return premium;
+    }
+
+    public OptionBundle getOptions() {
+        return options;
+    }
+
+    public static <E extends Options> E getOptions(Class<? extends E> clazz) {
+        if(instance == null) return null;
+
+        for(Options option : getInstance().getOptions().getOptions()) {
+            if(option.getClass().equals(clazz)) return (E) option;
+        }
+
+        return null;
     }
 }
