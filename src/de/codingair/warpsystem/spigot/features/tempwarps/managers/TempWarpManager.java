@@ -177,7 +177,7 @@ public class TempWarpManager implements Manager, Ticker {
 
         saveTemplates();
         for(Player player : Bukkit.getOnlinePlayers()) {
-            saveAndRemoveKeys(player, false);
+            saveKeys(player, false);
         }
 
         config.set("Warps", data);
@@ -191,6 +191,7 @@ public class TempWarpManager implements Manager, Ticker {
     public void destroy() {
         this.warps.clear();
         this.reserved.clear();
+        this.keyList.clear();
     }
 
     @Override
