@@ -50,7 +50,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 Player p = (Player) sender;
-                getInfoMessage().send(p);
+                sendInfoMessage(p);
             }
 
             @Override
@@ -230,7 +230,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 Player p = (Player) sender;
-                getInfoMessage().send(p);
+                sendInfoMessage(p);
                 return false;
             }
         }.setOnlyPlayers(true));
@@ -578,10 +578,16 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
         getComponent("shortcut", "add").removeChild("globalwarp");
     }
 
-    private static FancyMessage getInfoMessage() {
-        FancyMessage fancyMessage = new FancyMessage(MessageTypes.INFO_MESSAGE, true, "§6§nWarpSystem", "", "§3Author: §bCodingAir", "§3Version: §b" + WarpSystem.getInstance().getDescription().getVersion(), "", "§eAvailable on SpigotMc!");
-        fancyMessage.setAlignment(TextAlignment.CENTER);
-        fancyMessage.setCentered(true);
-        return fancyMessage;
+    private static void sendInfoMessage(Player player) {
+        player.sendMessage(new String[] {
+                "",
+                "§7§m               §7< §6WarpSystem §7>§m               §7",
+                "",
+                "     §3Author: §bCodingAir",
+                "     §3Version: §bv" + WarpSystem.getInstance().getDescription().getVersion() + " §7["+ (WarpSystem.getInstance().isPremium() ? "§6Premium" : "§bFree") + "§7]",
+                "",
+                "     §eAvailable on SpigotMc!",
+                ""
+        });
     }
 }
