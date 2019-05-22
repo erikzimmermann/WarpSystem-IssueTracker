@@ -5,6 +5,7 @@ import de.codingair.warpsystem.spigot.api.players.Head;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import org.bukkit.entity.Player;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class HeadManager {
@@ -34,7 +35,7 @@ public class HeadManager {
         Head head = new Head(player);
 
         String id = this.file.getConfig().getString(uuid.toString());
-        if(!head.getId().equals(id)) {
+        if(!Objects.equals(head.getId(), id)) {
             this.file.getConfig().set(uuid.toString(), head.getId());
             this.file.saveConfig();
             return true;
