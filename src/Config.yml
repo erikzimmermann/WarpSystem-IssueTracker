@@ -129,6 +129,8 @@ WarpSystem:
       ProtectedRegions: false
     #If enabled, players won't be able to buy TempWarps. The only way to create TempWarps then is with keys (1x Key = 1x TempWarp). Create templates and give your players keys with the "/twarps keys" command!
     Keys: false
+    #Turn this to true, if you want, that all TempWarps should be public when you create them. The state can always be changed.
+    Public_as_create_state: false
 
   EffectPortals:
     #Max distance between particle and player
