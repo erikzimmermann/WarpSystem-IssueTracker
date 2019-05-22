@@ -61,6 +61,7 @@ public class Hologram extends HotbarGUI {
         setItem(4, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Start_Name") + ": '§r" + menu.getEditor().getPortal().getStartName() + "§7'").getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
+                if(clickType != ClickType.LEFT_CLICK) return;
                 //Start-Name
                 menu.getEditor().doAction(PortalEditor.Action.CHANGE_START_NAME, () -> updateDisplayName(getItem(4), "§7" + Lang.get("Start_Name") + ": '§r" + menu.getEditor().getPortal().getStartName() + "§7'"));
             }
@@ -110,13 +111,14 @@ public class Hologram extends HotbarGUI {
         setItem(7, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Goal_Name") + ": '§r" + menu.getEditor().getPortal().getDestinationName() + "§7'").getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
+                if(clickType != ClickType.LEFT_CLICK) return;
                 //Goal-Name
                 menu.getEditor().doAction(PortalEditor.Action.CHANGE_DESTINATION_NAME, () -> updateDisplayName(getItem(7), "§7" + Lang.get("Goal_Name") + ": '§r" + menu.getEditor().getPortal().getDestinationName() + "§7'"));
             }
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), Lang.get("Portal_Editor_Change_Name"), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), "§7" + Lang.get("Leftclick") + ": §e" + Lang.get("Change_Name"), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override

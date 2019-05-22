@@ -136,7 +136,7 @@ public class PortalEditor implements Removable {
                     public void onClick(AnvilClickEvent e) {
                         String input = e.getInput();
 
-                        if(input != null && input.equalsIgnoreCase("NONE") && input.equalsIgnoreCase("NULL")) input = null;
+                        if(input != null && (input.equalsIgnoreCase("NONE") || input.equalsIgnoreCase("NULL"))) input = null;
 
                         portal.setPermission(input);
                         e.setClose(true);
@@ -163,6 +163,7 @@ public class PortalEditor implements Removable {
                         }
 
                         portal.setStartName(ChatColor.translateAlternateColorCodes('&', input));
+                        e.setClose(true);
                     }
 
                     @Override
@@ -186,13 +187,14 @@ public class PortalEditor implements Removable {
                         }
 
                         portal.setDestinationName(ChatColor.translateAlternateColorCodes('&', input));
+                        e.setClose(true);
                     }
 
                     @Override
                     public void onClose(AnvilCloseEvent e) {
                         e.setPost(after);
                     }
-                }, new ItemBuilder(Material.PAPER).setName(portal.getDestinationName().replace("§", "&")).getItem());
+                }, new ItemBuilder(Material.PAPER).setName(portal.getDestinationName() == null ? (Lang.get("Name") + "...") : portal.getDestinationName().replace("§", "&")).getItem());
                 break;
 
             case INCREASE_VOLUME:
