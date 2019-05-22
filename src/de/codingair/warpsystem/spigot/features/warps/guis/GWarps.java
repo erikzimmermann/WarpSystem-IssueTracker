@@ -122,7 +122,7 @@ public class GWarps extends GUI {
         addListener(new InterfaceListener() {
             @Override
             public void onInvClickEvent(InventoryClickEvent e) {
-                if(e.getCurrentItem() == null || e.getCurrentItem().getType() == Material.AIR) {
+                if(cursorIcon != null && cursorIcon.getCategory() == GWarps.this.category && cursorIcon.getSlot() == e.getSlot()) {
                     e.setCursor(new ItemStack(Material.AIR));
                     setMoving(false, e.getSlot());
                     e.setCancelled(true);
