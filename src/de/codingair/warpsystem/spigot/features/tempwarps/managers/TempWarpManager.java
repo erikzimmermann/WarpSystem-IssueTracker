@@ -497,8 +497,10 @@ public class TempWarpManager implements Manager, Ticker {
                 warp.setInactiveSales(0);
             }
 
-            adapter.deposit(player, inactiveSales);
-            player.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Inactive_Win").replace("%AMOUNT%", inactiveSales + ""));
+            if(inactiveSales > 0) {
+                adapter.deposit(player, inactiveSales);
+                player.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Inactive_Win").replace("%AMOUNT%", inactiveSales + ""));
+            }
         }
 
         correct.clear();
