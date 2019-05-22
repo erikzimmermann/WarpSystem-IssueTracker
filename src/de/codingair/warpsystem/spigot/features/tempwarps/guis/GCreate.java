@@ -55,10 +55,6 @@ public class GCreate extends SimpleGUI {
         return smallest;
     }
 
-    public GCreate(Player p, TempWarp warp) {
-        this(p, warp, null);
-    }
-
     public GCreate(Player p, TempWarp warp, Value<Key> key) {
         super(p, new StandardLayout(), new Page(p, Lang.get(!(warp instanceof EmptyTempWarp) && warp.isExpired() ? "TempWarp_Reactivate" : "TempWarp_Create"), null) {
             @Override
@@ -131,7 +127,7 @@ public class GCreate extends SimpleGUI {
                             return;
                         }
 
-                        if(TempWarpManager.getManager().isReserved(warp.isPublic() ? input : p.getName() + "." + input)) {
+                        if(TempWarpManager.getManager().isReserved(warp, warp.isPublic() ? input : p.getName() + "." + input)) {
                             p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                             Sound.CLICK.playSound(p, 1, 0.7F);
                             return;
@@ -268,14 +264,10 @@ public class GCreate extends SimpleGUI {
                 addButton(new SyncButton(4, 2) {
                     @Override
                     public void onClick(InventoryClickEvent e, Player player) {
-                        if(warp.getIdentifier() != null) {
-                            if(TempWarpManager.getManager().isReserved(!warp.isPublic() ? warp.getName() : warp.getLastKnownName() + warp.getName())) warp.setName(null);
+                        if(warp.getIdentifier() != null && TempWarpManager.getManager().isReserved(warp, warp.getIdentifier())) warp.setName(null);
 
-                            warp.setPublic(!warp.isPublic());
-                            updatePage();
-                        } else {
-                            player.sendMessage(Lang.getPrefix() + Lang.get("TempWarps_Toggle_Without_Name"));
-                        }
+                        warp.setPublic(!warp.isPublic());
+                        updatePage();
                     }
 
                     @Override

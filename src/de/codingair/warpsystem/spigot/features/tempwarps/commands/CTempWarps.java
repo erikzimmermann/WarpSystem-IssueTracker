@@ -308,6 +308,11 @@ public class CTempWarps extends CommandBuilder {
                     return false;
                 }
 
+                if(TempWarpManager.getManager().isProtectedRegions() && isProtected((Player) sender)) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Create_Protected"));
+                    return false;
+                }
+
                 TempWarpManager.getManager().create((Player) sender);
                 return false;
             }
@@ -320,23 +325,7 @@ public class CTempWarps extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                List<TempWarp> list = TempWarpManager.getManager().getWarps((Player) sender);
-                int current = list.size();
-                list.clear();
-                if(!TempWarpManager.hasPermission((Player) sender)) {
-                    if(current == 0) {
-                        sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
-                    } else sender.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Maximum_of_Warps").replace("%AMOUNT%", current + ""));
-                    return false;
-                }
-
-                if(TempWarpManager.getManager().isProtectedRegions() && isProtected((Player) sender)) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Create_Protected"));
-                    return false;
-                }
-
-                TempWarpManager.getManager().create((Player) sender, argument);
-                return false;
+                return getComponent("create").runCommand(sender, label, args);
             }
         });
 

@@ -70,7 +70,7 @@ public class TempWarpManager implements Manager, Ticker {
         return "§8[§4§lERROR§4 - WarpSystem§8] §cThe TempWarp is not available. Check the info of §n" + name + "§c and take a look to the worlds!";
     }
 
-    private List<EmptyTempWarp> reserved = new ArrayList<>();
+    private List<TempWarp> reserved = new ArrayList<>();
     private List<TempWarp> warps = new ArrayList<>();
     private ConfigFile configFile;
 
@@ -94,6 +94,7 @@ public class TempWarpManager implements Manager, Ticker {
     private List<Integer> inactiveReminds;
     private boolean refund;
     private boolean keys;
+    private boolean firstPublic; //true = the TW will be public when you open up the create gui
 
     private TempWarpConfig config;
 
@@ -130,6 +131,7 @@ public class TempWarpManager implements Manager, Ticker {
         this.refund = config.getBoolean("WarpSystem.TempWarps.Refund", true);
         this.protectedRegions = config.getBoolean("WarpSystem.TempWarps.Support.ProtectedRegions", false);
         this.keys = config.getBoolean("WarpSystem.TempWarps.Keys", false);
+        this.firstPublic = config.getBoolean("WarpSystem.TempWarps.Public_as_create_state", false);
 
         String timeUnit = config.getString("WarpSystem.TempWarps.Time.Interval", "m");
         TimeUnit unit = getTimeUnitOfString(timeUnit);
@@ -387,7 +389,7 @@ public class TempWarpManager implements Manager, Ticker {
         warps.clear();
     }
 
-    public void create(Player player, String... args) {
+    public void create(Player player) {
         Value<Key> value = null;
         if(keys) {
             List<String> keyList = TempWarpManager.getManager().getKeys(player);
@@ -404,7 +406,7 @@ public class TempWarpManager implements Manager, Ticker {
 
         if(keys) warp.setDuration(value.getValue().getTime());
         else warp.setDuration(minTime);
-        if(args.length > 0 && !isReserved(player.getName() + "." + args[0])) warp.setName(args[0]);
+        warp.setPublic(this.firstPublic);
 
         new GCreate(player, warp, value).open();
     }
@@ -535,12 +537,12 @@ public class TempWarpManager implements Manager, Ticker {
         return correct;
     }
 
-    public boolean isReserved(String identifier) {
+    public boolean isReserved(TempWarp warp, String identifier) {
         identifier = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', identifier.replace("_", " ")));
         if(getWarp(identifier) != null) return true;
 
-        for(EmptyTempWarp emptyTempWarp : this.reserved) {
-            if(emptyTempWarp.getIdentifier() != null && emptyTempWarp.getIdentifier().equalsIgnoreCase(identifier)) return true;
+        for(TempWarp tWarp : this.reserved) {
+            if(tWarp != warp && tWarp.getIdentifier() != null && tWarp.getIdentifier().equalsIgnoreCase(identifier)) return true;
         }
 
         return false;
@@ -744,7 +746,7 @@ public class TempWarpManager implements Manager, Ticker {
         return messageChangeCosts;
     }
 
-    public List<EmptyTempWarp> getReserved() {
+    public List<TempWarp> getReserved() {
         return reserved;
     }
 
@@ -762,5 +764,9 @@ public class TempWarpManager implements Manager, Ticker {
 
     public HashMap<UUID, List<String>> getKeyList() {
         return keyList;
+    }
+
+    public boolean isFirstPublic() {
+        return firstPublic;
     }
 }
