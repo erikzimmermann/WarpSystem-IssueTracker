@@ -66,9 +66,8 @@ public class CNativePortals extends CommandBuilder {
                         if(e.isSubmitted()) {
                             String name = e.getSubmittedText();
 
-                            Portal portal = new Portal(PortalType.WATER, null, name, new ArrayList<>());
+                            Portal portal = new Portal(PortalType.WATER, new Destination(), name, new ArrayList<>());
                             Portal clone = portal.clone();
-                            clone.setDestination(new Destination());
 
                             clone.setEditMode(true);
 

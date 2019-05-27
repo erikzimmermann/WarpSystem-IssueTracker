@@ -133,4 +133,9 @@ public class Destination {
         destination.adapter = adapter;
         return destination;
     }
+
+    @Override
+    public String toString() {
+        return "Destination{id=" + this.id + ", " + this.type + "}";
+    }
 }

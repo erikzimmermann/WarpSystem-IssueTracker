@@ -1,5 +1,7 @@
 package de.codingair.warpsystem.spigot.features.nativeportals;
 
+import de.codingair.codingapi.server.Sound;
+import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.server.blocks.utils.Axis;
 import de.codingair.codingapi.tools.Area;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
@@ -10,20 +12,20 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalBlock;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalListener;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Portal extends FeatureObject {
     private PortalType type;
@@ -194,6 +196,11 @@ public class Portal extends FeatureObject {
                 blocks.equals(portal.blocks) &&
                 listeners.equals(portal.listeners) &&
                 type == portal.type;
+    }
+
+    @Override
+    public FeatureObject perform(Player player) {
+        return perform(player, hasAction(Action.WARP) ? getAction(WarpAction.class).getValue().getId() : null, hasAction(Action.WARP) ? getAction(WarpAction.class).getValue() : null, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), true, true);
     }
 
     public boolean isInPortal(LivingEntity entity) {
