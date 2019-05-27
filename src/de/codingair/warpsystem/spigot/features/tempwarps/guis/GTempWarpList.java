@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static de.codingair.warpsystem.bungee.base.WarpSystem.getInstance;
+
 public class GTempWarpList extends GUI {
     private static int MAX_PAGE(Player player) {
         List<TempWarp> warps = TempWarpManager.getManager().getActiveWarps(false);
@@ -63,17 +65,31 @@ public class GTempWarpList extends GUI {
                 String name = de.codingair.codingapi.utils.ChatColor.highlight("§6" + tempWarp.getName(), underline, "§e§n", "§r", true);
                 builder.setName(name);
 
-                builder.setLore("§8" + Lang.get("Owner") + ": " + de.codingair.codingapi.utils.ChatColor.highlight("§8" + tempWarp.getLastKnownName(), underline, "§e§n", "§r", true));
-                builder.addLore("§8" + Lang.get("Online") + ": " + TempWarpManager.getManager().convertInTimeFormat(new Date().getTime() - tempWarp.getBornDate().getTime(), TimeUnit.MILLISECONDS));
-                if(tempWarp.getTeleportCosts() > 0) builder.addLore("§8" + Lang.get("Costs") + ": " + tempWarp.getTeleportCosts() + " " + Lang.get("Coins"));
+                List<String> list = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getStringList("WarpSystem.TempWarps.List_Info." + (tempWarp.isOwner(gui.getPlayer()) ?
+                                "Own_Warp_Info" : "Other_Warp_Info"));
 
-                if(tempWarp.isOwner(gui.getPlayer())) {
-                    if(tempWarp.isExpired()) {
-                        long time = tempWarp.getExpireDate().getTime() + TimeUnit.MILLISECONDS.convert(TempWarpManager.getManager().getInactiveTime(), TimeUnit.SECONDS) - new Date().getTime();
-                        builder.addLore("", "§8" + Lang.get("Deleted_In") + ": " + TempWarpManager.getManager().convertInTimeFormat(time + 950, TimeUnit.MILLISECONDS));
-                    } else {
-                        builder.addLore("", "§8" + Lang.get("Ends_In") + ": " + TempWarpManager.getManager().convertInTimeFormat(tempWarp.getLeftTime() + 950, TimeUnit.MILLISECONDS));
+                for(String s : list) {
+                    if(s.contains("%TELEPORT_COSTS%") && tempWarp.getTeleportCosts() == 0) continue;
+                    if(s.contains("%TIME_BEFORE_DELETE%") && !tempWarp.isExpired()) continue;
+                    if(s.contains("%END_TIME%") && tempWarp.isExpired()) continue;
+
+                    s = ChatColor.translateAlternateColorCodes('&', s);
+
+                    String lastColor = "§7";
+                    if(s.contains("%")) {
+                        lastColor = ChatColor.getLastColors(s.split("%")[0]);
                     }
+
+                    s = s
+                            .replace("%PLAYER%", "" + de.codingair.codingapi.utils.ChatColor.highlight(lastColor + tempWarp.getLastKnownName(), underline, "§e§n", "§r", true))
+                            .replace("%ONLINE_TIME%", "" + TempWarpManager.getManager().convertInTimeFormat(new Date().getTime() - tempWarp.getBornDate().getTime(), TimeUnit.MILLISECONDS))
+                            .replace("%TELEPORT_COSTS%", "" + tempWarp.getTeleportCosts())
+                            .replace("%NAME%", "" + tempWarp.getName())
+                            .replace("%ID%", "" + tempWarp.getIdentifier())
+                            .replace("%TIME_BEFORE_DELETE%", "" + (!tempWarp.isExpired() ? "" : TempWarpManager.getManager().convertInTimeFormat(tempWarp.getExpireDate().getTime() + TimeUnit.MILLISECONDS.convert(TempWarpManager.getManager().getInactiveTime(), TimeUnit.SECONDS) - new Date().getTime() + 950, TimeUnit.MILLISECONDS)))
+                            .replace("%END_TIME%", "" + (tempWarp.isExpired() ? "" : TempWarpManager.getManager().convertInTimeFormat(tempWarp.getLeftTime() + 950, TimeUnit.MILLISECONDS)));
+
+                    builder.addLore(s);
                 }
                 return builder.getItem();
             }
