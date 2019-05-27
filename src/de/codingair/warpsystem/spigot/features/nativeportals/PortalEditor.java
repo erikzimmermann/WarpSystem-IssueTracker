@@ -6,6 +6,7 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalBlock;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
@@ -98,7 +99,9 @@ public class PortalEditor implements Removable {
         API.removeRemovable(this);
 
         if(backup != null) {
+            Destination dest = this.backup.getDestination();
             this.backup.apply(portal);
+            backup.setDestination(dest);
 
             portal.setVisible(false);
             backup.setVisible(true);
