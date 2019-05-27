@@ -131,6 +131,21 @@ WarpSystem:
     Keys: false
     #Turn this to true, if you want, that all TempWarps should be public when you create them. The state can always be changed.
     Public_as_create_state: false
+    List_Info:
+      #The varaible names are case sensitive!
+      #Available variables: %PLAYER%, %ONLINE_TIME%, %TELEPORT_COSTS%, %TIME_BEFORE_DELETE%, %END_TIME%, %NAME%, %ID%
+      #TeleportCosts won't be displayed, if the costs = 0. Furthermore, you cannot use "deleted in" will only be displayed if the tempwarp is expired.  
+      Own_Warp_Info:
+      - "&8Owner: %PLAYER%"
+      - "&8Online: %ONLINE_TIME%"
+      - "&8Coins: %TELEPORT_COSTS% Coin(s)"
+      - ""
+      - "&cdeleted in &n%TIME_BEFORE_DELETE%"
+      - "&8Ends in: %END_TIME%"
+      Other_Warp_Info:
+      - "&8Owner: %PLAYER%"
+      - "&8Online: %ONLINE_TIME%"
+      - "&8Coins: %TELEPORT_COSTS% Coin(s)"
 
   EffectPortals:
     #Max distance between particle and player
