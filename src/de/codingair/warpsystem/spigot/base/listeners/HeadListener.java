@@ -9,7 +9,7 @@ public class HeadListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerFinalJoinEvent e) {
-        WarpSystem.getInstance().getHeadManager().update(e.getPlayer());
+        WarpSystem.getInstance().getHeadManager().update(e.getPlayer(), e.getUniqueId());
     }
 
 }

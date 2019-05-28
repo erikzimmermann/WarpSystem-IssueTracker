@@ -28,10 +28,9 @@ public class HeadManager {
     /*
         Called in UUIDListener after getting an unique Id.
      */
-    public boolean update(Player player) {
+    public boolean update(Player player, UUID uuid) {
         checkFile();
 
-        UUID uuid = WarpSystem.getInstance().getUUIDManager().get(player);
         Head head = new Head(player);
 
         String id = this.file.getConfig().getString(uuid.toString());
@@ -45,7 +44,7 @@ public class HeadManager {
     }
 
     public Head getHead(Player player) {
-        update(player);
+        update(player, WarpSystem.getInstance().getUUIDManager().get(player));
         return new Head(player);
     }
 }

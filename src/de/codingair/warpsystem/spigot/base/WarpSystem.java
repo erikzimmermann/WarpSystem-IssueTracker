@@ -522,8 +522,8 @@ public class WarpSystem extends JavaPlugin {
     public void setOnBungeeCord(boolean onBungeeCord) {
         this.onBungeeCord = onBungeeCord;
         if(onBungeeCord) {
-            this.bungeeFeatureList.forEach(BungeeFeature::onConnect);
             this.uuidManager.downloadAll();
+            this.bungeeFeatureList.forEach(BungeeFeature::onConnect);
         } else {
             this.bungeeFeatureList.forEach(BungeeFeature::onDisconnect);
         }
