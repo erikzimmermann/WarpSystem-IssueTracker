@@ -50,6 +50,7 @@ public class BungeeBukkitListener implements PacketListener, Listener {
                         WarpSystem.getInstance().getLogger().log(Level.INFO, "Found a valid DataCenter > Init BungeeFeatures");
                     }
 
+                    this.notice = null;
                     WarpSystem.getInstance().setOnBungeeCord(true);
                 } else if(WarpSystem.getInstance().getBungeePluginVersion() == null || WarpSystem.getInstance().getBungeePluginVersion().equals(WarpSystem.getInstance().getDescription().getVersion())) {
                     this.notice = new String[] {
