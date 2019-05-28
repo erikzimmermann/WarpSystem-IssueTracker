@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.features.warps.simplewarps;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.utils.actions.Action;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -59,6 +60,14 @@ public class SimpleWarp {
 
     public String getName() {
         return name;
+    }
+
+    public String getFormattedName() {
+        return ChatColor.translateAlternateColorCodes('&', name.replace("_", " "));
+    }
+
+    public String getName(boolean stripColors) {
+        return stripColors ? ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name)) : name;
     }
 
     public void setName(String name) {
@@ -142,7 +151,7 @@ public class SimpleWarp {
     private void apply(String s) throws ParseException {
         JSONObject json = (JSONObject) new JSONParser().parse(s);
 
-        this.name = (String) json.get("Name");
+        this.name = ((String) json.get("Name")).replace(" ", "_");
         this.permission = json.get("Permission") == null ? null : (String) json.get("Permission");
 
         JSONArray array = (JSONArray) new JSONParser().parse((String) json.get("Actions"));

@@ -57,7 +57,7 @@ public class CSetWarp extends CommandBuilder {
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 SimpleWarpManager hManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
                 for(SimpleWarp value : hManager.getWarps().values()) {
-                    suggestions.add(value.getName());
+                    suggestions.add(value.getName(true));
                 }
             }
 
@@ -65,7 +65,7 @@ public class CSetWarp extends CommandBuilder {
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
                 SimpleWarpManager hManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
                 if(hManager.existsWarp(argument)) {
-                    SimpleMessage simpleMessage = new SimpleMessage(Lang.getPrefix() + Lang.get("Warp_Confirm_Overwrite").replace("%WARP%", hManager.getWarp(argument).getName()), WarpSystem.getInstance());
+                    SimpleMessage simpleMessage = new SimpleMessage(Lang.getPrefix() + Lang.get("Warp_Confirm_Overwrite").replace("%WARP%", hManager.getWarp(argument).getFormattedName()), WarpSystem.getInstance());
 
                     simpleMessage.replace("%YES%", new ChatButton(Lang.get("Warp_Confirm_Overwrite_Yes"), Lang.get("Click_Hover")) {
                         @Override

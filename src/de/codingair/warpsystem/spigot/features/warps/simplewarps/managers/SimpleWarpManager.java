@@ -38,7 +38,7 @@ public class SimpleWarpManager implements Manager {
             for(String w : l) {
                 try {
                     SimpleWarp warp = new SimpleWarp(w);
-                    warps.put(warp.getName().toLowerCase(), warp);
+                    warps.put(warp.getName(true).toLowerCase(), warp);
                 } catch(ParseException e) {
                     e.printStackTrace();
                     errors = true;
@@ -80,14 +80,15 @@ public class SimpleWarpManager implements Manager {
         if(existsWarp(warp.getName())) return;
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.SimpleWarps.Add_Permission_On_Creation", true) && warp.getPermission() == null)
             warp.setPermission("WarpSystem.Warps." + ChatColor.stripColor(warp.getName()));
-        this.warps.put(warp.getName().toLowerCase(), warp);
+        this.warps.put(warp.getName(true).toLowerCase(), warp);
     }
 
     public void removeWarp(SimpleWarp warp) {
-        this.warps.remove(warp.getName().toLowerCase());
+        this.warps.remove(warp.getName(true).toLowerCase());
     }
 
     public SimpleWarp getWarp(String warp) {
+        warp = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', warp));
         return this.warps.get(warp.toLowerCase());
     }
 
@@ -96,10 +97,14 @@ public class SimpleWarpManager implements Manager {
     }
 
     public boolean existsWarp(String warp) {
+        warp = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', warp));
         return this.warps.containsKey(warp.toLowerCase());
     }
 
     public boolean isReserved(String name) {
+        name = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name));
+
+        if(existsWarp(name)) return true;
         for(String n : this.reservedNames) {
             if(n.equalsIgnoreCase(name)) return true;
         }
@@ -114,11 +119,17 @@ public class SimpleWarpManager implements Manager {
     }
 
     public boolean commitNewName(SimpleWarp warp, String name) {
-        if(existsWarp(name) || warp.getName().equals(name)) return false;
         this.reservedNames.remove(name);
-        this.warps.remove(warp.getName().toLowerCase());
-        warp.setName(name);
-        this.warps.put(warp.getName().toLowerCase(), warp);
+
+        if(warp.getName().equalsIgnoreCase(name) && !warp.getName().equals(name)) {
+            warp.setName(name);
+        } else {
+            if(existsWarp(name) || warp.getName().equals(name)) return false;
+            this.warps.remove(warp.getName().toLowerCase());
+            warp.setName(name);
+            this.warps.put(warp.getName().toLowerCase(), warp);
+        }
+
         return true;
     }
 
