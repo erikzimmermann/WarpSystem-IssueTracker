@@ -258,7 +258,7 @@ SimpleWarp_Change_Permission: '&8» &7Klicke hier, um die Berechtigung zu änder
 SimpleWarp_Change_Price: '&8» &7Klicke hier, um den Teleport-Preis zu ändern'
 SimpleWarp_Cancel_Edit: '&7Dein Änderungen wurden &cnicht &7gespeichert.'
 SimpleWarp_Save_Edit: '&7Deine Änderungen wurde &aerfolgreich gespeichert&7.'
-SimpleWarp_Edit_Title: '&cSimpleWarp&0: ''&8%WARP%&0'''
+SimpleWarp_Edit_Title: '&cSimpleWarp&0: ''&f%WARP%&0'''
 SimpleWarp_Edit_Permission_Hint: '&7Tippe &7''&c-&7'', um die Berechtigung &czurückzusetzen&7.'
 Warp_Confirm_Overwrite: '&7Möchtest du ''&b%WARP%&7'' überschreiben? &8[%YES% &8| %NO%&8]'
 Warp_Confirm_Overwrite_Yes: '&aJa'

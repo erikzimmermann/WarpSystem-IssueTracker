@@ -49,7 +49,7 @@ public class CDeleteWarp extends CommandBuilder {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 for(SimpleWarp value : m.getWarps().values()) {
-                    suggestions.add(value.getName());
+                    suggestions.add(value.getName(true));
                 }
             }
 
