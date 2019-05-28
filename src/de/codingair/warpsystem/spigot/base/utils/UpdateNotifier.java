@@ -51,7 +51,7 @@ public class UpdateNotifier {
         }
 
         m.appendTail(sb);
-        return sb.toString();
+        return sb.toString().replace("&amp;", "&");
     }
 
     private interface UpdateCheckerAdapter {
