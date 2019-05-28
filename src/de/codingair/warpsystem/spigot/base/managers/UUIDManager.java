@@ -32,10 +32,11 @@ public class UUIDManager {
             WarpSystem.getInstance().getDataHandler().send(new RequestUUIDPacket(player.getName(), new Callback<UUID>() {
                 @Override
                 public void accept(UUID uniqueId) {
-                    if(!uniqueIds.containsKey(player.getName())) uniqueIds.put(player.getName(), uniqueId);
-                    else uniqueIds.replace(player.getName(), uniqueId);
+                    if(!uniqueIds.containsKey(player.getName())) {
+                        uniqueIds.put(player.getName(), uniqueId);
 
-                    Bukkit.getPluginManager().callEvent(new PlayerFinalJoinEvent(player, uniqueId));
+                        Bukkit.getPluginManager().callEvent(new PlayerFinalJoinEvent(player, uniqueId));
+                    } else uniqueIds.replace(player.getName(), uniqueId);
                 }
             }));
         } else {
@@ -51,6 +52,12 @@ public class UUIDManager {
         if(!isCached(name)) return null;
         tempIds.setExpire(name.toLowerCase(), 60 * 2);
         return tempIds.get(name.toLowerCase());
+    }
+
+    public void convertFromCached(Player player) {
+        if(tempIds.containsKey(player.getName().toLowerCase()) && !uniqueIds.containsKey(player.getName())) {
+            uniqueIds.put(player.getName(), tempIds.remove(player.getName().toLowerCase()));
+        }
     }
 
     public void downloadFromMojang(String name, Callback<UUID> callback) {

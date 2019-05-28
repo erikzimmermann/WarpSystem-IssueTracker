@@ -15,9 +15,9 @@ public class UUIDListener implements Listener {
         if(Bukkit.getOnlinePlayers().size() > 1) WarpSystem.getInstance().getUUIDManager().download(e.getPlayer());
         else {
             Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                if(!WarpSystem.getInstance().getUUIDManager().isCached(e.getPlayer().getName()))
-                    WarpSystem.getInstance().getUUIDManager().download(e.getPlayer());
-            }, 10);
+                if(WarpSystem.getInstance().getUUIDManager().isCached(e.getPlayer().getName())) WarpSystem.getInstance().getUUIDManager().convertFromCached(e.getPlayer());
+                else if(WarpSystem.getInstance().getUUIDManager().get(e.getPlayer()) == null) WarpSystem.getInstance().getUUIDManager().download(e.getPlayer());
+            }, 20);
         }
     }
 
