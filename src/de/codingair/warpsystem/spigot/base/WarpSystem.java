@@ -68,6 +68,7 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_ByPass_Teleport_Costs = "WarpSystem.ByPass.Teleport.Costs";
     public static final String PERMISSION_ByPass_Teleport_Delay = "WarpSystem.ByPass.Teleport.Delay";
     public static final String PERMISSION_USE_TELEPORT_COMMAND = "WarpSystem.Use.TeleportCommand";
+    public static final String PERMISSION_TELEPORT_PRELOAD_CHUNKS = "WarpSystem.Teleport.ChunkPreLoading";
     public static final String PERMISSION_SIMPLE_WARPS_DIRECT_TELEPORT = "WarpSystem.SimpleWarp.DirectTeleport";
     public static String PERMISSION_ADMIN = "WarpSystem.Admin";
 

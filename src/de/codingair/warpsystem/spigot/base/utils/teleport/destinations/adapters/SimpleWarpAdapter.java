@@ -41,6 +41,8 @@ public class SimpleWarpAdapter implements DestinationAdapter {
             if(silent) TeleportListener.TELEPORTS.put(player, warp.getLocation());
             player.teleport(warp.getLocation());
 
+            warp.increaseTeleports();
+
             if(message != null)
                 player.sendMessage((message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
 

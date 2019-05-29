@@ -1,5 +1,7 @@
 package de.codingair.warpsystem.spigot.base.utils.options;
 
+import java.util.Objects;
+
 public class Option<E> {
     private String path;
     private E value;
@@ -38,5 +40,13 @@ public class Option<E> {
 
     public E getDefault() {
         return def;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Option) {
+            Option o = (Option) obj;
+            return o.getPath().equals(path) && Objects.equals(getValue(), o.getValue()) && Objects.equals(getDefault(), o.getDefault());
+        } else return false;
     }
 }

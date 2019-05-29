@@ -4,6 +4,9 @@ import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.files.loader.UTFConfig;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 
+import java.lang.reflect.Field;
+import java.util.Objects;
+
 public abstract class Options {
     private ConfigFile file;
 
@@ -48,4 +51,24 @@ public abstract class Options {
     public abstract void write();
     public abstract void read();
     public abstract void apply(Options options);
+
+    @Override
+    public boolean equals(Object obj) {
+        if(this.getClass().isInstance(obj)) {
+            Options other = (Options) obj;
+
+            for(Field field : getClass().getDeclaredFields()) {
+                field.setAccessible(true);
+
+                try {
+                    if(!Objects.equals(field.get(this), field.get(other))) return false;
+                } catch(IllegalAccessException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+
+            return true;
+        } return false;
+    }
 }

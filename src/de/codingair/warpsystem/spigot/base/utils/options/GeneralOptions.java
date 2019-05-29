@@ -10,6 +10,9 @@ public class GeneralOptions extends Options {
     private Option<String> lang = new Option<>("WarpSystem.Language", "ENG");
     private Option<Integer> teleportDelay = new Option<>("WarpSystem.Teleport.Delay", 5);
     private Option<Boolean> allowMove = new Option<>("WarpSystem.Teleport.Allow_Move", false);
+    private Option<Integer> chunkPreLoadRadius = new Option<>("WarpSystem.Teleport.Chunk_Pre_Loading.Chunk_Radius", 1);
+    private Option<Boolean> chunkPreLoad = new Option<>("WarpSystem.Teleport.Chunk_Pre_Loading.Enabled", true);
+    private Option<Boolean> chunkPreLoadingLimitedByPerm = new Option<>("WarpSystem.Teleport.Chunk_Pre_Loading.Limit_by_Permission", false);
 
     public GeneralOptions() {
         super("Config");
@@ -25,6 +28,9 @@ public class GeneralOptions extends Options {
         set(lang);
         set(teleportDelay);
         set(allowMove);
+        set(chunkPreLoadRadius);
+        set(chunkPreLoad);
+        set(chunkPreLoadingLimitedByPerm);
         save();
     }
 
@@ -33,6 +39,9 @@ public class GeneralOptions extends Options {
         get(lang);
         get(teleportDelay);
         get(allowMove);
+        get(chunkPreLoadRadius);
+        get(chunkPreLoad);
+        get(chunkPreLoadingLimitedByPerm);
     }
 
     @Override
@@ -43,6 +52,9 @@ public class GeneralOptions extends Options {
             this.lang = o.lang.clone();
             this.teleportDelay = o.teleportDelay.clone();
             this.allowMove = o.allowMove.clone();
+            this.chunkPreLoadRadius = o.chunkPreLoadRadius.clone();
+            this.chunkPreLoad = o.chunkPreLoad.clone();
+            this.chunkPreLoadingLimitedByPerm = o.chunkPreLoadingLimitedByPerm.clone();
         }
     }
 
@@ -86,5 +98,29 @@ public class GeneralOptions extends Options {
 
     public void setAllowMove(boolean allowMove) {
         this.allowMove.setValue(allowMove);
+    }
+
+    public int getChunkPreLoadRadius() {
+        return chunkPreLoadRadius.getValue();
+    }
+
+    public void setChunkPreLoadRadius(int radius) {
+        chunkPreLoadRadius.setValue(radius);
+    }
+
+    public boolean isChunkPreLoadEnabled() {
+        return chunkPreLoad.getValue();
+    }
+
+    public void setChunkPreLoad(boolean enabled) {
+        chunkPreLoad.setValue(enabled);
+    }
+
+    public boolean isChunkPreLoadingLimitedByPerm() {
+        return chunkPreLoadingLimitedByPerm.getValue();
+    }
+
+    public void setChunkPreLoadingLimitedByPerm(boolean limited) {
+        chunkPreLoadingLimitedByPerm.setValue(limited);
     }
 }

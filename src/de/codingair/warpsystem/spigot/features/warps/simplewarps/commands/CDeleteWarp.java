@@ -71,10 +71,10 @@ public class CDeleteWarp extends CommandBuilder {
                         if(!accepted) {
                             SimpleWarp warp = m.getWarp(argument);
                             m.removeWarp(warp);
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("SimpleWarp_Deleted").replace("%WARP%", warp.getName()));
+                            sender.sendMessage(Lang.getPrefix() + Lang.get("SimpleWarp_Deleted").replace("%WARP%", warp.getName(true)));
                         } else {
                             SimpleWarp warp = m.getWarp(argument);
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("SimpleWarp_Not_Deleted").replace("%WARP%", warp.getName()));
+                            sender.sendMessage(Lang.getPrefix() + Lang.get("SimpleWarp_Not_Deleted").replace("%WARP%", warp.getName(true)));
                         }
                     }
                 }).open();
