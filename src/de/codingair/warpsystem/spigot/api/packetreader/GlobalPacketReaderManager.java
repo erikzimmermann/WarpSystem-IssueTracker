@@ -60,12 +60,12 @@ public class GlobalPacketReaderManager {
         new PacketReader(player, reader.getName(), WarpSystem.getInstance()){
             @Override
             public boolean readPacket(Object packet) {
-                return reader.readPacket(packet);
+                return reader.readPacket(player, packet);
             }
 
             @Override
             public boolean writePacket(Object packet) {
-                return reader.writePacket(packet);
+                return reader.writePacket(player, packet);
             }
         }.inject();
     }

@@ -65,14 +65,11 @@ permissions:
     description: Default start of each permission node
     children:
       warpsystem.notify: true
+      warpsystem.admin: true
       warpsystem.modify.*: true
       warpsystem.use.*: true
       warpsystem.bypass.*: true
-      warpsystem.Admin: true
-  warpsystem.Admin:
-    description: Permission to be an admin (for different gui-size e.g.)
-  warpsystem.notify:
-    description: notify for warnings or new updates
+      warpsystem.teleport.*: true
   warpsystem.modify.*:
     description: notify for warnings or new updates
     children:
@@ -82,8 +79,8 @@ permissions:
       warpsystem.modify.globalwarps: true
       warpsystem.modify.simplewarps: true
       warpsystem.modify.portals: true
-      warpsystem.modify.nativePortals: true
-      warpsystem.modify.randomTeleporters: true
+      warpsystem.modify.nativeportals: true
+      warpsystem.modify.randomteleporters: true
   warpsystem.use.*:
     description: Player can use features
     children:
@@ -93,15 +90,19 @@ permissions:
       warpsystem.use.globalwarps: true
       warpsystem.use.simplewarps: true
       warpsystem.use.portals: true
-      warpsystem.use.nativePortals: true
-      warpsystem.use.randomTeleporters: true
+      warpsystem.use.nativeportals: true
+      warpsystem.use.randomteleporters: true
   warpsystem.bypass.*:
     description: Permission to bypass different things
     children:
       warpsystem.bypass.teleport.*: true
       warpsystem.bypass.maintenance: true
-  warpsystem.bypass.Teleport.*:
+  warpsystem.bypass.teleport.*:
     description: Permission to bypass teleport parameters
     children:
       warpsystem.bypass.teleport.costs: true
       warpsystem.bypass.teleport.delay: true
+  warpsystem.teleport.*:
+    description: Extra things for teleports
+    children:
+      warpsystem.teleport.chunkpreloading: true
