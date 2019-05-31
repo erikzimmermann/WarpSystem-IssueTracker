@@ -129,6 +129,8 @@ public class PortalEditor implements Removable {
     }
 
     public void doAction(Action action, Runnable after) {
+        if(API.getRemovable(player, AnvilGUI.class) != null) return;
+
         switch(action) {
             case CHANGE_PERMISSION:
                 AnvilGUI.openAnvil(WarpSystem.getInstance(), player, new AnvilListener() {
