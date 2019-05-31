@@ -37,7 +37,7 @@ public class Teleport extends HotbarGUI {
                 .getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-                //Hologram-Height
+                if(clickType != ClickType.LEFT_CLICK) return;
                 menu.getEditor().doAction(PortalEditor.Action.CHANGE_PERMISSION, () -> updateDisplayName(getItem(2), "§7" + Lang.get("Permission") + ": '§e" + menu.getEditor().getPortal().getPermission() + "§7'"));
             }
 

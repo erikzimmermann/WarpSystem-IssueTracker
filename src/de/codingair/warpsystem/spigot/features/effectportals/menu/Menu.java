@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.features.effectportals.menu;
 
+import de.codingair.codingapi.API;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.anvil.*;
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
@@ -71,6 +72,7 @@ public class Menu extends HotbarGUI {
 
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
+                if(API.getRemovable(player, AnvilGUI.class) != null) return;
                 if(clickType.name().contains("LEFT")) {
                     //Set destination portal
 
