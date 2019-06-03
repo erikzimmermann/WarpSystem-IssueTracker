@@ -85,6 +85,8 @@ public class PAppearance extends PageItem {
                 Bukkit.getPluginManager().registerEvents(new Listener() {
                     @EventHandler
                     public void onDrop(PlayerDropItemEvent e) {
+                        if(!e.getPlayer().getName().equals(player.getName())) return;
+
                         if(e.getItemDrop().getItemStack().equals(PortalEditor.PORTAL_ITEM.getItem())) {
                             e.setCancelled(true);
 
