@@ -10,7 +10,7 @@ public enum PortalType {
     WATER(null, StaticWaterBlock.class, XMaterial.WATER_BUCKET.parseMaterial()),
     LAVA(null, StaticLavaBlock.class, XMaterial.LAVA_BUCKET.parseMaterial()),
     NETHER(XMaterial.NETHER_PORTAL.parseMaterial(), null, XMaterial.FLINT_AND_STEEL.parseMaterial()),
-    END(XMaterial.END_PORTAL.parseMaterial(), XMaterial.END_GATEWAY.parseMaterialSavely(), null, XMaterial.END_PORTAL_FRAME.parseMaterial()),
+    END(XMaterial.END_PORTAL.parseMaterial(), XMaterial.END_GATEWAY.parseMaterialSafely(), null, XMaterial.END_PORTAL_FRAME.parseMaterial()),
     EDIT(XMaterial.END_STONE.parseMaterial(), null, null),
     ;
 

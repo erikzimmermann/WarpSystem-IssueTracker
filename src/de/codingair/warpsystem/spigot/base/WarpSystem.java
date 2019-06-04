@@ -271,7 +271,7 @@ public class WarpSystem extends JavaPlugin {
 
         try {
             API.getInstance().reload(this);
-        } catch(InvalidDescriptionException | InvalidPluginException e) {
+        } catch(InvalidDescriptionException | InvalidPluginException | FileNotFoundException e) {
             e.printStackTrace();
         }
     }
