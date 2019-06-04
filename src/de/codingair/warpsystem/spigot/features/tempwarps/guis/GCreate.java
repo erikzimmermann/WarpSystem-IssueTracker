@@ -315,7 +315,7 @@ public class GCreate extends SimpleGUI {
     public void close(Player p, boolean isClosing) {
         super.close(p, isClosing);
 
-        if(!isClosingForAnvil()) TempWarpManager.getManager().getReserved().remove(this.warp);
+        if(!isClosingForGUI()) TempWarpManager.getManager().getReserved().remove(this.warp);
     }
 
     private static boolean canPay(Player player, double costs) {

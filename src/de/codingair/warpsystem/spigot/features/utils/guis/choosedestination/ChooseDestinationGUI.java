@@ -31,7 +31,7 @@ public class ChooseDestinationGUI extends SimpleGUI {
 
             @Override
             public void onInvCloseEvent(InventoryCloseEvent e) {
-                if(isClosingForAnvil() || isClosingByButton()) return;
+                if(isClosingForGUI() || isClosingByButton()) return;
                 callback.accept(null);
             }
 
