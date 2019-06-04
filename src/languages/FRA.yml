@@ -65,10 +65,12 @@ Delete_Portal_Successfully: '&7Le portail a bien été &csupprimé.'
 PORTAL_CREATE_FIRST_SAVED: '&7La première position a été sauvegardé.'
 PORTAL_CREATE_NEXT: '&7Effectuez cette commande à la prochaine position voulu.'
 Teleport_Radius: 'Rayon de téléportation'
+Animation_Radius: 'Rayon d''Animation'
 Animation_Height: 'Taille d''Animation'
 Destination: Destination
 Animation_Type: 'Type d''Animation'
 Particle_Effect: Particle-Effect
+Particle_Effects: Particle-Effects
 Hologram_Height: 'Taille d''Hologram'
 Start_Name: 'Nom de démarrage'
 Goal_Name: Goal-Name
@@ -348,3 +350,10 @@ Effect_Portals: 'Portails d''effets'
 General: 'Général'
 Toggle: 'Basculer'
 NativePortals: 'Native portals'
+Potion_Effect: 'Effet de potion'
+Potion_Effects: 'Effets de potion'
+Potion_Effect_Type: 'Type d''effet Potion'
+Level: 'Niveau'
+Potion_Effect_Time_before_Teleport: 'Effect duration before teleport'
+Potion_Effect_Time_after_Teleport: 'Effect duration after teleport'
+Animation_Editor: 'Éditeur d''animation'

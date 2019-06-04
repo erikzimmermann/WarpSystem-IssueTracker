@@ -33,7 +33,7 @@ public class Animation extends HotbarGUI {
         setItem(1, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
 
         setItem(2, new ItemComponent(new ItemBuilder(Material.STRING)
-                .setName("§7" + Lang.get("Teleport_Radius") + ": §e" + menu.getEditor().getPortal().getTeleportRadius())
+                .setName("§7" + Lang.get("Animation_Radius") + ": §e" + menu.getEditor().getPortal().getTeleportRadius())
                 .getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
@@ -49,7 +49,7 @@ public class Animation extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Animation_Height")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Animation_Radius")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -132,7 +132,7 @@ public class Animation extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.NEXT_PREVIOUS(Lang.get("Animation_Height")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), PortalEditor.NEXT_PREVIOUS(Lang.get("Particle_Effect")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
