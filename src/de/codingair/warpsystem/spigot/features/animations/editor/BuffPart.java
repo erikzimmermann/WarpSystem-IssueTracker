@@ -165,4 +165,8 @@ public class BuffPart extends HotbarGUI {
     private Buff getBuff() {
         return menu.getClone().getBuffList().size() <= slot ? null : menu.getClone().getBuffList().get(slot);
     }
+
+    public Menu getMenuGUI() {
+        return menu;
+    }
 }

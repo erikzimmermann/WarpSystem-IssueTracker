@@ -15,7 +15,7 @@ public class Animation implements Serializable {
     private Location teleportLoc = null;
     private List<Buff> buffList = new ArrayList<>();
     private List<ParticlePart> particleParts = new ArrayList<>();
-    private SoundData tickSound = new SoundData(Sound.NOTE_PIANO, 1.5F, 0.5F);
+    private SoundData tickSound = new SoundData(Sound.NOTE_PIANO, 1F, 0.5F);
     private SoundData teleportSound = new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F);
 
     public Animation() {
@@ -27,6 +27,11 @@ public class Animation implements Serializable {
 
     public Animation(Animation clone) {
         apply(clone);
+    }
+
+    public Animation(String name, ParticlePart part) {
+        this.name = name;
+        this.particleParts.add(part);
     }
 
     @Override
@@ -70,7 +75,7 @@ public class Animation implements Serializable {
         for(Buff buff : this.buffList) {
             JSONObject data = new JSONObject();
             buff.write(data);
-            buffArray.add(data.toJSONString());
+            buffArray.add(data);
         }
         json.put("bufflist", buffArray);
 
@@ -78,7 +83,7 @@ public class Animation implements Serializable {
         for(ParticlePart part : this.particleParts) {
             JSONObject data = new JSONObject();
             part.write(data);
-            buffArray.add(data.toJSONString());
+            particleArray.add(data);
         }
         json.put("particleparts", particleArray);
 

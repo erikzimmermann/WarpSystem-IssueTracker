@@ -5,6 +5,7 @@ import de.codingair.codingapi.particles.animations.playeranimations.CustomAnimat
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -23,11 +24,17 @@ public class AnimationPlayer {
     private BukkitRunnable runnable;
     private List<PlayerAnimation> animations = new ArrayList<>();
     private List<PotionEffect> buffBackup = new ArrayList<>();
+    private Location destination;
 
     public AnimationPlayer(Player player, Animation animation, int seconds) {
+        this(player, animation, seconds, null);
+    }
+
+    public AnimationPlayer(Player player, Animation animation, int seconds, Location destination) {
         this.player = player;
         this.animation = animation;
         this.seconds = seconds;
+        this.destination = destination;
     }
 
     private void buildBuffBackup() {
@@ -68,7 +75,6 @@ public class AnimationPlayer {
 
             @Override
             public void run() {
-                left--;
                 if(left > 0) {
                     for(Buff buff : animation.getBuffList()) {
                         if(buff.getTimeBeforeTeleport() == left || (left == seconds && buff.getTimeBeforeTeleport() > left)) {
@@ -81,6 +87,10 @@ public class AnimationPlayer {
                 } else if(left == 0) {
                     if(!loop) MessageAPI.sendActionBar(player, null);
 
+                    for(PlayerAnimation anim : animations) {
+                        anim.setRunning(false);
+                    }
+
                     for(Buff buff : animation.getBuffList()) {
                         if(buff.getTimeAfterTeleport() == 0) {
                             player.removePotionEffect(buff.getType());
@@ -89,12 +99,9 @@ public class AnimationPlayer {
                         }
                     }
 
-                    if(animation.getTeleportSound() != null) animation.getTeleportSound().play(player);
+                    if(animation.getTeleportSound() != null) animation.getTeleportSound().play(player, destination);
 
-                    if(player.getActivePotionEffects().isEmpty()) {
-                        setRunning(false);
-                        return;
-                    }
+                    if(player.getActivePotionEffects().isEmpty()) setRunning(false);
                 } else {
                     for(Buff buff : animation.getBuffList()) {
                         if(buff.getTimeAfterTeleport() == -left) {
@@ -102,11 +109,10 @@ public class AnimationPlayer {
                         }
                     }
 
-                    if(player.getActivePotionEffects().isEmpty()) {
-                        setRunning(false);
-                        return;
-                    }
+                    if(player.getActivePotionEffects().isEmpty()) setRunning(false);
                 }
+
+                left--;
             }
         };
     }
@@ -126,33 +132,34 @@ public class AnimationPlayer {
     }
 
     public void setRunning(boolean running) {
-        if(this.running != running) {
+        if(this.animation != null) {
+            if(this.running != running) {
+                if(running) {
+                    buildBuffBackup();
+                    removeActivePotionEffects();
+                    buildRunnable();
+                    buildAnimations();
 
-            if(running) {
-                buildBuffBackup();
-                removeActivePotionEffects();
-                buildRunnable();
-                buildAnimations();
+                    for(PlayerAnimation anim : this.animations) {
+                        anim.setRunning(true);
+                    }
 
-                for(PlayerAnimation anim : this.animations) {
-                    anim.setRunning(true);
-                }
+                    this.runnable.runTaskTimer(WarpSystem.getInstance(), 0, 20);
+                } else {
+                    for(PlayerAnimation anim : this.animations) {
+                        anim.setRunning(false);
+                    }
+                    this.runnable.cancel();
+                    removeActivePotionEffects();
+                    if(!loop) restoreBuffs();
+                    if(!loop) buffBackup.clear();
+                    animations.clear();
 
-                this.runnable.runTaskTimer(WarpSystem.getInstance(), loop ? 20 : 0, 20);
-            } else {
-                for(PlayerAnimation anim : this.animations) {
-                    anim.setRunning(false);
-                }
-                this.runnable.cancel();
-                removeActivePotionEffects();
-                if(!loop) restoreBuffs();
-                if(!loop) buffBackup.clear();
-                animations.clear();
-
-                if(loop) {
-                    this.running = running;
-                    setRunning(true);
-                    return;
+                    if(loop) {
+                        this.running = running;
+                        setRunning(true);
+                        return;
+                    }
                 }
             }
         }

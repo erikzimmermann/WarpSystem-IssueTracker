@@ -1,6 +1,5 @@
 package de.codingair.warpsystem.spigot.features.animations.editor;
 
-import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
@@ -11,9 +10,7 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.animations.utils.AnimationType;
 import de.codingair.warpsystem.spigot.features.animations.utils.Buff;
-import de.codingair.warpsystem.spigot.features.animations.utils.ParticlePart;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -67,7 +64,7 @@ public class Buffs extends HotbarGUI {
                                         .getItem());
 
                                 init(p);
-                            }
+                            } else buffs[id].init(p);
                         } else {
                             ic.setLink(null);
                             if(clickType == ClickType.RIGHT_CLICK && parts.size() >= id + 1) {
@@ -93,5 +90,9 @@ public class Buffs extends HotbarGUI {
                 }).setLink(this.buffs[id]));
             } else setItem(id + 2, new ItemComponent(new ItemStack(Material.AIR)));
         }
+    }
+
+    public Menu getMenuGUI() {
+        return menu;
     }
 }

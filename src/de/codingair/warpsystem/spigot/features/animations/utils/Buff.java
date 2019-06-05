@@ -20,7 +20,7 @@ public class Buff implements Serializable {
 
     @Override
     public boolean read(JSONObject json) throws Exception {
-        this.type = PotionEffectType.getByName((String) json.get("name"));
+        this.type = PotionEffectType.getByName((String) json.get("type"));
         this.level = Integer.parseInt(json.get("level") + "");
         this.timeBeforeTeleport = Integer.parseInt(json.get("timebeforeteleport") + "");
         this.timeAfterTeleport = Integer.parseInt(json.get("timeafterteleport") + "");
@@ -29,7 +29,7 @@ public class Buff implements Serializable {
 
     @Override
     public void write(JSONObject json) {
-        json.put("name", this.type.getName());
+        json.put("type", this.type.getName());
         json.put("level", this.level + "");
         json.put("timebeforeteleport", this.timeBeforeTeleport + "");
         json.put("timeafterteleport", this.timeAfterTeleport + "");

@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.features.animations.editor;
 
 import de.codingair.codingapi.particles.Particle;
+import de.codingair.codingapi.particles.animations.PlayerAnimation;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
@@ -54,7 +55,7 @@ public class Particles extends HotbarGUI {
                             ic.setLink(animations[id]);
 
                             if(menu.getClone().getParticleParts().size() == id) {
-                                menu.getClone().getParticleParts().add(new ParticlePart(AnimationType.CIRCLE, Particle.FLAME, 1, 1));
+                                menu.getClone().getParticleParts().add(new ParticlePart(AnimationType.CIRCLE, Particle.FLAME, 1, 1, PlayerAnimation.MAX_SPEED));
                                 animations[id].init(p);
                                 menu.getAnimPlayer().update();
 
@@ -63,7 +64,7 @@ public class Particles extends HotbarGUI {
                                         .getItem());
 
                                 init(p);
-                            }
+                            } else animations[id].init(p);
                         } else {
                             ic.setLink(null);
                             if(clickType == ClickType.RIGHT_CLICK && parts.size() >= id + 1) {
@@ -78,7 +79,7 @@ public class Particles extends HotbarGUI {
                     @Override
                     public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
                         if(parts.size() >= id + 1) {
-                            MessageAPI.sendActionBar(getPlayer(), Menu.ACTION_BAR(Lang.get("Animation") + " #" + (id + 1), "§e" + Lang.get("Edit"), "§c" + Lang.get("Delete")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                            MessageAPI.sendActionBar(getPlayer(), Menu.ACTION_BAR(parts.get(id).getAnimation().getDisplayName(), "§e" + Lang.get("Edit"), "§c" + Lang.get("Delete")), WarpSystem.getInstance(), Integer.MAX_VALUE);
                         } else MessageAPI.sendActionBar(getPlayer(), "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Add"), WarpSystem.getInstance(), Integer.MAX_VALUE);
                     }
 
@@ -89,5 +90,9 @@ public class Particles extends HotbarGUI {
                 }).setLink(this.animations[id]));
             } else setItem(id + 2, new ItemComponent(new ItemStack(Material.AIR)));
         }
+    }
+
+    public Menu getMenuGUI() {
+        return menu;
     }
 }

@@ -9,6 +9,7 @@ import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
 import de.codingair.codingapi.player.gui.hotbar.ItemComponent;
 import de.codingair.codingapi.player.gui.hotbar.ItemListener;
+import de.codingair.codingapi.player.gui.inventory.gui.Skull;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -27,6 +28,7 @@ public class Menu extends HotbarGUI {
 
     private Particles particles;
     private Buffs buffs;
+    private Sounds sounds;
 
     public static String PLUS_MINUS(String s) {
         return ACTION_BAR(s, "+", "-");
@@ -57,6 +59,7 @@ public class Menu extends HotbarGUI {
         this.animPlayer = new AnimationPlayer(player, clone, 5);
         particles = new Particles(getPlayer(), this);
         buffs = new Buffs(getPlayer(), this);
+        sounds = new Sounds(getPlayer(), this);
 
         this.animPlayer.setLoop(true);
         this.animPlayer.setRunning(true);
@@ -65,7 +68,7 @@ public class Menu extends HotbarGUI {
     }
 
     private void init(Player p) {
-        p.getInventory().setHeldItemSlot(1);
+        p.getInventory().setHeldItemSlot(0);
 
         setItem(0, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
         setItem(1, new ItemComponent(new ItemBuilder(XMaterial.NAME_TAG).setName("§7" + Lang.get("Name") + ": '§r" + clone.getName() + "§7'").getItem(), new ItemListener() {
@@ -109,52 +112,49 @@ public class Menu extends HotbarGUI {
         }));
         setItem(2, new ItemComponent(new ItemBuilder(XMaterial.BEACON).setName("§7» §e" + Lang.get("Particle_Effects") + "§7 «").getItem()).setLink(this.particles));
         setItem(3, new ItemComponent(new ItemBuilder(XMaterial.SPLASH_POTION).setName("§7» §e" + Lang.get("Potion_Effects") + "§7 «").getItem()).setLink(this.buffs));
+        setItem(4, new ItemComponent(new ItemBuilder(XMaterial.NOTE_BLOCK).setName("§7» §e" + Lang.get("Sounds") + "§7 «").getItem()).setLink(this.sounds));
 
         setItem(6, new ItemComponent(new ItemBuilder(XMaterial.LIME_TERRACOTTA).setName("§7» §a" + Lang.get("Save") + "§7 «").getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-//                if(editor.getBackupPortal() == null) {
-//                    //CREATION
-//                    getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Portal_Created"));
-//                } else {
-//                    //Save changes
-//                    getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Portal_Save_Changes"));
-//                }
+                String id = animation.getName();
+
+                animation.apply(clone);
+                clone.destroy();
+
+                if(!AnimationManager.getInstance().existsAnimation(id)) {
+                    //register
+                    AnimationManager.getInstance().addAnimation(animation);
+                }
+
+                getPlayer().sendMessage(Lang.getPrefix() + "§a" + Lang.get("Changes_have_been_saved"));
+
+                animPlayer.setLoop(false);
+                animPlayer.setRunning(false);
             }
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-
             }
 
             @Override
             public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
-
             }
         }).setCloseOnClick(true));
 
         setItem(7, new ItemComponent(new ItemBuilder(XMaterial.RED_TERRACOTTA).setName("§7» §c" + Lang.get("Cancel") + "§7 «").getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-//                editor.exit();
-//
-//                if(editor.getBackupPortal() == null) {
-//                    //NO CREATION
-//                    getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Portal_Not_Created"));
-//                } else {
-//                    //Delete changes
-//                    getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Portal_Delete_Changes"));
-//                }
+                animPlayer.setLoop(false);
+                animPlayer.setRunning(false);
             }
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-
             }
 
             @Override
             public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
-
             }
         }).setCloseOnClick(true));
     }
@@ -177,5 +177,10 @@ public class Menu extends HotbarGUI {
 
     Buffs getBuffs() {
         return buffs;
+    }
+
+    @Override
+    public void open(boolean sound) {
+        super.open(sound);
     }
 }

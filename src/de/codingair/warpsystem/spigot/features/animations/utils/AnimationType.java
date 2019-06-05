@@ -1,8 +1,7 @@
 package de.codingair.warpsystem.spigot.features.animations.utils;
 
 import de.codingair.codingapi.particles.Particle;
-import de.codingair.codingapi.particles.animations.playeranimations.CircleAnimation;
-import de.codingair.codingapi.particles.animations.playeranimations.CustomAnimation;
+import de.codingair.codingapi.particles.animations.playeranimations.*;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -10,7 +9,11 @@ import org.bukkit.plugin.Plugin;
 import java.lang.reflect.InvocationTargetException;
 
 public enum AnimationType {
-    CIRCLE(0, CircleAnimation.class, "Circle");
+    CIRCLE(0, CircleAnimation.class, "Circle"),
+    PULSING_CIRCLE_ANIMATION(1, PulsingCircleAnimation.class, "Pulsing Circle Animation"),
+    ROTATING_CIRCLE_ANIMATION(2, RotatingCircleAnimation.class, "Rotating Circle Animation"),
+    SINUS_ANIMATION(3, SinusAnimation.class, "Sinus Animation"),
+    ;
 
     private int id;
     private Class<? extends CustomAnimation> clazz;
@@ -22,9 +25,9 @@ public enum AnimationType {
         this.displayName = displayName;
     }
 
-    public CustomAnimation build(Particle particle, Player player, double radius, double height) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        return clazz.getConstructor(Particle.class, Player.class, Plugin.class, boolean.class, double.class, double.class)
-                .newInstance(particle, player, WarpSystem.getInstance(), true, radius, height);
+    public CustomAnimation build(Particle particle, Player player, double radius, double height, int speed) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        return clazz.getConstructor(Particle.class, Player.class, Plugin.class, boolean.class, double.class, double.class, int.class)
+                .newInstance(particle, player, WarpSystem.getInstance(), true, radius, height, speed);
     }
 
     public int getId() {

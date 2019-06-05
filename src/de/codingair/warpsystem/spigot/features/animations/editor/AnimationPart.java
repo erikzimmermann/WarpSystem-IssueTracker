@@ -122,10 +122,38 @@ public class AnimationPart extends HotbarGUI {
                 MessageAPI.stopSendingActionBar(getPlayer());
             }
         }));
+
+        setItem(6, new ItemComponent(new ItemBuilder(XMaterial.SUGAR).setName("§7" + Lang.get("Animation_Speed") + ": §e" + getSpeed()).getItem(), new ItemListener() {
+            @Override
+            public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
+                if(clickType == ClickType.LEFT_CLICK) {
+                    getPart().setSpeed(getPart().getSpeed() + 1);
+                } else if(clickType == ClickType.RIGHT_CLICK) {
+                    getPart().setSpeed(getPart().getSpeed() - 1);
+                } else return;
+
+                menu.getAnimPlayer().update();
+                updateDisplayName(ic, "§7" + Lang.get("Animation_Speed") + ": §e" + getSpeed());
+            }
+
+            @Override
+            public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
+                MessageAPI.sendActionBar(getPlayer(), Menu.PLUS_MINUS(Lang.get("Animation_Speed")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+            }
+
+            @Override
+            public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
+                MessageAPI.stopSendingActionBar(getPlayer());
+            }
+        }));
     }
 
     private double getRadius() {
         return getPart() == null ? null : getPart().getRadius();
+    }
+
+    private double getSpeed() {
+        return getPart() == null ? null : getPart().getSpeed();
     }
 
     private double getHeight() {
@@ -145,5 +173,9 @@ public class AnimationPart extends HotbarGUI {
     
     private ParticlePart getPart() {
         return menu.getClone().getParticleParts().size() <= slot ? null : menu.getClone().getParticleParts().get(slot);
+    }
+
+    public Menu getMenuGUI() {
+        return menu;
     }
 }

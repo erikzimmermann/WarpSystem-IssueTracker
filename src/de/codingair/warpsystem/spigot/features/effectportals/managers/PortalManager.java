@@ -41,7 +41,7 @@ public class PortalManager implements Manager {
                 }
             }
 
-            WarpSystem.log("     ...got " + this.portals.size() + " Portal(s)");
+            WarpSystem.log("    ...got " + this.portals.size() + " Portal(s)");
         }
 
         int temp = this.portals.size();
@@ -57,7 +57,7 @@ public class PortalManager implements Manager {
             }
         }
 
-        WarpSystem.log("     ...got " + (portals.size() - temp) + " Portal(s)");
+        WarpSystem.log("    ...got " + (portals.size() - temp) + " Portal(s)");
 
         //Check duplicates
         List<Portal> duplicates = new ArrayList<>();
