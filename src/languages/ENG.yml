@@ -64,15 +64,19 @@ Apply_Delete_Yes: '&7Yes, &4delete&7.'
 Delete_Portal_Successfully: '&7The portal has been &cdeleted &7successfully.'
 PORTAL_CREATE_FIRST_SAVED: '&7The first position has been saved.'
 PORTAL_CREATE_NEXT: '&7Run this command at the next required position again.'
-Teleport_Radius: Teleport-Radius
-Animation_Height: Animation-Height
+Teleport_Radius: 'Teleport radius'
+Animation_Radius: 'Animation radius'
+Animation_Height: 'Animation height'
+Animation_Speed: 'Animation speed'
 Destination: Destination
 Animation_Type: Animation-Type
 Particle_Effect: Particle-Effect
+Particle_Effects: Particle-Effects
 Hologram_Height: Hologram-Height
 Start_Name: Start-Name
 Goal_Name: Goal-Name
 Sound: Sound
+Sounds: Sounds
 Volume: Volume
 Pitch: Pitch
 Entering_Portal_Editor: '&7You are now in the portal-editor.'
@@ -90,7 +94,7 @@ Coins: Coin(s)
 Costs: Costs
 WarpSign_Choose_Warp: Choose a warp for the sign!
 WarpSign_Finish: The WarpSign was set successfully!
-Teleport_Cancelled: '&cThe teleport was cancelled.'
+Teleport_Cancelled: '&cThe teleport has been cancelled.'
 WarpSign_Removed: '&7The WarpSign was &cremoved&7!'
 Search: Search...
 Previous_Page: Previous Page
@@ -345,3 +349,14 @@ Effect_Portals: 'Effect portals'
 General: 'General'
 Toggle: 'Toggle'
 NativePortals: 'Native portals'
+Potion_Effect: 'Potion effect'
+Potion_Effects: 'Potion effects'
+Potion_Effect_Type: 'Potion effect type'
+Level: 'Level'
+Potion_Effect_Time_before_Teleport: 'Effect duration before teleport'
+Potion_Effect_Time_after_Teleport: 'Effect duration after teleport'
+Animation_Editor: 'Animation editor'
+Animation_does_not_exist: '&cThis animation &cdoes not exists&7!'
+Animation_was_removed: '&7The animation "&b%ANIMATION%&7" was &cremoved&7!'
+Tick_Sound: 'Tick sound'
+Teleport_Sound: 'Teleport sound'

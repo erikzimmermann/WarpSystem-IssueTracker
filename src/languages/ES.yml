@@ -64,15 +64,19 @@ Apply_Delete_Yes: '&7Si, &4eliminar&7.'
 Delete_Portal_Successfully: '&7El portal fue &celiminado &7con exito.'
 PORTAL_CREATE_FIRST_SAVED: '&7La primera posicion fue guardada.'
 PORTAL_CREATE_NEXT: '&7Ejecuta este comando en la siguiente posicion requerida.'
-Teleport_Radius: Radio-Teletransporte
-Animation_Height: Altura-Animacion
+Teleport_Radius: 'Radio-Teletransporte'
+Animation_Radius: 'Radio-Animacion'
+Animation_Height: 'Altura-Animacion'
+Animation_Speed: 'Velocidad-Animacion'
 Destination: Destinacion
 Animation_Type: Tipo-Animacion
 Particle_Effect: Efecto-Particula
+Particle_Effects: Efecto-Particulas
 Hologram_Height: Altura-Holograma
 Start_Name: Nombre-Inicio
 Goal_Name: Nombre-Objetivo
 Sound: Sonido
+Sounds: Sonidos
 Volume: Volumen
 Pitch: Tono
 Entering_Portal_Editor: '&7Ahora estas en el modo editor.'
@@ -345,3 +349,14 @@ Effect_Portals: 'Portales de efectos'
 General: 'General'
 Toggle: 'Palanca'
 NativePortals: 'Portales Nativos'
+Potion_Effect: 'Efecto de poción'
+Potion_Effects: 'Efectos de poción'
+Potion_Effect_Type: 'Tipo de efecto poción'
+Level: 'Nivel'
+Potion_Effect_Time_before_Teleport: 'Duración del efecto antes del teletransporte'
+Potion_Effect_Time_after_Teleport: 'Duración del efecto después del teletransporte'
+Animation_Editor: 'Editor de animacion'
+Animation_does_not_exist: '&cEsta animacion &cno existe&7!'
+Animation_was_removed: '&7La animacion "&b%ANIMATION%&7" fue &celiminada&7!'
+Tick_Sound: 'Tick sound'
+Teleport_Sound: 'Teleport sound'

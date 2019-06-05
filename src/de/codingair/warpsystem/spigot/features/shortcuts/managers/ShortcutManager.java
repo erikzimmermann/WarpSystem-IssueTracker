@@ -70,7 +70,7 @@ public class ShortcutManager implements Manager, BungeeFeature {
             }
         }
 
-        WarpSystem.log("     ...got " + this.shortcuts.size() + " Shortcut(s)");
+        WarpSystem.log("    ...got " + this.shortcuts.size() + " Shortcut(s)");
 
         Bukkit.getPluginManager().registerEvents(new ShortcutListener(), WarpSystem.getInstance());
         return true;

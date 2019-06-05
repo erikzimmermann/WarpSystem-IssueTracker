@@ -67,14 +67,18 @@ PORTAL_CREATE_HELP: '&7Benutze: &e/portal create <Position-Name>'
 PORTAL_CREATE_FIRST_SAVED: '&7Die erste Position wurde gespeichert.'
 PORTAL_CREATE_NEXT: '&7Führe diesen Befehl erneut an der gewünschten Zielposition aus.'
 Teleport_Radius: Teleport-Radius
+Animation_Radius: "Animations-Radius"
 Animation_Height: 'Animations-Höhe'
+Animation_Speed: 'Animations-Geschwindigkeit'
 Destination: 'Ziel'
 Animation_Type: Animations-Typ
 Particle_Effect: Partikel-Effekt
+Particle_Effects: Partikel-Effekte
 Hologram_Height: 'Hologram-Höhe'
 Start_Name: Start-Name
 Goal_Name: Ziel-Name
 Sound: Ton
+Sounds: Töne
 Volume: 'Lautstärke'
 Pitch: 'Tonhöhe'
 Entering_Portal_Editor: '&7Du bist nun im Portal-Editor.'
@@ -346,3 +350,14 @@ Effect_Portals: 'Effekt Portal'
 General: 'Allgemeines'
 Toggle: 'Umschalten'
 NativePortals: 'Native portals'
+Potion_Effect: 'Trank-Effekt'
+Potion_Effects: 'Trank-Effekte'
+Potion_Effect_Type: 'Trank-Effekt-Typ'
+Level: 'Level'
+Potion_Effect_Time_before_Teleport: 'Effekt-Dauer vor Teleport'
+Potion_Effect_Time_after_Teleport: 'Effekt-Dauer nach Teleport'
+Animation_Editor: 'Animations Editor'
+Animation_does_not_exist: '&cDiese Animation &cexistiert nicht&7!'
+Animation_was_removed: '&7Die Animation "&b%ANIMATION%&7" wurde &cgelöscht&7!'
+Tick_Sound: 'Sekunden-Ton'
+Teleport_Sound: 'Teleport-Ton'

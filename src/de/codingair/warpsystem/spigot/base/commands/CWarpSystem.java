@@ -1,11 +1,13 @@
 package de.codingair.warpsystem.spigot.base.commands;
 
+import de.codingair.codingapi.API;
 import de.codingair.codingapi.player.chat.ChatButton;
 import de.codingair.codingapi.player.chat.SimpleMessage;
 import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilGUI;
 import de.codingair.codingapi.player.gui.anvil.AnvilListener;
+import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
 import de.codingair.codingapi.server.commands.BaseComponent;
 import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
@@ -25,6 +27,10 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.Wa
 import de.codingair.warpsystem.spigot.base.utils.options.OptionBundle;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
+import de.codingair.warpsystem.spigot.features.animations.AnimationManager;
+import de.codingair.warpsystem.spigot.features.animations.editor.*;
+import de.codingair.warpsystem.spigot.features.animations.utils.Animation;
+import de.codingair.warpsystem.spigot.features.animations.utils.AnimationPlayer;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.guis.GEditor;
 import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
@@ -62,15 +68,171 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, shortcut, options>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, shortcut, options, animations>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, shortcut, options>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, shortcut, options, animations>");
                 return false;
             }
         }, true);
+
+        getBaseComponent().addChild(new CommandComponent("animations") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                return false;
+            }
+        });
+
+        getComponent("animations").addChild(new CommandComponent("activate") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations activate §e<name>");
+                return false;
+            }
+        });
+
+        getComponent("animations", "activate").addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
+                for(Animation animation : AnimationManager.getInstance().getAnimationList()) {
+                    suggestions.add(animation.getName());
+                }
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                Animation animation = AnimationManager.getInstance().getAnimation(argument);
+
+                if(animation == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Animation_does_not_exist"));
+                    return false;
+                }
+
+                AnimationManager.getInstance().setActive(animation);
+                sender.sendMessage(Lang.getPrefix() + "§a" + Lang.get("Changes_have_been_saved"));
+                return false;
+            }
+        });
+
+        getComponent("animations").addChild(new CommandComponent("add") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations add §e<name>");
+                return false;
+            }
+        }.setOnlyPlayers(true));
+
+        getComponent("animations", "add").addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                if(AnimationManager.getInstance().existsAnimation(argument)) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
+                    return false;
+                }
+
+                HotbarGUI h = API.getRemovable((Player) sender, HotbarGUI.class);
+                if(h != null) {
+                    h.destroy();
+                    Menu m = null;
+
+                    if(h instanceof AnimationPart) m = ((AnimationPart) h).getMenuGUI();
+                    if(h instanceof BuffPart) m = ((BuffPart) h).getMenuGUI();
+                    if(h instanceof Buffs) m = ((Buffs) h).getMenuGUI();
+                    if(h instanceof Particles) m = ((Particles) h).getMenuGUI();
+                    if(h instanceof Sounds) m = ((Sounds) h).getMenuGUI();
+                    if(h instanceof Menu) m = (Menu) h;
+
+                    m.getAnimPlayer().setLoop(false);
+                    m.getAnimPlayer().setRunning(false);
+                }
+
+                new Menu((Player) sender, argument).open(true);
+                return false;
+            }
+        }.setOnlyPlayers(true));
+
+        getComponent("animations").addChild(new CommandComponent("edit") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations edit §e<name>");
+                return false;
+            }
+        }.setOnlyPlayers(true));
+
+        getComponent("animations", "edit").addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
+                for(Animation animation : AnimationManager.getInstance().getAnimationList()) {
+                    suggestions.add(animation.getName());
+                }
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                Animation animation = AnimationManager.getInstance().getAnimation(argument);
+
+                if(animation == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Animation_does_not_exist"));
+                    return false;
+                }
+
+                HotbarGUI h = API.getRemovable((Player) sender, HotbarGUI.class);
+                if(h != null) {
+                    h.destroy();
+                    Menu m = null;
+
+                    if(h instanceof AnimationPart) m = ((AnimationPart) h).getMenuGUI();
+                    if(h instanceof BuffPart) m = ((BuffPart) h).getMenuGUI();
+                    if(h instanceof Buffs) m = ((Buffs) h).getMenuGUI();
+                    if(h instanceof Particles) m = ((Particles) h).getMenuGUI();
+                    if(h instanceof Sounds) m = ((Sounds) h).getMenuGUI();
+                    if(h instanceof Menu) m = (Menu) h;
+
+                    m.getAnimPlayer().setLoop(false);
+                    m.getAnimPlayer().setRunning(false);
+                }
+
+                new Menu((Player) sender, animation).open(true);
+                return false;
+            }
+        }.setOnlyPlayers(true));
+
+        getComponent("animations").addChild(new CommandComponent("remove") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations remove §e<name>");
+                return false;
+            }
+        });
+
+        getComponent("animations", "remove").addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
+                for(Animation animation : AnimationManager.getInstance().getAnimationList()) {
+                    suggestions.add(animation.getName());
+                }
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                Animation animation = AnimationManager.getInstance().getAnimation(argument);
+
+                if(animation == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Animation_does_not_exist"));
+                    return false;
+                }
+
+                AnimationManager.getInstance().removeAnimation(animation);
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Animation_was_removed").replace("%ANIMATION%", animation.getName()));
+                return false;
+            }
+        });
 
         getBaseComponent().addChild(new CommandComponent("options") {
             @Override
@@ -78,7 +240,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                 new OptionsGUI((Player) sender).open();
                 return false;
             }
-        });
+        }.setOnlyPlayers(true));
 
         getBaseComponent().addChild(new CommandComponent("shortcut") {
             @Override
@@ -108,22 +270,6 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                 clone.addAction(new WarpAction(new Destination()));
 
                 new GEditor((Player) sender, shortcut, clone).open();
-//                String warpId = args[3];
-//
-//                SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(warpId);
-//
-//                if(warp == null) {
-//                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
-//                    return false;
-//                }
-//
-//                if(ShortcutManager.getInstance().getShortcut(argument) != null) {
-//                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_already_exists"));
-//                    return false;
-//                }
-//
-//                ShortcutManager.getInstance().getShortcuts().add(new Shortcut(new Destination(warp.getName(), DestinationType.SimpleWarp), argument));
-//                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_created").replace("%SHORTCUT%", argument));
                 return false;
             }
         }.setOnlyPlayers(true));
@@ -157,11 +303,9 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                 if(clone.getDestination() == null) clone.addAction(new WarpAction(new Destination()));
 
                 new GEditor((Player) sender, shortcut, clone).open();
-//                ShortcutManager.getInstance().getShortcuts().remove(shortcut);
-//                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_was_removed").replace("%SHORTCUT%", shortcut.getDisplayName()));
                 return false;
             }
-        });
+        }.setOnlyPlayers(true));
 
         getComponent("shortcut").addChild(new CommandComponent("remove") {
             @Override
@@ -223,7 +367,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                 sender.sendMessage(message.toArray(new String[0]));
                 return false;
             }
-        }.setOnlyPlayers(true));
+        });
 
 
         getBaseComponent().addChild(new CommandComponent("info") {
@@ -233,7 +377,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                 sendInfoMessage(p);
                 return false;
             }
-        }.setOnlyPlayers(true));
+        });
 
         getBaseComponent().addChild(new CommandComponent("news") {
             @Override
@@ -327,7 +471,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                 }
                 return false;
             }
-        });
+        }.setOnlyPlayers(true));
 
         getBaseComponent().addChild(new CommandComponent("reload") {
             TimeList<CommandSender> confirm = new TimeList<>();
@@ -578,8 +722,8 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
         getComponent("shortcut", "add").removeChild("globalwarp");
     }
 
-    private static void sendInfoMessage(Player player) {
-        player.sendMessage(new String[] {
+    private static void sendInfoMessage(CommandSender sender) {
+        sender.sendMessage(new String[] {
                 "",
                 "§7§m               §7< §6WarpSystem §7>§m               §7",
                 "",

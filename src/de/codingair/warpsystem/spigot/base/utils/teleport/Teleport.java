@@ -1,7 +1,5 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport;
 
-import de.codingair.codingapi.particles.animations.Animation;
-import de.codingair.codingapi.particles.animations.playeranimations.CircleAnimation;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.server.Environment;
 import de.codingair.codingapi.server.Sound;
@@ -18,25 +16,23 @@ import de.codingair.warpsystem.spigot.base.utils.effects.RotatingParticleSpiral;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.spigot.base.utils.options.GeneralOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
-import net.minecraft.server.v1_14_R1.EntityPlayer;
+import de.codingair.warpsystem.spigot.features.animations.AnimationManager;
+import de.codingair.warpsystem.spigot.features.animations.utils.AnimationPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_14_R1.CraftChunk;
-import org.bukkit.craftbukkit.v1_14_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 
 public class Teleport {
     private Player player;
-    private Animation animation;
+    private AnimationPlayer animation;
     private BukkitRunnable runnable;
 
     private Sound cancelSound = Sound.ITEM_BREAK;
@@ -73,7 +69,7 @@ public class Teleport {
 
         if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) this.costs = 0;
 
-        this.animation = new CircleAnimation(WarpSystem.getInstance().getTeleportManager().getParticle(), player, WarpSystem.getInstance(), WarpSystem.getInstance().getTeleportManager().getRadius());
+        this.animation = new AnimationPlayer(player, AnimationManager.getInstance().getActive(), seconds, destination.buildLocation());
         this.runnable = new BukkitRunnable() {
             private int left = seconds;
             private String msg = Lang.get("Teleporting_Info");
@@ -86,9 +82,7 @@ public class Teleport {
                     return;
                 }
 
-                player.playSound(player.getLocation(), Sound.NOTE_PIANO.bukkitSound(), 1.5F, 0.5F);
                 MessageAPI.sendActionBar(player, msg.replace("%seconds%", left + ""));
-
                 left--;
             }
         };
@@ -155,15 +149,16 @@ public class Teleport {
     }
 
     public void cancel(boolean sound, boolean finished) {
-        if(animation.isRunning()) {
+        if(runnable != null) {
             this.startTime = 0;
-            this.animation.setRunning(false);
             this.runnable.cancel();
+            this.runnable = null;
             MessageAPI.sendActionBar(player, null);
         }
         if(sound && cancelSound != null) cancelSound.playSound(player);
 
         if(!finished) {
+            this.animation.setRunning(false);
             payBack();
             if(callback != null) callback.accept(TeleportResult.CANCELLED);
         }
@@ -200,7 +195,7 @@ public class Teleport {
 
         if(player.isOnline()) {
             if(afterEffects) playAfterEffects(player);
-            if(teleportSound != null) teleportSound.play(player);
+//            if(teleportSound != null) teleportSound.play(player);
         }
     }
 
@@ -231,7 +226,7 @@ public class Teleport {
         return destination;
     }
 
-    public Animation getAnimation() {
+    public AnimationPlayer getAnimation() {
         return animation;
     }
 
