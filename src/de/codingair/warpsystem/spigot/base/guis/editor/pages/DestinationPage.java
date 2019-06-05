@@ -1,8 +1,6 @@
 package de.codingair.warpsystem.spigot.base.guis.editor.pages;
 
-import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
-import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
-import de.codingair.codingapi.player.gui.anvil.AnvilSlot;
+import de.codingair.codingapi.player.gui.anvil.*;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncAnvilGUIButton;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
@@ -18,8 +16,10 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
+import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.guis.GSimpleWarpList;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestServerStatusPacket;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -54,8 +54,9 @@ public class DestinationPage extends PageItem {
                 String name = null;
                 if(destination.getType() == DestinationType.SimpleWarp) name = destination.getId();
 
-                List<String> lore = name == null ? null : new ArrayList<>();
-                if(lore != null) lore.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));
+                List<String> lore = new ArrayList<>();
+                if(name != null) lore.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));
+                else lore.add("§3" + Lang.get("Shift_Leftclick") + ": §a" + Lang.get("Create"));
 
                 return new ItemBuilder(XMaterial.ENDER_PEARL).setName(Editor.ITEM_TITLE_COLOR + Lang.get("SimpleWarps"))
                         .setLore("§3" + Lang.get("Current") + ": " + (name == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + ChatColor.translateAlternateColorCodes('&', name.replace("_", " ")) + "§7'"),
@@ -68,39 +69,82 @@ public class DestinationPage extends PageItem {
             public void onClick(InventoryClickEvent e, Player player) {
                 if(e.isLeftClick()) {
                     getLast().setClosingForGUI(true);
-                    new GSimpleWarpList(p) {
-                        @Override
-                        public void onClick(SimpleWarp value, ClickType clickType) {
-                            destination.setId(value.getName());
-                            destination.setType(DestinationType.SimpleWarp);
-                            destination.setAdapter(DestinationType.SimpleWarp.getInstance());
-                            update();
+                    if(e.isShiftClick()) {
+                        AnvilGUI.openAnvil(WarpSystem.getInstance(), player, new AnvilListener() {
+                            @Override
+                            public void onClick(AnvilClickEvent e) {
+                                if(e.getSlot() == AnvilSlot.OUTPUT) {
+                                    String input = e.getInput();
 
-                            if(WarpSystem.getInstance().isOnBungeeCord()) {
-                                ((SyncButton) DestinationPage.this.getButton(2, 2)).update();
-                                ((SyncButton) DestinationPage.this.getButton(3, 2)).update();
+                                    if(input == null) {
+                                        e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
+                                        return;
+                                    }
+
+                                    if(SimpleWarpManager.getInstance().existsWarp(input)) {
+                                        e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
+                                        return;
+                                    }
+
+                                    player.sendMessage(Lang.getPrefix() + Lang.get("SimpleWarp_Created").replace("%WARP%", ChatColor.translateAlternateColorCodes('&', input)));
+                                    SimpleWarp w;
+                                    SimpleWarpManager.getInstance().addWarp(w = new SimpleWarp(player, input, null));
+
+                                    destination.setId(w.getName());
+                                    destination.setType(DestinationType.SimpleWarp);
+                                    destination.setAdapter(DestinationType.SimpleWarp.getInstance());
+                                    update();
+
+                                    if(WarpSystem.getInstance().isOnBungeeCord()) {
+                                        ((SyncButton) DestinationPage.this.getButton(2, 2)).update();
+                                        ((SyncButton) DestinationPage.this.getButton(3, 2)).update();
+                                    }
+
+                                    e.setClose(true);
+                                    playSound(player);
+                                }
                             }
 
-                            this.setClosingForGUI(true);
-                            getLast().open();
-                        }
+                            @Override
+                            public void onClose(AnvilCloseEvent e) {
+                                e.setPost(() -> getLast().open());
+                            }
+                        }, new ItemBuilder(XMaterial.NAME_TAG).setName(Lang.get("Name") + "...").getItem());
+                    } else {
+                        new GSimpleWarpList(p) {
+                            @Override
+                            public void onClick(SimpleWarp value, ClickType clickType) {
+                                destination.setId(value.getName());
+                                destination.setType(DestinationType.SimpleWarp);
+                                destination.setAdapter(DestinationType.SimpleWarp.getInstance());
+                                update();
 
-                        @Override
-                        public void onClose() {
-                            getLast().open();
-                        }
+                                if(WarpSystem.getInstance().isOnBungeeCord()) {
+                                    ((SyncButton) DestinationPage.this.getButton(2, 2)).update();
+                                    ((SyncButton) DestinationPage.this.getButton(3, 2)).update();
+                                }
 
-                        @Override
-                        public void buildItemDescription(List<String> lore) {
-                            lore.add("");
-                            lore.add("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose"));
-                        }
-                    }.open();
+                                this.setClosingForGUI(true);
+                                getLast().open();
+                            }
+
+                            @Override
+                            public void onClose() {
+                                getLast().open();
+                            }
+
+                            @Override
+                            public void buildItemDescription(List<String> lore) {
+                                lore.add("");
+                                lore.add("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose"));
+                            }
+                        }.open();
+                    }
                 } else if(e.isRightClick()) {
                     destination.setId(null);
                     destination.setAdapter(null);
                     destination.setType(null);
-                    
+
                     if(WarpSystem.getInstance().isOnBungeeCord()) {
                         ((SyncButton) getButton(2, 2)).update();
                         ((SyncButton) getButton(3, 2)).update();
@@ -131,7 +175,7 @@ public class DestinationPage extends PageItem {
                 public void onClick(InventoryClickEvent e, Player player) {
                     if(e.isLeftClick()) {
                         getLast().setClosingForGUI(true);
-                        new GGlobalWarpList(player){
+                        new GGlobalWarpList(player) {
                             @Override
                             public void onClick(String warp, ClickType clickType) {
                                 destination.setId(warp);
@@ -161,7 +205,7 @@ public class DestinationPage extends PageItem {
                         destination.setId(null);
                         destination.setAdapter(null);
                         destination.setType(null);
-                        
+
                         ((SyncButton) getButton(1, 2)).update();
                         ((SyncButton) getButton(3, 2)).update();
                         update();
@@ -253,7 +297,7 @@ public class DestinationPage extends PageItem {
                         destination.setId(null);
                         destination.setAdapter(null);
                         destination.setType(null);
-                        
+
                         ((SyncButton) getButton(1, 2)).update();
                         ((SyncButton) getButton(2, 2)).update();
                         update();

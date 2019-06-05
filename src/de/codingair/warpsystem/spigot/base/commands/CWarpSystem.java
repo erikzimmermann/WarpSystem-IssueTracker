@@ -81,6 +81,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
         getBaseComponent().addChild(new CommandComponent("animations") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations §e<activate, add, edit, remove>");
                 return false;
             }
         });

@@ -43,9 +43,9 @@ public class Destination {
 
             this.type = json.get(0) == null ? null : DestinationType.valueOf((String) json.get(0));
             this.id = json.get(1) == null ? null : (String) json.get(1);
-            this.adapter = type.getInstance();
+            this.adapter = type == null ? null : type.getInstance();
         } catch(Exception ex) {
-            throw new IllegalArgumentException("Wrong serialized data!");
+            throw new IllegalArgumentException("Wrong serialized data!", ex);
         }
     }
 
