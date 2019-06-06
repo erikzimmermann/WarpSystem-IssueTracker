@@ -34,7 +34,7 @@ public class PortalListener implements Listener {
         for(Portal portal : API.getRemovables(Portal.class)) {
             if(!portal.isRegistered()) continue;
 
-            if(player.getWorld() == portal.getStart().getWorld() && e.getFrom().distance(portal.getStart()) > portal.getTeleportRadius() && e.getTo().distance(portal.getStart()) <= portal.getTeleportRadius()) {
+            if(e.getFrom().getWorld() == portal.getStart().getWorld() && e.getTo().getWorld() == portal.getStart().getWorld() && e.getFrom().distance(portal.getStart()) > portal.getTeleportRadius() && e.getTo().distance(portal.getStart()) <= portal.getTeleportRadius()) {
                 if(aboutToEdit) {
                     CPortal.aboutToEdit.remove(player.getName());
                     new PortalEditor(player, portal).start();
@@ -64,7 +64,7 @@ public class PortalListener implements Listener {
             } else if(portal.getDestination() != null && portal.getDestination().getAdapter() instanceof PortalDestinationAdapter) {
                 Location destination = portal.getDestination().buildLocation();
 
-                if(player.getWorld() == destination.getWorld() && e.getFrom().distance(destination) > portal.getTeleportRadius() && e.getTo().distance(destination) <= portal.getTeleportRadius()) {
+                if(e.getFrom().getWorld() == destination.getWorld() && e.getTo().getWorld() == destination.getWorld() && e.getFrom().distance(destination) > portal.getTeleportRadius() && e.getTo().distance(destination) <= portal.getTeleportRadius()) {
                     if(aboutToEdit) {
                         CPortal.aboutToEdit.remove(player.getName());
                         new PortalEditor(player, portal).start();
