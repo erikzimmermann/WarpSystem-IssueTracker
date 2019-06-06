@@ -70,28 +70,28 @@ public class Teleport {
         if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) this.costs = 0;
 
         this.animation = new AnimationPlayer(player, AnimationManager.getInstance().getActive(), seconds, destination.buildLocation());
-        this.runnable = new BukkitRunnable() {
-            private int left = seconds;
-            private String msg = Lang.get("Teleporting_Info");
-
-            @Override
-            public void run() {
-                if(left == 0) {
-                    teleport();
-                    MessageAPI.sendActionBar(player, null);
-                    return;
-                }
-
-                MessageAPI.sendActionBar(player, msg.replace("%seconds%", left + ""));
-                left--;
-            }
-        };
     }
 
     public void start() {
         if(!animation.isRunning()) {
             this.startTime = System.currentTimeMillis();
             this.animation.setRunning(true);
+            this.runnable = new BukkitRunnable() {
+                private int left = seconds;
+                private String msg = Lang.get("Teleporting_Info");
+
+                @Override
+                public void run() {
+                    if(left == 0) {
+                        teleport();
+                        MessageAPI.sendActionBar(player, null);
+                        return;
+                    }
+
+                    MessageAPI.sendActionBar(player, msg.replace("%seconds%", left + ""));
+                    left--;
+                }
+            };
             this.runnable.runTaskTimer(WarpSystem.getInstance(), 0L, 20L);
             preLoadChunks(-1);
         }
