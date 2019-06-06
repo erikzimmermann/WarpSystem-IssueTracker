@@ -36,6 +36,7 @@ public class OptionBundle {
 
     public void write() {
         for(Options option : this.options) {
+            option.reloadFile(false);
             option.write();
         }
     }

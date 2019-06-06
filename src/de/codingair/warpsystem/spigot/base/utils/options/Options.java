@@ -35,6 +35,11 @@ public abstract class Options {
         return this.file.getConfig();
     }
 
+    public void reloadFile(boolean save) {
+        if(save) this.file.saveConfig();
+        this.file.loadConfig();
+    }
+
     public void save() {
         this.file.saveConfig();
     }
@@ -44,7 +49,7 @@ public abstract class Options {
     }
 
     public void set(Option option) {
-        getConfig().set(option.getPath(), option.getValue());
+        if(option.hasChanged()) getConfig().set(option.getPath(), option.getValue());
     }
 
     public abstract Options clone();
