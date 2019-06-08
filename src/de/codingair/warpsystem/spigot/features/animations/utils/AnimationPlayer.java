@@ -59,6 +59,7 @@ public class AnimationPlayer {
         for(ParticlePart particlePart : this.animation.getParticleParts()) {
             try {
                 CustomAnimation anim = particlePart.build(player);
+                anim.setZRotation(90);
                 if(anim != null) {
                     this.animations.add(anim);
                 }
