@@ -28,8 +28,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.UUID;
 
 public class PortalEditor implements Removable {
-    public static String PLUS_MINUS(String s) {
-        return ACTION_BAR(s, "+", "-");
+    public static String MINUS_PLUS(String s) {
+        return ACTION_BAR(s, "-", "+");
     }
 
     public static String NEXT_PREVIOUS(String s) {

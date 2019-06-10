@@ -30,12 +30,20 @@ public class Menu extends HotbarGUI {
     private Buffs buffs;
     private Sounds sounds;
 
-    public static String PLUS_MINUS(String s) {
-        return ACTION_BAR(s, "+", "-");
+    public static String MINUS_PLUS(String s) {
+        return ACTION_BAR(s, "-", "+");
     }
 
-    public static String NEXT_PREVIOUS(String s) {
+    public static String MINUS_PLUS_SHIFT(String s) {
+        return ACTION_BAR(s, "§7(§e" + Lang.get("Shift") + "§7) §e-", "+ §7(§e" + Lang.get("Shift") + "§7)");
+    }
+
+    public static String PREVIOUS_NEXT(String s) {
         return ACTION_BAR(s, "«", "»");
+    }
+
+    public static String PREVIOUS_NEXT_SHIFT(String s) {
+        return ACTION_BAR(s, "§7(§e" + Lang.get("Shift") + "§7) §e«", "» §7(§e" + Lang.get("Shift") + "§7)");
     }
 
     public static String ACTION_BAR(String s, String left, String right) {

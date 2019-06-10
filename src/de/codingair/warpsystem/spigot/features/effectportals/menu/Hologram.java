@@ -39,9 +39,9 @@ public class Hologram extends HotbarGUI {
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 //Hologram-Height
                 if(clickType.equals(ClickType.LEFT_CLICK) || clickType.equals(ClickType.SHIFT_LEFT_CLICK)) {
-                    menu.getEditor().doAction(PortalEditor.Action.INCREASE_HOLOGRAM_HEIGHT);
-                } else if(clickType.equals(ClickType.RIGHT_CLICK) || clickType.equals(ClickType.SHIFT_RIGHT_CLICK)) {
                     menu.getEditor().doAction(PortalEditor.Action.DECREASE_HOLOGRAM_HEIGHT);
+                } else if(clickType.equals(ClickType.RIGHT_CLICK) || clickType.equals(ClickType.SHIFT_RIGHT_CLICK)) {
+                    menu.getEditor().doAction(PortalEditor.Action.INCREASE_HOLOGRAM_HEIGHT);
                 }
 
                 updateDisplayName(getItem(2), "§7" + Lang.get("Hologram_Height") + ": §e" + menu.getEditor().getPortal().getHologramHeight());
@@ -49,7 +49,7 @@ public class Hologram extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Hologram_Height")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), PortalEditor.MINUS_PLUS(Lang.get("Hologram_Height")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override

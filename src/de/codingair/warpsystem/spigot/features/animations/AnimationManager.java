@@ -64,7 +64,7 @@ public class AnimationManager implements Manager {
 
     @Override
     public void save(boolean saver) {
-        WarpSystem.log("  > Saving Animations");
+        if(!saver) WarpSystem.log("  > Saving Animations");
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Animations");
 
         List<String> dataList = new ArrayList<>();
@@ -78,7 +78,7 @@ public class AnimationManager implements Manager {
         file.getConfig().set("Active", active == null ? null : active.getName());
         file.saveConfig();
 
-        WarpSystem.log("    ...saved " + animationList.size() + " animation(s)");
+        if(!saver) WarpSystem.log("    ...saved " + animationList.size() + " animation(s)");
     }
 
     @Override

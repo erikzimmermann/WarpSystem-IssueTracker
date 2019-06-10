@@ -39,9 +39,9 @@ public class Animation extends HotbarGUI {
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 //Teleport-Radius
                 if(clickType.equals(ClickType.LEFT_CLICK) || clickType.equals(ClickType.SHIFT_LEFT_CLICK)) {
-                    menu.getEditor().doAction(PortalEditor.Action.INCREASE_TELEPORT_RADIUS);
-                } else if(clickType.equals(ClickType.RIGHT_CLICK) || clickType.equals(ClickType.SHIFT_RIGHT_CLICK)) {
                     menu.getEditor().doAction(PortalEditor.Action.DECREASE_TELEPORT_RADIUS);
+                } else if(clickType.equals(ClickType.RIGHT_CLICK) || clickType.equals(ClickType.SHIFT_RIGHT_CLICK)) {
+                    menu.getEditor().doAction(PortalEditor.Action.INCREASE_TELEPORT_RADIUS);
                 }
 
                 updateDisplayName(getItem(2), "§7" + Lang.get("Teleport_Radius") + ": §e" + menu.getEditor().getPortal().getTeleportRadius());
@@ -49,7 +49,7 @@ public class Animation extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Animation_Radius")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), PortalEditor.MINUS_PLUS(Lang.get("Animation_Radius")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -65,9 +65,9 @@ public class Animation extends HotbarGUI {
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 //Animation-Height
                 if(clickType.equals(ClickType.LEFT_CLICK) || clickType.equals(ClickType.SHIFT_LEFT_CLICK)) {
-                    menu.getEditor().doAction(PortalEditor.Action.INCREASE_ANIMATION_HEIGHT);
-                } else if(clickType.equals(ClickType.RIGHT_CLICK) || clickType.equals(ClickType.SHIFT_RIGHT_CLICK)) {
                     menu.getEditor().doAction(PortalEditor.Action.DECREASE_ANIMATION_HEIGHT);
+                } else if(clickType.equals(ClickType.RIGHT_CLICK) || clickType.equals(ClickType.SHIFT_RIGHT_CLICK)) {
+                    menu.getEditor().doAction(PortalEditor.Action.INCREASE_ANIMATION_HEIGHT);
                 }
 
                 updateDisplayName(getItem(3), "§7" + Lang.get("Animation_Height") + ": §e" + menu.getEditor().getPortal().getAnimationHeight());
@@ -75,7 +75,7 @@ public class Animation extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Animation_Height")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), PortalEditor.MINUS_PLUS(Lang.get("Animation_Height")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override

@@ -43,7 +43,7 @@ public class BuffPart extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), Menu.NEXT_PREVIOUS(Lang.get("Potion_Effect_Type")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Menu.PREVIOUS_NEXT(Lang.get("Potion_Effect_Type")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -56,9 +56,9 @@ public class BuffPart extends HotbarGUI {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 if(clickType == ClickType.LEFT_CLICK) {
-                    getBuff().setLevel(getBuff().getLevel() + 1);
-                } else if(clickType == ClickType.RIGHT_CLICK) {
                     getBuff().setLevel(getBuff().getLevel() - 1);
+                } else if(clickType == ClickType.RIGHT_CLICK) {
+                    getBuff().setLevel(getBuff().getLevel() + 1);
                 } else return;
 
                 menu.getAnimPlayer().update();
@@ -67,7 +67,7 @@ public class BuffPart extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), Menu.PLUS_MINUS(Lang.get("Level")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Menu.MINUS_PLUS(Lang.get("Level")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -80,9 +80,9 @@ public class BuffPart extends HotbarGUI {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 if(clickType == ClickType.LEFT_CLICK) {
-                    getBuff().setTimeBeforeTeleport(getBuff().getTimeBeforeTeleport() + 1);
-                } else if(clickType == ClickType.RIGHT_CLICK) {
                     getBuff().setTimeBeforeTeleport(getBuff().getTimeBeforeTeleport() - 1);
+                } else if(clickType == ClickType.RIGHT_CLICK) {
+                    getBuff().setTimeBeforeTeleport(getBuff().getTimeBeforeTeleport() + 1);
                 } else return;
 
                 menu.getAnimPlayer().update();
@@ -91,7 +91,7 @@ public class BuffPart extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), Menu.PLUS_MINUS(Lang.get("Potion_Effect_Time_before_Teleport")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Menu.MINUS_PLUS(Lang.get("Potion_Effect_Time_before_Teleport")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -104,9 +104,9 @@ public class BuffPart extends HotbarGUI {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 if(clickType == ClickType.LEFT_CLICK) {
-                    getBuff().setTimeAfterTeleport(getBuff().getTimeAfterTeleport() + 1);
-                } else if(clickType == ClickType.RIGHT_CLICK) {
                     getBuff().setTimeAfterTeleport(getBuff().getTimeAfterTeleport() - 1);
+                } else if(clickType == ClickType.RIGHT_CLICK) {
+                    getBuff().setTimeAfterTeleport(getBuff().getTimeAfterTeleport() + 1);
                 } else return;
 
                 menu.getAnimPlayer().update();
@@ -115,7 +115,7 @@ public class BuffPart extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), Menu.PLUS_MINUS(Lang.get("Potion_Effect_Time_after_Teleport")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Menu.MINUS_PLUS(Lang.get("Potion_Effect_Time_after_Teleport")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
