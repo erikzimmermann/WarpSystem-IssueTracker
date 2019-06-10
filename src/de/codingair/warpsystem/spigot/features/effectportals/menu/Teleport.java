@@ -85,9 +85,9 @@ public class Teleport extends HotbarGUI {
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 //Volume
                 if(clickType.equals(ClickType.LEFT_CLICK) || clickType.equals(ClickType.SHIFT_LEFT_CLICK)) {
-                    menu.getEditor().doAction(PortalEditor.Action.INCREASE_VOLUME);
-                } else if(clickType.equals(ClickType.RIGHT_CLICK) || clickType.equals(ClickType.SHIFT_RIGHT_CLICK)) {
                     menu.getEditor().doAction(PortalEditor.Action.DECREASE_VOLUME);
+                } else if(clickType.equals(ClickType.RIGHT_CLICK) || clickType.equals(ClickType.SHIFT_RIGHT_CLICK)) {
+                    menu.getEditor().doAction(PortalEditor.Action.INCREASE_VOLUME);
                 }
 
                 updateDisplayName(getItem(5), "§7" + Lang.get("Volume") + ": §e" + menu.getEditor().getPortal().getTeleportSound().getVolume());
@@ -95,7 +95,7 @@ public class Teleport extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Volume")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), PortalEditor.MINUS_PLUS(Lang.get("Volume")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -111,9 +111,9 @@ public class Teleport extends HotbarGUI {
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 //Pitch
                 if(clickType.equals(ClickType.LEFT_CLICK) || clickType.equals(ClickType.SHIFT_LEFT_CLICK)) {
-                    menu.getEditor().doAction(PortalEditor.Action.INCREASE_PITCH);
-                } else if(clickType.equals(ClickType.RIGHT_CLICK) || clickType.equals(ClickType.SHIFT_RIGHT_CLICK)) {
                     menu.getEditor().doAction(PortalEditor.Action.DECREASE_PITCH);
+                } else if(clickType.equals(ClickType.RIGHT_CLICK) || clickType.equals(ClickType.SHIFT_RIGHT_CLICK)) {
+                    menu.getEditor().doAction(PortalEditor.Action.INCREASE_PITCH);
                 }
 
                 updateDisplayName(getItem(6), "§7" + Lang.get("Pitch") + ":§e " + menu.getEditor().getPortal().getTeleportSound().getPitch());
@@ -121,7 +121,7 @@ public class Teleport extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Pitch")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), PortalEditor.MINUS_PLUS(Lang.get("Pitch")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override

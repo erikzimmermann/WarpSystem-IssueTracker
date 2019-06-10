@@ -95,4 +95,8 @@ public class Particles extends HotbarGUI {
     public Menu getMenuGUI() {
         return menu;
     }
+
+    public AnimationPart[] getAnimations() {
+        return animations;
+    }
 }

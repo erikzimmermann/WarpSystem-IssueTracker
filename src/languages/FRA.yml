@@ -365,3 +365,7 @@ Animation_was_removed: '&7L''animation "&b%ANIMATION%&7" &ca été supprimée&7!
 Tick_Sound: 'Son répété'
 Teleport_Sound: 'Son de téléportation'
 Create: 'Créer'
+Rotation: 'Rotation'
+Color: 'Couleur'
+ParticleType_Doesnt_Support_Colors: 'Le type de particule sélectionné ne prend pas en charge les couleurs.'
+Reset: 'Réinitialiser'

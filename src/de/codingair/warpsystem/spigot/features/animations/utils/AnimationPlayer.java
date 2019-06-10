@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.spigot.features.animations.utils;
 
 import de.codingair.codingapi.particles.animations.PlayerAnimation;
-import de.codingair.codingapi.particles.animations.playeranimations.CustomAnimation;
+import de.codingair.codingapi.particles.animations.customanimations.CustomAnimation;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -59,7 +59,6 @@ public class AnimationPlayer {
         for(ParticlePart particlePart : this.animation.getParticleParts()) {
             try {
                 CustomAnimation anim = particlePart.build(player);
-                anim.setZRotation(90);
                 if(anim != null) {
                     this.animations.add(anim);
                 }

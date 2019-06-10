@@ -37,8 +37,12 @@ public class Sounds extends HotbarGUI {
                 //Sound
                 if(clickType.equals(ClickType.LEFT_CLICK)) {
                     getTickSound().setSound(previous(getTickSound().getSound()));
+                } else if(clickType.equals(ClickType.SHIFT_LEFT_CLICK)) {
+                    getTickSound().setSound(shiftPrevious(getTickSound().getSound()));
                 } else if(clickType.equals(ClickType.RIGHT_CLICK)) {
                     getTickSound().setSound(next(getTickSound().getSound()));
+                } else if(clickType.equals(ClickType.SHIFT_RIGHT_CLICK)) {
+                    getTickSound().setSound(shiftNext(getTickSound().getSound()));
                 }
 
                 menu.getAnimPlayer().update();
@@ -47,7 +51,7 @@ public class Sounds extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.NEXT_PREVIOUS(Lang.get("Tick_Sound")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Menu.PREVIOUS_NEXT_SHIFT(Lang.get("Tick_Sound")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -76,7 +80,7 @@ public class Sounds extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Volume")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Menu.MINUS_PLUS(Lang.get("Volume")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -105,7 +109,7 @@ public class Sounds extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Pitch")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Menu.MINUS_PLUS(Lang.get("Pitch")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -122,8 +126,12 @@ public class Sounds extends HotbarGUI {
                 //Sound
                 if(clickType.equals(ClickType.LEFT_CLICK)) {
                     getTeleportSound().setSound(previous(getTeleportSound().getSound()));
+                } else if(clickType.equals(ClickType.SHIFT_LEFT_CLICK)) {
+                    getTeleportSound().setSound(shiftPrevious(getTeleportSound().getSound()));
                 } else if(clickType.equals(ClickType.RIGHT_CLICK)) {
                     getTeleportSound().setSound(next(getTeleportSound().getSound()));
+                } else if(clickType.equals(ClickType.SHIFT_RIGHT_CLICK)) {
+                    getTeleportSound().setSound(shiftNext(getTeleportSound().getSound()));
                 }
 
                 menu.getAnimPlayer().update();
@@ -132,7 +140,7 @@ public class Sounds extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.NEXT_PREVIOUS(Lang.get("Teleport_Sound")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Menu.PREVIOUS_NEXT_SHIFT(Lang.get("Teleport_Sound")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -161,7 +169,7 @@ public class Sounds extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Volume")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Menu.MINUS_PLUS(Lang.get("Volume")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -190,7 +198,7 @@ public class Sounds extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.PLUS_MINUS(Lang.get("Pitch")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Menu.MINUS_PLUS(Lang.get("Pitch")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -208,10 +216,37 @@ public class Sounds extends HotbarGUI {
         throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
     }
 
+    public static Sound shiftNext(Sound sound) {
+        int id = -1;
+        for(int i = 0; i < Sound.values().length; i++) {
+            if(Sound.values()[i].equals(sound)) {
+                id = i;
+            } else if(id >= 0 && sound.name().charAt(0) != Sound.values()[i].name().charAt(0)) {
+                return Sound.values()[i];
+            }
+        }
+
+        return Sound.values()[0];
+    }
+
     public static Sound previous(Sound sound) {
         for(int i = 0; i < Sound.values().length; i++) {
             if(Sound.values()[i].equals(sound)) {
                 return i - 1 < 0 ? Sound.values()[Sound.values().length - 1] : Sound.values()[i - 1];
+            }
+        }
+
+        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
+    }
+
+    public static Sound shiftPrevious(Sound sound) {
+        int id = -1;
+
+        for(int i = 0; i < Sound.values().length; i++) {
+            if(Sound.values()[i].name().charAt(0) == sound.name().charAt(0)) {
+                return id == -1 ? Sound.values()[Sound.values().length - 1] : Sound.values()[id];
+            } else {
+                id = i;
             }
         }
 

@@ -1,7 +1,8 @@
 package de.codingair.warpsystem.spigot.features.animations.utils;
 
 import de.codingair.codingapi.particles.Particle;
-import de.codingair.codingapi.particles.animations.playeranimations.*;
+import de.codingair.codingapi.particles.animations.customanimations.*;
+import de.codingair.codingapi.particles.animations.customanimations.CircleAnimation;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -10,9 +11,11 @@ import java.lang.reflect.InvocationTargetException;
 
 public enum AnimationType {
     CIRCLE(0, CircleAnimation.class, "Circle"),
-    PULSING_CIRCLE_ANIMATION(1, PulsingCircleAnimation.class, "Pulsing Circle Animation"),
-    ROTATING_CIRCLE_ANIMATION(2, RotatingCircleAnimation.class, "Rotating Circle Animation"),
-    SINUS_ANIMATION(3, SinusAnimation.class, "Sinus Animation"),
+    PULSING_CIRCLE_ANIMATION(1, PulsingCircleAnimation.class, "Pulsing Circle"),
+    ROTATING_CIRCLE_ANIMATION(2, RotatingCircleAnimation.class, "Rotating Circle"),
+    SINUS_ANIMATION(3, SinusAnimation.class, "Sinus"),
+    VECTOR_ANIMATION(4, VectorAnimation.class, "Vector"),
+    LINE_ANIMATION(5, LineAnimation.class, "Line"),
     ;
 
     private int id;
