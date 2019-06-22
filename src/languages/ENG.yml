@@ -29,6 +29,7 @@ Config: Config
 Maintenance: Maintenance
 Language: Language
 Animation: Animation
+Animations: Animations
 Show: 'Show'
 Previous_Animation: 'Previous animation'
 Next_Animation: 'Next animation'
@@ -100,7 +101,7 @@ Search: Search...
 Previous_Page: Previous Page
 Next_Page: Next Page
 GlobalWarp_Created: '&7The GlobalWarp "&b%GLOBAL_WARP%&7" was &acreated successfully&7.'
-GlobalWarp_Create_No_Dots: '&cGlobalWarp names &lcan''t &ccontain any points!'
+GlobalWarp_Create_No_Dots: '&cGlobalWarp names &-lcan''t &ccontain any points!'
 Target_Server: Target-Server
 GUI_Choose_Icon: Choose your IconType
 Warp: Warp
@@ -365,3 +366,6 @@ Rotation: 'Rotation'
 Color: 'Color'
 ParticleType_Doesnt_Support_Colors: 'The selected Particle type doesn''t support colors.'
 Reset: 'Reset'
+Portal: 'Portal'
+Position: 'Position'
+Positioning: 'Positioning'

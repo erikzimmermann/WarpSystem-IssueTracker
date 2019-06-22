@@ -16,11 +16,11 @@ import de.codingair.warpsystem.spigot.features.nativeportals.guis.DeleteGUI;
 import de.codingair.warpsystem.spigot.features.nativeportals.guis.NPEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.listeners.EditorListener;
 import de.codingair.warpsystem.spigot.features.nativeportals.listeners.PortalListener;
+import de.codingair.warpsystem.utils.JSONObject;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import de.codingair.warpsystem.utils.JSONParser;
 
 import java.util.ArrayList;
 import java.util.List;

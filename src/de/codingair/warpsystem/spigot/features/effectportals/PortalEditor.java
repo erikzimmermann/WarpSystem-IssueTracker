@@ -1,14 +1,11 @@
 package de.codingair.warpsystem.spigot.features.effectportals;
 
 import de.codingair.codingapi.API;
-import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.particles.animations.standalone.AnimationType;
 import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilGUI;
 import de.codingair.codingapi.player.gui.anvil.AnvilListener;
-import de.codingair.codingapi.server.Sound;
-import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.utils.Node;
@@ -19,7 +16,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.effectportals.managers.PortalManager;
 import de.codingair.warpsystem.spigot.features.effectportals.menu.Menu;
-import de.codingair.warpsystem.spigot.features.effectportals.utils.Portal;
+import de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -41,10 +38,9 @@ public class PortalEditor implements Removable {
     }
 
     private final UUID uniqueId = UUID.randomUUID();
-    public final AnimationType[] ANIMATION_TYPES = new AnimationType[] {AnimationType.CIRCLE, AnimationType.ROTATING_CIRCLE, AnimationType.PULSING_CIRCLE, AnimationType.SINUS};
     private Player player;
-    private Portal portal;
-    private Portal backupPortal;
+    private EffectPortal effectPortal;
+    private EffectPortal backupEffectPortal;
     private boolean finished = false;
     private Menu menu;
 
@@ -61,16 +57,16 @@ public class PortalEditor implements Removable {
         CHANGE_PERMISSION
     }
 
-    public PortalEditor(Player player, Portal portal) {
+    public PortalEditor(Player player, EffectPortal effectPortal) {
         this.player = player;
-        this.backupPortal = portal;
-        this.portal = new Portal(this.backupPortal);
+        this.backupEffectPortal = effectPortal;
+        this.effectPortal = new EffectPortal(this.backupEffectPortal);
         menu = new Menu(this.player, this);
     }
 
     public PortalEditor(Player player, Node<String, Location> first) {
         this.player = player;
-        this.portal = new Portal(first.getValue(), new Destination(), AnimationType.CIRCLE, 1, WarpSystem.getInstance().getTeleportManager().getParticles().get(0), 1, first.getKey(), null, new SoundData(Sound.ENDERMAN_TELEPORT, 1, 1), 2.2, true, true, null);
+        this.effectPortal = new EffectPortal(first.getValue(), new Destination(), null, first.getKey(), null, 2.2, true, true, null);
         menu = new Menu(this.player, this);
     }
 
@@ -81,7 +77,7 @@ public class PortalEditor implements Removable {
 
     @Override
     public Class<? extends Removable> getAbstractClass() {
-        return Portal.class;
+        return EffectPortal.class;
     }
 
     @Override
@@ -92,36 +88,6 @@ public class PortalEditor implements Removable {
     @Override
     public JavaPlugin getPlugin() {
         return WarpSystem.getInstance();
-    }
-
-    public int getCurrentAnimationTypeIndex() {
-        int i = 0;
-        for(AnimationType type : this.ANIMATION_TYPES) {
-            if(this.portal.getAnimationType().equals(type)) return i;
-            i++;
-        }
-
-        return 0;
-    }
-
-    public int getCurrentParticleIndex() {
-        int i = 0;
-        for(Particle particle : WarpSystem.getInstance().getTeleportManager().getParticles()) {
-            if(this.portal.getParticle().equals(particle)) return i;
-            i++;
-        }
-
-        return 0;
-    }
-
-    public int getCurrentSoundIndex() {
-        int i = 0;
-        for(Sound sound : Sound.values()) {
-            if(this.portal.getTeleportSound().getSound().equals(sound)) return i;
-            i++;
-        }
-
-        return 0;
     }
 
     public void doAction(Action action) {
@@ -140,7 +106,7 @@ public class PortalEditor implements Removable {
 
                         if(input != null && (input.equalsIgnoreCase("NONE") || input.equalsIgnoreCase("NULL"))) input = null;
 
-                        portal.setPermission(input);
+                        effectPortal.setPermission(input);
                         e.setClose(true);
                     }
 
@@ -148,7 +114,7 @@ public class PortalEditor implements Removable {
                     public void onClose(AnvilCloseEvent e) {
                         e.setPost(after);
                     }
-                }, new ItemBuilder(Material.PAPER).setName(portal.getPermission() == null ? "NONE" : portal.getPermission()).getItem());
+                }, new ItemBuilder(Material.PAPER).setName(effectPortal.getPermission() == null ? "NONE" : effectPortal.getPermission()).getItem());
                 break;
 
             case CHANGE_START_NAME:
@@ -164,7 +130,7 @@ public class PortalEditor implements Removable {
                             return;
                         }
 
-                        portal.setStartName(ChatColor.translateAlternateColorCodes('&', input));
+                        effectPortal.setStartName(ChatColor.translateAlternateColorCodes('&', input));
                         e.setClose(true);
                     }
 
@@ -172,7 +138,7 @@ public class PortalEditor implements Removable {
                     public void onClose(AnvilCloseEvent e) {
                         e.setPost(after);
                     }
-                }, new ItemBuilder(Material.PAPER).setName(portal.getStartName().replace("§", "&")).getItem());
+                }, new ItemBuilder(Material.PAPER).setName(effectPortal.getStartName().replace("§", "&")).getItem());
                 break;
 
             case CHANGE_DESTINATION_NAME:
@@ -188,7 +154,7 @@ public class PortalEditor implements Removable {
                             return;
                         }
 
-                        portal.setDestinationName(ChatColor.translateAlternateColorCodes('&', input));
+                        effectPortal.setDestinationName(ChatColor.translateAlternateColorCodes('&', input));
                         e.setClose(true);
                     }
 
@@ -196,109 +162,15 @@ public class PortalEditor implements Removable {
                     public void onClose(AnvilCloseEvent e) {
                         e.setPost(after);
                     }
-                }, new ItemBuilder(Material.PAPER).setName(portal.getDestinationName() == null ? (Lang.get("Name") + "...") : portal.getDestinationName().replace("§", "&")).getItem());
-                break;
-
-            case INCREASE_VOLUME:
-                double volume = this.portal.getTeleportSound().getVolume() + 0.1;
-                if(volume > 1.0) volume = 1.0;
-
-                this.portal.setSoundVolume((float) volume);
-                this.portal.getTeleportSound().play(player);
-                break;
-
-            case DECREASE_VOLUME:
-                volume = this.portal.getTeleportSound().getVolume() - 0.1;
-                if(volume < 0) volume = 0.0;
-
-                this.portal.setSoundVolume((float) volume);
-                this.portal.getTeleportSound().play(player);
-                break;
-
-            case INCREASE_ANIMATION_HEIGHT:
-                this.portal.setAnimationHeight(this.portal.getAnimationHeight() + 0.1);
-                break;
-
-            case DECREASE_ANIMATION_HEIGHT:
-                this.portal.setAnimationHeight(this.portal.getAnimationHeight() - 0.1);
+                }, new ItemBuilder(Material.PAPER).setName(effectPortal.getDestinationName() == null ? (Lang.get("Name") + "...") : effectPortal.getDestinationName().replace("§", "&")).getItem());
                 break;
 
             case INCREASE_HOLOGRAM_HEIGHT:
-                this.portal.setHologramHeight(this.portal.getHologramHeight() + 0.1);
+                this.effectPortal.setHologramHeight(this.effectPortal.getHologramHeight() + 0.1);
                 break;
 
             case DECREASE_HOLOGRAM_HEIGHT:
-                this.portal.setHologramHeight(this.portal.getHologramHeight() - 0.1);
-                break;
-
-            case INCREASE_PITCH:
-                double pitch = this.portal.getTeleportSound().getPitch() + 0.1;
-                if(pitch > 1.0) pitch = 1.0;
-
-                this.portal.setSoundPitch((float) pitch);
-                this.portal.getTeleportSound().play(player);
-                break;
-
-            case DECREASE_PITCH:
-                pitch = this.portal.getTeleportSound().getPitch() - 0.1;
-                if(pitch < 0) pitch = 0.0;
-
-                this.portal.setSoundPitch((float) pitch);
-                this.portal.getTeleportSound().play(player);
-                break;
-
-            case INCREASE_TELEPORT_RADIUS:
-                this.portal.setTeleportRadius(this.portal.getTeleportRadius() + 0.1);
-                break;
-
-            case DECREASE_TELEPORT_RADIUS:
-                this.portal.setTeleportRadius(this.portal.getTeleportRadius() - 0.1);
-                break;
-
-            case NEXT_ANIMATION_TYPE:
-                int i = getCurrentAnimationTypeIndex() + 1;
-                if(i >= ANIMATION_TYPES.length) i = 0;
-
-                this.portal.setAnimationType(ANIMATION_TYPES[i]);
-                break;
-
-            case PREVIOUS_ANIMATION_TYPE:
-                i = getCurrentAnimationTypeIndex() - 1;
-                if(i < 0) i = ANIMATION_TYPES.length - 1;
-
-                this.portal.setAnimationType(ANIMATION_TYPES[i]);
-                break;
-
-            case NEXT_PARTICLE:
-                i = getCurrentParticleIndex() + 1;
-                if(i >= WarpSystem.getInstance().getTeleportManager().getParticles().size()) i = 0;
-
-                this.portal.setParticle(WarpSystem.getInstance().getTeleportManager().getParticles().get(i));
-                break;
-
-            case PREVIOUS_PARTICLE:
-                i = getCurrentParticleIndex() - 1;
-                if(i < 0) i = WarpSystem.getInstance().getTeleportManager().getParticles().size() - 1;
-
-                this.portal.setParticle(WarpSystem.getInstance().getTeleportManager().getParticles().get(i));
-                break;
-
-            case NEXT_SOUND:
-                i = getCurrentSoundIndex() + 1;
-                if(i >= Sound.values().length) i = 0;
-
-                this.portal.getTeleportSound().setSound(Sound.values()[i]);
-
-                this.portal.getTeleportSound().play(player);
-                break;
-
-            case PREVIOUS_SOUND:
-                i = getCurrentSoundIndex() - 1;
-                if(i < 0) i = Sound.values().length - 1;
-
-                this.portal.getTeleportSound().setSound(Sound.values()[i]);
-
-                this.portal.getTeleportSound().play(player);
+                this.effectPortal.setHologramHeight(this.effectPortal.getHologramHeight() - 0.1);
                 break;
 
             case SAVE:
@@ -313,8 +185,8 @@ public class PortalEditor implements Removable {
     public void start() {
         API.addRemovable(this);
 
-        if(this.backupPortal != null) this.backupPortal.setRunning(false);
-        this.portal.setRunning(true);
+        if(this.backupEffectPortal != null) this.backupEffectPortal.setRunning(false);
+        this.effectPortal.setRunning(true);
         this.menu.open(true);
 
         this.player.sendMessage(Lang.getPrefix() + Lang.get("Entering_Portal_Editor"));
@@ -327,23 +199,23 @@ public class PortalEditor implements Removable {
     public void finish() {
         PortalManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.PORTALS);
         if(finished) return;
-        if(this.backupPortal != null) this.backupPortal.apply(this.portal);
+        if(this.backupEffectPortal != null) this.backupEffectPortal.apply(this.effectPortal);
 
         exit(true);
 
-        if(this.backupPortal == null) manager.getPortals().add(this.portal);
+        if(this.backupEffectPortal == null) manager.getEffectPortals().add(this.effectPortal);
     }
 
     public void exit() {
-        exit(portal.isRegistered() || (backupPortal != null && backupPortal.isRegistered()));
+        exit(effectPortal.isRegistered() || (backupEffectPortal != null && backupEffectPortal.isRegistered()));
     }
 
     private void exit(boolean running) {
         if(finished) return;
         finished = true;
 
-        this.portal.setRunning(this.backupPortal == null && running);
-        if(this.backupPortal != null) this.backupPortal.setRunning(running);
+        this.effectPortal.setRunning(this.backupEffectPortal == null && running);
+        if(this.backupEffectPortal != null) this.backupEffectPortal.setRunning(running);
 
         quit();
         API.removeRemovable(this);
@@ -353,11 +225,11 @@ public class PortalEditor implements Removable {
         return player;
     }
 
-    public Portal getPortal() {
-        return portal;
+    public EffectPortal getEffectPortal() {
+        return effectPortal;
     }
 
-    public Portal getBackupPortal() {
-        return backupPortal;
+    public EffectPortal getBackupEffectPortal() {
+        return backupEffectPortal;
     }
 }

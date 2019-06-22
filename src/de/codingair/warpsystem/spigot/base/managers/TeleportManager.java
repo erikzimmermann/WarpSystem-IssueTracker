@@ -6,7 +6,9 @@ import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.api.events.PlayerGlobalWarpEvent;
+import de.codingair.warpsystem.spigot.api.events.PlayerWarpEvent;
 import de.codingair.warpsystem.spigot.api.events.utils.GlobalWarp;
+import de.codingair.warpsystem.spigot.api.events.utils.Warp;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.options.GeneralOptions;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -190,26 +192,39 @@ public class TeleportManager {
         if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) seconds = 0;
 
         //Call events
-        if(origin != Origin.GlobalWarp || destination.getType() != DestinationType.UNKNOWN) {
-            if(destination.getType() == DestinationType.GlobalWarp) {
-                String name = GlobalWarpManager.getInstance().getCaseCorrectlyName(destination.getId());
-                String server = GlobalWarpManager.getInstance().getGlobalWarps().get(name);
+        if(destination.getType() == DestinationType.GlobalWarp) {
+            String name = GlobalWarpManager.getInstance().getCaseCorrectlyName(destination.getId());
+            String server = GlobalWarpManager.getInstance().getGlobalWarps().get(name);
 
-                PlayerGlobalWarpEvent event = new PlayerGlobalWarpEvent(player, new GlobalWarp(name, server), origin, displayName, message, seconds, costs);
-                Bukkit.getPluginManager().callEvent(event);
+            PlayerGlobalWarpEvent event = new PlayerGlobalWarpEvent(player, new GlobalWarp(name, server), origin, displayName, message, seconds, costs);
+            Bukkit.getPluginManager().callEvent(event);
 
-                if(event.isCancelled()) {
-                    if(callback != null) callback.accept(TeleportResult.CANCELLED_BY_SYSTEM);
-                    if(event.getTeleportResultCallback() != null) event.getTeleportResultCallback().accept(TeleportResult.CANCELLED_BY_SYSTEM);
-                    return;
-                }
-
-                resultCallback = event.getTeleportResultCallback();
-                costs = event.getCosts();
-                seconds = event.getSeconds();
-                displayName = event.getDisplayName();
-                message = event.getMessage();
+            if(event.isCancelled()) {
+                if(callback != null) callback.accept(TeleportResult.CANCELLED_BY_SYSTEM);
+                if(event.getTeleportResultCallback() != null) event.getTeleportResultCallback().accept(TeleportResult.CANCELLED_BY_SYSTEM);
+                return;
             }
+
+            resultCallback = event.getTeleportResultCallback();
+            costs = event.getCosts();
+            seconds = event.getSeconds();
+            displayName = event.getDisplayName();
+            message = event.getMessage();
+        } else {
+            PlayerWarpEvent event = new PlayerWarpEvent(player, new Warp(destination.buildLocation(), destination.getId(), destination.getType()), origin, displayName, message, seconds, costs);
+            Bukkit.getPluginManager().callEvent(event);
+
+            if(event.isCancelled()) {
+                if(callback != null) callback.accept(TeleportResult.CANCELLED_BY_SYSTEM);
+                if(event.getTeleportResultCallback() != null) event.getTeleportResultCallback().accept(TeleportResult.CANCELLED_BY_SYSTEM);
+                return;
+            }
+
+            resultCallback = event.getTeleportResultCallback();
+            costs = event.getCosts();
+            seconds = event.getSeconds();
+            displayName = event.getDisplayName();
+            message = event.getMessage();
         }
 
         Callback<TeleportResult> finalResultCallback = resultCallback;

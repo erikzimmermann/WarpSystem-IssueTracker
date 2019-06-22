@@ -1,6 +1,6 @@
 package de.codingair.warpsystem.spigot.base.utils.featureobjects;
 
-import org.json.simple.JSONObject;
+import de.codingair.warpsystem.utils.JSONObject;
 
 public interface Serializable {
     boolean read(JSONObject json) throws Exception;

@@ -4,8 +4,8 @@ import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.Serializable;
+import de.codingair.warpsystem.utils.JSONObject;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +35,14 @@ public class Animation implements Serializable {
     }
 
     @Override
-    public boolean read(JSONObject json) throws Exception {
+    public boolean read(JSONObject json) {
         buffList.clear();
         particleParts.clear();
 
-        this.name = (String) json.get("name");
-        this.teleportLoc = json.get("teleportlocation") == null ? null : Location.getByJSONString((String) json.get("teleportlocation"));
+        this.name = json.get("name");
+        this.teleportLoc = json.get("teleportlocation") == null ? null : Location.getByJSONString(json.get("teleportlocation"));
 
-        JSONArray buffArray = (JSONArray) json.get("bufflist");
+        JSONArray buffArray = json.get("bufflist");
         for(Object o : buffArray) {
             JSONObject data = (JSONObject) o;
             Buff b = new Buff();
@@ -50,7 +50,7 @@ public class Animation implements Serializable {
             buffList.add(b);
         }
 
-        JSONArray particleArray = (JSONArray) json.get("particleparts");
+        JSONArray particleArray = json.get("particleparts");
         for(Object o : particleArray) {
             JSONObject data = (JSONObject) o;
             ParticlePart p = new ParticlePart();

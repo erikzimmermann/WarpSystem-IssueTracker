@@ -1,33 +1,31 @@
 package de.codingair.warpsystem.spigot.features.effectportals.menu;
 
-import de.codingair.codingapi.API;
+import de.codingair.codingapi.particles.animations.movables.LocationMid;
 import de.codingair.codingapi.player.MessageAPI;
-import de.codingair.codingapi.player.gui.anvil.*;
+import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
+import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
+import de.codingair.codingapi.player.gui.anvil.AnvilGUI;
+import de.codingair.codingapi.player.gui.anvil.AnvilListener;
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
 import de.codingair.codingapi.player.gui.hotbar.ItemComponent;
 import de.codingair.codingapi.player.gui.hotbar.ItemListener;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
-import de.codingair.codingapi.tools.Callback;
-import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
+import de.codingair.warpsystem.spigot.features.animations.AnimationManager;
+import de.codingair.warpsystem.spigot.features.animations.guis.AnimationList;
+import de.codingair.warpsystem.spigot.features.animations.utils.Animation;
 import de.codingair.warpsystem.spigot.features.effectportals.PortalEditor;
-import de.codingair.warpsystem.spigot.features.effectportals.utils.PortalDestinationAdapter;
-import de.codingair.warpsystem.spigot.features.utils.guis.choosedestination.ChooseDestinationGUI;
-import de.codingair.warpsystem.transfer.packets.spigot.RequestServerStatusPacket;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class Menu extends HotbarGUI {
     private PortalEditor editor;
-    private Animation animation = new Animation(getPlayer(), this);
     private Hologram hologram = new Hologram(getPlayer(), this);
     private Teleport teleport = new Teleport(getPlayer(), this);
 
@@ -39,7 +37,6 @@ public class Menu extends HotbarGUI {
         setCloseSound(new SoundData(Sound.LEVEL_UP, 0.5F, 0.5F));
         setClickSound(new SoundData(Sound.CLICK, 0.5F, 1F));
 
-        this.animation.init();
         this.hologram.init();
         this.teleport.init();
         init();
@@ -47,150 +44,87 @@ public class Menu extends HotbarGUI {
 
     private void init() {
         setItem(0, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
-        setItem(1, new ItemComponent(new ItemBuilder(Material.REDSTONE).setName("§7» §e" + Lang.get("Animation") + "§7 «").getItem()).setLink(this.animation));
-        setItem(2, new ItemComponent(new ItemBuilder(XMaterial.OAK_SIGN).setName("§7» §e" + Lang.get("Hologram") + "§7 «").getItem()).setLink(this.hologram));
-        setItem(3, new ItemComponent(new ItemBuilder(Material.ENDER_PEARL).setName("§7» §e" + Lang.get("Teleport") + "§7 «").getItem()).setLink(this.teleport));
 
-        String destination = null;
-        if(editor.getPortal().getDestination().getId() != null && editor.getPortal().getDestination().getAdapter() != null) {
-            if(editor.getPortal().getDestination().getAdapter() instanceof PortalDestinationAdapter) {
-                destination = Lang.get("Effect_Portal");
-            } else {
-                switch(editor.getPortal().getDestination().getType()) {
-                    case SimpleWarp:
-                        destination = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("SimpleWarp") + "§8)";
-                        break;
-
-                    case GlobalWarp:
-                        destination = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("GlobalWarp") + "§8)";
-                        break;
-                }
-            }
-        }
-
-        setItem(4, new ItemComponent(new ItemBuilder(XMaterial.REDSTONE).setName("§7" + Lang.get("Destination") + ": §e" + (destination == null ? "§c-" : destination)).getItem(), new ItemListener() {
-            private boolean removed = false;
-
+        setItem(1, new ItemComponent(new ItemBuilder(XMaterial.REDSTONE).setName("§7" + Lang.get("Animation") + ": §e" + (editor.getEffectPortal().getAnimation() == null ? "§c-" : editor.getEffectPortal().getAnimation().getName())).getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-                if(API.getRemovable(player, AnvilGUI.class) != null) return;
-                if(clickType.name().contains("LEFT")) {
-                    //Set destination portal
-
-                    if(editor.getPortal().getDestination().getType() == DestinationType.EffectPortal) {
-                        editor.getPortal().getDestination().setId(null);
-                        editor.getPortal().getDestination().setAdapter(null);
-                        editor.getPortal().getDestination().setType(DestinationType.UNKNOWN);
-                        editor.getPortal().setDestinationName(null);
-
-                        editor.getPortal().update();
-                        updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §c-");
-                        onUnhover(gui, ic, ic, player);
-                        onHover(gui, ic, ic, player);
-                    } else {
+                if(clickType == ClickType.LEFT_CLICK) {
+                    if(editor.getEffectPortal().getAnimation() == null) {
                         AnvilGUI.openAnvil(WarpSystem.getInstance(), player, new AnvilListener() {
                             @Override
                             public void onClick(AnvilClickEvent e) {
-                                e.setClose(false);
-                                e.setCancelled(true);
+                                String input = e.getInput();
 
-                                if(e.getSlot() == AnvilSlot.OUTPUT) {
-                                    if(e.getInput() == null) {
-                                        player.sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
-                                        return;
-                                    }
-
-                                    String input = e.getInput().replace(" ", "_");
-
-                                    editor.getPortal().getDestination().setId(Location.getByLocation(player.getLocation()).toJSONString(4));
-                                    editor.getPortal().getDestination().setAdapter(new PortalDestinationAdapter());
-                                    editor.getPortal().getDestination().setType(DestinationType.EffectPortal);
-                                    editor.getPortal().setDestinationName(input);
-
-                                    editor.getPortal().update();
-                                    onUnhover(gui, ic, ic, player);
-                                    onHover(gui, ic, ic, player);
-
-                                    removed = true;
-                                    updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §e" + Lang.get("Effect_Portal"));
-
-                                    e.setClose(true);
+                                if(input == null) {
+                                    player.sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
+                                    return;
                                 }
+
+                                if(AnimationManager.getInstance().existsAnimation(input)) {
+                                    player.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
+                                    return;
+                                }
+
+                                e.setClose(true);
                             }
 
                             @Override
                             public void onClose(AnvilCloseEvent e) {
+                                e.setPost(() -> {
+                                    setWaiting(true);
+                                    editor.getEffectPortal().setAnimation(new Animation(e.getSubmittedText()));
+                                    updateDisplayName(ic, "§7" + Lang.get("Animation") + ": §e" + (editor.getEffectPortal().getAnimation() == null ? "§c-" : editor.getEffectPortal().getAnimation().getName()));
+                                    new de.codingair.warpsystem.spigot.features.animations.guis.editor.Menu(player, new LocationMid(editor.getEffectPortal().getStart()), editor.getEffectPortal().getAnimation(), Menu.this).open(false);
+                                });
                             }
                         }, new ItemBuilder(XMaterial.PAPER).setName(Lang.get("Name") + "...").getItem());
-                    }
-                } else if(clickType.name().contains("RIGHT")) {
-                    if(editor.getPortal().getDestination().getType() != DestinationType.EffectPortal && editor.getPortal().getDestination().getAdapter() != null) {
-                        editor.getPortal().getDestination().setId(null);
-                        editor.getPortal().getDestination().setAdapter(null);
-                        editor.getPortal().getDestination().setType(DestinationType.UNKNOWN);
-                        editor.getPortal().setDestinationName(null);
-
-                        editor.getPortal().update();
-                        removed = true;
-                        updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §c-");
-                        onUnhover(gui, ic, ic, player);
-                        onHover(gui, ic, ic, player);
                     } else {
-                        new ChooseDestinationGUI(player, new Callback<Destination>() {
+                        setWaiting(true);
+                        new de.codingair.warpsystem.spigot.features.animations.guis.editor.Menu(player, new LocationMid(editor.getEffectPortal().getStart()), editor.getEffectPortal().getAnimation(), Menu.this).open(false);
+                    }
+                } else if(clickType == ClickType.RIGHT_CLICK) {
+                    if(editor.getEffectPortal().getAnimation() == null) {
+                        new AnimationList(player) {
                             @Override
-                            public void accept(Destination destination) {
-                                if(destination == null) return;
-                                editor.getPortal().getDestination().apply(destination);
-                                editor.getPortal().update();
-                                onUnhover(gui, ic, ic, player);
-                                onHover(gui, ic, ic, player);
-
-                                String dest = null;
-                                switch(editor.getPortal().getDestination().getType()) {
-                                    case SimpleWarp:
-                                        dest = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("SimpleWarp") + "§8)";
-                                        break;
-
-                                    case GlobalWarp:
-                                        dest = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("GlobalWarp") + "§8)";
-                                        break;
-
-                                    case Server:
-                                        removed = false;
-                                        dest = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("Server") + " §7- " + Lang.get("Pinging") + "...§8)";
-                                        WarpSystem.getInstance().getDataHandler().send(new RequestServerStatusPacket(editor.getPortal().getDestination().getId(), new Callback<Boolean>() {
-                                            @Override
-                                            public void accept(Boolean online) {
-                                                if(removed) {
-                                                    removed = false;
-                                                    return;
-                                                }
-
-                                                String newName = editor.getPortal().getDestination().getId() + " §8(§b" + Lang.get("Server") + " §7- " + (online ? "§a" + Lang.get("Online") : "§c" + Lang.get("Offline")) + "§8)";
-                                                updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §e" + newName);
-                                            }
-                                        }));
-                                        break;
+                            public void onClick(Animation value, org.bukkit.event.inventory.ClickType clickType) {
+                                if(clickType == org.bukkit.event.inventory.ClickType.LEFT) {
+                                    editor.getEffectPortal().setAnimation(value);
+                                    updateDisplayName(ic, "§7" + Lang.get("Animation") + ": §e" + (editor.getEffectPortal().getAnimation() == null ? "§c-" : editor.getEffectPortal().getAnimation().getName()));
                                 }
-
-                                updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §e" + (dest == null ? "§c-" : dest));
                             }
-                        }).open();
+
+                            @Override
+                            public void onClose() {
+                            }
+
+                            @Override
+                            public void buildItemDescription(List<String> lore) {
+                                lore.add("");
+                                lore.add("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose"));
+                            }
+                        }.open();
+                    } else {
+                        editor.getEffectPortal().setAnimation(null);
+                        updateDisplayName(ic, "§7" + Lang.get("Animation") + ": §e" + (editor.getEffectPortal().getAnimation() == null ? "§c-" : editor.getEffectPortal().getAnimation().getName()));
                     }
                 }
             }
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), PortalEditor.ACTION_BAR(
-                        Lang.get("Destination"),
-                        editor.getPortal().getDestination().getType() == DestinationType.EffectPortal ?
-                                "§c" + Lang.get("Remove") :
-                                Lang.get("Effect_Portal"),
-                        editor.getPortal().getDestination().getType() != DestinationType.EffectPortal && editor.getPortal().getDestination().getAdapter() != null ?
-                                "§c" + Lang.get("Remove") :
-                                Lang.get("Existing_Warps"))
-                        , WarpSystem.getInstance(), Integer.MAX_VALUE);
+                if(editor.getEffectPortal().getAnimation() == null) {
+                    MessageAPI.sendActionBar(getPlayer(), PortalEditor.ACTION_BAR(
+                            Lang.get("Animation"),
+                            Lang.get("Create"),
+                            Lang.get("Choose"))
+                            , WarpSystem.getInstance(), Integer.MAX_VALUE);
+                } else {
+                    MessageAPI.sendActionBar(getPlayer(), PortalEditor.ACTION_BAR(
+                            Lang.get("Animation"),
+                            Lang.get("Edit"),
+                            Lang.get("Remove"))
+                            , WarpSystem.getInstance(), Integer.MAX_VALUE);
+                }
             }
 
             @Override
@@ -199,12 +133,15 @@ public class Menu extends HotbarGUI {
             }
         }));
 
+        setItem(2, new ItemComponent(new ItemBuilder(XMaterial.OAK_SIGN).setName("§7» §e" + Lang.get("Hologram") + "§7 «").getItem()).setLink(this.hologram));
+        setItem(3, new ItemComponent(new ItemBuilder(XMaterial.ENDER_PEARL).setName("§7» §e" + Lang.get("Teleport") + "§7 «").getItem()).setLink(this.teleport));
+
         setItem(6, new ItemComponent(new ItemBuilder(XMaterial.LIME_TERRACOTTA).setName("§7» §a" + Lang.get("Save") + "§7 «").getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 editor.finish();
 
-                if(editor.getBackupPortal() == null) {
+                if(editor.getBackupEffectPortal() == null) {
                     //CREATION
                     getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Portal_Created"));
                 } else {
@@ -229,7 +166,7 @@ public class Menu extends HotbarGUI {
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 editor.exit();
 
-                if(editor.getBackupPortal() == null) {
+                if(editor.getBackupEffectPortal() == null) {
                     //NO CREATION
                     getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Portal_Not_Created"));
                 } else {
@@ -248,6 +185,23 @@ public class Menu extends HotbarGUI {
 
             }
         }).setCloseOnClick(true));
+    }
+
+    @Override
+    public void open(boolean sound) {
+        if(editor.getEffectPortal().getAnimation() != null && !AnimationManager.getInstance().existsAnimation(editor.getEffectPortal().getAnimation().getName())) {
+            editor.getEffectPortal().setAnimation(null);
+        }
+
+        System.out.println("animation: " + editor.getEffectPortal().getAnimation());
+        editor.getEffectPortal().setShowAnimation(true);
+        super.open(sound);
+    }
+
+    @Override
+    public void close(boolean sound) {
+        editor.getEffectPortal().setShowAnimation(false);
+        super.close(sound);
     }
 
     public PortalEditor getEditor() {

@@ -34,7 +34,7 @@ public class Hologram extends HotbarGUI {
         setItem(0, new ItemComponent(new ItemBuilder(Skull.ArrowLeft).setName("§7» §c" + Lang.get("Back") + "§7 «").getItem()).setLink(this.menu));
         setItem(1, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
 
-        setItem(2, new ItemComponent(new ItemBuilder(Material.STICK).setName("§7" + Lang.get("Hologram_Height") + ": §e" + menu.getEditor().getPortal().getHologramHeight()).getItem(), new ItemListener() {
+        setItem(2, new ItemComponent(new ItemBuilder(Material.STICK).setName("§7" + Lang.get("Hologram_Height") + ": §e" + menu.getEditor().getEffectPortal().getHologramHeight()).getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 //Hologram-Height
@@ -44,7 +44,7 @@ public class Hologram extends HotbarGUI {
                     menu.getEditor().doAction(PortalEditor.Action.INCREASE_HOLOGRAM_HEIGHT);
                 }
 
-                updateDisplayName(getItem(2), "§7" + Lang.get("Hologram_Height") + ": §e" + menu.getEditor().getPortal().getHologramHeight());
+                updateDisplayName(getItem(2), "§7" + Lang.get("Hologram_Height") + ": §e" + menu.getEditor().getEffectPortal().getHologramHeight());
             }
 
             @Override
@@ -58,12 +58,12 @@ public class Hologram extends HotbarGUI {
             }
         }));
 
-        setItem(4, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Start_Name") + ": '§r" + menu.getEditor().getPortal().getStartName() + "§7'").getItem(), new ItemListener() {
+        setItem(4, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Start_Name") + ": '§r" + menu.getEditor().getEffectPortal().getStartName() + "§7'").getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 if(clickType != ClickType.LEFT_CLICK) return;
                 //Start-Name
-                menu.getEditor().doAction(PortalEditor.Action.CHANGE_START_NAME, () -> updateDisplayName(getItem(4), "§7" + Lang.get("Start_Name") + ": '§r" + menu.getEditor().getPortal().getStartName() + "§7'"));
+                menu.getEditor().doAction(PortalEditor.Action.CHANGE_START_NAME, () -> updateDisplayName(getItem(4), "§7" + Lang.get("Start_Name") + ": '§r" + menu.getEditor().getEffectPortal().getStartName() + "§7'"));
             }
 
             @Override
@@ -77,20 +77,20 @@ public class Hologram extends HotbarGUI {
             }
         }));
 
-        ItemBuilder builder = new ItemBuilder(menu.getEditor().getPortal().isStartHoloStatus() ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA);
+        ItemBuilder builder = new ItemBuilder(menu.getEditor().getEffectPortal().isStartHoloStatus() ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA);
         builder.setName(ChatColor.GRAY + Lang.get("Status_Of_Start") +
-                (menu.getEditor().getPortal().isStartHoloStatus() ? ChatColor.GREEN + Lang.get("Enabled") :
+                (menu.getEditor().getEffectPortal().isStartHoloStatus() ? ChatColor.GREEN + Lang.get("Enabled") :
                         ChatColor.RED + Lang.get("Disabled")));
 
         setItem(5, new ItemComponent(builder.getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-                menu.getEditor().getPortal().setStartHoloStatus(!menu.getEditor().getPortal().isStartHoloStatus());
-                menu.getEditor().getPortal().updateHolograms();
+                menu.getEditor().getEffectPortal().setStartHoloStatus(!menu.getEditor().getEffectPortal().isStartHoloStatus());
+                menu.getEditor().getEffectPortal().updateHolograms();
 
-                ItemBuilder builder = new ItemBuilder(menu.getEditor().getPortal().isStartHoloStatus() ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA);
+                ItemBuilder builder = new ItemBuilder(menu.getEditor().getEffectPortal().isStartHoloStatus() ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA);
                 builder.setName(ChatColor.GRAY + Lang.get("Status_Of_Start") +
-                        (menu.getEditor().getPortal().isStartHoloStatus() ? ChatColor.GREEN + Lang.get("Enabled") :
+                        (menu.getEditor().getEffectPortal().isStartHoloStatus() ? ChatColor.GREEN + Lang.get("Enabled") :
                                 ChatColor.RED + Lang.get("Disabled")));
 
                 setItem(5, new ItemComponent(builder.getItem(), this), false);
@@ -108,12 +108,12 @@ public class Hologram extends HotbarGUI {
 
         setItem(6, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
 
-        setItem(7, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Goal_Name") + ": '§r" + menu.getEditor().getPortal().getDestinationName() + "§7'").getItem(), new ItemListener() {
+        setItem(7, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Goal_Name") + ": '§r" + menu.getEditor().getEffectPortal().getDestinationName() + "§7'").getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 if(clickType != ClickType.LEFT_CLICK) return;
                 //Goal-Name
-                menu.getEditor().doAction(PortalEditor.Action.CHANGE_DESTINATION_NAME, () -> updateDisplayName(getItem(7), "§7" + Lang.get("Goal_Name") + ": '§r" + menu.getEditor().getPortal().getDestinationName() + "§7'"));
+                menu.getEditor().doAction(PortalEditor.Action.CHANGE_DESTINATION_NAME, () -> updateDisplayName(getItem(7), "§7" + Lang.get("Goal_Name") + ": '§r" + menu.getEditor().getEffectPortal().getDestinationName() + "§7'"));
             }
 
             @Override
@@ -128,20 +128,20 @@ public class Hologram extends HotbarGUI {
         }));
 
 
-        builder = new ItemBuilder(menu.getEditor().getPortal().isDestinationHoloStatus() ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA);
+        builder = new ItemBuilder(menu.getEditor().getEffectPortal().isDestinationHoloStatus() ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA);
         builder.setName(ChatColor.GRAY + Lang.get("Status_Of_Destination") +
-                (menu.getEditor().getPortal().isDestinationHoloStatus() ? ChatColor.GREEN + Lang.get("Enabled") :
+                (menu.getEditor().getEffectPortal().isDestinationHoloStatus() ? ChatColor.GREEN + Lang.get("Enabled") :
                         ChatColor.RED + Lang.get("Disabled")));
 
         setItem(8, new ItemComponent(builder.getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-                menu.getEditor().getPortal().setDestinationHoloStatus(!menu.getEditor().getPortal().isDestinationHoloStatus());
-                menu.getEditor().getPortal().updateHolograms();
+                menu.getEditor().getEffectPortal().setDestinationHoloStatus(!menu.getEditor().getEffectPortal().isDestinationHoloStatus());
+                menu.getEditor().getEffectPortal().updateHolograms();
 
-                ItemBuilder builder = new ItemBuilder(menu.getEditor().getPortal().isDestinationHoloStatus() ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA);
+                ItemBuilder builder = new ItemBuilder(menu.getEditor().getEffectPortal().isDestinationHoloStatus() ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA);
                 builder.setName(ChatColor.GRAY + Lang.get("Status_Of_Destination") +
-                        (menu.getEditor().getPortal().isDestinationHoloStatus() ? ChatColor.GREEN + Lang.get("Enabled") :
+                        (menu.getEditor().getEffectPortal().isDestinationHoloStatus() ? ChatColor.GREEN + Lang.get("Enabled") :
                                 ChatColor.RED + Lang.get("Disabled")));
 
                 setItem(8, new ItemComponent(builder.getItem(), this), false);

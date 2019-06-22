@@ -9,8 +9,8 @@ import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import de.codingair.warpsystem.utils.JSONObject;
+import de.codingair.warpsystem.utils.JSONParser;
 
 import java.util.ArrayList;
 import java.util.List;

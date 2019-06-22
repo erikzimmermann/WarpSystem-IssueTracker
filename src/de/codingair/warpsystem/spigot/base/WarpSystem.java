@@ -319,7 +319,7 @@ public class WarpSystem extends JavaPlugin {
 
         try {
             API.getInstance().reload(this);
-        } catch(InvalidDescriptionException | InvalidPluginException | FileNotFoundException e) {
+        } catch(InvalidDescriptionException | FileNotFoundException | InvalidPluginException e) {
             e.printStackTrace();
         }
     }

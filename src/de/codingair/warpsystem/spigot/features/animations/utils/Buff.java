@@ -1,8 +1,8 @@
 package de.codingair.warpsystem.spigot.features.animations.utils;
 
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.Serializable;
+import de.codingair.warpsystem.utils.JSONObject;
 import org.bukkit.potion.PotionEffectType;
-import org.json.simple.JSONObject;
 
 public class Buff implements Serializable {
     private PotionEffectType type;
@@ -19,8 +19,8 @@ public class Buff implements Serializable {
     }
 
     @Override
-    public boolean read(JSONObject json) throws Exception {
-        this.type = PotionEffectType.getByName((String) json.get("type"));
+    public boolean read(JSONObject json) {
+        this.type = PotionEffectType.getByName(json.get("type"));
         this.level = Integer.parseInt(json.get("level") + "");
         this.timeBeforeTeleport = Integer.parseInt(json.get("timebeforeteleport") + "");
         this.timeAfterTeleport = Integer.parseInt(json.get("timeafterteleport") + "");

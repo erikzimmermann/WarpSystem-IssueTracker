@@ -29,6 +29,7 @@ Config: Configuration
 Maintenance: Maintenance
 Language: Langage
 Animation: Animation
+Animations: Animations
 Show: 'Voir'
 Previous_Animation: 'Animation précédente'
 Next_Animation: 'Animation suivante'
@@ -369,3 +370,4 @@ Rotation: 'Rotation'
 Color: 'Couleur'
 ParticleType_Doesnt_Support_Colors: 'Le type de particule sélectionné ne prend pas en charge les couleurs.'
 Reset: 'Réinitialiser'
+Portal: 'Portail'

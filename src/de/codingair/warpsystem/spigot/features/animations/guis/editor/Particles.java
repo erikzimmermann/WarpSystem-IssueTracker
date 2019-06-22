@@ -1,5 +1,7 @@
-package de.codingair.warpsystem.spigot.features.animations.editor;
+package de.codingair.warpsystem.spigot.features.animations.guis.editor;
 
+import de.codingair.codingapi.particles.Particle;
+import de.codingair.codingapi.particles.animations.customanimations.CustomAnimation;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
@@ -10,27 +12,27 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.animations.utils.Buff;
+import de.codingair.codingapi.particles.animations.customanimations.AnimationType;
+import de.codingair.warpsystem.spigot.features.animations.utils.ParticlePart;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
 
-public class Buffs extends HotbarGUI {
+public class Particles extends HotbarGUI {
     private Menu menu;
-    private List<Buff> parts;
-    private BuffPart[] buffs = new BuffPart[5];
+    private List<ParticlePart> parts;
+    private AnimationPart[] animations = new AnimationPart[5];
 
-    public Buffs(Player player, Menu menu) {
+    public Particles(Player player, Menu menu) {
         super(player, WarpSystem.getInstance());
 
         this.menu = menu;
-        this.parts = menu.getClone().getBuffList();
+        this.parts = menu.getClone().getParticleParts();
 
         for(int i = 0; i < 5; i++) {
-            this.buffs[i] = new BuffPart(player, i, menu);
+            this.animations[i] = new AnimationPart(player, i, menu);
         }
 
         init(player);
@@ -44,27 +46,25 @@ public class Buffs extends HotbarGUI {
             int id = i;
 
             if(i < parts.size() + 1) {
-                setItem(id + 2, new ItemComponent(new ItemBuilder(parts.size() >= id + 1 ? XMaterial.SPLASH_POTION : XMaterial.BARRIER)
-                        .setName("§c" + Lang.get("Potion_Effect") + " #" + (id + 1))
-                        .setData((byte) id)
+                setItem(id + 2, new ItemComponent(new ItemBuilder(parts.size() >= id + 1 ? XMaterial.NETHER_STAR : XMaterial.BARRIER)
+                        .setName("§c" + Lang.get("Animation") + " #" + (id + 1))
                         .getItem(), new ItemListener() {
                     @Override
                     public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                         if(clickType == ClickType.LEFT_CLICK) {
-                            ic.setLink(buffs[id]);
+                            ic.setLink(animations[id]);
 
-                            if(menu.getClone().getBuffList().size() == id) {
-                                menu.getClone().getBuffList().add(new Buff(PotionEffectType.ABSORPTION, 1, 0, 0));
-                                buffs[id].init(p);
+                            if(menu.getClone().getParticleParts().size() == id) {
+                                menu.getClone().getParticleParts().add(new ParticlePart(AnimationType.CIRCLE, Particle.FLAME, 1, 1, CustomAnimation.MAX_SPEED));
+                                animations[id].init(p);
                                 menu.getAnimPlayer().update();
 
-                                ic.setItem(new ItemBuilder(parts.size() >= id + 1 ? XMaterial.SPLASH_POTION : XMaterial.BARRIER)
-                                        .setName("§c" + Lang.get("Potion_Effect") + " #" + (id + 1))
-                                        .setData((byte) id)
+                                ic.setItem(new ItemBuilder(parts.size() >= id + 1 ? XMaterial.NETHER_STAR : XMaterial.BARRIER)
+                                        .setName("§c" + Lang.get("Animation") + " #" + (id + 1))
                                         .getItem());
 
                                 init(p);
-                            } else buffs[id].init(p);
+                            } else animations[id].init(p);
                         } else {
                             ic.setLink(null);
                             if(clickType == ClickType.RIGHT_CLICK && parts.size() >= id + 1) {
@@ -79,7 +79,7 @@ public class Buffs extends HotbarGUI {
                     @Override
                     public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
                         if(parts.size() >= id + 1) {
-                            MessageAPI.sendActionBar(getPlayer(), Menu.ACTION_BAR(Lang.get("Potion_Effect") + " #" + (id + 1), "§e" + Lang.get("Edit"), "§c" + Lang.get("Delete")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                            MessageAPI.sendActionBar(getPlayer(), Menu.ACTION_BAR(parts.get(id).getAnimation().getDisplayName(), "§e" + Lang.get("Edit"), "§c" + Lang.get("Delete")), WarpSystem.getInstance(), Integer.MAX_VALUE);
                         } else MessageAPI.sendActionBar(getPlayer(), "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Add"), WarpSystem.getInstance(), Integer.MAX_VALUE);
                     }
 
@@ -87,12 +87,16 @@ public class Buffs extends HotbarGUI {
                     public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
                         MessageAPI.stopSendingActionBar(getPlayer());
                     }
-                }).setLink(this.buffs[id]));
+                }).setLink(this.animations[id]));
             } else setItem(id + 2, new ItemComponent(new ItemStack(Material.AIR)));
         }
     }
 
     public Menu getMenuGUI() {
         return menu;
+    }
+
+    public AnimationPart[] getAnimations() {
+        return animations;
     }
 }

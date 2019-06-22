@@ -6,11 +6,12 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.effectportals.guis.PortalDeleteGUI;
 import de.codingair.warpsystem.spigot.features.effectportals.PortalEditor;
-import de.codingair.warpsystem.spigot.features.effectportals.utils.Portal;
 import de.codingair.warpsystem.spigot.features.effectportals.commands.CPortal;
+import de.codingair.warpsystem.spigot.features.effectportals.guis.PortalDeleteGUI;
+import de.codingair.warpsystem.spigot.features.effectportals.guis.editor.EffectPortalEditor;
 import de.codingair.warpsystem.spigot.features.effectportals.managers.PortalManager;
+import de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.PortalDestinationAdapter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -31,13 +32,14 @@ public class PortalListener implements Listener {
         boolean aboutToEdit = CPortal.aboutToEdit.contains(player.getName());
         boolean aboutToDelete = CPortal.aboutToDelete.contains(player.getName());
 
-        for(Portal portal : API.getRemovables(Portal.class)) {
-            if(!portal.isRegistered()) continue;
+        for(EffectPortal effectPortal : API.getRemovables(EffectPortal.class)) {
+            if(!effectPortal.isRegistered()) continue;
 
-            if(e.getFrom().getWorld() == portal.getStart().getWorld() && e.getTo().getWorld() == portal.getStart().getWorld() && e.getFrom().distance(portal.getStart()) > portal.getTeleportRadius() && e.getTo().distance(portal.getStart()) <= portal.getTeleportRadius()) {
+            if(e.getFrom().getWorld() == effectPortal.getStart().getWorld() && e.getTo().getWorld() == effectPortal.getStart().getWorld() && effectPortal.entered(e.getPlayer())) {
                 if(aboutToEdit) {
                     CPortal.aboutToEdit.remove(player.getName());
-                    new PortalEditor(player, portal).start();
+                    new EffectPortalEditor(player, effectPortal).open();
+//                    new PortalEditor(player, effectPortal).start();
                     return;
                 } else if(aboutToDelete) {
                     CPortal.aboutToDelete.remove(player.getName());
@@ -45,8 +47,8 @@ public class PortalListener implements Listener {
                         @Override
                         public void accept(Boolean delete) {
                             if(delete) {
-                                manager.getPortals().remove(portal);
-                                portal.setRunning(false);
+                                manager.getEffectPortals().remove(effectPortal);
+                                effectPortal.setRunning(false);
 
                                 player.sendMessage(Lang.getPrefix() + Lang.get("Delete_Portal_Successfully"));
                             } else {
@@ -60,14 +62,15 @@ public class PortalListener implements Listener {
                 if(!player.hasPermission(WarpSystem.PERMISSION_USE_PORTALS)) {
                     player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     return;
-                } else portal.teleportToDestination(player);
-            } else if(portal.getDestination() != null && portal.getDestination().getAdapter() instanceof PortalDestinationAdapter) {
-                Location destination = portal.getDestination().buildLocation();
+                } else effectPortal.teleportToDestination(player);
+            } else if(effectPortal.getDestination() != null && effectPortal.getDestination().getAdapter() instanceof PortalDestinationAdapter) {
+                Location destination = effectPortal.getDestination().buildLocation();
 
-                if(e.getFrom().getWorld() == destination.getWorld() && e.getTo().getWorld() == destination.getWorld() && e.getFrom().distance(destination) > portal.getTeleportRadius() && e.getTo().distance(destination) <= portal.getTeleportRadius()) {
+                if(e.getFrom().getWorld() == destination.getWorld() && e.getTo().getWorld() == destination.getWorld() && effectPortal.entered(e.getPlayer())) {
                     if(aboutToEdit) {
                         CPortal.aboutToEdit.remove(player.getName());
-                        new PortalEditor(player, portal).start();
+                        new EffectPortalEditor(player, effectPortal).open();
+//                        new PortalEditor(player, effectPortal).start();
                         return;
                     } else if(aboutToDelete) {
                         CPortal.aboutToDelete.remove(player.getName());
@@ -75,8 +78,8 @@ public class PortalListener implements Listener {
                             @Override
                             public void accept(Boolean delete) {
                                 if(delete) {
-                                    manager.getPortals().remove(portal);
-                                    portal.setRunning(false);
+                                    manager.getEffectPortals().remove(effectPortal);
+                                    effectPortal.setRunning(false);
 
                                     player.sendMessage(Lang.getPrefix() + Lang.get("Delete_Portal_Successfully"));
                                 } else {
@@ -90,7 +93,7 @@ public class PortalListener implements Listener {
                     if(!player.hasPermission(WarpSystem.PERMISSION_USE_PORTALS)) {
                         player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                         return;
-                    } else portal.teleportToStart(player);
+                    } else effectPortal.teleportToStart(player);
                 }
             }
         }
@@ -98,8 +101,8 @@ public class PortalListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent e) {
-        for(Portal portal : API.getRemovables(Portal.class)) {
-            portal.add(e.getPlayer());
+        for(EffectPortal effectPortal : API.getRemovables(EffectPortal.class)) {
+            effectPortal.add(e.getPlayer());
         }
     }
 
@@ -109,8 +112,8 @@ public class PortalListener implements Listener {
             portalEditor.exit();
         }
 
-        for(Portal portal : API.getRemovables(Portal.class)) {
-            portal.remove(e.getPlayer());
+        for(EffectPortal effectPortal : API.getRemovables(EffectPortal.class)) {
+            effectPortal.remove(e.getPlayer());
         }
     }
 

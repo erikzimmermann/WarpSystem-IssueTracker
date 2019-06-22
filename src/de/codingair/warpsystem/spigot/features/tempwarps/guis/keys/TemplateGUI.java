@@ -28,7 +28,7 @@ public class TemplateGUI extends Editor<Key> {
     }
 
     @Override
-    public Key getKey() {
+    public Key getClone() {
         return clone;
     }
 }

@@ -44,8 +44,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import de.codingair.warpsystem.utils.JSONObject;
+import de.codingair.warpsystem.utils.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
