@@ -125,7 +125,6 @@ public class EffectPortalManager implements Manager {
 
     @Override
     public void save(boolean saver) {
-        if(true) return;
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
 
         if(!saver) WarpSystem.log("  > Saving Portals");
