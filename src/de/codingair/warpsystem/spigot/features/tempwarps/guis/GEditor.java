@@ -19,6 +19,7 @@ import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -135,7 +136,7 @@ public class GEditor extends SimpleGUI {
                     }
 
                     @Override
-                    public ItemStack craftAnvilItem() {
+                    public ItemStack craftAnvilItem(ClickType trigger) {
                         return new ItemBuilder(XMaterial.NAME_TAG).setName((warp.getName() == null ? Lang.get("Name") + "..." : warp.getName())).getItem();
                     }
                 }.setOption(option));
@@ -274,7 +275,7 @@ public class GEditor extends SimpleGUI {
                     }
 
                     @Override
-                    public ItemStack craftAnvilItem() {
+                    public ItemStack craftAnvilItem(ClickType trigger) {
                         return new ItemBuilder(XMaterial.PAPER)
                                 .setName(warp.getMessage() == null ? (Lang.get("Message") + "...") : warp.getMessage())
                                 .getItem();
