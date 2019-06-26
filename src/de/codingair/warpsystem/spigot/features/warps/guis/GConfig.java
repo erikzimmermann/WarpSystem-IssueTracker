@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.features.warps.guis;
 
-import de.codingair.codingapi.particles.animations.playeranimations.CircleAnimation;
+import de.codingair.codingapi.particles.animations.customanimations.CircleAnimation;
+import de.codingair.codingapi.particles.animations.movables.PlayerMid;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
 import de.codingair.codingapi.player.gui.inventory.gui.InterfaceListener;
@@ -157,7 +158,7 @@ public class GConfig extends GUI {
                         close = true;
                         p.closeInventory();
 
-                        CircleAnimation circleAnimation = new CircleAnimation(WarpSystem.getInstance().getTeleportManager().getParticle(), p, WarpSystem.getInstance(), WarpSystem.getInstance().getTeleportManager().getRadius());
+                        CircleAnimation circleAnimation = new CircleAnimation(WarpSystem.getInstance().getTeleportManager().getParticle(), new PlayerMid(p), WarpSystem.getInstance().getTeleportManager().getRadius(), 1, 0);
                         circleAnimation.setRunning(true);
 
                         MessageAPI.sendActionBar(p, Lang.get("Move_To_Open_Editor"),

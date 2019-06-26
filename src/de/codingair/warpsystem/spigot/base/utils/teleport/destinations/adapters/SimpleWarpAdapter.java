@@ -1,8 +1,8 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters;
 
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.warpsystem.spigot.api.SpigotAPI;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
@@ -38,8 +38,10 @@ public class SimpleWarpAdapter implements DestinationAdapter {
                 action.onRun(player);
             }
 
-            if(silent) SpigotAPI.getInstance().silentTeleport(player, warp.getLocation());
-            else player.teleport(warp.getLocation());
+            if(silent) TeleportListener.TELEPORTS.put(player, warp.getLocation());
+            player.teleport(warp.getLocation());
+
+            warp.increaseTeleports();
 
             if(message != null)
                 player.sendMessage((message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
