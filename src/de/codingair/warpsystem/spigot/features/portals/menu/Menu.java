@@ -2,7 +2,7 @@ package de.codingair.warpsystem.spigot.features.portals.menu;
 
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
-import de.codingair.codingapi.player.gui.hotbar.ItemComponent;
+import de.codingair.codingapi.player.gui.hotbar.components.ItemComponent;
 import de.codingair.codingapi.player.gui.hotbar.ItemListener;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
@@ -28,13 +28,13 @@ public class Menu extends HotbarGUI {
         setCloseSound(new SoundData(Sound.LEVEL_UP, 0.5F, 0.5F));
         setClickSound(new SoundData(Sound.CLICK, 0.5F, 1F));
 
-        this.animation.init();
-        this.hologram.init();
-        this.teleport.init();
-        init();
+        this.animation.initialize();
+        this.hologram.initialize();
+        this.teleport.initialize();
+        initialize();
     }
 
-    private void init() {
+    public void initialize() {
         setItem(0, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
         setItem(1, new ItemComponent(new ItemBuilder(Material.REDSTONE).setName("§7» §e" + Lang.get("Animation") + "§7 «").getItem()).setLink(this.animation));
         setItem(2, new ItemComponent(new ItemBuilder(Material.SIGN).setName("§7» §e" + Lang.get("Hologram") + "§7 «").getItem()).setLink(this.hologram));
