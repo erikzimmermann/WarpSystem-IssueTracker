@@ -1,11 +1,13 @@
-package de.codingair.warpsystem.spigot.features.animations.editor;
+package de.codingair.warpsystem.spigot.features.animations.guis.editor;
 
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
-import de.codingair.codingapi.player.gui.hotbar.ItemComponent;
+import de.codingair.codingapi.player.gui.hotbar.components.ItemComponent;
 import de.codingair.codingapi.player.gui.hotbar.ItemListener;
 import de.codingair.codingapi.player.gui.inventory.gui.Skull;
+import de.codingair.codingapi.server.Sound;
+import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -24,7 +26,11 @@ public class Buffs extends HotbarGUI {
     private BuffPart[] buffs = new BuffPart[5];
 
     public Buffs(Player player, Menu menu) {
-        super(player, WarpSystem.getInstance());
+        super(player, WarpSystem.getInstance(), 2);
+
+        setOpenSound(new SoundData(Sound.LEVEL_UP, 0.5F, 1F));
+        setCloseSound(new SoundData(Sound.LEVEL_UP, 0.5F, 0.5F));
+        setClickSound(new SoundData(Sound.CLICK, 0.5F, 1F));
 
         this.menu = menu;
         this.parts = menu.getClone().getBuffList();
@@ -33,10 +39,10 @@ public class Buffs extends HotbarGUI {
             this.buffs[i] = new BuffPart(player, i, menu);
         }
 
-        init(player);
+        initialize();
     }
 
-    private void init(Player p) {
+    public void initialize() {
         setItem(0, new ItemComponent(new ItemBuilder(Skull.ArrowLeft).setName("§7» §c" + Lang.get("Back") + "§7 «").getItem()).setLink(menu), false);
         setItem(1, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
 
@@ -55,7 +61,7 @@ public class Buffs extends HotbarGUI {
 
                             if(menu.getClone().getBuffList().size() == id) {
                                 menu.getClone().getBuffList().add(new Buff(PotionEffectType.ABSORPTION, 1, 0, 0));
-                                buffs[id].init(p);
+                                buffs[id].initialize();
                                 menu.getAnimPlayer().update();
 
                                 ic.setItem(new ItemBuilder(parts.size() >= id + 1 ? XMaterial.SPLASH_POTION : XMaterial.BARRIER)
@@ -63,15 +69,15 @@ public class Buffs extends HotbarGUI {
                                         .setData((byte) id)
                                         .getItem());
 
-                                init(p);
-                            } else buffs[id].init(p);
+                                initialize();
+                            } else buffs[id].initialize();
                         } else {
                             ic.setLink(null);
                             if(clickType == ClickType.RIGHT_CLICK && parts.size() >= id + 1) {
                                 parts.remove(id);
                                 menu.getAnimPlayer().update();
                                 onHover(gui, ic, ic, player);
-                                init(p);
+                                initialize();
                             }
                         }
                     }

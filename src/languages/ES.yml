@@ -29,6 +29,7 @@ Config: Configuracion
 Maintenance: Mantenimiento
 Language: Idioma
 Animation: Animacion
+Animations: Animaciones
 Show: 'Ver'
 Previous_Animation: 'Animacion anterior'
 Next_Animation: 'Siguiente animacion'
@@ -365,3 +366,12 @@ Rotation: 'Rotación'
 Color: 'Color'
 ParticleType_Doesnt_Support_Colors: 'El tipo de partícula seleccionado no admite colores.'
 Reset: 'Reiniciar'
+Portal: 'Portal'
+Position: 'Position'
+Positioning: 'Positioning'
+Enter_Something: 'Please enter something.'
+No_second_effect_portal: 'You don''t have a second effect portal.'
+Object_Position: 'Position of %OBJECT%'
+Hologram_Text: 'Hologram text'
+EffectPortal_ChangeName_Hint: 'El nombre, que se mostrará en un telepuerto.'
+EffectPortal_No_Animation: '&7You &cneed an animation &7to finish your effect portal'

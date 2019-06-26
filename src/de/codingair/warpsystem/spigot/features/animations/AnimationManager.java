@@ -3,18 +3,15 @@ package de.codingair.warpsystem.spigot.features.animations;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.files.loader.UTFConfig;
 import de.codingair.codingapi.particles.Particle;
-import de.codingair.codingapi.particles.animations.PlayerAnimation;
-import de.codingair.codingapi.server.SoundData;
+import de.codingair.codingapi.particles.animations.customanimations.CustomAnimation;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.animations.utils.Animation;
-import de.codingair.warpsystem.spigot.features.animations.utils.AnimationType;
+import de.codingair.codingapi.particles.animations.customanimations.AnimationType;
 import de.codingair.warpsystem.spigot.features.animations.utils.ParticlePart;
-import de.codingair.warpsystem.spigot.features.effectportals.managers.PortalManager;
 import de.codingair.warpsystem.utils.Manager;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import de.codingair.codingapi.tools.JSON.JSONObject;
+import de.codingair.codingapi.tools.JSON.JSONParser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,7 +54,7 @@ public class AnimationManager implements Manager {
     private void createStandard() {
         Animation animation = getAnimation("Standard");
         if(animation == null) {
-            animation = new Animation("Standard", new ParticlePart(AnimationType.CIRCLE, Particle.FLAME, 1, 1, PlayerAnimation.MAX_SPEED));
+            animation = new Animation("Standard", new ParticlePart(AnimationType.CIRCLE, Particle.FLAME, 1, 1, CustomAnimation.MAX_SPEED));
         }
         this.active = animation;
     }

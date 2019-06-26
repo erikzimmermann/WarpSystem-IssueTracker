@@ -6,9 +6,7 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
-import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
-import org.bukkit.entity.Player;
-import org.json.simple.JSONObject;
+import de.codingair.codingapi.tools.JSON.JSONObject;
 
 public class Shortcut extends FeatureObject {
     private String displayName;

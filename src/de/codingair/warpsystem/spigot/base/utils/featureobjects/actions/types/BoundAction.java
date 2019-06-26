@@ -32,4 +32,9 @@ public class BoundAction extends ActionObject<String> {
     public boolean usable() {
         return getValue() != null;
     }
+
+    @Override
+    public BoundAction clone() {
+        return new BoundAction(getValue());
+    }
 }

@@ -199,7 +199,7 @@ public class Editor<C> extends SimpleGUI {
         return backup;
     }
 
-    public C getKey() {
+    public C getClone() {
         return clone;
     }
 

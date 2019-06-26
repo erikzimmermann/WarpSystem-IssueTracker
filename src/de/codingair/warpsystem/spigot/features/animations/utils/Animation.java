@@ -4,8 +4,8 @@ import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.Serializable;
+import de.codingair.codingapi.tools.JSON.JSONObject;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,24 +35,24 @@ public class Animation implements Serializable {
     }
 
     @Override
-    public boolean read(JSONObject json) throws Exception {
+    public boolean read(JSONObject json) {
         buffList.clear();
         particleParts.clear();
 
-        this.name = (String) json.get("name");
-        this.teleportLoc = json.get("teleportlocation") == null ? null : Location.getByJSONString((String) json.get("teleportlocation"));
+        this.name = json.get("name");
+        this.teleportLoc = json.get("teleportlocation") == null ? null : Location.getByJSONString(json.get("teleportlocation"));
 
-        JSONArray buffArray = (JSONArray) json.get("bufflist");
+        JSONArray buffArray = json.get("bufflist");
         for(Object o : buffArray) {
-            JSONObject data = (JSONObject) o;
+            JSONObject data = new JSONObject((org.json.simple.JSONObject) o);
             Buff b = new Buff();
             b.read(data);
             buffList.add(b);
         }
 
-        JSONArray particleArray = (JSONArray) json.get("particleparts");
+        JSONArray particleArray = json.get("particleparts");
         for(Object o : particleArray) {
-            JSONObject data = (JSONObject) o;
+            JSONObject data = new JSONObject((org.json.simple.JSONObject) o);
             ParticlePart p = new ParticlePart();
             p.read(data);
             particleParts.add(p);
@@ -93,6 +93,8 @@ public class Animation implements Serializable {
 
     @Override
     public void destroy() {
+        buffList.clear();
+        particleParts.clear();
     }
 
     public Animation clone() {
@@ -105,8 +107,15 @@ public class Animation implements Serializable {
 
         this.name = clone.name;
         this.teleportLoc = clone.teleportLoc;
-        this.buffList.addAll(clone.getBuffList());
-        this.particleParts.addAll(clone.getParticleParts());
+
+        for(Buff buff : clone.getBuffList()) {
+            this.buffList.add(new Buff(buff));
+        }
+
+        for(ParticlePart part : clone.getParticleParts()) {
+            this.particleParts.add(new ParticlePart(part));
+        }
+
         this.tickSound = new SoundData(clone.tickSound.getSound(), clone.tickSound.getVolume(), clone.tickSound.getPitch());
         this.teleportSound = new SoundData(clone.teleportSound.getSound(), clone.teleportSound.getVolume(), clone.teleportSound.getPitch());
     }

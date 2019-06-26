@@ -107,7 +107,7 @@ public class OptionPage extends PageItem {
             }
 
             @Override
-            public ItemStack craftAnvilItem() {
+            public ItemStack craftAnvilItem(ClickType trigger) {
                 return new ItemBuilder(XMaterial.PAPER).setName(sign.getPermission() == null ? Lang.get("Permission") + "..." : sign.getPermission()).getItem();
             }
 

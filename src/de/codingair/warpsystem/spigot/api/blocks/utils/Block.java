@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.api.blocks.utils;
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -24,7 +25,7 @@ public abstract class Block implements Removable {
     @Override
     public void destroy() {
         API.removeRemovable(this);
-        location.getBlock().setType(Material.AIR);
+        Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> location.getBlock().setType(Material.AIR));
     }
 
     @Override

@@ -1,10 +1,10 @@
-package de.codingair.warpsystem.spigot.features.animations.editor;
+package de.codingair.warpsystem.spigot.features.animations.guis.editor;
 
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
-import de.codingair.codingapi.player.gui.hotbar.ItemComponent;
 import de.codingair.codingapi.player.gui.hotbar.ItemListener;
+import de.codingair.codingapi.player.gui.hotbar.components.ItemComponent;
 import de.codingair.codingapi.player.gui.inventory.gui.Skull;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
@@ -12,21 +12,24 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.effectportals.PortalEditor;
 import org.bukkit.entity.Player;
 
 public class Sounds extends HotbarGUI {
     private Menu menu;
 
     public Sounds(Player player, Menu menu) {
-        super(player, WarpSystem.getInstance());
+        super(player, WarpSystem.getInstance(), 2);
+
+        setOpenSound(new SoundData(Sound.LEVEL_UP, 0.5F, 1F));
+        setCloseSound(new SoundData(Sound.LEVEL_UP, 0.5F, 0.5F));
+        setClickSound(new SoundData(Sound.CLICK, 0.5F, 1F));
 
         this.menu = menu;
 
-        init(player);
+        initialize();
     }
 
-    private void init(Player p) {
+    public void initialize() {
         setItem(0, new ItemComponent(new ItemBuilder(Skull.ArrowLeft).setName("§7» §c" + Lang.get("Back") + "§7 «").getItem()).setLink(menu), false);
         setItem(1, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
         setItem(2, new ItemComponent(new ItemBuilder(XMaterial.MUSIC_DISC_WAIT)

@@ -41,7 +41,7 @@ public abstract class NameButton extends SyncAnvilGUIButton {
     }
 
     @Override
-    public ItemStack craftAnvilItem() {
+    public ItemStack craftAnvilItem(ClickType trigger) {
         if(name == null) return new ItemStack(Material.AIR);
 
         return new ItemBuilder(Material.PAPER).setName(name.getValue() == null ? Lang.get("Name") + "..." : name.getValue().replace("§", "&")).getItem();

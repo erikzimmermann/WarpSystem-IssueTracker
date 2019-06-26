@@ -2,6 +2,7 @@ package de.codingair.warpsystem.spigot.base.guis.editor.pages;
 
 import de.codingair.codingapi.player.gui.anvil.*;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
+import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncAnvilGUIButton;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.Sound;
@@ -16,7 +17,6 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
-import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.guis.GSimpleWarpList;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
@@ -93,12 +93,7 @@ public class DestinationPage extends PageItem {
                                     destination.setId(w.getName());
                                     destination.setType(DestinationType.SimpleWarp);
                                     destination.setAdapter(DestinationType.SimpleWarp.getInstance());
-                                    update();
-
-                                    if(WarpSystem.getInstance().isOnBungeeCord()) {
-                                        ((SyncButton) DestinationPage.this.getButton(2, 2)).update();
-                                        ((SyncButton) DestinationPage.this.getButton(3, 2)).update();
-                                    }
+                                    updateDestinationButtons();
 
                                     e.setClose(true);
                                     playSound(player);
@@ -117,12 +112,7 @@ public class DestinationPage extends PageItem {
                                 destination.setId(value.getName());
                                 destination.setType(DestinationType.SimpleWarp);
                                 destination.setAdapter(DestinationType.SimpleWarp.getInstance());
-                                update();
-
-                                if(WarpSystem.getInstance().isOnBungeeCord()) {
-                                    ((SyncButton) DestinationPage.this.getButton(2, 2)).update();
-                                    ((SyncButton) DestinationPage.this.getButton(3, 2)).update();
-                                }
+                                updateDestinationButtons();
 
                                 this.setClosingForGUI(true);
                                 getLast().open();
@@ -145,11 +135,7 @@ public class DestinationPage extends PageItem {
                     destination.setAdapter(null);
                     destination.setType(null);
 
-                    if(WarpSystem.getInstance().isOnBungeeCord()) {
-                        ((SyncButton) getButton(2, 2)).update();
-                        ((SyncButton) getButton(3, 2)).update();
-                    }
-                    update();
+                    updateDestinationButtons();
                 }
             }
         }.setOption(option));
@@ -181,10 +167,7 @@ public class DestinationPage extends PageItem {
                                 destination.setId(warp);
                                 destination.setType(DestinationType.GlobalWarp);
                                 destination.setAdapter(DestinationType.GlobalWarp.getInstance());
-                                update();
-
-                                ((SyncButton) DestinationPage.this.getButton(1, 2)).update();
-                                ((SyncButton) DestinationPage.this.getButton(3, 2)).update();
+                                updateDestinationButtons();
 
                                 this.setClosingForGUI(true);
                                 getLast().open();
@@ -206,9 +189,7 @@ public class DestinationPage extends PageItem {
                         destination.setAdapter(null);
                         destination.setType(null);
 
-                        ((SyncButton) getButton(1, 2)).update();
-                        ((SyncButton) getButton(3, 2)).update();
-                        update();
+                        updateDestinationButtons();
                     }
                 }
             }.setOption(option));
@@ -273,9 +254,7 @@ public class DestinationPage extends PageItem {
                     destination.setId(input);
                     destination.setType(DestinationType.Server);
                     destination.setAdapter(DestinationType.Server.getInstance());
-                    ((SyncButton) getButton(1, 2)).update();
-                    ((SyncButton) getButton(2, 2)).update();
-                    update();
+                    updateDestinationButtons();
                     e.setClose(true);
                 }
 
@@ -284,7 +263,7 @@ public class DestinationPage extends PageItem {
                 }
 
                 @Override
-                public ItemStack craftAnvilItem() {
+                public ItemStack craftAnvilItem(ClickType trigger) {
                     String name = null;
                     if(destination.getType() == DestinationType.Server) name = destination.getId();
 
@@ -298,9 +277,7 @@ public class DestinationPage extends PageItem {
                         destination.setAdapter(null);
                         destination.setType(null);
 
-                        ((SyncButton) getButton(1, 2)).update();
-                        ((SyncButton) getButton(2, 2)).update();
-                        update();
+                        updateDestinationButtons();
                     } else if(e.isShiftClick() && e.isLeftClick()) {
                         if(server != null && !pinging) {
                             pinging = true;
@@ -318,5 +295,18 @@ public class DestinationPage extends PageItem {
                 }
             }.setOption(option));
         }
+    }
+
+    public void updateDestinationButtons() {
+        for(int i = 1; i < 8; i++) {
+            Button button = getButton(i, 2);
+            if(button instanceof SyncButton) {
+                ((SyncButton) button).update();
+            }
+        }
+    }
+
+    public Destination getDestination() {
+        return destination;
     }
 }

@@ -125,7 +125,7 @@ public class PAppearance extends PageItem {
             }
 
             @Override
-            public ItemStack craftAnvilItem() {
+            public ItemStack craftAnvilItem(ClickType trigger) {
                 return new ItemBuilder(Material.PAPER).setName(Lang.get("Line") + "...").getItem();
             }
 

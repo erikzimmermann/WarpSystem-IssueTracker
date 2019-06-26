@@ -89,7 +89,7 @@ public class CostsButton extends SyncAnvilGUIButton {
     }
 
     @Override
-    public ItemStack craftAnvilItem() {
+    public ItemStack craftAnvilItem(ClickType trigger) {
         if(object == null) return new ItemStack(Material.AIR);
 
         CostsAction action = object.getAction(Action.COSTS);

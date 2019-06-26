@@ -14,11 +14,12 @@ public enum Origin {
     Warp,
     TempWarp,
     WarpSign(WarpSign.class, "WarpSigns"),
-    EffectPortal(de.codingair.warpsystem.spigot.features.effectportals.utils.Portal.class, "Portals"),
+    EffectPortal(de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal.class, "Portals"),
     NativePortal(de.codingair.warpsystem.spigot.features.nativeportals.Portal.class, "NativePortals"),
     ShortCut(Shortcut.class, "Shortcuts"),
     CommandBlock,
     TeleportCommand,
+    Custom,
     UNKNOWN;
 
     private Class<? extends FeatureObject> clazz = null;

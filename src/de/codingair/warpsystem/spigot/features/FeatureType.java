@@ -5,7 +5,7 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.animations.AnimationManager;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
-import de.codingair.warpsystem.spigot.features.effectportals.managers.PortalManager;
+import de.codingair.warpsystem.spigot.features.effectportals.managers.EffectPortalManager;
 import de.codingair.warpsystem.spigot.features.randomteleports.managers.RandomTeleporterManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
 import de.codingair.warpsystem.spigot.features.signs.managers.SignManager;
@@ -22,7 +22,7 @@ public enum FeatureType {
     WARPS(IconManager.class, Priority.HIGHEST, "Warps"),
     GLOBAL_WARPS(GlobalWarpManager.class, Priority.LOW, "GlobalWarps"),
     SIGNS(SignManager.class, Priority.LOWEST, "WarpSigns"),
-    PORTALS(PortalManager.class, Priority.LOW, "Portals"),
+    PORTALS(EffectPortalManager.class, Priority.LOW, "Portals"),
     NATIVE_PORTALS(NativePortalManager.class, Priority.LOW, "NativePortals"),
     SHORTCUTS(ShortcutManager.class, Priority.LOW, "Shortcuts"),
     TEMP_WARPS(TempWarpManager.class, Priority.LOW, "TempWarps"),

@@ -29,6 +29,7 @@ Config: Config
 Maintenance: Maintenance
 Language: Language
 Animation: Animation
+Animations: Animations
 Show: 'Show'
 Previous_Animation: 'Previous animation'
 Next_Animation: 'Next animation'
@@ -69,10 +70,10 @@ Animation_Radius: 'Animation radius'
 Animation_Height: 'Animation height'
 Animation_Speed: 'Animation speed'
 Destination: Destination
-Animation_Type: Animation-Type
-Particle_Effect: Particle-Effect
-Particle_Effects: Particle-Effects
-Hologram_Height: Hologram-Height
+Animation_Type: 'Animation type'
+Particle_Effect: 'Particle effect'
+Particle_Effects: 'Particle effects'
+Hologram_Height: 'Hologram height'
 Start_Name: Start-Name
 Goal_Name: Goal-Name
 Sound: Sound
@@ -100,7 +101,7 @@ Search: Search...
 Previous_Page: Previous Page
 Next_Page: Next Page
 GlobalWarp_Created: '&7The GlobalWarp "&b%GLOBAL_WARP%&7" was &acreated successfully&7.'
-GlobalWarp_Create_No_Dots: '&cGlobalWarp names &lcan''t &ccontain any points!'
+GlobalWarp_Create_No_Dots: '&cGlobalWarp names &-lcan''t &ccontain any points!'
 Target_Server: Target-Server
 GUI_Choose_Icon: Choose your IconType
 Warp: Warp
@@ -365,3 +366,12 @@ Rotation: 'Rotation'
 Color: 'Color'
 ParticleType_Doesnt_Support_Colors: 'The selected Particle type doesn''t support colors.'
 Reset: 'Reset'
+Portal: 'Portal'
+Position: 'Position'
+Positioning: 'Positioning'
+Enter_Something: 'Please enter something.'
+No_second_effect_portal: 'You don''t have a second effect portal.'
+Object_Position: 'Position of %OBJECT%'
+Hologram_Text: 'Hologram text'
+EffectPortal_ChangeName_Hint: 'The name, which will be displayed on a teleport.'
+EffectPortal_No_Animation: '&7You &cneed an animation &7to finish your effect portal'

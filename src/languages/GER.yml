@@ -30,6 +30,7 @@ Config: Konfiguration
 Maintenance: Wartung
 Language: Sprache
 Animation: Animation
+Animations: Animationen
 Show: 'Zeigen'
 Previous_Animation: 'Vorherige Animation'
 Next_Animation: 'Nächste Animation'
@@ -366,3 +367,12 @@ Rotation: 'Rotation'
 Color: 'Farbe'
 ParticleType_Doesnt_Support_Colors: 'Der gewählte Partikel-Typ unterstützt keine Farben.'
 Reset: 'Zurücksetzen'
+Portal: 'Portal'
+Position: 'Position'
+Positioning: 'Positionierung'
+Enter_Something: 'Bitte gib etwas ein.'
+No_second_effect_portal: 'Du hast kein zweites Effekt-Portal.'
+Object_Position: 'Position of %OBJECT%'
+Hologram_Text: 'Hologram text'
+EffectPortal_ChangeName_Hint: 'Der Name, der in einem Teleport angezeigt wird.'
+EffectPortal_No_Animation: '&7Du &cbrauchst eine Animation &7um dein EffektPortal fertigzustellen.'
