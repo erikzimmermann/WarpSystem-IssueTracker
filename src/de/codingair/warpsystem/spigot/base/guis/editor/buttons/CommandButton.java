@@ -86,7 +86,7 @@ public class CommandButton extends SyncAnvilGUIButton {
     }
 
     @Override
-    public ItemStack craftAnvilItem() {
+    public ItemStack craftAnvilItem(ClickType trigger) {
         return new ItemBuilder(XMaterial.PAPER).setName(Lang.get("Command") + "...").getItem();
     }
 

@@ -36,4 +36,9 @@ public class WarpAction extends ActionObject<Destination> {
     public boolean usable() {
         return getValue() != null && getValue().getId() != null;
     }
+
+    @Override
+    public WarpAction clone() {
+        return new WarpAction(getValue() == null ? null : getValue().clone());
+    }
 }

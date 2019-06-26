@@ -56,7 +56,7 @@ public class POptions extends PageItem {
                 }
 
                 @Override
-                public ItemStack craftAnvilItem() {
+                public ItemStack craftAnvilItem(ClickType trigger) {
                     return new ItemBuilder(Material.PAPER).setName(clone.getName() == null ? Lang.get("Name") + "..." : clone.getName().replace("§", "&")).getItem();
                 }
 

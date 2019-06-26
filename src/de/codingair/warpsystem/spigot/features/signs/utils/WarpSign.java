@@ -10,7 +10,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
-import de.codingair.warpsystem.utils.JSONObject;
+import de.codingair.codingapi.tools.JSON.JSONObject;
 
 import java.util.Objects;
 

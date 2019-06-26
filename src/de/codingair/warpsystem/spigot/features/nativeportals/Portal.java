@@ -20,7 +20,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.json.simple.JSONArray;
-import de.codingair.warpsystem.utils.JSONObject;
+import de.codingair.codingapi.tools.JSON.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.util.ArrayList;

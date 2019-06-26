@@ -52,4 +52,9 @@ public class CostsAction extends ActionObject<Double> {
     public boolean usable() {
         return getValue() != null;
     }
+
+    @Override
+    public CostsAction clone() {
+        return new CostsAction(getValue());
+    }
 }

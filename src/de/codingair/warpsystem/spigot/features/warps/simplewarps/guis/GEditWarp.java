@@ -14,10 +14,7 @@ import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Date;
@@ -119,7 +116,7 @@ public class GEditWarp extends SimpleGUI {
                 }
 
                 @Override
-                public ItemStack craftAnvilItem() {
+                public ItemStack craftAnvilItem(ClickType trigger) {
                     ItemBuilder anvilItem = new ItemBuilder(XMaterial.PAPER);
                     anvilItem.setName(clone.getName());
                     return anvilItem.getItem();
@@ -153,7 +150,7 @@ public class GEditWarp extends SimpleGUI {
                 }
 
                 @Override
-                public ItemStack craftAnvilItem() {
+                public ItemStack craftAnvilItem(ClickType trigger) {
                     ItemBuilder anvilItem = new ItemBuilder(XMaterial.PAPER);
                     anvilItem.setName(clone.getPermission() == null ? Lang.get("Permission") + "..." : clone.getPermission());
                     return anvilItem.getItem();
@@ -200,7 +197,7 @@ public class GEditWarp extends SimpleGUI {
                 }
 
                 @Override
-                public ItemStack craftAnvilItem() {
+                public ItemStack craftAnvilItem(ClickType trigger) {
                     ItemBuilder anvilItem = new ItemBuilder(XMaterial.PAPER);
                     anvilItem.setName(clone.getCosts() + "");
                     return anvilItem.getItem();

@@ -19,6 +19,8 @@ public abstract class ActionObject<T> {
 
     public abstract boolean perform(Player player);
 
+    public abstract ActionObject clone();
+
     public Action getType() {
         return type;
     }

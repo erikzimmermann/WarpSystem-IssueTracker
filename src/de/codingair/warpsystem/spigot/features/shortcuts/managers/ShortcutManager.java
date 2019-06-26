@@ -9,11 +9,11 @@ import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.shortcuts.listeners.ShortcutListener;
 import de.codingair.warpsystem.spigot.features.shortcuts.listeners.ShortcutPacketListener;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
-import de.codingair.warpsystem.utils.JSONObject;
+import de.codingair.codingapi.tools.JSON.JSONObject;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
-import de.codingair.warpsystem.utils.JSONParser;
+import de.codingair.codingapi.tools.JSON.JSONParser;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,20 +2,22 @@ package de.codingair.warpsystem.spigot.features.effectportals.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.effectportals.commands.CPortal;
 import de.codingair.warpsystem.spigot.features.effectportals.listeners.PortalListener;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
-import de.codingair.warpsystem.utils.JSONObject;
-import de.codingair.warpsystem.utils.JSONParser;
+import de.codingair.codingapi.tools.JSON.JSONObject;
+import de.codingair.codingapi.tools.JSON.JSONParser;
+import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PortalManager implements Manager {
-    private static PortalManager instance;
+public class EffectPortalManager implements Manager {
+    private static EffectPortalManager instance;
     private List<EffectPortal> effectPortals = new ArrayList<>();
     private double maxParticleDistance = 70D;
 
@@ -67,7 +69,7 @@ public class PortalManager implements Manager {
             for(EffectPortal p1 : this.effectPortals) {
                 if(duplicates.contains(p1) || p0.equals(p1)) continue;
 
-                if(p0.getStart().equals(p1.getStart()) && p0.getDestination().equals(p1.getDestination())) {
+                if(p0.getLocation().equals(p1.getLocation()) && p0.getDestination().equals(p1.getDestination())) {
                     if(!duplicates.contains(p1)) duplicates.add(p1);
                 }
             }
@@ -81,7 +83,7 @@ public class PortalManager implements Manager {
 
 //        WarpSystem.log("    > Verify that worlds are available");
         for(EffectPortal effectPortal : this.effectPortals) {
-            if(effectPortal.getStart().getWorld() == null) {
+            if(effectPortal.getLocation().getWorld() == null) {
                 effectPortal.setDisabled(true);
                 success = false;
             }
@@ -90,6 +92,12 @@ public class PortalManager implements Manager {
 //        WarpSystem.log("    > Verify that portals are enabled");
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Portals", true)) {
             this.effectPortals.forEach(p -> p.setRunning(true));
+        }
+
+        for(EffectPortal effectPortal : this.effectPortals) {
+            if(effectPortal.hasDestinationPortal() && effectPortal.getLink() == null) {
+                effectPortal.removeAction(Action.WARP);
+            }
         }
 
         //Remove old portals
@@ -107,15 +115,24 @@ public class PortalManager implements Manager {
         return success;
     }
 
+    public EffectPortal getPortal(Location loc) {
+        for(EffectPortal p : this.effectPortals) {
+            if(p.getLocation().equals(loc)) return p;
+        }
+
+        return null;
+    }
+
     @Override
     public void save(boolean saver) {
+        if(true) return;
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
 
         if(!saver) WarpSystem.log("  > Saving Portals");
         List<String> data = new ArrayList<>();
 
         for(EffectPortal effectPortal : this.effectPortals) {
-            if(effectPortal.getStart().getWorld() == null) continue;
+            if(effectPortal.getLocation().getWorld() == null) continue;
             JSONObject json = new JSONObject();
             effectPortal.write(json);
             data.add(json.toJSONString());
@@ -140,9 +157,9 @@ public class PortalManager implements Manager {
         return maxParticleDistance;
     }
 
-    public static PortalManager getInstance() {
+    public static EffectPortalManager getInstance() {
         if(instance == null) instance = WarpSystem.getInstance().getDataManager().getManager(FeatureType.PORTALS);
-        if(instance == null) instance = new PortalManager();
+        if(instance == null) instance = new EffectPortalManager();
         return instance;
     }
 }

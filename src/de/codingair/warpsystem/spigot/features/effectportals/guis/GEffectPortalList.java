@@ -5,7 +5,7 @@ import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.base.guis.list.GUIList;
 import de.codingair.warpsystem.spigot.base.guis.list.ListItem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.effectportals.managers.PortalManager;
+import de.codingair.warpsystem.spigot.features.effectportals.managers.EffectPortalManager;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -21,7 +21,7 @@ public abstract class GEffectPortalList extends GUIList<EffectPortal> {
 
     @Override
     public void addListItems(List<ListItem<EffectPortal>> listItems) {
-        for(EffectPortal value : PortalManager.getInstance().getEffectPortals()) {
+        for(EffectPortal value : EffectPortalManager.getInstance().getEffectPortals()) {
             listItems.add(new ListItem<EffectPortal>(value) {
                 @Override
                 public ItemStack buildItem() {
@@ -49,7 +49,7 @@ public abstract class GEffectPortalList extends GUIList<EffectPortal> {
 
                             case EffectPortal: {
                                 destType = Lang.get("Effect_Portal");
-                                dest = value.getDestinationName();
+                                dest = value.getLink().getName();
                                 break;
                             }
                         }
@@ -59,7 +59,7 @@ public abstract class GEffectPortalList extends GUIList<EffectPortal> {
                     }
 
                     return new ItemBuilder(Material.ENDER_PEARL)
-                            .setName("§7\"§r" + ChatColor.highlight(value.getStartName(), getSearched(), "§e§n", "§r", true) + "§7\"")
+                            .setName("§7\"§r" + ChatColor.highlight(value.getName(), getSearched(), "§e§n", "§r", true) + "§7\"")
                             .setLore("§7" + Lang.get("Destination") + ": §7" + (destType == null ? "§c" + Lang.get("Not_Set") : dest + " (" + destType + ")"))
                             .getItem();
                 }
@@ -94,13 +94,13 @@ public abstract class GEffectPortalList extends GUIList<EffectPortal> {
 
                             case EffectPortal: {
                                 destType = Lang.get("Effect_Portal");
-                                dest = value.getDestinationName();
+                                dest = value.getLink().getName();
                                 break;
                             }
                         }
                     }
 
-                    return value.getStartName().toLowerCase().contains(searching.toLowerCase())
+                    return value.getName().toLowerCase().contains(searching.toLowerCase())
                             || (dest != null && (dest.toLowerCase().contains(searching.toLowerCase()) || destType.toLowerCase().contains(searching.toLowerCase())));
                 }
             });

@@ -19,6 +19,7 @@ public enum Origin {
     ShortCut(Shortcut.class, "Shortcuts"),
     CommandBlock,
     TeleportCommand,
+    Custom,
     UNKNOWN;
 
     private Class<? extends FeatureObject> clazz = null;

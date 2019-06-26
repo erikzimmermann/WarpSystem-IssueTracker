@@ -19,8 +19,10 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -67,7 +69,7 @@ public class TeleportManager {
      */
     public boolean load() {
         boolean success = true;
-        
+
         this.options = WarpSystem.getOptions(GeneralOptions.class);
 
         this.particleId = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Animation", 17);
@@ -80,6 +82,10 @@ public class TeleportManager {
         config.set("WarpSystem.Teleport.Animation", this.particleId);
 
         WarpSystem.getInstance().getFileManager().getFile("Config").saveConfig();
+    }
+
+    public void teleport(Player player, Location location, String displayName, boolean afterEffects) {
+        teleport(player, Origin.Custom, new Destination(new LocationAdapter(location)), displayName, null, 0, true, true, true, false, afterEffects, null);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs) {
@@ -106,20 +112,16 @@ public class TeleportManager {
         teleport(player, origin, destination, displayName, costs, false, this.options.isAllowMove(), true, false, callback);
     }
 
-    public void instantTeleport(Player player, Origin origin, Destination destination, String displayName) {
-        teleport(player, origin, destination, displayName, 0, true, true, true, false, null);
-    }
-
-    public void instantTeleport(Player player, Origin origin, Destination destination, String displayName, boolean message) {
-        teleport(player, origin, destination, displayName, 0, true, true, message, false, null);
-    }
-
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean message, boolean silent, Callback<TeleportResult> callback) {
         teleport(player, origin, destination, displayName, costs, skip, this.options.isAllowMove(), message, silent, callback);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, boolean message, boolean silent, Callback<TeleportResult> callback) {
         teleport(player, origin, destination, displayName, null, costs, skip, canMove, message, silent, callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, boolean message, boolean silent, boolean afterEffects, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message, silent, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), afterEffects, callback);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, boolean message, boolean silent, Callback<TeleportResult> callback) {

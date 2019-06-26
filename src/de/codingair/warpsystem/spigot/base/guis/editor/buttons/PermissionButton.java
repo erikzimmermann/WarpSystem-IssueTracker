@@ -64,7 +64,7 @@ public class PermissionButton extends SyncAnvilGUIButton {
     }
 
     @Override
-    public ItemStack craftAnvilItem() {
+    public ItemStack craftAnvilItem(ClickType trigger) {
         if(object == null) return new ItemStack(Material.AIR);
 
         return new ItemBuilder(XMaterial.PAPER).setName(object.getPermission() == null ? Lang.get("Permission") + "..." : object.getPermission()).getItem();

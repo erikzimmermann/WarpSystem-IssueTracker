@@ -188,15 +188,15 @@ public class Teleport {
             @EventHandler
             public void onTeleportEd(PlayerTeleportedEvent e) {
                 sendLoadedChunks();
+
+                if(player.isOnline()) {
+                    if(afterEffects) playAfterEffects(player);
+                    if(teleportSound != null) teleportSound.play(player);
+                }
+
                 HandlerList.unregisterAll(this);
             }
-
         }, WarpSystem.getInstance());
-
-        if(player.isOnline()) {
-            if(afterEffects) playAfterEffects(player);
-//            if(teleportSound != null) teleportSound.play(player);
-        }
     }
 
     private void payBack() {

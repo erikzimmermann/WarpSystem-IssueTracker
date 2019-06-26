@@ -73,4 +73,9 @@ public class CommandAction extends ActionObject<List<String>> {
     public boolean usable() {
         return getValue() != null;
     }
+
+    @Override
+    public CommandAction clone() {
+        return new CommandAction(getValue());
+    }
 }

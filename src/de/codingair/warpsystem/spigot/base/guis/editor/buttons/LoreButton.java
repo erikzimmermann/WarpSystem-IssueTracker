@@ -54,7 +54,7 @@ public abstract class LoreButton extends SyncAnvilGUIButton {
     }
 
     @Override
-    public ItemStack craftAnvilItem() {
+    public ItemStack craftAnvilItem(ClickType trigger) {
         return new ItemBuilder(Material.PAPER).setName(Lang.get("Line") + "...").getItem();
     }
 

@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.spigot.features.animations.utils;
 
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.Serializable;
-import de.codingair.warpsystem.utils.JSONObject;
+import de.codingair.codingapi.tools.JSON.JSONObject;
 import org.bukkit.potion.PotionEffectType;
 
 public class Buff implements Serializable {
@@ -9,6 +9,10 @@ public class Buff implements Serializable {
     private int level, timeBeforeTeleport, timeAfterTeleport;
 
     public Buff() {
+    }
+
+    public Buff(Buff buff) {
+        this(buff.getType(), buff.getLevel(), buff.getTimeBeforeTeleport(), buff.getTimeAfterTeleport());
     }
 
     public Buff(PotionEffectType type, int level, int timeBeforeTeleport, int timeAfterTeleport) {

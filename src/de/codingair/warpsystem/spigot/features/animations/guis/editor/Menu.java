@@ -9,14 +9,14 @@ import de.codingair.codingapi.player.gui.anvil.AnvilGUI;
 import de.codingair.codingapi.player.gui.anvil.AnvilListener;
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
-import de.codingair.codingapi.player.gui.hotbar.ItemComponent;
+import de.codingair.codingapi.player.gui.hotbar.components.ItemComponent;
 import de.codingair.codingapi.player.gui.hotbar.ItemListener;
-import de.codingair.codingapi.player.gui.inventory.gui.Skull;
+import de.codingair.codingapi.server.Sound;
+import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.animations.AnimationManager;
 import de.codingair.warpsystem.spigot.features.animations.utils.Animation;
 import de.codingair.warpsystem.spigot.features.animations.utils.AnimationPlayer;
@@ -25,8 +25,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import java.lang.reflect.InvocationTargetException;
 
 public class Menu extends HotbarGUI {
     private Animation animation;
@@ -92,20 +90,20 @@ public class Menu extends HotbarGUI {
         this(player, animation, animation.clone());
     }
 
-    public Menu(Player player, Animation animation, HotbarGUI link) {
-        this(player, animation, animation.clone(), link);
+    public Menu(Player player, Animation animation, HotbarGUI link, MenuParts... menuParts) {
+        this(player, animation, animation.clone(), link, menuParts);
     }
 
-    public Menu(Player player, MovableMid mid, Animation animation, HotbarGUI link) {
-        this(player, mid, animation, animation.clone(), link);
+    public Menu(Player player, MovableMid mid, Animation animation, HotbarGUI link, MenuParts... menuParts) {
+        this(player, mid, animation, animation.clone(), link, menuParts);
     }
 
     public Menu(Player player, Animation animation, Animation clone) {
         this(player, animation, clone, null);
     }
 
-    public Menu(Player player, Animation animation, Animation clone, HotbarGUI link) {
-        this(player, new PlayerMid(player), animation, clone, link);
+    public Menu(Player player, Animation animation, Animation clone, HotbarGUI link, MenuParts... menuParts) {
+        this(player, new PlayerMid(player), animation, clone, link, menuParts);
     }
 
     public Menu(Player player, MovableMid mid, Animation animation, Animation clone, HotbarGUI link) {
@@ -117,7 +115,11 @@ public class Menu extends HotbarGUI {
     }
 
     public Menu(Player player, MovableMid mid, Animation animation, Animation clone, HotbarGUI link, MenuHook hook, MenuParts... menuParts) {
-        super(player, WarpSystem.getInstance());
+        super(player, WarpSystem.getInstance(), 1);
+
+        setOpenSound(new SoundData(Sound.LEVEL_UP, 0.5F, 1F));
+        setCloseSound(new SoundData(Sound.LEVEL_UP, 0.5F, 0.5F));
+        setClickSound(new SoundData(Sound.CLICK, 0.5F, 1F));
 
         this.hook = hook;
         this.menuParts = menuParts;
@@ -126,7 +128,15 @@ public class Menu extends HotbarGUI {
         this.link = link;
         this.mid = mid;
 
-        this.animPlayer = new AnimationPlayer(player, mid, clone, 5, null);
+        boolean sound = false;
+        for(MenuParts part : menuParts) {
+            if(part == MenuParts.SOUNDS) {
+                sound = true;
+                break;
+            }
+        }
+
+        this.animPlayer = new AnimationPlayer(player, mid, clone, 5, null, sound);
 
         particles = new Particles(getPlayer(), this);
         buffs = new Buffs(getPlayer(), this);
@@ -135,11 +145,11 @@ public class Menu extends HotbarGUI {
         this.animPlayer.setLoop(true);
         this.animPlayer.setRunning(true);
 
-        init(player);
+        initialize();
     }
 
-    private void init(Player p) {
-        p.getInventory().setHeldItemSlot(0);
+    public void initialize() {
+        getPlayer().getInventory().setHeldItemSlot(0);
 
         setItem(0, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
         setItem(1, new ItemComponent(new ItemBuilder(XMaterial.NAME_TAG).setName("§7" + Lang.get("Name") + ": '§r" + clone.getName() + "§7'").getItem(), new ItemListener() {
@@ -178,7 +188,7 @@ public class Menu extends HotbarGUI {
 
             @Override
             public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
-                MessageAPI.stopSendingActionBar(p);
+                MessageAPI.stopSendingActionBar(getPlayer());
             }
         }));
 
@@ -200,6 +210,7 @@ public class Menu extends HotbarGUI {
                     ic.setLink(this.sounds);
                     break;
             }
+            setItem(slot, ic, false);
 
             slot++;
         }
@@ -248,7 +259,7 @@ public class Menu extends HotbarGUI {
             }
         }).setLink(link).setCloseOnClick(link == null));
 
-        if(hook != null) hook.onInitialize(this, p);
+        if(hook != null) hook.onInitialize(this, getPlayer());
     }
 
     public Animation getAnimation() {
@@ -274,5 +285,6 @@ public class Menu extends HotbarGUI {
     @Override
     public void open(boolean sound) {
         super.open(sound);
+        setStartSlot(-1);
     }
 }

@@ -70,10 +70,10 @@ Animation_Radius: 'Animation radius'
 Animation_Height: 'Animation height'
 Animation_Speed: 'Animation speed'
 Destination: Destination
-Animation_Type: Animation-Type
-Particle_Effect: Particle-Effect
-Particle_Effects: Particle-Effects
-Hologram_Height: Hologram-Height
+Animation_Type: 'Animation type'
+Particle_Effect: 'Particle effect'
+Particle_Effects: 'Particle effects'
+Hologram_Height: 'Hologram height'
 Start_Name: Start-Name
 Goal_Name: Goal-Name
 Sound: Sound
@@ -369,3 +369,9 @@ Reset: 'Reset'
 Portal: 'Portal'
 Position: 'Position'
 Positioning: 'Positioning'
+Enter_Something: 'Please enter something.'
+No_second_effect_portal: 'You don''t have a second effect portal.'
+Object_Position: 'Position of %OBJECT%'
+Hologram_Text: 'Hologram text'
+EffectPortal_ChangeName_Hint: 'The name, which will be displayed on a teleport.'
+EffectPortal_No_Animation: '&7You &cneed an animation &7to finish your effect portal'

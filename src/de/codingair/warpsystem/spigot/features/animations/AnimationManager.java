@@ -10,8 +10,8 @@ import de.codingair.warpsystem.spigot.features.animations.utils.Animation;
 import de.codingair.codingapi.particles.animations.customanimations.AnimationType;
 import de.codingair.warpsystem.spigot.features.animations.utils.ParticlePart;
 import de.codingair.warpsystem.utils.Manager;
-import de.codingair.warpsystem.utils.JSONObject;
-import de.codingair.warpsystem.utils.JSONParser;
+import de.codingair.codingapi.tools.JSON.JSONObject;
+import de.codingair.codingapi.tools.JSON.JSONParser;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -16,8 +16,8 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.exceptions.IconReadException;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
-import de.codingair.warpsystem.utils.JSONParser;
-import de.codingair.warpsystem.utils.JSONObject;
+import de.codingair.codingapi.tools.JSON.JSONParser;
+import de.codingair.codingapi.tools.JSON.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
@@ -164,6 +164,19 @@ public class FeatureObject implements Serializable {
             this.actions.forEach(ActionObject::destroy);
             this.actions.clear();
         }
+    }
+
+    public void commitClonedActions() {
+        List<ActionObject> a = getActions();
+        List<ActionObject> cloned = new ArrayList<>();
+
+        for(ActionObject ao : a) {
+            cloned.add(ao.clone());
+        }
+
+        a.clear();
+        a.addAll(cloned);
+        cloned.clear();
     }
 
     public void apply(FeatureObject object) {

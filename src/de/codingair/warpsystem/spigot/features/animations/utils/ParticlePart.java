@@ -6,7 +6,7 @@ import de.codingair.codingapi.particles.animations.customanimations.CustomAnimat
 import de.codingair.codingapi.particles.animations.movables.MovableMid;
 import de.codingair.codingapi.particles.utils.Color;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.Serializable;
-import de.codingair.warpsystem.utils.JSONObject;
+import de.codingair.codingapi.tools.JSON.JSONObject;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
@@ -22,6 +22,14 @@ public class ParticlePart implements Serializable {
     public ParticlePart() {
     }
 
+    public ParticlePart(ParticlePart part) {
+        this(part.getAnimation(), part.getParticle(), part.getRadius(), part.getHeight(), part.getSpeed());
+        this.xRotation = part.xRotation;
+        this.yRotation = part.yRotation;
+        this.zRotation = part.zRotation;
+        this.color = part.color;
+    }
+
     public ParticlePart(AnimationType animation, Particle particle, double radius, double height, int speed) {
         this.animation = animation;
         this.particle = particle;
@@ -32,15 +40,15 @@ public class ParticlePart implements Serializable {
 
     @Override
     public boolean read(JSONObject json) {
-        animation = AnimationType.getById(Integer.parseInt(json.get("animation") + ""));
-        particle = Particle.getById(Integer.parseInt(json.get("particle") + ""));
-        radius = Double.parseDouble(json.get("radius") + "");
-        height = Double.parseDouble(json.get("height") + "");
-        speed = Integer.parseInt(json.get("speed") + "");
+        animation = AnimationType.getById(json.get("animation"));
+        particle = Particle.getById(json.get("particle"));
+        radius = json.get("radius");
+        height = json.get("height");
+        speed = json.get("speed");
         color = json.get("color") == null ? null : Color.valueOf(json.get("color"));
-        xRotation = json.get("xrot") == null ? 0 : Integer.parseInt(json.get("xrot") + "");
-        yRotation = json.get("yrot") == null ? 0 : Integer.parseInt(json.get("yrot") + "");
-        zRotation = json.get("zrot") == null ? 0 : Integer.parseInt(json.get("zrot") + "");
+        xRotation = json.get("xrot") == null ? 0 : json.get("xrot");
+        yRotation = json.get("yrot") == null ? 0 : json.get("yrot");
+        zRotation = json.get("zrot") == null ? 0 : json.get("zrot");
         return true;
     }
 
@@ -48,6 +56,7 @@ public class ParticlePart implements Serializable {
     public void write(JSONObject json) {
         json.put("animation", animation.getId());
         json.put("particle", particle.getId());
+        json.put("height", height);
         json.put("radius", radius);
         json.put("speed", speed);
         json.put("color", color == null ? null : color.name());

@@ -5,6 +5,7 @@ import de.codingair.codingapi.particles.animations.movables.LocationMid;
 import de.codingair.codingapi.particles.animations.movables.MovableMid;
 import de.codingair.codingapi.particles.animations.movables.PlayerMid;
 import de.codingair.codingapi.player.MessageAPI;
+import de.codingair.codingapi.tools.HitBox;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.Location;
@@ -29,6 +30,9 @@ public class AnimationPlayer {
     private List<PotionEffect> buffBackup = new ArrayList<>();
     private Location destination;
     private double maxDistance = 70;
+    private boolean sounds;
+
+    private HitBox hitBox = null;
 
     public AnimationPlayer(Player player, Animation animation, int seconds) {
         this(player, new PlayerMid(player), animation, seconds, null);
@@ -47,11 +51,16 @@ public class AnimationPlayer {
     }
 
     public AnimationPlayer(Player player, MovableMid location, Animation animation, int seconds, Location destination) {
+        this(player, location, animation, seconds, destination, true);
+    }
+
+    public AnimationPlayer(Player player, MovableMid location, Animation animation, int seconds, Location destination, boolean sounds) {
         this.player = player;
         this.animMid = location;
         this.animation = animation;
         this.seconds = seconds;
         this.destination = destination;
+        this.sounds = sounds;
     }
 
     private void buildBuffBackup() {
@@ -105,7 +114,7 @@ public class AnimationPlayer {
                         }
                     }
 
-                    if(animation.getTickSound() != null && player != null) animation.getTickSound().play(player);
+                    if(sounds && animation.getTickSound() != null && player != null) animation.getTickSound().play(player);
                     if(!loop && player != null) MessageAPI.sendActionBar(player, msg.replace("%seconds%", left + ""));
                     if(seconds == -1) return;
                 } else if(left == 0) {
@@ -127,7 +136,7 @@ public class AnimationPlayer {
                         }
                     }
 
-                    if(animation.getTeleportSound() != null && player != null) animation.getTeleportSound().play(player, destination);
+                    if(sounds && animation.getTeleportSound() != null && player != null) animation.getTeleportSound().play(player, destination);
 
                     if(player == null || player.getActivePotionEffects().isEmpty()) setRunning(false);
                 } else {
@@ -145,6 +154,20 @@ public class AnimationPlayer {
                 left--;
             }
         };
+    }
+
+    public HitBox getHitBox() {
+        if(this.animations == null) return null;
+        if(hitBox != null) return hitBox;
+        else {
+            for(CustomAnimation a : animations) {
+                HitBox box = a.getHitBox();
+                if(hitBox == null) hitBox = box;
+                else hitBox.addProperty(box);
+            }
+
+            return hitBox;
+        }
     }
 
     public void update() {

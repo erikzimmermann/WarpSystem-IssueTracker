@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.effectportals.menu;
+package de.codingair.warpsystem.spigot.features.effectportals.guis.editor;
 
 import de.codingair.codingapi.particles.animations.movables.LocationMid;
 import de.codingair.codingapi.player.MessageAPI;
@@ -8,7 +8,7 @@ import de.codingair.codingapi.player.gui.anvil.AnvilGUI;
 import de.codingair.codingapi.player.gui.anvil.AnvilListener;
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
-import de.codingair.codingapi.player.gui.hotbar.ItemComponent;
+import de.codingair.codingapi.player.gui.hotbar.components.ItemComponent;
 import de.codingair.codingapi.player.gui.hotbar.ItemListener;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
@@ -19,30 +19,30 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.animations.AnimationManager;
 import de.codingair.warpsystem.spigot.features.animations.guis.AnimationList;
 import de.codingair.warpsystem.spigot.features.animations.utils.Animation;
-import de.codingair.warpsystem.spigot.features.effectportals.PortalEditor;
+import de.codingair.warpsystem.spigot.features.effectportals.EffectPortalEditor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
 public class Menu extends HotbarGUI {
-    private PortalEditor editor;
+    private EffectPortalEditor editor;
     private Hologram hologram = new Hologram(getPlayer(), this);
     private Teleport teleport = new Teleport(getPlayer(), this);
 
-    public Menu(Player player, PortalEditor editor) {
-        super(player, WarpSystem.getInstance());
+    public Menu(Player player, EffectPortalEditor editor) {
+        super(player, WarpSystem.getInstance(), 1);
         this.editor = editor;
 
         setOpenSound(new SoundData(Sound.LEVEL_UP, 0.5F, 1F));
         setCloseSound(new SoundData(Sound.LEVEL_UP, 0.5F, 0.5F));
         setClickSound(new SoundData(Sound.CLICK, 0.5F, 1F));
 
-        this.hologram.init();
-        this.teleport.init();
-        init();
+        this.hologram.initialize();
+        this.teleport.initialize();
+        initialize();
     }
 
-    private void init() {
+    public void initialize() {
         setItem(0, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
 
         setItem(1, new ItemComponent(new ItemBuilder(XMaterial.REDSTONE).setName("§7" + Lang.get("Animation") + ": §e" + (editor.getEffectPortal().getAnimation() == null ? "§c-" : editor.getEffectPortal().getAnimation().getName())).getItem(), new ItemListener() {
@@ -70,17 +70,22 @@ public class Menu extends HotbarGUI {
 
                             @Override
                             public void onClose(AnvilCloseEvent e) {
+                                if(!e.isSubmitted()) return;
                                 e.setPost(() -> {
                                     setWaiting(true);
+                                    editor.getEffectPortal().setShowAnimation(false);
                                     editor.getEffectPortal().setAnimation(new Animation(e.getSubmittedText()));
                                     updateDisplayName(ic, "§7" + Lang.get("Animation") + ": §e" + (editor.getEffectPortal().getAnimation() == null ? "§c-" : editor.getEffectPortal().getAnimation().getName()));
-                                    new de.codingair.warpsystem.spigot.features.animations.guis.editor.Menu(player, new LocationMid(editor.getEffectPortal().getStart()), editor.getEffectPortal().getAnimation(), Menu.this).open(false);
+                                    player.teleport(editor.getEffectPortal().getLocation());
+                                    new de.codingair.warpsystem.spigot.features.animations.guis.editor.Menu(player, new LocationMid(editor.getEffectPortal().getLocation()), editor.getEffectPortal().getAnimation(), Menu.this, de.codingair.warpsystem.spigot.features.animations.guis.editor.Menu.MenuParts.PARTICLES).open(false);
                                 });
                             }
                         }, new ItemBuilder(XMaterial.PAPER).setName(Lang.get("Name") + "...").getItem());
                     } else {
                         setWaiting(true);
-                        new de.codingair.warpsystem.spigot.features.animations.guis.editor.Menu(player, new LocationMid(editor.getEffectPortal().getStart()), editor.getEffectPortal().getAnimation(), Menu.this).open(false);
+                        editor.getEffectPortal().setShowAnimation(false);
+                        player.teleport(editor.getEffectPortal().getLocation());
+                        new de.codingair.warpsystem.spigot.features.animations.guis.editor.Menu(player, new LocationMid(editor.getEffectPortal().getLocation()), editor.getEffectPortal().getAnimation(), Menu.this, de.codingair.warpsystem.spigot.features.animations.guis.editor.Menu.MenuParts.PARTICLES).open(false);
                     }
                 } else if(clickType == ClickType.RIGHT_CLICK) {
                     if(editor.getEffectPortal().getAnimation() == null) {
@@ -90,6 +95,8 @@ public class Menu extends HotbarGUI {
                                 if(clickType == org.bukkit.event.inventory.ClickType.LEFT) {
                                     editor.getEffectPortal().setAnimation(value);
                                     updateDisplayName(ic, "§7" + Lang.get("Animation") + ": §e" + (editor.getEffectPortal().getAnimation() == null ? "§c-" : editor.getEffectPortal().getAnimation().getName()));
+                                    onHover(Menu.this, ic, ic, player);
+                                    player.closeInventory();
                                 }
                             }
 
@@ -106,6 +113,7 @@ public class Menu extends HotbarGUI {
                     } else {
                         editor.getEffectPortal().setAnimation(null);
                         updateDisplayName(ic, "§7" + Lang.get("Animation") + ": §e" + (editor.getEffectPortal().getAnimation() == null ? "§c-" : editor.getEffectPortal().getAnimation().getName()));
+                        onHover(Menu.this, ic, ic, player);
                     }
                 }
             }
@@ -113,13 +121,13 @@ public class Menu extends HotbarGUI {
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
                 if(editor.getEffectPortal().getAnimation() == null) {
-                    MessageAPI.sendActionBar(getPlayer(), PortalEditor.ACTION_BAR(
+                    MessageAPI.sendActionBar(getPlayer(), EffectPortalEditor.ACTION_BAR(
                             Lang.get("Animation"),
                             Lang.get("Create"),
                             Lang.get("Choose"))
                             , WarpSystem.getInstance(), Integer.MAX_VALUE);
                 } else {
-                    MessageAPI.sendActionBar(getPlayer(), PortalEditor.ACTION_BAR(
+                    MessageAPI.sendActionBar(getPlayer(), EffectPortalEditor.ACTION_BAR(
                             Lang.get("Animation"),
                             Lang.get("Edit"),
                             Lang.get("Remove"))
@@ -134,19 +142,25 @@ public class Menu extends HotbarGUI {
         }));
 
         setItem(2, new ItemComponent(new ItemBuilder(XMaterial.OAK_SIGN).setName("§7» §e" + Lang.get("Hologram") + "§7 «").getItem()).setLink(this.hologram));
-        setItem(3, new ItemComponent(new ItemBuilder(XMaterial.ENDER_PEARL).setName("§7» §e" + Lang.get("Teleport") + "§7 «").getItem()).setLink(this.teleport));
+        setItem(3, new ItemComponent(new ItemBuilder(XMaterial.ENDER_EYE).setName("§7» §e" + Lang.get("Teleport") + "§7 «").getItem()).setLink(this.teleport));
 
         setItem(6, new ItemComponent(new ItemBuilder(XMaterial.LIME_TERRACOTTA).setName("§7» §a" + Lang.get("Save") + "§7 «").getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-                editor.finish();
-
-                if(editor.getBackupEffectPortal() == null) {
-                    //CREATION
-                    getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Portal_Created"));
+                if(editor.getEffectPortal().getAnimation() == null) {
+                    player.sendMessage(Lang.getPrefix() + Lang.get("EffectPortal_No_Animation"));
                 } else {
-                    //Save changes
-                    getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Portal_Save_Changes"));
+                    editor.finish();
+
+                    if(editor.getBackupEffectPortal() == null) {
+                        //CREATION
+                        getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Portal_Created"));
+                    } else {
+                        //Save changes
+                        getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Portal_Save_Changes"));
+                    }
+
+                    close(false);
                 }
             }
 
@@ -159,7 +173,7 @@ public class Menu extends HotbarGUI {
             public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
 
             }
-        }).setCloseOnClick(true));
+        }));
 
         setItem(7, new ItemComponent(new ItemBuilder(XMaterial.RED_TERRACOTTA).setName("§7» §c" + Lang.get("Cancel") + "§7 «").getItem(), new ItemListener() {
             @Override
@@ -177,12 +191,10 @@ public class Menu extends HotbarGUI {
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-
             }
 
             @Override
             public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
-
             }
         }).setCloseOnClick(true));
     }
@@ -193,18 +205,30 @@ public class Menu extends HotbarGUI {
             editor.getEffectPortal().setAnimation(null);
         }
 
-        System.out.println("animation: " + editor.getEffectPortal().getAnimation());
         editor.getEffectPortal().setShowAnimation(true);
+
+        if(editor.getEffectPortal().isRunning()) {
+            editor.getEffectPortal().update();
+            if(editor.getEffectPortal().getLink() != null) editor.getEffectPortal().getLink().update();
+        } else editor.getEffectPortal().setRunning(true);
         super.open(sound);
+        setStartSlot(-1);
     }
 
     @Override
     public void close(boolean sound) {
-        editor.getEffectPortal().setShowAnimation(false);
         super.close(sound);
     }
 
-    public PortalEditor getEditor() {
+    public EffectPortalEditor getEditor() {
         return editor;
+    }
+
+    public Hologram getHologram() {
+        return hologram;
+    }
+
+    public Teleport getTeleport() {
+        return teleport;
     }
 }

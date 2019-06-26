@@ -6,7 +6,7 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionOb
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
-import de.codingair.warpsystem.utils.JSONObject;
+import de.codingair.codingapi.tools.JSON.JSONObject;
 
 import java.util.List;
 import java.util.Objects;

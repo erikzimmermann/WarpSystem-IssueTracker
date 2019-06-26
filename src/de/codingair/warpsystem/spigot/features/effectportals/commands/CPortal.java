@@ -7,13 +7,11 @@ import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.codingapi.server.commands.MultiCommandComponent;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.TimeList;
-import de.codingair.codingapi.utils.Node;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
-import de.codingair.warpsystem.spigot.features.effectportals.PortalEditor;
+import de.codingair.warpsystem.spigot.features.effectportals.EffectPortalEditor;
 import de.codingair.warpsystem.spigot.features.effectportals.guis.GEffectPortalList;
-import de.codingair.warpsystem.spigot.features.effectportals.guis.editor.EffectPortalEditor;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -64,9 +62,9 @@ public class CPortal extends CommandBuilder {
                 new GEffectPortalList((Player) sender) {
                     @Override
                     public void onClick(EffectPortal value, ClickType clickType) {
-                        ((Player) sender).teleport(value.getStart());
+                        ((Player) sender).teleport(value.getLocation());
                         Sound.ENDERMAN_TELEPORT.playSound((Player) sender);
-                        new PortalEditor((Player) sender, value).start();
+                        new EffectPortalEditor((Player) sender, value).start();
                     }
 
                     @Override
@@ -101,9 +99,7 @@ public class CPortal extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                EffectPortal effectPortal = new EffectPortal(Location.getByLocation(((Player) sender).getLocation()), new Destination(), null, args[1], null, 2.2, true, true, null);
-//                new PortalEditor((Player) sender, new Node<>(args[1], Location.getByLocation(((Player) sender).getLocation()))).start();
-                new EffectPortalEditor((Player) sender, effectPortal).open();
+                new EffectPortalEditor((Player) sender, argument).start();
                 return false;
             }
         });
