@@ -99,7 +99,7 @@ public class Menu extends HotbarGUI {
     }
 
     public Menu(Player player, Animation animation, Animation clone) {
-        this(player, animation, clone, null);
+        this(player, animation, clone, null, MenuParts.PARTICLES, MenuParts.BUFFS, MenuParts.SOUNDS);
     }
 
     public Menu(Player player, Animation animation, Animation clone, HotbarGUI link, MenuParts... menuParts) {
