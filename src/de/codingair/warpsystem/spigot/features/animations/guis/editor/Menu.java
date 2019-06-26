@@ -21,6 +21,8 @@ import de.codingair.warpsystem.spigot.features.animations.AnimationManager;
 import de.codingair.warpsystem.spigot.features.animations.utils.Animation;
 import de.codingair.warpsystem.spigot.features.animations.utils.AnimationPlayer;
 import de.codingair.warpsystem.spigot.features.animations.utils.MenuHook;
+import de.codingair.warpsystem.spigot.features.effectportals.managers.EffectPortalManager;
+import de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -226,6 +228,10 @@ public class Menu extends HotbarGUI {
                 if(!AnimationManager.getInstance().existsAnimation(id)) {
                     //register
                     AnimationManager.getInstance().addAnimation(animation);
+                } else {
+                    for(EffectPortal portal : EffectPortalManager.getInstance().getEffectPortals()) {
+                        if(portal.getAnimation().equals(animation)) portal.update();
+                    }
                 }
 
                 getPlayer().sendMessage(Lang.getPrefix() + "§a" + Lang.get("Changes_have_been_saved"));
