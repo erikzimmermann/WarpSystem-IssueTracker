@@ -10,6 +10,7 @@ import de.codingair.codingapi.server.fancymessages.MessageTypes;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
 import de.codingair.warpsystem.spigot.api.SpigotAPI;
+import de.codingair.warpsystem.spigot.base.ad.AdvertisementManager;
 import de.codingair.warpsystem.spigot.base.commands.CWarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.*;
@@ -89,6 +90,8 @@ public class WarpSystem extends JavaPlugin {
     private SpigotDataHandler dataHandler = new SpigotDataHandler(this);
     private UUIDManager uuidManager = new UUIDManager();
 
+    private AdvertisementManager advertisementManager;
+
     @Override
     public void onEnable() {
         instance = this;
@@ -159,6 +162,7 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new UUIDListener(), this);
 
             this.startAutoSaver();
+            advertisementManager = new AdvertisementManager();
 
             timer.stop();
 

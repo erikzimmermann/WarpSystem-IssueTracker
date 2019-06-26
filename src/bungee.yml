@@ -1,5 +1,5 @@
 name: WarpSystem
 author: CodingAir
-version: 3.1.11
+version: 3.1.12
 description: WarpSystem
 main: de.codingair.warpsystem.bungee.base.WarpSystem

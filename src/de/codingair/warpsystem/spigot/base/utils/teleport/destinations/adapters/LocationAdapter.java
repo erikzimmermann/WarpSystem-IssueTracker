@@ -1,8 +1,8 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters;
 
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.warpsystem.spigot.api.SpigotAPI;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import org.bukkit.ChatColor;
@@ -29,8 +29,8 @@ public class LocationAdapter implements DestinationAdapter {
             if(callback != null) callback.accept(TeleportResult.WORLD_DOES_NOT_EXIST);
             return false;
         } else {
-            if(silent) SpigotAPI.getInstance().silentTeleport(player, location);
-            else player.teleport(location);
+            if(silent) TeleportListener.TELEPORTS.put(player, location);
+            player.teleport(location);
 
             if(message != null)
                 player.sendMessage((message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));

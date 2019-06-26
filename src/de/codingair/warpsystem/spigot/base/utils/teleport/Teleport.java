@@ -1,15 +1,16 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport;
 
 import de.codingair.codingapi.particles.animations.Animation;
-import de.codingair.codingapi.particles.animations.playeranimations.CircleAnimation;
+import de.codingair.codingapi.particles.animations.customanimations.CircleAnimation;
+import de.codingair.codingapi.particles.animations.movables.PlayerMid;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.effects.RotatingParticleSpiral;
 import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -48,7 +49,7 @@ public class Teleport {
 
         if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) this.costs = 0;
 
-        this.animation = new CircleAnimation(WarpSystem.getInstance().getTeleportManager().getParticle(), player, WarpSystem.getInstance(), WarpSystem.getInstance().getTeleportManager().getRadius());
+        this.animation = new CircleAnimation(WarpSystem.getInstance().getTeleportManager().getParticle(), new PlayerMid(player), WarpSystem.getInstance().getTeleportManager().getRadius(), 1, 0);
         this.runnable = new BukkitRunnable() {
             private int left = seconds;
             private String msg = Lang.get("Teleporting_Info");
