@@ -125,6 +125,7 @@ public class GWarps extends GUI {
                 if(cursorIcon != null && cursorIcon.getCategory() == GWarps.this.category && cursorIcon.getSlot() == e.getSlot()) {
                     e.setCursor(new ItemStack(Material.AIR));
                     setMoving(false, e.getSlot());
+                    Sound.CLICK.playSound(getPlayer(), 0.7F, 1F);
                     e.setCancelled(true);
                 }
             }
@@ -501,9 +502,9 @@ public class GWarps extends GUI {
                                             p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Not_Deleted"));
                                         }
 
-                                        new GWarps(p, category, editing).open();
+                                        GWarps.this.reinitialize();
                                     }
-                                }, () -> new GWarps(p, category, editing).open()).open();
+                                }, GWarps.this::open).open();
                             }
                         }
                     } else if(e.isLeftClick()) {

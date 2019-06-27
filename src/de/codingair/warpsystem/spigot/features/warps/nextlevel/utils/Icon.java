@@ -102,6 +102,7 @@ public class Icon extends FeatureObject {
 
     @Override
     public boolean equals(Object o) {
+        if(!(o instanceof Icon)) return false;
         Icon icon = (Icon) o;
         return super.equals(o) &&
                 slot == icon.slot &&
