@@ -93,7 +93,7 @@ public class WarpSystem extends JavaPlugin {
     private HeadManager headManager = new HeadManager();
 
     private UpdateNotifier updateNotifier;
-    private boolean runningFirstTime = false;
+    private List<String> runningFirstTime = null;
 
     private Timer timer = new Timer();
 
@@ -136,8 +136,8 @@ public class WarpSystem extends JavaPlugin {
 
             PERMISSION_ADMIN = this.fileManager.getFile("Config").getConfig().getString("WarpSystem.Admin.Permission", "WarpSystem.Admin");
 
-            this.runningFirstTime = !fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "2.1.0").equals(getDescription().getVersion());
-            if(this.runningFirstTime) createBackup();
+            this.runningFirstTime = !fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "2.1.0").equals(getDescription().getVersion()) ? new ArrayList<>() : null;
+            if(this.runningFirstTime()) createBackup();
 
             log("Loading features");
             this.fileManager.loadAll();
@@ -156,10 +156,8 @@ public class WarpSystem extends JavaPlugin {
                 log(" ");
                 log(" ");
                 log("Loading with errors > Create backup...");
-                if(!this.runningFirstTime) createBackup();
+                if(!this.runningFirstTime()) createBackup();
                 log("Backup successfully created");
-                log(" ");
-                log("Try to use WarpSystem v3.0.1, which converts old icons.");
                 log(" ");
             }
 
@@ -193,6 +191,8 @@ public class WarpSystem extends JavaPlugin {
 
             if(fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Functions.CommandBlocks", true))
                 Bukkit.getPluginManager().registerEvents(new CommandBlockListener(), this);
+
+            if(runningFirstTime()) Bukkit.getScheduler().runTaskLater(this, () -> notifyPlayers(null), 100L);
         } catch(Throwable ex) {
             //make error-report
 
@@ -270,6 +270,7 @@ public class WarpSystem extends JavaPlugin {
 
         this.dataHandler.onDisable();
         if(this.packetListener != null) this.dataHandler.unregister(this.packetListener);
+        if(this.runningFirstTime != null) this.runningFirstTime.clear();
 
         destroy();
         this.uuidManager.removeAll();
@@ -486,7 +487,8 @@ public class WarpSystem extends JavaPlugin {
                 player.sendMessage("");
                 player.spigot().sendMessage(tc0);
                 player.sendMessage("");
-            } else if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && this.runningFirstTime) {
+            } else if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && this.runningFirstTime() && !this.runningFirstTime.contains(player.getName())) {
+                this.runningFirstTime.add(player.getName());
                 ConfigFile file = fileManager.getFile("Config");
                 file.getConfig().set("Do_Not_Edit.Last_Version", getDescription().getVersion());
                 file.saveConfig();
@@ -598,5 +600,9 @@ public class WarpSystem extends JavaPlugin {
         }
 
         return null;
+    }
+
+    private boolean runningFirstTime() {
+        return runningFirstTime != null;
     }
 }
