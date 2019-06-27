@@ -105,8 +105,8 @@ public class ParticlePart implements Serializable {
 
     public void setHeight(double height) {
         this.height = round(height);
-        if(this.height < 0) this.height = 0;
-        if(this.height > 3) this.height = 3;
+        if(this.height < -5) this.height = -5;
+        if(this.height > 10) this.height = 10;
     }
 
     private double round(double d) {
