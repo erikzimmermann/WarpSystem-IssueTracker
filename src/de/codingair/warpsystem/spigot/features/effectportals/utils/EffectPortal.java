@@ -81,10 +81,10 @@ public class EffectPortal extends FeatureObject implements Removable {
         HitBox hFrom;
         HitBox move;
         if(entity instanceof Player) {
-            hFrom = new HitBox(from, 0, ((Player) entity).getEyeHeight());
+            hFrom = new HitBox(from, 0.1, ((Player) entity).getEyeHeight());
 
             move = new HitBox(hFrom);
-            move.addProperty(new HitBox(to, 0, ((Player) entity).getEyeHeight()));
+            move.addProperty(new HitBox(to, 0.1, ((Player) entity).getEyeHeight()));
         } else {
             hFrom = new HitBox(from, 0, 0);
 
