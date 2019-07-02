@@ -8,6 +8,7 @@ import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.server.reflections.PacketUtils;
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.warpsystem.spigot.api.events.PlayerTeleportAcceptEvent;
 import de.codingair.warpsystem.spigot.api.events.PlayerTeleportedEvent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -48,14 +49,16 @@ public class Teleport {
     private double costs;
     private boolean canMove;
     private String message;
+    private Origin origin;
     private boolean silent;
     private boolean afterEffects;
     private Callback<TeleportResult> callback;
     private List<Chunk> preLoadedChunks = null;
 
-    public Teleport(Player player, Destination destination, String displayName, String permission, int seconds, double costs, String message, boolean canMove, boolean silent, SoundData teleportSound, boolean afterEffects, Callback<TeleportResult> callback) {
+    public Teleport(Player player, Destination destination, Origin origin, String displayName, String permission, int seconds, double costs, String message, boolean canMove, boolean silent, SoundData teleportSound, boolean afterEffects, Callback<TeleportResult> callback) {
         this.player = player;
         this.destination = destination;
+        this.origin = origin;
         this.displayName = displayName == null ? null : displayName.replace("_", " ");
         this.permission = permission;
         this.seconds = seconds;
@@ -180,17 +183,22 @@ public class Teleport {
 
         if(seconds == 0) preLoadChunks(1);
 
+        Location from = player.getLocation();
+
         if(!destination.teleport(player, message, displayName, this.permission == null, silent, costs, callback)) {
             return;
         }
 
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
-            public void onTeleportEd(PlayerTeleportedEvent e) {
-                sendLoadedChunks();
-
+            public void onTeleportEd(PlayerTeleportAcceptEvent e) {
                 if(player.isOnline()) {
-                    if(afterEffects) playAfterEffects(player);
+                    sendLoadedChunks();
+
+                    PlayerTeleportedEvent event = new PlayerTeleportedEvent(player, from, origin, afterEffects);
+                    Bukkit.getPluginManager().callEvent(event);
+
+                    if(event.isRunAfterEffects()) playAfterEffects(player);
                     if(teleportSound != null) teleportSound.play(player);
                 }
 

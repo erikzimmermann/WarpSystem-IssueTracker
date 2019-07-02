@@ -1,6 +1,6 @@
 package de.codingair.warpsystem.spigot.api.packetreader.readers;
 
-import de.codingair.warpsystem.spigot.api.events.PlayerTeleportedEvent;
+import de.codingair.warpsystem.spigot.api.events.PlayerTeleportAcceptEvent;
 import de.codingair.warpsystem.spigot.api.packetreader.GlobalPacketReader;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import org.bukkit.Bukkit;
@@ -15,7 +15,7 @@ public class TeleportReader implements GlobalPacketReader {
     @Override
     public boolean readPacket(Player player, Object packet) {
         if(packet.getClass().getSimpleName().equals("PacketPlayInTeleportAccept")) {
-            Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> Bukkit.getPluginManager().callEvent(new PlayerTeleportedEvent(player)));
+            Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> Bukkit.getPluginManager().callEvent(new PlayerTeleportAcceptEvent(player)));
         }
         return false;
     }
