@@ -230,7 +230,7 @@ public class TeleportManager {
         }
 
         Callback<TeleportResult> finalResultCallback = resultCallback;
-        Teleport teleport = new Teleport(player, destination, displayName, permission, seconds, costs, message, canMove, silent, teleportSound, afterEffects, new Callback<TeleportResult>() {
+        Teleport teleport = new Teleport(player, destination, origin, displayName, permission, seconds, costs, message, canMove, silent, teleportSound, afterEffects, new Callback<TeleportResult>() {
             @Override
             public void accept(TeleportResult object) {
                 if(callback != null) callback.accept(object);
