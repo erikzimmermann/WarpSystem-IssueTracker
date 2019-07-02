@@ -240,6 +240,7 @@ public class TempWarp {
         this.startDate = new Date();
         this.endDate = calculateEndDate();
         this.expireDate = null;
+        setNotify(false);
     }
 
     public boolean isAvailable() {

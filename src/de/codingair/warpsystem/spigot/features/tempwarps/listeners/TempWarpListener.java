@@ -32,7 +32,7 @@ public class TempWarpListener implements Listener {
             public void run() {
                 for(; id < warps.size(); id++) {
                     TempWarp warp = warps.get(id);
-                    if(warp.isNotify()) {
+                    if(warp.isNotify() && warp.isExpired()) {
                         long time = warp.getExpireDate().getTime() + TimeUnit.MILLISECONDS.convert(TempWarpManager.getManager().getInactiveTime(), TimeUnit.SECONDS) - new Date().getTime();
                         e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("TempWarp_expiring").replace("%TEMP_WARP%", warp.getName()).replace("%TIME_LEFT%", TempWarpManager.getManager().convertInTimeFormat(time, TimeUnit.MILLISECONDS)));
                         id++;
