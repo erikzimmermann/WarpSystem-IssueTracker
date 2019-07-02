@@ -57,7 +57,8 @@ public class PermissionButton extends SyncAnvilGUIButton {
 
         return new ItemBuilder(XMaterial.ENDER_EYE)
                 .setName("§6§n" + Lang.get("Permission"))
-                .setLore("§3" + Lang.get("Current") + ": " + (permission == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + permission + "§7'"))
+                .setLore("§8» " + Lang.get("Permission_Notice"))
+                .addLore("§3" + Lang.get("Current") + ": " + (permission == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + permission + "§7'"))
                 .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + (permission == null ? Lang.get("Set") : Lang.get("Change")))
                 .addLore(lore)
                 .getItem();
