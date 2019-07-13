@@ -82,7 +82,7 @@ public class AdvertisementManager {
                     + "  §6Premium features:§r\n"
                     + "  §7» MUCH better editors\n"
                     + "  §7» §6Weekly§7 updates\n"
-                    + "  §7» Tons of new settings\n"
+                    + "  §7» Many new settings\n"
                     + "  §7» No ads\n"
                     + "\n"
                     + "  §7Feel free to contact me via §nDiscord§r  \n"
