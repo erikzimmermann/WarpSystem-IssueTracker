@@ -21,7 +21,6 @@ public class AdvertisementManager {
     public AdvertisementManager() {
         messages.add(new MESSAGE_01());
         messages.add(new MESSAGE_02());
-        messages.add(new MESSAGE_03());
 
         getId();
         runAdvertiser();
@@ -51,10 +50,11 @@ public class AdvertisementManager {
                 else for(PermissionAttachmentInfo p : player.getEffectivePermissions()) {
                     if(p.getPermission().toLowerCase().startsWith(WarpSystem.PERMISSION_MODIFY.toLowerCase())) {
                         send(id, player);
+                        break;
                     }
                 }
             }
-        }, 20 * 60 * 2, 20 * 60 * 40); //all 40 minutes
+        }, 20 * 60 * 60, 20 * 60 * 60); //all 60 minutes
     }
 
     private void send(int id, Player player) {
@@ -82,7 +82,7 @@ public class AdvertisementManager {
                     + "  §6Premium features:§r\n"
                     + "  §7» MUCH better editors\n"
                     + "  §7» §6Weekly§7 updates\n"
-                    + "  §7» Tons of new settings\n"
+                    + "  §7» Many new settings\n"
                     + "  §7» No ads\n"
                     + "\n"
                     + "  §7Feel free to contact me via §nDiscord§r  \n"
@@ -106,41 +106,6 @@ public class AdvertisementManager {
                             + " \n"
                             + "    §7Do you like the free edition?\n"
                             + "    §7Get professional with premium!\n"
-                            + " \n"
-                            + "    §7» %HERE%§7 «\n"
-                            + " \n"
-                            + "§6§m                                                 ",
-                    WarpSystem.getInstance());
-
-            TextComponent link = new TextComponent("§6Upgrade now!");
-            link.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/premium-warps-portals-and-more-warp-teleport-system-1-8-1-14.66035/"));
-            link.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {new TextComponent(""
-                    + "  §6Premium features:§r\n"
-                    + "  §7» MUCH better editors\n"
-                    + "  §7» §6Weekly§7 updates\n"
-                    + "  §7» Tons of new settings\n"
-                    + "  §7» No ads\n"
-                    + "\n"
-                    + "  §7Feel free to contact me via §nDiscord§r  \n"
-                    + "  §7to get a §6free demo§7!\n"
-                    + "\n"
-                    + "  §7Thank you for your support!§r    \n"
-                    + "\n"
-                    + "  §3CodingAir§7§n#0281§r"
-            )}));
-
-            replace("%HERE%", link);
-        }
-    }
-
-    private class MESSAGE_03 extends SimpleMessage {
-        public MESSAGE_03() {
-            super(""
-                            + "§6§m                                                 \n"
-                            + " \n"
-                            + "    §3§nWarpSystem§7 §8[§bFree§8]\n"
-                            + " \n"
-                            + "    §7Support me with premium!\n"
                             + " \n"
                             + "    §7» %HERE%§7 «\n"
                             + " \n"
