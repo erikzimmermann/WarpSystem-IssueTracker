@@ -25,7 +25,8 @@ public abstract class Block implements Removable {
     @Override
     public void destroy() {
         API.removeRemovable(this);
-        Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> location.getBlock().setType(Material.AIR));
+        if(WarpSystem.getInstance().isEnabled())
+            Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> location.getBlock().setType(Material.AIR));
     }
 
     @Override
