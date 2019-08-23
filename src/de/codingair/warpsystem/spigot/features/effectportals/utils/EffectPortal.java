@@ -207,9 +207,9 @@ public class EffectPortal extends FeatureObject implements Removable {
         json.put("ep.holo.pos", this.holoPos.toJSON(4));
         json.put("ep.link", this.link == null ? null : this.link.getLocation().toJSON(4));
         json.put("ep.link.use", useLink);
-        json.put("ep.sound.type", teleportSound.getSound().name());
-        json.put("ep.sound.volume", teleportSound.getVolume());
-        json.put("ep.sound.pitch", teleportSound.getPitch());
+        json.put("ep.sound.type", teleportSound == null ? null : teleportSound.getSound().name());
+        json.put("ep.sound.volume", teleportSound == null ? null : teleportSound.getVolume());
+        json.put("ep.sound.pitch", teleportSound == null ? null : teleportSound.getPitch());
     }
 
     @Override
