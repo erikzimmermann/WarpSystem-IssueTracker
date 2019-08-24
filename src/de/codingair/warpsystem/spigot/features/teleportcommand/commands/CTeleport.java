@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.teleportcommand;
+package de.codingair.warpsystem.spigot.features.teleportcommand.commands;
 
 import de.codingair.codingapi.server.commands.BaseComponent;
 import de.codingair.codingapi.server.commands.CommandBuilder;
@@ -22,7 +22,7 @@ import java.util.Set;
 
 public class CTeleport extends CommandBuilder {
     public CTeleport() {
-        super("teleport", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND) {
+        super("teleport", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));

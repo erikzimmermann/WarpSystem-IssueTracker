@@ -1,7 +1,8 @@
-package de.codingair.warpsystem.bungee.features.teleport;
+package de.codingair.warpsystem.bungee.features.teleport.commands;
 
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.base.language.Lang;
+import de.codingair.warpsystem.bungee.features.teleport.TeleportCommand;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPlayerToCoordsPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPlayerToPlayerPacket;
 import net.md_5.bungee.BungeeCord;
@@ -10,9 +11,9 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
-public class CTeleport extends Command {
+public class CTeleport extends Command implements TeleportCommand {
     public CTeleport() {
-        super("teleport", WarpSystem.PERMISSION_USE_TELEPORT_COMMAND, "tp");
+        super("teleport", WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP, "tp");
     }
 
     @Override

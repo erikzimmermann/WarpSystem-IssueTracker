@@ -6,7 +6,7 @@ import net.md_5.bungee.api.event.TabCompleteEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
-public class TabCompleterListener implements Listener {
+public class TabCompleterListener implements Listener, TeleportCommand {
 
     @EventHandler
     public void onTabComplete(TabCompleteEvent e) {
@@ -23,7 +23,7 @@ public class TabCompleterListener implements Listener {
             if(e.getCursor().endsWith(" ")) {
                 if(deep == 1 && Character.isDigit(args[1].charAt(0)) && BungeeCord.getInstance().getPlayer(args[1]) == null) return;
                 if(deep == 0 || deep == 1) {
-                    for(ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
+                    for(ProxiedPlayer player : getPlayers((ProxiedPlayer) e.getSender())) {
                         e.getSuggestions().add(player.getName());
                     }
                 }
@@ -31,7 +31,7 @@ public class TabCompleterListener implements Listener {
                 if(deep == 1 || deep == 2) {
                     String last = args[deep];
 
-                    for(ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
+                    for(ProxiedPlayer player : getPlayers((ProxiedPlayer) e.getSender())) {
                         if(!player.getName().toLowerCase().startsWith(last.toLowerCase())) continue;
                         e.getSuggestions().add(player.getName());
                     }

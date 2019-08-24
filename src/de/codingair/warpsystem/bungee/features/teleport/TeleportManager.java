@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.bungee.features.teleport;
 
 import de.codingair.warpsystem.bungee.base.WarpSystem;
+import de.codingair.warpsystem.bungee.features.teleport.commands.CTeleport;
 import de.codingair.warpsystem.utils.Manager;
 import net.md_5.bungee.BungeeCord;
 

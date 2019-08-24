@@ -85,7 +85,11 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, Location location, String displayName, boolean afterEffects) {
-        teleport(player, Origin.Custom, new Destination(new LocationAdapter(location)), displayName, null, 0, true, true, true, false, afterEffects, null);
+        teleport(player, Origin.Custom, location, displayName, afterEffects);
+    }
+
+    public void teleport(Player player, Origin origin, Location location, String displayName, boolean afterEffects) {
+        teleport(player, origin, new Destination(new LocationAdapter(location)), displayName, null, 0, true, true, true, false, afterEffects, null);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs) {
