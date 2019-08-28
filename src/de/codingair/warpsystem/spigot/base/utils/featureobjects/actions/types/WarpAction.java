@@ -24,7 +24,7 @@ public class WarpAction extends ActionObject<Destination> {
 
     @Override
     public String write() {
-        return getValue().getType() == DestinationType.UNKNOWN ? null : getValue().toJSONString();
+        return getValue() == null || getValue().getType() == DestinationType.UNKNOWN ? null : getValue().toJSONString();
     }
 
     @Override
