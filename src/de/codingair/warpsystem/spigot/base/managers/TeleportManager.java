@@ -144,7 +144,7 @@ public class TeleportManager {
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, boolean message, boolean silent, SoundData soundData, boolean afterEffects, Callback<TeleportResult> callback) {
         teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message ?
-                costs > 0 ?
+                costs > 0 && AdapterType.getActive() != null && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs) ?
                         Lang.getPrefix() + Lang.get("Money_Paid")
                         : Lang.getPrefix() + Lang.get("Teleported_To")
                 : null, silent, soundData, afterEffects, callback);
@@ -218,13 +218,14 @@ public class TeleportManager {
         Callback<TeleportResult> resultCallback = null;
 
         if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) seconds = 0;
+        String message = options.getFinalMessage(player);
 
         //Call events
         if(options.getDestination().getType() == DestinationType.GlobalWarp) {
             String name = GlobalWarpManager.getInstance().getCaseCorrectlyName(options.getDestination().getId());
             String server = GlobalWarpManager.getInstance().getGlobalWarps().get(name);
 
-            PlayerGlobalWarpEvent event = new PlayerGlobalWarpEvent(player, new GlobalWarp(name, server), options.getOrigin(), options.getDisplayName(), options.getMessage(), seconds, options.getCosts());
+            PlayerGlobalWarpEvent event = new PlayerGlobalWarpEvent(player, new GlobalWarp(name, server), options.getOrigin(), options.getDisplayName(), message, seconds, options.getCosts());
             event.setWaitForTeleport(options.isWaitForTeleport());
             Bukkit.getPluginManager().callEvent(event);
 
@@ -238,10 +239,10 @@ public class TeleportManager {
             options.setCosts(event.getCosts());
             options.setWaitForTeleport(event.isWaitForTeleport());
             options.setDisplayName(event.getDisplayName());
-            options.setMessage(event.getMessage());
+            message = event.getMessage();
             seconds = event.getSeconds();
         } else {
-            PlayerWarpEvent event = new PlayerWarpEvent(player, new Warp(options.getDestination().buildLocation(), options.getDestination().getId(), options.getDestination().getType()), options.getOrigin(), options.getDisplayName(), options.getMessage(), seconds, options.getCosts());
+            PlayerWarpEvent event = new PlayerWarpEvent(player, new Warp(options.getDestination().buildLocation(), options.getDestination().getId(), options.getDestination().getType()), options.getOrigin(), options.getDisplayName(), message, seconds, options.getCosts());
             event.setWaitForTeleport(options.isWaitForTeleport());
             Bukkit.getPluginManager().callEvent(event);
 
@@ -255,16 +256,17 @@ public class TeleportManager {
             options.setCosts(event.getCosts());
             options.setWaitForTeleport(event.isWaitForTeleport());
             options.setDisplayName(event.getDisplayName());
-            options.setMessage(event.getMessage());
+            message = event.getMessage();
             seconds = event.getSeconds();
         }
 
         int finalSeconds = seconds;
         Callback<TeleportResult> finalResultCallback = resultCallback;
+        String finalMessage = message;
         Callback waiting = new Callback() {
             @Override
             public void accept(Object object) {
-                Teleport teleport = new Teleport(player, options.getDestination(), options.getOrigin(), options.getDisplayName(), options.getPermission(), finalSeconds, options.getCosts(), options.getMessage(), options.isCanMove(), options.isSilent(), options.getTeleportSound(), options.isAfterEffects(), new Callback<TeleportResult>() {
+                Teleport teleport = new Teleport(player, options.getDestination(), options.getOrigin(), options.getDisplayName(), options.getPermission(), finalSeconds, options.getCosts(), finalMessage, options.isCanMove(), options.isSilent(), options.getTeleportSound(), options.isAfterEffects(), new Callback<TeleportResult>() {
                     @Override
                     public void accept(TeleportResult object) {
                         if(options.getCallback() != null) options.getCallback().accept(object);
@@ -289,19 +291,17 @@ public class TeleportManager {
                 } catch(Throwable ignored) {
                 }
 
-                if(options.getCosts() > 0) {
-                    if(!player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs) && AdapterType.getActive() != null) {
-                        double bank = AdapterType.getActive().getMoney(player);
+                if(options.getFinalCosts(player) > 0) {
+                    double bank = AdapterType.getActive().getMoney(player);
 
-                        if(bank < options.getCosts()) {
-                            if(options.getCallback() != null) options.getCallback().accept(TeleportResult.NOT_ENOUGH_MONEY);
-                            player.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money").replace("%AMOUNT%", (options.getCosts() % ((int) options.getCosts()) == 0 ? (int) options.getCosts() : options.getCosts()) + ""));
-                            return;
-                        }
+                    if(bank < options.getCosts()) {
+                        if(options.getCallback() != null) options.getCallback().accept(TeleportResult.NOT_ENOUGH_MONEY);
+                        player.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money").replace("%AMOUNT%", (options.getCosts() % ((int) options.getCosts()) == 0 ? (int) options.getCosts() : options.getCosts()) + ""));
+                        return;
+                    }
 
-                        teleports.add(teleport);
-                        AdapterType.getActive().withdraw(player, options.getCosts());
-                    } else teleports.add(teleport);
+                    teleports.add(teleport);
+                    AdapterType.getActive().withdraw(player, options.getCosts());
                 } else teleports.add(teleport);
 
                 if(finalSeconds == 0 || options.isSkip()) teleport.teleport();

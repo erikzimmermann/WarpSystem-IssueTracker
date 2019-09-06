@@ -58,7 +58,7 @@ public class CTpAll extends CommandBuilder {
                     return false;
                 }
 
-                int i = TeleportCommandManager.getInstance().sendTeleportRequest(new BungeePlayer((Player) sender), false, false, players.toArray(new Player[0]));
+                int i = TeleportCommandManager.getInstance().sendTeleportRequest(new BungeePlayer((Player) sender), true, false, players.toArray(new Player[0]));
                 sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_All").replace("%RECEIVED%", i + "").replace("%MAX%", (Bukkit.getOnlinePlayers().size() - 1) + ""));
                 return false;
             }
