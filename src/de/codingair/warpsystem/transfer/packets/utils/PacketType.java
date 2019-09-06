@@ -1,5 +1,7 @@
 package de.codingair.warpsystem.transfer.packets.utils;
 
+import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ClearInvitesPacket;
+import de.codingair.warpsystem.spigot.features.teleportcommand.packets.TeleportRequestOptionsPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.*;
 import de.codingair.warpsystem.transfer.packets.general.BooleanPacket;
 import de.codingair.warpsystem.transfer.packets.general.IntegerPacket;
@@ -27,6 +29,13 @@ public enum PacketType {
     TeleportPlayerToCoordsPacket(21, TeleportPlayerToCoordsPacket.class),
     PrepareServerSwitchPacket(22, PrepareServerSwitchPacket.class),
     PrepareLoginMessagePacket(23, PrepareLoginMessagePacket.class),
+    MessagePacket(24, MessagePacket.class),
+
+    TeleportRequestOptionsPacket(30, TeleportRequestOptionsPacket.class),
+    ClearInvitesPacket(31, ClearInvitesPacket.class),
+    PrepareTeleportPlayerToPlayerPacket(32, PrepareTeleportPlayerToPlayerPacket.class),
+    PrepareTeleportRequestPacket(33, PrepareTeleportRequestPacket.class),
+    StartTeleportToPlayerPacket(34, de.codingair.warpsystem.transfer.packets.general.StartTeleportToPlayerPacket.class),
 
     BooleanPacket(100, BooleanPacket.class),
     IntegerPacket(101, IntegerPacket.class),

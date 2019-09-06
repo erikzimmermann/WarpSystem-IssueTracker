@@ -8,6 +8,7 @@ import java.io.IOException;
 
 public class TeleportPlayerToPlayerPacket implements Packet {
     private String gate, player, target;
+    private boolean messageToGate = true;
 
     public TeleportPlayerToPlayerPacket() {
     }
@@ -18,11 +19,19 @@ public class TeleportPlayerToPlayerPacket implements Packet {
         this.target = target;
     }
 
+    public TeleportPlayerToPlayerPacket(String gate, String player, String target, boolean messageToGate) {
+        this.gate = gate;
+        this.player = player;
+        this.target = target;
+        this.messageToGate = messageToGate;
+    }
+
     @Override
     public void write(DataOutputStream out) throws IOException {
         out.writeUTF(this.gate);
         out.writeUTF(this.player);
         out.writeUTF(this.target);
+        out.writeBoolean(messageToGate);
     }
 
     @Override
@@ -30,6 +39,7 @@ public class TeleportPlayerToPlayerPacket implements Packet {
         this.gate = in.readUTF();
         this.player = in.readUTF();
         this.target = in.readUTF();
+        this.messageToGate = in.readBoolean();
     }
 
     public String getGate() {
@@ -42,5 +52,9 @@ public class TeleportPlayerToPlayerPacket implements Packet {
 
     public String getTarget() {
         return target;
+    }
+
+    public boolean isMessageToGate() {
+        return messageToGate;
     }
 }

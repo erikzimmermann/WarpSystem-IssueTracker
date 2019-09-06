@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.base.listeners;
 
+import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
@@ -21,7 +22,12 @@ public class CommandListener implements Listener {
         if(command == null) return;
         if(command.getExecutor() instanceof Plugin && ((Plugin) command.getExecutor()).getName().equals(WarpSystem.getInstance().getName())) {
             FeatureType feature = getFeatureName(command);
-            if(feature.isActive()) return;
+            if(feature == null) return;
+
+            if(feature == FeatureType.TELEPORT_COMMAND) {
+                ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
+                if(file.getConfig().getBoolean("WarpSystem.TeleportCommands." + getCaseSensitive(command), true)) return;
+            } else if(feature.isActive()) return;
 
             e.setCancelled(true);
             if(e.getPlayer().hasPermission(WarpSystem.PERMISSION_NOTIFY) && feature != null) {
@@ -44,7 +50,23 @@ public class CommandListener implements Listener {
         else if(name.startsWith("setwarp")) return FeatureType.WARPS;
         else if(name.startsWith("deletewarp")) return FeatureType.WARPS;
         else if(name.startsWith("editwarp")) return FeatureType.WARPS;
+        else if(name.startsWith("teleport")) return FeatureType.TELEPORT_COMMAND;
+        else if(name.startsWith("tpa")) return FeatureType.TELEPORT_COMMAND;
+        else if(name.startsWith("tpall")) return FeatureType.TELEPORT_COMMAND;
+        else if(name.startsWith("tphere")) return FeatureType.TELEPORT_COMMAND;
+        else if(name.startsWith("tptoggle")) return FeatureType.TELEPORT_COMMAND;
+        else if(name.startsWith("tpatoggle")) return FeatureType.TELEPORT_COMMAND;
         else return null;
+    }
+
+    private String getCaseSensitive(PluginCommand command) {
+        String name = command.getName().toLowerCase();
+        if(name.startsWith("teleport")) return "Tp";
+        else if(name.startsWith("tpa")) return "Tpa";
+        else if(name.startsWith("tpall")) return "TpAll";
+        else if(name.startsWith("tphere")) return "TpHere";
+        else if(name.startsWith("tptoggle")) return "TpToggle";
+        else /*if(name.startsWith("tpatoggle"))*/ return "TpaToggle";
     }
 
 }

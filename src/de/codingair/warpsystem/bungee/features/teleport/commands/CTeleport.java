@@ -1,7 +1,8 @@
-package de.codingair.warpsystem.bungee.features.teleport;
+package de.codingair.warpsystem.bungee.features.teleport.commands;
 
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.base.language.Lang;
+import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPlayerToCoordsPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPlayerToPlayerPacket;
 import net.md_5.bungee.BungeeCord;
@@ -12,7 +13,7 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class CTeleport extends Command {
     public CTeleport() {
-        super("teleport", WarpSystem.PERMISSION_USE_TELEPORT_COMMAND, "tp");
+        super("teleport", WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP, "tp");
     }
 
     @Override
@@ -125,6 +126,11 @@ public class CTeleport extends Command {
             return;
         }
 
+        if(gate != player && TeleportManager.getInstance().deniesForceTps(player)) {
+            gate.sendMessage(Lang.getPrefix() + Lang.get("Teleport_denied").replace("%PLAYER%", player.getName()));
+            return;
+        }
+
         TeleportPlayerToCoordsPacket packet = new TeleportPlayerToCoordsPacket(gate.getName(), player.getName(), x, y, z, relativeX, relativeY, relativeZ);
         WarpSystem.getInstance().getDataHandler().send(packet, player.getServer().getInfo());
     }
@@ -132,6 +138,11 @@ public class CTeleport extends Command {
     private void tp(ProxiedPlayer gate, ProxiedPlayer player, ProxiedPlayer target) {
         if(player == null || target == null) {
             gate.sendMessage(new TextComponent(Lang.getPrefix() + Lang.get("Player_is_not_online")));
+            return;
+        }
+
+        if(gate != player && TeleportManager.getInstance().deniesForceTps(player)) {
+            gate.sendMessage(Lang.getPrefix() + Lang.get("Teleport_denied").replace("%PLAYER%", player.getName()));
             return;
         }
 

@@ -20,6 +20,7 @@ public enum Origin {
     CommandBlock,
     TeleportCommand,
     Custom,
+    CustomTeleportCommands,
     UNKNOWN;
 
     private Class<? extends FeatureObject> clazz = null;

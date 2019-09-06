@@ -21,6 +21,12 @@ import java.util.concurrent.TimeUnit;
 
 public class WarpSystem extends Plugin {
     public static final String PERMISSION_USE_TELEPORT_COMMAND = "WarpSystem.Use.TeleportCommand";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TP = PERMISSION_USE_TELEPORT_COMMAND + ".Tp";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TP_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpToggle";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA = PERMISSION_USE_TELEPORT_COMMAND + ".Tpa";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaToggle";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPHERE = PERMISSION_USE_TELEPORT_COMMAND + ".TpHere";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpAll";
 
     private static WarpSystem instance;
     private BungeeDataHandler dataHandler = new BungeeDataHandler(this);

@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.bungee.features;
 
 import de.codingair.warpsystem.bungee.features.globalwarps.managers.GlobalWarpManager;
-import de.codingair.warpsystem.bungee.features.teleport.TeleportManager;
+import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
 import de.codingair.warpsystem.utils.Manager;
 
 import java.util.ArrayList;
