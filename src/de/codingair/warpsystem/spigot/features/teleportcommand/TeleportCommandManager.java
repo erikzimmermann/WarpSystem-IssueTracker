@@ -162,7 +162,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
         if(tpAllNotifySender) notifySender = true;
         boolean finalNotifySender = notifySender;
 
-        SimpleMessage m = new SimpleMessage(Lang.getPrefix() + Lang.get("TeleportRequest_tpTo" + (tpToSender ? "Sender" : "Receiver")).replace("%PLAYER%", ChatColor.stripColor(sender.getDisplayName())).replace("%SECONDS%", "30").replace("%PLAYER%", sender.getDisplayName()), WarpSystem.getInstance()) {
+        SimpleMessage m = new SimpleMessage(Lang.getPrefix() + Lang.get("TeleportRequest_tpTo" + (tpToSender ? "Sender" : "Receiver")).replace("%PLAYER%", ChatColor.stripColor(sender.getDisplayName())).replace("%SECONDS%", expireDelay+"").replace("%PLAYER%", sender.getDisplayName()), WarpSystem.getInstance()) {
             @Override
             public void onTimeOut() {
                 if(sender.onSpigot()) {

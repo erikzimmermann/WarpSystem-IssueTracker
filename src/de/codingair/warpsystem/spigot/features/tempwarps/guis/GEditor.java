@@ -12,7 +12,7 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.EmptyTempWarp;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
@@ -70,7 +70,7 @@ public class GEditor extends SimpleGUI {
                             Sound.CLICK.playSound(p);
 
                             int costs = warp.getCosts() - warp.backupped().getCosts();
-                            if(costs != 0) AdapterType.getActive().withdraw(p, warp.getCosts());
+                            if(costs != 0) MoneyAdapterType.getActive().withdraw(p, warp.getCosts());
                             warp.apply();
 
                             if(costs > 0) {
@@ -332,6 +332,6 @@ public class GEditor extends SimpleGUI {
 
     private static boolean canPay(Player player, TempWarp warp) {
         int costs = warp.getCosts() - warp.backupped().getCosts();
-        return costs < 0 || AdapterType.getActive().getMoney(player) >= costs;
+        return costs < 0 || MoneyAdapterType.getActive().getMoney(player) >= costs;
     }
 }

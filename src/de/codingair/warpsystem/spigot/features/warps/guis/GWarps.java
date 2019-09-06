@@ -19,7 +19,7 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.Bo
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.editor.GEditor;
@@ -421,7 +421,7 @@ public class GWarps extends GUI {
 
                 iconBuilder.addText("§7" + Lang.get("Commands") + ": " + command);
                 iconBuilder.addText("§7" + Lang.get("Permission") + ": " + permission);
-                if(AdapterType.canEnable()) iconBuilder.addText("§7" + Lang.get("Costs") + ": " + costs);
+                if(MoneyAdapterType.canEnable()) iconBuilder.addText("§7" + Lang.get("Costs") + ": " + costs);
                 iconBuilder.addText("§8------------");
                 iconBuilder.addText("§3" + Lang.get("Leftclick") + ": §7" + Lang.get("Edit"));
                 iconBuilder.addText("§3" + Lang.get("Shift_Leftclick") + ": §7" + Lang.get("Move"));

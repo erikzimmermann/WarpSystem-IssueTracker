@@ -14,7 +14,7 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.utils.effects.RotatingParticleSpiral;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.base.utils.options.GeneralOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.animations.AnimationManager;
@@ -204,8 +204,8 @@ public class Teleport {
     }
 
     private void payBack() {
-        if(AdapterType.getActive() != null) {
-            AdapterType.getActive().deposit(player, this.costs);
+        if(MoneyAdapterType.getActive() != null) {
+            MoneyAdapterType.getActive().deposit(player, this.costs);
         }
     }
 

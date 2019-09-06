@@ -12,7 +12,7 @@ import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.Adapter;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.tempwarps.commands.CTempWarp;
 import de.codingair.warpsystem.spigot.features.tempwarps.commands.CTempWarps;
@@ -102,7 +102,7 @@ public class TempWarpManager implements Manager, Ticker {
 
     @Override
     public boolean load() {
-        if(!AdapterType.canEnable()) {
+        if(!MoneyAdapterType.canEnable()) {
             WarpSystem.log("  > No Money-Plugin > Ignoring TempWarps");
             return true;
         }
@@ -167,7 +167,7 @@ public class TempWarpManager implements Manager, Ticker {
 
     @Override
     public void save(boolean saver) {
-        if(!AdapterType.canEnable()) return;
+        if(!MoneyAdapterType.canEnable()) return;
 
         if(!saver) WarpSystem.log("  > Saving TempWarps");
 
@@ -457,7 +457,7 @@ public class TempWarpManager implements Manager, Ticker {
             return;
         }
 
-        if(warp.getCosts() > AdapterType.getActive().getMoney(player)) {
+        if(warp.getCosts() > MoneyAdapterType.getActive().getMoney(player)) {
             player.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Renew_Not_Enough_Money"));
             return;
         }
@@ -489,7 +489,7 @@ public class TempWarpManager implements Manager, Ticker {
 
     public void updateWarps(Player player) {
         List<TempWarp> correct = getWarps(player);
-        Adapter adapter = AdapterType.getActive();
+        Adapter adapter = MoneyAdapterType.getActive();
 
         if(adapter != null && adapter.isReady()) {
             int inactiveSales = 0;

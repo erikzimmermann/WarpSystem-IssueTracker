@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.spigot.features.warps.simplewarps.utils.actions.types;
 
 import de.codingair.warpsystem.spigot.base.utils.money.Adapter;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.utils.actions.Action;
 import org.bukkit.entity.Player;
 
@@ -17,7 +17,7 @@ public class PayAction implements Action {
 
     @Override
     public void onRun(Player player) {
-        Adapter a = AdapterType.getActive();
+        Adapter a = MoneyAdapterType.getActive();
         if(a != null) a.withdraw(player, coins);
     }
 

@@ -13,7 +13,7 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.options.GeneralOptions;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.*;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
@@ -144,7 +144,7 @@ public class TeleportManager {
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, boolean message, boolean silent, SoundData soundData, boolean afterEffects, Callback<TeleportResult> callback) {
         teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message ?
-                costs > 0 && AdapterType.getActive() != null && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs) ?
+                costs > 0 && MoneyAdapterType.getActive() != null && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs) ?
                         Lang.getPrefix() + Lang.get("Money_Paid")
                         : Lang.getPrefix() + Lang.get("Teleported_To")
                 : null, silent, soundData, afterEffects, callback);
@@ -292,7 +292,7 @@ public class TeleportManager {
                 }
 
                 if(options.getFinalCosts(player) > 0) {
-                    double bank = AdapterType.getActive().getMoney(player);
+                    double bank = MoneyAdapterType.getActive().getMoney(player);
 
                     if(bank < options.getCosts()) {
                         if(options.getCallback() != null) options.getCallback().accept(TeleportResult.NOT_ENOUGH_MONEY);
@@ -301,7 +301,7 @@ public class TeleportManager {
                     }
 
                     teleports.add(teleport);
-                    AdapterType.getActive().withdraw(player, options.getCosts());
+                    MoneyAdapterType.getActive().withdraw(player, options.getCosts());
                 } else teleports.add(teleport);
 
                 if(finalSeconds == 0 || options.isSkip()) teleport.teleport();
