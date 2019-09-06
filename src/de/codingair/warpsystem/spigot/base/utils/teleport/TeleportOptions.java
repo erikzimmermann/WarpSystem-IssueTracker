@@ -5,9 +5,11 @@ import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 public class TeleportOptions {
     private Origin origin;
@@ -18,6 +20,7 @@ public class TeleportOptions {
     private boolean skip;
     private boolean canMove;
     private boolean waitForTeleport; //Waiting for walking teleports
+    private String payMessage;
     private String message;
     private boolean silent;
     private SoundData teleportSound;
@@ -37,9 +40,8 @@ public class TeleportOptions {
         this.skip = false;
         this.canMove = WarpSystem.getInstance().getTeleportManager().getOptions().isAllowMove();
         this.waitForTeleport = false;
-        this.message = costs > 0 ?
-                Lang.getPrefix() + Lang.get("Money_Paid")
-                : Lang.getPrefix() + Lang.get("Teleported_To");
+        this.message = Lang.getPrefix() + Lang.get("Teleported_To");
+        this.payMessage = Lang.getPrefix() + Lang.get("Money_Paid");
         this.silent = false;
         this.teleportSound = new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F);
         this.afterEffects = true;
@@ -80,6 +82,10 @@ public class TeleportOptions {
 
     public double getCosts() {
         return costs;
+    }
+
+    public double getFinalCosts(Player player) {
+        return costs > 0 && AdapterType.getActive() != null && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs) ? costs : 0;
     }
 
     public void setCosts(double costs) {
@@ -148,5 +154,17 @@ public class TeleportOptions {
 
     public void setCallback(Callback<TeleportResult> callback) {
         this.callback = callback;
+    }
+
+    public String getPayMessage() {
+        return payMessage;
+    }
+
+    public void setPayMessage(String payMessage) {
+        this.payMessage = payMessage;
+    }
+
+    public String getFinalMessage(Player player) {
+        return getFinalCosts(player) > 0 ? getPayMessage() : getMessage();
     }
 }
