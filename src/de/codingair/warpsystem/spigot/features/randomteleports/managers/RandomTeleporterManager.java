@@ -7,7 +7,7 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.randomteleports.commands.CRandomTP;
 import de.codingair.warpsystem.spigot.features.randomteleports.listeners.InteractListener;
@@ -293,6 +293,6 @@ public class RandomTeleporterManager implements Manager {
     }
 
     public boolean isBuyable() {
-        return buyable && AdapterType.canEnable();
+        return buyable && MoneyAdapterType.canEnable();
     }
 }

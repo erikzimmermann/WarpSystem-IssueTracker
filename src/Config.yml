@@ -22,6 +22,12 @@ WarpSystem:
         Standard: '&c&nWarps&r'
         In_Category: '&c&nWarps&r &c@%CATEGORY%'
 
+  Economy:
+    #Priority list for economy systems
+    priority:
+    - Essentials
+    - Vault
+
   Teleport:
     Chunk_Pre_Loading:
       # If enabled, only players with the "WarpSystem.Teleport.ChunkPreLoading" will preload chunks!

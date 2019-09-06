@@ -7,7 +7,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -51,7 +51,7 @@ public class TeleportManager {
                 if(teleported == TeleportResult.TELEPORTED) {
                     Player owner = warp.getOnlineOwner();
                     if(owner == null) warp.setInactiveSales(warp.getInactiveSales() + costs);
-                    else AdapterType.getActive().deposit(owner, costs);
+                    else MoneyAdapterType.getActive().deposit(owner, costs);
                 }
             }
         };

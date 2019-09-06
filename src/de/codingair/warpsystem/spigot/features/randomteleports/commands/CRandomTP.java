@@ -7,7 +7,7 @@ import de.codingair.codingapi.server.commands.CommandBuilder;
 import de.codingair.codingapi.server.commands.CommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.features.randomteleports.managers.RandomTeleporterManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -98,7 +98,7 @@ public class CRandomTP extends CommandBuilder {
                         return false;
                     }
 
-                    double bank = AdapterType.getActive().getMoney((Player) sender);
+                    double bank = MoneyAdapterType.getActive().getMoney((Player) sender);
                     double costs = RandomTeleporterManager.getInstance().getCosts();
 
                     if(bank >= costs) {
@@ -109,10 +109,10 @@ public class CRandomTP extends CommandBuilder {
                             public void onClick(Player player) {
                                 sm.destroy();
 
-                                double bank = AdapterType.getActive().getMoney((Player) sender);
+                                double bank = MoneyAdapterType.getActive().getMoney((Player) sender);
 
                                 if(bank >= costs) {
-                                    AdapterType.getActive().withdraw(player, costs);
+                                    MoneyAdapterType.getActive().withdraw(player, costs);
                                     UUID u = WarpSystem.getInstance().getUUIDManager().get((Player) sender);
                                     RandomTeleporterManager.getInstance().setBoughtTeleports(u, RandomTeleporterManager.getInstance().getBoughtTeleports(u) + 1);
                                     sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Buy_Finished").replace("%AMOUNT%", (costs + "").endsWith(".0") ? (costs + "").substring(0, (costs + "").length() - 2) : (costs + "")));

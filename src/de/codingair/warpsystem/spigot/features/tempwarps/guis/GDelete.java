@@ -14,7 +14,7 @@ import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.codingapi.tools.time.TimeListener;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
 import org.bukkit.entity.Player;
@@ -57,7 +57,7 @@ public class GDelete extends SimpleGUI {
                         TempWarpManager.getManager().delete(warp);
 
                         int costs = getRefund(warp);
-                        AdapterType.getActive().deposit(p, costs);
+                        MoneyAdapterType.getActive().deposit(p, costs);
 
                         if(costs > 0) {
                             p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Deleted_Refund").replace("%TEMP_WARP%", warp.getName()).replace("%COINS%", costs + ""));

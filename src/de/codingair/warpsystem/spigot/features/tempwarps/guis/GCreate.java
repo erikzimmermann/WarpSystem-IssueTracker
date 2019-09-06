@@ -13,7 +13,7 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.EmptyTempWarp;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.Key;
@@ -102,7 +102,7 @@ public class GCreate extends SimpleGUI {
                                 p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Renew_Finished").replace("%TEMP_WARP%", warp.getName()).replace("%COINS%", price + ""));
                             }
 
-                            AdapterType.getActive().withdraw(p, warp.getCosts());
+                            MoneyAdapterType.getActive().withdraw(p, warp.getCosts());
 
                             if(key != null) {
                                 TempWarpManager.getManager().getKeys(p).remove(key.getValue().getStrippedName());
@@ -387,6 +387,6 @@ public class GCreate extends SimpleGUI {
     }
 
     private static boolean canPay(Player player, double costs) {
-        return AdapterType.getActive().getMoney(player) >= costs;
+        return MoneyAdapterType.getActive().getMoney(player) >= costs;
     }
 }
