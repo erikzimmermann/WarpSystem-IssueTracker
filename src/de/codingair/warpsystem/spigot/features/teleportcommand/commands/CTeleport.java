@@ -9,6 +9,7 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
+import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -91,7 +92,7 @@ public class CTeleport extends CommandBuilder {
                             if(!args[0].isEmpty()) x += args[0].contains(".") ? Double.parseDouble(args[0]) : Integer.parseInt(args[0]);
                             if(!args[1].isEmpty()) y += args[1].contains(".") ? Double.parseDouble(args[1]) : Integer.parseInt(args[1]);
                             if(!args[2].isEmpty()) z += args[2].contains(".") ? Double.parseDouble(args[2]) : Integer.parseInt(args[2]);
-                            
+
                             tp(p, p, x, y, z);
                         } else {
                             //Teleport 0 to coords
@@ -181,6 +182,11 @@ public class CTeleport extends CommandBuilder {
             return;
         }
 
+        if(gate != player && TeleportCommandManager.getInstance().deniesForceTps(player)) {
+            gate.sendMessage(Lang.getPrefix() + Lang.get("Teleport_denied").replace("%PLAYER%", player.getName()));
+            return;
+        }
+
         String destination = "x=" + x + ", y=" + y + ", z=" + z;
 
         if(gate != player) gate.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", player.getName()).replace("%warp%", destination));
@@ -202,6 +208,11 @@ public class CTeleport extends CommandBuilder {
     private static void tp(Player gate, Player player, Player target) {
         if(player == null || target == null) {
             gate.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
+            return;
+        }
+
+        if(gate != player && TeleportCommandManager.getInstance().deniesForceTps(player)) {
+            gate.sendMessage(Lang.getPrefix() + Lang.get("Teleport_denied").replace("%PLAYER%", player.getName()));
             return;
         }
 

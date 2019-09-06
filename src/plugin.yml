@@ -58,6 +58,21 @@ commands:
     usuage: /teleport <player> [player]
     description: A Warp-System-CMD
     aliases: [tp]
+  tpa:
+    ususage: /tpa <player>
+    description: A Warp-System-CMD
+  tpall:
+    ususage: "/tpAll <teleport request: true|false>"
+    description: A Warp-System-CMD
+  tphere:
+    ususage: /tpHere <player>
+    description: A Warp-System-CMD
+  tptoggle:
+    ususage: /tpToggle
+    description: A Warp-System-CMD
+  tpatoggle:
+    ususage: /tpaToggle
+    description: A Warp-System-CMD
 
 permissions:
   warpsystem:

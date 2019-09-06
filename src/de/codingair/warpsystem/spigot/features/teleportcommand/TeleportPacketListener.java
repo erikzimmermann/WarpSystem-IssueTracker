@@ -1,14 +1,24 @@
 package de.codingair.warpsystem.spigot.features.teleportcommand;
 
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.codingapi.tools.time.TimeMap;
+import de.codingair.codingapi.utils.ChatColor;
+import de.codingair.warpsystem.spigot.api.players.BungeePlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.EmptyAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
+import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ClearInvitesPacket;
+import de.codingair.warpsystem.transfer.packets.bungee.PrepareTeleportRequestPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPlayerToCoordsPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPlayerToPlayerPacket;
+import de.codingair.warpsystem.transfer.packets.general.StartTeleportToPlayerPacket;
+import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPlayerToPlayerPacket;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
@@ -101,7 +111,7 @@ public class TeleportPacketListener implements Listener, PacketListener {
                 Player other = Bukkit.getPlayer(tpPacket.getTarget());
 
                 if(gate != null && player != null && other != null) {
-                    if(gate != player) gate.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", player.getName()).replace("%warp%", other.getName()));
+                    if(gate != player && tpPacket.isMessageToGate()) gate.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", player.getName()).replace("%warp%", other.getName()));
 
                     WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TeleportCommand, new Destination(new LocationAdapter(other.getLocation())),
                             other.getName(), 0, true,
@@ -109,6 +119,44 @@ public class TeleportPacketListener implements Listener, PacketListener {
                                     Lang.get("Teleported_To_By").replace("%gate%", gate.getName())
                             , false, null);
                 } else teleport.put(tpPacket.getPlayer(), packet, 10);
+                break;
+            }
+
+            case PrepareTeleportRequestPacket: {
+                PrepareTeleportRequestPacket tpPacket = (PrepareTeleportRequestPacket) packet;
+                TeleportCommandManager.getInstance().sendTeleportRequest(new BungeePlayer(tpPacket.getSender(), tpPacket.getSenderDisplayName()), tpPacket.isTpToSender(), tpPacket.isNotifySender(), Bukkit.getPlayer(tpPacket.getReceiver()));
+                break;
+            }
+
+            case StartTeleportToPlayerPacket: {
+                StartTeleportToPlayerPacket tpPacket = (StartTeleportToPlayerPacket) packet;
+                Player player = Bukkit.getPlayer(tpPacket.getPlayer());
+
+                if(player == null) return;
+
+                TeleportOptions options = new TeleportOptions(new Destination(new EmptyAdapter()), null);
+                options.setOrigin(Origin.CustomTeleportCommands);
+                options.setWaitForTeleport(true);
+                options.setMessage(null);
+                options.setCallback(new Callback<TeleportResult>() {
+                    @Override
+                    public void accept(TeleportResult result) {
+                        //move
+                        WarpSystem.getInstance().getDataHandler().send(new ClearInvitesPacket(tpPacket.getTeleportRequestSender()));
+                        WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportPlayerToPlayerPacket(player.getName(), tpPacket.getTo(), new Callback<Integer>() {
+                            @Override
+                            public void accept(Integer result) {
+                                if(result == 0) {
+                                    //teleported
+                                } else {
+                                    player.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_not_valid").replace("%PLAYER%", ChatColor.stripColor(tpPacket.getToDisplayName())));
+                                }
+                            }
+                        }));
+                    }
+                });
+
+                WarpSystem.getInstance().getTeleportManager().teleport(player, options);
                 break;
             }
 

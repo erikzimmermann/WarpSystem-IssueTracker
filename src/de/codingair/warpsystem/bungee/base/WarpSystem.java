@@ -26,9 +26,7 @@ public class WarpSystem extends Plugin {
     public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA = PERMISSION_USE_TELEPORT_COMMAND + ".Tpa";
     public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaToggle";
     public static final String PERMISSION_USE_TELEPORT_COMMAND_TPHERE = PERMISSION_USE_TELEPORT_COMMAND + ".TpHere";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPHEREALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpHereAll";
     public static final String PERMISSION_USE_TELEPORT_COMMAND_TPALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpAll";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND_BUNGEE_ACCESS = PERMISSION_USE_TELEPORT_COMMAND + ".BungeeAccess";
 
     private static WarpSystem instance;
     private BungeeDataHandler dataHandler = new BungeeDataHandler(this);
