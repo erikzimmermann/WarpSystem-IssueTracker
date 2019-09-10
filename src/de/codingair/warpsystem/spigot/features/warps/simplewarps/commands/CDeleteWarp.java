@@ -1,10 +1,10 @@
 package de.codingair.warpsystem.spigot.features.warps.simplewarps.commands;
 
 import de.codingair.codingapi.player.gui.inventory.guis.ConfirmGUI;
-import de.codingair.codingapi.server.commands.BaseComponent;
-import de.codingair.codingapi.server.commands.CommandBuilder;
-import de.codingair.codingapi.server.commands.CommandComponent;
-import de.codingair.codingapi.server.commands.MultiCommandComponent;
+import de.codingair.codingapi.server.commands.builder.BaseComponent;
+import de.codingair.codingapi.server.commands.builder.CommandBuilder;
+import de.codingair.codingapi.server.commands.builder.CommandComponent;
+import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -18,7 +18,7 @@ import java.util.List;
 
 public class CDeleteWarp extends CommandBuilder {
     public CDeleteWarp() {
-        super("DeleteWarp", new BaseComponent(WarpSystem.PERMISSION_MODIFY_SIMPLE_WARPS) {
+        super("DeleteWarp", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_SIMPLE_WARPS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -39,7 +39,7 @@ public class CDeleteWarp extends CommandBuilder {
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp>");
                 return false;
             }
-        }, true);
+        }, true, "delwarp");
 
         setHighestPriority(true);
 

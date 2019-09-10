@@ -1,15 +1,13 @@
 package de.codingair.warpsystem.spigot.features.effectportals.commands;
 
 import de.codingair.codingapi.server.Sound;
-import de.codingair.codingapi.server.commands.BaseComponent;
-import de.codingair.codingapi.server.commands.CommandBuilder;
-import de.codingair.codingapi.server.commands.CommandComponent;
-import de.codingair.codingapi.server.commands.MultiCommandComponent;
-import de.codingair.codingapi.tools.Location;
+import de.codingair.codingapi.server.commands.builder.BaseComponent;
+import de.codingair.codingapi.server.commands.builder.CommandBuilder;
+import de.codingair.codingapi.server.commands.builder.CommandComponent;
+import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.TimeList;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.effectportals.EffectPortalEditor;
 import de.codingair.warpsystem.spigot.features.effectportals.guis.GEffectPortalList;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal;
@@ -24,7 +22,7 @@ public class CPortal extends CommandBuilder {
     public static TimeList<String> aboutToDelete = new TimeList<>();
 
     public CPortal() {
-        super("Portal", new BaseComponent(WarpSystem.PERMISSION_MODIFY_PORTALS) {
+        super("Portal", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_PORTALS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -46,7 +44,7 @@ public class CPortal extends CommandBuilder {
 
                 return false;
             }
-        }.setOnlyPlayers(true), true);
+        }.setOnlyPlayers(true), true, "portals");
 
         try {
             setHighestPriority(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Dominate_In_Commands.Highest_Priority.Portal", true));

@@ -1,8 +1,8 @@
 package de.codingair.warpsystem.spigot.features.teleportcommand.commands;
 
-import de.codingair.codingapi.server.commands.BaseComponent;
-import de.codingair.codingapi.server.commands.CommandBuilder;
-import de.codingair.codingapi.server.commands.CommandComponent;
+import de.codingair.codingapi.server.commands.builder.BaseComponent;
+import de.codingair.codingapi.server.commands.builder.CommandBuilder;
+import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -23,7 +23,7 @@ import java.util.Set;
 
 public class CTeleport extends CommandBuilder {
     public CTeleport() {
-        super("teleport", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP) {
+        super("teleport", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -138,7 +138,7 @@ public class CTeleport extends CommandBuilder {
 
                 return false;
             }
-        }.setOnlyPlayers(true), true);
+        }.setOnlyPlayers(true), true, "tp");
 
         setHighestPriority(true);
 

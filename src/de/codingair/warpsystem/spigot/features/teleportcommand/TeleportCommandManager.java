@@ -95,7 +95,6 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
 
     @Override
     public void destroy() {
-        teleportCommand.unregister(WarpSystem.getInstance());
     }
 
     @Override

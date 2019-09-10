@@ -8,27 +8,19 @@ import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilGUI;
 import de.codingair.codingapi.player.gui.anvil.AnvilListener;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
-import de.codingair.codingapi.server.commands.BaseComponent;
-import de.codingair.codingapi.server.commands.CommandBuilder;
-import de.codingair.codingapi.server.commands.CommandComponent;
-import de.codingair.codingapi.server.commands.MultiCommandComponent;
+import de.codingair.codingapi.server.commands.builder.BaseComponent;
+import de.codingair.codingapi.server.commands.builder.CommandBuilder;
+import de.codingair.codingapi.server.commands.builder.CommandComponent;
+import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.options.OptionsGUI;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.animations.AnimationManager;
 import de.codingair.warpsystem.spigot.features.animations.guis.editor.*;
 import de.codingair.warpsystem.spigot.features.animations.utils.Animation;
-import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
-import de.codingair.warpsystem.spigot.features.shortcuts.guis.GEditor;
-import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
-import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.ImportType;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Result;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
@@ -40,11 +32,9 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class CWarpSystem extends CommandBuilder implements BungeeFeature {
+public class CWarpSystem extends CommandBuilder {
     public CWarpSystem() {
         super("WarpSystem", new BaseComponent(WarpSystem.PERMISSION_MODIFY) {
             @Override
@@ -62,15 +52,23 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, shortcut, options, animations>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, options, animations>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, shortcut, options, animations>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, options, animations>");
                 return false;
             }
         }, true);
+
+        getBaseComponent().addChild(new CommandComponent("shortcut") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /shortcuts");
+                return false;
+            }
+        });
 
         getBaseComponent().addChild(new CommandComponent("animations") {
             @Override
@@ -236,134 +234,6 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                 return false;
             }
         }.setOnlyPlayers(true));
-
-        getBaseComponent().addChild(new CommandComponent("shortcut") {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut §e<add, edit, remove, list>");
-                return false;
-            }
-        }.setOnlyPlayers(true));
-
-        getComponent("shortcut").addChild(new CommandComponent("add") {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut add §e<name>");
-                return false;
-            }
-        }.setOnlyPlayers(true));
-
-        getComponent("shortcut", "add").addChild(new MultiCommandComponent() {
-            @Override
-            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-            }
-
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                Shortcut shortcut = new Shortcut(null, argument);
-                Shortcut clone = shortcut.clone();
-                clone.addAction(new WarpAction(new Destination()));
-
-                new GEditor((Player) sender, shortcut, clone).open();
-                return false;
-            }
-        }.setOnlyPlayers(true));
-
-        getComponent("shortcut").addChild(new CommandComponent("edit") {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut edit §e<name>");
-                return false;
-            }
-        }.setOnlyPlayers(true));
-
-        getComponent("shortcut", "edit").addChild(new MultiCommandComponent() {
-            @Override
-            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                for(Shortcut shortcut : ShortcutManager.getInstance().getShortcuts()) {
-                    suggestions.add(shortcut.getDisplayName());
-                }
-            }
-
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                Shortcut shortcut = ShortcutManager.getInstance().getShortcut(argument);
-
-                if(shortcut == null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_does_not_exist"));
-                    return false;
-                }
-
-                Shortcut clone = shortcut.clone();
-                if(clone.getDestination() == null) clone.addAction(new WarpAction(new Destination()));
-
-                new GEditor((Player) sender, shortcut, clone).open();
-                return false;
-            }
-        }.setOnlyPlayers(true));
-
-        getComponent("shortcut").addChild(new CommandComponent("remove") {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut remove §e<name>");
-                return false;
-            }
-        }.setOnlyPlayers(true));
-
-        getComponent("shortcut", "remove").addChild(new MultiCommandComponent() {
-            @Override
-            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                for(Shortcut shortcut : ShortcutManager.getInstance().getShortcuts()) {
-                    suggestions.add(shortcut.getDisplayName());
-                }
-            }
-
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                Shortcut shortcut = ShortcutManager.getInstance().getShortcut(argument);
-
-                if(shortcut == null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_does_not_exist"));
-                    return false;
-                }
-
-                ShortcutManager.getInstance().getShortcuts().remove(shortcut);
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_was_removed").replace("%SHORTCUT%", shortcut.getDisplayName()));
-                return false;
-            }
-        });
-
-        getComponent("shortcut").addChild(new CommandComponent("list") {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                List<String> message = new ArrayList<>();
-
-                if(ShortcutManager.getInstance().getShortcuts().isEmpty()) {
-                    message.add(" ");
-                    message.add("  §3§lShortcuts: §c-");
-                    message.add(" ");
-
-                    sender.sendMessage(message.toArray(new String[0]));
-                    return false;
-                }
-
-                for(Shortcut shortcut : ShortcutManager.getInstance().getShortcuts()) {
-                    message.add("  §7(" + (shortcut.getDestination().getType() + ") §b" + shortcut.getDestination().getId() + " §7« \"§e" + shortcut.getDisplayName() + "§7\""));
-                }
-
-                Collections.sort(message);
-
-                message.add(0, " ");
-                message.add(1, " ");
-                message.add(2, "  §3§l§nShortcuts");
-                message.add(3, " ");
-                message.add(" ");
-
-                sender.sendMessage(message.toArray(new String[0]));
-                return false;
-            }
-        });
-
 
         getBaseComponent().addChild(new CommandComponent("info") {
             @Override
@@ -653,68 +523,6 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                 return false;
             }
         });
-
-        WarpSystem.getInstance().getBungeeFeatureList().add(this);
-    }
-
-    @Override
-    public void onConnect() {
-        if(getComponent("shortcut", "add", "globalwarp") != null) return;
-
-        getComponent("shortcut", "add").addChild(new CommandComponent("globalwarp") {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut add globalwarp §e<globalwarp>");
-                return false;
-            }
-        }.setOnlyPlayers(true));
-
-        getComponent("shortcut", "add", "globalwarp").addChild(new MultiCommandComponent() {
-            @Override
-            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                suggestions.addAll(GlobalWarpManager.getInstance().getGlobalWarps().keySet());
-            }
-
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut add globalwarp " + argument + " §e<shortcut>");
-                return false;
-            }
-        });
-
-        getComponent("shortcut", "add", "globalwarp", null).addChild(new MultiCommandComponent() {
-            @Override
-            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-
-            }
-
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                String warpId = args[3];
-                String shortcut = argument;
-
-                String globalWarp = GlobalWarpManager.getInstance().getCaseCorrectlyName(warpId);
-
-                if(globalWarp == null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
-                    return false;
-                }
-
-                if(ShortcutManager.getInstance().getShortcut(shortcut) != null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_already_exists"));
-                    return false;
-                }
-
-                ShortcutManager.getInstance().getShortcuts().add(new Shortcut(new Destination(globalWarp, DestinationType.GlobalWarp), shortcut));
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_created").replace("%SHORTCUT%", shortcut));
-                return false;
-            }
-        });
-    }
-
-    @Override
-    public void onDisconnect() {
-        getComponent("shortcut", "add").removeChild("globalwarp");
     }
 
     private static void sendInfoMessage(CommandSender sender) {

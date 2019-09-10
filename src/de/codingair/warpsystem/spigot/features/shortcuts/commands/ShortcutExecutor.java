@@ -1,17 +1,16 @@
-package de.codingair.warpsystem.spigot.features.teleportcommand.commands;
+package de.codingair.warpsystem.spigot.features.shortcuts.commands;
 
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
-import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
+import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CTpaToggle extends CommandBuilder {
-    public CTpaToggle() {
-        super("TpaToggle", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA_TOGGLE) {
+public class ShortcutExecutor extends CommandBuilder {
+    public ShortcutExecutor(Shortcut shortcut) {
+        super(shortcut.getDisplayName(), "A WarpSystem-Command", new BaseComponent(shortcut.getPermission()) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -24,18 +23,16 @@ public class CTpaToggle extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tp <§eplayer§7> [§eplayer§7] §c" + Lang.get("Or") + " §7/tp [§eplayer§7] <§ex§7> <§ey§7> <§ez§7>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                if(TeleportCommandManager.getInstance().toggleDenyTpaRequest((Player) sender))
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_toggled_disabling"));
-                else
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_toggled_enabling"));
+                if(shortcut.isActive()) {
+                    shortcut.perform((Player) sender);
+                }
                 return false;
             }
-        }.setOnlyPlayers(true), true);
-
-        setHighestPriority(true);
+        }.setOnlyPlayers(true), false);
     }
 }

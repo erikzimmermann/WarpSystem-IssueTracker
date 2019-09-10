@@ -1,10 +1,10 @@
 package de.codingair.warpsystem.spigot.features.globalwarps.commands;
 
 import de.codingair.codingapi.player.gui.inventory.guis.ConfirmGUI;
-import de.codingair.codingapi.server.commands.BaseComponent;
-import de.codingair.codingapi.server.commands.CommandBuilder;
-import de.codingair.codingapi.server.commands.CommandComponent;
-import de.codingair.codingapi.server.commands.MultiCommandComponent;
+import de.codingair.codingapi.server.commands.builder.BaseComponent;
+import de.codingair.codingapi.server.commands.builder.CommandBuilder;
+import de.codingair.codingapi.server.commands.builder.CommandComponent;
+import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
@@ -22,7 +22,7 @@ import java.util.List;
 
 public class CGlobalWarps extends CommandBuilder {
     public CGlobalWarps() {
-        super("GlobalWarps", new BaseComponent(WarpSystem.PERMISSION_MODIFY_GLOBAL_WARPS) {
+        super("GlobalWarps", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_GLOBAL_WARPS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -43,7 +43,7 @@ public class CGlobalWarps extends CommandBuilder {
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, list>");
                 return false;
             }
-        }, true);
+        }, true, "gws", "gwarps");
 
         getBaseComponent().addChild(new CommandComponent("create") {
             @Override

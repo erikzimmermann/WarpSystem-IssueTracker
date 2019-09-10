@@ -1,6 +1,6 @@
 package de.codingair.warpsystem.spigot.features.globalwarps.managers;
 
-import de.codingair.codingapi.server.commands.CommandBuilder;
+import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;

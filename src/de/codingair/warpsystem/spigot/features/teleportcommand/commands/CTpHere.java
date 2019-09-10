@@ -1,9 +1,9 @@
 package de.codingair.warpsystem.spigot.features.teleportcommand.commands;
 
-import de.codingair.codingapi.server.commands.BaseComponent;
-import de.codingair.codingapi.server.commands.CommandBuilder;
-import de.codingair.codingapi.server.commands.CommandComponent;
-import de.codingair.codingapi.server.commands.MultiCommandComponent;
+import de.codingair.codingapi.server.commands.builder.BaseComponent;
+import de.codingair.codingapi.server.commands.builder.CommandBuilder;
+import de.codingair.codingapi.server.commands.builder.CommandComponent;
+import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.api.players.BungeePlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -17,7 +17,7 @@ import java.util.List;
 
 public class CTpHere extends CommandBuilder {
     public CTpHere() {
-        super("TpHere", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPHERE) {
+        super("TpHere", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPHERE) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
