@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.features.shortcuts.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
+import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.tools.JSON.JSONObject;
 import de.codingair.codingapi.tools.JSON.JSONParser;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -111,6 +112,10 @@ public class ShortcutManager implements Manager, BungeeFeature {
     }
 
     public void reloadCommand(Shortcut s) {
+        reloadCommand(s, false);
+    }
+
+    public void reloadCommand(Shortcut s, boolean force) {
         ShortcutExecutor executor = executors.remove(s);
         boolean reload;
         if(reload = (executor != null)) executor.unregister(WarpSystem.getInstance());
@@ -119,14 +124,10 @@ public class ShortcutManager implements Manager, BungeeFeature {
         executors.put(s, executor);
         executor.register(WarpSystem.getInstance());
 
-        if(reload) {
-            System.out.println("reloading commands...");
+        if((reload || force) && Version.getVersion().isBiggerThan(Version.v1_12)) {
             for(Player player : Bukkit.getOnlinePlayers()) {
-//                ((CraftPlayer) player).getHandle().server.getCommandDispatcher().a().register()
-
                 player.updateCommands();
             }
-            System.out.println("completed");
         }
     }
 

@@ -26,7 +26,7 @@ public class GEditor extends Editor<Shortcut> {
                     ShortcutManager.getInstance().getShortcuts().add(shortcut);
                 }
 
-                if(reload) ShortcutManager.getInstance().reloadCommand(shortcut);
+                if(reload) ShortcutManager.getInstance().reloadCommand(shortcut, true);
             }
 
             @Override
