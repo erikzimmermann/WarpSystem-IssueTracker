@@ -48,6 +48,7 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_NOTIFY = "WarpSystem.Notify";
     public static final String PERMISSION_MODIFY = "WarpSystem.Modify";
     public static final String PERMISSION_MODIFY_WARP_GUI = "WarpSystem.Modify.WarpGUI";
+    public static final String PERMISSION_MODIFY_SHORTCUTS = "WarpSystem.Modify.Shortcuts";
     public static final String PERMISSION_MODIFY_WARP_SIGNS = "WarpSystem.Modify.WarpSigns";
     public static final String PERMISSION_MODIFY_GLOBAL_WARPS = "WarpSystem.Modify.GlobalWarps";
     public static final String PERMISSION_MODIFY_SIMPLE_WARPS = "WarpSystem.Modify.SimpleWarps";

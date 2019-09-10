@@ -50,8 +50,7 @@ public abstract class NameButton extends SyncAnvilGUIButton {
     @Override
     public void onOtherClick(InventoryClickEvent e) {
         if(e.getClick() == ClickType.RIGHT && acceptNull) {
-            onChange(name.getValue(), null);
-            name.setValue(null);
+            name.setValue(onChange(name.getValue(), null));
             update();
         }
     }
@@ -74,14 +73,14 @@ public abstract class NameButton extends SyncAnvilGUIButton {
         }
 
         e.setClose(true);
-        onChange(name.getValue(), e.getInput());
-        name.setValue(e.getInput());
+        String newName = onChange(name.getValue(), e.getInput());
+        name.setValue(newName);
         update();
     }
 
     public abstract String acceptName(String name);
 
-    public abstract void onChange(String old, String name);
+    public abstract String onChange(String old, String name);
 
     @Override
     public void onClose(AnvilCloseEvent e) {

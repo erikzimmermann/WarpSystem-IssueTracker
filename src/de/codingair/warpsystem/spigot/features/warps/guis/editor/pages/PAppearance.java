@@ -94,9 +94,10 @@ public class PAppearance extends PageItem {
             }
 
             @Override
-            public void onChange(String old, String name) {
+            public String onChange(String old, String name) {
                 icon.setName(name);
                 getLast().updateShowIcon();
+                return name;
             }
         });
 

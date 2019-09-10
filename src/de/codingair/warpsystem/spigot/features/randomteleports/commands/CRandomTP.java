@@ -2,9 +2,9 @@ package de.codingair.warpsystem.spigot.features.randomteleports.commands;
 
 import de.codingair.codingapi.player.chat.ChatButton;
 import de.codingair.codingapi.player.chat.SimpleMessage;
-import de.codingair.codingapi.server.commands.BaseComponent;
-import de.codingair.codingapi.server.commands.CommandBuilder;
-import de.codingair.codingapi.server.commands.CommandComponent;
+import de.codingair.codingapi.server.commands.builder.BaseComponent;
+import de.codingair.codingapi.server.commands.builder.CommandBuilder;
+import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public class CRandomTP extends CommandBuilder {
     public CRandomTP() {
-        super("RandomTP", new BaseComponent(WarpSystem.PERMISSION_USE_RANDOM_TELEPORTER) {
+        super("RandomTP", " WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_RANDOM_TELEPORTER) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));

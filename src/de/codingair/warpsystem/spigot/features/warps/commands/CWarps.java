@@ -1,10 +1,10 @@
 package de.codingair.warpsystem.spigot.features.warps.commands;
 
 import de.codingair.codingapi.server.Sound;
-import de.codingair.codingapi.server.commands.BaseComponent;
-import de.codingair.codingapi.server.commands.CommandBuilder;
-import de.codingair.codingapi.server.commands.CommandComponent;
-import de.codingair.codingapi.server.commands.MultiCommandComponent;
+import de.codingair.codingapi.server.commands.builder.BaseComponent;
+import de.codingair.codingapi.server.commands.builder.CommandBuilder;
+import de.codingair.codingapi.server.commands.builder.CommandComponent;
+import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
@@ -18,7 +18,7 @@ import java.util.List;
 
 public class CWarps extends CommandBuilder {
     public CWarps() {
-        super("Warps", new BaseComponent(WarpSystem.PERMISSION_USE_WARP_GUI) {
+        super("Warps", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_WARP_GUI) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));

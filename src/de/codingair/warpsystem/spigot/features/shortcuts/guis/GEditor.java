@@ -17,12 +17,16 @@ public class GEditor extends Editor<Shortcut> {
     public GEditor(Player p, Shortcut shortcut, Shortcut clone) {
         super(p, clone, new Backup<Shortcut>(shortcut) {
             @Override
-            public void applyTo(Shortcut value) {
-                shortcut.apply(value);
+            public void applyTo(Shortcut clone) {
+                boolean reload = !shortcut.getDisplayName().equalsIgnoreCase(clone.getDisplayName());
+                shortcut.apply(clone);
 
                 if(ShortcutManager.getInstance().getShortcut(shortcut.getDisplayName()) == null) {
+                    reload = true;
                     ShortcutManager.getInstance().getShortcuts().add(shortcut);
                 }
+
+                if(reload) ShortcutManager.getInstance().reloadCommand(shortcut);
             }
 
             @Override

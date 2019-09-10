@@ -50,8 +50,9 @@ public class PAppearance extends PageItem {
             }
 
             @Override
-            public void onChange(String old, String name) {
+            public String onChange(String old, String name) {
                 portal.setDisplayName(name);
+                return name;
             }
         }.setOption(option));
 

@@ -1,8 +1,8 @@
 package de.codingair.warpsystem.spigot.features.teleportcommand.commands;
 
-import de.codingair.codingapi.server.commands.BaseComponent;
-import de.codingair.codingapi.server.commands.CommandBuilder;
-import de.codingair.codingapi.server.commands.CommandComponent;
+import de.codingair.codingapi.server.commands.builder.BaseComponent;
+import de.codingair.codingapi.server.commands.builder.CommandBuilder;
+import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 public class CTpToggle extends CommandBuilder {
     public CTpToggle() {
-        super("TpToggle", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP_TOGGLE) {
+        super("TpToggle", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP_TOGGLE) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
