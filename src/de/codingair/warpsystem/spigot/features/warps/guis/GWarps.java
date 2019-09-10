@@ -425,8 +425,8 @@ public class GWarps extends GUI {
                 iconBuilder.addText("§8------------");
                 iconBuilder.addText("§3" + Lang.get("Leftclick") + ": §7" + Lang.get("Edit"));
                 iconBuilder.addText("§3" + Lang.get("Shift_Leftclick") + ": §7" + Lang.get("Move"));
-                iconBuilder.addText("§3" + Lang.get("Rightclick") + ": §7" + ChatColor.stripColor(Lang.get("Delete")));
-                if(icon.isCategory()) iconBuilder.addText("§3" + Lang.get("Shift_Rightclick") + ": §7" + Lang.get("Open"));
+                iconBuilder.addText("§3" + Lang.get("Rightclick") + ": §7" + ChatColor.stripColor(Lang.get("Change_Item")));
+                iconBuilder.addText("§3" + Lang.get("Shift_Rightclick") + ": §7" + ChatColor.stripColor(Lang.get("Delete")));
 
                 if(!icon.isCategory()) {
                     iconBuilder.addText("§8------------");
@@ -485,26 +485,28 @@ public class GWarps extends GUI {
                                     setTitle(getTitle(GWarps.this.category, listener, getPlayer()));
                                 }
                             } else {
-                                if(e.isShiftClick() && icon.isCategory()) {
-                                    GWarps.this.category = icon;
-                                    reinitialize();
-                                    setTitle(getTitle(GWarps.this.category, listener, getPlayer()));
-                                    return;
-                                }
+                                if(e.isShiftClick()) {
+                                    new IconDeleteGUI(p, new Callback<Boolean>() {
+                                        @Override
+                                        public void accept(Boolean delete) {
+                                            if(delete) {
+                                                manager.remove(icon);
+                                                p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Deleted"));
+                                            } else {
+                                                p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Not_Deleted"));
+                                            }
 
-                                new IconDeleteGUI(p, new Callback<Boolean>() {
-                                    @Override
-                                    public void accept(Boolean delete) {
-                                        if(delete) {
-                                            manager.remove(icon);
-                                            p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Deleted"));
-                                        } else {
-                                            p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Not_Deleted"));
+                                            GWarps.this.reinitialize();
                                         }
-
-                                        GWarps.this.reinitialize();
-                                    }
-                                }, GWarps.this::open).open();
+                                    }, GWarps.this::open).open();
+                                } else {
+                                    if(p.getInventory().getItem(p.getInventory().getHeldItemSlot()) == null || p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType() == Material.AIR
+                                            || icon.getItem().getType() == p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType()) return;
+                                    
+                                    icon.changeItem(p.getInventory().getItem(p.getInventory().getHeldItemSlot()));
+                                    GWarps.this.reinitialize();
+                                    updateInventory(p);
+                                }
                             }
                         }
                     } else if(e.isLeftClick()) {
