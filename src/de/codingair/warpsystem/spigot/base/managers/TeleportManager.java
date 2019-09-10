@@ -32,8 +32,6 @@ public class TeleportManager {
     private List<Particle> particles = new ArrayList<>();
     private List<Teleport> teleports = new ArrayList<>();
 
-    private int particleId = 0;
-    private double radius = 1.5;
     private GeneralOptions options;
 
     public TeleportManager() {
@@ -69,16 +67,10 @@ public class TeleportManager {
         boolean success = true;
 
         this.options = WarpSystem.getOptions(GeneralOptions.class);
-
-        this.particleId = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Animation", 17);
         return success;
     }
 
     public void save(boolean saver) {
-        FileConfiguration config = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig();
-
-        config.set("WarpSystem.Teleport.Animation", this.particleId);
-
         WarpSystem.getInstance().getFileManager().getFile("Config").saveConfig();
     }
 
@@ -370,26 +362,6 @@ public class TeleportManager {
 
     public boolean isTeleporting(Player p) {
         return getTeleport(p) != null;
-    }
-
-    public int getParticleId() {
-        return particleId;
-    }
-
-    public Particle getParticle() {
-        return particles.get(particleId);
-    }
-
-    public void setParticleId(int particleId) {
-        this.particleId = particleId;
-    }
-
-    public double getRadius() {
-        return radius;
-    }
-
-    public void setRadius(double radius) {
-        this.radius = radius;
     }
 
     public List<Particle> getParticles() {
