@@ -29,63 +29,26 @@ public class CRandomTP extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                if(sender.hasPermission(WarpSystem.PERMISSION_MODIFY_RANDOM_TELEPORTER)) {
-                    if(RandomTeleporterManager.getInstance().isBuyable())
-                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<buy, blocks>");
-                    else
-                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<blocks>");
-                } else {
-                    if(RandomTeleporterManager.getInstance().isBuyable())
-                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<buy>");
-                    else runCommand(sender, label, args);
-                }
+                runCommand(sender, label, args);
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                int free = RandomTeleporterManager.getInstance().getFreeTeleportAmount((Player) sender);
-                int bought = RandomTeleporterManager.getInstance().getBoughtTeleports((Player) sender);
-                int teleports = RandomTeleporterManager.getInstance().getTeleports((Player) sender);
-                int max = RandomTeleporterManager.getInstance().getMaxTeleportAmount((Player) sender);
-
-                if(free == -1) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Info_Unlimited"));
+                if(sender.hasPermission(WarpSystem.PERMISSION_MODIFY_RANDOM_TELEPORTER)) {
+                    if(RandomTeleporterManager.getInstance().isBuyable())
+                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<buy, blocks, info, go>");
+                    else
+                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<blocks, info, go>");
                 } else {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Info")
-                            .replace("%LEFT%", (free + bought - teleports) + "")
-                            .replace("%ALL%", (free + bought) + ""));
-
-                    if(RandomTeleporterManager.getInstance().isBuyable()) {
-                        if(max == -1) {
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Info_Buyable_Unlimited"));
-                        } else {
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Info_Buyable")
-                                    .replace("%LEFT%", (max - free - bought) + "")
-                                    .replace("%ALL%", (max - free) + ""));
-                        }
+                    if(RandomTeleporterManager.getInstance().isBuyable())
+                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<buy, info, go>");
+                    else {
+                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, go>");
                     }
                 }
                 return false;
             }
-        }.setOnlyPlayers(true), true);
-
-        getBaseComponent().addChild(new CommandComponent("blocks", WarpSystem.PERMISSION_MODIFY_RANDOM_TELEPORTER) {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " blocks §e<add>");
-                return false;
-            }
-        });
-
-        getComponent("blocks").addChild(new CommandComponent("add") {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                RandomTeleporterManager.getInstance().getListener().getAddingNewBlock().remove(sender);
-                RandomTeleporterManager.getInstance().getListener().getAddingNewBlock().add((Player) sender, 30);
-                sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Adding_New_Block"));
-                return false;
-            }
-        });
+        }.setOnlyPlayers(true), true, "rtp");
 
         if(RandomTeleporterManager.getInstance().isBuyable()) {
             getBaseComponent().addChild(new CommandComponent("buy") {
@@ -138,5 +101,60 @@ public class CRandomTP extends CommandBuilder {
                 }
             });
         }
+
+        getBaseComponent().addChild(new CommandComponent("blocks", WarpSystem.PERMISSION_MODIFY_RANDOM_TELEPORTER) {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " blocks §e<add>");
+                return false;
+            }
+        });
+
+        getComponent("blocks").addChild(new CommandComponent("add") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                RandomTeleporterManager.getInstance().getListener().getAddingNewBlock().remove(sender);
+                RandomTeleporterManager.getInstance().getListener().getAddingNewBlock().add((Player) sender, 30);
+                sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Adding_New_Block"));
+                return false;
+            }
+        });
+
+        getBaseComponent().addChild(new CommandComponent("info") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                int free = RandomTeleporterManager.getInstance().getFreeTeleportAmount((Player) sender);
+                int bought = RandomTeleporterManager.getInstance().getBoughtTeleports((Player) sender);
+                int teleports = RandomTeleporterManager.getInstance().getTeleports((Player) sender);
+                int max = RandomTeleporterManager.getInstance().getMaxTeleportAmount((Player) sender);
+
+                if(free == -1) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Info_Unlimited"));
+                } else {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Info")
+                            .replace("%LEFT%", (free + bought - teleports) + "")
+                            .replace("%ALL%", (free + bought) + ""));
+
+                    if(RandomTeleporterManager.getInstance().isBuyable()) {
+                        if(max == -1) {
+                            sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Info_Buyable_Unlimited"));
+                        } else {
+                            sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Info_Buyable")
+                                    .replace("%LEFT%", (max - free - bought) + "")
+                                    .replace("%ALL%", (max - free) + ""));
+                        }
+                    }
+                }
+                return false;
+            }
+        });
+
+        getBaseComponent().addChild(new CommandComponent("go") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                RandomTeleporterManager.getInstance().tryToTeleport((Player) sender);
+                return false;
+            }
+        });
     }
 }
