@@ -29,6 +29,7 @@ import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.Simple
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -36,7 +37,7 @@ import java.util.List;
 
 public class CWarpSystem extends CommandBuilder {
     public CWarpSystem() {
-        super("WarpSystem", new BaseComponent(WarpSystem.PERMISSION_MODIFY) {
+        super("WarpSystem", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 Player p = (Player) sender;
@@ -60,7 +61,7 @@ public class CWarpSystem extends CommandBuilder {
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, options, animations>");
                 return false;
             }
-        }, true);
+        }, true, "ws");
 
         getBaseComponent().addChild(new CommandComponent("shortcut") {
             @Override
@@ -348,7 +349,8 @@ public class CWarpSystem extends CommandBuilder {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("Plugin_Reloading"));
                         WarpSystem.getInstance().reload(false);
                         sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Plugin_Reloaded"));
-                    } catch(Exception ex) {
+                    } catch(Throwable ex) {
+                        if(ex instanceof NoClassDefFoundError) return false;
                         ex.printStackTrace();
                     }
                 } else {

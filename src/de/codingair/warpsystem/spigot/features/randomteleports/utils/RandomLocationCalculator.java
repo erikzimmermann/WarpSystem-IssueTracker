@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.features.randomteleports.utils;
 
+import de.codingair.codingapi.tools.Area;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
@@ -9,6 +10,7 @@ import de.codingair.warpsystem.spigot.features.randomteleports.managers.RandomTe
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.WorldBorder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 
@@ -55,6 +57,7 @@ public class RandomLocationCalculator implements Runnable {
         int i = 0;
 
         long maxTime = (long) ((maxRange - minRange) / 2);
+        if(maxTime < 1000) maxTime = 1000;
 
         do {
             if(i == 0) i++;
@@ -130,12 +133,18 @@ public class RandomLocationCalculator implements Runnable {
     private boolean correct(Location location) throws InterruptedException {
         if(RandomTeleporterManager.getInstance().getBiomeList() != null && !RandomTeleporterManager.getInstance().getBiomeList().contains(location.getBlock().getBiome())) return false;
         if(RandomTeleporterManager.getInstance().isProtectedRegions() && isProtected(location)) return false;
+        if(RandomTeleporterManager.getInstance().isWorldBorder() && !isInsideOfWorldBorder(location)) return false;
 
         if(location.getBlock().getType().name().toLowerCase().contains("lava")) return false;
         Location below = location.clone();
         below.setY(below.getY() - 1);
 
         return !below.getBlock().getType().name().toLowerCase().contains("lava");
+    }
+
+    private boolean isInsideOfWorldBorder(Location location) {
+        WorldBorder border = location.getWorld().getWorldBorder();
+        return border == null || Area.isInArea(location, border.getCenter(), border.getSize()/ 2, false, 0);
     }
 
     private boolean isProtected(Location location) throws InterruptedException {

@@ -5,9 +5,3 @@ description: WarpSystem
 main: de.codingair.warpsystem.spigot.base.WarpSystem
 softdepend: [Multiverse-Core, Vault, Essentials, MultiWorld]
 api-version: 1.13
-
-commands:
-  warpsystem:
-    usuage: /WarpSystem
-    description: A WarpSystem-Command
-    aliases: [ws]
