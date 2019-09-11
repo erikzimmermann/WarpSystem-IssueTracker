@@ -11,6 +11,7 @@ import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -61,13 +62,49 @@ public class CWarps extends CommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
                 Icon category = manager.getCategory(argument);
+                CommandSender target = sender;
+
+                if(category != null && category.hasPermission() && !sender.hasPermission(category.getPermission())) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category"));
+                    return false;
+                } else if(category == null && sender.hasPermission(WarpSystem.PERMISSION_WARP_GUI_OTHER)) {
+                    Player other = Bukkit.getPlayer(argument);
+
+                    if(other == null) {
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
+                        return false;
+                    }
+
+                    target = other;
+                }
+
+                run(target, category);
+                return false;
+            }
+        });
+
+        getComponent((String) null).addChild(new MultiCommandComponent(WarpSystem.PERMISSION_WARP_GUI_OTHER) {
+            @Override
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                Icon category = manager.getCategory(argument);
 
                 if(category != null && category.hasPermission() && !sender.hasPermission(category.getPermission())) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category"));
                     return false;
                 }
 
-                run(sender, category);
+                Player other = Bukkit.getPlayer(argument);
+
+                if(other == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
+                    return false;
+                }
+
+                run(other, category);
                 return false;
             }
         });
