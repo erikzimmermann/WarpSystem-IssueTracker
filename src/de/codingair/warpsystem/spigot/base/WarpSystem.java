@@ -11,7 +11,6 @@ import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.api.SpigotAPI;
-import de.codingair.warpsystem.spigot.base.ad.AdvertisementManager;
 import de.codingair.warpsystem.spigot.base.commands.CWarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.*;
@@ -75,7 +74,7 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_USE_TELEPORT_COMMAND_TP_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpToggle";
     public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA = PERMISSION_USE_TELEPORT_COMMAND + ".Tpa";
     public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaToggle";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPHERE = PERMISSION_USE_TELEPORT_COMMAND + ".TpHere";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA_HERE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaHere";
     public static final String PERMISSION_USE_TELEPORT_COMMAND_TPHEREALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpHereAll";
     public static final String PERMISSION_USE_TELEPORT_COMMAND_TPALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpAll";
     public static final String PERMISSION_USE_TELEPORT_COMMAND_BUNGEE_ACCESS = PERMISSION_USE_TELEPORT_COMMAND + ".BungeeAccess";
@@ -116,8 +115,6 @@ public class WarpSystem extends JavaPlugin {
 
     private SpigotDataHandler dataHandler = new SpigotDataHandler(this);
     private UUIDManager uuidManager = new UUIDManager();
-
-    private AdvertisementManager advertisementManager;
 
     @Override
     public void onEnable() {
@@ -183,7 +180,6 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new HeadListener(), this);
 
             this.startAutoSaver();
-            advertisementManager = new AdvertisementManager();
 
             timer.stop();
 

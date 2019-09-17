@@ -11,9 +11,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class RandomLocationCalculator implements Runnable {
@@ -58,6 +61,7 @@ public class RandomLocationCalculator implements Runnable {
 
         long maxTime = (long) ((maxRange - minRange) / 2);
         if(maxTime < 1000) maxTime = 1000;
+        if(maxTime > 5000) maxTime = 5000;
 
         do {
             if(i == 0) i++;
@@ -76,8 +80,8 @@ public class RandomLocationCalculator implements Runnable {
             location.setZ(z + zNext);
 
             if(start + maxTime < System.currentTimeMillis()) return null;
-            if(correct(location)) location.setY(calculateYCoord(location));
-        } while(!correct(location));
+            if(correct(location, false)) location.setY(calculateYCoord(location));
+        } while(!correct(location, true));
 
         return location;
     }
@@ -130,7 +134,8 @@ public class RandomLocationCalculator implements Runnable {
         }
     }
 
-    private boolean correct(Location location) throws InterruptedException {
+    private boolean correct(Location location, boolean safety) throws InterruptedException {
+        if(safety && !isSafe(location)) return false;
         if(RandomTeleporterManager.getInstance().getBiomeList() != null && !RandomTeleporterManager.getInstance().getBiomeList().contains(location.getBlock().getBiome())) return false;
         if(RandomTeleporterManager.getInstance().isProtectedRegions() && isProtected(location)) return false;
         if(RandomTeleporterManager.getInstance().isWorldBorder() && !isInsideOfWorldBorder(location)) return false;
@@ -140,6 +145,22 @@ public class RandomLocationCalculator implements Runnable {
         below.setY(below.getY() - 1);
 
         return !below.getBlock().getType().name().toLowerCase().contains("lava");
+    }
+
+    private boolean isSafe(Location location) {
+        Block b = location.clone().subtract(0, 1, 0).getBlock();
+
+        List<String> unsafe = new ArrayList<>();
+
+        unsafe.add("VOID");
+        unsafe.add("LAVA");
+        unsafe.add("FIRE");
+
+        for(String s : unsafe) {
+            if(b.getType().name().toLowerCase().contains(s.toLowerCase())) return false;
+        }
+
+        return true;
     }
 
     private boolean isInsideOfWorldBorder(Location location) {

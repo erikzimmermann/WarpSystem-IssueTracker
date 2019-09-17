@@ -44,19 +44,33 @@ public class TabCompleterListener implements Listener {
             e.getSuggestions().clear();
             if(!((ProxiedPlayer) e.getSender()).hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA)) return;
 
-            for(ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
-                if(player.getName().equals(((ProxiedPlayer) e.getSender()).getName())) continue;
-                if(!TeleportManager.getInstance().getAccessibleServers().contains(player.getServer().getInfo())) continue;
-                e.getSuggestions().add(player.getName());
+            if(!TeleportManager.getInstance().getAccessibleServers().contains(((ProxiedPlayer) e.getSender()).getServer().getInfo())) {
+                for(ProxiedPlayer player : ((ProxiedPlayer) e.getSender()).getServer().getInfo().getPlayers()) {
+                    if(player.getName().equals(((ProxiedPlayer) e.getSender()).getName())) continue;
+                    e.getSuggestions().add(player.getName());
+                }
+            } else {
+                for(ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
+                    if(player.getName().equals(((ProxiedPlayer) e.getSender()).getName())) continue;
+                    if(!TeleportManager.getInstance().getAccessibleServers().contains(player.getServer().getInfo())) continue;
+                    e.getSuggestions().add(player.getName());
+                }
             }
-        } else if(cmd.equalsIgnoreCase("tphere")) {
+        } else if(cmd.equalsIgnoreCase("tpahere")) {
             e.getSuggestions().clear();
-            if(!((ProxiedPlayer) e.getSender()).hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPHERE)) return;
+            if(!((ProxiedPlayer) e.getSender()).hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA_HERE)) return;
 
-            for(ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
-                if(player.getName().equals(((ProxiedPlayer) e.getSender()).getName())) continue;
-                if(!TeleportManager.getInstance().getAccessibleServers().contains(player.getServer().getInfo())) continue;
-                e.getSuggestions().add(player.getName());
+            if(!TeleportManager.getInstance().getAccessibleServers().contains(((ProxiedPlayer) e.getSender()).getServer().getInfo())) {
+                for(ProxiedPlayer player : ((ProxiedPlayer) e.getSender()).getServer().getInfo().getPlayers()) {
+                    if(player.getName().equals(((ProxiedPlayer) e.getSender()).getName())) continue;
+                    e.getSuggestions().add(player.getName());
+                }
+            } else {
+                for(ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
+                    if(player.getName().equals(((ProxiedPlayer) e.getSender()).getName())) continue;
+                    if(!TeleportManager.getInstance().getAccessibleServers().contains(player.getServer().getInfo())) continue;
+                    e.getSuggestions().add(player.getName());
+                }
             }
         } else if(cmd.equalsIgnoreCase("tpall")) {
             e.getSuggestions().clear();
@@ -64,6 +78,13 @@ public class TabCompleterListener implements Listener {
 
             e.getSuggestions().add("true");
             e.getSuggestions().add("false");
+        } else if(cmd.equalsIgnoreCase("tphere")) {
+            e.getSuggestions().clear();
+            if(!((ProxiedPlayer) e.getSender()).hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) return;
+
+            for(ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
+                e.getSuggestions().add(player.getName());
+            }
         }
     }
 }

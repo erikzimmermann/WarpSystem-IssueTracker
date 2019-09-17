@@ -135,7 +135,7 @@ public class CTeleport extends Command {
         WarpSystem.getInstance().getDataHandler().send(packet, player.getServer().getInfo());
     }
 
-    private void tp(ProxiedPlayer gate, ProxiedPlayer player, ProxiedPlayer target) {
+    void tp(ProxiedPlayer gate, ProxiedPlayer player, ProxiedPlayer target) {
         if(player == null || target == null) {
             gate.sendMessage(new TextComponent(Lang.getPrefix() + Lang.get("Player_is_not_online")));
             return;

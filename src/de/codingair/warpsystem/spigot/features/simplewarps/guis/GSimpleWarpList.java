@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.warps.simplewarps.guis;
+package de.codingair.warpsystem.spigot.features.simplewarps.guis;
 
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
@@ -6,8 +6,8 @@ import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.base.guis.list.GUIList;
 import de.codingair.warpsystem.spigot.base.guis.list.ListItem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
+import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;

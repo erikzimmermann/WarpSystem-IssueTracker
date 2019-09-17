@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.warps.simplewarps.commands;
+package de.codingair.warpsystem.spigot.features.simplewarps.commands;
 
 import de.codingair.codingapi.player.chat.ChatButton;
 import de.codingair.codingapi.player.chat.SimpleMessage;
@@ -10,8 +10,8 @@ import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
+import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -36,12 +36,12 @@ public class CSetWarp extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp> ['true' for overwriting]");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp> ['true' for overwriting]");
                 return false;
             }
         }, true);
@@ -99,6 +99,17 @@ public class CSetWarp extends CommandBuilder {
                 message.replace("%EDIT%", tc);
 
                 message.send((Player) sender);
+                return false;
+            }
+        });
+
+        getComponent((String) null).addChild(new CommandComponent("true") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                if(SimpleWarpManager.getInstance().existsWarp(args[0])) {
+                    SimpleWarpManager.getInstance().getWarp(args[0]).setLocation(Location.getByLocation(((Player) sender).getLocation()));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Overwritten"));
+                } else getComponent((String) null).runCommand(sender, args[0], args);
                 return false;
             }
         });

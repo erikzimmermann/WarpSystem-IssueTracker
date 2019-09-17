@@ -35,9 +35,10 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
     private List<String> denyForceTps = new ArrayList<>();
 
     private CTeleport teleportCommand;
+    private CTpHere tpHere;
     private CTpa tpa;
     private CTpAll tpAll;
-    private CTpHere tpHere;
+    private CTpaHere tpaHere;
     private CTpToggle tpToggle;
     private CTpaToggle tpaToggle;
     private TeleportPacketListener packetListener;
@@ -59,6 +60,8 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
         if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Tp", true)) {
             teleportCommand = new CTeleport();
             teleportCommand.register(WarpSystem.getInstance());
+            tpHere = new CTpHere(teleportCommand);
+            tpHere.register(WarpSystem.getInstance());
         }
 
         if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpToggle", true)) {
@@ -71,9 +74,9 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
             tpa.register(WarpSystem.getInstance());
         }
 
-        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpHere", true)) {
-            tpHere = new CTpHere();
-            tpHere.register(WarpSystem.getInstance());
+        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaHere", true)) {
+            tpaHere = new CTpaHere();
+            tpaHere.register(WarpSystem.getInstance());
         }
 
         if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaToggle", true)) {

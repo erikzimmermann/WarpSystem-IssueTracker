@@ -3,51 +3,41 @@ package de.codingair.warpsystem.bungee.features.teleport.commands;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.base.language.Lang;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
+import de.codingair.warpsystem.transfer.packets.bungee.TeleportPlayerToCoordsPacket;
+import de.codingair.warpsystem.transfer.packets.bungee.TeleportPlayerToPlayerPacket;
 import net.md_5.bungee.BungeeCord;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
 public class CTpHere extends Command {
-    public CTpHere() {
-        super("TpHere", WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA);
+    private CTeleport teleport;
+
+    public CTpHere(CTeleport teleport) {
+        super("tphere", WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP);
+
+        this.teleport = teleport;
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(args.length != 1) {
-            sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpa <§eplayer§7>");
-        } else {
-            ProxiedPlayer receiver = BungeeCord.getInstance().getPlayer(args[0]);
+        if(!(sender instanceof ProxiedPlayer)) return;
 
-            if(receiver == null) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
-                return;
+        ProxiedPlayer p = (ProxiedPlayer) sender;
+
+        try {
+            if(args.length == 1) {
+                //Teleport sender to 0
+                ProxiedPlayer target = BungeeCord.getInstance().getPlayer(args[0]);
+                teleport.tp(p, target, p);
+            } else {
+                //HELP
+                p.sendMessage(new TextComponent(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpHere <§eplayer§7>"));
             }
-
-            if(receiver.getName().equalsIgnoreCase(sender.getName())) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Cant_Teleport_Yourself"));
-                return;
-            }
-
-            if(TeleportManager.getInstance().deniesTpaRequests(receiver)) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_denied_sender").replace("%PLAYER%", ChatColor.stripColor(receiver.getDisplayName())));
-                return;
-            }
-
-            if(TeleportManager.getInstance().hasOpenInvites((ProxiedPlayer) sender)) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Open_Requests"));
-                return;
-            }
-
-            if(!TeleportManager.getInstance().getAccessibleServers().contains(receiver.getServer().getInfo())) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Receiver_not_availabe"));
-                return;
-            }
-
-            TeleportManager.getInstance().sendTeleportRequest((ProxiedPlayer) sender, true, true, receiver);
-            sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_sent").replace("%PLAYER%", ChatColor.stripColor(receiver.getDisplayName())));
+        } catch(NumberFormatException ex) {
+            //HELP
+            p.sendMessage(new TextComponent(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpHere <§eplayer§7>"));
         }
     }
 }

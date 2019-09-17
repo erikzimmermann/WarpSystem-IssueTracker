@@ -1,8 +1,8 @@
 package de.codingair.warpsystem.spigot.features.warps.importfilter.filters;
 
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
+import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Filter;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Result;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;

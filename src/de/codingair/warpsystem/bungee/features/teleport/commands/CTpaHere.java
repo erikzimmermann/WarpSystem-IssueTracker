@@ -1,17 +1,17 @@
 package de.codingair.warpsystem.bungee.features.teleport.commands;
 
 import de.codingair.warpsystem.bungee.base.WarpSystem;
-import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
 import de.codingair.warpsystem.bungee.base.language.Lang;
+import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
-public class CTpa extends Command {
-    public CTpa() {
-        super("Tpa", WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA);
+public class CTpaHere extends Command {
+    public CTpaHere() {
+        super("TpaHere", WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA);
     }
 
     @Override
@@ -19,7 +19,7 @@ public class CTpa extends Command {
         if(!(sender instanceof ProxiedPlayer)) return;
 
         if(args.length != 1) {
-            sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpa <§eplayer§7>");
+            sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpaHere <§eplayer§7>");
         } else {
             ProxiedPlayer receiver = BungeeCord.getInstance().getPlayer(args[0]);
 
@@ -53,7 +53,7 @@ public class CTpa extends Command {
                 return;
             }
 
-            TeleportManager.getInstance().sendTeleportRequest((ProxiedPlayer) sender, false, true, receiver);
+            TeleportManager.getInstance().sendTeleportRequest((ProxiedPlayer) sender, true, true, receiver);
             sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_sent").replace("%PLAYER%", ChatColor.stripColor(receiver.getDisplayName())));
         }
     }
