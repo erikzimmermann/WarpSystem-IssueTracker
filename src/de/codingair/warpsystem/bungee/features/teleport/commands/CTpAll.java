@@ -19,6 +19,8 @@ public class CTpAll extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if(!(sender instanceof ProxiedPlayer)) return;
+
         if(args.length == 1 && args[0].equalsIgnoreCase("true")) {
             if(TeleportManager.getInstance().hasOpenInvites((ProxiedPlayer) sender)) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Open_Requests"));
@@ -28,13 +30,22 @@ public class CTpAll extends Command {
             List<ProxiedPlayer> players = new ArrayList<>();
             int max = 0;
 
-            for(ProxiedPlayer receiver : BungeeCord.getInstance().getPlayers()) {
-                if(receiver.getName().equals(sender.getName())) continue;
+            if(!TeleportManager.getInstance().getAccessibleServers().contains(((ProxiedPlayer) sender).getServer().getInfo())) {
+                for(ProxiedPlayer receiver : ((ProxiedPlayer) sender).getServer().getInfo().getPlayers()) {
+                    if(!receiver.getName().equals(sender.getName())) {
+                        max++;
+                        if(!TeleportManager.getInstance().deniesTpaRequests(receiver)) players.add(receiver);
+                    }
+                }
+            } else {
+                for(ProxiedPlayer receiver : BungeeCord.getInstance().getPlayers()) {
+                    if(receiver.getName().equals(sender.getName())) continue;
 
-                if(!receiver.getName().equals(sender.getName())
-                        && TeleportManager.getInstance().getAccessibleServers().contains(receiver.getServer().getInfo())) {
-                    max++;
-                    if(!TeleportManager.getInstance().deniesTpaRequests(receiver)) players.add(receiver);
+                    if(!receiver.getName().equals(sender.getName())
+                            && TeleportManager.getInstance().getAccessibleServers().contains(receiver.getServer().getInfo())) {
+                        max++;
+                        if(!TeleportManager.getInstance().deniesTpaRequests(receiver)) players.add(receiver);
+                    }
                 }
             }
 
