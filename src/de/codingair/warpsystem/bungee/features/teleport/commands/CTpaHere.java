@@ -16,6 +16,8 @@ public class CTpaHere extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if(!(sender instanceof ProxiedPlayer)) return;
+
         if(args.length != 1) {
             sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpaHere <§eplayer§7>");
         } else {
@@ -38,6 +40,11 @@ public class CTpaHere extends Command {
 
             if(TeleportManager.getInstance().hasOpenInvites((ProxiedPlayer) sender)) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Open_Requests"));
+                return;
+            }
+
+            if(!TeleportManager.getInstance().getAccessibleServers().contains(((ProxiedPlayer) sender).getServer().getInfo()) && !((ProxiedPlayer) sender).getServer().getInfo().equals(receiver.getServer().getInfo())) {
+                sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Receiver_not_availabe"));
                 return;
             }
 

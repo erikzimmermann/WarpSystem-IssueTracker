@@ -71,7 +71,7 @@ WarpSystem:
     Tp: true
     TpToggle: true
     Tpa: true
-    TpHere: true
+    TpaHere: true
     TpaToggle: true
     TpAll: true
     # For Tpa, TpHere & TpAll
