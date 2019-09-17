@@ -12,7 +12,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.commands.CWarp;
 import de.codingair.warpsystem.spigot.features.warps.commands.CWarps;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
@@ -28,8 +28,8 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.Bo
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
+import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.utils.Manager;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;

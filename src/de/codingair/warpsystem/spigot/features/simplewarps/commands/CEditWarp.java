@@ -1,24 +1,23 @@
-package de.codingair.warpsystem.spigot.features.warps.simplewarps.commands;
+package de.codingair.warpsystem.spigot.features.simplewarps.commands;
 
-import de.codingair.codingapi.player.gui.inventory.guis.ConfirmGUI;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
-import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
+import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.guis.GEditWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class CDeleteWarp extends CommandBuilder {
-    public CDeleteWarp() {
-        super("DeleteWarp", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_SIMPLE_WARPS) {
+public class CEditWarp extends CommandBuilder {
+    public CEditWarp() {
+        super("EditWarp", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_SIMPLE_WARPS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -39,7 +38,7 @@ public class CDeleteWarp extends CommandBuilder {
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp>");
                 return false;
             }
-        }, true, "delwarp");
+        }, true);
 
         setHighestPriority(true);
 
@@ -60,24 +59,9 @@ public class CDeleteWarp extends CommandBuilder {
                     return false;
                 }
 
-                new ConfirmGUI((Player) sender,
-                        Lang.get("Delete"),
-                        "§a" + Lang.get("No"),
-                        Lang.get("SimpleWarp_Confirm_Delete"),
-                        "§c" + Lang.get("Yes"),
-                        WarpSystem.getInstance(), new Callback<Boolean>() {
-                    @Override
-                    public void accept(Boolean accepted) {
-                        if(!accepted) {
-                            SimpleWarp warp = m.getWarp(argument);
-                            m.removeWarp(warp);
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("SimpleWarp_Deleted").replace("%WARP%", warp.getName(true)));
-                        } else {
-                            SimpleWarp warp = m.getWarp(argument);
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("SimpleWarp_Not_Deleted").replace("%WARP%", warp.getName(true)));
-                        }
-                    }
-                }).open();
+                SimpleWarp warp = m.getWarp(argument);
+                new GEditWarp((Player) sender, warp).open();
+                ((Player) sender).updateInventory();
                 return false;
             }
         });

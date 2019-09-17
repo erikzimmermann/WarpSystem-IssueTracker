@@ -13,8 +13,8 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.guis.GSimpleWarpList;
+import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.guis.GSimpleWarpList;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;

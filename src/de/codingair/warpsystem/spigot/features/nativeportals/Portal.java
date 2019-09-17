@@ -12,8 +12,8 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalBlock;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalListener;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
+import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;

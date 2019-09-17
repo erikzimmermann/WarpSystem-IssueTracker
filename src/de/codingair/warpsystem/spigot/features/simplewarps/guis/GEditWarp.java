@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.warps.simplewarps.guis;
+package de.codingair.warpsystem.spigot.features.simplewarps.guis;
 
 import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
@@ -10,8 +10,8 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
+import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.*;

@@ -1,6 +1,6 @@
-package de.codingair.warpsystem.spigot.features.warps.simplewarps.utils.actions.types;
+package de.codingair.warpsystem.spigot.features.simplewarps.utils.actions.types;
 
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.utils.actions.Action;
+import de.codingair.warpsystem.spigot.features.simplewarps.utils.actions.Action;
 import org.bukkit.entity.Player;
 
 public class CommandAction implements Action {

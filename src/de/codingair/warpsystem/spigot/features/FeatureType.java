@@ -12,7 +12,7 @@ import de.codingair.warpsystem.spigot.features.signs.managers.SignManager;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
+import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.utils.Manager;
 
 import java.util.ArrayList;
