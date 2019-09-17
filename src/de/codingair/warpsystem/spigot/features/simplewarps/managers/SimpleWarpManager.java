@@ -1,15 +1,13 @@
-package de.codingair.warpsystem.spigot.features.warps.simplewarps.managers;
+package de.codingair.warpsystem.spigot.features.simplewarps.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
-import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.warps.commands.CWarps;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CDeleteWarp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CEditWarp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CSetWarp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.commands.CDeleteWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.commands.CEditWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.commands.CSetWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.commands.CWarp;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.ChatColor;
 import org.json.simple.parser.ParseException;

@@ -1,6 +1,6 @@
 package de.codingair.warpsystem.spigot.features.warps.importfilter;
 
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
 
 import java.util.List;
 

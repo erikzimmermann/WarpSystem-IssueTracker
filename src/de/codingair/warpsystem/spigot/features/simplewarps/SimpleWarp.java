@@ -1,7 +1,7 @@
-package de.codingair.warpsystem.spigot.features.warps.simplewarps;
+package de.codingair.warpsystem.spigot.features.simplewarps;
 
 import de.codingair.codingapi.tools.Location;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.utils.actions.Action;
+import de.codingair.warpsystem.spigot.features.simplewarps.utils.actions.Action;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

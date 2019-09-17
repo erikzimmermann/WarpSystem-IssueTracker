@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.warps.simplewarps.utils.actions;
+package de.codingair.warpsystem.spigot.features.simplewarps.utils.actions;
 
 import org.bukkit.entity.Player;
 
