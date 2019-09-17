@@ -9,16 +9,21 @@ import de.codingair.codingapi.server.fancymessages.FancyMessage;
 import de.codingair.codingapi.server.fancymessages.MessageTypes;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
+import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.api.SpigotAPI;
 import de.codingair.warpsystem.spigot.base.ad.AdvertisementManager;
 import de.codingair.warpsystem.spigot.base.commands.CWarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.*;
 import de.codingair.warpsystem.spigot.base.managers.DataManager;
+import de.codingair.warpsystem.spigot.base.managers.HeadManager;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.managers.UUIDManager;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
-import de.codingair.warpsystem.spigot.base.utils.UpdateChecker;
+import de.codingair.warpsystem.spigot.base.utils.UpdateNotifier;
+import de.codingair.warpsystem.spigot.base.utils.options.GeneralOptions;
+import de.codingair.warpsystem.spigot.base.utils.options.OptionBundle;
+import de.codingair.warpsystem.spigot.base.utils.options.Options;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestInitialPacket;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
 import de.codingair.warpsystem.utils.Manager;
@@ -32,6 +37,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
@@ -42,28 +48,49 @@ import java.util.logging.Level;
 public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_NOTIFY = "WarpSystem.Notify";
     public static final String PERMISSION_MODIFY = "WarpSystem.Modify";
-    public static final String PERMISSION_MODIFY_ICONS = "WarpSystem.Modify.Icons";
+    public static final String PERMISSION_MODIFY_WARP_GUI = "WarpSystem.Modify.WarpGUI";
+    public static final String PERMISSION_MODIFY_SHORTCUTS = "WarpSystem.Modify.Shortcuts";
     public static final String PERMISSION_MODIFY_WARP_SIGNS = "WarpSystem.Modify.WarpSigns";
     public static final String PERMISSION_MODIFY_GLOBAL_WARPS = "WarpSystem.Modify.GlobalWarps";
     public static final String PERMISSION_MODIFY_SIMPLE_WARPS = "WarpSystem.Modify.SimpleWarps";
     public static final String PERMISSION_MODIFY_PORTALS = "WarpSystem.Modify.Portals";
     public static final String PERMISSION_MODIFY_NATIVE_PORTALS = "WarpSystem.Modify.NativePortals";
-    public static final String PERMISSION_USE_WARPS = "WarpSystem.Use.Warps";
+    public static final String PERMISSION_MODIFY_RANDOM_TELEPORTER = "WarpSystem.Modify.RandomTeleporters";
+    public static final String PERMISSION_MODIFY_TEMP_WARPS = "WarpSystem.Modify.TempWarps";
+    public static final String PERMISSION_USE_WARP_GUI = "WarpSystem.Use.WarpGUI";
+    public static final String PERMISSION_WARP_GUI_OTHER = "WarpSystem.WarpGUI.Other";
+    public static final String PERMISSION_HIDE_ALL_ICONS = "WarpGUI.HideAll";
     public static final String PERMISSION_USE_WARP_SIGNS = "WarpSystem.Use.WarpSigns";
     public static final String PERMISSION_USE_GLOBAL_WARPS = "WarpSystem.Use.GlobalWarps";
     public static final String PERMISSION_USE_SIMPLE_WARPS = "WarpSystem.Use.SimpleWarps";
     public static final String PERMISSION_USE_TEMP_WARPS = "WarpSystem.Use.TempWarps";
     public static final String PERMISSION_USE_PORTALS = "WarpSystem.Use.Portals";
     public static final String PERMISSION_USE_NATIVE_PORTALS = "WarpSystem.Use.NativePortals";
+    public static final String PERMISSION_USE_RANDOM_TELEPORTER = "WarpSystem.Use.RandomTeleporters";
     public static final String PERMISSION_ByPass_Maintenance = "WarpSystem.ByPass.Maintenance";
     public static final String PERMISSION_ByPass_Teleport_Costs = "WarpSystem.ByPass.Teleport.Costs";
     public static final String PERMISSION_ByPass_Teleport_Delay = "WarpSystem.ByPass.Teleport.Delay";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND = "WarpSystem.Use.TeleportCommand";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TP = PERMISSION_USE_TELEPORT_COMMAND + ".Tp";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TP_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpToggle";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA = PERMISSION_USE_TELEPORT_COMMAND + ".Tpa";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaToggle";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPHERE = PERMISSION_USE_TELEPORT_COMMAND + ".TpHere";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPHEREALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpHereAll";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpAll";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_BUNGEE_ACCESS = PERMISSION_USE_TELEPORT_COMMAND + ".BungeeAccess";
+    public static final String PERMISSION_TELEPORT_PRELOAD_CHUNKS = "WarpSystem.Teleport.ChunkPreLoading";
+    public static final String PERMISSION_SIMPLE_WARPS_DIRECT_TELEPORT = "WarpSystem.SimpleWarp.DirectTeleport";
     public static String PERMISSION_ADMIN = "WarpSystem.Admin";
-    public static boolean OP_CAN_SKIP_DELAY = false;
 
     private static WarpSystem instance;
     public static boolean activated = false;
     public static boolean maintenance = false;
+    private final boolean premium = true;
+    public static final int PREMIUM_THREAD_ID = 369986;
+    public static final int FREE_THREAD_ID = 182037;
+
+    private OptionBundle options;
 
     private boolean onBungeeCord = false;
     private String bungeePluginVersion = null;
@@ -74,10 +101,10 @@ public class WarpSystem extends JavaPlugin {
     private TeleportManager teleportManager = new TeleportManager();
     private FileManager fileManager = new FileManager(this);
     private DataManager dataManager;
+    private HeadManager headManager = new HeadManager();
 
-    private UpdateChecker updateChecker = new UpdateChecker("https://www.spigotmc.org/resources/warpsystem-gui.29595/history");
-    private int latestVersionId = -1;
-    private boolean runningFirstTime = false;
+    private UpdateNotifier updateNotifier;
+    private List<String> runningFirstTime = null;
 
     private Timer timer = new Timer();
 
@@ -94,7 +121,12 @@ public class WarpSystem extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        timer.start();
+
         instance = this;
+        this.updateNotifier = new UpdateNotifier();
+
+        loadOptions();
 
         try {
             checkOldDirectory();
@@ -102,32 +134,23 @@ public class WarpSystem extends JavaPlugin {
             API.getInstance().onEnable(this);
             SpigotAPI.getInstance().onEnable(this);
 
-            timer.start();
-
-            latestVersionId = UpdateChecker.getLatestVersionID();
-
             log(" ");
             log("__________________________________________________________");
             log(" ");
             log("                       WarpSystem [" + getDescription().getVersion() + "]");
-            if(updateAvailable) {
-                log(" ");
-                log("New update available [v" + updateChecker.getVersion() + " - " + WarpSystem.this.updateChecker.getUpdateInfo() + "].");
-                log("Download it on\n\n" + updateChecker.getDownload() + "\n");
-            }
             log(" ");
             log("Status:");
             log(" ");
             log("MC-Version: " + Version.getVersion().getVersionName());
             log(" ");
 
-            if(this.fileManager.getFile("Language") == null) this.fileManager.loadFile("Language", "/");
             if(this.fileManager.getFile("Config") == null) this.fileManager.loadFile("Config", "/");
+            Lang.initPreDefinedLanguages(this);
 
             PERMISSION_ADMIN = this.fileManager.getFile("Config").getConfig().getString("WarpSystem.Admin.Permission", "WarpSystem.Admin");
 
-            this.runningFirstTime = !fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "2.1.0").equals(getDescription().getVersion());
-            if(this.runningFirstTime) createBackup();
+            this.runningFirstTime = !fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "2.1.0").equals(getDescription().getVersion()) ? new ArrayList<>() : null;
+            if(this.runningFirstTime()) createBackup();
 
             log("Loading features");
             this.fileManager.loadAll();
@@ -146,20 +169,18 @@ public class WarpSystem extends JavaPlugin {
                 log(" ");
                 log(" ");
                 log("Loading with errors > Create backup...");
-                if(!this.runningFirstTime) createBackup();
+                if(!this.runningFirstTime()) createBackup();
                 log("Backup successfully created");
-                log(" ");
-                log("Try to use WarpSystem v3.0.1, which converts old icons.");
                 log(" ");
             }
 
             maintenance = fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Maintenance", false);
-            OP_CAN_SKIP_DELAY = fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Teleport.Op_Can_Skip_Delay", false);
 
             Bukkit.getPluginManager().registerEvents(new TeleportListener(), this);
             Bukkit.getPluginManager().registerEvents(new NotifyListener(), this);
             Bukkit.getPluginManager().registerEvents(new CommandListener(), this);
             Bukkit.getPluginManager().registerEvents(new UUIDListener(), this);
+            Bukkit.getPluginManager().registerEvents(new HeadListener(), this);
 
             this.startAutoSaver();
             advertisementManager = new AdvertisementManager();
@@ -173,10 +194,7 @@ public class WarpSystem extends JavaPlugin {
             log(" ");
 
             activated = true;
-            Bukkit.getScheduler().runTaskLaterAsynchronously(WarpSystem.getInstance(), () -> {
-                updateAvailable = WarpSystem.this.updateChecker.needsUpdate();
-                WarpSystem.getInstance().notifyPlayers(null);
-            }, 20L);
+            startUpdateNotifier();
 
             this.ERROR = false;
 
@@ -187,6 +205,8 @@ public class WarpSystem extends JavaPlugin {
 
             if(fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Functions.CommandBlocks", true))
                 Bukkit.getPluginManager().registerEvents(new CommandBlockListener(), this);
+
+            if(runningFirstTime()) Bukkit.getScheduler().runTaskLater(this, () -> notifyPlayers(null), 100L);
         } catch(Throwable ex) {
             //make error-report
 
@@ -247,7 +267,6 @@ public class WarpSystem extends JavaPlugin {
         teleportManager.getTeleports().forEach(t -> t.cancel(false, false));
 
         //Disable all functions
-        OP_CAN_SKIP_DELAY = false;
         activated = false;
         maintenance = false;
         onBungeeCord = false;
@@ -257,7 +276,6 @@ public class WarpSystem extends JavaPlugin {
         ERROR = true;
         shouldSave = true;
         BungeeCordHelper.bungeeMessenger = null;
-        this.uuidManager.removeAll();
 
         HandlerList.unregisterAll(this);
 
@@ -266,8 +284,49 @@ public class WarpSystem extends JavaPlugin {
 
         this.dataHandler.onDisable();
         if(this.packetListener != null) this.dataHandler.unregister(this.packetListener);
+        if(this.runningFirstTime != null) this.runningFirstTime.clear();
 
         destroy();
+        this.uuidManager.removeAll();
+    }
+
+    private void loadOptions() {
+        if(this.options == null) this.options = new OptionBundle(new GeneralOptions());
+        this.options.read();
+    }
+
+    public void reloadOptions(boolean save) {
+        if(save) this.options.write();
+        this.options.read();
+    }
+
+    public void saveOptions() {
+        this.options.write();
+    }
+
+    private void startUpdateNotifier() {
+        Value<BukkitTask> task = new Value<>(null);
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                updateAvailable = WarpSystem.this.updateNotifier.read();
+
+                if(updateAvailable) {
+                    String v = updateNotifier.getVersion();
+                    if(!v.startsWith("v")) v = "v" + v;
+
+                    log("-----< WarpSystem >-----");
+                    log("New update available [" + v + " - " + WarpSystem.this.updateNotifier.getUpdateInfo() + "].");
+                    log("Download it on\n\n" + updateNotifier.getDownload() + "\n");
+                    log("------------------------");
+
+                    WarpSystem.getInstance().notifyPlayers(null);
+                    task.getValue().cancel();
+                }
+            }
+        };
+
+        task.setValue(Bukkit.getScheduler().runTaskTimerAsynchronously(WarpSystem.getInstance(), runnable, 20L, 5 * 60 * 20L));
     }
 
     public void reload(boolean save) {
@@ -275,7 +334,7 @@ public class WarpSystem extends JavaPlugin {
 
         try {
             API.getInstance().reload(this);
-        } catch(InvalidDescriptionException | InvalidPluginException | FileNotFoundException e) {
+        } catch(InvalidDescriptionException | FileNotFoundException | InvalidPluginException e) {
             e.printStackTrace();
         }
     }
@@ -302,7 +361,7 @@ public class WarpSystem extends JavaPlugin {
                 log("                       WarpSystem [" + getDescription().getVersion() + "]");
                 if(updateAvailable) {
                     log(" ");
-                    log("New update available [v" + updateChecker.getVersion() + " - " + WarpSystem.this.updateChecker.getUpdateInfo() + "]. Download it on \n\n" + updateChecker.getDownload() + "\n");
+                    log("New update available [" + updateNotifier.getVersion() + " - " + WarpSystem.this.updateNotifier.getUpdateInfo() + "]. Download it on \n\n" + updateNotifier.getDownload() + "\n");
                 }
                 log(" ");
                 log("Status:");
@@ -315,7 +374,7 @@ public class WarpSystem extends JavaPlugin {
                 if(!saver) log("Saving options");
                 fileManager.getFile("Config").loadConfig();
                 fileManager.getFile("Config").getConfig().set("WarpSystem.Maintenance", maintenance);
-                fileManager.getFile("Config").getConfig().set("WarpSystem.Teleport.Op_Can_Skip_Delay", OP_CAN_SKIP_DELAY);
+                this.options.write();
 
                 if(!saver) log("Saving features");
                 this.dataManager.save(saver);
@@ -424,38 +483,26 @@ public class WarpSystem extends JavaPlugin {
             }
         } else {
             if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && WarpSystem.updateAvailable) {
-                TextComponent tc0 = new TextComponent(Lang.getPrefix() + "§7A new update is available §8[§bv" + WarpSystem.getInstance().updateChecker.getVersion() + "§8 - §b" + WarpSystem.getInstance().updateChecker.getUpdateInfo() + "§8]§7. Download it §7»");
+                String v = updateNotifier.getVersion();
+                if(!v.startsWith("v")) v = "v" + v;
+
+                TextComponent tc0 = new TextComponent(Lang.getPrefix() + "§7A new update is available §8[§b" + v + "§8 - §b" + WarpSystem.getInstance().updateNotifier.getUpdateInfo() + "§8]§7. Download it §7»");
                 TextComponent click = new TextComponent("§chere");
                 TextComponent tc1 = new TextComponent("§7«!");
 
-                click.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/warps-portals-and-warpsigns-warp-system-only-gui.29595/update?update=" + latestVersionId));
+                click.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, getUpdateNotifier().getDownload()));
                 click.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
 
                 tc0.addExtra(click);
                 tc0.addExtra(tc1);
                 tc0.setColor(ChatColor.GRAY);
 
-                int updateId = WarpSystem.getInstance().getLatestVersionId();
-
-                TextComponent command0 = new TextComponent(Lang.getPrefix() + "§7Run \"§c/WarpSystem news§7\" or click »");
-                TextComponent command1 = new TextComponent("§chere");
-                TextComponent command2 = new TextComponent("§7« to read all new stuff!");
-
-                command1.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/warps-portals-and-warpsigns-warp-system-only-gui.29595/update?update=" + updateId));
-                command1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
-
-                command0.addExtra(command1);
-                command0.addExtra(command2);
-                command0.setColor(ChatColor.GRAY);
-
                 player.sendMessage("");
                 player.sendMessage("");
                 player.spigot().sendMessage(tc0);
                 player.sendMessage("");
-                player.spigot().sendMessage(command0);
-                player.sendMessage("");
-                player.sendMessage("");
-            } else if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && this.runningFirstTime) {
+            } else if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && this.runningFirstTime() && !this.runningFirstTime.contains(player.getName())) {
+                this.runningFirstTime.add(player.getName());
                 ConfigFile file = fileManager.getFile("Config");
                 file.getConfig().set("Do_Not_Edit.Last_Version", getDescription().getVersion());
                 file.saveConfig();
@@ -492,8 +539,8 @@ public class WarpSystem extends JavaPlugin {
     public void setOnBungeeCord(boolean onBungeeCord) {
         this.onBungeeCord = onBungeeCord;
         if(onBungeeCord) {
-            this.bungeeFeatureList.forEach(BungeeFeature::onConnect);
             this.uuidManager.downloadAll();
+            this.bungeeFeatureList.forEach(BungeeFeature::onConnect);
         } else {
             this.bungeeFeatureList.forEach(BungeeFeature::onDisconnect);
         }
@@ -527,8 +574,8 @@ public class WarpSystem extends JavaPlugin {
         this.server = server;
     }
 
-    public int getLatestVersionId() {
-        return latestVersionId;
+    public UpdateNotifier getUpdateNotifier() {
+        return updateNotifier;
     }
 
     public UUIDManager getUUIDManager() {
@@ -545,5 +592,31 @@ public class WarpSystem extends JavaPlugin {
 
     public List<BungeeFeature> getBungeeFeatureList() {
         return bungeeFeatureList;
+    }
+
+    public HeadManager getHeadManager() {
+        return headManager;
+    }
+
+    public final boolean isPremium() {
+        return premium;
+    }
+
+    public OptionBundle getOptions() {
+        return options;
+    }
+
+    public static <E extends Options> E getOptions(Class<? extends E> clazz) {
+        if(instance == null) return null;
+
+        for(Options option : getInstance().getOptions().getOptions()) {
+            if(option.getClass().equals(clazz)) return (E) option;
+        }
+
+        return null;
+    }
+
+    private boolean runningFirstTime() {
+        return runningFirstTime != null;
     }
 }

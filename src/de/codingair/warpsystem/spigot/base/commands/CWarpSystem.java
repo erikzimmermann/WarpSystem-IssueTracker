@@ -1,49 +1,47 @@
 package de.codingair.warpsystem.spigot.base.commands;
 
+import de.codingair.codingapi.API;
 import de.codingair.codingapi.player.chat.ChatButton;
 import de.codingair.codingapi.player.chat.SimpleMessage;
 import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilGUI;
 import de.codingair.codingapi.player.gui.anvil.AnvilListener;
-import de.codingair.codingapi.server.commands.BaseComponent;
-import de.codingair.codingapi.server.commands.CommandBuilder;
-import de.codingair.codingapi.server.commands.CommandComponent;
-import de.codingair.codingapi.server.commands.MultiCommandComponent;
-import de.codingair.codingapi.server.fancymessages.FancyMessage;
-import de.codingair.codingapi.server.fancymessages.MessageTypes;
+import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
+import de.codingair.codingapi.server.commands.builder.BaseComponent;
+import de.codingair.codingapi.server.commands.builder.CommandBuilder;
+import de.codingair.codingapi.server.commands.builder.CommandComponent;
+import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
-import de.codingair.codingapi.utils.TextAlignment;
+import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.guis.options.OptionsGUI;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
-import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
-import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
-import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
-import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
+import de.codingair.warpsystem.spigot.features.animations.AnimationManager;
+import de.codingair.warpsystem.spigot.features.animations.guis.editor.*;
+import de.codingair.warpsystem.spigot.features.animations.utils.Animation;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.ImportType;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Result;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class CWarpSystem extends CommandBuilder implements BungeeFeature {
+public class CWarpSystem extends CommandBuilder {
     public CWarpSystem() {
-        super("WarpSystem", new BaseComponent(WarpSystem.PERMISSION_MODIFY) {
+        super("WarpSystem", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 Player p = (Player) sender;
-                getInfoMessage().send(p);
+                sendInfoMessage(p);
             }
 
             @Override
@@ -55,166 +53,213 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, shortcut>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, options, animations>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, shortcut>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, options, animations>");
                 return false;
             }
-        }, true);
+        }, true, "ws");
 
         getBaseComponent().addChild(new CommandComponent("shortcut") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut §e<add, remove, list>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /shortcuts");
                 return false;
             }
-        }.setOnlyPlayers(true));
+        });
 
-        getComponent("shortcut").addChild(new CommandComponent("add") {
+        getBaseComponent().addChild(new CommandComponent("animations") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut add §e<warp" + (WarpSystem.getInstance().isOnBungeeCord() ? ", globalwarp" : "") + ">");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations §e<activate, add, edit, remove>");
                 return false;
             }
-        }.setOnlyPlayers(true));
+        });
 
-        getComponent("shortcut", "add").addChild(new CommandComponent("warp") {
+        getComponent("animations").addChild(new CommandComponent("activate") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut add warp §e<warp>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations activate §e<name>");
                 return false;
             }
-        }.setOnlyPlayers(true));
+        });
 
-        getComponent("shortcut", "add", "warp").addChild(new MultiCommandComponent() {
+        getComponent("animations", "activate").addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                for(Warp warp : IconManager.getInstance().getWarps()) {
-                    suggestions.add(warp.getIdentifier());
+                for(Animation animation : AnimationManager.getInstance().getAnimationList()) {
+                    suggestions.add(animation.getName());
                 }
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut add warp " + argument + " §e<shortcut>");
+                Animation animation = AnimationManager.getInstance().getAnimation(argument);
+
+                if(animation == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Animation_does_not_exist"));
+                    return false;
+                }
+
+                AnimationManager.getInstance().setActive(animation);
+                sender.sendMessage(Lang.getPrefix() + "§a" + Lang.get("Changes_have_been_saved"));
                 return false;
             }
         });
 
-        getComponent("shortcut", "add", "warp", null).addChild(new MultiCommandComponent() {
+        getComponent("animations").addChild(new CommandComponent("add") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations add §e<name>");
+                return false;
+            }
+        }.setOnlyPlayers(true));
+
+        getComponent("animations", "add").addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                String warpId = args[3];
-                String shortcut = argument;
-
-                Warp warp = IconManager.getInstance().getWarp(warpId);
-
-                if(warp == null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
+                if(AnimationManager.getInstance().existsAnimation(argument)) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                     return false;
                 }
 
-                if(ShortcutManager.getInstance().getShortcut(shortcut) != null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_already_exists"));
-                    return false;
+                HotbarGUI h = API.getRemovable((Player) sender, HotbarGUI.class);
+                if(h != null) {
+                    h.destroy();
+                    Menu m = null;
+
+                    if(h instanceof AnimationPart) m = ((AnimationPart) h).getMenuGUI();
+                    if(h instanceof BuffPart) m = ((BuffPart) h).getMenuGUI();
+                    if(h instanceof Buffs) m = ((Buffs) h).getMenuGUI();
+                    if(h instanceof Particles) m = ((Particles) h).getMenuGUI();
+                    if(h instanceof Sounds) m = ((Sounds) h).getMenuGUI();
+                    if(h instanceof Menu) m = (Menu) h;
+
+                    m.getAnimPlayer().setLoop(false);
+                    m.getAnimPlayer().setRunning(false);
                 }
 
-                ShortcutManager.getInstance().getShortcuts().add(new Shortcut(warp, shortcut));
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_created").replace("%SHORTCUT%", shortcut));
-                return false;
-            }
-        });
-
-        getComponent("shortcut").addChild(new CommandComponent("remove") {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut remove §e<name>");
+                new Menu((Player) sender, argument).open(true);
                 return false;
             }
         }.setOnlyPlayers(true));
 
-        getComponent("shortcut", "remove").addChild(new MultiCommandComponent() {
+        getComponent("animations").addChild(new CommandComponent("edit") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations edit §e<name>");
+                return false;
+            }
+        }.setOnlyPlayers(true));
+
+        getComponent("animations", "edit").addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                for(Shortcut shortcut : ShortcutManager.getInstance().getShortcuts()) {
-                    suggestions.add(shortcut.getDisplayName());
+                for(Animation animation : AnimationManager.getInstance().getAnimationList()) {
+                    suggestions.add(animation.getName());
                 }
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                Shortcut shortcut = ShortcutManager.getInstance().getShortcut(argument);
+                Animation animation = AnimationManager.getInstance().getAnimation(argument);
 
-                if(shortcut == null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_does_not_exist"));
+                if(animation == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Animation_does_not_exist"));
                     return false;
                 }
 
-                ShortcutManager.getInstance().getShortcuts().remove(shortcut);
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_was_removed").replace("%SHORTCUT%", shortcut.getDisplayName()));
-                return false;
-            }
-        });
+                HotbarGUI h = API.getRemovable((Player) sender, HotbarGUI.class);
+                if(h != null) {
+                    h.destroy();
+                    Menu m = null;
 
-        getComponent("shortcut").addChild(new CommandComponent("list") {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                List<String> message = new ArrayList<>();
+                    if(h instanceof AnimationPart) m = ((AnimationPart) h).getMenuGUI();
+                    if(h instanceof BuffPart) m = ((BuffPart) h).getMenuGUI();
+                    if(h instanceof Buffs) m = ((Buffs) h).getMenuGUI();
+                    if(h instanceof Particles) m = ((Particles) h).getMenuGUI();
+                    if(h instanceof Sounds) m = ((Sounds) h).getMenuGUI();
+                    if(h instanceof Menu) m = (Menu) h;
 
-                if(ShortcutManager.getInstance().getShortcuts().isEmpty()) {
-                    message.add(" ");
-                    message.add("  §3§lShortcuts: §c-");
-                    message.add(" ");
-
-                    sender.sendMessage(message.toArray(new String[0]));
-                    return false;
+                    m.getAnimPlayer().setLoop(false);
+                    m.getAnimPlayer().setRunning(false);
                 }
 
-                for(Shortcut shortcut : ShortcutManager.getInstance().getShortcuts()) {
-                    message.add("  §7(" + (shortcut.getWarp() == null ? "Global warp" : "Warp") + ") §b" + (shortcut.getWarp() == null ? shortcut.getGlobalWarp() : shortcut.getWarp().getNameWithoutColor()) + " §7« \"§e" + shortcut.getDisplayName() + "§7\"");
-                }
-
-                Collections.sort(message);
-
-                message.add(0, " ");
-                message.add(1, " ");
-                message.add(2, "  §3§l§nShortcuts");
-                message.add(3, " ");
-                message.add(" ");
-
-                sender.sendMessage(message.toArray(new String[0]));
+                new Menu((Player) sender, animation).open(true);
                 return false;
             }
         }.setOnlyPlayers(true));
 
+        getComponent("animations").addChild(new CommandComponent("remove") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations remove §e<name>");
+                return false;
+            }
+        });
+
+        getComponent("animations", "remove").addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
+                for(Animation animation : AnimationManager.getInstance().getAnimationList()) {
+                    suggestions.add(animation.getName());
+                }
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                Animation animation = AnimationManager.getInstance().getAnimation(argument);
+
+                if(animation == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Animation_does_not_exist"));
+                    return false;
+                }
+
+                AnimationManager.getInstance().removeAnimation(animation);
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Animation_was_removed").replace("%ANIMATION%", animation.getName()));
+                return false;
+            }
+        });
+
+        getBaseComponent().addChild(new CommandComponent("options") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                new OptionsGUI((Player) sender).open();
+                return false;
+            }
+        }.setOnlyPlayers(true));
 
         getBaseComponent().addChild(new CommandComponent("info") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 Player p = (Player) sender;
-                getInfoMessage().send(p);
+                sendInfoMessage(p);
                 return false;
             }
-        }.setOnlyPlayers(true));
+        });
 
         getBaseComponent().addChild(new CommandComponent("news") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                int updateId = WarpSystem.getInstance().getLatestVersionId();
-
                 Player p = (Player) sender;
+
+                if(WarpSystem.getInstance().getUpdateNotifier().getDownload() == null) {
+                    p.sendMessage(Lang.getPrefix() + "§cFetching data... Please try again.");
+                    return false;
+                }
+
                 TextComponent tc0 = new TextComponent(Lang.getPrefix() + "§7Click »");
                 TextComponent click = new TextComponent("§chere");
                 TextComponent tc1 = new TextComponent("§7« to read all new stuff!");
 
-                click.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/warps-portals-and-warpsigns-warp-system-only-gui.29595/update?update=" + updateId));
+                click.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, WarpSystem.getInstance().getUpdateNotifier().getDownload()));
                 click.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
 
                 tc0.addExtra(click);
@@ -249,7 +294,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                         TextComponent link = new TextComponent("§chere");
                         TextComponent base1 = new TextComponent("§7« to report the bug to §cGitHub§7.");
 
-                        link.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/CodingAir/WarpSystem/issues/new"));
+                        link.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/CodingAir/WarpSystem-IssueTracker/issues/new"));
                         link.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
 
                         base.addExtra(link);
@@ -263,7 +308,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                         link = new TextComponent("§chere");
                         base1 = new TextComponent("§7« to report the bug to the §6SpigotMc-Forum§7.");
 
-                        link.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/threads/warps-portals-and-warpsigns-warp-system-only-gui.182037/page-9999"));
+                        link.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/threads/" + (WarpSystem.getInstance().isPremium() ? "Premium" : "Free") + "-WarpSystem." + (WarpSystem.getInstance().isPremium() ? WarpSystem.PREMIUM_THREAD_ID : WarpSystem.FREE_THREAD_ID) + "/page-9999"));
                         link.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
 
                         base.addExtra(link);
@@ -292,17 +337,25 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                 }
                 return false;
             }
-        });
+        }.setOnlyPlayers(true));
 
         getBaseComponent().addChild(new CommandComponent("reload") {
+            TimeList<CommandSender> confirm = new TimeList<>();
+
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                try {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Plugin_Reloading"));
-                    WarpSystem.getInstance().reload(true);
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Plugin_Reloaded"));
-                } catch(Exception ex) {
-                    ex.printStackTrace();
+                if(confirm.contains(sender)) {
+                    try {
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Plugin_Reloading"));
+                        WarpSystem.getInstance().reload(false);
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Success_Plugin_Reloaded"));
+                    } catch(Throwable ex) {
+                        if(ex instanceof NoClassDefFoundError) return false;
+                        ex.printStackTrace();
+                    }
+                } else {
+                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Unsaved_Changes"));
+                    confirm.add(sender, 10);
                 }
                 return false;
             }
@@ -370,9 +423,9 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Start"));
 
                     Result result;
-                    int size = (IconManager.getInstance() == null ? 0 : IconManager.getInstance().getWarps().size()) + (SimpleWarpManager.getInstance() == null ? 0 : SimpleWarpManager.getInstance().getWarps().size());
+                    int size = (IconManager.getInstance() == null ? 0 : IconManager.getInstance().getIcons().size()) + (SimpleWarpManager.getInstance() == null ? 0 : SimpleWarpManager.getInstance().getWarps().size());
                     if((result = type.importData()).isFinished()) {
-                        int amount = (IconManager.getInstance() == null ? 0 : IconManager.getInstance().getWarps().size()) + (SimpleWarpManager.getInstance() == null ? 0 : SimpleWarpManager.getInstance().getWarps().size()) - size;
+                        int amount = (IconManager.getInstance() == null ? 0 : IconManager.getInstance().getIcons().size()) + (SimpleWarpManager.getInstance() == null ? 0 : SimpleWarpManager.getInstance().getWarps().size()) - size;
                         sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish").replace("%AMOUNT%", amount + ""));
                     } else {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish_With_Errors") + " §8[" + result.name() + "]");
@@ -406,7 +459,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                             return false;
                         }
 
-                        if(IconManager.getInstance().getWarp(warp.getName()) != null || SimpleWarpManager.getInstance().existsWarp(warp.getName())) {
+                        if(IconManager.getInstance().getIcon(warp.getName()) != null || SimpleWarpManager.getInstance().existsWarp(warp.getName())) {
                             sender.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
 
                             SimpleMessage simpleMessage = new SimpleMessage(Lang.getPrefix() + Lang.get("Import_Choose_New_Name"), WarpSystem.getInstance());
@@ -428,7 +481,7 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                                                 return;
                                             }
 
-                                            if(IconManager.getInstance().getWarp(s) != null || SimpleWarpManager.getInstance().existsWarp(s)) {
+                                            if(IconManager.getInstance().getIcon(s) != null || SimpleWarpManager.getInstance().existsWarp(s)) {
                                                 sender.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                                                 return;
                                             }
@@ -472,74 +525,18 @@ public class CWarpSystem extends CommandBuilder implements BungeeFeature {
                 return false;
             }
         });
-
-        WarpSystem.getInstance().getBungeeFeatureList().add(this);
     }
 
-    @Override
-    public void onConnect() {
-        if(getComponent("shortcut", "add", "globalwarp") != null) return;
-
-        getComponent("shortcut", "add").addChild(new CommandComponent("globalwarp") {
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut add globalwarp §e<globalwarp>");
-                return false;
-            }
-        }.setOnlyPlayers(true));
-
-        getComponent("shortcut", "add", "globalwarp").addChild(new MultiCommandComponent() {
-            @Override
-            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                suggestions.addAll(GlobalWarpManager.getInstance().getGlobalWarps().keySet());
-            }
-
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut add globalwarp " + argument + " §e<shortcut>");
-                return false;
-            }
+    private static void sendInfoMessage(CommandSender sender) {
+        sender.sendMessage(new String[] {
+                "",
+                "§7§m               §7< §6WarpSystem §7>§m               §7",
+                "",
+                "     §3Author: §bCodingAir",
+                "     §3Version: §bv" + WarpSystem.getInstance().getDescription().getVersion() + " §7["+ (WarpSystem.getInstance().isPremium() ? "§6Premium" : "§bFree") + "§7]",
+                "",
+                "     §eAvailable on SpigotMc!",
+                ""
         });
-
-        getComponent("shortcut", "add", "globalwarp", null).addChild(new MultiCommandComponent() {
-            @Override
-            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-
-            }
-
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                String warpId = args[3];
-                String shortcut = argument;
-
-                String globalWarp = GlobalWarpManager.getInstance().getCaseCorrectlyName(warpId);
-
-                if(globalWarp == null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
-                    return false;
-                }
-
-                if(ShortcutManager.getInstance().getShortcut(shortcut) != null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_already_exists"));
-                    return false;
-                }
-
-                ShortcutManager.getInstance().getShortcuts().add(new Shortcut(globalWarp, shortcut));
-                sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_created").replace("%SHORTCUT%", shortcut));
-                return false;
-            }
-        });
-    }
-
-    @Override
-    public void onDisconnect() {
-        getComponent("shortcut", "add").removeChild("globalwarp");
-    }
-
-    private static FancyMessage getInfoMessage() {
-        FancyMessage fancyMessage = new FancyMessage(MessageTypes.INFO_MESSAGE, true, "§6§nWarpSystem", "", "§3Author: §bCodingAir", "§3Version: §b" + WarpSystem.getInstance().getDescription().getVersion(), "", "§eAvailable on SpigotMc!");
-        fancyMessage.setAlignment(TextAlignment.CENTER);
-        fancyMessage.setCentered(true);
-        return fancyMessage;
     }
 }

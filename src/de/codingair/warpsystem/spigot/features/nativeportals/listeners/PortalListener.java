@@ -4,14 +4,17 @@ import de.codingair.codingapi.API;
 import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
-import de.codingair.warpsystem.spigot.features.nativeportals.guis.GEditor;
+import de.codingair.warpsystem.spigot.features.nativeportals.guis.NPEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 
@@ -35,18 +38,32 @@ public class PortalListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPortal(PlayerPortalEvent e) {
-        if(NativePortalManager.getInstance().getNoTeleport().contains(e.getPlayer())
-                || NativePortalManager.getInstance().isEditing(e.getPlayer())
-                || WarpSystem.getInstance().getTeleportManager().isTeleporting(e.getPlayer())
-                || API.getRemovable(e.getPlayer(), GEditor.class) != null) {
+        Player player = e.getPlayer();
+        if(NativePortalManager.getInstance().getNoTeleport().contains(player)
+                || NativePortalManager.getInstance().isEditing(player)
+                || WarpSystem.getInstance().getTeleportManager().isTeleporting(player)
+                || API.getRemovable(player, NPEditor.class) != null) {
             e.setCancelled(true);
-            return;
         }
 
         for(Portal portal : NativePortalManager.getInstance().getPortals()) {
-            if(portal.isInPortal(e.getPlayer(), e.getTo()) || portal.isInPortal(e.getPlayer(), e.getFrom())) {
+            if(portal.isInPortal(player, e.getTo()) || portal.isInPortal(player, e.getFrom())) {
                 e.setCancelled(true);
                 return;
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onPortal(EntityPortalEvent e) {
+        if(e.getEntity() instanceof LivingEntity) {
+            LivingEntity le = (LivingEntity) e.getEntity();
+
+            for(Portal portal : NativePortalManager.getInstance().getPortals()) {
+                if(portal.isInPortal(le, e.getTo()) || portal.isInPortal(le, e.getFrom())) {
+                    e.setCancelled(true);
+                    return;
+                }
             }
         }
     }

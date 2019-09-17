@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.base.managers;
 import de.codingair.codingapi.player.data.UUIDFetcher;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.time.TimeMap;
+import de.codingair.warpsystem.spigot.api.events.PlayerFinalJoinEvent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestUUIDPacket;
 import org.bukkit.Bukkit;
@@ -31,10 +32,15 @@ public class UUIDManager {
             WarpSystem.getInstance().getDataHandler().send(new RequestUUIDPacket(player.getName(), new Callback<UUID>() {
                 @Override
                 public void accept(UUID uniqueId) {
-                    if(!uniqueIds.containsKey(player.getName())) uniqueIds.put(player.getName(), uniqueId);
-                    else uniqueIds.replace(player.getName(), uniqueId);
+                    if(!uniqueIds.containsKey(player.getName())) {
+                        uniqueIds.put(player.getName(), uniqueId);
+
+                        Bukkit.getPluginManager().callEvent(new PlayerFinalJoinEvent(player, uniqueId));
+                    } else uniqueIds.replace(player.getName(), uniqueId);
                 }
             }));
+        } else {
+            Bukkit.getPluginManager().callEvent(new PlayerFinalJoinEvent(player, player.getUniqueId()));
         }
     }
 
@@ -46,6 +52,12 @@ public class UUIDManager {
         if(!isCached(name)) return null;
         tempIds.setExpire(name.toLowerCase(), 60 * 2);
         return tempIds.get(name.toLowerCase());
+    }
+
+    public void convertFromCached(Player player) {
+        if(tempIds.containsKey(player.getName().toLowerCase()) && !uniqueIds.containsKey(player.getName())) {
+            uniqueIds.put(player.getName(), tempIds.remove(player.getName().toLowerCase()));
+        }
     }
 
     public void downloadFromMojang(String name, Callback<UUID> callback) {

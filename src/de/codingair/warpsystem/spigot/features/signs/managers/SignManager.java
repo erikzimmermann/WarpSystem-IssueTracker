@@ -2,12 +2,15 @@ package de.codingair.warpsystem.spigot.features.signs.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.signs.listeners.SignListener;
 import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
+import de.codingair.codingapi.tools.JSON.JSONObject;
+import de.codingair.codingapi.tools.JSON.JSONParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +30,12 @@ public class SignManager implements Manager {
         List<String> data = file.getConfig().getStringList("WarpSigns");
         if(data != null) {
             for(String s : data) {
-                WarpSign warpSign = WarpSign.fromJSONString(s);
+                WarpSign warpSign = new WarpSign();
+                try {
+                    warpSign.read((JSONObject) new JSONParser().parse(s));
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
 
                 if(warpSign != null) {
                     if(warpSign.getLocation() != null && warpSign.getLocation().getWorld() != null && warpSign.getLocation().getBlock() != null) {
@@ -63,7 +71,9 @@ public class SignManager implements Manager {
 
         List<String> data = new ArrayList<>();
         for(WarpSign s : this.warpSigns) {
-            data.add(s.toJSONString());
+            JSONObject json = new JSONObject();
+            s.write(json);
+            data.add(json.toJSONString());
         }
 
         file.getConfig().set("WarpSigns", data);
@@ -87,5 +97,9 @@ public class SignManager implements Manager {
 
     public List<WarpSign> getWarpSigns() {
         return warpSigns;
+    }
+
+    public static SignManager getInstance() {
+        return ((SignManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIGNS));
     }
 }

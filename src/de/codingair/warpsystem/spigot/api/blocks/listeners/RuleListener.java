@@ -1,8 +1,11 @@
 package de.codingair.warpsystem.spigot.api.blocks.listeners;
 
+import com.earth2me.essentials.Warps;
 import de.codingair.codingapi.API;
 import de.codingair.warpsystem.spigot.api.blocks.StaticLavaBlock;
 import de.codingair.warpsystem.spigot.api.blocks.utils.StaticBlock;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -11,6 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.util.Vector;
@@ -19,6 +23,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RuleListener implements Listener {
+
+    @EventHandler
+    public void onChange(BlockPhysicsEvent e) {
+        List<StaticBlock> l = API.getRemovables(StaticBlock.class);
+
+        for(StaticBlock loc : l) {
+            if(!(loc instanceof StaticLavaBlock)) continue;
+
+            StaticLavaBlock lava = (StaticLavaBlock) loc;
+            org.bukkit.block.Block b = lava.getLocation().getBlock();
+            if(b.getWorld().getName().equals(e.getBlock().getLocation().getWorld().getName()) && b.getLocation().getBlockX() == e.getBlock().getLocation().getBlockX() && b.getLocation().getBlockY() == e.getBlock().getLocation().getBlockY() && b.getLocation().getBlockZ() == e.getBlock().getLocation().getBlockZ()) {
+                e.setCancelled(true);
+            }
+        }
+
+        l.clear();
+    }
 
     @EventHandler
     public void onFlow(BlockFromToEvent e) {

@@ -2,20 +2,16 @@ package de.codingair.warpsystem.spigot.features.warps.simplewarps.commands;
 
 import de.codingair.codingapi.player.chat.ChatButton;
 import de.codingair.codingapi.player.chat.SimpleMessage;
-import de.codingair.codingapi.serializable.SerializableLocation;
-import de.codingair.codingapi.server.commands.BaseComponent;
-import de.codingair.codingapi.server.commands.CommandBuilder;
-import de.codingair.codingapi.server.commands.CommandComponent;
-import de.codingair.codingapi.server.commands.MultiCommandComponent;
+import de.codingair.codingapi.server.commands.builder.BaseComponent;
+import de.codingair.codingapi.server.commands.builder.CommandBuilder;
+import de.codingair.codingapi.server.commands.builder.CommandComponent;
+import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
-import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -27,7 +23,7 @@ import java.util.List;
 
 public class CSetWarp extends CommandBuilder {
     public CSetWarp() {
-        super("SetWarp", new BaseComponent(WarpSystem.PERMISSION_MODIFY_SIMPLE_WARPS) {
+        super("SetWarp", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_SIMPLE_WARPS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -57,12 +53,7 @@ public class CSetWarp extends CommandBuilder {
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 SimpleWarpManager hManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
                 for(SimpleWarp value : hManager.getWarps().values()) {
-                    suggestions.add(value.getName());
-                }
-
-                IconManager iManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
-                for(Warp warp : iManager.getWarps()) {
-                    suggestions.add(warp.getIdentifier());
+                    suggestions.add(value.getName(true));
                 }
             }
 
@@ -70,37 +61,12 @@ public class CSetWarp extends CommandBuilder {
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
                 SimpleWarpManager hManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
                 if(hManager.existsWarp(argument)) {
-                    SimpleMessage simpleMessage = new SimpleMessage(Lang.getPrefix() + Lang.get("Warp_Confirm_Overwrite").replace("%WARP%", hManager.getWarp(argument).getName()), WarpSystem.getInstance());
+                    SimpleMessage simpleMessage = new SimpleMessage(Lang.getPrefix() + Lang.get("Warp_Confirm_Overwrite").replace("%WARP%", hManager.getWarp(argument).getFormattedName()), WarpSystem.getInstance());
 
                     simpleMessage.replace("%YES%", new ChatButton(Lang.get("Warp_Confirm_Overwrite_Yes"), Lang.get("Click_Hover")) {
                         @Override
                         public void onClick(Player player) {
                             hManager.getWarp(argument).setLocation(Location.getByLocation(((Player) sender).getLocation()));
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Overwritten"));
-                            simpleMessage.destroy();
-                        }
-                    });
-
-                    simpleMessage.replace("%NO%", new ChatButton(Lang.get("Warp_Confirm_Overwrite_No"), Lang.get("Click_Hover")) {
-                        @Override
-                        public void onClick(Player player) {
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Not_Overwritten"));
-                            simpleMessage.destroy();
-                        }
-                    });
-
-                    simpleMessage.send((Player) sender);
-                    return false;
-                }
-
-                IconManager iManager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
-                if(iManager.getWarp(argument) != null) {
-                    SimpleMessage simpleMessage = new SimpleMessage(Lang.getPrefix() + Lang.get("Warp_Confirm_Overwrite").replace("%WARP%", iManager.getWarp(argument).getIdentifier()), WarpSystem.getInstance());
-
-                    simpleMessage.replace("%YES%", new ChatButton(Lang.get("Warp_Confirm_Overwrite_Yes"), Lang.get("Click_Hover")) {
-                        @Override
-                        public void onClick(Player player) {
-                            iManager.getWarp(argument).getAction(Action.TELEPORT_TO_WARP).setValue(new SerializableLocation(((Player) sender).getLocation()));
                             sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Overwritten"));
                             simpleMessage.destroy();
                         }

@@ -1,14 +1,17 @@
 package de.codingair.warpsystem.spigot.features.warps.simplewarps.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
-import de.codingair.codingapi.server.commands.CommandBuilder;
+import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.warps.commands.CWarps;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CDeleteWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CEditWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CSetWarp;
+import de.codingair.warpsystem.spigot.features.warps.simplewarps.commands.CWarp;
 import de.codingair.warpsystem.utils.Manager;
+import org.bukkit.ChatColor;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
@@ -16,9 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SimpleWarpManager implements Manager {
+    private static SimpleWarpManager instance = null;
     private HashMap<String, SimpleWarp> warps = new HashMap<>();
     private List<String> reservedNames = new ArrayList<>();
-    private List<CommandBuilder> commands = new ArrayList<>();
     private ConfigFile file;
 
     @Override
@@ -35,7 +38,7 @@ public class SimpleWarpManager implements Manager {
             for(String w : l) {
                 try {
                     SimpleWarp warp = new SimpleWarp(w);
-                    warps.put(warp.getName().toLowerCase(), warp);
+                    warps.put(warp.getName(true).toLowerCase(), warp);
                 } catch(ParseException e) {
                     e.printStackTrace();
                     errors = true;
@@ -45,10 +48,10 @@ public class SimpleWarpManager implements Manager {
 
         WarpSystem.log("    ...got " + warps.size() + " SimpleWarp(s)");
 
-        this.commands.add(new CSetWarp());
-        this.commands.add(new CEditWarp());
-        this.commands.add(new CDeleteWarp());
-        this.commands.forEach(c -> c.register(WarpSystem.getInstance()));
+        new CWarp().register(WarpSystem.getInstance());
+        new CSetWarp().register(WarpSystem.getInstance());
+        new CEditWarp().register(WarpSystem.getInstance());
+        new CDeleteWarp().register(WarpSystem.getInstance());
 
         return !errors;
     }
@@ -70,21 +73,22 @@ public class SimpleWarpManager implements Manager {
 
     @Override
     public void destroy() {
-        this.commands.forEach(c -> c.unregister(WarpSystem.getInstance()));
-        this.commands.clear();
         this.warps.clear();
     }
 
     public void addWarp(SimpleWarp warp) {
         if(existsWarp(warp.getName())) return;
-        this.warps.put(warp.getName().toLowerCase(), warp);
+        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.SimpleWarps.Add_Permission_On_Creation", true) && warp.getPermission() == null)
+            warp.setPermission("WarpSystem.Warps." + ChatColor.stripColor(warp.getName()));
+        this.warps.put(warp.getName(true).toLowerCase(), warp);
     }
 
     public void removeWarp(SimpleWarp warp) {
-        this.warps.remove(warp.getName().toLowerCase());
+        this.warps.remove(warp.getName(true).toLowerCase());
     }
 
     public SimpleWarp getWarp(String warp) {
+        warp = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', warp));
         return this.warps.get(warp.toLowerCase());
     }
 
@@ -93,10 +97,14 @@ public class SimpleWarpManager implements Manager {
     }
 
     public boolean existsWarp(String warp) {
+        warp = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', warp));
         return this.warps.containsKey(warp.toLowerCase());
     }
 
     public boolean isReserved(String name) {
+        name = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name));
+
+        if(existsWarp(name)) return true;
         for(String n : this.reservedNames) {
             if(n.equalsIgnoreCase(name)) return true;
         }
@@ -111,15 +119,23 @@ public class SimpleWarpManager implements Manager {
     }
 
     public boolean commitNewName(SimpleWarp warp, String name) {
-        if(existsWarp(name) || warp.getName().equals(name)) return false;
         this.reservedNames.remove(name);
-        this.warps.remove(warp.getName().toLowerCase());
-        warp.setName(name);
-        this.warps.put(warp.getName().toLowerCase(), warp);
+
+        if(warp.getName().equalsIgnoreCase(name) && !warp.getName().equals(name)) {
+            warp.setName(name);
+        } else {
+            if(existsWarp(name) || warp.getName().equals(name)) return false;
+            this.warps.remove(warp.getName().toLowerCase());
+            warp.setName(name);
+            this.warps.put(warp.getName().toLowerCase(), warp);
+        }
+
         return true;
     }
 
     public static SimpleWarpManager getInstance() {
-        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
+        if(instance == null) instance = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
+        if(instance == null) instance = new SimpleWarpManager();
+        return instance;
     }
 }

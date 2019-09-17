@@ -12,7 +12,6 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.warps.simplewarps.managers.SimpleWarpManager;
-import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.*;
@@ -63,7 +62,7 @@ public class GEditWarp extends SimpleGUI {
         private boolean saved = false;
 
         public GPage(Player p, SimpleWarp warp) {
-            super(p, Lang.get("SimpleWarp_Edit_Title").replace("%WARP%", warp.getName()), false);
+            super(p, Lang.get("SimpleWarp_Edit_Title").replace("%WARP%", ChatColor.translateAlternateColorCodes('&', warp.getName())), false);
             this.warp = warp;
             this.clone = warp.clone();
             initialize(p);
@@ -87,7 +86,9 @@ public class GEditWarp extends SimpleGUI {
                         return;
                     }
 
-                    if(IconManager.getInstance().getWarp(s) != null || !SimpleWarpManager.getInstance().reserveName(s)) {
+                    s = s.replace(" ", "_");
+
+                    if(!s.equalsIgnoreCase(warp.getName()) && !SimpleWarpManager.getInstance().reserveName(s)) {
                         p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                         return;
                     }
@@ -101,6 +102,9 @@ public class GEditWarp extends SimpleGUI {
 
                 @Override
                 public void onClose(AnvilCloseEvent e) {
+                    getInterface().reinitialize(Lang.get("SimpleWarp_Edit_Title").replace("%WARP%", ChatColor.translateAlternateColorCodes('&', clone.getName())));
+                    e.setPost(() -> getInterface().open());
+                    getInterface().setClosingForGUI(false);
                 }
 
                 @Override

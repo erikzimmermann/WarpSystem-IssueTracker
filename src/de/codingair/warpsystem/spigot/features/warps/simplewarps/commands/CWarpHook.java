@@ -35,7 +35,7 @@ public class CWarpHook {
         SimpleWarpManager m = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
         for(SimpleWarp value : m.getWarps().values()) {
             if(value.getPermission() == null || sender.hasPermission(value.getPermission())) {
-                suggestions.add(value.getName());
+                suggestions.add(value.getName(true));
             }
         }
     }

@@ -6,8 +6,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
-import de.codingair.warpsystem.spigot.features.warps.guis.GWarps;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.transfer.packets.spigot.PerformCommandPacket;
@@ -103,7 +102,7 @@ public abstract class ActionIcon extends Icon implements Serializable {
         switch(action.getAction()) {
             case OPEN_CATEGORY:
                 Category category = action.getValue();
-                new GWarps(p, category, editor).open();
+//                new GWarps(p, category, editor).open();
                 break;
 
             case RUN_COMMAND:
@@ -142,26 +141,26 @@ public abstract class ActionIcon extends Icon implements Serializable {
                 double costs = getAction(Action.PAY_MONEY) == null ? 0 : getAction(Action.PAY_MONEY).getValue();
                 if(p.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) costs = 0;
 
-                WarpSystem.getInstance().getTeleportManager().teleport(p, Origin.WarpIcon, new Destination(((Warp) this).getIdentifier(), DestinationType.WarpIcon), getName(), costs);
+//                WarpSystem.getInstance().getTeleportManager().teleport(p, Origin.WarpIcon, new Destination(((Warp) this).getIdentifier(), DestinationType.WarpIcon), getName(), costs);
                 break;
             }
 
             case PAY_MONEY:
                 if(p.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) break;
-                if(AdapterType.getActive() == null) break;
+                if(MoneyAdapterType.getActive() == null) break;
                 if(WarpSystem.getInstance().getTeleportManager().isTeleporting(p)) break;
 
                 double prize = action.getValue();
                 if(prize <= 0) break;
 
-                double bank = AdapterType.getActive().getMoney(p);
+                double bank = MoneyAdapterType.getActive().getMoney(p);
 
                 if(bank < prize) {
                     p.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money").replace("%AMOUNT%", (prize % ((int) prize) == 0 ? (int) prize : prize) + ""));
                     return true;
                 }
 
-                AdapterType.getActive().setMoney(p, bank - prize);
+                MoneyAdapterType.getActive().withdraw(p, prize);
                 break;
         }
 

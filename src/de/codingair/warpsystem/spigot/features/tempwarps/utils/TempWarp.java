@@ -24,15 +24,18 @@ public class TempWarp {
     private Date bornDate;
     private Date startDate;
     private Date endDate;
+    private Date expireDate;
     private int duration;
     private boolean isPublic;
     private String message;
     private int teleportCosts;
+    private String creatorKey = null;
+    private boolean notify = false;
 
     private int paid;
     private int inactiveSales = 0;
 
-    TempWarp(String lastKnownName, UUID owner, Location location, String name, String message, Date bornDate, Date startDate, Date endDate, int duration, boolean isPublic, int teleportCosts, int paid, int inactiveSales) {
+    TempWarp(String lastKnownName, UUID owner, Location location, String name, String message, Date bornDate, Date startDate, Date endDate, Date expireDate, int duration, boolean isPublic, int teleportCosts, int paid, int inactiveSales) {
         this.lastKnownName = lastKnownName;
         this.owner = owner;
         this.location = location;
@@ -41,6 +44,7 @@ public class TempWarp {
         this.bornDate = bornDate;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.expireDate = expireDate;
         this.duration = duration;
         this.isPublic = isPublic;
         this.teleportCosts = teleportCosts;
@@ -48,7 +52,7 @@ public class TempWarp {
         this.inactiveSales = inactiveSales;
     }
 
-    private TempWarp(String lastKnownName, UUID owner, Location location, String name, String message, Date bornDate, Date startDate, int duration, boolean isPublic, int teleportCosts, int paid) {
+    private TempWarp(String lastKnownName, UUID owner, Location location, String name, String message, Date bornDate, Date startDate, Date expireDate, int duration, boolean isPublic, int teleportCosts, int paid) {
         this.lastKnownName = lastKnownName;
         this.owner = owner;
         this.location = location;
@@ -56,6 +60,7 @@ public class TempWarp {
         this.message = message;
         this.bornDate = bornDate;
         this.startDate = startDate;
+        this.expireDate = expireDate;
         this.duration = duration;
         this.isPublic = isPublic;
         this.teleportCosts = teleportCosts;
@@ -65,7 +70,7 @@ public class TempWarp {
     }
 
     public TempWarp(Player player, Location location, String name, int duration, boolean isPublic, String message, int teleportCosts) {
-        this(player.getName(), WarpSystem.getInstance().getUUIDManager().get(player), location, name, message, new Date(), new Date(), duration, isPublic, teleportCosts, 0);
+        this(player.getName(), WarpSystem.getInstance().getUUIDManager().get(player), location, name, message, new Date(), new Date(), null, duration, isPublic, teleportCosts, 0);
         saveCosts();
     }
 
@@ -91,15 +96,20 @@ public class TempWarp {
     }
 
     public boolean isExpired() {
-        return isExpired(new Date());
+        boolean expired = isExpired(new Date());
+        if(expired && expireDate == null) this.expireDate = new Date();
+        return expired;
     }
 
     public boolean isExpired(Date date) {
-        return this.getEndDate().before(date);
+        boolean expired = this.getEndDate().before(date);
+        if(expired && this.expireDate == null) this.expireDate = new Date(getEndDate().getTime());
+        return expired;
     }
 
     public long getLeftTime() {
-        return getEndDate().getTime() - new Date().getTime();
+        if(getExpireDate() == null) return getEndDate().getTime() - new Date().getTime();
+        return getExpireDate().getTime() - new Date().getTime();
     }
 
     public Date calculateEndDate() {
@@ -112,6 +122,10 @@ public class TempWarp {
 
     public Date getBornDate() {
         return bornDate;
+    }
+
+    public Date getExpireDate() {
+        return expireDate;
     }
 
     public int getDuration() {
@@ -153,6 +167,7 @@ public class TempWarp {
 
     public void setDuration(int duration) {
         this.duration = duration;
+        if(this.endDate != null) this.endDate = calculateEndDate();
     }
 
     public void setPublic(boolean aPublic) {
@@ -224,6 +239,8 @@ public class TempWarp {
     public void renew() {
         this.startDate = new Date();
         this.endDate = calculateEndDate();
+        this.expireDate = null;
+        setNotify(false);
     }
 
     public boolean isAvailable() {
@@ -231,6 +248,10 @@ public class TempWarp {
     }
 
     public void apply() {
+        if(backup != null) {
+            if(!isExpired()) expireDate = null;
+            else if(backup.getDuration() != getDuration()) expireDate = new Date();
+        }
         this.backup = null;
     }
 
@@ -243,6 +264,7 @@ public class TempWarp {
         this.message = warp.message;
         this.startDate = warp.startDate;
         this.endDate = warp.endDate;
+        this.expireDate = warp.expireDate;
         this.duration = warp.duration;
         this.isPublic = warp.isPublic;
         this.teleportCosts = warp.teleportCosts;
@@ -254,7 +276,7 @@ public class TempWarp {
     }
 
     public TempWarp clone() {
-        return new TempWarp(this.lastKnownName, this.owner, this.location, this.name, this.message, this.bornDate, this.startDate, this.endDate, this.duration, this.isPublic, this.teleportCosts, this.paid, this.inactiveSales);
+        return new TempWarp(this.lastKnownName, this.owner, this.location, this.name, this.message, this.bornDate, this.startDate, this.endDate, this.expireDate, this.duration, this.isPublic, this.teleportCosts, this.paid, this.inactiveSales);
     }
 
     public String toJSONString() {
@@ -268,11 +290,14 @@ public class TempWarp {
         json.put("BornDate", this.bornDate.getTime() + "");
         json.put("StartDate", this.startDate.getTime() + "");
         json.put("EndDate", this.endDate.getTime() + "");
+        json.put("ExpireDate", this.expireDate == null ? null : this.expireDate.getTime() + "");
         json.put("Duration", this.duration + "");
         json.put("isPublic", this.isPublic);
         json.put("TeleportCosts", this.teleportCosts);
         json.put("Paid", this.paid);
         json.put("InactiveSales", this.inactiveSales);
+        json.put("Key", this.creatorKey);
+        json.put("Notify", this.notify);
 
         return json.toJSONString();
     }
@@ -289,13 +314,19 @@ public class TempWarp {
             Date bornDate = new Date(Long.parseLong((String) json.get("BornDate")));
             Date startDate = new Date(Long.parseLong((String) json.get("StartDate")));
             Date endDate = new Date(Long.parseLong((String) json.get("EndDate")));
+            Date expireDate = json.get("ExpireDate") == null ? null : new Date(Long.parseLong((String) json.get("ExpireDate")));
             int timeIntervals = Integer.parseInt(json.get("Duration") + "");
             boolean isPublic = (boolean) json.get("isPublic");
             int teleportCosts = Integer.parseInt(json.get("TeleportCosts") + "");
             int paid = Integer.parseInt(json.get("Paid") + "");
             int inactiveSales = Integer.parseInt(json.get("InactiveSales") + "");
+            String creatorKey = json.get("Key") == null ? null : (String) json.get("Key");
+            boolean notify = json.get("Notify") != null && (boolean) json.get("Notify");
 
-            return new TempWarp(lastKnownName, owner, location, name, teleportMessage, bornDate, startDate, endDate, timeIntervals, isPublic, teleportCosts, paid, inactiveSales);
+            TempWarp warp = new TempWarp(lastKnownName, owner, location, name, teleportMessage, bornDate, startDate, endDate, expireDate, timeIntervals, isPublic, teleportCosts, paid, inactiveSales);
+            warp.setCreatorKey(creatorKey);
+            warp.setNotify(notify);
+            return warp;
         } catch(ParseException e) {
             e.printStackTrace();
             return null;
@@ -316,5 +347,25 @@ public class TempWarp {
 
     public void setInactiveSales(int inactiveSales) {
         this.inactiveSales = inactiveSales;
+    }
+
+    public boolean isBeingEdited() {
+        return this.backup != null;
+    }
+
+    public String getCreatorKey() {
+        return creatorKey;
+    }
+
+    public void setCreatorKey(String creatorKey) {
+        this.creatorKey = creatorKey;
+    }
+
+    public boolean isNotify() {
+        return notify;
+    }
+
+    public void setNotify(boolean notify) {
+        this.notify = notify;
     }
 }

@@ -2,37 +2,37 @@ package de.codingair.warpsystem.spigot.base.managers;
 
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
+import de.codingair.codingapi.server.Sound;
+import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.api.events.PlayerGlobalWarpEvent;
 import de.codingair.warpsystem.spigot.api.events.PlayerWarpEvent;
 import de.codingair.warpsystem.spigot.api.events.utils.GlobalWarp;
 import de.codingair.warpsystem.spigot.api.events.utils.Warp;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.utils.options.GeneralOptions;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
-import de.codingair.warpsystem.spigot.base.utils.teleport.Teleport;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
-import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
-import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.*;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TeleportManager {
+    public static final String NO_PERMISSION = "%NO_PERMISSION%";
     private List<Particle> particles = new ArrayList<>();
     private List<Teleport> teleports = new ArrayList<>();
 
-    private boolean canMove = false;
-    private int seconds = 5;
-    private int particleId = 0;
-    private double radius = 1.5;
-    private boolean showMessage = true;
+    private GeneralOptions options;
 
     public TeleportManager() {
         particles.add(Particle.FIREWORKS_SPARK);
@@ -66,21 +66,28 @@ public class TeleportManager {
     public boolean load() {
         boolean success = true;
 
-        this.particleId = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Animation", 17);
-        this.seconds = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getInt("WarpSystem.Teleport.Delay", 5);
-        this.canMove = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Teleport.Allow_Move", false);
-        this.showMessage = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true);
+        this.options = WarpSystem.getOptions(GeneralOptions.class);
         return success;
     }
 
     public void save(boolean saver) {
-        FileConfiguration config = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig();
-
-        config.set("WarpSystem.Teleport.Animation", this.particleId);
-        config.set("WarpSystem.Teleport.Delay", this.seconds);
-        config.set("WarpSystem.Teleport.Allow_Move", this.canMove);
-
         WarpSystem.getInstance().getFileManager().getFile("Config").saveConfig();
+    }
+
+    public void teleport(Player player, Location location, String displayName, boolean afterEffects) {
+        teleport(player, Origin.Custom, location, displayName, afterEffects);
+    }
+
+    public void teleport(Player player, Origin origin, Location location, String displayName, boolean afterEffects) {
+        teleport(player, origin, location, displayName, afterEffects, true);
+    }
+
+    public void teleport(Player player, Origin origin, Location location, String displayName, boolean afterEffects, boolean skip) {
+        teleport(player, origin, new Destination(new LocationAdapter(location)), displayName, null, 0, skip, skip, true, false, afterEffects, null);
+    }
+
+    public void teleport(Player player, Origin origin, Location location, String displayName, boolean afterEffects, boolean skip, Callback<TeleportResult> callBack) {
+        teleport(player, origin, new Destination(new LocationAdapter(location)), displayName, null, 0, skip, skip, true, false, afterEffects, callBack);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs) {
@@ -88,38 +95,98 @@ public class TeleportManager {
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean message) {
-        teleport(player, origin, destination, displayName, costs, false, this.canMove, message, false, null);
+        teleport(player, origin, destination, displayName, costs, false, this.options.isAllowMove(), message, false, null);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean message) {
+        teleport(player, origin, destination, displayName, permission, costs, false, this.options.isAllowMove(), message, false, null);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean message, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, costs, false, this.options.isAllowMove(), message, false, callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean message, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, permission, costs, false, this.options.isAllowMove(), message, false, callback);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, costs, false, this.canMove, true, false, callback);
-    }
-
-    public void instantTeleport(Player player, Origin origin, Destination destination, String displayName) {
-        teleport(player, origin, destination, displayName, 0, true, true, true, false, null);
-    }
-
-    public void instantTeleport(Player player, Origin origin, Destination destination, String displayName, boolean message) {
-        teleport(player, origin, destination, displayName, 0, true, true, message, false, null);
+        teleport(player, origin, destination, displayName, costs, false, this.options.isAllowMove(), true, false, callback);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean message, boolean silent, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, costs, skip, this.canMove, message, silent, callback);
+        teleport(player, origin, destination, displayName, costs, skip, this.options.isAllowMove(), message, silent, callback);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, boolean message, boolean silent, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, costs, skip, canMove, message ?
-                costs > 0 ?
+        teleport(player, origin, destination, displayName, null, costs, skip, canMove, message, silent, callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, boolean message, boolean silent, boolean afterEffects, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message, silent, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), afterEffects, callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, boolean message, boolean silent, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message, silent, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, boolean message, boolean silent, SoundData soundData, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message, silent, soundData, true, callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, boolean message, boolean silent, SoundData soundData, boolean afterEffects, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message ?
+                costs > 0 && MoneyAdapterType.getActive() != null && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs) ?
                         Lang.getPrefix() + Lang.get("Money_Paid")
                         : Lang.getPrefix() + Lang.get("Teleported_To")
-                : null, silent, callback);
+                : null, silent, soundData, afterEffects, callback);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, String message, boolean silent, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, costs, skip, this.canMove, message, silent, callback);
+        teleport(player, origin, destination, displayName, costs, skip, this.options.isAllowMove(), message, silent, callback);
     }
 
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, String message, boolean silent, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, costs, skip, canMove, message, silent, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, String message, boolean silent, SoundData teleportSound, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, costs, skip, canMove, message, silent, teleportSound, true, callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, String message, boolean silent, SoundData teleportSound, boolean afterEffects, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, null, costs, skip, canMove, message, silent, teleportSound, true, callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, String message, boolean silent, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, permission, costs, skip, this.options.isAllowMove(), message, silent, callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, String message, boolean silent, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message, silent, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, String message, boolean silent, SoundData teleportSound, Callback<TeleportResult> callback) {
+        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message, silent, teleportSound, true, callback);
+    }
+
+    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, String message, boolean silent, SoundData teleportSound, boolean afterEffects, Callback<TeleportResult> callback) {
+        TeleportOptions options = new TeleportOptions(destination, displayName);
+        options.setOrigin(origin);
+        options.setPermission(permission);
+        options.setCosts(costs);
+        options.setSkip(skip);
+        options.setCanMove(canMove);
+        options.setMessage(message);
+        options.setSilent(silent);
+        options.setTeleportSound(teleportSound);
+        options.setAfterEffects(afterEffects);
+        options.setCallback(callback);
+
+        teleport(player, options);
+    }
+
+    public void teleport(Player player, TeleportOptions options) {
         if(WarpSystem.maintenance && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Maintenance)) {
             player.sendMessage(Lang.getPrefix() + Lang.get("Warning_Maintenance"));
             return;
@@ -133,94 +200,144 @@ public class TeleportManager {
             return;
         }
 
-        if(destination.getType() == DestinationType.GlobalWarp && !WarpSystem.getInstance().isOnBungeeCord()) {
-            if(callback != null) callback.accept(TeleportResult.NOT_ON_BUNGEE_CORD);
+        if((options.getDestination().getType() == DestinationType.GlobalWarp || options.getDestination().getType() == DestinationType.Server) && !WarpSystem.getInstance().isOnBungeeCord()) {
+            if(options.getCallback() != null) options.getCallback().accept(TeleportResult.NOT_ON_BUNGEE_CORD);
             player.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Server_Is_Not_Online"));
             return;
         }
 
-        int seconds = this.seconds;
+        int seconds = this.options.getTeleportDelay();
         Callback<TeleportResult> resultCallback = null;
 
-        if((WarpSystem.OP_CAN_SKIP_DELAY && player.isOp()) || player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) seconds = 0;
+        if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) seconds = 0;
+        String message = options.getFinalMessage(player);
 
         //Call events
-        if(origin != Origin.GlobalWarp || destination.getType() != DestinationType.UNKNOWN) {
-            if(destination.getType() == DestinationType.GlobalWarp) {
-                String name = GlobalWarpManager.getInstance().getCaseCorrectlyName(destination.getId());
-                String server = GlobalWarpManager.getInstance().getGlobalWarps().get(name);
+        if(options.getDestination().getType() == DestinationType.GlobalWarp) {
+            String name = GlobalWarpManager.getInstance().getCaseCorrectlyName(options.getDestination().getId());
+            String server = GlobalWarpManager.getInstance().getGlobalWarps().get(name);
 
-                PlayerGlobalWarpEvent event = new PlayerGlobalWarpEvent(player, new GlobalWarp(name, server), origin, displayName, message, seconds, costs);
-                Bukkit.getPluginManager().callEvent(event);
+            PlayerGlobalWarpEvent event = new PlayerGlobalWarpEvent(player, new GlobalWarp(name, server), options.getOrigin(), options.getDisplayName(), message, seconds, options.getCosts());
+            event.setWaitForTeleport(options.isWaitForTeleport());
+            Bukkit.getPluginManager().callEvent(event);
 
-                if(event.isCancelled()) {
-                    if(callback != null) callback.accept(TeleportResult.CANCELLED_BY_SYSTEM);
-                    if(event.getTeleportResultCallback() != null) event.getTeleportResultCallback().accept(TeleportResult.CANCELLED_BY_SYSTEM);
-                    return;
-                }
-
-                resultCallback = event.getTeleportResultCallback();
-                costs = event.getCosts();
-                seconds = event.getSeconds();
-                displayName = event.getDisplayName();
-                message = event.getMessage();
-            } else if(destination.getType() != DestinationType.GlobalWarpIcon) {
-                Warp.Type type = Warp.Type.GUIWarp;
-                if(origin == Origin.TempWarp) type = Warp.Type.TempWarp;
-                else if(destination.getType() == DestinationType.SimpleWarp) type = Warp.Type.SimpleWarp;
-
-                PlayerWarpEvent event = new PlayerWarpEvent(player, new Warp(destination.buildLocation(), destination.getId(), type), origin, displayName, message, seconds, costs);
-                Bukkit.getPluginManager().callEvent(event);
-
-                if(event.isCancelled()) {
-                    if(callback != null) callback.accept(TeleportResult.CANCELLED_BY_SYSTEM);
-                    if(event.getTeleportResultCallback() != null) event.getTeleportResultCallback().accept(TeleportResult.CANCELLED_BY_SYSTEM);
-                    return;
-                }
-
-                resultCallback = event.getTeleportResultCallback();
-                costs = event.getCosts();
-                seconds = event.getSeconds();
-                displayName = event.getDisplayName();
-                message = event.getMessage();
+            if(event.isCancelled()) {
+                if(options.getCallback() != null) options.getCallback().accept(TeleportResult.CANCELLED_BY_SYSTEM);
+                if(event.getTeleportResultCallback() != null) event.getTeleportResultCallback().accept(TeleportResult.CANCELLED_BY_SYSTEM);
+                return;
             }
+
+            resultCallback = event.getTeleportResultCallback();
+            options.setCosts(event.getCosts());
+            options.setWaitForTeleport(event.isWaitForTeleport());
+            options.setDisplayName(event.getDisplayName());
+            message = event.getMessage();
+            seconds = event.getSeconds();
+        } else {
+            PlayerWarpEvent event = new PlayerWarpEvent(player, new Warp(options.getDestination().buildLocation(), options.getDestination().getId(), options.getDestination().getType()), options.getOrigin(), options.getDisplayName(), message, seconds, options.getCosts());
+            event.setWaitForTeleport(options.isWaitForTeleport());
+            Bukkit.getPluginManager().callEvent(event);
+
+            if(event.isCancelled()) {
+                if(options.getCallback() != null) options.getCallback().accept(TeleportResult.CANCELLED_BY_SYSTEM);
+                if(event.getTeleportResultCallback() != null) event.getTeleportResultCallback().accept(TeleportResult.CANCELLED_BY_SYSTEM);
+                return;
+            }
+
+            resultCallback = event.getTeleportResultCallback();
+            options.setCosts(event.getCosts());
+            options.setWaitForTeleport(event.isWaitForTeleport());
+            options.setDisplayName(event.getDisplayName());
+            message = event.getMessage();
+            seconds = event.getSeconds();
         }
 
+        int finalSeconds = seconds;
         Callback<TeleportResult> finalResultCallback = resultCallback;
-        Teleport teleport = new Teleport(player, destination, displayName, seconds, costs, message, canMove, silent, new Callback<TeleportResult>() {
+        String finalMessage = message;
+        Callback waiting = new Callback() {
             @Override
-            public void accept(TeleportResult object) {
-                if(callback != null) callback.accept(object);
-                if(finalResultCallback != null) finalResultCallback.accept(object);
-            }
-        });
+            public void accept(Object object) {
+                Teleport teleport = new Teleport(player, options.getDestination(), options.getOrigin(), options.getDisplayName(), options.getPermission(), finalSeconds, options.getCosts(), finalMessage, options.isCanMove(), options.isSilent(), options.getTeleportSound(), options.isAfterEffects(), new Callback<TeleportResult>() {
+                    @Override
+                    public void accept(TeleportResult object) {
+                        if(options.getCallback() != null) options.getCallback().accept(object);
+                        if(finalResultCallback != null) finalResultCallback.accept(object);
+                    }
+                });
 
-        SimulatedTeleportResult simulated = teleport.simulate(player);
-        if(simulated.getError() != null) {
-            player.sendMessage(simulated.getError());
-            if(callback != null) callback.accept(simulated.getResult());
-            return;
-        }
-
-        player.closeInventory();
-
-        if(costs > 0) {
-            if(!player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs) && AdapterType.getActive() != null) {
-                double bank = AdapterType.getActive().getMoney(player);
-
-                if(bank < costs) {
-                    if(callback != null) callback.accept(TeleportResult.NOT_ENOUGH_MONEY);
-                    player.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money").replace("%AMOUNT%", (costs % ((int) costs) == 0 ? (int) costs : costs) + ""));
+                SimulatedTeleportResult simulated = teleport.simulate(player);
+                if(simulated.getError() != null) {
+                    player.sendMessage(simulated.getError());
+                    if(options.getCallback() != null) options.getCallback().accept(simulated.getResult());
                     return;
                 }
 
-                this.teleports.add(teleport);
-                AdapterType.getActive().setMoney(player, bank - costs);
-            } else this.teleports.add(teleport);
-        } else this.teleports.add(teleport);
+                if(simulated.getResult() == TeleportResult.NO_ADAPTER) {
+                    if(options.getCallback() != null) options.getCallback().accept(simulated.getResult());
+                    return;
+                }
 
-        if(seconds == 0 || skip) teleport.teleport();
-        else teleport.start();
+                try {
+                    player.closeInventory();
+                } catch(Throwable ignored) {
+                }
+
+                if(options.getFinalCosts(player) > 0) {
+                    double bank = MoneyAdapterType.getActive().getMoney(player);
+
+                    if(bank < options.getCosts()) {
+                        if(options.getCallback() != null) options.getCallback().accept(TeleportResult.NOT_ENOUGH_MONEY);
+                        player.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money").replace("%AMOUNT%", (options.getCosts() % ((int) options.getCosts()) == 0 ? (int) options.getCosts() : options.getCosts()) + ""));
+                        return;
+                    }
+
+                    teleports.add(teleport);
+                    MoneyAdapterType.getActive().withdraw(player, options.getCosts());
+                } else teleports.add(teleport);
+
+                if(finalSeconds == 0 || options.isSkip()) teleport.teleport();
+                else teleport.start();
+            }
+        };
+
+        if(options.isWaitForTeleport() && !options.isCanMove()) {
+            waitWhileWalking(player, waiting);
+        } else waiting.accept(null);
+    }
+
+    public void waitWhileWalking(Player player, Callback callback) {
+        BukkitRunnable runnable = new BukkitRunnable() {
+            int notMoving = 0;
+            int shakeTicks = 0;
+            boolean shake = false;
+            Location location = player.getLocation();
+
+            @Override
+            public void run() {
+                if(location.getWorld() == player.getWorld() && location.distance(player.getLocation()) <= 0.2) {
+                    if(notMoving < 0) notMoving = 0;
+                    notMoving++;
+                } else {
+                    if(notMoving > 0) notMoving = 0;
+                    else notMoving--;
+                    location = player.getLocation();
+                    MessageAPI.sendActionBar(player, "§7» " + (shake ? " " : "") + Lang.get("Teleport_Stop_Moving") + (shake ? " " : "") + " §7«");
+
+                    if(shakeTicks == 3) {
+                        shakeTicks = 0;
+                        shake = !shake;
+                    } else shakeTicks++;
+                }
+
+                if(notMoving == 2) {
+                    this.cancel();
+                    callback.accept(null);
+                }
+            }
+        };
+
+        runnable.runTaskTimer(WarpSystem.getInstance(), 2, 2);
     }
 
     public void cancelTeleport(Player p) {
@@ -247,51 +364,15 @@ public class TeleportManager {
         return getTeleport(p) != null;
     }
 
-    public boolean isCanMove() {
-        return canMove;
-    }
-
-    public boolean isShowMessage() {
-        return showMessage;
-    }
-
-    public void setCanMove(boolean canMove) {
-        this.canMove = canMove;
-    }
-
-    public int getSeconds() {
-        return seconds;
-    }
-
-    public void setSeconds(int seconds) {
-        this.seconds = seconds;
-    }
-
-    public int getParticleId() {
-        return particleId;
-    }
-
-    public Particle getParticle() {
-        return particles.get(particleId);
-    }
-
-    public void setParticleId(int particleId) {
-        this.particleId = particleId;
-    }
-
-    public double getRadius() {
-        return radius;
-    }
-
-    public void setRadius(double radius) {
-        this.radius = radius;
-    }
-
     public List<Particle> getParticles() {
         return particles;
     }
 
     public List<Teleport> getTeleports() {
         return teleports;
+    }
+
+    public GeneralOptions getOptions() {
+        return options;
     }
 }

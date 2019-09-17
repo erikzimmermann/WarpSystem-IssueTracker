@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.features.tempwarps.guis;
 
+import de.codingair.codingapi.player.gui.inventory.gui.GUI;
 import de.codingair.codingapi.player.gui.inventory.gui.GUIListener;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
@@ -13,7 +14,7 @@ import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.codingapi.tools.time.TimeListener;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
 import org.bukkit.entity.Player;
@@ -56,7 +57,7 @@ public class GDelete extends SimpleGUI {
                         TempWarpManager.getManager().delete(warp);
 
                         int costs = getRefund(warp);
-                        AdapterType.getActive().setMoney(p, AdapterType.getActive().getMoney(p) + costs);
+                        MoneyAdapterType.getActive().deposit(p, costs);
 
                         if(costs > 0) {
                             p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Deleted_Refund").replace("%TEMP_WARP%", warp.getName()).replace("%COINS%", costs + ""));
@@ -115,7 +116,7 @@ public class GDelete extends SimpleGUI {
             @Override
             public void onTick(Object item, int timeLeft) {
                 setItem(4, new ItemBuilder(XMaterial.NETHER_STAR).setText(Lang.get("TempWarp_Confirm_Delete").replace("%COINS%", getRefund(warp) + ""), 100).getItem());
-                getPlayer().updateInventory();
+                GUI.updateInventory(getPlayer());
             }
         });
     }

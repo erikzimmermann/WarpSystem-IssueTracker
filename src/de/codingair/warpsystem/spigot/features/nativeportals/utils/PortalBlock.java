@@ -23,21 +23,23 @@ public class PortalBlock {
     }
 
     public void updateBlock(Portal portal) {
+        PortalType type = portal.isEditMode() ? PortalType.EDIT : portal.getType();
+
         if(portal.isVisible()) {
-            if(portal.getType().getBlockMaterial() == null) {
+            if(type.getBlockMaterial() == null) {
                 try {
-                    portal.getType().getBlock().getConstructor(Location.class).newInstance(this.loc).create();
+                    type.getBlock().getConstructor(Location.class).newInstance(this.loc).create();
                 } catch(NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
             } else {
-                if(portal.getType() == PortalType.NETHER) {
-                    new ModernBlock(this.loc.getBlock()).setTypeAndData(portal.getType().getBlockMaterial(), new Orientable(portal.getCachedAxis()));
-                } else if(portal.getType() == PortalType.END) {
-                    if(portal.isVertically() && portal.getType().getVerticalBlockMaterial() != null) {
-                        this.loc.getBlock().setType(portal.getType().getVerticalBlockMaterial(), true);
-                    } else this.loc.getBlock().setType(portal.getType().getBlockMaterial(), false);
-                } else this.loc.getBlock().setType(portal.getType().getBlockMaterial(), false);
+                if(type == PortalType.NETHER) {
+                    new ModernBlock(this.loc.getBlock()).setTypeAndData(type.getBlockMaterial(), new Orientable(portal.getCachedAxis()));
+                } else if(type == PortalType.END) {
+                    if(portal.isVertically() && type.getVerticalBlockMaterial() != null) {
+                        this.loc.getBlock().setType(type.getVerticalBlockMaterial(), true);
+                    } else this.loc.getBlock().setType(type.getBlockMaterial(), false);
+                } else this.loc.getBlock().setType(type.getBlockMaterial(), false);
             }
         } else this.loc.getBlock().setType(Material.AIR, true);
     }

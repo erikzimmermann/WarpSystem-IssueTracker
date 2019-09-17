@@ -1,7 +1,9 @@
 package de.codingair.warpsystem.spigot.base.listeners;
 
+import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.features.FeatureType;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.EventHandler;
@@ -19,30 +21,52 @@ public class CommandListener implements Listener {
         PluginCommand command = Bukkit.getPluginCommand(cmd);
         if(command == null) return;
         if(command.getExecutor() instanceof Plugin && ((Plugin) command.getExecutor()).getName().equals(WarpSystem.getInstance().getName())) {
-            e.setCancelled(true);
-            String feature = getFeatureName(command);
+            FeatureType feature = getFeatureName(command);
+            if(feature == null) return;
 
+            if(feature == FeatureType.TELEPORT_COMMAND) {
+                ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
+                if(file.getConfig().getBoolean("WarpSystem.TeleportCommands." + getCaseSensitive(command), true)) return;
+            } else if(feature.isActive()) return;
+
+            e.setCancelled(true);
             if(e.getPlayer().hasPermission(WarpSystem.PERMISSION_NOTIFY) && feature != null) {
-                if(feature.equalsIgnoreCase("GlobalWarps")) {
-                    e.getPlayer().sendMessage(new String[] {Lang.getPrefix() + "§7You have to §cinstall§7 this plugin §con your BungeeCord", "§7and enable '§4§l" + feature + "§7' in the Config.yml to use this command!"});
+                if(feature == FeatureType.GLOBAL_WARPS) {
+                    e.getPlayer().sendMessage(new String[] {Lang.getPrefix() + "§7You have to §cinstall§7 this plugin §con your BungeeCord", "§7and enable '§4§l" + feature.getName() + "§7' in the Config.yml to use this command!"});
                 } else {
-                    e.getPlayer().sendMessage(Lang.getPrefix() + "§7You have to enable '§4§l" + feature + "§7' in the Config.yml to use this command!");
+                    e.getPlayer().sendMessage(Lang.getPrefix() + "§7You have to enable '§4§l" + feature.getName() + "§7' in the Config.yml to use this command!");
                 }
             } else e.getPlayer().sendMessage(org.spigotmc.SpigotConfig.unknownCommandMessage);
         }
     }
 
-    private String getFeatureName(PluginCommand command) {
+    private FeatureType getFeatureName(PluginCommand command) {
         String name = command.getName().toLowerCase();
-        if(name.startsWith("warp")) return "Warps";
-        else if(name.startsWith("portal")) return "Portals";
-        else if(name.startsWith("globalwarp")) return "GlobalWarps";
-        else if(name.startsWith("nativeportal")) return "NativePortals";
-        else if(name.startsWith("tempwarp")) return "TempWarps";
-        else if(name.startsWith("setwarp")) return "Warps";
-        else if(name.startsWith("deletewarp")) return "Warps";
-        else if(name.startsWith("editwarp")) return "Warps";
+        if(name.startsWith("warp")) return FeatureType.WARPS;
+        else if(name.startsWith("portal")) return FeatureType.PORTALS;
+        else if(name.startsWith("globalwarp")) return FeatureType.GLOBAL_WARPS;
+        else if(name.startsWith("nativeportal")) return FeatureType.NATIVE_PORTALS;
+        else if(name.startsWith("tempwarp")) return FeatureType.TEMP_WARPS;
+        else if(name.startsWith("setwarp")) return FeatureType.WARPS;
+        else if(name.startsWith("deletewarp")) return FeatureType.WARPS;
+        else if(name.startsWith("editwarp")) return FeatureType.WARPS;
+        else if(name.startsWith("teleport")) return FeatureType.TELEPORT_COMMAND;
+        else if(name.startsWith("tpa")) return FeatureType.TELEPORT_COMMAND;
+        else if(name.startsWith("tpall")) return FeatureType.TELEPORT_COMMAND;
+        else if(name.startsWith("tphere")) return FeatureType.TELEPORT_COMMAND;
+        else if(name.startsWith("tptoggle")) return FeatureType.TELEPORT_COMMAND;
+        else if(name.startsWith("tpatoggle")) return FeatureType.TELEPORT_COMMAND;
         else return null;
+    }
+
+    private String getCaseSensitive(PluginCommand command) {
+        String name = command.getName().toLowerCase();
+        if(name.startsWith("teleport")) return "Tp";
+        else if(name.startsWith("tpa")) return "Tpa";
+        else if(name.startsWith("tpall")) return "TpAll";
+        else if(name.startsWith("tphere")) return "TpHere";
+        else if(name.startsWith("tptoggle")) return "TpToggle";
+        else /*if(name.startsWith("tpatoggle"))*/ return "TpaToggle";
     }
 
 }

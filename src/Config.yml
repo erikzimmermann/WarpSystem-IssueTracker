@@ -1,8 +1,9 @@
 ~Config
 WarpSystem:
+  Language: ENG
   Maintenance: false
   Admin:
-    Permission: 'WarpSystem.Admin'
+    Permission: WarpSystem.Admin
 
   GUI:
     # false: The WarpGUI is identical on the entire server in all worlds
@@ -12,50 +13,35 @@ WarpSystem:
       # The number must be between inclusive 9 and inclusive 54 and must be divisible by 9.
       Size: 54
       Title:
-        Standard: '&c&l&nWarps&r'
-        In_Category: '&c&l&nWarps&r &c@%CATEGORY%'
+        Standard: '&c&nWarps&r'
+        In_Category: '&c&nWarps&r &c@%CATEGORY%'
     User:
       # The number must be between inclusive 9 and inclusive 54 and must be divisible by 9.
       Size: 54
       Title:
-        Standard: '&c&l&nWarps&r'
-        In_Category: '&c&l&nWarps&r &c@%CATEGORY%'
+        Standard: '&c&nWarps&r'
+        In_Category: '&c&nWarps&r &c@%CATEGORY%'
+
+  Economy:
+    #Priority list for economy systems
+    priority:
+    - Essentials
+    - Vault
 
   Teleport:
+    Chunk_Pre_Loading:
+      # If enabled, only players with the "WarpSystem.Teleport.ChunkPreLoading" will preload chunks!
+      Limit_by_Permission: false
+      Enabled: true
+      Chunk_Radius: 1
     Animation_After_Teleport:
       Enabled: true
-    Op_Can_Skip_Delay: false
-    Delay: 5
-    # Animations:
-    # 0  - FIREWORKS_SPARK
-    # 1  - SUSPENDED_DEPTH
-    # 2  - CRIT
-    # 3  - CRIT_MAGIC
-    # 4  - SMOKE_NORMAL
-    # 5  - SMOKE_LARGE
-    # 6  - SPELL
-    # 7  - SPELL_INSTANT
-    # 8  - SPELL_MOB
-    # 9  - SPELL_WITCH
-    # 10 - DRIP_WATER
-    # 11 - DRIP_LAVA
-    # 12 - VILLAGER_ANGRY
-    # 13 - VILLAGER_HAPPY
-    # 14 - TOWN_AURA
-    # 15 - NOTE
-    # 16 - ENCHANTMENT_TABLE
-    # 17 - FLAME
-    # 18 - CLOUD
-    # 19 - REDSTONE
-    # 20 - SNOW_SHOVEL
-    # 21 - HEART
-    # 22 - PORTAL
-    Animation: 17
-    Allow_Move: false
+    Delay: 3
+    Allow_Move: true
 
   Send:
     Teleport_Message:
-      Warps: true
+      WarpGUI: true
       SimpleWarps: true
       GlobalWarps: true
       NativePortals: true
@@ -74,64 +60,172 @@ WarpSystem:
     GlobalWarps: true
     Shortcuts: true
     TempWarps: true
-    #Available commands: '/warp <warp>' or '/globalwarp <warp>'
-    #Activates when a player is within 5 blocks of a CommandBlock and the CommandBlock is active
+    # Available commands: '/warp <warp>' or '/globalwarp <warp>'
+    # Required for '/tp' command for CommandBlocks (CommandBlocks with tp commands inside don't work, if you turn this to false)
     CommandBlocks: true
+    RandomTeleport: true
+    TeleportCommand: true
+
+  # 'TeleportCommand' in 'Functions' (above) have to be toggled to true as well, if you want to use this feature.
+  TeleportCommands:
+    Tp: true
+    TpToggle: true
+    Tpa: true
+    TpHere: true
+    TpaToggle: true
+    TpAll: true
+    # For Tpa, TpHere & TpAll
+    TeleportRequests:
+      # In seconds
+      ExpireDelay: 30
+      #true: Players on this server can receive/send teleport requests from/to other servers. |false: Players can only send TeleportRequests to players on this server
+      BungeeCord: true
+      #true: The teleport request SENDER will be notified about every accepted or denied teleport request. |false: The teleport request SENDER won't get any accept or deny messages
+      TpAll: true
+
+  EffectPortals:
+    # Max distance between particle and player
+    ParticleDistance: 70.0
+
+  SimpleWarps:
+    # Adds on every created warp the standard permission: 'WarpSystem.Warps.<WarpName>'
+    Add_Permission_On_Creation: false
+
+  Commands:
+    Warp:
+      # true: '/warp' opens the WarpGUI
+      # false: '/warp <warp>' teleports you to warps
+      GUI: false
 
   TempWarps:
-    #Permission to set the available amount of TempWarps: "WarpSystem.TempWarps.2" (Example for a maximum of 2 TempWarps)
+    # Permission to set the available amount of TempWarps: "WarpSystem.TempWarps.2" (Example for a maximum of 2 TempWarps)
     Time:
-      #sec, min, hour, day
+      # sec, min, hour, day
       Interval: min
-      #Step to increase/decrease the duration in the gui
+      # Step to increase/decrease the duration in the gui
       DurationSteps: 5
       Min_Time: 5
-      Max_Time: 1440
+      Max_Time: 43200
     # When a TempWarp expires, then it's inactive. (When "Time_After_Expiration" is expired too, the TempWarp will be deleted.)
     Inactive:
       # Time in seconds after an expiration. After that time, the TempWarp will be deleted.
-      Time_After_Expiration: 60
+      Time_After_Expiration: 86400
       # Time in seconds to remind a player, if a TempWarp is inactive
       Reminds:
+      - 43200
+      - 21600
+      - 3600
+      - 1800
+      - 900
+      - 600
+      - 300
+      - 180
+      - 60
       - 30
       - 10
       - 5
     Name:
-      Edit_Costs: 50
+      Edit_Costs: 400
     Refund: true
     Message:
       Min_character_length: 5
       Max_character_length: 50
       Refund_by_removing_message: 0
-      Edit_Costs: 50
+      Edit_Costs: 200
     Custom_Teleport_Costs:
       Max_Costs: 500
-      #Step to increase/decrease costs in gui
+      # Step to increase/decrease costs in gui
       Cost_Steps: 50
-      #Percent of custom TeleportCosts
+      # Percent of custom TeleportCosts
       TeleportCosts: 50
     Costs:
-      CostsPerInterval: 5
-      PublicCosts: 5
-      MessageCosts: 5
+      CostsPerInterval: 1
+      PublicCosts: 100
+      MessageCosts: 200
+    Support:
+      # If enabled, the player can't create TempWarps in regions, where he cannot build
+      ProtectedRegions: false
+    # If enabled, players won't be able to buy TempWarps. The only way to create TempWarps then is with keys (1x Key = 1x TempWarp). Create templates and give your players keys with the "/twarps keys" command!
+    Keys: true
+    # Turn this to true, if you want, that all TempWarps should be public when you create them. The state can always be changed.
+    Public_as_create_state: true
+    List_Info:
+      # The varaible names are case sensitive!
+      # Available variables: %PLAYER%, %ONLINE_TIME%, %TELEPORT_COSTS%, %TIME_BEFORE_DELETE%, %END_TIME%, %NAME%, %ID%
+      # TeleportCosts won't be displayed, if the costs = 0. Furthermore, you cannot use "deleted in" will only be displayed if the tempwarp is expired.
+      Own_Warp_Info:
+      - '&8Owner: %PLAYER%'
+      - '&8Online: %ONLINE_TIME%'
+      - '&8Coins: %TELEPORT_COSTS% Coin(s)'
+      - ''
+      - '&cdeleted in &n%TIME_BEFORE_DELETE%'
+      - '&8Ends in: %END_TIME%'
+      Other_Warp_Info:
+      - '&8Owner: %PLAYER%'
+      - '&8Online: %ONLINE_TIME%'
+      - '&8Coins: %TELEPORT_COSTS% Coin(s)'
 
-  GlobalWarps:
-    Use_Warps_Of_WarpsGUI: false
-
-  Commands:
-    Warp:
-      #true: '/warp' opens the WarpGUI
-      #false: '/warp <warp>' teleports you to warps
-      GUI: false
-
-  # true: block all commands of other plugin, which have this command
-  # false: ignore
-  Dominate_In_Commands:
-    Highest_Priority:
-      Warp: true
-      Warps: true
-      WarpSystem: true
-      Portal: true
+  # The standard and max amount of random teleports will be configured with permissions:
+  # "warpsystem.randomteleporters.free.1" » This permissions means, that the player with that permission has a standard amount of 1 free random teleports
+  # "warpsystem.randomteleporters.max.2" » This permissions means, that the player with that permission has a max amount of 2 random teleports, so he could buy one, if it's enabled
+  RandomTeleport:
+    # Costs for one extra teleport (buyable with commands)
+    Buyable:
+      Enabled: true
+      Costs: 500
+    Range:
+      Min: 1000
+      Max: 10000
+    Support:
+      # If enabled, the player will be teleported to a random position, which is not in a protected region
+      ProtectedRegions: true
+      # If enabled, the player will be teleported to a random position, which is inside of the WorldBorder
+      WorldBorder: true
+      # If enabled, the player will be teleported to a random position, in one of the listed biomes
+      Biome:
+        Enabled: false
+        # Names can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html
+        BiomeList:
+        - OCEAN
+        - PLAINS
+        - DESERT
+        - EXTREME_HILLS
+        - FOREST
+        - TAIGA
+        - SWAMPLAND
+        - RIVER
+        - HELL
+        - SKY
+        - FROZEN_OCEAN
+        - FROZEN_RIVER
+        - ICE_FLATS
+        - ICE_MOUNTAINS
+        - MUSHROOM_ISLAND
+        - MUSHROOM_ISLAND_SHORE
+        - BEACHES
+        - DESERT_HILLS
+        - FOREST_HILLS
+        - TAIGA_HILLS
+        - SMALLER_EXTREME_HILLS
+        - JUNGLE
+        - JUNGLE_HILLS
+        - JUNGLE_EDGE
+        - DEEP_OCEAN
+        - STONE_BEACH
+        - COLD_BEACH
+        - BIRCH_FOREST
+        - BIRCH_FOREST_HILLS
+        - ROOFED_FOREST
+        - TAIGA_COLD
+        - TAIGA_COLD_HILLS
+        - REDWOOD_TAIGA
+        - REDWOOD_TAIGA_HILLS
+        - EXTREME_HILLS_WITH_TREES
+        - SAVANNA
+        - SAVANNA_ROCK
+        - MESA
+        - MESA_ROCK
+        - MESA_CLEAR_ROCK
 
 Do_Not_Edit:
-  Last_Version: 1.0
+  Last_Version: 4.0.7

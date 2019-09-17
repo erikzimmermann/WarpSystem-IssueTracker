@@ -1,23 +1,31 @@
 package de.codingair.warpsystem.spigot.features.shortcuts.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
+import de.codingair.codingapi.server.Version;
+import de.codingair.codingapi.tools.JSON.JSONObject;
+import de.codingair.codingapi.tools.JSON.JSONParser;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.shortcuts.commands.CShortcuts;
+import de.codingair.warpsystem.spigot.features.shortcuts.commands.ShortcutExecutor;
 import de.codingair.warpsystem.spigot.features.shortcuts.listeners.ShortcutListener;
 import de.codingair.warpsystem.spigot.features.shortcuts.listeners.ShortcutPacketListener;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ShortcutManager implements Manager, BungeeFeature {
     private List<Shortcut> shortcuts = new ArrayList<>();
+    private HashMap<Shortcut, ShortcutExecutor> executors = new HashMap<>();
     private ShortcutPacketListener listener;
 
     @Override
@@ -34,15 +42,47 @@ public class ShortcutManager implements Manager, BungeeFeature {
         WarpSystem.log("  > Loading Shortcuts");
 
         for(String key : config.getKeys(false)) {
+            if(key.equals("Shortcuts")) continue;
+            String dest = config.getString(key + ".Destination");
+
+            //Old
             String warpId = config.getString(key + ".WarpId", null);
             String globalWarp = config.getString(key + ".GlobalWarp", null);
 
-            Warp warp = warpId == null ? null : IconManager.getInstance().getWarp(warpId);
+            Destination destination;
+            if(dest != null) {
+                destination = new Destination(dest);
+            } else if(warpId != null) {
+                destination = new Destination(warpId, DestinationType.SimpleWarp);
+            } else if(globalWarp != null) {
+                destination = new Destination(globalWarp, DestinationType.GlobalWarp);
+            } else continue;
 
-            this.shortcuts.add(warp == null ? new Shortcut(globalWarp, key) : new Shortcut(warp, key));
+            this.shortcuts.add(new Shortcut(destination, key.replace(" ", "_")));
         }
 
-        WarpSystem.log("     ...got " + this.shortcuts.size() + " Shortcut(s)");
+        List<String> data = config.getStringList("Shortcuts");
+        if(data != null) {
+            for(String datum : data) {
+                try {
+                    Shortcut s = new Shortcut();
+                    JSONObject json = (JSONObject) new JSONParser().parse(datum);
+                    s.read(json);
+                    s.setDisplayName(s.getDisplayName().replace(" ", "_"));
+                    this.shortcuts.add(s);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        for(Shortcut s : this.shortcuts) {
+            //create Command
+            reloadCommand(s);
+        }
+
+        new CShortcuts().register(WarpSystem.getInstance());
+        WarpSystem.log("    ...got " + this.shortcuts.size() + " Shortcut(s)");
 
         Bukkit.getPluginManager().registerEvents(new ShortcutListener(), WarpSystem.getInstance());
         return true;
@@ -57,14 +97,38 @@ public class ShortcutManager implements Manager, BungeeFeature {
 
         for(String key : config.getKeys(false)) config.set(key, null);
 
+        List<String> data = new ArrayList<>();
         for(Shortcut sc : this.shortcuts) {
-            config.set(sc.getDisplayName() + ".WarpId", sc.getWarp() == null ? null : ((Warp) sc.getWarp()).getIdentifier());
-            config.set(sc.getDisplayName() + ".GlobalWarp", sc.getGlobalWarp());
+            JSONObject json = new JSONObject();
+            sc.write(json);
+            data.add(json.toJSONString());
         }
 
-        if(!saver) WarpSystem.log("    ...saved " + config.getKeys(false).size() + " Shortcut(s)");
+        config.set("Shortcuts", data);
+
+        if(!saver) WarpSystem.log("    ...saved " + data.size() + " Shortcut(s)");
 
         file.saveConfig();
+    }
+
+    public void reloadCommand(Shortcut s) {
+        reloadCommand(s, false);
+    }
+
+    public void reloadCommand(Shortcut s, boolean force) {
+        ShortcutExecutor executor = executors.remove(s);
+        boolean reload;
+        if(reload = (executor != null)) executor.unregister(WarpSystem.getInstance());
+
+        executor = new ShortcutExecutor(s);
+        executors.put(s, executor);
+        executor.register(WarpSystem.getInstance());
+
+        if((reload || force) && Version.getVersion().isBiggerThan(Version.v1_12)) {
+            for(Player player : Bukkit.getOnlinePlayers()) {
+                player.updateCommands();
+            }
+        }
     }
 
     @Override
@@ -86,8 +150,10 @@ public class ShortcutManager implements Manager, BungeeFeature {
     }
 
     public Shortcut getShortcut(String displayName) {
+        if(displayName == null) return null;
+
         for(Shortcut shortcut : this.shortcuts) {
-            if(shortcut.getDisplayName().equalsIgnoreCase(displayName)) return shortcut;
+            if(displayName.equalsIgnoreCase(shortcut.getDisplayName())) return shortcut;
         }
 
         return null;

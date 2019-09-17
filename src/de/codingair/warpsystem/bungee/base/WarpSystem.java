@@ -3,6 +3,7 @@ package de.codingair.warpsystem.bungee.base;
 import de.codingair.codingapi.bungeecord.files.FileManager;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
+import de.codingair.warpsystem.bungee.base.language.Lang;
 import de.codingair.warpsystem.bungee.base.listeners.MainListener;
 import de.codingair.warpsystem.bungee.base.managers.DataManager;
 import de.codingair.warpsystem.bungee.base.managers.ServerManager;
@@ -19,6 +20,14 @@ import java.nio.channels.FileChannel;
 import java.util.concurrent.TimeUnit;
 
 public class WarpSystem extends Plugin {
+    public static final String PERMISSION_USE_TELEPORT_COMMAND = "WarpSystem.Use.TeleportCommand";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TP = PERMISSION_USE_TELEPORT_COMMAND + ".Tp";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TP_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpToggle";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA = PERMISSION_USE_TELEPORT_COMMAND + ".Tpa";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaToggle";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPHERE = PERMISSION_USE_TELEPORT_COMMAND + ".TpHere";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpAll";
+
     private static WarpSystem instance;
     private BungeeDataHandler dataHandler = new BungeeDataHandler(this);
     private FileManager fileManager = new FileManager(this);
@@ -39,6 +48,14 @@ public class WarpSystem extends Plugin {
         log("Status:");
         log(" ");
         log("Initialize SpigotConnector");
+
+        this.fileManager.loadFile("Config", "/", "bungee/");
+        try {
+            Lang.initPreDefinedLanguages(this);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
         this.dataHandler.onEnable();
         MainListener listener = new MainListener();
         BungeeCord.getInstance().getPluginManager().registerListener(this, listener);

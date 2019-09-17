@@ -17,7 +17,7 @@ public class LocationAdapter implements DestinationAdapter {
     }
 
     @Override
-    public boolean teleport(Player player, String id, String displayName, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
+    public boolean teleport(Player player, String id, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
         if(this.location == null) {
             player.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
             if(callback != null) callback.accept(TeleportResult.DESTINATION_DOES_NOT_EXIST);
@@ -41,7 +41,7 @@ public class LocationAdapter implements DestinationAdapter {
     }
 
     @Override
-    public SimulatedTeleportResult simulate(Player player, String id) {
+    public SimulatedTeleportResult simulate(Player player, String id, boolean checkPermission) {
         if(this.location == null) {
             return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"), TeleportResult.DESTINATION_DOES_NOT_EXIST);
         }

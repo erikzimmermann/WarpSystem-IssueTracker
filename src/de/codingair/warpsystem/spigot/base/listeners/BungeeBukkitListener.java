@@ -1,25 +1,33 @@
 package de.codingair.warpsystem.spigot.base.listeners;
 
+import de.codingair.codingapi.tools.time.TimeMap;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.transfer.packets.bungee.InitialPacket;
+import de.codingair.warpsystem.transfer.packets.bungee.PrepareLoginMessagePacket;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
 
+import java.util.HashMap;
 import java.util.logging.Level;
 
 public class BungeeBukkitListener implements PacketListener, Listener {
     private String[] notice = null;
+    private TimeMap<String, String> loginMessage = new TimeMap<>();
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
+        String message = loginMessage.remove(e.getPlayer());
+        if(message != null) e.getPlayer().sendMessage(message);
+
         Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
             if(notice != null && (e.getPlayer().hasPermission(WarpSystem.PERMISSION_NOTIFY) || e.getPlayer().isOp())) e.getPlayer().sendMessage(notice);
         }, 20 * 4L);
@@ -42,6 +50,7 @@ public class BungeeBukkitListener implements PacketListener, Listener {
                         WarpSystem.getInstance().getLogger().log(Level.INFO, "Found a valid DataCenter > Init BungeeFeatures");
                     }
 
+                    this.notice = null;
                     WarpSystem.getInstance().setOnBungeeCord(true);
                 } else if(WarpSystem.getInstance().getBungeePluginVersion() == null || WarpSystem.getInstance().getBungeePluginVersion().equals(WarpSystem.getInstance().getDescription().getVersion())) {
                     this.notice = new String[] {
@@ -57,6 +66,16 @@ public class BungeeBukkitListener implements PacketListener, Listener {
                 }
 
                 WarpSystem.getInstance().setBungeePluginVersion(version);
+                break;
+            }
+
+            case PrepareLoginMessagePacket: {
+                PrepareLoginMessagePacket p = (PrepareLoginMessagePacket) packet;
+
+                if(Bukkit.getPlayer(p.getPlayer()) != null) {
+                    Bukkit.getPlayer(p.getPlayer()).sendMessage(p.getMessage());
+                } else loginMessage.put(p.getPlayer(), p.getMessage(), 10);
+                break;
             }
         }
     }

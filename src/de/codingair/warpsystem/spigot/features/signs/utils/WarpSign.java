@@ -2,22 +2,36 @@ package de.codingair.warpsystem.spigot.features.signs.utils;
 
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
+import de.codingair.codingapi.tools.JSON.JSONObject;
 
-public class WarpSign {
+import java.util.Objects;
+
+public class WarpSign extends FeatureObject {
     private Location location;
-    private Destination destination;
+
+    public WarpSign() {
+    }
+
+    public WarpSign(WarpSign sign) {
+        super(sign);
+        this.location = sign.location;
+    }
 
     public WarpSign(Location location, Destination destination) {
+        this(location, destination, null);
+    }
+
+    public WarpSign(Location location, Destination destination, String permission) {
+        super(permission, false, new WarpAction(destination));
         this.location = location;
-        this.destination = destination;
     }
 
     public Location getLocation() {
@@ -25,39 +39,73 @@ public class WarpSign {
     }
 
     public Destination getDestination() {
-        return destination;
+        return hasAction(Action.WARP) ? ((WarpAction) getAction(Action.WARP)).getValue() : null;
     }
 
-    public String toJSONString() {
-        JSONObject json = new JSONObject();
+    @Override
+    public boolean read(JSONObject json) throws Exception {
+        super.read(json);
 
-        json.put("Loc", this.location.toJSONString(0));
-        json.put("Destination", this.destination.toJSONString());
-
-        return json.toJSONString();
-    }
-
-    public static WarpSign fromJSONString(String s) {
-        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
-
-        try {
-            JSONObject json = (JSONObject) new JSONParser().parse(s);
-
-            Location loc = Location.getByJSONString((String) json.get("Loc"));
-            Destination destination;
-            if(json.get("Destination") != null) {
-                //New pattern
-                 destination = new Destination((String) json.get("Destination"));
-            } else if(json.get("Warp") != null) {
-                //Old pattern
-                Warp warp = manager.getWarp((String) json.get("Warp"), json.get("Category") == null ? null : manager.getCategory((String) json.get("Category")));
-                destination = new Destination(warp.getIdentifier(), DestinationType.WarpIcon);
-            } else throw new IllegalStateException("Couldn't find a pattern to recreate a WarpSign!");
-
-            return new WarpSign(loc, destination);
-        } catch(ParseException e) {
-            e.printStackTrace();
-            return null;
+        if(json.get("Loc") != null) {
+            this.location = Location.getByJSONString((String) json.get("Loc"));
+        } else if(json.get("location") != null) {
+            this.location = Location.getByJSONString((String) json.get("location"));
         }
+
+        if(json.get("Destination") != null) {
+            //New pattern
+            Destination destination = new Destination((String) json.get("Destination"));
+            addAction(new WarpAction(destination));
+        } else if(json.get("Warp") != null) {
+            //Old pattern
+            Icon warp = ((IconManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS)).getIcon((String) json.get("Warp"));
+            if(warp != null) {
+                Destination destination = new Destination(warp.getName(), DestinationType.SimpleWarp);
+                addAction(new WarpAction(destination));
+            }
+        }
+
+        if(json.get("Permissions") != null) {
+            setPermission((String) json.get("Permissions"));
+        }
+
+        return true;
+    }
+
+    @Override
+    public void write(JSONObject json) {
+        super.write(json);
+
+        json.put("location", this.location.toJSONString(0));
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.location = null;
+    }
+
+    @Override
+    public void apply(FeatureObject object) {
+        super.apply(object);
+
+        WarpSign sign = (WarpSign) object;
+        this.location = sign.location;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o) &&
+                o instanceof WarpSign &&
+                Objects.equals(this.location, ((WarpSign) o).location);
+    }
+
+    public void setDestination(Destination destination) {
+        if(destination == null) removeAction(Action.WARP);
+        else addAction(new WarpAction(destination));
+    }
+
+    public WarpSign clone() {
+        return new WarpSign(this);
     }
 }

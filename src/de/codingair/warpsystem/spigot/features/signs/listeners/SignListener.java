@@ -1,21 +1,19 @@
 package de.codingair.warpsystem.spigot.features.signs.listeners;
 
-import de.codingair.codingapi.player.gui.sign.SignGUI;
-import de.codingair.codingapi.player.gui.sign.SignTools;
-import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.API;
 import de.codingair.codingapi.tools.Location;
+import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.signs.guis.WarpSignGUI;
 import de.codingair.warpsystem.spigot.features.signs.managers.SignManager;
 import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
-import de.codingair.warpsystem.spigot.features.utils.guis.choosedestination.ChooseDestinationGUI;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -37,30 +35,19 @@ public class SignListener implements Listener {
             SignManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIGNS);
             WarpSign sign = manager.getByLocation(s.getLocation());
             if(sign != null) {
-                if(e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_WARP_SIGNS) && e.getPlayer().getGameMode().equals(GameMode.CREATIVE) && e.getPlayer().getItemInHand().getType().equals(Material.SIGN)) {
+                if(e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_WARP_SIGNS) && e.getPlayer().getGameMode().equals(GameMode.CREATIVE) && e.getPlayer().getItemInHand().getType().name().toLowerCase().contains("sign")) {
                     String[] lines = s.getLines();
                     for(int i = 0; i < 4; i++) {
                         lines[i] = lines[i].replace("§", "&");
+                        s.setLine(i, lines[i]);
                     }
 
-                    SignTools.updateSign(s, lines);
+                    s.update(true, true);
 
-                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> new SignGUI(e.getPlayer(), s, WarpSystem.getInstance()) {
-                        @Override
-                        public void onSignChangeEvent(String[] lines) {
-                            Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> {
-                                for(int i = 0; i < 4; i++) {
-                                    lines[i] = ChatColor.translateAlternateColorCodes('&', lines[i]);
-                                }
+                    WarpSign clone = sign.clone();
+                    if(clone.getDestination() == null) clone.setDestination(new Destination());
 
-                                SignTools.updateSign(s, lines);
-                            });
-                            close();
-
-                            e.getPlayer().sendMessage(Lang.getPrefix() + "§7" + Lang.get("WarpSign_Edited"));
-                        }
-                    }.open(), 2L);
-
+                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> new WarpSignGUI(e.getPlayer(), sign, clone).open(), 1L);
                     return;
                 }
 
@@ -69,8 +56,9 @@ public class SignListener implements Listener {
                     return;
                 }
 
-                WarpSystem.getInstance().getTeleportManager().teleport(e.getPlayer(), Origin.WarpSign, sign.getDestination(), sign.getDestination().getId(), sign.getDestination().getCosts(),
-                        WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.WarpSigns", true));
+                if(sign.getDestination() == null || sign.getDestination().getId() == null) return;
+
+                sign.perform(e.getPlayer());
             }
         }
     }
@@ -89,6 +77,11 @@ public class SignListener implements Listener {
                 e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                 e.setCancelled(true);
             } else {
+                for(WarpSignGUI gui : API.getRemovables(WarpSignGUI.class)) {
+                    gui.close();
+                    gui.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("WarpSign_Removed"));
+                }
+
                 manager.getWarpSigns().remove(sign);
                 e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("WarpSign_Removed"));
             }
@@ -98,43 +91,11 @@ public class SignListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlace(SignChangeEvent e) {
-        SignManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIGNS);
         if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_WARP_SIGNS) || !e.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
 
         if(e.getLine(0).equalsIgnoreCase("[warps]")) {
-            e.getPlayer().sendMessage(" ");
-            e.getPlayer().sendMessage(Lang.getPrefix() + "§7" + Lang.get("WarpSign_Choose_Warp"));
-            e.getPlayer().sendMessage(" ");
-
-            new ChooseDestinationGUI(e.getPlayer(), Lang.get("WarpSign_Choose_Warp_GUI"), new Callback<Destination>() {
-                @Override
-                public void accept(Destination destination) {
-                    Sign s = (Sign) e.getBlock().getState();
-                    SignTools.updateSign(s, new String[] {"", "§4§n" + Lang.get("Description"), "", ""});
-
-                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                        new SignGUI(e.getPlayer(), s, WarpSystem.getInstance()) {
-                            @Override
-                            public void onSignChangeEvent(String[] lines) {
-
-                                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                                    for(int i = 0; i < 4; i++) {
-                                        lines[i] = ChatColor.translateAlternateColorCodes('&', lines[i]);
-                                    }
-
-                                    SignTools.updateSign(s, lines);
-                                }, 2L);
-                                close();
-
-                                e.getPlayer().sendMessage(Lang.getPrefix() + "§7" + Lang.get("WarpSign_Finish"));
-                            }
-                        }.open();
-
-                        WarpSign sign = new WarpSign(Location.getByLocation(s.getLocation()), destination);
-                        manager.getWarpSigns().add(sign);
-                    }, 2L);
-                }
-            }).open();
+            WarpSign sign = new WarpSign(Location.getByLocation(e.getBlock().getLocation()), new Destination());
+            Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> new WarpSignGUI(e.getPlayer(), sign, sign.clone()).open(), 1L);
         }
     }
 

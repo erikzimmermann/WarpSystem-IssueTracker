@@ -7,8 +7,9 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class TeleportManager {
@@ -42,17 +43,7 @@ public class TeleportManager {
         }
 
         int costs = warp.getTeleportCosts();
-        boolean isOwner;
-
-        if(!(isOwner = warp.isOwner(player))) {
-            if(AdapterType.getActive().getMoney(player) < costs) {
-                //not enough money
-                player.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money").replace("%AMOUNT%", warp.getTeleportCosts() + ""));
-                return false;
-            }
-
-            AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) - costs);
-        }
+        boolean isOwner = warp.isOwner(player);
 
         Callback<TeleportResult> callback = new Callback<TeleportResult>() {
             @Override
@@ -60,17 +51,15 @@ public class TeleportManager {
                 if(teleported == TeleportResult.TELEPORTED) {
                     Player owner = warp.getOnlineOwner();
                     if(owner == null) warp.setInactiveSales(warp.getInactiveSales() + costs);
-                    else AdapterType.getActive().setMoney(owner, AdapterType.getActive().getMoney(owner) + costs);
-                } else {
-                    AdapterType.getActive().setMoney(player, AdapterType.getActive().getMoney(player) + costs);
+                    else MoneyAdapterType.getActive().deposit(owner, costs);
                 }
             }
         };
 
         if(warp.getMessage() != null) {
-            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TempWarp, new Destination(new LocationAdapter(warp.getLocation())), warp.getName(), warp.getTeleportCosts(), false, warp.getMessage(), false, isOwner ? null : callback);
+            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TempWarp, new Destination(new LocationAdapter(warp.getLocation())), warp.getName(), isOwner ? 0 : warp.getTeleportCosts(), false, ChatColor.translateAlternateColorCodes('&', warp.getMessage()), false, isOwner ? null : callback);
         } else {
-            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TempWarp, new Destination(new LocationAdapter(warp.getLocation())), warp.getName(), warp.getTeleportCosts(), false,
+            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TempWarp, new Destination(new LocationAdapter(warp.getLocation())), warp.getName(), isOwner ? 0 : warp.getTeleportCosts(), false,
                     WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.TempWarps", true), false, isOwner ? null : callback);
         }
         return true;

@@ -20,6 +20,7 @@ public class PlayerGlobalWarpEvent extends PlayerEvent implements Cancellable {
     private String message;
     private int seconds;
     private double costs;
+    private boolean waitForTeleport; //Waiting for walking teleports
     private Callback<TeleportResult> teleportResultCallback;
 
     public PlayerGlobalWarpEvent(Player player, GlobalWarp warp, Origin origin, String displayName, String message, int seconds, double costs) {
@@ -97,5 +98,13 @@ public class PlayerGlobalWarpEvent extends PlayerEvent implements Cancellable {
 
     public void setTeleportResultCallback(Callback<TeleportResult> teleportResultCallback) {
         this.teleportResultCallback = teleportResultCallback;
+    }
+
+    public boolean isWaitForTeleport() {
+        return waitForTeleport;
+    }
+
+    public void setWaitForTeleport(boolean waitForTeleport) {
+        this.waitForTeleport = waitForTeleport;
     }
 }

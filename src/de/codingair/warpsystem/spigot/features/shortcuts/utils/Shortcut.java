@@ -1,83 +1,73 @@
 package de.codingair.warpsystem.spigot.features.shortcuts.utils;
 
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
-import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionIcon;
-import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
-import org.bukkit.entity.Player;
+import de.codingair.codingapi.tools.JSON.JSONObject;
 
-public class Shortcut {
-    private ActionIcon warp;
-    private String globalWarp;
+public class Shortcut extends FeatureObject {
     private String displayName;
 
-    public Shortcut(Warp warp, String displayName) {
-        this.warp = warp;
+    public Shortcut() {
+    }
+
+    public Shortcut(Shortcut shortcut) {
+        super(shortcut);
+        this.displayName = shortcut.getDisplayName();
+    }
+
+    public Shortcut(Destination destination, String displayName) {
+        super(null, false, new WarpAction(destination));
         this.displayName = displayName;
     }
 
-    public Shortcut(GlobalWarp warp, String displayName) {
-        this.warp = warp;
-        this.displayName = displayName;
+    @Override
+    public boolean read(JSONObject json) throws Exception {
+        this.displayName = (String) json.get("Name");
+        return super.read(json);
     }
 
-    public Shortcut(String globalWarp, String displayName) {
-        this.globalWarp = globalWarp;
-        this.displayName = displayName;
+    @Override
+    public void write(JSONObject json) {
+        json.put("Name", this.displayName);
+        super.write(json);
     }
 
-    public void run(Player player) {
-        if(this.warp != null) {
-            if(warp instanceof Warp) {
-                if(!player.hasPermission(WarpSystem.PERMISSION_USE_WARPS)) {
-                    player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
-                    return;
-                }
+    @Override
+    public void apply(FeatureObject object) {
+        super.apply(object);
 
-                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.ShortCut, new Destination(((Warp) warp).getIdentifier(), DestinationType.WarpIcon), warp.getName(), IconManager.getCosts(warp),
-                        WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.Warps", true));
-            } else if(warp instanceof GlobalWarp) {
-                if(!player.hasPermission(WarpSystem.PERMISSION_USE_GLOBAL_WARPS)) {
-                    player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
-                    return;
-                }
-
-                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.ShortCut, new Destination(warp.getName(), DestinationType.GlobalWarpIcon), warp.getName(), IconManager.getCosts(warp),
-                        WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true));
-            }
-        } else if(globalWarp != null) {
-            if(!player.hasPermission(WarpSystem.PERMISSION_USE_GLOBAL_WARPS)) {
-                player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
-                return;
-            }
-
-            WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.ShortCut, new Destination(globalWarp, DestinationType.GlobalWarp), displayName, 0,
-                    WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true));
+        if(object instanceof Shortcut) {
+            this.displayName = ((Shortcut) object).displayName;
         }
     }
 
     public boolean isActive() {
-        if(this.warp instanceof GlobalWarp || this.globalWarp != null) {
+        if(getDestination() == null || getDestination().getAdapter() == null) return false;
+
+        if(getDestination().getType() == DestinationType.GlobalWarp) {
             return WarpSystem.getInstance().isOnBungeeCord();
         }
 
         return true;
     }
 
-    public ActionIcon getWarp() {
-        return warp;
-    }
-
-    public String getGlobalWarp() {
-        return globalWarp;
+    public Destination getDestination() {
+        return hasAction(Action.WARP) ? ((WarpAction) getAction(Action.WARP)).getValue() : null;
     }
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public Shortcut clone() {
+        return new Shortcut(this);
     }
 }

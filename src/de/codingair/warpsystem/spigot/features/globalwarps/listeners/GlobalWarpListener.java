@@ -3,15 +3,17 @@ package de.codingair.warpsystem.spigot.features.globalwarps.listeners;
 import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.codingapi.tools.time.TimeMap;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
-import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
+import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.transfer.packets.bungee.SendGlobalWarpNamesPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.UpdateGlobalWarpPacket;
@@ -26,11 +28,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GlobalWarpListener implements Listener, PacketListener {
     private TimeMap<String, TeleportPacket> teleport = new TimeMap<>();
@@ -38,11 +36,6 @@ public class GlobalWarpListener implements Listener, PacketListener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onJoin(PlayerJoinEvent e) {
-        join(e.getPlayer());
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onLogin(PlayerLoginEvent e) {
         join(e.getPlayer());
     }
 
@@ -55,7 +48,7 @@ public class GlobalWarpListener implements Listener, PacketListener {
         TeleportPacket packet = teleport.remove(player.getName());
 
         if(packet != null) {
-            noTeleport.add(player, 1);
+            noTeleport.add(player, 3);
 
             SGlobalWarp warp = packet.getWarp();
             Location location = new Location(Bukkit.getWorld(warp.getLoc().getWorld()), warp.getLoc().getX(), warp.getLoc().getY(), warp.getLoc().getZ(), warp.getLoc().getYaw(), warp.getLoc().getPitch());
@@ -94,17 +87,13 @@ public class GlobalWarpListener implements Listener, PacketListener {
                     case DELETE:
                         ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).getGlobalWarps().remove(((UpdateGlobalWarpPacket) packet).getName());
 
-                        List<GlobalWarp> delete = new ArrayList<>();
-                        for(GlobalWarp warpIcon : manager.getGlobalWarps()) {
-                            String name = warpIcon.getAction(Action.SWITCH_SERVER).getValue();
-                            if(name.equalsIgnoreCase(((UpdateGlobalWarpPacket) packet).getName())) delete.add(warpIcon);
+                        for(Icon warpIcon : manager.getIcons()) {
+                            if(warpIcon.getAction(Action.WARP) != null) {
+                                if(warpIcon.getAction(WarpAction.class).getValue().getType() == DestinationType.GlobalWarp &&
+                                        warpIcon.getAction(WarpAction.class).getValue().getId().equalsIgnoreCase(((UpdateGlobalWarpPacket) packet).getName()))
+                                warpIcon.getAction(WarpAction.class).setValue(null);
+                            }
                         }
-
-                        for(GlobalWarp globalWarp : delete) {
-                            manager.getGlobalWarps().remove(globalWarp);
-                        }
-
-                        delete.clear();
                         break;
                 }
                 break;

@@ -24,15 +24,17 @@ public class ServerManager implements Listener {
     public void run() {
         BungeeCord.getInstance().getScheduler().schedule(WarpSystem.getInstance(), () -> {
             for(ServerInfo info : BungeeCord.getInstance().getServers().values()) {
-                info.ping((serverPing, error) -> {
-                    if(error != null) onlineServer.remove(info);
-                    else if(!onlineServer.contains(info)) onlineServer.add(info);
-                });
+                info.ping((serverPing, error) -> setStatus(info, error == null));
             }
         }, 0, 5, TimeUnit.SECONDS);
     }
 
     public void sendInitialPacket(ServerInfo server) {
         WarpSystem.getInstance().getDataHandler().send(new InitialPacket(WarpSystem.getInstance().getDescription().getVersion()), server);
+    }
+
+    public void setStatus(ServerInfo info, boolean online) {
+        if(!online) this.onlineServer.remove(info);
+        else if(!this.onlineServer.contains(info)) this.onlineServer.add(info);
     }
 }

@@ -12,7 +12,7 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.AdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.EmptyTempWarp;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
@@ -38,7 +38,7 @@ public class GEditor extends SimpleGUI {
             public void initialize(Player p) {
                 if(warp instanceof EmptyTempWarp) throw new IllegalArgumentException("GEditor just can edit filled TempWarps!");
                 warp.backup();
-                
+
                 ItemButtonOption option = new ItemButtonOption();
                 option.setCloseOnClick(false);
                 option.setClickSound(Sound.CLICK.bukkitSound());
@@ -54,7 +54,7 @@ public class GEditor extends SimpleGUI {
                         builder.setName("§7" + Lang.get("Status") + ": " + (ready ? "§a" + Lang.get("Ready") : "§c" + Lang.get("Not_Ready")));
 
                         int costs = warp.getCosts() - warp.backupped().getCosts();
-                        builder.addLore("", "§7" + Lang.get("Price") + ": " + (canPay(p, warp) ? "§a" : "§c") + costs + " " + Lang.get("Coins"));
+                        if(costs != 0) builder.addLore("", "§7" + Lang.get("Price") + ": " + (canPay(p, warp) ? "§a" : "§c") + costs + " " + Lang.get("Coins"));
                         if(ready) builder.addLore("", Lang.get("TempWarp_Click_Buy").replace("%PRICE%", costs + ""));
 
                         return builder.getItem();
@@ -70,13 +70,13 @@ public class GEditor extends SimpleGUI {
                             Sound.CLICK.playSound(p);
 
                             int costs = warp.getCosts() - warp.backupped().getCosts();
-                            if(costs != 0) AdapterType.getActive().setMoney(p, AdapterType.getActive().getMoney(p) - warp.getCosts());
+                            if(costs != 0) MoneyAdapterType.getActive().withdraw(p, warp.getCosts());
                             warp.apply();
-                            
+
                             if(costs > 0) {
                                 p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Edited_Pay").replace("%TEMP_WARP%", warp.getName()).replace("%COINS%", costs + ""));
                             } else if(costs < 0) {
-                                p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Edited_Refund").replace("%TEMP_WARP%", warp.getName()).replace("%COINS%", costs + ""));
+                                p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Edited_Refund").replace("%TEMP_WARP%", warp.getName()).replace("%COINS%", -costs + ""));
                             } else {
                                 p.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_Edited").replace("%TEMP_WARP%", warp.getName()).replace("%COINS%", costs + ""));
                             }
@@ -121,7 +121,7 @@ public class GEditor extends SimpleGUI {
                     public ItemStack craftItem() {
                         ItemBuilder builder = new ItemBuilder(XMaterial.NAME_TAG)
                                 .setName("§7" + Lang.get("Name") + ": " + (warp.getName() == null ? "§c" + Lang.get("Not_Set") : "\"§b" + warp.getName() + "§7\"") + "")
-                                .setLore("", Lang.get("Change_Name"));
+                                .setLore("", Lang.get("Change_Name_Long"));
 
                         if(warp.getName() == null) {
                             builder.addEnchantment(Enchantment.DAMAGE_ALL, 1);
@@ -148,6 +148,7 @@ public class GEditor extends SimpleGUI {
 
                     @Override
                     public void onClick(InventoryClickEvent e, Player player) {
+                        if(warp.getCreatorKey() != null) return;
                         if(last == 0) last = new Date().getTime();
 
                         if(e.isLeftClick()) {
@@ -196,12 +197,14 @@ public class GEditor extends SimpleGUI {
                     @Override
                     public ItemStack craftItem() {
                         ItemBuilder builder = new ItemBuilder(XMaterial.CLOCK).setName("§7" + Lang.get("Active_Time") + ": " + (warp.getDuration() <= 0 ? "§c" + Lang.get("Not_Set") : "§b" + TempWarpManager.getManager().convertInTimeFormat(warp.getDuration(), TempWarpManager.getManager().getConfig().getUnit())
-                                + (warp.getDuration() == TempWarpManager.getManager().getMinTime() ? " §7(§c" + Lang.get("Minimum") + "§7)" : warp.getDuration() == TempWarpManager.getManager().getMaxTime() ? " §7(§c" + Lang.get("Maximum") + "§7)" : "")));
+                                + (warp.getCreatorKey() != null ? " §7(" + Lang.get("Key") + ": §e" + warp.getCreatorKey() + "§7)" : (warp.getDuration() == TempWarpManager.getManager().getMinTime() ? " §7(§c" + Lang.get("Minimum") + "§7)" : warp.getDuration() == TempWarpManager.getManager().getMaxTime() ? " §7(§c" + Lang.get("Maximum") + "§7)" : ""))));
 
-                        builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp) ? "§a" : "§c") + (warp.getDuration() * TempWarpManager.getManager().getConfig().getDurationCosts()) + " " + Lang.get("Coins"));
-                        builder.addLore("");
-                        if(warp.getDuration() > TempWarpManager.getManager().getMinTime()) builder.addLore(Lang.get("Leftclick_Reduce"));
-                        if(warp.getDuration() < TempWarpManager.getManager().getMaxTime()) builder.addLore(Lang.get("Rightclick_Enlarge"));
+                        if(warp.getCreatorKey() == null) {
+                            builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp) ? "§a" : "§c") + (warp.getDuration() * TempWarpManager.getManager().getConfig().getDurationCosts()) + " " + Lang.get("Coins"));
+                            builder.addLore("");
+                            if(warp.getDuration() > TempWarpManager.getManager().getMinTime()) builder.addLore("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Reduce"));
+                            if(warp.getDuration() < TempWarpManager.getManager().getMaxTime()) builder.addLore("§3" + Lang.get("Rightclick") + ": §b" + Lang.get("Enlarge"));
+                        }
 
                         return builder.getItem();
                     }
@@ -228,7 +231,8 @@ public class GEditor extends SimpleGUI {
                                         "§c" + Lang.get("Private")
                                 ));
 
-                        builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp) ? "§a" : "§c") + (warp.isPublic() ? TempWarpManager.getManager().getConfig().getPublicCosts() : 0) + " " + Lang.get("Coins"));
+                        if(warp.isPublic() && TempWarpManager.getManager().getConfig().getPublicCosts() > 0)
+                            builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp) ? "§a" : "§c") + (warp.isPublic() ? TempWarpManager.getManager().getConfig().getPublicCosts() : 0) + " " + Lang.get("Coins"));
                         builder.addLore("", Lang.get("Click_Toggle"));
 
                         return builder.getItem();
@@ -268,7 +272,8 @@ public class GEditor extends SimpleGUI {
 
                         builder.setText("§7" + Lang.get("Teleport_Message") + ": " + (warp.getMessage() == null ? "§c" + (warp.backupped().getMessage() == null ? Lang.get("Not_Set") : Lang.get("Removed")) : "\"§f" + ChatColor.translateAlternateColorCodes('&', warp.getMessage()) + "§7\""), 100);
 
-                        builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp) ? "§a" : "§c") + (warp.getMessage() != null ? ((TempWarpManager.getManager().getMessageChangeCosts() > 0 && warp.isChangingMessage() ? TempWarpManager.getManager().getMessageChangeCosts() : 0) + TempWarpManager.getManager().getConfig().getMessageCosts()) : (warp.backupped().getMessage() == null ? 0 : TempWarpManager.getManager().getRefundByRemovingMessage())) + " " + Lang.get("Coins"));
+                        if(warp.getMessage() != null && TempWarpManager.getManager().getConfig().getMessageCosts() > 0)
+                            builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp) ? "§a" : "§c") + (warp.getMessage() != null ? ((TempWarpManager.getManager().getMessageChangeCosts() > 0 && warp.isChangingMessage() ? TempWarpManager.getManager().getMessageChangeCosts() : 0) + TempWarpManager.getManager().getConfig().getMessageCosts()) : (warp.backupped().getMessage() == null ? 0 : TempWarpManager.getManager().getRefundByRemovingMessage())) + " " + Lang.get("Coins"));
                         builder.addLore("", Lang.get("Change_Message"));
 
                         return builder.getItem();
@@ -311,12 +316,12 @@ public class GEditor extends SimpleGUI {
                         ItemBuilder builder = new ItemBuilder(XMaterial.GOLD_NUGGET).setName("§7" + Lang.get("Teleport_Costs") + ": §b" + warp.getTeleportCosts() + " " + Lang.get("Coins")
                                 + (warp.getTeleportCosts() == 0 ? " §7(§c" + Lang.get("Minimum") + "§7)" : warp.getTeleportCosts() == TempWarpManager.getManager().getMaxTeleportCosts() ? " §7(§c" + Lang.get("Maximum") + "§7)" : ""));
 
-                        builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp) ? "§a" : "§c") + (((
-                                TempWarpManager.getManager().calculateTeleportCosts(warp.getTeleportCosts()) - TempWarpManager.getManager().calculateTeleportCosts(warp.backupped().getTeleportCosts())
-                                ) + "").replace(".0", "")) + " " + Lang.get("Coins"));
+                        double price = TempWarpManager.getManager().calculateTeleportCosts(warp.getTeleportCosts()) - TempWarpManager.getManager().calculateTeleportCosts(warp.backupped().getTeleportCosts());
+                        if(price != 0)
+                            builder.addLore("§7" + Lang.get("Costs") + ": " + (canPay(p, warp) ? "§a" : "§c") + (((price) + "").replace(".0", "")) + " " + Lang.get("Coins"));
                         builder.addLore("");
-                        if(warp.getTeleportCosts() > 0) builder.addLore(Lang.get("Leftclick_Reduce"));
-                        if(warp.getTeleportCosts() < TempWarpManager.getManager().getMaxTeleportCosts()) builder.addLore(Lang.get("Rightclick_Enlarge"));
+                        if(warp.getTeleportCosts() > 0) builder.addLore("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Reduce"));
+                        if(warp.getTeleportCosts() < TempWarpManager.getManager().getMaxTeleportCosts()) builder.addLore("§3" + Lang.get("Rightclick") + ": §b" + Lang.get("Enlarge"));
 
                         return builder.getItem();
                     }
@@ -327,6 +332,6 @@ public class GEditor extends SimpleGUI {
 
     private static boolean canPay(Player player, TempWarp warp) {
         int costs = warp.getCosts() - warp.backupped().getCosts();
-        return costs < 0 || AdapterType.getActive().getMoney(player) >= costs;
+        return costs < 0 || MoneyAdapterType.getActive().getMoney(player) >= costs;
     }
 }

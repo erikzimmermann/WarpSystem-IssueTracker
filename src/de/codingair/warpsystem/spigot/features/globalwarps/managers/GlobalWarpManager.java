@@ -1,7 +1,6 @@
 package de.codingair.warpsystem.spigot.features.globalwarps.managers;
 
-import de.codingair.codingapi.files.ConfigFile;
-import de.codingair.codingapi.server.commands.CommandBuilder;
+import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
@@ -27,7 +26,6 @@ import java.util.List;
 public class GlobalWarpManager implements Manager, BungeeFeature {
     //              Name,   Server
     private HashMap<String, String> globalWarps = new HashMap<>();
-    private boolean globalWarpsOfGUI = false;
     private GlobalWarpListener listener;
     private List<CommandBuilder> commandExecutorList = new ArrayList<>();
 
@@ -90,14 +88,6 @@ public class GlobalWarpManager implements Manager, BungeeFeature {
 
         WarpSystem.getInstance().getBungeeFeatureList().add(this);
 
-        ConfigFile config = WarpSystem.getInstance().getFileManager().getFile("Config");
-        Object test = config.getConfig().get("WarpSystem.GlobalWarps.Use_Warps_Of_WarpsGUI", null);
-        if(test == null) {
-            config.getConfig().set("WarpSystem.GlobalWarps.Use_Warps_Of_WarpsGUI", false);
-        } else if(test instanceof Boolean) {
-            globalWarpsOfGUI = (boolean) test;
-        }
-
         WarpSystem.getInstance().getDataHandler().register(listener = new GlobalWarpListener());
         Bukkit.getPluginManager().registerEvents(listener, WarpSystem.getInstance());
         return true;
@@ -130,9 +120,5 @@ public class GlobalWarpManager implements Manager, BungeeFeature {
 
     public static GlobalWarpManager getInstance() {
         return WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS);
-    }
-
-    public boolean isGlobalWarpsOfGUI() {
-        return globalWarpsOfGUI;
     }
 }

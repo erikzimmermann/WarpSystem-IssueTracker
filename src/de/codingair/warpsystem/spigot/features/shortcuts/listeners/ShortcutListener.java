@@ -10,10 +10,11 @@ public class ShortcutListener implements Listener {
 
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent e) {
+        if(true) return;
         String label = e.getMessage().split(" ")[0].replaceFirst("/", "");
         Shortcut shortcut = ShortcutManager.getInstance().getShortcut(label);
         if(shortcut != null && shortcut.isActive()) {
-            shortcut.run(e.getPlayer());
+            shortcut.perform(e.getPlayer());
             e.setCancelled(true);
         }
     }

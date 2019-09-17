@@ -6,6 +6,7 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalBlock;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
@@ -20,6 +21,7 @@ import java.util.UUID;
 public class PortalEditor implements Removable {
     public static final ItemBuilder PORTAL_ITEM = new ItemBuilder(XMaterial.END_STONE).setName(Lang.get("NativePortalEditor_Place_Blocks"));
 
+    private boolean ended = false;
     private final UUID uniqueId = UUID.randomUUID();
     private Player player;
     private Portal backup;
@@ -35,13 +37,15 @@ public class PortalEditor implements Removable {
     }
 
     public PortalEditor(Player player, PortalType type) {
-        this(player);
+        this.player = player;
+        API.addRemovable(this);
         this.backup = null;
         this.portal = new Portal(type);
     }
 
     public PortalEditor(Player player, Portal portal) {
-        this(player);
+        this.player = player;
+        API.addRemovable(this);
         this.backup = portal;
         this.portal = portal.clone();
     }
@@ -85,6 +89,9 @@ public class PortalEditor implements Removable {
     }
 
     public Portal end() {
+        if(ended) return null;
+        ended = true;
+
         this.player.getInventory().setItem(this.player.getInventory().getHeldItemSlot(), old == null ? new ItemStack(Material.AIR) : old);
         this.player.updateInventory();
         this.portal.setType(this.type);
@@ -92,7 +99,10 @@ public class PortalEditor implements Removable {
         API.removeRemovable(this);
 
         if(backup != null) {
+            Destination dest = this.backup.getDestination();
             this.backup.apply(portal);
+            backup.setDestination(dest);
+
             portal.setVisible(false);
             backup.setVisible(true);
 
