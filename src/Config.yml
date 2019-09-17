@@ -180,6 +180,7 @@ WarpSystem:
       # If enabled, the player will be teleported to a random position, which is not in a protected region
       ProtectedRegions: true
       # If enabled, the player will be teleported to a random position, which is inside of the WorldBorder
+      # Premium feature - WorldBorder won't be supported even it's set to 'true'
       WorldBorder: true
       # If enabled, the player will be teleported to a random position, in one of the listed biomes
       Biome:

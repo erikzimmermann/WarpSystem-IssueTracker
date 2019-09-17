@@ -4,6 +4,7 @@ import de.codingair.codingapi.tools.time.TimeMap;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.transfer.packets.bungee.InitialPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.PrepareLoginMessagePacket;
+import de.codingair.warpsystem.transfer.packets.spigot.IsOperatorPacket;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
@@ -25,6 +26,10 @@ public class BungeeBukkitListener implements PacketListener, Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
+        if(e.getPlayer().isOp()) {
+            WarpSystem.getInstance().getDataHandler().send(new IsOperatorPacket(e.getPlayer().getName()));
+        }
+
         String message = loginMessage.remove(e.getPlayer());
         if(message != null) e.getPlayer().sendMessage(message);
 

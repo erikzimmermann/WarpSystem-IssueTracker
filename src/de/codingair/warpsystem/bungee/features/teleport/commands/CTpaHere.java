@@ -11,12 +11,17 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class CTpaHere extends Command {
     public CTpaHere() {
-        super("TpaHere", WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA);
+        super("TpaHere");
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
         if(!(sender instanceof ProxiedPlayer)) return;
+
+        if(!WarpSystem.getInstance().getDataManager().isOp(sender)) {
+            sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
+            return;
+        }
 
         if(args.length != 1) {
             sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpaHere <§eplayer§7>");

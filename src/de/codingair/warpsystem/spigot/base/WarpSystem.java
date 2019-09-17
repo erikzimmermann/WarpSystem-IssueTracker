@@ -11,6 +11,7 @@ import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.api.SpigotAPI;
+import de.codingair.warpsystem.spigot.base.ad.AdvertisementManager;
 import de.codingair.warpsystem.spigot.base.commands.CWarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.*;
@@ -178,6 +179,8 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new CommandListener(), this);
             Bukkit.getPluginManager().registerEvents(new UUIDListener(), this);
             Bukkit.getPluginManager().registerEvents(new HeadListener(), this);
+
+            AdvertisementManager advertisementManager = new AdvertisementManager();
 
             this.startAutoSaver();
 

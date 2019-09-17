@@ -48,22 +48,10 @@ public class Teleport extends HotbarGUI {
         if(getPortal().getDestination().getId() != null && getPortal().getDestination().getAdapter() != null) {
             if(getPortal().getDestination().getAdapter() instanceof PortalDestinationAdapter) {
                 destination = Lang.get("Effect_Portal");
-            } else {
-                switch(getPortal().getDestination().getType()) {
-                    case SimpleWarp:
-                        destination = getPortal().getDestination().getId() + " §8(§b" + Lang.get("SimpleWarp") + "§8)";
-                        break;
-
-                    case GlobalWarp:
-                        destination = getPortal().getDestination().getId() + " §8(§b" + Lang.get("GlobalWarp") + "§8)";
-                        break;
-                }
             }
         }
 
         setItem(2, new ItemComponent(new ItemBuilder(XMaterial.ENDER_EYE).setName("§7" + Lang.get("Destination") + ": §e" + (destination == null ? "§c-" : destination)).getItem(), new ItemListener() {
-            private boolean removed = false;
-
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 if(API.getRemovable(player, AnvilGUI.class) != null) return;
@@ -125,7 +113,6 @@ public class Teleport extends HotbarGUI {
                                     onUnhover(gui, ic, ic, player);
                                     onHover(gui, ic, ic, player);
 
-                                    removed = true;
                                     updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §e" + Lang.get("Effect_Portal"));
 
                                     e.setClose(true);
@@ -145,54 +132,10 @@ public class Teleport extends HotbarGUI {
                         getPortal().setLink(null);
 
                         getPortal().update();
-                        removed = true;
                         updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §c-");
                         onHover(gui, ic, ic, player);
                     } else {
-                        new ChooseDestinationGUI(player, new Callback<Destination>() {
-                            @Override
-                            public void accept(Destination destination) {
-                                if(destination == null) return;
-                                if(getPortal().getDestination().getType() == DestinationType.EffectPortal) {
-                                    getPortal().getLink().destroy();
-                                }
-
-                                getPortal().getDestination().apply(destination);
-                                getPortal().update();
-                                onUnhover(gui, ic, ic, player);
-                                onHover(gui, ic, ic, player);
-
-                                String dest = null;
-                                switch(getPortal().getDestination().getType()) {
-                                    case SimpleWarp:
-                                        dest = getPortal().getDestination().getId() + " §8(§b" + Lang.get("SimpleWarp") + "§8)";
-                                        break;
-
-                                    case GlobalWarp:
-                                        dest = getPortal().getDestination().getId() + " §8(§b" + Lang.get("GlobalWarp") + "§8)";
-                                        break;
-
-                                    case Server:
-                                        removed = false;
-                                        dest = getPortal().getDestination().getId() + " §8(§b" + Lang.get("Server") + " §7- " + Lang.get("Pinging") + "...§8)";
-                                        WarpSystem.getInstance().getDataHandler().send(new RequestServerStatusPacket(getPortal().getDestination().getId(), new Callback<Boolean>() {
-                                            @Override
-                                            public void accept(Boolean online) {
-                                                if(removed) {
-                                                    removed = false;
-                                                    return;
-                                                }
-
-                                                String newName = getPortal().getDestination().getId() + " §8(§b" + Lang.get("Server") + " §7- " + (online ? "§a" + Lang.get("Online") : "§c" + Lang.get("Offline")) + "§8)";
-                                                updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §e" + newName);
-                                            }
-                                        }));
-                                        break;
-                                }
-
-                                updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §e" + (dest == null ? "§c-" : dest));
-                            }
-                        }).open();
+                        Lang.PREMIUM_CHAT(player);
                     }
                 }
             }

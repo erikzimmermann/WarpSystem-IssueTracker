@@ -81,30 +81,7 @@ public class CWarpSystem extends CommandBuilder {
         getComponent("animations").addChild(new CommandComponent("activate") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations activate §e<name>");
-                return false;
-            }
-        });
-
-        getComponent("animations", "activate").addChild(new MultiCommandComponent() {
-            @Override
-            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                for(Animation animation : AnimationManager.getInstance().getAnimationList()) {
-                    suggestions.add(animation.getName());
-                }
-            }
-
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                Animation animation = AnimationManager.getInstance().getAnimation(argument);
-
-                if(animation == null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Animation_does_not_exist"));
-                    return false;
-                }
-
-                AnimationManager.getInstance().setActive(animation);
-                sender.sendMessage(Lang.getPrefix() + "§a" + Lang.get("Changes_have_been_saved"));
+                Lang.PREMIUM_CHAT(sender);
                 return false;
             }
         });
