@@ -37,7 +37,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
     private CTeleport teleportCommand;
     private CTpa tpa;
     private CTpAll tpAll;
-    private CTpHere tpHere;
+    private CTpaHere tpHere;
     private CTpToggle tpToggle;
     private CTpaToggle tpaToggle;
     private TeleportPacketListener packetListener;
@@ -72,7 +72,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
         }
 
         if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpHere", true)) {
-            tpHere = new CTpHere();
+            tpHere = new CTpaHere();
             tpHere.register(WarpSystem.getInstance());
         }
 

@@ -27,7 +27,7 @@ public class TeleportManager implements Manager {
         BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTeleport());
         BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpAll());
         BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpa());
-        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpHere());
+        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpaHere());
         BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpToggle());
         BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpaToggle());
         BungeeCord.getInstance().getPluginManager().registerListener(WarpSystem.getInstance(), new TabCompleterListener());

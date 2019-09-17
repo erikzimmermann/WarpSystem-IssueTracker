@@ -9,15 +9,15 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
-public class CTpHere extends Command {
-    public CTpHere() {
-        super("TpHere", WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA);
+public class CTpaHere extends Command {
+    public CTpaHere() {
+        super("TpaHere", WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA);
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
         if(args.length != 1) {
-            sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpa <§eplayer§7>");
+            sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpaHere <§eplayer§7>");
         } else {
             ProxiedPlayer receiver = BungeeCord.getInstance().getPlayer(args[0]);
 
