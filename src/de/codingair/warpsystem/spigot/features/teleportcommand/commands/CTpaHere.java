@@ -15,9 +15,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class CTpHere extends CommandBuilder {
-    public CTpHere() {
-        super("TpHere", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPHERE) {
+public class CTpaHere extends CommandBuilder {
+    public CTpaHere() {
+        super("TpaHere", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA_HERE) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -35,7 +35,7 @@ public class CTpHere extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpa <§eplayer§7>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpaHere <§eplayer§7>");
                 return false;
             }
         }.setOnlyPlayers(true), true);

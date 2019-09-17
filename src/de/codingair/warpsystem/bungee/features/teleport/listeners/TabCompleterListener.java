@@ -51,7 +51,7 @@ public class TabCompleterListener implements Listener {
             }
         } else if(cmd.equalsIgnoreCase("tphere")) {
             e.getSuggestions().clear();
-            if(!((ProxiedPlayer) e.getSender()).hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPHERE)) return;
+            if(!((ProxiedPlayer) e.getSender()).hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA_HERE)) return;
 
             for(ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
                 if(player.getName().equals(((ProxiedPlayer) e.getSender()).getName())) continue;
