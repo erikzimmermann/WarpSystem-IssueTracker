@@ -11,6 +11,7 @@ import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.api.SpigotAPI;
+import de.codingair.warpsystem.spigot.base.ad.AdvertisementManager;
 import de.codingair.warpsystem.spigot.base.commands.CWarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.*;
@@ -86,7 +87,7 @@ public class WarpSystem extends JavaPlugin {
     private static WarpSystem instance;
     public static boolean activated = false;
     public static boolean maintenance = false;
-    private final boolean premium = true;
+    private final boolean premium = false;
     public static final int PREMIUM_THREAD_ID = 369986;
     public static final int FREE_THREAD_ID = 182037;
 
@@ -105,6 +106,7 @@ public class WarpSystem extends JavaPlugin {
 
     private UpdateNotifier updateNotifier;
     private List<String> runningFirstTime = null;
+    private List<String> newUpdate = new ArrayList<>();
 
     private Timer timer = new Timer();
 
@@ -179,6 +181,8 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new CommandListener(), this);
             Bukkit.getPluginManager().registerEvents(new UUIDListener(), this);
             Bukkit.getPluginManager().registerEvents(new HeadListener(), this);
+
+            AdvertisementManager advertisementManager = new AdvertisementManager();
 
             this.startAutoSaver();
 
@@ -282,6 +286,7 @@ public class WarpSystem extends JavaPlugin {
         this.dataHandler.onDisable();
         if(this.packetListener != null) this.dataHandler.unregister(this.packetListener);
         if(this.runningFirstTime != null) this.runningFirstTime.clear();
+        this.newUpdate.clear();
 
         destroy();
         this.uuidManager.removeAll();
@@ -303,23 +308,20 @@ public class WarpSystem extends JavaPlugin {
 
     private void startUpdateNotifier() {
         Value<BukkitTask> task = new Value<>(null);
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                updateAvailable = WarpSystem.this.updateNotifier.read();
+        Runnable runnable = () -> {
+            updateAvailable = WarpSystem.this.updateNotifier.read();
 
-                if(updateAvailable) {
-                    String v = updateNotifier.getVersion();
-                    if(!v.startsWith("v")) v = "v" + v;
+            if(updateAvailable) {
+                String v = updateNotifier.getVersion();
+                if(!v.startsWith("v")) v = "v" + v;
 
-                    log("-----< WarpSystem >-----");
-                    log("New update available [" + v + " - " + WarpSystem.this.updateNotifier.getUpdateInfo() + "].");
-                    log("Download it on\n\n" + updateNotifier.getDownload() + "\n");
-                    log("------------------------");
+                log("-----< WarpSystem >-----");
+                log("New update available [" + v + " - " + WarpSystem.this.updateNotifier.getUpdateInfo() + "].");
+                log("Download it on\n\n" + updateNotifier.getDownload() + "\n");
+                log("------------------------");
 
-                    WarpSystem.getInstance().notifyPlayers(null);
-                    task.getValue().cancel();
-                }
+                WarpSystem.getInstance().notifyPlayers(null);
+                task.getValue().cancel();
             }
         };
 
@@ -342,7 +344,7 @@ public class WarpSystem extends JavaPlugin {
     }
 
     private void destroy() {
-        this.dataManager.getManagers().forEach(Manager::destroy);
+        if(dataManager != null) this.dataManager.getManagers().forEach(Manager::destroy);
         this.bungeeFeatureList.clear();
     }
 
@@ -479,7 +481,8 @@ public class WarpSystem extends JavaPlugin {
                 notifyPlayers(p);
             }
         } else {
-            if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && WarpSystem.updateAvailable) {
+            if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && WarpSystem.updateAvailable && !newUpdate.contains(player.getName())) {
+                newUpdate.add(player.getName());
                 String v = updateNotifier.getVersion();
                 if(!v.startsWith("v")) v = "v" + v;
 
