@@ -223,6 +223,7 @@ public class EffectPortal extends FeatureObject implements Removable {
             this.name = ep.name;
             this.location = ep.location;
             this.link = ep.link;
+            this.useLink = ep.useLink;
 
             this.animation = ep.animation;
             this.animPlayer = ep.animPlayer;
@@ -276,6 +277,8 @@ public class EffectPortal extends FeatureObject implements Removable {
     }
 
     public void updateAnimations() {
+        if(link != null && !useLink) link.updateAnimations();
+
         if(isDisabled()) return;
         if(this.animPlayer != null && this.animPlayer.isRunning()) this.animPlayer.setRunning(false);
         if(getAnimation() == null || !showAnimation()) return;

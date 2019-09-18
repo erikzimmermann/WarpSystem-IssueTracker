@@ -15,7 +15,6 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.codingapi.particles.utils.Color;
 import de.codingair.warpsystem.spigot.features.animations.utils.ParticlePart;
 import org.bukkit.entity.Player;
-import sun.plugin2.message.Message;
 
 public class AnimationPart extends HotbarGUI {
     private Menu menu;

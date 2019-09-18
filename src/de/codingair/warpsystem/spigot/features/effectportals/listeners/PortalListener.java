@@ -22,8 +22,6 @@ public class PortalListener implements Listener {
 
     @EventHandler
     public void onWalk(PlayerWalkEvent e) {
-        EffectPortalManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.PORTALS);
-
         Player player = e.getPlayer();
 
         boolean aboutToEdit = CPortal.aboutToEdit.contains(player.getName());
