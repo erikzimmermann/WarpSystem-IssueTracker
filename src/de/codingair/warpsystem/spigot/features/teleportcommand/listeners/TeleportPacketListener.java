@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.teleportcommand;
+package de.codingair.warpsystem.spigot.features.teleportcommand.listeners;
 
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.time.TimeList;
@@ -13,6 +13,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.EmptyAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
+import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ClearInvitesPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.PrepareTeleportRequestPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPlayerToCoordsPacket;
