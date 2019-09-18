@@ -1,5 +1,6 @@
-package de.codingair.warpsystem.spigot.features.teleportcommand;
+package de.codingair.warpsystem.spigot.features.teleportcommand.listeners;
 
+import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;

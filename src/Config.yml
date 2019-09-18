@@ -6,17 +6,17 @@ WarpSystem:
     Permission: WarpSystem.Admin
 
   GUI:
-    # false: The WarpGUI is identical on the entire server in all worlds
-    # true: The WarpGUI is different in every world
+    #false: The WarpGUI is identical on the entire server in all worlds
+    #true: The WarpGUI is different in every world
     Bound_to_world: false
     Admin:
-      # The number must be between inclusive 9 and inclusive 54 and must be divisible by 9.
+      #The number must be between inclusive 9 and inclusive 54 and must be divisible by 9.
       Size: 54
       Title:
         Standard: '&c&nWarps&r'
         In_Category: '&c&nWarps&r &c@%CATEGORY%'
     User:
-      # The number must be between inclusive 9 and inclusive 54 and must be divisible by 9.
+      #The number must be between inclusive 9 and inclusive 54 and must be divisible by 9.
       Size: 54
       Title:
         Standard: '&c&nWarps&r'
@@ -30,7 +30,7 @@ WarpSystem:
 
   Teleport:
     Chunk_Pre_Loading:
-      # If enabled, only players with the "WarpSystem.Teleport.ChunkPreLoading" will preload chunks!
+      #If enabled, only players with the "WarpSystem.Teleport.ChunkPreLoading" will preload chunks!
       Limit_by_Permission: false
       Enabled: true
       Chunk_Radius: 1
@@ -60,23 +60,27 @@ WarpSystem:
     GlobalWarps: true
     Shortcuts: true
     TempWarps: true
-    # Available commands: '/warp <warp>' or '/globalwarp <warp>'
-    # Required for '/tp' command for CommandBlocks (CommandBlocks with tp commands inside don't work, if you turn this to false)
+    #Available commands: '/warp <warp>' or '/globalwarp <warp>'
+    #Required for '/tp' command for CommandBlocks (CommandBlocks with tp commands inside don't work, if you turn this to false)
     CommandBlocks: true
     RandomTeleport: true
     TeleportCommand: true
 
-  # 'TeleportCommand' in 'Functions' (above) have to be toggled to true as well, if you want to use this feature.
+  #'TeleportCommand' in 'Functions' (above) have to be toggled to true as well, if you want to use this feature.
   TeleportCommands:
+    Back:
+      #Amount of temp. saved locations for the /back command
+      History_Size: 3
+      Enabled: true
     Tp: true
     TpToggle: true
     Tpa: true
     TpaHere: true
     TpaToggle: true
     TpAll: true
-    # For Tpa, TpHere & TpAll
+    #For Tpa, TpHere & TpAll
     TeleportRequests:
-      # In seconds
+      #In seconds
       ExpireDelay: 30
       #true: Players on this server can receive/send teleport requests from/to other servers. |false: Players can only send TeleportRequests to players on this server
       BungeeCord: true
@@ -84,33 +88,33 @@ WarpSystem:
       TpAll: true
 
   EffectPortals:
-    # Max distance between particle and player
+    #Max distance between particle and player
     ParticleDistance: 70.0
 
   SimpleWarps:
-    # Adds on every created warp the standard permission: 'WarpSystem.Warps.<WarpName>'
+    #Adds on every created warp the standard permission: 'WarpSystem.Warps.<WarpName>'
     Add_Permission_On_Creation: false
 
   Commands:
     Warp:
-      # true: '/warp' opens the WarpGUI
-      # false: '/warp <warp>' teleports you to warps
+      #true: '/warp' opens the WarpGUI
+      #false: '/warp <warp>' teleports you to warps
       GUI: false
 
   TempWarps:
-    # Permission to set the available amount of TempWarps: "WarpSystem.TempWarps.2" (Example for a maximum of 2 TempWarps)
+    #Permission to set the available amount of TempWarps: "WarpSystem.TempWarps.2" (Example for a maximum of 2 TempWarps)
     Time:
-      # sec, min, hour, day
+      #sec, min, hour, day
       Interval: min
-      # Step to increase/decrease the duration in the gui
+      #Step to increase/decrease the duration in the gui
       DurationSteps: 5
       Min_Time: 5
       Max_Time: 43200
-    # When a TempWarp expires, then it's inactive. (When "Time_After_Expiration" is expired too, the TempWarp will be deleted.)
+    #When a TempWarp expires, then it's inactive. (When "Time_After_Expiration" is expired too, the TempWarp will be deleted.)
     Inactive:
-      # Time in seconds after an expiration. After that time, the TempWarp will be deleted.
+      #Time in seconds after an expiration. After that time, the TempWarp will be deleted.
       Time_After_Expiration: 86400
-      # Time in seconds to remind a player, if a TempWarp is inactive
+      #Time in seconds to remind a player, if a TempWarp is inactive
       Reminds:
       - 43200
       - 21600
@@ -134,25 +138,25 @@ WarpSystem:
       Edit_Costs: 200
     Custom_Teleport_Costs:
       Max_Costs: 500
-      # Step to increase/decrease costs in gui
+      #Step to increase/decrease costs in gui
       Cost_Steps: 50
-      # Percent of custom TeleportCosts
+      #Percent of custom TeleportCosts
       TeleportCosts: 50
     Costs:
       CostsPerInterval: 1
       PublicCosts: 100
       MessageCosts: 200
     Support:
-      # If enabled, the player can't create TempWarps in regions, where he cannot build
+      #If enabled, the player can't create TempWarps in regions, where he cannot build
       ProtectedRegions: false
-    # If enabled, players won't be able to buy TempWarps. The only way to create TempWarps then is with keys (1x Key = 1x TempWarp). Create templates and give your players keys with the "/twarps keys" command!
+    #If enabled, players won't be able to buy TempWarps. The only way to create TempWarps then is with keys (1x Key = 1x TempWarp). Create templates and give your players keys with the "/twarps keys" command!
     Keys: true
-    # Turn this to true, if you want, that all TempWarps should be public when you create them. The state can always be changed.
+    #Turn this to true, if you want, that all TempWarps should be public when you create them. The state can always be changed.
     Public_as_create_state: true
     List_Info:
-      # The varaible names are case sensitive!
-      # Available variables: %PLAYER%, %ONLINE_TIME%, %TELEPORT_COSTS%, %TIME_BEFORE_DELETE%, %END_TIME%, %NAME%, %ID%
-      # TeleportCosts won't be displayed, if the costs = 0. Furthermore, you cannot use "deleted in" will only be displayed if the tempwarp is expired.
+      #The varaible names are case sensitive!
+      #Available variables: %PLAYER%, %ONLINE_TIME%, %TELEPORT_COSTS%, %TIME_BEFORE_DELETE%, %END_TIME%, %NAME%, %ID%
+      #TeleportCosts won't be displayed, if the costs = 0. Furthermore, you cannot use "deleted in" will only be displayed if the tempwarp is expired.
       Own_Warp_Info:
       - '&8Owner: %PLAYER%'
       - '&8Online: %ONLINE_TIME%'
@@ -165,11 +169,11 @@ WarpSystem:
       - '&8Online: %ONLINE_TIME%'
       - '&8Coins: %TELEPORT_COSTS% Coin(s)'
 
-  # The standard and max amount of random teleports will be configured with permissions:
-  # "warpsystem.randomteleporters.free.1" » This permissions means, that the player with that permission has a standard amount of 1 free random teleports
-  # "warpsystem.randomteleporters.max.2" » This permissions means, that the player with that permission has a max amount of 2 random teleports, so he could buy one, if it's enabled
+  #The standard and max amount of random teleports will be configured with permissions:
+  #"warpsystem.randomteleporters.free.1" » This permissions means, that the player with that permission has a standard amount of 1 free random teleports
+  #"warpsystem.randomteleporters.max.2" » This permissions means, that the player with that permission has a max amount of 2 random teleports, so he could buy one, if it's enabled
   RandomTeleport:
-    # Costs for one extra teleport (buyable with commands)
+    #Costs for one extra teleport (buyable with commands)
     Buyable:
       Enabled: true
       Costs: 500
@@ -177,14 +181,14 @@ WarpSystem:
       Min: 1000
       Max: 10000
     Support:
-      # If enabled, the player will be teleported to a random position, which is not in a protected region
+      #If enabled, the player will be teleported to a random position, which is not in a protected region
       ProtectedRegions: true
-      # If enabled, the player will be teleported to a random position, which is inside of the WorldBorder
+      #If enabled, the player will be teleported to a random position, which is inside of the WorldBorder
       WorldBorder: true
-      # If enabled, the player will be teleported to a random position, in one of the listed biomes
+      #If enabled, the player will be teleported to a random position, in one of the listed biomes
       Biome:
         Enabled: false
-        # Names can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html
+        #Names can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html
         BiomeList:
         - OCEAN
         - PLAINS
