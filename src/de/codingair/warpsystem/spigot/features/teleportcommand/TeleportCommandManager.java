@@ -15,18 +15,24 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.EmptyAdapter;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.teleportcommand.commands.*;
+import de.codingair.warpsystem.spigot.features.teleportcommand.listeners.BackListener;
+import de.codingair.warpsystem.spigot.features.teleportcommand.listeners.TeleportListener;
+import de.codingair.warpsystem.spigot.features.teleportcommand.listeners.TeleportPacketListener;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ClearInvitesPacket;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.TeleportRequestOptionsPacket;
-import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPlayerToPlayerPacket;
 import de.codingair.warpsystem.transfer.packets.general.StartTeleportToPlayerPacket;
+import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPlayerToPlayerPacket;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class TeleportCommandManager implements Manager, BungeeFeature {
@@ -34,16 +40,13 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
     private List<String> denyTpa = new ArrayList<>();
     private List<String> denyForceTps = new ArrayList<>();
 
-    private CTeleport teleportCommand;
-    private CTpHere tpHere;
-    private CTpa tpa;
-    private CTpAll tpAll;
-    private CTpaHere tpaHere;
-    private CTpToggle tpToggle;
-    private CTpaToggle tpaToggle;
+    private HashMap<String, List<Location>> backHistory = new HashMap<>();
+    private List<String> usingBackCommand = new ArrayList<>();
+
     private TeleportPacketListener packetListener;
 
     private int expireDelay = 30;
+    private int backHistorySize = 3;
     private boolean bungeeCord = false;
     private boolean tpAllNotifySender = true;
 
@@ -51,6 +54,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
     public boolean load() {
         WarpSystem.getInstance().getBungeeFeatureList().add(this);
         Bukkit.getPluginManager().registerEvents(new TeleportListener(), WarpSystem.getInstance());
+        Bukkit.getPluginManager().registerEvents(new BackListener(), WarpSystem.getInstance());
 
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
         expireDelay = file.getConfig().getInt("WarpSystem.TeleportCommands.TeleportRequests.ExpireDelay", 30);
@@ -58,35 +62,24 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
         tpAllNotifySender = file.getConfig().getBoolean("WarpSystem.TeleportCommands.TeleportRequests.TpAll", true);
 
         if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Tp", true)) {
-            teleportCommand = new CTeleport();
+            CTeleport teleportCommand = new CTeleport();
             teleportCommand.register(WarpSystem.getInstance());
-            tpHere = new CTpHere(teleportCommand);
-            tpHere.register(WarpSystem.getInstance());
+            new CTpHere(teleportCommand).register(WarpSystem.getInstance());
         }
 
-        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpToggle", true)) {
-            tpToggle = new CTpToggle();
-            tpToggle.register(WarpSystem.getInstance());
-        }
-
-        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Tpa", true)) {
-            tpa = new CTpa();
-            tpa.register(WarpSystem.getInstance());
-        }
-
-        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaHere", true)) {
-            tpaHere = new CTpaHere();
-            tpaHere.register(WarpSystem.getInstance());
-        }
-
-        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaToggle", true)) {
-            tpaToggle = new CTpaToggle();
-            tpaToggle.register(WarpSystem.getInstance());
-        }
-
-        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpAll", true)) {
-            tpAll = new CTpAll();
-            tpAll.register(WarpSystem.getInstance());
+        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpToggle", true)) new CTpToggle().register(WarpSystem.getInstance());
+        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Tpa", true)) new CTpa().register(WarpSystem.getInstance());
+        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaHere", true)) new CTpaHere().register(WarpSystem.getInstance());
+        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaToggle", true)) new CTpaToggle().register(WarpSystem.getInstance());
+        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpAll", true)) new CTpAll().register(WarpSystem.getInstance());
+        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Back.Enabled", true)) {
+            new CBack().register(WarpSystem.getInstance());
+            this.backHistorySize = file.getConfig().getInt("WarpSystem.TeleportCommands.Back.History_Size", 3);
+            if(backHistorySize < 1) {
+                backHistorySize = 1;
+                file.getConfig().set("WarpSystem.TeleportCommands.Back.History_Size", 1);
+                file.saveConfig();
+            }
         }
 
         return true;
@@ -116,6 +109,42 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
             WarpSystem.getInstance().getDataHandler().unregister(this.packetListener);
             this.packetListener = null;
         }
+    }
+
+    public void clearBackHistory(Player player) {
+        this.backHistory.remove(player.getName());
+    }
+
+    public boolean usingBackCommand(Player player) {
+        return this.usingBackCommand.contains(player.getName());
+    }
+
+    public void addToBackHistory(Player player, Location location) {
+        List<Location> locations = this.backHistory.computeIfAbsent(player.getName(), k -> new ArrayList<>());
+        locations.add(0, location);
+        if(locations.size() > backHistorySize) locations.remove(locations.size() - 1);
+    }
+
+    public boolean teleportToLastBackLocation(Player player) {
+        List<Location> locations = this.backHistory.get(player.getName());
+        if(locations == null) return false;
+
+        TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(locations.get(0))), Lang.get("Last_Position"));
+        options.setCallback(new Callback<TeleportResult>() {
+            @Override
+            public void accept(TeleportResult result) {
+                if(result == TeleportResult.TELEPORTED) {
+                    locations.remove(0);
+                    if(locations.isEmpty()) backHistory.remove(player.getName());
+                }
+
+                usingBackCommand.remove(player.getName());
+            }
+        });
+
+        this.usingBackCommand.add(player.getName());
+        WarpSystem.getInstance().getTeleportManager().teleport(player, options);
+        return true;
     }
 
     public boolean deniesTpaRequests(Player player) {
@@ -164,7 +193,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
         if(tpAllNotifySender) notifySender = true;
         boolean finalNotifySender = notifySender;
 
-        SimpleMessage m = new SimpleMessage(Lang.getPrefix() + Lang.get("TeleportRequest_tpTo" + (tpToSender ? "Sender" : "Receiver")).replace("%PLAYER%", ChatColor.stripColor(sender.getDisplayName())).replace("%SECONDS%", expireDelay+"").replace("%PLAYER%", sender.getDisplayName()), WarpSystem.getInstance()) {
+        SimpleMessage m = new SimpleMessage(Lang.getPrefix() + Lang.get("TeleportRequest_tpTo" + (tpToSender ? "Sender" : "Receiver")).replace("%PLAYER%", ChatColor.stripColor(sender.getDisplayName())).replace("%SECONDS%", expireDelay + "").replace("%PLAYER%", sender.getDisplayName()), WarpSystem.getInstance()) {
             @Override
             public void onTimeOut() {
                 if(sender.onSpigot()) {
@@ -197,7 +226,8 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
 
                             WarpSystem.getInstance().getTeleportManager().teleport(tpToSender ? player : sender.getSpigotPlayer(), options);
 
-                            if(finalNotifySender) sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_accepted_sender").replace("%PLAYER%", ChatColor.stripColor(player.getDisplayName())));
+                            if(finalNotifySender)
+                                sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_accepted_sender").replace("%PLAYER%", ChatColor.stripColor(player.getDisplayName())));
                             player.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_accepted_other").replace("%PLAYER%", ChatColor.stripColor(sender.getDisplayName())));
                         } else {
                             player.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_not_valid").replace("%PLAYER%", ChatColor.stripColor(sender.getDisplayName())));
