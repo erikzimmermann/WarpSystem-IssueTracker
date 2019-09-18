@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Lang {
+    public static void PREMIUM_CHAT_ONLY_OPED(CommandSender sender) {
+        sender.sendMessage("\n"+getPrefix() + "§7This is a §6§lPremium§7 feature! Only §eoped §7players can use this.\n");
+    }
+
     public static void PREMIUM_CHAT(CommandSender sender) {
         TextComponent tc0 = new TextComponent("\n" + Lang.getPrefix() + "§7This is a ");
         TextComponent premium = new TextComponent("§6§lPremium");

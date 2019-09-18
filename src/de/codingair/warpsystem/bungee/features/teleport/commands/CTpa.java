@@ -23,6 +23,8 @@ public class CTpa extends Command {
             return;
         }
 
+        Lang.PREMIUM_CHAT_ONLY_OPED(sender);
+
         if(args.length != 1) {
             sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpa <§eplayer§7>");
         } else {

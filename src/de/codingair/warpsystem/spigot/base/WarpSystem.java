@@ -343,7 +343,7 @@ public class WarpSystem extends JavaPlugin {
     }
 
     private void destroy() {
-        this.dataManager.getManagers().forEach(Manager::destroy);
+        if(dataManager != null) this.dataManager.getManagers().forEach(Manager::destroy);
         this.bungeeFeatureList.clear();
     }
 

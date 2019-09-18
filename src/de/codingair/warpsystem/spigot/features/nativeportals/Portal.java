@@ -77,10 +77,14 @@ public class Portal extends FeatureObject {
     public boolean read(JSONObject json) throws Exception {
         super.read(json);
 
-        if(json.get("Type") != null) {
-            this.type = PortalType.valueOf((String) json.get("Type"));
-        } else if(json.get("type") != null) {
-            this.type = PortalType.valueOf((String) json.get("type"));
+        try {
+            if(json.get("Type") != null) {
+                this.type = PortalType.valueOf(json.get("Type"));
+            } else if(json.get("type") != null) {
+                this.type = PortalType.valueOf(json.get("type"));
+            }
+        } catch(IllegalArgumentException ex) {
+            this.type = PortalType.WATER;
         }
 
         Destination destination = null;

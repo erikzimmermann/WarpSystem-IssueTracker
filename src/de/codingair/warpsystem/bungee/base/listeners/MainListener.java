@@ -54,7 +54,14 @@ public class MainListener implements Listener, PacketListener {
             }
 
             case IsOperatorPacket: {
-                WarpSystem.getInstance().getDataManager().getOped().add(((IsOperatorPacket) packet).getPlayer());
+                IsOperatorPacket p = (IsOperatorPacket) packet;
+
+                if(p.isOperator()) {
+                    WarpSystem.getInstance().getDataManager().getOped().add(p.getPlayer());
+                } else {
+                    WarpSystem.getInstance().getDataManager().getOped().remove(p.getPlayer());
+                }
+
                 break;
             }
 

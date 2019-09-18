@@ -17,7 +17,7 @@ public class ParticlePart implements Serializable {
     private Color color = Color.RED;
     private double radius, height;
     private int xRotation, yRotation, zRotation;
-    private int speed;
+    private int speed = CustomAnimation.MAX_SPEED;
 
     public ParticlePart() {
     }
@@ -44,11 +44,6 @@ public class ParticlePart implements Serializable {
         particle = Particle.getById(json.get("particle"));
         radius = json.get("radius");
         height = json.get("height");
-        speed = json.get("speed");
-        color = json.get("color") == null ? null : Color.valueOf(json.get("color"));
-        xRotation = json.get("xrot") == null ? 0 : json.get("xrot");
-        yRotation = json.get("yrot") == null ? 0 : json.get("yrot");
-        zRotation = json.get("zrot") == null ? 0 : json.get("zrot");
         return true;
     }
 
@@ -58,11 +53,6 @@ public class ParticlePart implements Serializable {
         json.put("particle", particle.getId());
         json.put("height", height);
         json.put("radius", radius);
-        json.put("speed", speed);
-        json.put("color", color == null ? null : color.name());
-        json.put("xrot", xRotation);
-        json.put("yrot", yRotation);
-        json.put("zrot", zRotation);
     }
 
     @Override

@@ -9,10 +9,12 @@ import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
@@ -26,8 +28,8 @@ public class BungeeBukkitListener implements PacketListener, Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        if(e.getPlayer().isOp()) {
-            WarpSystem.getInstance().getDataHandler().send(new IsOperatorPacket(e.getPlayer().getName()));
+        if(e.getPlayer().isOp() && WarpSystem.getInstance().isOnBungeeCord()) {
+            WarpSystem.getInstance().getDataHandler().send(new IsOperatorPacket(e.getPlayer().getName(), e.getPlayer().isOp()));
         }
 
         String message = loginMessage.remove(e.getPlayer());
@@ -45,6 +47,28 @@ public class BungeeBukkitListener implements PacketListener, Listener {
         }
     }
 
+    @EventHandler
+    public void onCommand(PlayerCommandPreprocessEvent e) {
+        String cmd = e.getMessage().toLowerCase();
+        if(cmd.startsWith("/")) cmd = cmd.substring(1);
+
+        if((cmd.startsWith("deop") || cmd.startsWith("op")) && cmd.contains(" ")) {
+            String player = cmd.split(" ")[1];
+
+            Player p = Bukkit.getPlayer(player);
+
+            if(p != null) {
+                boolean op = p.isOp();
+
+                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
+                    if(op != p.isOp()) {
+                        WarpSystem.getInstance().getDataHandler().send(new IsOperatorPacket(p.getName(), p.isOp()));
+                    }
+                }, 20);
+            }
+        }
+    }
+
     @Override
     public void onReceive(Packet packet, String extra) {
         switch(PacketType.getByObject(packet)) {
@@ -57,6 +81,12 @@ public class BungeeBukkitListener implements PacketListener, Listener {
 
                     this.notice = null;
                     WarpSystem.getInstance().setOnBungeeCord(true);
+
+                    for(Player player : Bukkit.getOnlinePlayers()) {
+                        if(!player.isOp()) continue;
+                        WarpSystem.getInstance().getDataHandler().send(new IsOperatorPacket(player.getName(), player.isOp()));
+                    }
+
                 } else if(WarpSystem.getInstance().getBungeePluginVersion() == null || WarpSystem.getInstance().getBungeePluginVersion().equals(WarpSystem.getInstance().getDescription().getVersion())) {
                     this.notice = new String[] {
                             "",

@@ -186,6 +186,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
                             TeleportOptions options = new TeleportOptions(tpToSender ? sender.getSpigotPlayer().getLocation() : player.getLocation(), tpToSender ? sender.getName() : player.getName());
                             options.setOrigin(Origin.CustomTeleportCommands);
                             options.setWaitForTeleport(true);
+                            options.setNoDelayByPass(true);
                             options.setCallback(new Callback<TeleportResult>() {
                                 @Override
                                 public void accept(TeleportResult object) {
@@ -210,6 +211,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
                             options.setOrigin(Origin.CustomTeleportCommands);
                             options.setWaitForTeleport(true);
                             options.setMessage(null);
+                            options.setNoDelayByPass(true);
                             options.setCallback(new Callback<TeleportResult>() {
                                 @Override
                                 public void accept(TeleportResult result) {

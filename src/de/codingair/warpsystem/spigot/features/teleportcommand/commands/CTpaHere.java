@@ -34,6 +34,10 @@ public class CTpaHere extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
+                if(!sender.isOp()) {
+                    noPermission(sender, label, null);
+                    return false;
+                }
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpaHere <§eplayer§7>");
                 return false;
             }
@@ -58,6 +62,8 @@ public class CTpaHere extends CommandBuilder {
                     getBaseComponent().noPermission(sender, label, null);
                     return false;
                 }
+
+                Lang.PREMIUM_CHAT_ONLY_OPED(sender);
 
                 Player receiver = Bukkit.getPlayer(argument);
 
