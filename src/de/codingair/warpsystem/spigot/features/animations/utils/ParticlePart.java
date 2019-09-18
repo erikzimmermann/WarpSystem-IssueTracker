@@ -42,13 +42,16 @@ public class ParticlePart implements Serializable {
     public boolean read(JSONObject json) {
         animation = AnimationType.getById(json.get("animation"));
         particle = Particle.getById(json.get("particle"));
-        radius = json.get("radius");
-        height = json.get("height");
-        speed = json.get("speed");
-        color = json.get("color") == null ? null : Color.valueOf(json.get("color"));
-        xRotation = json.get("xrot") == null ? 0 : json.get("xrot");
-        yRotation = json.get("yrot") == null ? 0 : json.get("yrot");
-        zRotation = json.get("zrot") == null ? 0 : json.get("zrot");
+        radius = json.get("radius", 0D);
+        height = json.get("height", 0D);
+        speed = json.get("speed", CustomAnimation.MAX_SPEED);
+        color = json.get("color", Color.class);
+        xRotation = json.get("xrot", 0);
+        yRotation = json.get("yrot", 0);
+        zRotation = json.get("zrot", 0);
+
+        if(color == null) color = Color.RED;
+        if(speed < CustomAnimation.MIN_SPEED) speed = CustomAnimation.MAX_SPEED;
         return true;
     }
 
@@ -59,7 +62,7 @@ public class ParticlePart implements Serializable {
         json.put("height", height);
         json.put("radius", radius);
         json.put("speed", speed);
-        json.put("color", color == null ? null : color.name());
+        json.put("color", color);
         json.put("xrot", xRotation);
         json.put("yrot", yRotation);
         json.put("zrot", zRotation);
