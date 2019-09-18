@@ -95,9 +95,11 @@ public class AnimationPart extends HotbarGUI {
                 if(!getPart().getParticle().isColorable()) return;
 
                 if(clickType == ClickType.LEFT_CLICK) {
-                    getPart().setColor(getColor().previous());
+                    if(getPart().getColor() == null) getPart().setColor(Color.RED);
+                    else getPart().setColor(getColor().previous());
                 } else if(clickType == ClickType.RIGHT_CLICK) {
-                    getPart().setColor(getColor().next());
+                    if(getPart().getColor() == null) getPart().setColor(Color.RED);
+                    else getPart().setColor(getColor().next());
                 }
 
                 menu.getAnimPlayer().update();
