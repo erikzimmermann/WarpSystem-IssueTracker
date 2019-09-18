@@ -154,7 +154,9 @@ public class Teleport extends HotbarGUI {
                             public void accept(Destination destination) {
                                 if(destination == null) return;
                                 if(getPortal().getDestination().getType() == DestinationType.EffectPortal) {
-                                    getPortal().getLink().destroy();
+                                    EffectPortal link = getPortal().getLink();
+                                    getPortal().setLink(null);
+                                    link.destroy();
                                 }
 
                                 getPortal().getDestination().apply(destination);
