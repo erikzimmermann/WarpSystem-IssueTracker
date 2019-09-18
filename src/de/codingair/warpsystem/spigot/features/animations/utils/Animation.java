@@ -56,6 +56,7 @@ public class Animation implements Serializable {
             ParticlePart p = new ParticlePart();
             p.read(data);
             particleParts.add(p);
+            break;
         }
 
         String[] data = json.get("ticksound") == null ? null : ((String) json.get("ticksound")).split("#", -1);

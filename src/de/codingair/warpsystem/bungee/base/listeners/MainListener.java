@@ -4,6 +4,7 @@ import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.transfer.packets.bungee.PrepareLoginMessagePacket;
 import de.codingair.warpsystem.transfer.packets.general.BooleanPacket;
 import de.codingair.warpsystem.transfer.packets.general.IntegerPacket;
+import de.codingair.warpsystem.transfer.packets.spigot.IsOperatorPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.MessagePacket;
 import de.codingair.warpsystem.transfer.packets.spigot.PrepareServerSwitchPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestServerStatusPacket;
@@ -15,6 +16,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
+import net.md_5.bungee.api.event.ServerDisconnectEvent;
+import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
@@ -30,6 +33,16 @@ public class MainListener implements Listener, PacketListener {
         }
     }
 
+    @EventHandler
+    public void onSwitch(ServerSwitchEvent e) {
+        WarpSystem.getInstance().getDataManager().getOped().remove(e.getPlayer().getName());
+    }
+
+    @EventHandler
+    public void onSwitch(ServerDisconnectEvent e) {
+        WarpSystem.getInstance().getDataManager().getOped().remove(e.getPlayer().getName());
+    }
+
     @Override
     public void onReceive(Packet packet, String extra) {
         ServerInfo server = BungeeCord.getInstance().getServerInfo(extra);
@@ -37,6 +50,18 @@ public class MainListener implements Listener, PacketListener {
         switch(PacketType.getByObject(packet)) {
             case RequestInitialPacket: {
                 WarpSystem.getInstance().getServerManager().sendInitialPacket(server);
+                break;
+            }
+
+            case IsOperatorPacket: {
+                IsOperatorPacket p = (IsOperatorPacket) packet;
+
+                if(p.isOperator()) {
+                    WarpSystem.getInstance().getDataManager().getOped().add(p.getPlayer());
+                } else {
+                    WarpSystem.getInstance().getDataManager().getOped().remove(p.getPlayer());
+                }
+
                 break;
             }
 
