@@ -6,17 +6,26 @@ import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
 public class CTpaHere extends Command {
     public CTpaHere() {
-        super("TpaHere", WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA);
+        super("TpaHere");
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(!(sender instanceof ProxiedPlayer)) return;
+        if(!(sender instanceof ProxiedPlayer)) {
+            sender.sendMessage(new TextComponent(Lang.getPrefix() + Lang.get("Only_For_Players")));
+            return;
+        }
+
+        if(!sender.hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA_HERE)) {
+            sender.sendMessage(new TextComponent(Lang.getPrefix() + Lang.get("No_Permission")));
+            return;
+        }
 
         if(args.length != 1) {
             sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpaHere <§eplayer§7>");

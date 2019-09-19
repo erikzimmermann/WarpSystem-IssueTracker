@@ -13,12 +13,20 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class CTeleport extends Command {
     public CTeleport() {
-        super("teleport", WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP, "tp");
+        super("teleport", null, "tp");
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(!(sender instanceof ProxiedPlayer)) return;
+        if(!(sender instanceof ProxiedPlayer)) {
+            sender.sendMessage(new TextComponent(Lang.getPrefix() + Lang.get("Only_For_Players")));
+            return;
+        }
+
+        if(!sender.hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) {
+            sender.sendMessage(new TextComponent(Lang.getPrefix() + Lang.get("No_Permission")));
+            return;
+        }
 
         ProxiedPlayer p = (ProxiedPlayer) sender;
 

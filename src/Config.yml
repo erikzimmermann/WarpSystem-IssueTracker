@@ -73,19 +73,20 @@ WarpSystem:
       History_Size: 3
       Enabled: true
     Tp: true
+    TpAll: true
     TpToggle: true
     Tpa: true
     TpaHere: true
+    TpaAll: true
     TpaToggle: true
-    TpAll: true
-    #For Tpa, TpHere & TpAll
+    #Tpa, TpaHere& TpaAll: |true: Players on this server can receive/send teleport requests from/to other servers. |false: Players can only send TeleportRequests to players on this server
+    #TpAll: Only players from servers with 'BungeeCord: true' will be teleported to you.
+    BungeeCord: true
     TeleportRequests:
       #In seconds
       ExpireDelay: 30
-      #true: Players on this server can receive/send teleport requests from/to other servers. |false: Players can only send TeleportRequests to players on this server
-      BungeeCord: true
       #true: The teleport request SENDER will be notified about every accepted or denied teleport request. |false: The teleport request SENDER won't get any accept or deny messages
-      TpAll: true
+      Notify_TpaAll_Sender: true
 
   EffectPortals:
     #Max distance between particle and player

@@ -28,6 +28,7 @@ public class TeleportManager implements Manager {
         BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), teleport = new CTeleport());
         BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpHere(teleport));
         BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpAll());
+        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpaAll());
         BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpa());
         BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpaHere());
         BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpToggle());
@@ -106,6 +107,7 @@ public class TeleportManager implements Manager {
      */
     public void sendTeleportRequest(ProxiedPlayer sender, boolean tpToSender, boolean notifySender, ProxiedPlayer... receiver) {
         if(this.hasInvites.contains(sender.getName())) return;
+        if(receiver.length == 0) return;
         this.hasInvites.add(sender.getName());
 
         for(ProxiedPlayer player : receiver) {

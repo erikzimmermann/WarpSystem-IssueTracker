@@ -13,9 +13,9 @@ import net.md_5.bungee.api.plugin.Command;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CTpAll extends Command {
-    public CTpAll() {
-        super("tpall");
+public class CTpaAll extends Command {
+    public CTpaAll() {
+        super("tpaall");
     }
 
     @Override
@@ -25,8 +25,13 @@ public class CTpAll extends Command {
             return;
         }
 
-        if(!sender.hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPALL)) {
+        if(!sender.hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA_ALL)) {
             sender.sendMessage(new TextComponent(Lang.getPrefix() + Lang.get("No_Permission")));
+            return;
+        }
+
+        if(TeleportManager.getInstance().hasOpenInvites((ProxiedPlayer) sender)) {
+            sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Open_Requests"));
             return;
         }
 
@@ -47,24 +52,12 @@ public class CTpAll extends Command {
                 if(!receiver.getName().equals(sender.getName())
                         && TeleportManager.getInstance().getAccessibleServers().contains(receiver.getServer().getInfo())) {
                     max++;
-                    if(!TeleportManager.getInstance().deniesForceTps(receiver)) players.add(receiver);
+                    if(!TeleportManager.getInstance().deniesTpaRequests(receiver)) players.add(receiver);
                 }
             }
         }
 
-        ProxiedPlayer target = (ProxiedPlayer) sender;
-        for(ProxiedPlayer player : players) {
-            //tp
-            TeleportPlayerToPlayerPacket packet = new TeleportPlayerToPlayerPacket(target.getName(), player.getName(), target.getName(), false);
-            if(!player.getServer().getInfo().equals(target.getServer().getInfo())) {
-                player.connect(target.getServer().getInfo(), (connected, throwable) -> {
-                    if(connected)
-                        WarpSystem.getInstance().getDataHandler().send(packet, target.getServer().getInfo());
-                });
-            } else
-                WarpSystem.getInstance().getDataHandler().send(packet, target.getServer().getInfo());
-        }
-
-        sender.sendMessage(Lang.getPrefix() + Lang.get("Teleport_all").replace("%AMOUNT%", players.size() + "").replace("%MAX%", max + ""));
+        TeleportManager.getInstance().sendTeleportRequest((ProxiedPlayer) sender, true, false, players.toArray(new ProxiedPlayer[0]));
+        sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_All").replace("%RECEIVED%", players.size() + "").replace("%MAX%", max + ""));
     }
 }

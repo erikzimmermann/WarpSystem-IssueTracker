@@ -59,7 +59,7 @@ public class TeleportPacketListener implements Listener, PacketListener {
                 Player other = Bukkit.getPlayer(tpPacket.getTarget());
 
                 if(gate != null && player != null && other != null) {
-                    if(gate != player) gate.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", player.getName()).replace("%warp%", other.getName()));
+                    if(gate != player && tpPacket.isMessageToGate()) gate.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", player.getName()).replace("%warp%", other.getName()));
 
                     Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TeleportCommand, new Destination(new LocationAdapter(other.getLocation())),
                             other.getName(), 0, true,
