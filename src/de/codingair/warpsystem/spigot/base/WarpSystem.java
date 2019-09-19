@@ -78,6 +78,7 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA_HERE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaHere";
     public static final String PERMISSION_USE_TELEPORT_COMMAND_TPHEREALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpHereAll";
     public static final String PERMISSION_USE_TELEPORT_COMMAND_TPALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpAll";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA_ALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpaAll";
     public static final String PERMISSION_USE_TELEPORT_COMMAND_BUNGEE_ACCESS = PERMISSION_USE_TELEPORT_COMMAND + ".BungeeAccess";
     public static final String PERMISSION_TELEPORT_PRELOAD_CHUNKS = "WarpSystem.Teleport.ChunkPreLoading";
     public static final String PERMISSION_SIMPLE_WARPS_DIRECT_TELEPORT = "WarpSystem.SimpleWarp.DirectTeleport";

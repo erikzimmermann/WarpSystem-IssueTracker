@@ -15,14 +15,22 @@ public class CTpHere extends Command {
     private CTeleport teleport;
 
     public CTpHere(CTeleport teleport) {
-        super("tphere", WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP);
+        super("tphere");
 
         this.teleport = teleport;
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(!(sender instanceof ProxiedPlayer)) return;
+        if(!(sender instanceof ProxiedPlayer)) {
+            sender.sendMessage(new TextComponent(Lang.getPrefix() + Lang.get("Only_For_Players")));
+            return;
+        }
+
+        if(!sender.hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) {
+            sender.sendMessage(new TextComponent(Lang.getPrefix() + Lang.get("No_Permission")));
+            return;
+        }
 
         ProxiedPlayer p = (ProxiedPlayer) sender;
 
