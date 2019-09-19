@@ -12,7 +12,7 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class CTpToggle extends Command {
     public CTpToggle() {
-        super("TpToggle");
+        super("tptoggle");
     }
 
     @Override

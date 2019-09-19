@@ -9,7 +9,7 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.transfer.packets.spigot.PerformCommandPacket;
+import de.codingair.warpsystem.transfer.packets.spigot.PerformCommandOnBungeePacket;
 import de.codingair.warpsystem.transfer.serializeable.icons.SActionIcon;
 import de.codingair.warpsystem.transfer.serializeable.icons.SActionObject;
 import de.codingair.warpsystem.transfer.serializeable.icons.SIcon;
@@ -112,7 +112,7 @@ public abstract class ActionIcon extends Icon implements Serializable {
                 String tag = command.contains(" ") ? command.split(" ")[0] : command;
 
                 if(WarpSystem.getInstance().isOnBungeeCord() && Bukkit.getPluginCommand(tag) == null) {
-                    WarpSystem.getInstance().getDataHandler().send(new PerformCommandPacket(p.getName(), command, new Callback<Boolean>() {
+                    WarpSystem.getInstance().getDataHandler().send(new PerformCommandOnBungeePacket(p.getName(), command, new Callback<Boolean>() {
                         @Override
                         public void accept(Boolean exists) {
                             if(!exists) p.sendMessage(org.spigotmc.SpigotConfig.unknownCommandMessage);

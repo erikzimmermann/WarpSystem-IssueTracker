@@ -10,7 +10,7 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class CTpaToggle extends Command {
     public CTpaToggle() {
-        super("TpaToggle");
+        super("tpatoggle");
     }
 
     @Override

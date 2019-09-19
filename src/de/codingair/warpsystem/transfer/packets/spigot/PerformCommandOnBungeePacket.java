@@ -7,14 +7,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class PerformCommandPacket extends RequestPacket<Boolean> {
+public class PerformCommandOnBungeePacket extends RequestPacket<Boolean> {
     private String player;
     private String command;
 
-    public PerformCommandPacket() {
+    public PerformCommandOnBungeePacket() {
     }
 
-    public PerformCommandPacket(String player, String command, Callback<Boolean> callback) {
+    public PerformCommandOnBungeePacket(String player, String command, Callback<Boolean> callback) {
         super(callback);
         this.player = player;
         this.command = command;

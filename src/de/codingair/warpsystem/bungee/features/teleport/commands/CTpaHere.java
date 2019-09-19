@@ -12,7 +12,7 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class CTpaHere extends Command {
     public CTpaHere() {
-        super("TpaHere");
+        super("tpahere");
     }
 
     @Override
@@ -52,12 +52,8 @@ public class CTpaHere extends Command {
                 return;
             }
 
-            if(!TeleportManager.getInstance().getAccessibleServers().contains(((ProxiedPlayer) sender).getServer().getInfo()) && !((ProxiedPlayer) sender).getServer().getInfo().equals(receiver.getServer().getInfo())) {
-                sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Receiver_not_availabe"));
-                return;
-            }
-
-            if(!TeleportManager.getInstance().getAccessibleServers().contains(receiver.getServer().getInfo())) {
+            if(!((ProxiedPlayer) sender).getServer().getInfo().equals(receiver.getServer().getInfo()) && (!TeleportManager.getInstance().isAccessible(((ProxiedPlayer) sender).getServer().getInfo())
+                    || !TeleportManager.getInstance().isAccessible(receiver.getServer().getInfo()))) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Receiver_not_availabe"));
                 return;
             }

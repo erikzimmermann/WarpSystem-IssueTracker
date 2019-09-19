@@ -4,7 +4,7 @@ import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.transfer.packets.bungee.DeployIconPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.SendUUIDPacket;
 import de.codingair.warpsystem.transfer.packets.general.BooleanPacket;
-import de.codingair.warpsystem.transfer.packets.spigot.PerformCommandPacket;
+import de.codingair.warpsystem.transfer.packets.spigot.PerformCommandOnBungeePacket;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestUUIDPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.UploadIconPacket;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
@@ -44,16 +44,16 @@ public class BungeePacketHandler implements PacketHandler {
                 WarpSystem.getInstance().getDataHandler().send(uuidPacket, server);
                 break;
 
-            case PerformCommandPacket:
-                PerformCommandPacket performCommandPacket = (PerformCommandPacket) packet;
+            case PerformCommandOnBungeePacket:
+                PerformCommandOnBungeePacket performCommandOnBungeePacket = (PerformCommandOnBungeePacket) packet;
 
-                ProxiedPlayer p = BungeeCord.getInstance().getPlayer(performCommandPacket.getPlayer());
+                ProxiedPlayer p = BungeeCord.getInstance().getPlayer(performCommandOnBungeePacket.getPlayer());
                 if(p == null) return;
 
-                String cmd = performCommandPacket.getCommand();
+                String cmd = performCommandOnBungeePacket.getCommand();
 
                 BooleanPacket answerPacket = new BooleanPacket(BungeeCord.getInstance().getPluginManager().dispatchCommand(p, cmd));
-                performCommandPacket.applyAsAnswer(answerPacket);
+                performCommandOnBungeePacket.applyAsAnswer(answerPacket);
 
                 WarpSystem.getInstance().getDataHandler().send(answerPacket, server);
                 break;

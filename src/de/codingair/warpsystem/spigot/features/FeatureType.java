@@ -28,7 +28,7 @@ public enum FeatureType {
     TEMP_WARPS(TempWarpManager.class, Priority.LOW, "TempWarps"),
     SIMPLE_WARPS(SimpleWarpManager.class, Priority.HIGH, "SimpleWarps"),
     RANDOM_TELEPORTS(RandomTeleporterManager.class, Priority.HIGH, "RandomTeleports"),
-    TELEPORT_COMMAND(TeleportCommandManager.class, Priority.HIGH, "TeleportCommand"),
+    TELEPORT_COMMAND(TeleportCommandManager.class, Priority.ALWAYS_ON, "TeleportCommand"),
     ANIMATION_EDITOR(AnimationManager.class, Priority.ALWAYS_ON, "AnimationEditor"),
     ;
 
