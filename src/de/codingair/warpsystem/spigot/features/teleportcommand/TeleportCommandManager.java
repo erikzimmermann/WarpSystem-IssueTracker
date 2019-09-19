@@ -112,7 +112,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
         WarpSystem.getInstance().getDataHandler().register(this.packetListener);
         Bukkit.getPluginManager().registerEvents(this.packetListener, WarpSystem.getInstance());
 
-        WarpSystem.getInstance().getDataHandler().send(new TeleportCommandOptionsPacket(bungeeCord, back != null, tp != null, tpAll != null, tpToggle != null, tpa != null && false, tpaHere != null, tpaAll != null, tpaToggle != null));
+        WarpSystem.getInstance().getDataHandler().send(new TeleportCommandOptionsPacket(bungeeCord, back != null, tp != null, tpAll != null, tpToggle != null, tpa != null, tpaHere != null, tpaAll != null, tpaToggle != null));
     }
 
     @Override
