@@ -9,18 +9,9 @@ commands:
     usuage: /teleport <player> [player]
     description: A Warp-System-CMD
     aliases: [tp]
-  tptoggle:
-    usuage: /tptoggle
-    description: A Warp-System-CMD
   tpa:
     usuage: /tpa <player>
     description: A Warp-System-CMD
   tphere:
     usuage: /tphere <player>
-    description: A Warp-System-CMD
-  tpatoggle:
-    usuage: /tpatoggle
-    description: A Warp-System-CMD
-  tpall:
-    usuage: /tpall <true, false>
     description: A Warp-System-CMD

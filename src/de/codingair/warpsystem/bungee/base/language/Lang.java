@@ -3,6 +3,7 @@ package de.codingair.warpsystem.bungee.base.language;
 import de.codingair.codingapi.bungeecord.files.ConfigFile;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 
@@ -11,6 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Lang {
+    public static void PREMIUM_CHAT_ONLY_OPED(CommandSender sender) {
+        sender.sendMessage("\n"+getPrefix() + "§7This is a §6§lPremium§7 feature! Only §eoped §7players can use this.\n");
+    }
+
     public static void initPreDefinedLanguages(Plugin plugin) throws IOException {
         List<String> languages = new ArrayList<>();
         languages.add("ENG.yml");

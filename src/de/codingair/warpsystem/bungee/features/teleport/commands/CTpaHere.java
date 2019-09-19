@@ -3,6 +3,8 @@ package de.codingair.warpsystem.bungee.features.teleport.commands;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.base.language.Lang;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
+import de.codingair.warpsystem.transfer.packets.bungee.TeleportPlayerToCoordsPacket;
+import de.codingair.warpsystem.transfer.packets.bungee.TeleportPlayerToPlayerPacket;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -26,6 +28,13 @@ public class CTpaHere extends Command {
             sender.sendMessage(new TextComponent(Lang.getPrefix() + Lang.get("No_Permission")));
             return;
         }
+
+        if(!WarpSystem.getInstance().getDataManager().isOp(sender)) {
+            sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
+            return;
+        }
+
+        Lang.PREMIUM_CHAT_ONLY_OPED(sender);
 
         if(args.length != 1) {
             sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpaHere <§eplayer§7>");
