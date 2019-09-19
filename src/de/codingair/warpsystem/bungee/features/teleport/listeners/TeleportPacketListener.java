@@ -3,7 +3,7 @@ package de.codingair.warpsystem.bungee.features.teleport.listeners;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ClearInvitesPacket;
-import de.codingair.warpsystem.spigot.features.teleportcommand.packets.TeleportRequestOptionsPacket;
+import de.codingair.warpsystem.spigot.features.teleportcommand.packets.TeleportCommandOptionsPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPlayerToPlayerPacket;
 import de.codingair.warpsystem.transfer.packets.general.IntegerPacket;
 import de.codingair.warpsystem.transfer.packets.general.StartTeleportToPlayerPacket;
@@ -15,16 +15,14 @@ import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-public class TeleportRequestPacketListener implements PacketListener {
+public class TeleportPacketListener implements PacketListener {
     @Override
     public void onReceive(Packet packet, String extra) {
-        if(PacketType.getByObject(packet) == PacketType.TeleportRequestOptionsPacket) {
+        if(PacketType.getByObject(packet) == PacketType.TeleportCommandOptions) {
             ServerInfo info = BungeeCord.getInstance().getServerInfo(extra);
-            TeleportRequestOptionsPacket p = (TeleportRequestOptionsPacket) packet;
+            TeleportCommandOptionsPacket p = (TeleportCommandOptionsPacket) packet;
 
-            if(p.isBungeeCord()) {
-                if(info != null) TeleportManager.getInstance().getAccessibleServers().add(info);
-            }
+            TeleportManager.getInstance().registerOptions(info, p.getOptions());
         } else if(PacketType.getByObject(packet) == PacketType.ClearInvitesPacket) {
             TeleportManager.getInstance().clear(((ClearInvitesPacket) packet).getName());
         } else if(PacketType.getByObject(packet) == PacketType.PrepareTeleportPlayerToPlayerPacket) {

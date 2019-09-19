@@ -33,7 +33,7 @@ public class CTpAll extends Command {
         List<ProxiedPlayer> players = new ArrayList<>();
         int max = 0;
 
-        if(!TeleportManager.getInstance().getAccessibleServers().contains(((ProxiedPlayer) sender).getServer().getInfo())) {
+        if(!TeleportManager.getInstance().isAccessible(((ProxiedPlayer) sender).getServer().getInfo())) {
             for(ProxiedPlayer receiver : ((ProxiedPlayer) sender).getServer().getInfo().getPlayers()) {
                 if(!receiver.getName().equals(sender.getName())) {
                     max++;
@@ -42,10 +42,8 @@ public class CTpAll extends Command {
             }
         } else {
             for(ProxiedPlayer receiver : BungeeCord.getInstance().getPlayers()) {
-                if(receiver.getName().equals(sender.getName())) continue;
-
                 if(!receiver.getName().equals(sender.getName())
-                        && TeleportManager.getInstance().getAccessibleServers().contains(receiver.getServer().getInfo())) {
+                        && TeleportManager.getInstance().isAccessible(receiver.getServer().getInfo())) {
                     max++;
                     if(!TeleportManager.getInstance().deniesForceTps(receiver)) players.add(receiver);
                 }

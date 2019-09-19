@@ -4,7 +4,7 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject;
-import de.codingair.warpsystem.transfer.packets.spigot.PerformCommandPacket;
+import de.codingair.warpsystem.transfer.packets.spigot.PerformCommandOnBungeePacket;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
@@ -57,7 +57,7 @@ public class CommandAction extends ActionObject<List<String>> {
             String tag = command.contains(" ") ? command.split(" ")[0] : command;
 
             if(WarpSystem.getInstance().isOnBungeeCord() && Bukkit.getPluginCommand(tag) == null) {
-                WarpSystem.getInstance().getDataHandler().send(new PerformCommandPacket(player.getName(), command, new Callback<Boolean>() {
+                WarpSystem.getInstance().getDataHandler().send(new PerformCommandOnBungeePacket(player.getName(), command, new Callback<Boolean>() {
                     @Override
                     public void accept(Boolean exists) {
                         if(!exists) player.sendMessage(org.spigotmc.SpigotConfig.unknownCommandMessage);
