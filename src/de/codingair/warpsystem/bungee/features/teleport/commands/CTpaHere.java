@@ -19,7 +19,15 @@ public class CTpaHere extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(!(sender instanceof ProxiedPlayer)) return;
+        if(!(sender instanceof ProxiedPlayer)) {
+            sender.sendMessage(new TextComponent(Lang.getPrefix() + Lang.get("Only_For_Players")));
+            return;
+        }
+
+        if(!sender.hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA_HERE)) {
+            sender.sendMessage(new TextComponent(Lang.getPrefix() + Lang.get("No_Permission")));
+            return;
+        }
 
         if(!WarpSystem.getInstance().getDataManager().isOp(sender)) {
             sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));

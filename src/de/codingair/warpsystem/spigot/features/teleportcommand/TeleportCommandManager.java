@@ -41,7 +41,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
     private int expireDelay = 30;
     private int backHistorySize = 3;
     private boolean bungeeCord = false;
-    private boolean tpAllNotifySender = true;
+    private boolean tpaAllNotifySender = true;
 
     @Override
     public boolean load() {
@@ -50,8 +50,8 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
 
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
         expireDelay = file.getConfig().getInt("WarpSystem.TeleportCommands.TeleportRequests.ExpireDelay", 30);
-        bungeeCord = file.getConfig().getBoolean("WarpSystem.TeleportCommands.TeleportRequests.BungeeCord", true);
-        tpAllNotifySender = file.getConfig().getBoolean("WarpSystem.TeleportCommands.TeleportRequests.TpAll", true);
+        bungeeCord = file.getConfig().getBoolean("WarpSystem.TeleportCommands.BungeeCord", true);
+        tpaAllNotifySender = file.getConfig().getBoolean("WarpSystem.TeleportCommands.TeleportRequests.Notify_TpaAll_Sender", true);
 
         if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Tp", true)) {
             CTeleport teleportCommand = new CTeleport();
@@ -63,6 +63,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
         if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Tpa", true)) new CTpa().register(WarpSystem.getInstance());
         if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaHere", true)) new CTpaHere().register(WarpSystem.getInstance());
         if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaToggle", true)) new CTpaToggle().register(WarpSystem.getInstance());
+        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaAll", true)) new CTpaAll().register(WarpSystem.getInstance());
         if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpAll", true)) new CTpAll().register(WarpSystem.getInstance());
         if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Back.Enabled", true)) {
             new CBack().register(WarpSystem.getInstance());
@@ -146,7 +147,8 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
      * @return the amount of players, who received the tp request
      */
     public int sendTeleportRequest(BungeePlayer sender, boolean tpToSender, boolean notifySender, Player... receiver) {
-        if(tpAllNotifySender) notifySender = true;
+        if(receiver.length == 0) return 0;
+        if(tpaAllNotifySender) notifySender = true;
         boolean finalNotifySender = notifySender;
 
         SimpleMessage m = new SimpleMessage(Lang.getPrefix() + Lang.get("TeleportRequest_tpTo" + (tpToSender ? "Sender" : "Receiver")).replace("%PLAYER%", ChatColor.stripColor(sender.getDisplayName())).replace("%SECONDS%", expireDelay + "").replace("%PLAYER%", sender.getDisplayName()), WarpSystem.getInstance()) {

@@ -102,6 +102,7 @@ public class TeleportManager implements Manager {
      */
     public void sendTeleportRequest(ProxiedPlayer sender, boolean tpToSender, boolean notifySender, ProxiedPlayer... receiver) {
         if(this.hasInvites.contains(sender.getName())) return;
+        if(receiver.length == 0) return;
         this.hasInvites.add(sender.getName());
 
         for(ProxiedPlayer player : receiver) {
