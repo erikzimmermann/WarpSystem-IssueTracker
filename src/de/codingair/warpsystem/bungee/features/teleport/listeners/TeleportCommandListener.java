@@ -42,6 +42,7 @@ public class TeleportCommandListener implements Listener {
         if(options == null) return false;
 
         switch(command.getName().toLowerCase()) {
+            case "tphere":
             case "teleport":
                 return options.isTp();
             case "tpa":
@@ -54,8 +55,6 @@ public class TeleportCommandListener implements Listener {
                 return options.isTpAll();
             case "tpatoggle":
                 return options.isTpaToggle();
-            case "tphere":
-                return options.isTpaHere();
             case "tptoggle":
                 return options.isTpToggle();
         }
