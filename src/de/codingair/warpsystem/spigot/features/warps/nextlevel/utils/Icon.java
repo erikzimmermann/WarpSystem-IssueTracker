@@ -51,6 +51,11 @@ public class Icon extends FeatureObject {
         return new Icon(this);
     }
 
+    public int getDepth() {
+        if(category == null) return 0;
+        else return 1 + category.getDepth();
+    }
+
     public void apply(Icon icon) {
         super.apply(icon);
 
