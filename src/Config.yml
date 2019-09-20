@@ -14,13 +14,13 @@ WarpSystem:
       Size: 54
       Title:
         Standard: '&c&nWarps&r'
-        In_Category: '&c&nWarps&r &c@%CATEGORY%'
+        In_Category: '&c&nWarps&r &c@%PAGE%'
     User:
       #The number must be between inclusive 9 and inclusive 54 and must be divisible by 9.
       Size: 54
       Title:
         Standard: '&c&nWarps&r'
-        In_Category: '&c&nWarps&r &c@%CATEGORY%'
+        In_Category: '&c&nWarps&r &c@%PAGE%'
 
   Economy:
     #Priority list for economy systems
