@@ -138,7 +138,6 @@ public class RandomLocationCalculator implements Runnable {
         if(safety && !isSafe(location)) return false;
         if(RandomTeleporterManager.getInstance().getBiomeList() != null && !RandomTeleporterManager.getInstance().getBiomeList().contains(location.getBlock().getBiome())) return false;
         if(RandomTeleporterManager.getInstance().isProtectedRegions() && isProtected(location)) return false;
-        if(RandomTeleporterManager.getInstance().isWorldBorder() && !isInsideOfWorldBorder(location)) return false;
 
         if(location.getBlock().getType().name().toLowerCase().contains("lava")) return false;
         Location below = location.clone();
@@ -161,11 +160,6 @@ public class RandomLocationCalculator implements Runnable {
         }
 
         return true;
-    }
-
-    private boolean isInsideOfWorldBorder(Location location) {
-        WorldBorder border = location.getWorld().getWorldBorder();
-        return border == null || Area.isInArea(location, border.getCenter(), border.getSize()/ 2, false, 0);
     }
 
     private boolean isProtected(Location location) throws InterruptedException {

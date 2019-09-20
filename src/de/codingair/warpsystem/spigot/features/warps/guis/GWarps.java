@@ -363,7 +363,7 @@ public class GWarps extends GUI {
                                 }
                             };
 
-                            new GChooseIconType(p, callback).open();
+                            new GChooseIconType(p, category, callback).open();
                         }
                     }.setOption(option).setOnlyLeftClick(true));
                 }
@@ -419,7 +419,7 @@ public class GWarps extends GUI {
                 iconBuilder.addText("§8------------");
                 iconBuilder.addText("§3" + Lang.get("Leftclick") + ": §7" + Lang.get("Edit"));
                 iconBuilder.addText("§3" + Lang.get("Shift_Leftclick") + ": §7" + Lang.get("Move"));
-                iconBuilder.addText("§3" + Lang.get("Rightclick") + ": §7" + ChatColor.stripColor(Lang.get("Change_Item")));
+                iconBuilder.addText("§3" + Lang.get("Rightclick") + ": §7" + ChatColor.stripColor(Lang.get("Change_Item")) + Lang.PREMIUM_LORE);
                 iconBuilder.addText("§3" + Lang.get("Shift_Rightclick") + ": §7" + ChatColor.stripColor(Lang.get("Delete")));
 
                 if(!icon.isPage()) {
@@ -494,12 +494,7 @@ public class GWarps extends GUI {
                                         }
                                     }, GWarps.this::open).open();
                                 } else {
-                                    if(p.getInventory().getItem(p.getInventory().getHeldItemSlot()) == null || p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType() == Material.AIR
-                                            || icon.getItem().getType() == p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType()) return;
-
-                                    icon.changeItem(p.getInventory().getItem(p.getInventory().getHeldItemSlot()));
-                                    GWarps.this.reinitialize();
-                                    updateInventory(p);
+                                    Lang.PREMIUM_CHAT(p);
                                 }
                             }
                         }
