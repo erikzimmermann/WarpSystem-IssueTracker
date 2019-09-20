@@ -1,7 +1,6 @@
 package de.codingair.warpsystem.spigot.features.warps.guis.editor;
 
 import de.codingair.warpsystem.spigot.base.guis.editor.Backup;
-import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.ShowIcon;
 import de.codingair.warpsystem.spigot.base.guis.editor.pages.DestinationPage;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -21,24 +20,24 @@ public class GEditor extends de.codingair.warpsystem.spigot.base.guis.editor.Edi
                 public void applyTo(Icon clone) {
                     icon.apply(clone);
 
-                    if(icon.isCategory() && !IconManager.getInstance().existsCategory(icon.getName())) {
+                    if(icon.isPage() && !IconManager.getInstance().existsCategory(icon.getName())) {
                         IconManager.getInstance().getIcons().add(icon);
-                    } else if(!icon.isCategory() && !IconManager.getInstance().existsIcon(icon.getName())) {
+                    } else if(!icon.isPage() && !IconManager.getInstance().existsIcon(icon.getName())) {
                         IconManager.getInstance().getIcons().add(icon);
                     }
 
-                    new GWarps(p, icon.getCategory(), true).open();
+                    new GWarps(p, icon.getPage(), true).open();
                 }
 
                 @Override
                 public void cancel(Icon value) {
-                    new GWarps(p, icon.getCategory(), true).open();
+                    new GWarps(p, icon.getPage(), true).open();
                 }
             }, new ShowIcon() {
                 @Override
                 public ItemStack buildIcon() {
                     return clone.getItem();
                 }
-            }, new PAppearance(p, clone), new PFunctions(p, clone), icon.isCategory() ? null : new DestinationPage(p, "§c§n" + Lang.get("Item_Editing"), clone.getAction(WarpAction.class).getValue()));
+            }, new PAppearance(p, clone), new PFunctions(p, clone), icon.isPage() ? null : new DestinationPage(p, "§c§n" + Lang.get("Item_Editing"), clone.getAction(WarpAction.class).getValue()));
     }
 }

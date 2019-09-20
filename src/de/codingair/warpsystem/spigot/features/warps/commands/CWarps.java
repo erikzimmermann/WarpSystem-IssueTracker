@@ -65,7 +65,7 @@ public class CWarps extends CommandBuilder {
                 CommandSender target = sender;
 
                 if(category != null && category.hasPermission() && !sender.hasPermission(category.getPermission())) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category"));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Page"));
                     return false;
                 } else if(category == null && sender.hasPermission(WarpSystem.PERMISSION_WARP_GUI_OTHER)) {
                     Player other = Bukkit.getPlayer(argument);
@@ -93,7 +93,7 @@ public class CWarps extends CommandBuilder {
                 Icon category = manager.getCategory(argument);
 
                 if(category != null && category.hasPermission() && !sender.hasPermission(category.getPermission())) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category"));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Page"));
                     return false;
                 }
 

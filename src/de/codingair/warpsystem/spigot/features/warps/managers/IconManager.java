@@ -367,14 +367,14 @@ public class IconManager implements Manager {
     }
 
     private void clean() {
-        Icon[] cats = new Icon[54];
+        Icon[] iconList = new Icon[54];
         int remove = 0;
 
         List<Icon> icons = new ArrayList<>(this.icons);
         List<String> names = new ArrayList<>();
 
         for(Icon icon : icons) {
-            if(!icon.isCategory()) continue;
+            if(!icon.isPage()) continue;
 
             if(names.contains(icon.getName())) {
                 remove++;
@@ -389,34 +389,41 @@ public class IconManager implements Manager {
 
         icons.clear();
         icons.addAll(getCategories());
-        for(Icon i : icons) {
-            Icon other = cats[i.getSlot()];
-            if(other != null) {
-                List<Icon> subOther = getIcons(other);
-                List<Icon> subI = getIcons(i);
+        icons.add(0, null);
 
-                if(subOther.size() < subI.size()) {
-                    remove++;
-                    remove(other);
-                    cats[i.getSlot()] = i;
-                } else {
-                    remove++;
-                    remove(i);
-                }
+        for(Icon page : icons) {
+            for(Icon i : getIcons(page)) {
+                Icon other = iconList[i.getSlot()];
 
-                subOther.clear();
-                subI.clear();
-            } else cats[i.getSlot()] = i;
+                if(other != null) {
+                    List<Icon> subOther = getIcons(other);
+                    List<Icon> subI = getIcons(i);
+
+                    if(subOther.size() < subI.size()) {
+                        remove++;
+                        remove(other);
+                        iconList[i.getSlot()] = i;
+                    } else {
+                        remove++;
+                        remove(i);
+                    }
+
+                    subOther.clear();
+                    subI.clear();
+                } else iconList[i.getSlot()] = i;
+            }
+
+            iconList = new Icon[54];
         }
 
         icons.clear();
         icons.addAll(getIcons(null));
 
         for(Icon icon : icons) {
-            if(icon.isCategory()) continue;
+            if(icon.isPage()) continue;
 
-            if(cats[icon.getSlot()] != null) remove(icon);
-            else cats[icon.getSlot()] = icon;
+            if(iconList[icon.getSlot()] != null) remove(icon);
+            else iconList[icon.getSlot()] = icon;
         }
 
         icons.clear();
@@ -460,18 +467,18 @@ public class IconManager implements Manager {
         List<Icon> icons = new ArrayList<>();
 
         for(Icon icon : this.icons) {
-            if(icon.isCategory()) icons.add(icon);
+            if(icon.isPage()) icons.add(icon);
         }
 
         return icons;
     }
 
     public List<Icon> getCategories(Icon category) {
-        if(category != null && !category.isCategory()) throw new IllegalArgumentException("Given icon is not a category!");
+        if(category != null && !category.isPage()) throw new IllegalArgumentException("Given icon is not a category!");
         List<Icon> icons = new ArrayList<>();
 
         for(Icon icon : this.icons) {
-            if(icon.isCategory() && Objects.equals(category, icon.getCategory())) icons.add(icon);
+            if(icon.isPage() && Objects.equals(category, icon.getPage())) icons.add(icon);
         }
 
         return icons;
@@ -572,7 +579,7 @@ public class IconManager implements Manager {
         name = ChatColor.stripColor(name);
 
         for(Icon icon : this.icons) {
-            if(!icon.isCategory()) continue;
+            if(!icon.isPage()) continue;
             if(ChatColor.stripColor(icon.getName()).equalsIgnoreCase(name)) return icon;
         }
 
@@ -584,26 +591,26 @@ public class IconManager implements Manager {
         name = ChatColor.stripColor(name);
 
         for(Icon icon : this.icons) {
-            if(icon.isCategory() || icon.getName() == null) continue;
+            if(icon.isPage() || icon.getName() == null) continue;
             if(ChatColor.stripColor(icon.getName()).equalsIgnoreCase(name)) return icon;
         }
 
         return null;
     }
 
-    public List<Icon> getIcons(Icon category) {
-        if(category != null && !category.isCategory()) throw new IllegalArgumentException("Given icon is not a category!");
+    public List<Icon> getIcons(Icon page) {
+        if(page != null && !page.isPage()) throw new IllegalArgumentException("Given icon is not a category!");
         List<Icon> icons = new ArrayList<>();
 
         for(Icon icon : this.icons) {
-            if(Objects.equals(category, icon.getCategory())) icons.add(icon);
+            if(Objects.equals(page, icon.getPage())) icons.add(icon);
         }
 
         return icons;
     }
 
     public void remove(Icon icon) {
-        if(icon.isCategory()) {
+        if(icon.isPage()) {
             List<Icon> warps = getIcons(icon);
 
             for(Icon warp : warps) {
