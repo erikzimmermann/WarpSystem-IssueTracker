@@ -2,6 +2,7 @@ package de.codingair.warpsystem.bungee.features.teleport.listeners;
 
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
+import de.codingair.warpsystem.bungee.features.teleport.utils.TeleportCommandOptions;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.TabCompleteEvent;
@@ -17,8 +18,11 @@ public class TabCompleterListener implements Listener {
         cmd = cmd.replaceFirst("/", "");
         String[] args = e.getCursor().split(" ");
 
+        TeleportCommandOptions options = TeleportManager.getInstance().getOptions(((ProxiedPlayer) e.getSender()).getServer().getInfo());
+
         if(cmd.equalsIgnoreCase("teleport") || cmd.equalsIgnoreCase("tp")) {
             e.getSuggestions().clear();
+            if(options == null || !options.isTp()) return;
             if(!((ProxiedPlayer) e.getSender()).hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) return;
 
             int deep = args.length - 1;
@@ -42,9 +46,10 @@ public class TabCompleterListener implements Listener {
             }
         } else if(cmd.equalsIgnoreCase("tpa")) {
             e.getSuggestions().clear();
+            if(options == null || !options.isTpa()) return;
             if(!((ProxiedPlayer) e.getSender()).hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA)) return;
 
-            if(!TeleportManager.getInstance().getAccessibleServers().contains(((ProxiedPlayer) e.getSender()).getServer().getInfo())) {
+            if(!TeleportManager.getInstance().isAccessible(((ProxiedPlayer) e.getSender()).getServer().getInfo())) {
                 for(ProxiedPlayer player : ((ProxiedPlayer) e.getSender()).getServer().getInfo().getPlayers()) {
                     if(player.getName().equals(((ProxiedPlayer) e.getSender()).getName())) continue;
                     e.getSuggestions().add(player.getName());
@@ -52,15 +57,18 @@ public class TabCompleterListener implements Listener {
             } else {
                 for(ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
                     if(player.getName().equals(((ProxiedPlayer) e.getSender()).getName())) continue;
-                    if(!TeleportManager.getInstance().getAccessibleServers().contains(player.getServer().getInfo())) continue;
+                    if(!((ProxiedPlayer) e.getSender()).getServer().getInfo().equals(player.getServer().getInfo()) && (
+                            !TeleportManager.getInstance().isAccessible(((ProxiedPlayer) e.getSender()).getServer().getInfo()) || !TeleportManager.getInstance().isAccessible(player.getServer().getInfo())
+                    )) continue;
                     e.getSuggestions().add(player.getName());
                 }
             }
         } else if(cmd.equalsIgnoreCase("tpahere")) {
             e.getSuggestions().clear();
+            if(options == null || !options.isTpaHere()) return;
             if(!((ProxiedPlayer) e.getSender()).hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA_HERE)) return;
 
-            if(!TeleportManager.getInstance().getAccessibleServers().contains(((ProxiedPlayer) e.getSender()).getServer().getInfo())) {
+            if(!TeleportManager.getInstance().isAccessible(((ProxiedPlayer) e.getSender()).getServer().getInfo())) {
                 for(ProxiedPlayer player : ((ProxiedPlayer) e.getSender()).getServer().getInfo().getPlayers()) {
                     if(player.getName().equals(((ProxiedPlayer) e.getSender()).getName())) continue;
                     e.getSuggestions().add(player.getName());
@@ -68,18 +76,22 @@ public class TabCompleterListener implements Listener {
             } else {
                 for(ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
                     if(player.getName().equals(((ProxiedPlayer) e.getSender()).getName())) continue;
-                    if(!TeleportManager.getInstance().getAccessibleServers().contains(player.getServer().getInfo())) continue;
+                    if(!((ProxiedPlayer) e.getSender()).getServer().getInfo().equals(player.getServer().getInfo()) && (
+                            !TeleportManager.getInstance().isAccessible(((ProxiedPlayer) e.getSender()).getServer().getInfo()) || !TeleportManager.getInstance().isAccessible(player.getServer().getInfo())
+                    )) continue;
                     e.getSuggestions().add(player.getName());
                 }
             }
         } else if(cmd.equalsIgnoreCase("tpall")) {
             e.getSuggestions().clear();
+            if(options == null || !options.isTpaAll()) return;
             if(!((ProxiedPlayer) e.getSender()).hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPALL)) return;
 
             e.getSuggestions().add("true");
             e.getSuggestions().add("false");
         } else if(cmd.equalsIgnoreCase("tphere")) {
             e.getSuggestions().clear();
+            if(options == null || !options.isTp()) return;
             if(!((ProxiedPlayer) e.getSender()).hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) return;
 
             for(ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {

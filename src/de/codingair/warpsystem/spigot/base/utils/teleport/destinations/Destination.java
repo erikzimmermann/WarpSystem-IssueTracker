@@ -6,6 +6,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.DestinationAdapter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 
@@ -14,7 +15,7 @@ public class Destination {
     private DestinationType type;
     private DestinationAdapter adapter;
     private double offsetX, offsetY, offsetZ;
-    private int signedX, signedY, signedZ;
+    private int signedX, signedY = 1, signedZ;
 
     public Destination() {
         id = null;
@@ -88,7 +89,7 @@ public class Destination {
     public boolean teleport(Player player, String message, String displayName, boolean checkPermission, boolean silent, double costs, Callback<TeleportResult> callback) {
         if(adapter == null) return false;
         player.setFallDistance(0F);
-        return adapter.teleport(player, id, displayName, checkPermission, message, silent, costs, callback);
+        return adapter.teleport(player, id, buildRandomOffset(), displayName, checkPermission, message, silent, costs, callback);
     }
 
     public Location buildLocation() {
@@ -99,6 +100,14 @@ public class Destination {
 
             return adapter.buildLocation(id).add(offsetX, offsetY, offsetZ);
         } else return adapter.buildLocation(id);
+    }
+
+    public Vector buildRandomOffset() {
+        double offsetX = signedX == 1 ? Math.random() * this.offsetX : signedX == -1 ? Math.random() * -this.offsetX : Math.random() * 2 * this.offsetX - this.offsetX;
+        double offsetY = signedY == 1 ? Math.random() * this.offsetY : signedY == -1 ? Math.random() * -this.offsetY : Math.random() * 2 * this.offsetY - this.offsetY;
+        double offsetZ = signedZ == 1 ? Math.random() * this.offsetZ : signedZ == -1 ? Math.random() * -this.offsetZ : Math.random() * 2 * this.offsetZ - this.offsetZ;
+
+        return new Vector(offsetX, offsetY, offsetZ);
     }
 
     public double getCosts() {

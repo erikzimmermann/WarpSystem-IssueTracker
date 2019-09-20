@@ -20,7 +20,7 @@ import de.codingair.warpsystem.spigot.features.teleportcommand.commands.*;
 import de.codingair.warpsystem.spigot.features.teleportcommand.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.features.teleportcommand.listeners.TeleportPacketListener;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ClearInvitesPacket;
-import de.codingair.warpsystem.spigot.features.teleportcommand.packets.TeleportRequestOptionsPacket;
+import de.codingair.warpsystem.spigot.features.teleportcommand.packets.TeleportCommandOptionsPacket;
 import de.codingair.warpsystem.transfer.packets.general.StartTeleportToPlayerPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPlayerToPlayerPacket;
 import de.codingair.warpsystem.utils.Manager;
@@ -43,35 +43,47 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
     private boolean bungeeCord = false;
     private boolean tpaAllNotifySender = true;
 
+    private CTeleport tp;
+    private CTpHere tpHere;
+    private CTpToggle tpToggle;
+    private CTpa tpa;
+    private CTpaHere tpaHere;
+    private CTpaToggle tpaToggle;
+    private CTpaAll tpaAll;
+    private CTpAll tpAll;
+    private CBack back;
+
     @Override
     public boolean load() {
         WarpSystem.getInstance().getBungeeFeatureList().add(this);
         Bukkit.getPluginManager().registerEvents(new TeleportListener(), WarpSystem.getInstance());
 
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
-        expireDelay = file.getConfig().getInt("WarpSystem.TeleportCommands.TeleportRequests.ExpireDelay", 30);
-        bungeeCord = file.getConfig().getBoolean("WarpSystem.TeleportCommands.BungeeCord", true);
-        tpaAllNotifySender = file.getConfig().getBoolean("WarpSystem.TeleportCommands.TeleportRequests.Notify_TpaAll_Sender", true);
 
-        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Tp", true)) {
-            CTeleport teleportCommand = new CTeleport();
-            teleportCommand.register(WarpSystem.getInstance());
-            new CTpHere(teleportCommand).register(WarpSystem.getInstance());
-        }
+        if(file.getConfig().getBoolean("WarpSystem.Functions.TeleportCommand", true)) {
+            expireDelay = file.getConfig().getInt("WarpSystem.TeleportCommands.TeleportRequests.ExpireDelay", 30);
+            bungeeCord = file.getConfig().getBoolean("WarpSystem.TeleportCommands.BungeeCord", true);
+            tpaAllNotifySender = file.getConfig().getBoolean("WarpSystem.TeleportCommands.TeleportRequests.Notify_TpaAll_Sender", true);
 
-        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpToggle", true)) new CTpToggle().register(WarpSystem.getInstance());
-        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Tpa", true)) new CTpa().register(WarpSystem.getInstance());
-        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaHere", true)) new CTpaHere().register(WarpSystem.getInstance());
-        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaToggle", true)) new CTpaToggle().register(WarpSystem.getInstance());
-        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaAll", true)) new CTpaAll().register(WarpSystem.getInstance());
-        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpAll", true)) new CTpAll().register(WarpSystem.getInstance());
-        if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Back.Enabled", true)) {
-            new CBack().register(WarpSystem.getInstance());
-            this.backHistorySize = file.getConfig().getInt("WarpSystem.TeleportCommands.Back.History_Size", 3);
-            if(backHistorySize < 1) {
-                backHistorySize = 1;
-                file.getConfig().set("WarpSystem.TeleportCommands.Back.History_Size", 1);
-                file.saveConfig();
+            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Tp", true)) {
+                (tp = new CTeleport()).register(WarpSystem.getInstance());
+                (tpHere = new CTpHere(tp)).register(WarpSystem.getInstance());
+            }
+
+            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpToggle", true)) (tpToggle = new CTpToggle()).register(WarpSystem.getInstance());
+            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Tpa", true)) (tpa = new CTpa()).register(WarpSystem.getInstance());
+            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaHere", true)) (tpaHere = new CTpaHere()).register(WarpSystem.getInstance());
+            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaToggle", true)) (tpaToggle = new CTpaToggle()).register(WarpSystem.getInstance());
+            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaAll", true)) (tpaAll = new CTpaAll()).register(WarpSystem.getInstance());
+            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpAll", true)) (tpAll = new CTpAll()).register(WarpSystem.getInstance());
+            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Back.Enabled", true)) {
+                (back = new CBack()).register(WarpSystem.getInstance());
+                this.backHistorySize = file.getConfig().getInt("WarpSystem.TeleportCommands.Back.History_Size", 3);
+                if(backHistorySize < 1) {
+                    backHistorySize = 1;
+                    file.getConfig().set("WarpSystem.TeleportCommands.Back.History_Size", 1);
+                    file.saveConfig();
+                }
             }
         }
 
@@ -92,7 +104,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
         WarpSystem.getInstance().getDataHandler().register(this.packetListener);
         Bukkit.getPluginManager().registerEvents(this.packetListener, WarpSystem.getInstance());
 
-        WarpSystem.getInstance().getDataHandler().send(new TeleportRequestOptionsPacket(bungeeCord));
+        WarpSystem.getInstance().getDataHandler().send(new TeleportCommandOptionsPacket(bungeeCord, back != null, tp != null, tpAll != null, tpToggle != null, tpa != null, tpaHere != null, tpaAll != null, tpaToggle != null));
     }
 
     @Override

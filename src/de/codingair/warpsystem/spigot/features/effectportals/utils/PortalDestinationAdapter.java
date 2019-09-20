@@ -9,10 +9,11 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class PortalDestinationAdapter implements DestinationAdapter {
     @Override
-    public boolean teleport(Player player, String id, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
+    public boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
         Location location = buildLocation(id);
 
         if(location == null) {

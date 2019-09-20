@@ -349,6 +349,14 @@ public class IconManager implements Manager {
         }
 
         int icons = this.icons.size();
+
+        List<Icon> temp = new ArrayList<>(this.icons);
+        for(Icon icon : temp) {
+            if(icon.isCategory() && icon.getCategory() != null) this.icons.remove(icon);
+        }
+
+        temp.clear();
+
         clean();
         if(icons > this.icons.size()) {
             WarpSystem.log("      ...cleaned " + (icons - this.icons.size()) + " (total) icon(s)");
@@ -453,6 +461,17 @@ public class IconManager implements Manager {
 
         for(Icon icon : this.icons) {
             if(icon.isCategory()) icons.add(icon);
+        }
+
+        return icons;
+    }
+
+    public List<Icon> getCategories(Icon category) {
+        if(category != null && !category.isCategory()) throw new IllegalArgumentException("Given icon is not a category!");
+        List<Icon> icons = new ArrayList<>();
+
+        for(Icon icon : this.icons) {
+            if(icon.isCategory() && Objects.equals(category, icon.getCategory())) icons.add(icon);
         }
 
         return icons;

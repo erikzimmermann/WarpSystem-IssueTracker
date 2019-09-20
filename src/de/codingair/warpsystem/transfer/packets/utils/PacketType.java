@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.transfer.packets.utils;
 
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ClearInvitesPacket;
-import de.codingair.warpsystem.spigot.features.teleportcommand.packets.TeleportRequestOptionsPacket;
+import de.codingair.warpsystem.spigot.features.teleportcommand.packets.TeleportCommandOptionsPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.*;
 import de.codingair.warpsystem.transfer.packets.general.BooleanPacket;
 import de.codingair.warpsystem.transfer.packets.general.IntegerPacket;
@@ -22,16 +22,17 @@ public enum PacketType {
     RequestGlobalWarpNamesPacket(14, RequestGlobalWarpNamesPacket.class),
     SendGlobalWarpNamesPacket(15, SendGlobalWarpNamesPacket.class),
     UpdateGlobalWarpPacket(16, UpdateGlobalWarpPacket.class),
-    PerformCommandPacket(17, PerformCommandPacket.class),
-    RequestUUIDPacket(18, RequestUUIDPacket.class),
-    SendUUIDPacket(19, SendUUIDPacket.class),
-    TeleportPlayerToPlayerPacket(20, TeleportPlayerToPlayerPacket.class),
-    TeleportPlayerToCoordsPacket(21, TeleportPlayerToCoordsPacket.class),
-    PrepareServerSwitchPacket(22, PrepareServerSwitchPacket.class),
-    PrepareLoginMessagePacket(23, PrepareLoginMessagePacket.class),
-    MessagePacket(24, MessagePacket.class),
+    PerformCommandOnSpigotPacket(17, PerformCommandOnSpigotPacket.class),
+    PerformCommandOnBungeePacket(18, PerformCommandOnBungeePacket.class),
+    RequestUUIDPacket(19, RequestUUIDPacket.class),
+    SendUUIDPacket(20, SendUUIDPacket.class),
+    TeleportPlayerToPlayerPacket(21, TeleportPlayerToPlayerPacket.class),
+    TeleportPlayerToCoordsPacket(22, TeleportPlayerToCoordsPacket.class),
+    PrepareServerSwitchPacket(23, PrepareServerSwitchPacket.class),
+    PrepareLoginMessagePacket(24, PrepareLoginMessagePacket.class),
+    MessagePacket(25, MessagePacket.class),
 
-    TeleportRequestOptionsPacket(30, TeleportRequestOptionsPacket.class),
+    TeleportCommandOptions(30, TeleportCommandOptionsPacket.class),
     ClearInvitesPacket(31, ClearInvitesPacket.class),
     PrepareTeleportPlayerToPlayerPacket(32, PrepareTeleportPlayerToPlayerPacket.class),
     PrepareTeleportRequestPacket(33, PrepareTeleportRequestPacket.class),

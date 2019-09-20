@@ -86,14 +86,14 @@ public class DestinationPage extends PageItem {
                                 destination.setAdapter(DestinationType.SimpleWarp.getInstance());
                                 updateDestinationButtons();
 
-                                this.setClosingForGUI(true);
-                                getLast().open();
-                            }
+                                    this.setClosingForGUI(true);
+                                    getLast().open();
+                                }
 
-                            @Override
-                            public void onClose() {
-                                getLast().open();
-                            }
+                                @Override
+                                public void onClose() {
+                                    getLast().open();
+                                }
 
                             @Override
                             public void buildItemDescription(List<String> lore) {
@@ -200,5 +200,9 @@ public class DestinationPage extends PageItem {
 
     public Destination getDestination() {
         return destination;
+    }
+
+    private double trim(double d) {
+        return ((double)(int) (d * 100)) / 100;
     }
 }

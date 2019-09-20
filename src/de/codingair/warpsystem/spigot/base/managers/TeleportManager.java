@@ -252,7 +252,7 @@ public class TeleportManager {
             seconds = event.getSeconds();
         }
 
-        int finalSeconds = seconds;
+        final int finalSeconds = seconds;
         Callback<TeleportResult> finalResultCallback = resultCallback;
         String finalMessage = message;
         Callback waiting = new Callback() {
@@ -301,7 +301,7 @@ public class TeleportManager {
             }
         };
 
-        if(options.isWaitForTeleport() && !options.isCanMove()) {
+        if(options.isWaitForTeleport() && !options.isCanMove() && finalSeconds > 0) {
             waitWhileWalking(player, waiting);
         } else waiting.accept(null);
     }
