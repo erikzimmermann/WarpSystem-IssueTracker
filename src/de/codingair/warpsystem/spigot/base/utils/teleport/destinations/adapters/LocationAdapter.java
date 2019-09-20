@@ -8,6 +8,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class LocationAdapter implements DestinationAdapter {
     private Location location;
@@ -17,7 +18,7 @@ public class LocationAdapter implements DestinationAdapter {
     }
 
     @Override
-    public boolean teleport(Player player, String id, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
+    public boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
         if(this.location == null) {
             player.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
             if(callback != null) callback.accept(TeleportResult.DESTINATION_DOES_NOT_EXIST);
@@ -29,8 +30,9 @@ public class LocationAdapter implements DestinationAdapter {
             if(callback != null) callback.accept(TeleportResult.WORLD_DOES_NOT_EXIST);
             return false;
         } else {
-            if(silent) TeleportListener.TELEPORTS.put(player, location);
-            player.teleport(location);
+            Location finalLoc = location.clone().add(randomOffset);
+            if(silent) TeleportListener.TELEPORTS.put(player, finalLoc);
+            player.teleport(finalLoc);
 
             if(message != null)
                 player.sendMessage((message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));

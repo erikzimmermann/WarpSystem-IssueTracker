@@ -9,10 +9,11 @@ import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpMa
 import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPacket;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class GlobalWarpAdapter implements DestinationAdapter {
     @Override
-    public boolean teleport(Player player, String id, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
+    public boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
         GlobalWarpManager.getInstance().teleport(player, displayName, id, costs, new Callback<PrepareTeleportPacket.Result>() {
             @Override
             public void accept(PrepareTeleportPacket.Result result) {

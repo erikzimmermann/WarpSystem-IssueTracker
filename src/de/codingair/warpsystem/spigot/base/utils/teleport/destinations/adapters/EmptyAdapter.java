@@ -5,11 +5,12 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResul
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class EmptyAdapter implements DestinationAdapter {
 
     @Override
-    public boolean teleport(Player player, String id, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
+    public boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
         if(callback != null) callback.accept(TeleportResult.TELEPORTED);
         return false;
     }

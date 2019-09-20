@@ -49,101 +49,214 @@ public class DestinationPage extends PageItem {
         option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
 
         addButton(new SyncButton(1, 2) {
+            private int editingOffset = 0;
+
             @Override
             public ItemStack craftItem() {
                 String name = null;
                 if(destination.getType() == DestinationType.SimpleWarp) name = destination.getId();
 
                 List<String> lore = new ArrayList<>();
-                if(name != null) lore.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));
-                else lore.add("§3" + Lang.get("Shift_Leftclick") + ": §a" + Lang.get("Create"));
+                if(editingOffset == 0) {
+                    lore.add("");
+                    lore.add("§3" + Lang.get("Leftclick") + ": §a" + (name == null ? Lang.get("Set") : Lang.get("Change")));
+                    if(name != null) lore.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));
+                    else lore.add("§3" + Lang.get("Shift_Leftclick") + ": §a" + Lang.get("Create"));
+                }
 
                 ItemBuilder builder = new ItemBuilder(XMaterial.ENDER_PEARL).setName(Editor.ITEM_TITLE_COLOR + Lang.get("SimpleWarps"))
-                        .setLore("§3" + Lang.get("Current") + ": " + (name == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + ChatColor.translateAlternateColorCodes('&', name.replace("_", " ")) + "§7'"),
-                                "", "§3" + Lang.get("Leftclick") + ": §a" + (name == null ? Lang.get("Set") : Lang.get("Change")))
+                        .setLore("§3" + Lang.get("Current") + ": " + (name == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + ChatColor.translateAlternateColorCodes('&', name.replace("_", " ")) + "§7'"))
                         .addLore(lore);
 
                 builder.addLore(" ");
-                builder.addLore("§6" + Lang.get("Max_Random_Offset") + " §7(§cComing soon§7)");
-                builder.addLore("§3" + Lang.get("Shift_Rightclick") + ": §b" + Lang.get("Edit"));
-                builder.addLore("  §8» §7X: §e" + (destination.getOffsetX() == 0 ? "0" : destination.getSignedX() == 1 ? "0 - " + destination.getOffsetX() : destination.getSignedX() == 0 ? "-" + destination.getOffsetX() + " - " + destination.getOffsetX() : "-" +  + destination.getOffsetX() + " - 0"));
-                builder.addLore("  §8» §7Y: §e" + (destination.getOffsetY() == 0 ? "0" : destination.getSignedY() == 1 ? "0 - " + destination.getOffsetY() : destination.getSignedY() == 0 ? "-" + destination.getOffsetY() + " - " + destination.getOffsetY() : "-" +  + destination.getOffsetY() + " - 0"));
-                builder.addLore("  §8» §7Z: §e" + (destination.getOffsetZ() == 0 ? "0" : destination.getSignedZ() == 1 ? "0 - " + destination.getOffsetZ() : destination.getSignedZ() == 0 ? "-" + destination.getOffsetZ() + " - " + destination.getOffsetZ() : "-" +  + destination.getOffsetZ() + " - 0"));
+                builder.addLore("§6" + (editingOffset == 0 ? "" : "§n") + Lang.get("Max_Random_Offset"));
+
+                if(editingOffset != 0) {
+                    double value = editingOffset == 1 ? destination.getOffsetX() : editingOffset == 2 ? destination.getOffsetY() : destination.getOffsetZ();
+
+                    builder.addLore(" ");
+                    builder.addLore("§3" + Lang.get("Leftclick") + ": §" + (value == 0 ? "c" : "a") + Lang.get("Reduce"));
+                    builder.addLore("§3" + Lang.get("Rightclick") + ": §" + (value == 100 ? "c" : "a") + Lang.get("Enlarge"));
+                    builder.addLore("§3" + Lang.get("Shift_Leftclick") + ": §a" + Lang.get("Choose"));
+                }
+
+                builder.addLore("§3" + Lang.get("Shift_Rightclick") + ": §b" + (editingOffset == 0 ? Lang.get("Edit") : "↓ §8(§7" + Lang.get("Close") + "§8)"));
+
+                if(editingOffset != 0) builder.addLore(" ");
+
+                builder.addLore("  §8» §7X: §e" + destination.getOffsetX() + (editingOffset == 1 ? " §c§l«" : ""));
+                builder.addLore("  §8» §7Y: §e" + destination.getOffsetY() + (editingOffset == 2 ? " §c§l«" : ""));
+                builder.addLore("  §8» §7Z: §e" + destination.getOffsetZ() + (editingOffset == 3 ? " §c§l«" : ""));
 
                 return builder.getItem();
             }
 
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
-                if(e.isLeftClick()) {
-                    getLast().setClosingForGUI(true);
-                    if(e.isShiftClick()) {
-                        AnvilGUI.openAnvil(WarpSystem.getInstance(), player, new AnvilListener() {
-                            @Override
-                            public void onClick(AnvilClickEvent e) {
-                                if(e.getSlot() == AnvilSlot.OUTPUT) {
-                                    String input = e.getInput();
+                if(editingOffset == 0) {
+                    if(e.isLeftClick()) {
+                        getLast().setClosingForGUI(true);
+                        if(e.isShiftClick()) {
+                            AnvilGUI.openAnvil(WarpSystem.getInstance(), player, new AnvilListener() {
+                                @Override
+                                public void onClick(AnvilClickEvent e) {
+                                    if(e.getSlot() == AnvilSlot.OUTPUT) {
+                                        String input = e.getInput();
 
-                                    if(input == null) {
-                                        e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
-                                        return;
+                                        if(input == null) {
+                                            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
+                                            return;
+                                        }
+
+                                        if(SimpleWarpManager.getInstance().existsWarp(input)) {
+                                            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
+                                            return;
+                                        }
+
+                                        player.sendMessage(Lang.getPrefix() + Lang.get("SimpleWarp_Created").replace("%WARP%", ChatColor.translateAlternateColorCodes('&', input)));
+                                        SimpleWarp w;
+                                        SimpleWarpManager.getInstance().addWarp(w = new SimpleWarp(player, input, null));
+
+                                        destination.setId(w.getName());
+                                        destination.setType(DestinationType.SimpleWarp);
+                                        destination.setAdapter(DestinationType.SimpleWarp.getInstance());
+                                        updateDestinationButtons();
+
+                                        e.setClose(true);
+                                        playSound(player);
                                     }
+                                }
 
-                                    if(SimpleWarpManager.getInstance().existsWarp(input)) {
-                                        e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
-                                        return;
-                                    }
-
-                                    player.sendMessage(Lang.getPrefix() + Lang.get("SimpleWarp_Created").replace("%WARP%", ChatColor.translateAlternateColorCodes('&', input)));
-                                    SimpleWarp w;
-                                    SimpleWarpManager.getInstance().addWarp(w = new SimpleWarp(player, input, null));
-
-                                    destination.setId(w.getName());
+                                @Override
+                                public void onClose(AnvilCloseEvent e) {
+                                    e.setPost(() -> getLast().open());
+                                }
+                            }, new ItemBuilder(XMaterial.NAME_TAG).setName(Lang.get("Name") + "...").getItem());
+                        } else {
+                            new GSimpleWarpList(p) {
+                                @Override
+                                public void onClick(SimpleWarp value, ClickType clickType) {
+                                    destination.setId(value.getName());
                                     destination.setType(DestinationType.SimpleWarp);
                                     destination.setAdapter(DestinationType.SimpleWarp.getInstance());
                                     updateDestinationButtons();
 
-                                    e.setClose(true);
-                                    playSound(player);
+                                    this.setClosingForGUI(true);
+                                    getLast().open();
                                 }
-                            }
 
-                            @Override
-                            public void onClose(AnvilCloseEvent e) {
-                                e.setPost(() -> getLast().open());
-                            }
-                        }, new ItemBuilder(XMaterial.NAME_TAG).setName(Lang.get("Name") + "...").getItem());
-                    } else {
-                        new GSimpleWarpList(p) {
-                            @Override
-                            public void onClick(SimpleWarp value, ClickType clickType) {
-                                destination.setId(value.getName());
-                                destination.setType(DestinationType.SimpleWarp);
-                                destination.setAdapter(DestinationType.SimpleWarp.getInstance());
-                                updateDestinationButtons();
+                                @Override
+                                public void onClose() {
+                                    getLast().open();
+                                }
 
-                                this.setClosingForGUI(true);
-                                getLast().open();
-                            }
+                                @Override
+                                public void buildItemDescription(List<String> lore) {
+                                    lore.add("");
+                                    lore.add("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose"));
+                                }
+                            }.open();
+                        }
+                    } else if(e.isRightClick()) {
+                        if(e.isShiftClick()) {
+                            editingOffset++;
+                            if(editingOffset == 4) editingOffset = 0;
+                            update();
+                        } else {
+                            destination.setId(null);
+                            destination.setAdapter(null);
+                            destination.setType(null);
 
-                            @Override
-                            public void onClose() {
-                                getLast().open();
-                            }
-
-                            @Override
-                            public void buildItemDescription(List<String> lore) {
-                                lore.add("");
-                                lore.add("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose"));
-                            }
-                        }.open();
+                            updateDestinationButtons();
+                        }
                     }
-                } else if(e.isRightClick()) {
-                    destination.setId(null);
-                    destination.setAdapter(null);
-                    destination.setType(null);
+                } else {
+                    if(e.isLeftClick()) {
+                        if(e.isShiftClick()) {
+                            getLast().setClosingForGUI(true);
+                            AnvilGUI.openAnvil(WarpSystem.getInstance(), player, new AnvilListener() {
+                                @Override
+                                public void onClick(AnvilClickEvent e) {
+                                    if(e.getSlot() == AnvilSlot.OUTPUT) {
+                                        String input = e.getInput();
 
-                    updateDestinationButtons();
+                                        if(input == null) {
+                                            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number"));
+                                            return;
+                                        }
+
+                                        input = input.replace(",", ".");
+                                        double value;
+
+                                        try {
+                                            value = Double.parseDouble(input);
+                                        } catch(NumberFormatException ex) {
+                                            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number"));
+                                            return;
+                                        }
+
+                                        if(value < 0) {
+                                            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number"));
+                                            return;
+                                        }
+
+                                        if(value > 100) value = 100;
+                                        value = trim(value);
+
+                                        if(editingOffset == 1) {
+                                            destination.setOffsetX(value);
+                                        } else if(editingOffset == 2) {
+                                            destination.setOffsetY(value);
+                                        } else if(editingOffset == 3) {
+                                            destination.setOffsetZ(value);
+                                        }
+
+                                        update();
+
+                                        e.setClose(true);
+                                        playSound(player);
+                                    }
+                                }
+
+                                @Override
+                                public void onClose(AnvilCloseEvent e) {
+                                    e.setPost(() -> getLast().open());
+                                }
+                            }, new ItemBuilder(XMaterial.NAME_TAG).setName("" + (editingOffset == 1 ? destination.getOffsetX() : editingOffset == 2 ? destination.getOffsetY() : destination.getOffsetZ())).getItem());
+                        } else {
+                            if(editingOffset == 1) {
+                                destination.setOffsetX(trim(destination.getOffsetX() - 1));
+                                if(destination.getOffsetX() < 0) destination.setOffsetX(0);
+                            } else if(editingOffset == 2) {
+                                destination.setOffsetY(trim(destination.getOffsetY() - 1));
+                                if(destination.getOffsetY() < 0) destination.setOffsetY(0);
+                            } else if(editingOffset == 3) {
+                                destination.setOffsetZ(trim(destination.getOffsetZ() - 1));
+                                if(destination.getOffsetZ() < 0) destination.setOffsetZ(0);
+                            }
+
+                            update();
+                        }
+                    } else if(e.isRightClick()) {
+                        if(e.isShiftClick()) {
+                            editingOffset++;
+                            if(editingOffset == 4) editingOffset = 0;
+                            update();
+                        } else {
+                            if(editingOffset == 1) {
+                                destination.setOffsetX(trim(destination.getOffsetX() + 1));
+                                if(destination.getOffsetX() > 100) destination.setOffsetX(0);
+                            } else if(editingOffset == 2) {
+                                destination.setOffsetY(trim(destination.getOffsetY() + 1));
+                                if(destination.getOffsetY() > 100) destination.setOffsetY(0);
+                            } else if(editingOffset == 3) {
+                                destination.setOffsetZ(trim(destination.getOffsetZ() + 1));
+                                if(destination.getOffsetZ() > 100) destination.setOffsetZ(0);
+                            }
+
+                            update();
+                        }
+                    }
                 }
             }
         }.setOption(option));
@@ -316,5 +429,9 @@ public class DestinationPage extends PageItem {
 
     public Destination getDestination() {
         return destination;
+    }
+
+    private double trim(double d) {
+        return ((double)(int) (d * 100)) / 100;
     }
 }
