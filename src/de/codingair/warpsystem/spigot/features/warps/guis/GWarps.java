@@ -215,10 +215,10 @@ public class GWarps extends GUI {
 
         int size = getSize(getPlayer());
         if(category != null) {
-            addButton(new ItemButton(size - 9, new ItemBuilder(Skull.ArrowLeft).setName("§c" + Lang.get("Back")).getItem()) {
+            addButton(new ItemButton(size - 9, new ItemBuilder(Skull.ArrowLeft).setName("§c" + Lang.get("Back") + (category.getDepth() > 0 ? " §8(§7" + Lang.get("Shift") + "§8)" : "")).getItem()) {
                 @Override
                 public void onClick(InventoryClickEvent e) {
-                    GWarps.this.category = null;
+                    GWarps.this.category = e.isShiftClick() ? null : category.getCategory();
                     reinitialize();
                     setTitle(getTitle(GWarps.this.category, listener, getPlayer()));
                 }
@@ -235,16 +235,14 @@ public class GWarps extends GUI {
                     && this.cursorIcon != icon) addToGUI(p, icon);
         }
 
-        if(category == null) {
-            List<Icon> cIcons = manager.getCategories();
-            for(Icon icon : cIcons) {
-                if(!icon.hasPermission() && (hideAll(p) || hideAll(p, "Category")) && !editing) continue;
-                BoundAction bound = icon.getAction(Action.BOUND_TO_WORLD);
+        List<Icon> cIcons = manager.getCategories(category);
+        for(Icon icon : cIcons) {
+            if(!icon.hasPermission() && (hideAll(p) || hideAll(p, "Category")) && !editing) continue;
+            BoundAction bound = icon.getAction(Action.BOUND_TO_WORLD);
 
-                if(((bound == null && world == null) || (bound != null && world != null && world.equals(bound.getValue())))
-                        && (editing || (!icon.hasPermission() || p.hasPermission(icon.getPermission())))
-                        && this.cursorIcon != icon) addToGUI(p, icon);
-            }
+            if(((bound == null && world == null) || (bound != null && world != null && world.equals(bound.getValue())))
+                    && (editing || (!icon.hasPermission() || p.hasPermission(icon.getPermission())))
+                    && this.cursorIcon != icon) addToGUI(p, icon);
         }
 
         for(int i = 0; i < size; i++) {
@@ -356,7 +354,7 @@ public class GWarps extends GUI {
                                                     Icon clone = icon.clone().addAction(new WarpAction(new Destination()));
                                                     new GEditor(p, icon, clone).open();
                                                 });
-                                            else{
+                                            else {
                                                 Sound.ITEM_BREAK.playSound(p);
                                                 e.setPost(() -> new GWarps(p, GWarps.this.category, editing).open());
                                             }
@@ -365,11 +363,7 @@ public class GWarps extends GUI {
                                 }
                             };
 
-                            boolean category = GWarps.this.category == null;
-                            if(category) {
-                                //Choose
-                                new GChooseIconType(p, callback).open();
-                            } else callback.accept(category);
+                            new GChooseIconType(p, callback).open();
                         }
                     }.setOption(option).setOnlyLeftClick(true));
                 }
@@ -502,7 +496,7 @@ public class GWarps extends GUI {
                                 } else {
                                     if(p.getInventory().getItem(p.getInventory().getHeldItemSlot()) == null || p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType() == Material.AIR
                                             || icon.getItem().getType() == p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType()) return;
-                                    
+
                                     icon.changeItem(p.getInventory().getItem(p.getInventory().getHeldItemSlot()));
                                     GWarps.this.reinitialize();
                                     updateInventory(p);

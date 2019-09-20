@@ -458,6 +458,17 @@ public class IconManager implements Manager {
         return icons;
     }
 
+    public List<Icon> getCategories(Icon category) {
+        if(category != null && !category.isCategory()) throw new IllegalArgumentException("Given icon is not a category!");
+        List<Icon> icons = new ArrayList<>();
+
+        for(Icon icon : this.icons) {
+            if(icon.isCategory() && Objects.equals(category, icon.getCategory())) icons.add(icon);
+        }
+
+        return icons;
+    }
+
     public boolean boundToWorld() {
         return WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.GUI.Bound_to_world", false);
     }
