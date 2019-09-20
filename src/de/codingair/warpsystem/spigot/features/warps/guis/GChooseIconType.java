@@ -81,7 +81,7 @@ public class GChooseIconType extends GUI {
             }
         }.setOption(option));
 
-        addButton(new ItemButton(6, new ItemBuilder(Material.CHEST).setName("§c" + Lang.get("Category")).getItem()) {
+        addButton(new ItemButton(6, new ItemBuilder(Material.CHEST).setName("§c" + Lang.get("Page")).getItem()) {
             @Override
             public void onClick(InventoryClickEvent e) {
                 set = true;

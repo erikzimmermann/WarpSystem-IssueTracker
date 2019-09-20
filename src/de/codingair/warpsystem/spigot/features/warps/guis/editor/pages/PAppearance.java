@@ -80,7 +80,7 @@ public class PAppearance extends PageItem {
             public String acceptName(String name) {
                 if(startName != null && startName.equalsIgnoreCase(name)) return null;
 
-                if(icon.isCategory()) {
+                if(icon.isPage()) {
                     if((icon.getName() == null || !icon.getName().equalsIgnoreCase(name)) && IconManager.getInstance().existsCategory(name)) {
                         return Lang.getPrefix() + Lang.get("Name_Already_Exists");
                     }

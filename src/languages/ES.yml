@@ -57,7 +57,6 @@ Name_Already_Exists: '&cEste nombre ya existe.'
 Only_For_Players: '&c¡Esto es solo para jugador!'
 Use: Usar
 Success_Files_Reloaded: '&aTodos los archivos fueron recargados.'
-Success_Create_Category: '&aHas creado una &bcategoria &acon &aexito.'
 PORTAL_GO_TO_PORTAL: '&7Tienes 30 segundos para entrar en el portal.'
 Apply_Delete_No: '&7No, &aguardarlo&7.'
 Question_Delete_Portal: '&7¿Estas seguro que quieres &celiminar &7este portal?'
@@ -105,7 +104,7 @@ GlobalWarp_Create_No_Dots: '¡&cNombres del WarpGlobal &lno puede contener punto
 Target_Server: Servidor-Destino
 GUI_Choose_Icon: Escoge el TipoIcono
 Warp: Warp
-Category: Categoria
+Page: Pagina
 GlobalWarp: WarpGlobal
 GlobalWarps: WarpGlobales
 Decoration: Decoracion
@@ -189,7 +188,7 @@ NativePortal_Not_Deleted: '&7El portal &cno &7fue eliminado.'
 Change_Permission: 'Cambiar permiso'
 Portal_Insufficient_Permissions: '&cNo tienes suficientes permisos para ir a este portal.'
 Enter_Correct_Name_Underline: '&cNo uses "_" simbolos.'
-Player_Cannot_Use_Category: '&c¡No tienes permiso para abrir esta categoria!'
+Player_Cannot_Use_Page: '&c¡No tienes permiso para abrir esta pagina!'
 Warning_Maintenance: '&cEl Sistema de Warps esta actualmente en mantenimiento, porfavor prueba mas tarde.'
 Not_Enough_Money: '&7Necesitas al menos &c%AMOUNT% moneda(s)&7, para transportate a ese Warp!'
 GlobalWarps_Not_Available: '&cNo hay WarpGlobales, que puedan ser enlazados!'

@@ -96,7 +96,7 @@ public class CWarp extends CommandBuilder {
                         Icon category = manager.getCategory(argument);
 
                         if(category != null && category.hasPermission() && !sender.hasPermission(category.getPermission())) {
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Category"));
+                            sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Page"));
                             return false;
                         }
 

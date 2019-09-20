@@ -105,7 +105,7 @@ GlobalWarp_Create_No_Dots: '&cGlobalWarp names &-lcan''t &ccontain any points!'
 Target_Server: Target-Server
 GUI_Choose_Icon: Choose your IconType
 Warp: Warp
-Category: Category
+Page: Page
 GlobalWarp: GlobalWarp
 GlobalWarps: GlobalWarps
 Decoration: Decoration
@@ -189,7 +189,7 @@ NativePortal_Not_Deleted: '&7The portal was &cnot &7deleted.'
 Change_Permission: 'Change permission'
 Portal_Insufficient_Permissions: '&cYou have insufficient permissions to teleport with this portal.'
 Enter_Correct_Name_Underline: '&cPlease don''t use "_"-Symbols.'
-Player_Cannot_Use_Category: '&cYou are not allowed to open this category!'
+Player_Cannot_Use_Page: '&cYou are not allowed to open this page!'
 Warning_Maintenance: '&cThe WarpSystem is currently in maintenance mode, please try it later again.'
 Not_Enough_Money: '&7You need at least &c%AMOUNT% coin(s)&7, to teleport to that position!'
 GlobalWarps_Not_Available: '&cThere are no GlobalWarps, which can be linked!'

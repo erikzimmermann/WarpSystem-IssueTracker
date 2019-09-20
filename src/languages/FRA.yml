@@ -57,7 +57,6 @@ Name_Already_Exists: '&cCe nom n''est pas disponible.'
 Only_For_Players: '&cCeci n''est que pour les joueurs!'
 Use: Utiliser
 Success_Files_Reloaded: '&aTout les fichiers ont été rechargé.'
-Success_Create_Category: '&aVous avez créé une &bcatégorie.'
 PORTAL_GO_TO_PORTAL: '&7Vous avez 30 secondes pour aller dans le portail.'
 Apply_Delete_No: '&7Non, &agarde le&7.'
 Question_Delete_Portal: '&7Voulez-vous réellement &csupprimer &7ce portail ?'
@@ -106,7 +105,7 @@ GlobalWarp_Create_No_Dots: '&cLes noms des warp globaux ne peuvent pas contenir 
 Target_Server: 'Serveur cible'
 GUI_Choose_Icon: 'Choisissez votre type d''icône'
 Warp: Warp
-Category: Categorie
+Page: Page
 GlobalWarp: Warp global
 GlobalWarps: Warps global
 Decoration: Decoration
@@ -192,7 +191,7 @@ NativePortal_Not_Deleted: '&7Le portail n''a &cpas &7été supprimé.'
 Change_Permission: 'Modifier les permissions'
 Portal_Insufficient_Permissions: '&cVous n''avez pas la permission de vous téléporter avec ce portail.'
 Enter_Correct_Name_Underline: '&cMerci de ne pas utiliser le underscore "_".'
-Player_Cannot_Use_Category: '&cVous n''êtes pas autorisé à ouvrir cette catégorie!'
+Player_Cannot_Use_Page: '&cVous n''êtes pas autorisé à ouvrir cette page!'
 Warning_Maintenance: '&cLe système de warp est actuellement en maintenance, merci d''essayer plus tard.'
 Not_Enough_Money: '&7Vous avez besoin d''au moins &c%AMOUNT% point(s) &7pour vous téléporter à cette position!'
 GlobalWarps_Not_Available: '&cIl n''y a pas de warps globaux qui peuvent être lié!'

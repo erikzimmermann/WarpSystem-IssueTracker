@@ -15,8 +15,8 @@ public class Icon extends FeatureObject {
     private String name;
     private ItemStack item;
     private int slot;
-    private Icon category;
-    private boolean isCategory = false;
+    private Icon page;
+    private boolean isPage = false;
 
     public Icon() {
     }
@@ -26,24 +26,24 @@ public class Icon extends FeatureObject {
         this.name = icon.getName();
         this.item = icon.getItem().clone();
         this.slot = icon.getSlot();
-        this.isCategory = icon.isCategory();
+        this.isPage = icon.isPage();
         this.slot = icon.getSlot();
-        this.category = icon.getCategory();
+        this.page = icon.getPage();
     }
 
-    public Icon(String name, ItemStack item, Icon category, int slot, String permission, List<ActionObject> actions) {
+    public Icon(String name, ItemStack item, Icon page, int slot, String permission, List<ActionObject> actions) {
         super(permission, false, actions);
         this.name = name;
         this.item = item;
-        this.category = category;
+        this.page = page;
         this.slot = slot;
     }
 
-    public Icon(String name, ItemStack item, Icon category, int slot, String permission, ActionObject... actions) {
+    public Icon(String name, ItemStack item, Icon page, int slot, String permission, ActionObject... actions) {
         super(permission, false, actions);
         this.name = name;
         this.item = item;
-        this.category = category;
+        this.page = page;
         this.slot = slot;
     }
 
@@ -52,8 +52,8 @@ public class Icon extends FeatureObject {
     }
 
     public int getDepth() {
-        if(category == null) return 0;
-        else return 1 + category.getDepth();
+        if(page == null) return 0;
+        else return 1 + page.getDepth();
     }
 
     public void apply(Icon icon) {
@@ -62,9 +62,9 @@ public class Icon extends FeatureObject {
         this.name = icon.getName();
         this.item = icon.getItem();
         this.slot = icon.getSlot();
-        this.isCategory = icon.isCategory();
+        this.isPage = icon.isPage();
         this.slot = icon.getSlot();
-        this.category = icon.getCategory();
+        this.page = icon.getPage();
     }
 
     @Override
@@ -73,9 +73,9 @@ public class Icon extends FeatureObject {
 
         this.item = null;
         this.slot = 0;
-        this.isCategory = false;
+        this.isPage = false;
         this.name = null;
-        this.category = null;
+        this.page = null;
     }
 
     @Override
@@ -83,13 +83,23 @@ public class Icon extends FeatureObject {
         super.read(json);
 
         this.name = json.get("name") == null ? null : (String) json.get("name");
-        ItemBuilder builder = ItemBuilder.getFromJSON((String) json.get("item"));
+        ItemBuilder builder = ItemBuilder.getFromJSON(json.get("item"));
         this.item = builder.getItem();
 
         this.slot = Integer.parseInt(json.get("slot") + "");
-        this.isCategory = Boolean.parseBoolean(json.get("isCategory") + "");
 
-        this.category = json.get("category") == null ? null : IconManager.getInstance().getCategory((String) json.get("category"));
+        if(json.get("isCategory") != null) {
+            this.isPage = Boolean.parseBoolean(json.get("isCategory") + "");
+        } else {
+            this.isPage = Boolean.parseBoolean(json.get("isPage") + "");
+        }
+
+        if(json.get("category") != null) {
+            this.page = json.get("category") == null ? null : IconManager.getInstance().getCategory(json.get("category"));
+        } else {
+            this.page = json.get("page") == null ? null : IconManager.getInstance().getCategory(json.get("page"));
+        }
+
         return true;
     }
 
@@ -101,8 +111,8 @@ public class Icon extends FeatureObject {
         json.put("name", this.name);
         json.put("item", builder.toJSONString());
         json.put("slot", this.slot);
-        json.put("isCategory", this.isCategory);
-        json.put("category", this.category == null ? null : this.category.getName());
+        json.put("isPage", this.isPage);
+        json.put("page", this.page == null ? null : this.page.getName());
     }
 
     @Override
@@ -111,10 +121,10 @@ public class Icon extends FeatureObject {
         Icon icon = (Icon) o;
         return super.equals(o) &&
                 slot == icon.slot &&
-                isCategory == icon.isCategory &&
+                isPage == icon.isPage &&
                 name.equals(icon.name) &&
                 item.equals(icon.item) &&
-                Objects.equals(category, icon.category);
+                Objects.equals(page, icon.page);
     }
 
     public String getName() {
@@ -158,12 +168,12 @@ public class Icon extends FeatureObject {
         return this;
     }
 
-    public Icon getCategory() {
-        return category;
+    public Icon getPage() {
+        return page;
     }
 
-    public Icon setCategory(Icon category) {
-        this.category = category;
+    public Icon setPage(Icon page) {
+        this.page = page;
         return this;
     }
 
@@ -171,11 +181,11 @@ public class Icon extends FeatureObject {
         return (Icon) super.addAction(action);
     }
 
-    public boolean isCategory() {
-        return isCategory;
+    public boolean isPage() {
+        return isPage;
     }
 
     public void setCategory(boolean category) {
-        isCategory = category;
+        isPage = category;
     }
 }
