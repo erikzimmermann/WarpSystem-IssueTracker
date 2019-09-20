@@ -34,6 +34,7 @@ public class Shortcut extends FeatureObject {
     public void write(JSONObject json) {
         json.put("Name", this.displayName);
         super.write(json);
+        setPermission(null);
     }
 
     @Override
