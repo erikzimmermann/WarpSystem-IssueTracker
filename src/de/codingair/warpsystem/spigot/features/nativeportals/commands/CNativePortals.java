@@ -4,6 +4,7 @@ import de.codingair.codingapi.player.gui.anvil.*;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
+import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -17,6 +18,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CNativePortals extends CommandBuilder {
     public CNativePortals() {
@@ -78,6 +80,23 @@ public class CNativePortals extends CommandBuilder {
                     }
                 }, new ItemBuilder(Material.PAPER).setName(Lang.get("Name") + "...").getItem());
 
+                return false;
+            }
+        });
+
+        getComponent("create").addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                NativePortal nativePortal = new NativePortal(PortalType.WATER, new Destination(), argument, new ArrayList<>());
+                NativePortal clone = nativePortal.clone();
+
+                clone.setEditMode(true);
+
+                new NPEditor((Player) sender, nativePortal, clone).open();
                 return false;
             }
         });
