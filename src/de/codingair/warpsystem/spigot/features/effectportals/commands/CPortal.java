@@ -1,20 +1,25 @@
 package de.codingair.warpsystem.spigot.features.effectportals.commands;
 
+import de.codingair.codingapi.player.gui.anvil.*;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.TimeList;
+import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.effectportals.EffectPortalEditor;
 import de.codingair.warpsystem.spigot.features.effectportals.guis.GEffectPortalList;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CPortal extends CommandBuilder {
@@ -85,7 +90,30 @@ public class CPortal extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("create") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " create §e<name>");
+                AnvilGUI.openAnvil(WarpSystem.getInstance(), (Player) sender, new AnvilListener() {
+                    @Override
+                    public void onClick(AnvilClickEvent e) {
+                        if(!e.getSlot().equals(AnvilSlot.OUTPUT)) return;
+
+                        String input = e.getInput();
+
+                        if(input == null) {
+                            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
+                            return;
+                        }
+
+                        e.setClose(true);
+                    }
+
+                    @Override
+                    public void onClose(AnvilCloseEvent e) {
+                        if(e.isSubmitted()) {
+                            String name = e.getSubmittedText();
+
+                            e.setPost(() -> new EffectPortalEditor((Player) sender, name).start());
+                        }
+                    }
+                }, new ItemBuilder(Material.PAPER).setName(Lang.get("Name") + "...").getItem());
                 return false;
             }
         });
