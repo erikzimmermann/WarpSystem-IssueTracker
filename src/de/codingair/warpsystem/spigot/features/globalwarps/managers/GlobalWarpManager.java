@@ -90,6 +90,9 @@ public class GlobalWarpManager implements Manager, BungeeFeature {
 
         WarpSystem.getInstance().getDataHandler().register(listener = new GlobalWarpListener());
         Bukkit.getPluginManager().registerEvents(listener, WarpSystem.getInstance());
+
+        new CGlobalWarp().register(WarpSystem.getInstance());
+        new CGlobalWarps().register(WarpSystem.getInstance());
         return true;
     }
 
@@ -105,17 +108,11 @@ public class GlobalWarpManager implements Manager, BungeeFeature {
 
     @Override
     public void onConnect() {
-        this.commandExecutorList.add(new CGlobalWarp());
-        this.commandExecutorList.add(new CGlobalWarps());
-        this.commandExecutorList.forEach(c -> c.register(WarpSystem.getInstance()));
-
         if(getGlobalWarps().isEmpty()) WarpSystem.getInstance().getDataHandler().send(new RequestGlobalWarpNamesPacket());
     }
 
     @Override
     public void onDisconnect() {
-        this.commandExecutorList.forEach(c -> c.unregister(WarpSystem.getInstance()));
-        this.commandExecutorList.clear();
     }
 
     public static GlobalWarpManager getInstance() {

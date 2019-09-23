@@ -7,6 +7,7 @@ import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
@@ -20,9 +21,9 @@ import org.bukkit.event.inventory.ClickType;
 
 import java.util.List;
 
-public class CGlobalWarps extends CommandBuilder {
+public class CGlobalWarps extends CommandBuilder implements BungeeFeature {
     public CGlobalWarps() {
-        super("GlobalWarps", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_GLOBAL_WARPS) {
+        super("globalwarps", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_GLOBAL_WARPS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -40,11 +41,17 @@ public class CGlobalWarps extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, list>");
+                if(WarpSystem.getInstance().isOnBungeeCord()) sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, list>");
+                else sender.sendMessage(Lang.getPrefix() + Lang.get("Connect_BungeeCord"));
                 return false;
             }
         }, true, "gws", "gwarps");
 
+        WarpSystem.getInstance().getBungeeFeatureList().add(this);
+    }
+
+    @Override
+    public void onConnect() {
         getBaseComponent().addChild(new CommandComponent("create") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
@@ -154,5 +161,12 @@ public class CGlobalWarps extends CommandBuilder {
                 return false;
             }
         });
+    }
+
+    @Override
+    public void onDisconnect() {
+        getBaseComponent().removeChild("create");
+        getBaseComponent().removeChild("delete");
+        getBaseComponent().removeChild("list");
     }
 }
