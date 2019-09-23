@@ -352,7 +352,7 @@ public class IconManager implements Manager {
 
         List<Icon> temp = new ArrayList<>(this.icons);
         for(Icon icon : temp) {
-            if(icon.isCategory() && icon.getCategory() != null) this.icons.remove(icon);
+            if(icon.isPage() && icon.getPage() != null) this.icons.remove(icon);
         }
 
         temp.clear();

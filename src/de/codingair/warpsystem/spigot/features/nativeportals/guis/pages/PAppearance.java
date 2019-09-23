@@ -11,9 +11,10 @@ import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.DelayButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.NameButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
+import de.codingair.warpsystem.spigot.features.nativeportals.NativePortal;
 import de.codingair.warpsystem.spigot.features.nativeportals.PortalEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.guis.NPEditor;
 import org.bukkit.Bukkit;
@@ -27,12 +28,12 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class PAppearance extends PageItem {
-    private Portal portal;
+    private NativePortal nativePortal;
 
-    public PAppearance(Player p, Portal portal) {
+    public PAppearance(Player p, NativePortal nativePortal) {
         super(p, NPEditor.getMainTitle(), new ItemBuilder(XMaterial.ITEM_FRAME).setName("§6§n" + Lang.get("Appearance")).getItem(), false);
 
-        this.portal = portal;
+        this.nativePortal = nativePortal;
         initialize(p);
     }
 
@@ -42,7 +43,7 @@ public class PAppearance extends PageItem {
         option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
         option.setOnlyLeftClick(true);
 
-        addButton(new NameButton(1, 2, false, new Value<>(portal.getDisplayName())) {
+        addButton(new NameButton(1, 2, false, new Value<>(nativePortal.getDisplayName())) {
             @Override
             public String acceptName(String name) {
                 return null;
@@ -50,7 +51,7 @@ public class PAppearance extends PageItem {
 
             @Override
             public String onChange(String old, String name) {
-                portal.setDisplayName(name);
+                nativePortal.setDisplayName(name);
                 return name;
             }
         }.setOption(option));
@@ -61,10 +62,10 @@ public class PAppearance extends PageItem {
                 ItemBuilder itemBuilder = new ItemBuilder(XMaterial.IRON_PICKAXE)
                         .setHideStandardLore(true)
                         .setName(Editor.ITEM_TITLE_COLOR + Lang.get("NativePortals_Set_Blocks"))
-                        .setLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Portal_Blocks") + ": " + (portal.getBlocks().isEmpty() ? "§c" : "§a") + portal.getBlocks().size())
+                        .setLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Portal_Blocks") + ": " + (nativePortal.getBlocks().isEmpty() ? "§c" : "§a") + nativePortal.getBlocks().size())
                         .addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("NativePortals_Set_Blocks"));
 
-                if(portal.getBlocks().isEmpty()) {
+                if(nativePortal.getBlocks().isEmpty()) {
                     itemBuilder.addEnchantment(Enchantment.DAMAGE_ALL, 1);
                     itemBuilder.setHideEnchantments(true);
                 }
@@ -77,7 +78,7 @@ public class PAppearance extends PageItem {
                 getLast().setClosingForGUI(true);
                 player.closeInventory();
 
-                PortalEditor editor = new PortalEditor(p, portal);
+                PortalEditor editor = new PortalEditor(p, nativePortal);
                 editor.init();
 
                 MessageAPI.sendActionBar(p, Lang.get("Drop_To_Leave"), WarpSystem.getInstance(), Integer.MAX_VALUE);
@@ -120,6 +121,8 @@ public class PAppearance extends PageItem {
             public void onClick(InventoryClickEvent e, Player player) {
                 Lang.PREMIUM_CHAT(player);
             }
-        });
+        }.setOption(option));
+
+        addButton(new DelayButton(4, 2, nativePortal).setOption(option));
     }
 }

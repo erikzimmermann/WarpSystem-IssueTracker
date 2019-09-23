@@ -3,7 +3,7 @@ package de.codingair.warpsystem.spigot.features.nativeportals.listeners;
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
+import de.codingair.warpsystem.spigot.features.nativeportals.NativePortal;
 import de.codingair.warpsystem.spigot.features.nativeportals.guis.NPEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
 import org.bukkit.Bukkit;
@@ -22,15 +22,19 @@ public class PortalListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onWalk(PlayerWalkEvent e) {
-        for(Portal portal : NativePortalManager.getInstance().getPortals()) {
-            if(!portal.isVisible()) continue;
+        for(NativePortal nativePortal : NativePortalManager.getInstance().getNativePortals()) {
+            if(!nativePortal.isVisible()) continue;
 
-            boolean test0 = portal.isInPortal(e.getPlayer(), e.getTo());
-            boolean test1 = portal.isInPortal(e.getPlayer(), e.getFrom());
+            boolean test0 = nativePortal.isInPortal(e.getPlayer(), e.getTo());
+            boolean test1 = nativePortal.isInPortal(e.getPlayer(), e.getFrom());
 
             if(test0 && !test1) {
-                for(de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalListener l : portal.getListeners()) {
+                for(de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalListener l : nativePortal.getListeners()) {
                     l.onEnter(e.getPlayer());
+                }
+            } else if(!test0 && test1) {
+                for(de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalListener l : nativePortal.getListeners()) {
+                    l.onLeave(e.getPlayer());
                 }
             }
         }
@@ -46,8 +50,8 @@ public class PortalListener implements Listener {
             e.setCancelled(true);
         }
 
-        for(Portal portal : NativePortalManager.getInstance().getPortals()) {
-            if(portal.isInPortal(player, e.getTo()) || portal.isInPortal(player, e.getFrom())) {
+        for(NativePortal nativePortal : NativePortalManager.getInstance().getNativePortals()) {
+            if(nativePortal.isInPortal(player, e.getTo()) || nativePortal.isInPortal(player, e.getFrom())) {
                 e.setCancelled(true);
                 return;
             }
@@ -59,8 +63,8 @@ public class PortalListener implements Listener {
         if(e.getEntity() instanceof LivingEntity) {
             LivingEntity le = (LivingEntity) e.getEntity();
 
-            for(Portal portal : NativePortalManager.getInstance().getPortals()) {
-                if(portal.isInPortal(le, e.getTo()) || portal.isInPortal(le, e.getFrom())) {
+            for(NativePortal nativePortal : NativePortalManager.getInstance().getNativePortals()) {
+                if(nativePortal.isInPortal(le, e.getTo()) || nativePortal.isInPortal(le, e.getFrom())) {
                     e.setCancelled(true);
                     return;
                 }
@@ -70,20 +74,20 @@ public class PortalListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPortalPlaceAround(BlockPlaceEvent e) {
-        for(Portal portal : NativePortalManager.getInstance().getPortals()) {
-            if(portal == null || portal.getType() == null) continue;
-            if(!portal.isVisible()) continue;
+        for(NativePortal nativePortal : NativePortalManager.getInstance().getNativePortals()) {
+            if(nativePortal == null || nativePortal.getType() == null) continue;
+            if(!nativePortal.isVisible()) continue;
 
-            switch(portal.getType()) {
+            switch(nativePortal.getType()) {
                 case WATER:
                 case LAVA:
-                    if(portal.isAround(e.getBlock().getLocation(), 0, true))
+                    if(nativePortal.isAround(e.getBlock().getLocation(), 0, true))
                         e.setCancelled(true);
                     break;
 
                 case NETHER:
-                    if(portal.isAround(e.getBlock().getLocation(), 1, true))
-                        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), portal::update, 1);
+                    if(nativePortal.isAround(e.getBlock().getLocation(), 1, true))
+                        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), nativePortal::update, 1);
                     break;
             }
         }
@@ -91,23 +95,23 @@ public class PortalListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEvent(PlayerBucketFillEvent e) {
-        for(Portal portal : NativePortalManager.getInstance().getPortals()) {
-            if(portal == null || portal.getType() == null) continue;
+        for(NativePortal nativePortal : NativePortalManager.getInstance().getNativePortals()) {
+            if(nativePortal == null || nativePortal.getType() == null) continue;
 
-            switch(portal.getType()) {
+            switch(nativePortal.getType()) {
                 case WATER:
                     if(!e.getBlockClicked().getType().name().contains("WATER")) continue;
-                    if(portal.isAround(e.getBlockClicked().getLocation(), 0, true)) {
+                    if(nativePortal.isAround(e.getBlockClicked().getLocation(), 0, true)) {
                         e.setCancelled(true);
-                        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), portal::update, 1);
+                        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), nativePortal::update, 1);
                     }
                     break;
 
                 case LAVA:
                     if(!e.getBlockClicked().getType().name().contains("LAVA")) continue;
-                    if(portal.isAround(e.getBlockClicked().getLocation(), 0, true)) {
+                    if(nativePortal.isAround(e.getBlockClicked().getLocation(), 0, true)) {
                         e.setCancelled(true);
-                        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), portal::update, 1);
+                        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), nativePortal::update, 1);
                     }
                     break;
             }
@@ -116,20 +120,20 @@ public class PortalListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onNetherPortalBreak(BlockBreakEvent e) {
-        for(Portal portal : NativePortalManager.getInstance().getPortals()) {
-            if(portal == null || portal.getType() == null) continue;
-            if(!portal.isVisible()) continue;
+        for(NativePortal nativePortal : NativePortalManager.getInstance().getNativePortals()) {
+            if(nativePortal == null || nativePortal.getType() == null) continue;
+            if(!nativePortal.isVisible()) continue;
 
-            switch(portal.getType()) {
+            switch(nativePortal.getType()) {
                 case NETHER:
-                    if(portal.isAround(e.getBlock().getLocation(), 0, true))
+                    if(nativePortal.isAround(e.getBlock().getLocation(), 0, true))
                         e.setCancelled(true);
-                    else if(portal.isAround(e.getBlock().getLocation(), 1, true)) {
-                        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), portal::update, 1);
+                    else if(nativePortal.isAround(e.getBlock().getLocation(), 1, true)) {
+                        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), nativePortal::update, 1);
                     }
                     break;
                 case END:
-                    if(portal.isAround(e.getBlock().getLocation(), 0, true))
+                    if(nativePortal.isAround(e.getBlock().getLocation(), 0, true))
                         e.setCancelled(true);
                     break;
             }

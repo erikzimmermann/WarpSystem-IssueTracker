@@ -7,9 +7,11 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Teleport;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
+import de.codingair.warpsystem.spigot.features.nativeportals.NativePortal;
 import de.codingair.warpsystem.spigot.features.nativeportals.PortalEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.commands.CNativePortals;
 import de.codingair.warpsystem.spigot.features.nativeportals.guis.DeleteGUI;
@@ -26,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NativePortalManager implements Manager {
-    private List<Portal> portals = new ArrayList<>();
+    private List<NativePortal> nativePortals = new ArrayList<>();
     private List<Player> noTeleport = new ArrayList<>();
     private TimeList<String> goingToDelete = new TimeList<>();
     private TimeList<String> goingToEdit = new TimeList<>();
@@ -53,18 +55,18 @@ public class NativePortalManager implements Manager {
 
         boolean success = true;
 
-        this.portals.forEach(p -> {
+        this.nativePortals.forEach(p -> {
             p.setVisible(false);
             p.clear();
         });
-        this.portals.clear();
+        this.nativePortals.clear();
 
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
 
         WarpSystem.log("  > Loading NativePortals");
         int fails = 0;
         for(String s : file.getConfig().getStringList("NativePortals")) {
-            Portal p = new Portal();
+            NativePortal p = new NativePortal();
             try {
                 p.read((JSONObject) new JSONParser().parse(s));
                 if(p != null) addPortal(p);
@@ -78,7 +80,7 @@ public class NativePortalManager implements Manager {
         }
 
         if(fails > 0) WarpSystem.log("    > " + fails + " Error(s)");
-        WarpSystem.log("    ...got " + portals.size() + " NativePortal(s)");
+        WarpSystem.log("    ...got " + nativePortals.size() + " NativePortal(s)");
 
         showAll();
 
@@ -92,9 +94,9 @@ public class NativePortalManager implements Manager {
 
         List<String> data = new ArrayList<>();
 
-        for(Portal portal : this.portals) {
+        for(NativePortal nativePortal : this.nativePortals) {
             JSONObject json = new JSONObject();
-            portal.write(json);
+            nativePortal.write(json);
             data.add(json.toJSONString());
         }
 
@@ -111,19 +113,19 @@ public class NativePortalManager implements Manager {
         this.goingToDelete.clear();
         this.goingToEdit.clear();
         this.noTeleport.clear();
-        this.portals.clear();
+        this.nativePortals.clear();
     }
 
     public void hideAll() {
-        for(Portal portal : this.portals) {
-            portal.setVisible(false);
-            portal.clear();
+        for(NativePortal nativePortal : this.nativePortals) {
+            nativePortal.setVisible(false);
+            nativePortal.clear();
         }
     }
 
     public void showAll() {
-        for(Portal portal : this.portals) {
-            portal.setVisible(true);
+        for(NativePortal nativePortal : this.nativePortals) {
+            nativePortal.setVisible(true);
         }
     }
 
@@ -139,74 +141,85 @@ public class NativePortalManager implements Manager {
         return getEditor(player) != null;
     }
 
-    private void init(Portal portal) {
-        portal.getListeners().clear();
-        portal.getListeners().add((player) -> {
-            if(!player.hasPermission(WarpSystem.PERMISSION_USE_NATIVE_PORTALS)) {
-                player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
-                return;
+    private void init(NativePortal nativePortal) {
+        nativePortal.getListeners().clear();
+        nativePortal.getListeners().add(new de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalListener() {
+            @Override
+            public void onEnter(Player player) {
+                if(!player.hasPermission(WarpSystem.PERMISSION_USE_NATIVE_PORTALS)) {
+                    player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
+                    return;
+                }
+
+                if(NativePortalManager.getInstance().isEditing(player) || API.getRemovable(player, NPEditor.class) != null) {
+                    player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.8));
+                    return;
+                } else if(API.getRemovable(player, GUI.class) != null) return;
+                else if(WarpSystem.getInstance().getTeleportManager().isTeleporting(player)) return;
+
+                if(goingToDelete.contains(player.getName())) {
+                    setGoingToDelete(player, 0);
+                    noTeleport.add(player);
+
+                    player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.8));
+
+                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
+                        nativePortal.setEditMode(true);
+
+                        new DeleteGUI(player, new Callback<Boolean>() {
+                            @Override
+                            public void accept(Boolean delete) {
+                                if(delete) {
+                                    nativePortal.clear();
+                                    NativePortalManager.getInstance().getNativePortals().remove(nativePortal);
+                                    player.sendMessage(Lang.getPrefix() + Lang.get("NativePortal_Deleted"));
+                                } else {
+                                    nativePortal.setEditMode(false);
+                                    player.sendMessage(Lang.getPrefix() + Lang.get("NativePortal_Not_Deleted"));
+                                }
+                            }
+                        }, null).open();
+                        noTeleport.remove(player);
+                    }, 4L);
+
+                } else if(goingToEdit.contains(player.getName())) {
+                    setGoingToEdit(player, 0);
+                    noTeleport.add(player);
+
+                    player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.8));
+
+                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
+                        nativePortal.setVisible(false);
+                        NativePortal clone = nativePortal.clone();
+                        if(clone.getDestination() == null) clone.setDestination(new Destination());
+                        clone.setEditMode(true);
+                        clone.setVisible(true);
+
+                        new NPEditor(player, nativePortal, clone).open();
+                        noTeleport.remove(player);
+                    }, 4L);
+                } else if(!noTeleport.contains(player)) {
+                    nativePortal.perform(player);
+                }
             }
 
-            if(NativePortalManager.getInstance().isEditing(player) || API.getRemovable(player, NPEditor.class) != null) {
-                player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.8));
-                return;
-            } else if(API.getRemovable(player, GUI.class) != null) return;
-            else if(WarpSystem.getInstance().getTeleportManager().isTeleporting(player)) return;
-
-            if(goingToDelete.contains(player.getName())) {
-                setGoingToDelete(player, 0);
-                noTeleport.add(player);
-
-                player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.8));
-
-                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                    portal.setEditMode(true);
-
-                    new DeleteGUI(player, new Callback<Boolean>() {
-                        @Override
-                        public void accept(Boolean delete) {
-                            if(delete) {
-                                portal.clear();
-                                NativePortalManager.getInstance().getPortals().remove(portal);
-                                player.sendMessage(Lang.getPrefix() + Lang.get("NativePortal_Deleted"));
-                            } else {
-                                portal.setEditMode(false);
-                                player.sendMessage(Lang.getPrefix() + Lang.get("NativePortal_Not_Deleted"));
-                            }
-                        }
-                    }, null).open();
-                    noTeleport.remove(player);
-                }, 4L);
-
-            } else if(goingToEdit.contains(player.getName())) {
-                setGoingToEdit(player, 0);
-                noTeleport.add(player);
-
-                player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.8));
-
-                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                    portal.setVisible(false);
-                    Portal clone = portal.clone();
-                    if(clone.getDestination() == null) clone.setDestination(new Destination());
-                    clone.setEditMode(true);
-                    clone.setVisible(true);
-
-                    new NPEditor(player, portal, clone).open();
-                    noTeleport.remove(player);
-                }, 4L);
-            } else if(!noTeleport.contains(player)) {
-                portal.perform(player);
+            @Override
+            public void onLeave(Player player) {
+                Teleport t = WarpSystem.getInstance().getTeleportManager().getTeleport(player);
+                if(t != null && t.getDestination().equals(nativePortal.getDestination())) {
+                    WarpSystem.getInstance().getTeleportManager().cancelTeleport(player);
+                }
             }
         });
     }
 
-    public void addPortal(Portal portal) {
-        init(portal);
-        this.portals.add(portal);
+    public void addPortal(NativePortal nativePortal) {
+        init(nativePortal);
+        this.nativePortals.add(nativePortal);
     }
 
-    public List<Portal> getPortals() {
-        return portals;
+    public List<NativePortal> getNativePortals() {
+        return nativePortals;
     }
 
     public static NativePortalManager getInstance() {

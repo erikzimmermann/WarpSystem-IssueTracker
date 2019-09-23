@@ -1,12 +1,12 @@
 package de.codingair.warpsystem.spigot.features.nativeportals;
 
-import de.codingair.codingapi.server.Sound;
-import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.server.blocks.utils.Axis;
 import de.codingair.codingapi.tools.Area;
+import de.codingair.codingapi.tools.JSON.JSONObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalBlock;
@@ -20,14 +20,13 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.json.simple.JSONArray;
-import de.codingair.codingapi.tools.JSON.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Portal extends FeatureObject {
+public class NativePortal extends FeatureObject {
     private PortalType type;
     private boolean editMode = false;
 
@@ -40,42 +39,44 @@ public class Portal extends FeatureObject {
 
     private String displayName;
 
-    public Portal() {
+    public NativePortal() {
         this.type = null;
         this.blocks = new ArrayList<>();
     }
 
-    public Portal(Portal portal) {
-        super(portal);
-        this.type = portal.getType();
-        this.blocks = new ArrayList<>(portal.getBlocks());
+    public NativePortal(NativePortal nativePortal) {
+        super(nativePortal);
+        this.type = nativePortal.getType();
+        this.blocks = new ArrayList<>(nativePortal.getBlocks());
 
         this.listeners.clear();
-        this.listeners.addAll(portal.getListeners());
+        this.listeners.addAll(nativePortal.getListeners());
 
-        this.displayName = portal.getDisplayName();
+        this.displayName = nativePortal.getDisplayName();
     }
 
-    public Portal(PortalType type, List<PortalBlock> blocks) {
+    public NativePortal(PortalType type, List<PortalBlock> blocks) {
         this.type = type;
         this.blocks = blocks;
     }
 
-    public Portal(PortalType type) {
+    public NativePortal(PortalType type) {
         this.type = type;
         this.blocks = new ArrayList<>();
     }
 
-    public Portal(PortalType type, Destination destination, String displayName, List<PortalBlock> blocks) {
+    public NativePortal(PortalType type, Destination destination, String displayName, List<PortalBlock> blocks) {
         super(null, false, new WarpAction(destination));
         this.type = type;
         this.displayName = displayName;
         this.blocks = blocks;
+        setSkip(true);
     }
 
     @Override
     public boolean read(JSONObject json) throws Exception {
         super.read(json);
+        setSkip(true);
 
         try {
             if(json.get("Type") != null) {
@@ -94,7 +95,7 @@ public class Portal extends FeatureObject {
             destination = new Destination((String) json.get("Destination"));
         } else if(json.get("Warp") != null || json.get("GlobalWarp") != null) {
             //old pattern
-            SimpleWarp warp = json.get("Warp") == null ? null : SimpleWarpManager.getInstance().getWarp((String) json.get("Warp"));
+            SimpleWarp warp = json.get("Warp") == null ? null : SimpleWarpManager.getInstance().getWarp(json.get("Warp"));
             String globalWarp = json.get("GlobalWarp") == null ? null : (String) json.get("GlobalWarp");
 
             if(warp != null) {
@@ -107,9 +108,9 @@ public class Portal extends FeatureObject {
         if(destination != null) addAction(new WarpAction(destination));
 
         if(json.get("Name") != null) {
-            this.displayName = (String) json.get("Name");
+            this.displayName = json.get("Name");
         } else if(json.get("name") != null) {
-            this.displayName = (String) json.get("name");
+            this.displayName = json.get("name");
         }
 
         JSONArray jsonArray = null;
@@ -176,35 +177,39 @@ public class Portal extends FeatureObject {
     public void apply(FeatureObject object) {
         super.apply(object);
 
-        Portal portal = (Portal) object;
+        NativePortal nativePortal = (NativePortal) object;
         boolean visible = isVisible();
         if(visible) setVisible(false);
 
         this.cachedEdges = null;
         this.cachedAxis = null;
         this.blocks.clear();
-        this.blocks.addAll(portal.getBlocks());
-        this.type = portal.getType();
+        this.blocks.addAll(nativePortal.getBlocks());
+        this.type = nativePortal.getType();
         this.listeners.clear();
-        this.listeners.addAll(portal.getListeners());
+        this.listeners.addAll(nativePortal.getListeners());
 
         if(visible) setVisible(true);
     }
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof Portal)) return false;
-        Portal portal = (Portal) o;
+        if(!(o instanceof NativePortal)) return false;
+        NativePortal nativePortal = (NativePortal) o;
 
         return super.equals(o) &&
-                blocks.equals(portal.blocks) &&
-                listeners.equals(portal.listeners) &&
-                type == portal.type;
+                blocks.equals(nativePortal.blocks) &&
+                listeners.equals(nativePortal.listeners) &&
+                type == nativePortal.type;
     }
 
     @Override
     public FeatureObject perform(Player player) {
-        return perform(player, hasAction(Action.WARP) ? getAction(WarpAction.class).getValue().getId() : null, hasAction(Action.WARP) ? getAction(WarpAction.class).getValue() : null, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), true, true);
+        TeleportOptions options = new TeleportOptions();
+
+        options.setCanMove(true);
+
+        return perform(player, options);
     }
 
     public boolean isInPortal(LivingEntity entity) {
@@ -356,8 +361,8 @@ public class Portal extends FeatureObject {
         return listeners;
     }
 
-    public Portal clone() {
-        return new Portal(this);
+    public NativePortal clone() {
+        return new NativePortal(this);
     }
 
     public Destination getDestination() {

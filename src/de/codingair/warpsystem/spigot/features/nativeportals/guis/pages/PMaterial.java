@@ -9,7 +9,7 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
+import de.codingair.warpsystem.spigot.features.nativeportals.NativePortal;
 import de.codingair.warpsystem.spigot.features.nativeportals.guis.NPEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;
 import org.bukkit.entity.Player;
@@ -17,9 +17,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class PMaterial extends PageItem {
-    private Portal clone;
+    private NativePortal clone;
 
-    public PMaterial(Player p, Portal clone) {
+    public PMaterial(Player p, NativePortal clone) {
         super(p, NPEditor.getMainTitle(), new ItemBuilder(XMaterial.END_PORTAL_FRAME).setName(Editor.ITEM_TITLE_COLOR + Lang.get("NativePortal_Material")).getItem(), false);
 
         this.clone = clone;

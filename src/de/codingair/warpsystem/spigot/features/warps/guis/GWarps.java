@@ -363,7 +363,7 @@ public class GWarps extends GUI {
                                 }
                             };
 
-                            new GChooseIconType(p, category, callback).open();
+                            new GChooseIconType(p, page, callback).open();
                         }
                     }.setOption(option).setOnlyLeftClick(true));
                 }

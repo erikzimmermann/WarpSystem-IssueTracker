@@ -11,6 +11,7 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionOb
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal;
@@ -31,6 +32,7 @@ public class FeatureObject implements Serializable {
     private List<ActionObject> actions;
     private String permission = null;
     private boolean disabled = false;
+    private boolean skip = false;
 
     public FeatureObject() {
         this.actions = new ArrayList<>();
@@ -52,21 +54,41 @@ public class FeatureObject implements Serializable {
         this.actions = featureObject.actions == null ? new ArrayList<>() : new ArrayList<>(featureObject.actions);
         this.permission = featureObject.permission;
         this.disabled = featureObject.disabled;
+        this.skip = featureObject.skip;
     }
 
     public FeatureObject perform(Player player) {
-        return perform(player, hasAction(Action.WARP) ? getAction(WarpAction.class).getValue().getId() : null, hasAction(Action.WARP) ? getAction(WarpAction.class).getValue() : null, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), false, true);
+        return perform(player, hasAction(Action.WARP) ? getAction(WarpAction.class).getValue().getId() : null, hasAction(Action.WARP) ? getAction(WarpAction.class).getValue() : null, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), skip, true);
     }
 
     public FeatureObject perform(Player player, String destName, Destination dest, SoundData sound, boolean skip, boolean afterEffects) {
+        TeleportOptions options = new TeleportOptions(dest, destName);
+        options.setTeleportSound(sound);
+        options.setSkip(skip);
+        options.setCanMove(skip);
+        options.setAfterEffects(afterEffects);
+
+        return perform(player, options);
+    }
+
+    public FeatureObject perform(Player player, TeleportOptions options) {
         if(this.actions == null) return this;
+
+        if(options.getDestination() == null) options.setDestination(hasAction(Action.WARP) ? getAction(WarpAction.class).getValue() : null);
+        if(options.getDisplayName() == null) options.setDisplayName(hasAction(Action.WARP) ? getAction(WarpAction.class).getValue().getId() : null);
+        if(options.getTeleportSound() == null) options.setTeleportSound(new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F));
+        options.setSkip(isSkip());
 
         if(getAction(Action.WARP) != null) {
             Origin origin = Origin.getByClass(this);
 
-            double costs = getAction(CostsAction.class) == null ? 0 : getAction(CostsAction.class).getValue();
-            WarpSystem.getInstance().getTeleportManager().teleport(player, origin, dest, destName, this.permission == null ? TeleportManager.NO_PERMISSION : permission, costs, skip, skip, WarpSystem.getInstance()
-                    .getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message." + origin.getConfigName(), true), false, sound, afterEffects, new Callback<TeleportResult>() {
+            options.setCosts(getAction(CostsAction.class) == null ? 0 : getAction(CostsAction.class).getValue());
+            options.setOrigin(origin);
+            options.setPermission(this.permission == null ? TeleportManager.NO_PERMISSION : permission);
+            if(!WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message." + origin.getConfigName(), true))
+                options.setMessage(null);
+
+            options.setCallback(new Callback<TeleportResult>() {
                 @Override
                 public void accept(TeleportResult result) {
                     if(result == TeleportResult.TELEPORTED) {
@@ -77,6 +99,8 @@ public class FeatureObject implements Serializable {
                     }
                 }
             });
+
+            WarpSystem.getInstance().getTeleportManager().teleport(player, options);
         } else if(getAction(Action.COSTS) == null || getAction(Action.COSTS).perform(player)) {
             for(ActionObject action : this.actions) {
                 if(action.getType() == Action.WARP || action.getType() == Action.COSTS) continue;
@@ -92,6 +116,7 @@ public class FeatureObject implements Serializable {
 
         this.disabled = Boolean.parseBoolean(json.get("disabled") + "");
         this.permission = json.get("permission") == null ? null : (String) json.get("permission");
+        this.skip = json.get("skip", false);
 
         if(this.actions == null) this.actions = new ArrayList<>();
 
@@ -151,6 +176,7 @@ public class FeatureObject implements Serializable {
     public void write(JSONObject json) {
         json.put("disabled", this.disabled);
         json.put("permission", this.permission);
+        json.put("skip", this.skip);
 
         JSONArray actionList = new JSONArray();
         if(this.actions != null) {
@@ -192,6 +218,7 @@ public class FeatureObject implements Serializable {
     public void apply(FeatureObject object) {
         this.destroy();
 
+        this.skip = object.skip;
         this.disabled = object.disabled;
         this.permission = object.permission;
         this.actions = object.actions == null ? new ArrayList<>() : new ArrayList<>(object.actions);
@@ -284,5 +311,13 @@ public class FeatureObject implements Serializable {
     public FeatureObject setDisabled(boolean disabled) {
         this.disabled = disabled;
         return this;
+    }
+
+    public boolean isSkip() {
+        return skip;
+    }
+
+    public void setSkip(boolean skip) {
+        this.skip = skip;
     }
 }

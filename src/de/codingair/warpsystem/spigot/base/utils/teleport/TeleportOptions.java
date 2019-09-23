@@ -28,6 +28,10 @@ public class TeleportOptions {
     private boolean afterEffects;
     private Callback<TeleportResult> callback;
 
+    public TeleportOptions() {
+        this((Destination) null, null);
+    }
+
     public TeleportOptions(Location location, String displayName) {
         this(new Destination(new LocationAdapter(location)), displayName);
     }
