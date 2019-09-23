@@ -504,12 +504,15 @@ public class CWarpSystem extends CommandBuilder {
     }
 
     private static void sendInfoMessage(CommandSender sender) {
+        String version = WarpSystem.getInstance().getDescription().getVersion();
+        if(version.contains("-free")) version = version.replace("-free", "");
+
         sender.sendMessage(new String[] {
                 "",
                 "§7§m               §7< §6WarpSystem §7>§m               §7",
                 "",
                 "     §3Author: §bCodingAir",
-                "     §3Version: §bv" + WarpSystem.getInstance().getDescription().getVersion() + " §7["+ (WarpSystem.getInstance().isPremium() ? "§6Premium" : "§bFree") + "§7]",
+                "     §3Version: §bv" + version + " §7["+ (WarpSystem.getInstance().isPremium() ? "§6Premium" : "§bFree") + "§7]",
                 "",
                 "     §eAvailable on SpigotMc!",
                 ""
