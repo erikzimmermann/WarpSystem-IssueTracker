@@ -28,6 +28,7 @@ public class TeleportOptions {
     private Callback<TeleportResult> callback;
 
     public TeleportOptions() {
+        this((Destination) null, null);
     }
 
     public TeleportOptions(Location location, String displayName) {
