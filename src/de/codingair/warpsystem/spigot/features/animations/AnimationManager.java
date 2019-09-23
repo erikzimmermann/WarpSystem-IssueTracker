@@ -43,7 +43,7 @@ public class AnimationManager implements Manager {
             }
         }
 
-        active = new Animation("Standard", new ParticlePart(AnimationType.CIRCLE, Particle.FLAME, 1, 1, CustomAnimation.MAX_SPEED));
+        active = new Animation("§Standard§", new ParticlePart(AnimationType.CIRCLE, Particle.FLAME, 1, 1, CustomAnimation.MAX_SPEED));
 
         WarpSystem.log("    ...got " + animationList.size() + " animation(s)");
 
@@ -104,10 +104,6 @@ public class AnimationManager implements Manager {
 
     public Animation getActive() {
         return active;
-    }
-
-    public void setActive(Animation active) {
-        this.active = active;
     }
 
     public static AnimationManager getInstance() {
