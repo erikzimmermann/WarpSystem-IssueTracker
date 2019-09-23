@@ -31,6 +31,7 @@ public class AnimationPlayer {
     private Location destination;
     private double maxDistance = 70;
     private boolean sounds;
+    private boolean teleportSound;
 
     private HitBox hitBox = null;
 
@@ -61,6 +62,7 @@ public class AnimationPlayer {
         this.seconds = seconds;
         this.destination = destination;
         this.sounds = sounds;
+        this.teleportSound = sounds;
     }
 
     private void buildBuffBackup() {
@@ -136,7 +138,7 @@ public class AnimationPlayer {
                         }
                     }
 
-                    if(sounds && animation.getTeleportSound() != null && player != null) animation.getTeleportSound().play(player, destination);
+                    if(teleportSound && animation.getTeleportSound() != null && player != null) animation.getTeleportSound().play(player, destination);
 
                     if(player == null || player.getActivePotionEffects().isEmpty()) setRunning(false);
                 } else {
@@ -247,5 +249,13 @@ public class AnimationPlayer {
 
     public void setMaxDistance(double maxDistance) {
         this.maxDistance = maxDistance;
+    }
+
+    public boolean isTeleportSound() {
+        return teleportSound;
+    }
+
+    public void setTeleportSound(boolean teleportSound) {
+        this.teleportSound = teleportSound;
     }
 }

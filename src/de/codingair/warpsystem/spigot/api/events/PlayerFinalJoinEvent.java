@@ -7,7 +7,6 @@ import org.bukkit.event.player.PlayerEvent;
 import java.util.UUID;
 
 public class PlayerFinalJoinEvent extends PlayerEvent {
-
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled = false;
 
