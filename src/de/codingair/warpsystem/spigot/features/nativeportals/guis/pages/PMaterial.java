@@ -81,24 +81,17 @@ public class PMaterial extends PageItem {
         addButton(new SyncButton(3, 2) {
             @Override
             public ItemStack craftItem() {
-                ItemBuilder builder = new ItemBuilder(XMaterial.WHITE_STAINED_GLASS).setName("§e§n" + Lang.get("Air_Portal"));
+                ItemBuilder builder = new ItemBuilder(XMaterial.WHITE_STAINED_GLASS).setName("§e§n" + Lang.get("Air_Portal") + Lang.PREMIUM_LORE);
 
-                if(clone.getType() == PortalType.AIR) {
-                    builder.setLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + "§a" + Lang.get("Enabled"));
-                } else {
-                    builder.setLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + "§c" + Lang.get("Disabled"));
-                    builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7" + Lang.get("Use"));
-                }
+                builder.setLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + "§c" + Lang.get("Disabled"));
+                builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7" + Lang.get("Use"));
 
                 return builder.getItem();
             }
 
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
-                PortalType next = PortalType.AIR;
-                clone.setType(next);
-
-                for(int i = 1; i < 6; i++) ((SyncButton) getButton(i, 2)).update();
+                Lang.PREMIUM_CHAT(player);
             }
         }.setOption(option));
 
