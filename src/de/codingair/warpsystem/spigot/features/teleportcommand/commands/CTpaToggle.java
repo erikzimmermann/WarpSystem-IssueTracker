@@ -5,9 +5,7 @@ import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class CTpaToggle extends CommandBuilder {
     public CTpaToggle() {
@@ -24,14 +22,12 @@ public class CTpaToggle extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
+                Lang.PREMIUM_CHAT(sender);
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                if(TeleportCommandManager.getInstance().toggleDenyTpaRequest((Player) sender))
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_toggled_disabling"));
-                else
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_toggled_enabling"));
+                Lang.PREMIUM_CHAT(sender);
                 return false;
             }
         }.setOnlyPlayers(true), true);
