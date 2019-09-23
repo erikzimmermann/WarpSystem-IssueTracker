@@ -1,5 +1,8 @@
 package de.codingair.warpsystem.bungee.features.globalwarps.listeners;
 
+import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.utils.Value;
+import de.codingair.warpsystem.bungee.api.ServerSwitchAttemptEvent;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.features.FeatureType;
 import de.codingair.warpsystem.bungee.features.globalwarps.managers.GlobalWarpManager;
@@ -91,19 +94,50 @@ public class GlobalWarpListener implements Listener, PacketListener {
                 IntegerPacket answerIntegerPacket = new IntegerPacket();
 
                 if(warp == null) answerIntegerPacket.setValue(1);
-                else if(otherServer == null || !WarpSystem.getInstance().getServerManager().isOnline(otherServer)) answerIntegerPacket.setValue(2);
+                else if(otherServer == null) answerIntegerPacket.setValue(2);
                 else answerIntegerPacket.setValue(0);
 
                 ((PrepareTeleportPacket) packet).applyAsAnswer(answerIntegerPacket);
-                WarpSystem.getInstance().getDataHandler().send(answerIntegerPacket, server);
-
-                if(answerIntegerPacket.getValue() != 0) return;
 
                 if(p.getServer().getInfo().equals(otherServer)) {
+                    WarpSystem.getInstance().getDataHandler().send(answerIntegerPacket, server);
                     WarpSystem.getInstance().getDataHandler().send(new TeleportPacket(player, warp, teleportDisplayName, ((PrepareTeleportPacket) packet).getCosts()), otherServer);
-                } else p.connect(otherServer, (connected, throwable) -> {
-                    if(connected) WarpSystem.getInstance().getDataHandler().send(new TeleportPacket(player, warp, teleportDisplayName, ((PrepareTeleportPacket) packet).getCosts()), otherServer);
-                });
+                } else {
+                    Value<Boolean> modifiedEvent = new Value<>(false);
+                    ServerSwitchAttemptEvent e = new ServerSwitchAttemptEvent(p, otherServer, new Callback() {
+                        private boolean used = false;
+
+                        @Override
+                        public void accept(Object object) {
+                            if(used) return;
+                            used = true;
+
+                            Callback<Boolean> pingCallback = new Callback<Boolean>() {
+                                @Override
+                                public void accept(Boolean online) {
+                                    if(online) {
+                                        WarpSystem.getInstance().getDataHandler().send(answerIntegerPacket, server);
+
+                                        p.connect(otherServer, (connected, throwable) -> {
+                                            if(connected) WarpSystem.getInstance().getDataHandler().send(new TeleportPacket(player, warp, teleportDisplayName, ((PrepareTeleportPacket) packet).getCosts()), otherServer);
+                                        });
+                                    } else {
+                                        answerIntegerPacket.setValue(2);
+                                        WarpSystem.getInstance().getDataHandler().send(answerIntegerPacket, server);
+                                    }
+                                }
+                            };
+
+                            if(modifiedEvent.getValue()) {
+                                WarpSystem.getInstance().getServerManager().ping(otherServer, pingCallback);
+                            } else pingCallback.accept(WarpSystem.getInstance().getServerManager().isOnline(otherServer));
+                        }
+                    });
+
+                    BungeeCord.getInstance().getPluginManager().callEvent(e);
+                    if(!e.isWaitForCallback()) e.getTeleportFinisher().accept(null);
+                    else modifiedEvent.setValue(true);
+                }
                 break;
 
             case RequestGlobalWarpNamesPacket:
