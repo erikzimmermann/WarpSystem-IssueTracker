@@ -187,7 +187,7 @@ public class Teleport extends HotbarGUI {
         });
 
         setItem(5, new ItemComponent(new ItemBuilder(XMaterial.REDSTONE)
-                .setName("§7" + Lang.get("Permission") + ": '§e" + getPortal().getPermission() + "§7'")
+                .setName("§7" + Lang.get("Permission") + ": "+(getPortal().getPermission() == null ? "§c-" : "'§e" + getPortal().getPermission() + "§7'"))
                 .getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
@@ -203,7 +203,7 @@ public class Teleport extends HotbarGUI {
                                 }
 
                                 getPortal().setPermission(e.getInput());
-                                updateDisplayName(ic, "§7" + Lang.get("Permission") + ": '§r" + getPortal().getPermission() + "§7'");
+                                updateDisplayName(ic, "§7" + Lang.get("Permission") + ": "+(getPortal().getPermission() == null ? "§c-" : "'§e" + getPortal().getPermission() + "§7'"));
                                 e.setClose(true);
                             }
                         }
@@ -214,7 +214,7 @@ public class Teleport extends HotbarGUI {
                     }, new ItemBuilder(XMaterial.PAPER).setName(getPortal().getPermission() != null ? getPortal().getPermission() : Lang.get("Permission") + "...").getItem());
                 } else if(clickType == ClickType.RIGHT_CLICK) {
                     getPortal().setPermission(null);
-                    updateDisplayName(ic, "§7" + Lang.get("Permission") + ": '§r" + getPortal().getPermission() + "§7'");
+                    updateDisplayName(ic, "§7" + Lang.get("Permission") + ": "+(getPortal().getPermission() == null ? "§c-" : "'§e" + getPortal().getPermission() + "§7'"));
                 }
             }
 
