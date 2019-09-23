@@ -1,12 +1,17 @@
 package de.codingair.warpsystem.bungee.base.listeners;
 
+import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.utils.Value;
+import de.codingair.warpsystem.bungee.api.ServerSwitchAttemptEvent;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.transfer.packets.bungee.PrepareLoginMessagePacket;
+import de.codingair.warpsystem.transfer.packets.bungee.TeleportPacket;
 import de.codingair.warpsystem.transfer.packets.general.BooleanPacket;
 import de.codingair.warpsystem.transfer.packets.general.IntegerPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.IsOperatorPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.MessagePacket;
 import de.codingair.warpsystem.transfer.packets.spigot.PrepareServerSwitchPacket;
+import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestServerStatusPacket;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
@@ -111,21 +116,45 @@ public class MainListener implements Listener, PacketListener {
                         return;
                     }
 
-                    if(WarpSystem.getInstance().getServerManager().isOnline(info)) {
-                        pp.connect(info, (connected, throwable) -> {
-                            if(connected) {
-                                if(p.getMessage() != null) {
-                                    BungeeCord.getInstance().getScheduler().schedule(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getDataHandler().send(new PrepareLoginMessagePacket(pp.getName(), p.getMessage()), info), 500, TimeUnit.MILLISECONDS);
-                                }
-                            }
+                    Value<Boolean> modifiedEvent = new Value<>(false);
+                    ServerSwitchAttemptEvent e = new ServerSwitchAttemptEvent(pp, info, new Callback() {
+                        private boolean used = false;
 
-                            answer.setValue(connected ? 0 : 4);
-                            WarpSystem.getInstance().getDataHandler().send(answer, server);
-                        });
-                    } else {
-                        answer.setValue(3);
-                        WarpSystem.getInstance().getDataHandler().send(answer, server);
-                    }
+                        @Override
+                        public void accept(Object object) {
+                            if(used) return;
+                            used = true;
+
+                            Callback<Boolean> pingCallback = new Callback<Boolean>() {
+                                @Override
+                                public void accept(Boolean online) {
+                                    if(online) {
+                                        pp.connect(info, (connected, throwable) -> {
+                                            if(connected) {
+                                                if(p.getMessage() != null) {
+                                                    BungeeCord.getInstance().getScheduler().schedule(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getDataHandler().send(new PrepareLoginMessagePacket(pp.getName(), p.getMessage()), info), 500, TimeUnit.MILLISECONDS);
+                                                }
+                                            }
+
+                                            answer.setValue(connected ? 0 : 4);
+                                            WarpSystem.getInstance().getDataHandler().send(answer, server);
+                                        });
+                                    } else {
+                                        answer.setValue(3);
+                                        WarpSystem.getInstance().getDataHandler().send(answer, server);
+                                    }
+                                }
+                            };
+
+                            if(modifiedEvent.getValue()) {
+                                WarpSystem.getInstance().getServerManager().ping(info, pingCallback);
+                            } else pingCallback.accept(WarpSystem.getInstance().getServerManager().isOnline(info));
+                        }
+                    });
+
+                    BungeeCord.getInstance().getPluginManager().callEvent(e);
+                    if(!e.isWaitForCallback()) e.getTeleportFinisher().accept(null);
+                    else modifiedEvent.setValue(true);
                 }
                 break;
             }

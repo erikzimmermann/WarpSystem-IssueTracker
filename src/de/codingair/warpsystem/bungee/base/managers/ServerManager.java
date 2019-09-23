@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.bungee.base.managers;
 
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
 import de.codingair.warpsystem.transfer.packets.bungee.InitialPacket;
@@ -28,6 +29,13 @@ public class ServerManager implements Listener {
                 info.ping((serverPing, error) -> setStatus(info, error == null));
             }
         }, 0, 5, TimeUnit.SECONDS);
+    }
+
+    public void ping(ServerInfo info, Callback<Boolean> callback) {
+        info.ping((serverPing, error) -> {
+            setStatus(info, error == null);
+            callback.accept(error == null);
+        });
     }
 
     public void sendInitialPacket(ServerInfo server) {

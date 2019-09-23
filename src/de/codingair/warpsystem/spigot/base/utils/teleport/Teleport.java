@@ -84,8 +84,13 @@ public class Teleport {
         if(!animation.isRunning()) {
             //Starting timer and call PreTeleportAttemptEvent
             PreTeleportAttemptEvent e = new PreTeleportAttemptEvent(this.player, new Callback() {
+                private boolean used = false;
+
                 @Override
                 public void accept(Object object) {
+                    if(used) return;
+                    used = true;
+
                     MessageAPI.sendActionBar(player, null);
                     teleport();
                 }
@@ -190,8 +195,13 @@ public class Teleport {
         WarpSystem.getInstance().getTeleportManager().getTeleports().remove(this);
 
         Callback teleport = new Callback() {
+            private boolean used = false;
+
             @Override
             public void accept(Object object) {
+                if(used) return;
+                used = true;
+
                 MessageAPI.stopSendingActionBar(player);
                 cancel(false, true);
                 if(destination == null) return;
