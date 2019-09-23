@@ -109,6 +109,6 @@ public class PAppearance extends PageItem {
         }.setOption(option));
 
         addButton(new PermissionButton(3, 2, nativePortal).setOption(option));
-        addButton(new DelayButton(3, 2, nativePortal).setOption(option));
+        addButton(new DelayButton(4, 2, nativePortal).setOption(option));
     }
 }
