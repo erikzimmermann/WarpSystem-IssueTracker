@@ -152,6 +152,7 @@ public class CTempWarps extends CommandBuilder {
                 List<TempWarp> warps = TempWarpManager.getManager().getWarps((Player) sender);
 
                 for(TempWarp warp : warps) {
+                    if(warp.isExpired()) continue;
                     suggestions.add(warp.getIdentifier());
                 }
 

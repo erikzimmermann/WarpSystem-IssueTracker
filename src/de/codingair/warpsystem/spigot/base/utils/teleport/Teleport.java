@@ -10,6 +10,7 @@ import de.codingair.codingapi.server.reflections.PacketUtils;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.api.events.PlayerTeleportAcceptEvent;
 import de.codingair.warpsystem.spigot.api.events.PlayerTeleportedEvent;
+import de.codingair.warpsystem.spigot.api.events.PreTeleportAttemptEvent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
@@ -17,6 +18,7 @@ import de.codingair.warpsystem.spigot.base.utils.effects.RotatingParticleSpiral;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.base.utils.options.GeneralOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.UnmodifiableDestination;
 import de.codingair.warpsystem.spigot.features.animations.AnimationManager;
 import de.codingair.warpsystem.spigot.features.animations.utils.AnimationPlayer;
 import org.bukkit.Bukkit;
@@ -27,6 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
@@ -63,7 +66,8 @@ public class Teleport {
         this.permission = permission;
         this.seconds = seconds;
         this.costs = costs;
-        this.teleportSound = teleportSound;
+        this.teleportSound = AnimationManager.getInstance().getActive().getTeleportSound();
+        if(this.teleportSound == null) this.teleportSound = teleportSound;
         this.afterEffects = afterEffects;
         this.message = message;
         this.canMove = canMove;
@@ -73,10 +77,22 @@ public class Teleport {
         if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) this.costs = 0;
 
         this.animation = new AnimationPlayer(player, AnimationManager.getInstance().getActive(), seconds, destination.buildLocation());
+        this.animation.setTeleportSound(false);
     }
 
     public void start() {
         if(!animation.isRunning()) {
+            //Starting timer and call PreTeleportAttemptEvent
+            PreTeleportAttemptEvent e = new PreTeleportAttemptEvent(this.player, new Callback() {
+                @Override
+                public void accept(Object object) {
+                    MessageAPI.sendActionBar(player, null);
+                    teleport();
+                }
+            }, new UnmodifiableDestination(this.destination));
+            Bukkit.getPluginManager().callEvent(e);
+
+
             this.startTime = System.currentTimeMillis();
             this.animation.setRunning(true);
             this.runnable = new BukkitRunnable() {
@@ -86,8 +102,11 @@ public class Teleport {
                 @Override
                 public void run() {
                     if(left == 0) {
-                        teleport();
-                        MessageAPI.sendActionBar(player, null);
+                        if(e.isWaitForCallback()) {
+                            MessageAPI.sendActionBar(player, e.getHotbarMessage(), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                        } else {
+                            e.getTeleportFinisher().accept(null);
+                        }
                         return;
                     }
 
@@ -170,37 +189,63 @@ public class Teleport {
     public void teleport() {
         WarpSystem.getInstance().getTeleportManager().getTeleports().remove(this);
 
-        cancel(false, true);
-        if(destination == null) return;
+        Callback teleport = new Callback() {
+            @Override
+            public void accept(Object object) {
+                MessageAPI.stopSendingActionBar(player);
+                cancel(false, true);
+                if(destination == null) return;
 
-        if(message != null) {
-            message = (message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName));
-        }
-
-        if(seconds == 0) preLoadChunks(1);
-
-        Location from = player.getLocation();
-
-        if(!destination.teleport(player, message, displayName, this.permission == null, silent, costs, callback)) {
-            return;
-        }
-
-        Bukkit.getPluginManager().registerEvents(new Listener() {
-            @EventHandler
-            public void onTeleportEd(PlayerTeleportAcceptEvent e) {
-                if(player.isOnline()) {
-                    sendLoadedChunks();
-
-                    PlayerTeleportedEvent event = new PlayerTeleportedEvent(player, from, origin, afterEffects);
-                    Bukkit.getPluginManager().callEvent(event);
-
-                    if(event.isRunAfterEffects()) playAfterEffects(player);
-                    if(teleportSound != null) teleportSound.play(player);
+                if(message != null) {
+                    message = (message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName));
                 }
 
-                HandlerList.unregisterAll(this);
+                if(seconds == 0) preLoadChunks(1);
+
+                Location from = player.getLocation();
+
+                if(!destination.teleport(player, message, displayName, permission == null, silent, costs, callback)) {
+                    return;
+                }
+
+                Bukkit.getPluginManager().registerEvents(new Listener() {
+                    @EventHandler
+                    public void onTeleportEd(PlayerTeleportAcceptEvent e) {
+                        if(player.equals(e.getPlayer())) {
+                            if(player.isOnline()) {
+                                sendLoadedChunks();
+
+                                PlayerTeleportedEvent event = new PlayerTeleportedEvent(player, from, origin, afterEffects);
+                                Bukkit.getPluginManager().callEvent(event);
+
+                                if(event.isRunAfterEffects()) playAfterEffects(player);
+                                if(teleportSound != null) teleportSound.play(player);
+                            }
+
+                            HandlerList.unregisterAll(this);
+                        }
+                    }
+
+                    @EventHandler
+                    public void onQuit(PlayerQuitEvent e) {
+                        if(player.equals(e.getPlayer())) HandlerList.unregisterAll(this);
+                    }
+                }, WarpSystem.getInstance());
             }
-        }, WarpSystem.getInstance());
+        };
+
+        if(this.runnable == null) {
+            //no timer set, call PreTeleportAttemptEvent
+            PreTeleportAttemptEvent e = new PreTeleportAttemptEvent(this.player, teleport, new UnmodifiableDestination(this.destination));
+            Bukkit.getPluginManager().callEvent(e);
+
+            if(e.isWaitForCallback()) {
+                MessageAPI.sendActionBar(player, e.getHotbarMessage(), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                return;
+            }
+        }
+
+        teleport.accept(null);
     }
 
     private void payBack() {
