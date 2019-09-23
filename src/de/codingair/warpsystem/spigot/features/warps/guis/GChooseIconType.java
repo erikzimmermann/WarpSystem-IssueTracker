@@ -9,6 +9,7 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -22,11 +23,13 @@ import java.util.List;
 public class GChooseIconType extends GUI {
     private Callback<Boolean> callback;
     private boolean set = false;
+    private Icon category;
 
-    public GChooseIconType(Player p, Callback<Boolean> callback) {
+    public GChooseIconType(Player p, Icon category, Callback<Boolean> callback) {
         super(p, "§c" + Lang.get("GUI_Choose_Icon"), 9, WarpSystem.getInstance(), false);
 
         this.callback = callback;
+        this.category = category;
 
         addListener(new GUIListener() {
             @Override
@@ -81,12 +84,16 @@ public class GChooseIconType extends GUI {
             }
         }.setOption(option));
 
-        addButton(new ItemButton(6, new ItemBuilder(Material.CHEST).setName("§c" + Lang.get("Page")).getItem()) {
+        addButton(new ItemButton(6, new ItemBuilder(Material.CHEST).setName("§c" + Lang.get("Category")).getItem()) {
             @Override
             public void onClick(InventoryClickEvent e) {
-                set = true;
-                p.closeInventory();
-                callback.accept(true);
+                if(category == null) {
+                    set = true;
+                    p.closeInventory();
+                    callback.accept(true);
+                } else {
+                    Lang.PREMIUM_CHAT(p);
+                }
             }
         }.setOption(option));
     }

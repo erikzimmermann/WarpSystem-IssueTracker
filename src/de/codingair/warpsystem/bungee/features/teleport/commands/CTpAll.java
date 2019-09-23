@@ -30,39 +30,6 @@ public class CTpAll extends Command {
             return;
         }
 
-        List<ProxiedPlayer> players = new ArrayList<>();
-        int max = 0;
-
-        if(!TeleportManager.getInstance().isAccessible(((ProxiedPlayer) sender).getServer().getInfo())) {
-            for(ProxiedPlayer receiver : ((ProxiedPlayer) sender).getServer().getInfo().getPlayers()) {
-                if(!receiver.getName().equals(sender.getName())) {
-                    max++;
-                    if(!TeleportManager.getInstance().deniesTpaRequests(receiver)) players.add(receiver);
-                }
-            }
-        } else {
-            for(ProxiedPlayer receiver : BungeeCord.getInstance().getPlayers()) {
-                if(!receiver.getName().equals(sender.getName())
-                        && TeleportManager.getInstance().isAccessible(receiver.getServer().getInfo())) {
-                    max++;
-                    if(!TeleportManager.getInstance().deniesForceTps(receiver)) players.add(receiver);
-                }
-            }
-        }
-
-        ProxiedPlayer target = (ProxiedPlayer) sender;
-        for(ProxiedPlayer player : players) {
-            //tp
-            TeleportPlayerToPlayerPacket packet = new TeleportPlayerToPlayerPacket(target.getName(), player.getName(), target.getName(), false);
-            if(!player.getServer().getInfo().equals(target.getServer().getInfo())) {
-                player.connect(target.getServer().getInfo(), (connected, throwable) -> {
-                    if(connected)
-                        WarpSystem.getInstance().getDataHandler().send(packet, target.getServer().getInfo());
-                });
-            } else
-                WarpSystem.getInstance().getDataHandler().send(packet, target.getServer().getInfo());
-        }
-
-        sender.sendMessage(Lang.getPrefix() + Lang.get("Teleport_all").replace("%AMOUNT%", players.size() + "").replace("%MAX%", max + ""));
+        Lang.PREMIUM_CHAT(sender);
     }
 }
