@@ -9,7 +9,6 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalBlock;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -24,8 +23,8 @@ public class PortalEditor implements Removable {
     private boolean ended = false;
     private final UUID uniqueId = UUID.randomUUID();
     private Player player;
-    private Portal backup;
-    private Portal portal;
+    private NativePortal backup;
+    private NativePortal nativePortal;
     private PortalType type;
     private ItemStack old;
 
@@ -33,21 +32,21 @@ public class PortalEditor implements Removable {
         this.player = player;
         API.addRemovable(this);
         this.backup = null;
-        this.portal = new Portal(type);
+        this.nativePortal = new NativePortal(type);
     }
 
     public PortalEditor(Player player, PortalType type) {
         this.player = player;
         API.addRemovable(this);
         this.backup = null;
-        this.portal = new Portal(type);
+        this.nativePortal = new NativePortal(type);
     }
 
-    public PortalEditor(Player player, Portal portal) {
+    public PortalEditor(Player player, NativePortal nativePortal) {
         this.player = player;
         API.addRemovable(this);
-        this.backup = portal;
-        this.portal = portal.clone();
+        this.backup = nativePortal;
+        this.nativePortal = nativePortal.clone();
     }
 
     @Override
@@ -76,52 +75,52 @@ public class PortalEditor implements Removable {
         this.player.getInventory().setItem(this.player.getInventory().getHeldItemSlot(), PORTAL_ITEM.getItem());
         this.player.updateInventory();
 
-        this.type = portal.getType();
-        this.portal.setType(PortalType.EDIT);
+        this.type = nativePortal.getType();
+        this.nativePortal.setType(PortalType.EDIT);
 
         if(backup != null) this.backup.setVisible(false);
-        this.portal.setVisible(true);
+        this.nativePortal.setVisible(true);
     }
 
     private void update() {
         this.player.getInventory().setItem(this.player.getInventory().getHeldItemSlot(), PORTAL_ITEM.getItem());
-        this.portal.update();
+        this.nativePortal.update();
     }
 
-    public Portal end() {
+    public NativePortal end() {
         if(ended) return null;
         ended = true;
 
         this.player.getInventory().setItem(this.player.getInventory().getHeldItemSlot(), old == null ? new ItemStack(Material.AIR) : old);
         this.player.updateInventory();
-        this.portal.setType(this.type);
+        this.nativePortal.setType(this.type);
 
         API.removeRemovable(this);
 
         if(backup != null) {
             Destination dest = this.backup.getDestination();
-            this.backup.apply(portal);
+            this.backup.apply(nativePortal);
             backup.setDestination(dest);
 
-            portal.setVisible(false);
+            nativePortal.setVisible(false);
             backup.setVisible(true);
 
             return this.backup;
         } else {
-            portal.setVisible(true);
-            return this.portal;
+            nativePortal.setVisible(true);
+            return this.nativePortal;
         }
     }
 
     public void addPosition(Location location) {
-        this.portal.addPortalBlock(new PortalBlock(location));
+        this.nativePortal.addPortalBlock(new PortalBlock(location));
         update();
     }
 
     public void removePosition(Location location) {
         PortalBlock block = null;
 
-        for(PortalBlock b : this.portal.getBlocks()) {
+        for(PortalBlock b : this.nativePortal.getBlocks()) {
             if(b.getLocation().equals(location)) {
                 block = b;
                 break;
@@ -129,7 +128,7 @@ public class PortalEditor implements Removable {
         }
 
         if(block != null) {
-            portal.removePortalBlock(block);
+            nativePortal.removePortalBlock(block);
             update();
         }
     }
@@ -138,11 +137,11 @@ public class PortalEditor implements Removable {
         return player;
     }
 
-    public Portal getBackup() {
+    public NativePortal getBackup() {
         return backup;
     }
 
-    public Portal getPortal() {
-        return portal;
+    public NativePortal getNativePortal() {
+        return nativePortal;
     }
 }

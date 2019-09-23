@@ -8,7 +8,7 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
-import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
+import de.codingair.warpsystem.spigot.features.nativeportals.NativePortal;
 import de.codingair.warpsystem.spigot.features.nativeportals.guis.NPEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;
@@ -66,13 +66,13 @@ public class CNativePortals extends CommandBuilder {
                         if(e.isSubmitted()) {
                             String name = e.getSubmittedText();
 
-                            Portal portal = new Portal(PortalType.WATER, new Destination(), name, new ArrayList<>());
-                            Portal clone = portal.clone();
+                            NativePortal nativePortal = new NativePortal(PortalType.WATER, new Destination(), name, new ArrayList<>());
+                            NativePortal clone = nativePortal.clone();
 
                             clone.setEditMode(true);
 
                             e.setPost(() -> {
-                                new NPEditor((Player) sender, portal, clone).open();
+                                new NPEditor((Player) sender, nativePortal, clone).open();
                             });
                         }
                     }

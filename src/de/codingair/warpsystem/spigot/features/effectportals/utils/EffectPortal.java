@@ -17,6 +17,7 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
@@ -56,11 +57,13 @@ public class EffectPortal extends FeatureObject implements Removable {
     private boolean running = false;
 
     public EffectPortal() {
+        setSkip(true);
     }
 
     public EffectPortal(EffectPortal effectPortal) {
         apply(effectPortal);
         commitClonedActions();
+        setSkip(true);
     }
 
     public EffectPortal(Location location, Destination destination, Animation animation, String name, boolean holoStatus, String permission) {
@@ -75,6 +78,7 @@ public class EffectPortal extends FeatureObject implements Removable {
         this.holoStatus = holoStatus;
         this.holoText = name;
         this.holoPos = location.clone().add(0, 1.7, 0);
+        setSkip(true);
     }
 
     public boolean entered(Entity entity, org.bukkit.Location from, org.bukkit.Location to) {
@@ -108,6 +112,8 @@ public class EffectPortal extends FeatureObject implements Removable {
     @Override
     public boolean read(JSONObject json) throws Exception {
         super.read(json);
+
+        if(json.get("skip") == null) setSkip(true);
 
         if(json.get("Destination") != null) {
             Destination destination;
@@ -380,7 +386,14 @@ public class EffectPortal extends FeatureObject implements Removable {
     @Override
     public FeatureObject perform(Player player) {
         if(getDestination() == null || getDestination().getId() == null) return this;
-        return super.perform(player, this.name, getAction(WarpAction.class).getValue(), getTeleportSound(), true, !(getDestination().getAdapter() instanceof PortalDestinationAdapter));
+        TeleportOptions options = new TeleportOptions();
+
+        options.setDisplayName(this.name);
+        options.setTeleportSound(getTeleportSound());
+        options.setAfterEffects(!(getDestination().getAdapter() instanceof PortalDestinationAdapter));
+        options.setCanMove(true);
+
+        return perform(player, options);
     }
 
     public boolean isRegistered() {
