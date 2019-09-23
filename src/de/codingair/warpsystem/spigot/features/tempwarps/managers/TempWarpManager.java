@@ -424,6 +424,11 @@ public class TempWarpManager implements Manager, Ticker {
             return;
         }
 
+        if(warp.isExpired()) {
+            player.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_is_expired"));
+            return;
+        }
+
         new GEditor(player, warp).open();
     }
 
