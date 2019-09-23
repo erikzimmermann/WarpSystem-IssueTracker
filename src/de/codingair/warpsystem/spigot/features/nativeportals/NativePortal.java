@@ -77,6 +77,7 @@ public class NativePortal extends FeatureObject {
     public boolean read(JSONObject json) throws Exception {
         super.read(json);
         setSkip(true);
+        setPermission(null);
 
         try {
             if(json.get("Type") != null) {
@@ -150,6 +151,7 @@ public class NativePortal extends FeatureObject {
     public void write(JSONObject json) {
         super.write(json);
 
+        json.remove("permission");
         json.put("type", type == null ? null : type.name());
         json.put("name", displayName);
 

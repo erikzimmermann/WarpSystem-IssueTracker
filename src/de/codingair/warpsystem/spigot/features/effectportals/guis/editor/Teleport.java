@@ -163,37 +163,16 @@ public class Teleport extends HotbarGUI {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 if(clickType == ClickType.LEFT_CLICK || clickType == ClickType.RIGHT_CLICK) {
-                    AnvilGUI.openAnvil(WarpSystem.getInstance(), player, new AnvilListener() {
-                        @Override
-                        public void onClick(AnvilClickEvent e) {
-                            if(e.getSlot() == AnvilSlot.OUTPUT) {
-
-                                if(e.getInput() == null) {
-                                    player.sendMessage(Lang.getPrefix() + "§c" + Lang.get("Enter_Something"));
-                                    return;
-                                }
-
-                                if(clickType == ClickType.LEFT_CLICK || !getPortal().hasDestinationPortal()) getPortal().setName(e.getInput());
-                                else getPortal().getLink().setName(e.getInput());
-
-                                onHover(gui, ic, ic, player);
-                                e.setClose(true);
-                            }
-                        }
-
-                        @Override
-                        public void onClose(AnvilCloseEvent e) {
-                        }
-                    }, new ItemBuilder(XMaterial.NAME_TAG).setName(clickType == ClickType.LEFT_CLICK || !getPortal().hasDestinationPortal() ? getPortal().getName() : getPortal().getLink().getName()).getItem());
+                    Lang.PREMIUM_CHAT(player);
                 }
             }
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
                 if(getPortal().hasDestinationPortal())
-                    MessageAPI.sendActionBar(getPlayer(), EffectPortalEditor.ACTION_BAR(Lang.get("Name"), "§7(§e" + getPortal().getName() + "§7) §e1. " + Lang.get("Effect_Portal"), "2. " + Lang.get("Effect_Portal") + " §7(§e" + getPortal().getLink().getName() + "§7)"), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                    MessageAPI.sendActionBar(getPlayer(), EffectPortalEditor.ACTION_BAR(Lang.get("Name") + Lang.PREMIUM_LORE, "§7(§e" + getPortal().getName() + "§7) §e1. " + Lang.get("Effect_Portal"), "2. " + Lang.get("Effect_Portal") + " §7(§e" + getPortal().getLink().getName() + "§7)"), WarpSystem.getInstance(), Integer.MAX_VALUE);
                 else
-                    MessageAPI.sendActionBar(getPlayer(), "§7" + Lang.get("Leftclick") + ": §e" + Lang.get("Change"), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                    MessageAPI.sendActionBar(getPlayer(), "§7" + Lang.get("Leftclick") + ": §e" + Lang.get("Change") + Lang.PREMIUM_LORE, WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -224,7 +203,7 @@ public class Teleport extends HotbarGUI {
                                 }
 
                                 getPortal().setPermission(e.getInput());
-                                updateDisplayName(ic, "§7" + Lang.get("Permission") + ": '§r" + getPortal().getName() + "§7'");
+                                updateDisplayName(ic, "§7" + Lang.get("Permission") + ": '§r" + getPortal().getPermission() + "§7'");
                                 e.setClose(true);
                             }
                         }
@@ -235,6 +214,7 @@ public class Teleport extends HotbarGUI {
                     }, new ItemBuilder(XMaterial.PAPER).setName(getPortal().getPermission() != null ? getPortal().getPermission() : Lang.get("Permission") + "...").getItem());
                 } else if(clickType == ClickType.RIGHT_CLICK) {
                     getPortal().setPermission(null);
+                    updateDisplayName(ic, "§7" + Lang.get("Permission") + ": '§r" + getPortal().getPermission() + "§7'");
                 }
             }
 
