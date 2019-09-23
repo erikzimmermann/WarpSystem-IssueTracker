@@ -3,7 +3,7 @@ package de.codingair.warpsystem.spigot.features.nativeportals.utils;
 import de.codingair.codingapi.server.blocks.ModernBlock;
 import de.codingair.codingapi.server.blocks.data.Orientable;
 import de.codingair.codingapi.tools.Area;
-import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
+import de.codingair.warpsystem.spigot.features.nativeportals.NativePortal;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -22,10 +22,10 @@ public class PortalBlock {
         return loc;
     }
 
-    public void updateBlock(Portal portal) {
-        PortalType type = portal.isEditMode() ? PortalType.EDIT : portal.getType();
+    public void updateBlock(NativePortal nativePortal) {
+        PortalType type = nativePortal.isEditMode() ? PortalType.EDIT : nativePortal.getType();
 
-        if(portal.isVisible()) {
+        if(nativePortal.isVisible()) {
             if(type.getBlockMaterial() == null) {
                 try {
                     type.getBlock().getConstructor(Location.class).newInstance(this.loc).create();
@@ -34,9 +34,9 @@ public class PortalBlock {
                 }
             } else {
                 if(type == PortalType.NETHER) {
-                    new ModernBlock(this.loc.getBlock()).setTypeAndData(type.getBlockMaterial(), new Orientable(portal.getCachedAxis()));
+                    new ModernBlock(this.loc.getBlock()).setTypeAndData(type.getBlockMaterial(), new Orientable(nativePortal.getCachedAxis()));
                 } else if(type == PortalType.END) {
-                    if(portal.isVertically() && type.getVerticalBlockMaterial() != null) {
+                    if(nativePortal.isVertically() && type.getVerticalBlockMaterial() != null) {
                         this.loc.getBlock().setType(type.getVerticalBlockMaterial(), true);
                     } else this.loc.getBlock().setType(type.getBlockMaterial(), false);
                 } else this.loc.getBlock().setType(type.getBlockMaterial(), false);

@@ -15,7 +15,7 @@ public enum Origin {
     TempWarp,
     WarpSign(WarpSign.class, "WarpSigns"),
     EffectPortal(de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal.class, "Portals"),
-    NativePortal(de.codingair.warpsystem.spigot.features.nativeportals.Portal.class, "NativePortals"),
+    NativePortal(de.codingair.warpsystem.spigot.features.nativeportals.NativePortal.class, "NativePortals"),
     ShortCut(Shortcut.class, "Shortcuts"),
     CommandBlock,
     TeleportCommand,

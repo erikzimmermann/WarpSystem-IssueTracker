@@ -6,35 +6,35 @@ import de.codingair.warpsystem.spigot.base.guis.editor.Backup;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.pages.DestinationPage;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.nativeportals.Portal;
+import de.codingair.warpsystem.spigot.features.nativeportals.NativePortal;
 import de.codingair.warpsystem.spigot.features.nativeportals.guis.pages.PAppearance;
 import de.codingair.warpsystem.spigot.features.nativeportals.guis.pages.PMaterial;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
 import org.bukkit.entity.Player;
 
-public class NPEditor extends Editor<Portal> {
-    private Portal clone;
+public class NPEditor extends Editor<NativePortal> {
+    private NativePortal clone;
 
-    public NPEditor(Player p, Portal portal, Portal clone) {
-        super(p, clone, new Backup<Portal>(portal) {
+    public NPEditor(Player p, NativePortal nativePortal, NativePortal clone) {
+        super(p, clone, new Backup<NativePortal>(nativePortal) {
             @Override
-            public void applyTo(Portal clone) {
+            public void applyTo(NativePortal clone) {
                 if(clone.getDestination() != null && clone.getDestination().getId() == null) clone.setDestination(null);
-                portal.apply(clone);
+                nativePortal.apply(clone);
 
                 clone.setVisible(false);
                 clone.destroy();
-                portal.setVisible(true);
+                nativePortal.setVisible(true);
 
-                if(!NativePortalManager.getInstance().getPortals().contains(portal))
-                    NativePortalManager.getInstance().addPortal(portal);
+                if(!NativePortalManager.getInstance().getNativePortals().contains(nativePortal))
+                    NativePortalManager.getInstance().addPortal(nativePortal);
             }
 
             @Override
-            public void cancel(Portal clone) {
+            public void cancel(NativePortal clone) {
                 clone.setVisible(false);
                 clone.destroy();
-                portal.setVisible(true);
+                nativePortal.setVisible(true);
             }
         }, () -> new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setHideName(true).getItem(), new PAppearance(p, clone), new PMaterial(p, clone), new DestinationPage(p, getMainTitle(), clone.getDestination()));
 
@@ -48,7 +48,7 @@ public class NPEditor extends Editor<Portal> {
         return !this.clone.getBlocks().isEmpty();
     }
 
-    public Portal getClone() {
+    public NativePortal getClone() {
         return clone;
     }
 
