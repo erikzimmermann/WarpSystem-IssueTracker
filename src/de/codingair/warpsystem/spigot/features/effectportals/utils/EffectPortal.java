@@ -123,7 +123,8 @@ public class EffectPortal extends FeatureObject implements Removable {
                 destination = new Destination(json.get("Destination"), DestinationType.EffectPortal);
             }
 
-            addAction(new WarpAction(destination));
+            if(destination.getType() == DestinationType.EffectPortal) addAction(new WarpAction(destination));
+            else removeAction(Action.WARP);
         }
 
         if(json.get("start") != null) {
