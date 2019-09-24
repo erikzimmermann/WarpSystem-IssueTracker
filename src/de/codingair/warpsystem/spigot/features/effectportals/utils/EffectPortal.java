@@ -116,6 +116,8 @@ public class EffectPortal extends FeatureObject implements Removable {
         if(json.get("skip") == null) setSkip(true);
 
         if(json.get("Destination") != null) {
+            //old pattern
+
             Destination destination;
             try {
                 destination = new Destination((String) json.get("Destination"));
@@ -125,9 +127,59 @@ public class EffectPortal extends FeatureObject implements Removable {
 
             if(destination.getType() == DestinationType.EffectPortal) addAction(new WarpAction(destination));
             else removeAction(Action.WARP);
-        }
 
-        if(json.get("start") != null) {
+            this.location = Location.getByJSONString(json.get("Start"));
+            AnimationType animationType = AnimationType.valueOf(json.get("AnimationType"));
+            double animationHeight = Double.parseDouble(json.get("AnimationHeight") + "");
+            Particle particle = Particle.valueOf(json.get("Particle"));
+            double teleportRadius = Double.parseDouble(json.get("TeleportRadius") + "");
+            this.name = this.holoText = json.get("StartName");
+            String destinationName = json.get("DestinationName");
+            double hologramHeight = Double.parseDouble(json.get("HologramHeight") + "");
+            Sound sound = Sound.valueOf(json.get("TeleportSound"));
+            float soundVolume = Float.parseFloat(json.get("TeleportSoundVolume") + "");
+            float soundPitch = Float.parseFloat(json.get("TeleportSoundPitch") + "");
+            this.holoStatus = json.get("StartHoloStatus") == null || Boolean.parseBoolean(json.get("StartHoloStatus") + "");
+            boolean destinationHoloStatus = json.get("DestinationHoloStatus") == null || Boolean.parseBoolean(json.get("DestinationHoloStatus") + "");
+            setPermission(json.get("Permission") == null ? null : (String) json.get("Permission"));
+
+            this.teleportSound = new SoundData(sound, soundVolume, soundPitch);
+
+            Animation animation = new Animation(name);
+            ParticlePart particles = new ParticlePart(animationType.getCustom(), particle, teleportRadius, animationHeight, 10);
+            animation.getParticleParts().add(particles);
+
+            AnimationManager.getInstance().addAnimation(animation);
+            this.animation = AnimationManager.getInstance().getAnimation(name);
+
+            if(hasDestinationPortal()) {
+                Location destinationHoloPos = Location.getByLocation(getDestination().buildLocation().clone());
+                destinationHoloPos.setY(destinationHoloPos.getY() + hologramHeight);
+
+                EffectPortal link = new EffectPortal();
+                link.apply(this);
+                link.setUseLink(true);
+                link.setLocation(Location.getByLocation(getDestination().buildLocation()));
+
+                Destination d = new Destination();
+                d.setId(getLocation().toJSONString(4));
+                d.setAdapter(new PortalDestinationAdapter());
+                d.setType(DestinationType.EffectPortal);
+
+                link.addAction(new WarpAction(d));
+                setLink(link);
+
+                link.setName(destinationName);
+                link.setHoloStatus(destinationHoloStatus);
+                link.setHoloPos(destinationHoloPos);
+                link.setHoloText(destinationName);
+
+                EffectPortalManager.getInstance().getEffectPortals().add(link);
+            }
+
+            holoPos = Location.getByLocation(location);
+            holoPos.setY(holoPos.getY() + hologramHeight);
+        } else if(json.get("start") != null) {
             this.location = Location.getByJSONString(json.get("start"));
 
             AnimationType animationType = AnimationType.valueOf(json.get("animationtype"));
@@ -161,6 +213,7 @@ public class EffectPortal extends FeatureObject implements Removable {
 
                 EffectPortal link = new EffectPortal();
                 link.apply(this);
+                link.setUseLink(true);
                 link.setLocation(Location.getByLocation(getDestination().buildLocation()));
 
                 Destination d = new Destination();
