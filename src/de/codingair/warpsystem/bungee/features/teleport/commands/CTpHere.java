@@ -12,12 +12,8 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
 public class CTpHere extends Command {
-    private CTeleport teleport;
-
     public CTpHere(CTeleport teleport) {
         super("tphere");
-
-        this.teleport = teleport;
     }
 
     @Override
