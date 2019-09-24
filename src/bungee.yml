@@ -15,6 +15,9 @@ commands:
   tpa:
     usuage: /tpa <player>
     description: A Warp-System-CMD
+  tpahere:
+    usuage: /tpahere <player>
+    description: A Warp-System-CMD
   tphere:
     usuage: /tphere <player>
     description: A Warp-System-CMD
@@ -22,5 +25,8 @@ commands:
     usuage: /tpatoggle
     description: A Warp-System-CMD
   tpall:
-    usuage: /tpall <true, false>
+    usuage: /tpall
+    description: A Warp-System-CMD
+  tpaall:
+    usuage: /tpaall
     description: A Warp-System-CMD
