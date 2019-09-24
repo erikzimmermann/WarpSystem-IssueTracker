@@ -6,7 +6,6 @@ import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.api.players.BungeePlayer;
-import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
 import org.bukkit.Bukkit;
@@ -17,7 +16,7 @@ import java.util.List;
 
 public class CTpaHere extends CommandBuilder {
     public CTpaHere() {
-        super("tpahere", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA_HERE) {
+        super("tpahere", "A WarpSystem-Command", new BaseComponent() {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -35,6 +34,10 @@ public class CTpaHere extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
+                if(!sender.isOp()) {
+                    noPermission(sender, label, null);
+                    return false;
+                }
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpaHere <§eplayer§7>");
                 return false;
             }
@@ -45,6 +48,8 @@ public class CTpaHere extends CommandBuilder {
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
+                if(!sender.isOp()) return;
+
                 for(Player player : Bukkit.getOnlinePlayers()) {
                     if(player.getName().equals(sender.getName()) || TeleportCommandManager.getInstance().deniesTpaRequests(player)) continue;
                     suggestions.add(ChatColor.stripColor(player.getDisplayName()));
@@ -53,6 +58,13 @@ public class CTpaHere extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                if(!sender.isOp()) {
+                    getBaseComponent().noPermission(sender, label, null);
+                    return false;
+                }
+
+                Lang.PREMIUM_CHAT_ONLY_OPED(sender);
+
                 Player receiver = Bukkit.getPlayer(argument);
 
                 if(receiver == null) {
