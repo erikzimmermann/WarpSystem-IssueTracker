@@ -201,7 +201,7 @@ public class TeleportManager {
 
         if((options.getDestination().getType() == DestinationType.GlobalWarp || options.getDestination().getType() == DestinationType.Server) && !WarpSystem.getInstance().isOnBungeeCord()) {
             if(options.getCallback() != null) options.getCallback().accept(TeleportResult.NOT_ON_BUNGEE_CORD);
-            player.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Server_Is_Not_Online"));
+            player.sendMessage(Lang.getPrefix() + Lang.get("Server_Is_Not_Online"));
             return;
         }
 
