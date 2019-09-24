@@ -20,7 +20,7 @@ import java.util.List;
 
 public class CShortcuts extends CommandBuilder {
     public CShortcuts() {
-        super("Shortcuts", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_SHORTCUTS) {
+        super("shortcuts", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_SHORTCUTS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -58,7 +58,7 @@ public class CShortcuts extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                Shortcut shortcut = new Shortcut(null, argument);
+                Shortcut shortcut = new Shortcut(null, argument.toLowerCase());
                 Shortcut clone = shortcut.clone();
                 clone.addAction(new WarpAction(new Destination()));
 

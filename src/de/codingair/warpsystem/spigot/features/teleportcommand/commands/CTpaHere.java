@@ -17,7 +17,7 @@ import java.util.List;
 
 public class CTpaHere extends CommandBuilder {
     public CTpaHere() {
-        super("TpaHere", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA_HERE) {
+        super("tpahere", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA_HERE) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));

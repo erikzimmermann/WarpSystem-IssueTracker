@@ -17,7 +17,7 @@ import java.util.List;
 
 public class CTpAll extends CommandBuilder {
     public CTpAll() {
-        super("TpAll", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPALL) {
+        super("tpall", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPALL) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));

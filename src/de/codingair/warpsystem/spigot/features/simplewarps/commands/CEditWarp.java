@@ -17,7 +17,7 @@ import java.util.List;
 
 public class CEditWarp extends CommandBuilder {
     public CEditWarp() {
-        super("EditWarp", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_SIMPLE_WARPS) {
+        super("editwarp", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_SIMPLE_WARPS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));

@@ -26,7 +26,7 @@ public class Shortcut extends FeatureObject {
 
     @Override
     public boolean read(JSONObject json) throws Exception {
-        this.displayName = (String) json.get("Name");
+        this.displayName = json.get("Name");
         return super.read(json);
     }
 
