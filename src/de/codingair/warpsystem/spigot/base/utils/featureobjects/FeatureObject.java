@@ -85,8 +85,7 @@ public class FeatureObject implements Serializable {
             options.setCosts(getAction(CostsAction.class) == null ? 0 : getAction(CostsAction.class).getValue());
             options.setOrigin(origin);
             options.setPermission(this.permission == null ? TeleportManager.NO_PERMISSION : permission);
-            if(!WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message." + origin.getConfigName(), true))
-                options.setMessage(null);
+            if(!origin.sendTeleportMessage()) options.setMessage(null);
 
             options.setCallback(new Callback<TeleportResult>() {
                 @Override

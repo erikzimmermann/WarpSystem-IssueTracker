@@ -1,5 +1,9 @@
 package de.codingair.warpsystem.spigot.base.guis.options;
 
+import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
+import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
+import de.codingair.codingapi.server.Sound;
+import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -8,13 +12,14 @@ import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.ShowIcon;
 import de.codingair.warpsystem.spigot.base.guis.options.pages.PGeneral;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.options.GeneralOptions;
 import de.codingair.warpsystem.spigot.base.utils.options.OptionBundle;
+import de.codingair.warpsystem.spigot.base.utils.options.specific.GeneralOptions;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class GOptions extends Editor<OptionBundle> {
-    public GOptions(Player p, OptionBundle bundle, OptionBundle clone) {
+    GOptions(Player p, OptionBundle bundle, OptionBundle clone) {
         super(p, clone, new Backup<OptionBundle>(WarpSystem.getInstance().getOptions()) {
             @Override
             public void applyTo(OptionBundle value) {
@@ -38,10 +43,35 @@ public class GOptions extends Editor<OptionBundle> {
     public void updatePageItems() {
         super.updatePageItems();
 
-        setItem(2, new ItemBuilder(XMaterial.ENDER_PEARL).setName(Editor.ITEM_TITLE_COLOR + Lang.get("WarpGUI")).setLore("§7coming soon...").getItem());
-//        setItem(3, new ItemBuilder(XMaterial.END_PORTAL_FRAME).setName(Editor.ITEM_TITLE_COLOR + Lang.get("NativePortals")).setLore("§7coming soon...").getItem());
-//        setItem(4, new ItemBuilder(XMaterial.BLAZE_ROD).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Effect_Portals")).setLore("§7coming soon...").getItem());
-//        setItem(5, new ItemBuilder(XMaterial.OAK_SIGN).setName(Editor.ITEM_TITLE_COLOR + Lang.get("WarpSigns")).setLore("§7coming soon...").getItem());
-        setItem(3, new ItemBuilder(XMaterial.LIGHT_GRAY_STAINED_GLASS_PANE).setName("§7...").getItem());
+        ItemButtonOption option = new ItemButtonOption();
+        option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
+
+        addButton(new ItemButton(2, new ItemBuilder(XMaterial.ENDER_PEARL).setName(Editor.ITEM_TITLE_COLOR + Lang.get("WarpGUI") + Lang.PREMIUM_LORE).getItem()) {
+            @Override
+            public void onClick(InventoryClickEvent e) {
+                Lang.PREMIUM_CHAT(e.getWhoClicked());
+            }
+        }.setOption(option));
+
+        addButton(new ItemButton(3, new ItemBuilder(XMaterial.END_PORTAL_FRAME).setName(Editor.ITEM_TITLE_COLOR + Lang.get("NativePortals") + Lang.PREMIUM_LORE).getItem()) {
+            @Override
+            public void onClick(InventoryClickEvent e) {
+                Lang.PREMIUM_CHAT(e.getWhoClicked());
+            }
+        }.setOption(option));
+
+        addButton(new ItemButton(4, new ItemBuilder(XMaterial.BLAZE_ROD).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Effect_Portals") + Lang.PREMIUM_LORE).getItem()) {
+            @Override
+            public void onClick(InventoryClickEvent e) {
+                Lang.PREMIUM_CHAT(e.getWhoClicked());
+            }
+        }.setOption(option));
+
+        addButton(new ItemButton(5, new ItemBuilder(XMaterial.OAK_SIGN).setName(Editor.ITEM_TITLE_COLOR + Lang.get("WarpSigns") + Lang.PREMIUM_LORE).getItem()) {
+            @Override
+            public void onClick(InventoryClickEvent e) {
+                Lang.PREMIUM_CHAT(e.getWhoClicked());
+            }
+        }.setOption(option));
     }
 }
