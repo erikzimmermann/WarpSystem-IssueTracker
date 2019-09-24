@@ -207,6 +207,7 @@ public class GWarps extends GUI {
                             reinitialize();
                             setTitle(getTitle(GWarps.this.page, listener, getPlayer()));
                         } else {
+                            setClosingForGUI(true);
                             new OptionsGUI(getPlayer()).open();
                         }
                     }

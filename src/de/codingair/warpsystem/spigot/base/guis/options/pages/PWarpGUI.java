@@ -24,7 +24,7 @@ public class PWarpGUI extends PageItem {
     private WarpGUIOptions options;
 
     public PWarpGUI(Player p, WarpGUIOptions options) {
-        super(p, Editor.TITLE_COLOR + "WarpSystem§r §7- §6" + Lang.get("Config"), new ItemBuilder(XMaterial.CHEST).setName(Editor.ITEM_TITLE_COLOR + Lang.get("WarpGUI")).getItem(), false);
+        super(p, Editor.TITLE_COLOR + "WarpSystem§r §7- §6" + Lang.get("Config"), new ItemBuilder(XMaterial.ENDER_EYE).setName(Editor.ITEM_TITLE_COLOR + Lang.get("WarpGUI")).getItem(), false);
 
         this.options = options;
 
@@ -59,6 +59,27 @@ public class PWarpGUI extends PageItem {
         }.setOption(option));
 
         addButton(new SyncButton(2, 2) {
+            @Override
+            public ItemStack craftItem() {
+                return new ItemBuilder(XMaterial.BOOK)
+                        .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Teleport_Message"))
+                        .setLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + (!options.getSendTeleportMessage().getValue() ?
+                                        "§c" + Lang.get("Disabled") :
+                                        "§a" + Lang.get("Enabled")), "",
+                                Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7" + Lang.get("Toggle"))
+                        .getItem();
+            }
+
+            @Override
+            public void onClick(InventoryClickEvent e, Player player) {
+                if(e.isLeftClick() && !e.isShiftClick()) {
+                    options.getSendTeleportMessage().setValue(!options.getSendTeleportMessage().getValue());
+                    update();
+                }
+            }
+        }.setOption(option));
+
+        addButton(new SyncButton(3, 2) {
             @Override
             public ItemStack craftItem() {
                 return new ItemBuilder(XMaterial.CHEST)
@@ -105,7 +126,7 @@ public class PWarpGUI extends PageItem {
             }
         }.setOption(option));
 
-        addButton(new SyncAnvilGUIButton(3, 2, ClickType.LEFT, ClickType.SHIFT_LEFT, ClickType.RIGHT, ClickType.SHIFT_RIGHT) {
+        addButton(new SyncAnvilGUIButton(4, 2, ClickType.LEFT, ClickType.SHIFT_LEFT, ClickType.RIGHT, ClickType.SHIFT_RIGHT) {
             @Override
             public ItemStack craftItem() {
                 return new ItemBuilder(XMaterial.NAME_TAG)
@@ -181,27 +202,6 @@ public class PWarpGUI extends PageItem {
                 }
 
                 return new ItemBuilder(XMaterial.NAME_TAG).setName(title).getItem();
-            }
-        }.setOption(option));
-
-        addButton(new SyncButton(4, 2) {
-            @Override
-            public ItemStack craftItem() {
-                return new ItemBuilder(XMaterial.BOOK)
-                        .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Teleport_Message"))
-                        .setLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + (!options.getSendTeleportMessage().getValue() ?
-                                        "§c" + Lang.get("Disabled") :
-                                        "§a" + Lang.get("Enabled")), "",
-                                Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7" + Lang.get("Toggle"))
-                        .getItem();
-            }
-
-            @Override
-            public void onClick(InventoryClickEvent e, Player player) {
-                if(e.isLeftClick() && !e.isShiftClick()) {
-                    options.getSendTeleportMessage().setValue(!options.getSendTeleportMessage().getValue());
-                    update();
-                }
             }
         }.setOption(option));
     }
