@@ -39,27 +39,26 @@ public class TeleportCommandListener implements Listener {
 
     public boolean isEnabled(ServerInfo info, Command command) {
         TeleportCommandOptions options = TeleportManager.getInstance().getOptions(info);
-        if(options == null) return false;
 
         switch(command.getName().toLowerCase()) {
             case "tphere":
             case "teleport":
-                return options.isTp();
+                return options != null && options.isTp();
             case "tpa":
-                return options.isTpa();
+                return options != null && options.isTpa();
             case "tpaall":
-                return options.isTpaAll();
+                return options != null && options.isTpaAll();
             case "tpahere":
-                return options.isTpaHere();
+                return options != null && options.isTpaHere();
             case "tpall":
-                return options.isTpAll();
+                return options != null && options.isTpAll();
             case "tpatoggle":
-                return options.isTpaToggle();
+                return options != null && options.isTpaToggle();
             case "tptoggle":
-                return options.isTpToggle();
+                return options != null && options.isTpToggle();
         }
 
-        return false;
+        return true;
     }
 
     public boolean isCommand(Command command, String name) {
