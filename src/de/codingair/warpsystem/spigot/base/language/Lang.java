@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.base.language;
 
 import de.codingair.codingapi.files.ConfigFile;
+import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -17,11 +18,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Lang {
+    private static final TimeList<CommandSender> premiumMessage = new TimeList<>();
+
     public static void PREMIUM_CHAT_ONLY_OPED(CommandSender sender) {
         sender.sendMessage("\n"+getPrefix() + "§7This is a §6§lPremium§7 feature! Only §eoped §7players can use this.\n");
     }
 
     public static void PREMIUM_CHAT(CommandSender sender) {
+        if(premiumMessage.contains(sender)) return;
+
         TextComponent tc0 = new TextComponent("\n" + Lang.getPrefix() + "§7This is a ");
         TextComponent premium = new TextComponent("§6§lPremium");
         TextComponent tc1 = new TextComponent(" feature. Buy it now to get full access! §8[");
@@ -42,6 +47,8 @@ public class Lang {
         tc0.addExtra(tc2);
 
         sender.spigot().sendMessage(tc0);
+
+        premiumMessage.add(sender, 5);
     }
 
     public static final String PREMIUM_HOTBAR = "§8» §6§lPremium feature §8«";
