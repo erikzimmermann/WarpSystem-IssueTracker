@@ -9,7 +9,7 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
-import de.codingair.warpsystem.spigot.base.utils.options.GeneralOptions;
+import de.codingair.warpsystem.spigot.base.utils.options.specific.GeneralOptions;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -125,21 +125,5 @@ public class PGeneral extends PageItem {
                 }
             }
         }.setOption(option));
-
-        //PreChunkLoading (coming soon...)
-        addButton(new SyncButton(4, 2) {
-            @Override
-            public ItemStack craftItem() {
-                ItemBuilder builder = new ItemBuilder(XMaterial.END_PORTAL_FRAME)
-                        .setName(Editor.ITEM_TITLE_COLOR + "Pre chunk loading")
-                        .setLore("§7coming soon...");
-                return builder.getItem();
-            }
-
-            @Override
-            public void onClick(InventoryClickEvent e, Player player) {
-
-            }
-        });
     }
 }

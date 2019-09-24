@@ -10,7 +10,7 @@ import de.codingair.warpsystem.spigot.api.events.PlayerWarpEvent;
 import de.codingair.warpsystem.spigot.api.events.utils.GlobalWarp;
 import de.codingair.warpsystem.spigot.api.events.utils.Warp;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.utils.options.GeneralOptions;
+import de.codingair.warpsystem.spigot.base.utils.options.specific.GeneralOptions;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.*;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
@@ -20,7 +20,6 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
