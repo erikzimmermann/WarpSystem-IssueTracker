@@ -1,6 +1,8 @@
-package de.codingair.warpsystem.spigot.base.utils.options;
+package de.codingair.warpsystem.spigot.base.utils.options.specific;
 
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.utils.options.Option;
+import de.codingair.warpsystem.spigot.base.utils.options.Options;
 
 import java.io.File;
 import java.util.ArrayList;

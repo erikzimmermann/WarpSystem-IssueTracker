@@ -20,6 +20,7 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.Co
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
+import de.codingair.warpsystem.spigot.base.utils.options.specific.WarpGUIOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.editor.GEditor;
@@ -75,7 +76,7 @@ public class GWarps extends GUI {
     }
 
     private static int getSize(Player player) {
-        return player.hasPermission(WarpSystem.PERMISSION_ADMIN) ? IconManager.getInstance().getAdminSize() : IconManager.getInstance().getUserSize();
+        return player.hasPermission(WarpSystem.PERMISSION_ADMIN) ? WarpSystem.getOptions(WarpGUIOptions.class).getAdminSize().getValue() : WarpSystem.getOptions(WarpGUIOptions.class).getUserSize().getValue();
     }
 
     public GWarps(Player p, Icon page, boolean editing) {

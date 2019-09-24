@@ -20,9 +20,10 @@ import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.managers.UUIDManager;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.UpdateNotifier;
-import de.codingair.warpsystem.spigot.base.utils.options.GeneralOptions;
 import de.codingair.warpsystem.spigot.base.utils.options.OptionBundle;
 import de.codingair.warpsystem.spigot.base.utils.options.Options;
+import de.codingair.warpsystem.spigot.base.utils.options.specific.GeneralOptions;
+import de.codingair.warpsystem.spigot.base.utils.options.specific.WarpGUIOptions;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestInitialPacket;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
 import de.codingair.warpsystem.utils.Manager;
@@ -289,8 +290,11 @@ public class WarpSystem extends JavaPlugin {
     }
 
     private void loadOptions() {
-        if(this.options == null) this.options = new OptionBundle(new GeneralOptions());
+        if(this.options == null) this.options = new OptionBundle(new GeneralOptions(), new WarpGUIOptions());
         this.options.read();
+        for(Options option : this.options.getOptions()) {
+            option.write();
+        }
     }
 
     public void reloadOptions(boolean save) {

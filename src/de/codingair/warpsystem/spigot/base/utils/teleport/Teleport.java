@@ -16,7 +16,7 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.utils.effects.RotatingParticleSpiral;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
-import de.codingair.warpsystem.spigot.base.utils.options.GeneralOptions;
+import de.codingair.warpsystem.spigot.base.utils.options.specific.GeneralOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.UnmodifiableDestination;
 import de.codingair.warpsystem.spigot.features.animations.AnimationManager;

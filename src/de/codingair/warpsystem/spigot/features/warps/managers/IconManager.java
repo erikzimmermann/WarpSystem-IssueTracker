@@ -60,9 +60,6 @@ public class IconManager implements Manager {
 
     private ItemStack background = null;
 
-    private int userSize = 54;
-    private int adminSize = 54;
-
     public static IconManager getInstance() {
         return ((IconManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS));
     }
@@ -76,42 +73,8 @@ public class IconManager implements Manager {
         WarpSystem.log("  > Loading Icons");
         ActionIconHelper.load = true;
 
-        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
+        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
         FileConfiguration config = file.getConfig();
-        this.userSize = config.getInt("WarpSystem.GUI.User.Size", 54);
-        switch(this.userSize) {
-            case 9:
-            case 18:
-            case 27:
-            case 36:
-            case 45:
-            case 54:
-                break;
-            default:
-                this.userSize = 54;
-                config.set("WarpSystem.GUI.User.Size", 54);
-                file.saveConfig();
-                break;
-        }
-
-        this.adminSize = config.getInt("WarpSystem.GUI.Admin.Size", 54);
-        switch(this.adminSize) {
-            case 9:
-            case 18:
-            case 27:
-            case 36:
-            case 45:
-            case 54:
-                break;
-            default:
-                this.adminSize = 54;
-                config.set("WarpSystem.GUI.Admin.Size", 54);
-                file.saveConfig();
-                break;
-        }
-
-        file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
-        config = file.getConfig();
 
         WarpSystem.log("    > Loading background");
         String data = config.getString("Background_Item", null);
@@ -615,22 +578,6 @@ public class IconManager implements Manager {
 
     public List<Icon> getIcons() {
         return icons;
-    }
-
-    public int getUserSize() {
-        return userSize;
-    }
-
-    public void setUserSize(int userSize) {
-        this.userSize = userSize;
-    }
-
-    public int getAdminSize() {
-        return adminSize;
-    }
-
-    public void setAdminSize(int adminSize) {
-        this.adminSize = adminSize;
     }
 
     public ItemStack getBackground() {

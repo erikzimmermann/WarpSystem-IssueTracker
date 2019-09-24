@@ -129,7 +129,7 @@ public class Editor<C> extends SimpleGUI {
             @Override
             public ItemStack craftItem() {
                 boolean finish = canFinish();
-                return new ItemBuilder(finish ? XMaterial.LIME_TERRACOTTA : XMaterial.LIGHT_GRAY_TERRACOTTA).setName((finish ? "§a" : "§7") + Lang.get("Finish")).getItem();
+                return new ItemBuilder(finish ? XMaterial.LIME_TERRACOTTA : XMaterial.LIGHT_GRAY_TERRACOTTA).setName((finish ? "§a" : "§7") + Lang.get("Finish") + finishButtonNameAddition()).getItem();
             }
 
             @Override
@@ -168,6 +168,10 @@ public class Editor<C> extends SimpleGUI {
             b.setLink(link);
             addButton(b);
         }
+    }
+
+    public String finishButtonNameAddition() {
+        return "";
     }
 
     public boolean canFinish() {

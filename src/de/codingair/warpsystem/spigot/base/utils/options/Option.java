@@ -1,12 +1,14 @@
 package de.codingair.warpsystem.spigot.base.utils.options;
 
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public class Option<E> {
     private String path;
     private E value;
     private E def;
     private State state;
+    private Predicate<E> predicate = null;
 
     public Option(String path) {
         this.path = path;
@@ -17,6 +19,13 @@ public class Option<E> {
         this.path = path;
         this.def = def;
         this.state = State.UNLOADED;
+    }
+
+    public Option(String path, E def, Predicate<E> predicate) {
+        this.path = path;
+        this.def = def;
+        this.state = State.UNLOADED;
+        this.predicate = predicate;
     }
 
     public Option(String path, E value, E def) {
@@ -36,12 +45,22 @@ public class Option<E> {
 
     public void setValue(E value) {
         if(state == State.UNLOADED) {
-            this.value = value;
+            if(predicate != null) {
+                if(predicate.test(value)) {
+                    this.value = value;
+                    state = State.LOADED;
+                } else {
+                    this.value = def;
+                    state = State.CHANGED;
+                }
+            } else {
+                this.value = value;
+                state = State.LOADED;
+            }
         } else if(!Objects.equals(this.value, value)) {
-            state = State.CHANGED;
             this.value = value;
+            state = State.CHANGED;
         }
-
     }
 
     public boolean hasChanged() {
