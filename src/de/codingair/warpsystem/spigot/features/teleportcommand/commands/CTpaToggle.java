@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 public class CTpaToggle extends CommandBuilder {
     public CTpaToggle() {
-        super("TpaToggle", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA_TOGGLE) {
+        super("tpatoggle", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA_TOGGLE) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));

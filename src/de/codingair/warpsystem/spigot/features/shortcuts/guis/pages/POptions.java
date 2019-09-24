@@ -38,7 +38,7 @@ public class POptions extends PageItem {
 
             @Override
             public String onChange(String old, String name) {
-                name = name.replace(" ", "_");
+                name = name.replace(" ", "_").toLowerCase();
                 shortcut.setDisplayName(name);
                 return name;
             }

@@ -23,7 +23,7 @@ import java.util.List;
 
 public class CSetWarp extends CommandBuilder {
     public CSetWarp() {
-        super("SetWarp", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_SIMPLE_WARPS) {
+        super("setwarp", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_SIMPLE_WARPS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
