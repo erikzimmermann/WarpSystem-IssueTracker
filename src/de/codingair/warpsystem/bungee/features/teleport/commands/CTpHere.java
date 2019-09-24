@@ -12,12 +12,8 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
 public class CTpHere extends Command {
-    private CTeleport teleport;
-
     public CTpHere(CTeleport teleport) {
         super("tphere");
-
-        this.teleport = teleport;
     }
 
     @Override
@@ -32,20 +28,6 @@ public class CTpHere extends Command {
             return;
         }
 
-        ProxiedPlayer p = (ProxiedPlayer) sender;
-
-        try {
-            if(args.length == 1) {
-                //Teleport sender to 0
-                ProxiedPlayer target = BungeeCord.getInstance().getPlayer(args[0]);
-                teleport.tp(p, target, p);
-            } else {
-                //HELP
-                p.sendMessage(new TextComponent(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpHere <§eplayer§7>"));
-            }
-        } catch(NumberFormatException ex) {
-            //HELP
-            p.sendMessage(new TextComponent(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpHere <§eplayer§7>"));
-        }
+        Lang.PREMIUM_CHAT(sender);
     }
 }
