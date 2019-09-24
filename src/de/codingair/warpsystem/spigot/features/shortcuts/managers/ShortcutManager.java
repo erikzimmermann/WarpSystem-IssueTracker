@@ -76,12 +76,12 @@ public class ShortcutManager implements Manager, BungeeFeature {
             }
         }
 
+        new CShortcuts().register(WarpSystem.getInstance());
+
         for(Shortcut s : this.shortcuts) {
             //create Command
             reloadCommand(s);
         }
-
-        new CShortcuts().register(WarpSystem.getInstance());
         WarpSystem.log("    ...got " + this.shortcuts.size() + " Shortcut(s)");
 
         Bukkit.getPluginManager().registerEvents(new ShortcutListener(), WarpSystem.getInstance());

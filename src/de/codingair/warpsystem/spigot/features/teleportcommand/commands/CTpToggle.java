@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 
 public class CTpToggle extends CommandBuilder {
     public CTpToggle() {
-        super("TpToggle", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP_TOGGLE) {
+        super("tptoggle", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP_TOGGLE) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));

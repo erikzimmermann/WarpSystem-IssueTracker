@@ -22,7 +22,7 @@ import java.util.List;
 
 public class CNativePortals extends CommandBuilder {
     public CNativePortals() {
-        super("NativePortals", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_NATIVE_PORTALS) {
+        super("nativeportals", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_NATIVE_PORTALS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));

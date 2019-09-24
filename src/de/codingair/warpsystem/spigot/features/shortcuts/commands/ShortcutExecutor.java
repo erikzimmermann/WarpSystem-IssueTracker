@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 public class ShortcutExecutor extends CommandBuilder {
     public ShortcutExecutor(Shortcut shortcut) {
-        super(shortcut.getDisplayName(), "A WarpSystem-Command", new BaseComponent(shortcut.getPermission()) {
+        super(shortcut.getDisplayName().toLowerCase(), "A WarpSystem-Command", new BaseComponent(shortcut.getPermission()) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -23,16 +23,15 @@ public class ShortcutExecutor extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tp <§eplayer§7> [§eplayer§7] §c" + Lang.get("Or") + " §7/tp [§eplayer§7] <§ex§7> <§ey§7> <§ez§7>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                if(shortcut.isActive()) {
-                    shortcut.perform((Player) sender);
-                }
+                if(shortcut.isActive()) shortcut.perform((Player) sender);
                 return false;
             }
         }.setOnlyPlayers(true), false);
+
+        setHighestPriority(true);
     }
 }

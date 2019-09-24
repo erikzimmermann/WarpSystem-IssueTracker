@@ -27,7 +27,7 @@ public class CPortal extends CommandBuilder {
     public static TimeList<String> aboutToDelete = new TimeList<>();
 
     public CPortal() {
-        super("Portal", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_PORTALS) {
+        super("portal", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_PORTALS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
