@@ -89,10 +89,8 @@ public class EffectPortalManager implements Manager {
             }
         }
 
-//        WarpSystem.log("    > Verify that portals are enabled");
-        if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Functions.Portals", true)) {
-            this.effectPortals.forEach(p -> p.setRunning(true));
-        }
+        this.effectPortals.forEach(EffectPortal::initializeLink);
+        this.effectPortals.forEach(p -> p.setRunning(true));
 
         for(EffectPortal effectPortal : this.effectPortals) {
             if(effectPortal.hasDestinationPortal() && effectPortal.getLink() == null) {
