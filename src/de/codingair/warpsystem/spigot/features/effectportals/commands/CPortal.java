@@ -13,6 +13,7 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.effectportals.EffectPortalEditor;
 import de.codingair.warpsystem.spigot.features.effectportals.guis.GEffectPortalList;
+import de.codingair.warpsystem.spigot.features.effectportals.managers.EffectPortalManager;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -90,6 +91,11 @@ public class CPortal extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("create") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
+                if(EffectPortalManager.getInstance().getPortal(((Player) sender).getLocation()) != null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Location_already_in_use"));
+                    return false;
+                }
+
                 AnvilGUI.openAnvil(WarpSystem.getInstance(), (Player) sender, new AnvilListener() {
                     @Override
                     public void onClick(AnvilClickEvent e) {
@@ -125,6 +131,11 @@ public class CPortal extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                if(EffectPortalManager.getInstance().getPortal(((Player) sender).getLocation()) != null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Location_already_in_use"));
+                    return false;
+                }
+
                 new EffectPortalEditor((Player) sender, argument).start();
                 return false;
             }
