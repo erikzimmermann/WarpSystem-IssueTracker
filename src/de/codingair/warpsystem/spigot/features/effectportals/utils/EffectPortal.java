@@ -41,6 +41,7 @@ public class EffectPortal extends FeatureObject implements Removable {
     private String name;
     private Location location;
     private EffectPortal link;
+    private Location linkHelper;
     private boolean useLink = false;
 
     private Animation animation;
@@ -157,6 +158,8 @@ public class EffectPortal extends FeatureObject implements Removable {
             if(hasDestinationPortal()) {
                 Location destinationHoloPos = Location.getByLocation(getDestination().buildLocation().clone());
                 destinationHoloPos.setY(destinationHoloPos.getY() + hologramHeight);
+                destinationHoloPos.setYaw(0);
+                destinationHoloPos.setPitch(0);
 
                 EffectPortal link = new EffectPortal();
                 link.apply(this);
@@ -168,6 +171,7 @@ public class EffectPortal extends FeatureObject implements Removable {
                 d.setType(DestinationType.EffectPortal);
 
                 link.addAction(new WarpAction(d));
+                link.setUseLink(true);
                 setLink(link);
 
                 link.setName(destinationName);
@@ -181,22 +185,24 @@ public class EffectPortal extends FeatureObject implements Removable {
             holoPos = Location.getByLocation(location);
             holoPos.setY(holoPos.getY() + hologramHeight);
         } else {
-            this.animation = AnimationManager.getInstance().getAnimation(json.get("ep.anim.name"));
+            if(json.get("ep.anim.name") == null) {
+                //link
+                setUseLink(true);
+            } else {
+                this.animation = AnimationManager.getInstance().getAnimation(json.get("ep.anim.name"));
+                this.teleportSound = json.get("ep.sound.type") == null ? new SoundData(Sound.ENDERMAN_TELEPORT, 0.7F, 1F) : new SoundData(Sound.valueOf(json.get("ep.sound.type")), (float) (double) json.get((Object) "ep.sound.volume"), (float) (double) json.get((Object) "ep.sound.pitch"));
+                linkHelper = json.get("ep.link") == null ? null : new Location((org.json.simple.JSONObject) json.get("ep.link"));
+            }
+
             this.location = Location.getByJSONString(json.get("ep.loc"));
             this.name = json.get("ep.name");
             this.holoText = json.get("ep.holo.text");
             this.holoStatus = json.get("ep.holo.state");
             this.holoPos = json.get("ep.holo.pos") == null ? null : new Location((org.json.simple.JSONObject) json.get("ep.holo.pos"));
-            this.useLink = json.get("ep.link.use");
-
-            this.teleportSound = json.get("ep.sound.type") == null ? new SoundData(Sound.ENDERMAN_TELEPORT, 0.7F, 1F) : new SoundData(Sound.valueOf(json.get("ep.sound.type")), (float) (double) json.get((Object) "ep.sound.volume"), (float) (double) json.get((Object) "ep.sound.pitch"));
-
-            Location link = json.get("ep.link") == null ? null : new Location((org.json.simple.JSONObject) json.get("ep.link"));
-
-            if(link != null) {
-                setLink(EffectPortalManager.getInstance().getPortal(link));
-            }
         }
+
+        this.holoPos.setYaw(0);
+        this.holoPos.setPitch(0);
 
         return true;
     }
@@ -205,17 +211,20 @@ public class EffectPortal extends FeatureObject implements Removable {
     public void write(JSONObject json) {
         super.write(json);
 
-        json.put("ep.anim.name", this.animation == null ? null : this.animation.getName());
+        if(!useLink()) {
+            //main
+            json.put("ep.anim.name", this.animation == null ? null : this.animation.getName());
+            json.put("ep.sound.type", teleportSound == null ? null : teleportSound.getSound().name());
+            json.put("ep.sound.volume", teleportSound == null ? null : teleportSound.getVolume());
+            json.put("ep.sound.pitch", teleportSound == null ? null : teleportSound.getPitch());
+            json.put("ep.link", this.link == null ? null : this.link.getLocation().toJSON(4));
+        }
+
         json.put("ep.loc", this.location.toJSONString(4));
         json.put("ep.name", this.name);
         json.put("ep.holo.state", this.holoStatus);
         json.put("ep.holo.text", this.holoText);
         json.put("ep.holo.pos", this.holoPos.toJSON(4));
-        json.put("ep.link", this.link == null ? null : this.link.getLocation().toJSON(4));
-        json.put("ep.link.use", useLink);
-        json.put("ep.sound.type", teleportSound == null ? null : teleportSound.getSound().name());
-        json.put("ep.sound.volume", teleportSound == null ? null : teleportSound.getVolume());
-        json.put("ep.sound.pitch", teleportSound == null ? null : teleportSound.getPitch());
     }
 
     @Override
@@ -486,10 +495,26 @@ public class EffectPortal extends FeatureObject implements Removable {
         if(link != null) {
             link.link = this;
             this.link = link;
+
+            link.linkHelper = null;
+            this.linkHelper = null;
         } else if(this.link != null) {
             this.link.link = null;
             this.link = null;
         }
+    }
+
+    public boolean initializeLink() {
+        if(this.linkHelper == null) return false;
+
+        EffectPortal link = EffectPortalManager.getInstance().getPortal(this.linkHelper);
+        if(link != null) {
+            setLink(link);
+            if(!this.useLink && !link.useLink) this.useLink = true;
+            return true;
+        }
+
+        return false;
     }
 
     public boolean useLink() {
