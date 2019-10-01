@@ -52,15 +52,23 @@ public class CWarpSystem extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, options, animations>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, upgrade, reload, import, news, report, options, animations>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, options, animations>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, upgrade, reload, import, news, report, options, animations>");
                 return false;
             }
         }, true, "ws");
+
+        getBaseComponent().addChild(new CommandComponent("upgrade") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                Lang.PREMIUM_CHAT_UPGRADE(sender);
+                return false;
+            }
+        });
 
         getBaseComponent().addChild(new CommandComponent("shortcut") {
             @Override
