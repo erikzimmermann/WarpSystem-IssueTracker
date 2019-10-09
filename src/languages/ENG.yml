@@ -57,7 +57,6 @@ Name_Already_Exists: '&cThis name is not available.'
 Only_For_Players: '&cThis is only for players!'
 Use: Use
 Success_Files_Reloaded: '&aAll files are reloaded.'
-Success_Create_Category: '&aYou have created a &bcategory &asuccessfully.'
 PORTAL_GO_TO_PORTAL: '&7You have 30 seconds to go into a portal.'
 Apply_Delete_No: '&7No, &akeep it&7.'
 Question_Delete_Portal: '&7Do you really want to &cdelete &7this portal?'

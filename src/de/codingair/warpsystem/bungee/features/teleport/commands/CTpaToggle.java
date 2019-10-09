@@ -25,9 +25,6 @@ public class CTpaToggle extends Command {
             return;
         }
 
-        if(TeleportManager.getInstance().toggleDenyTpaRequest((ProxiedPlayer) sender))
-            sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_toggled_disabling"));
-        else
-            sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_toggled_enabling"));
+        Lang.PREMIUM_CHAT(sender);
     }
 }
