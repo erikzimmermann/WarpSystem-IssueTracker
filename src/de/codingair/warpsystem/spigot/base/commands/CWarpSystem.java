@@ -238,8 +238,7 @@ public class CWarpSystem extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("info") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                Player p = (Player) sender;
-                sendInfoMessage(p);
+                sendInfoMessage(sender);
                 return false;
             }
         });
@@ -247,10 +246,8 @@ public class CWarpSystem extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("news") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                Player p = (Player) sender;
-
                 if(WarpSystem.getInstance().getUpdateNotifier().getDownload() == null) {
-                    p.sendMessage(Lang.getPrefix() + "§cFetching data... Please try again.");
+                    sender.sendMessage(Lang.getPrefix() + "§cFetching data... Please try again.");
                     return false;
                 }
 
@@ -264,10 +261,10 @@ public class CWarpSystem extends CommandBuilder {
                 tc0.addExtra(click);
                 tc0.addExtra(tc1);
 
-                p.spigot().sendMessage(tc0);
+                sender.spigot().sendMessage(tc0);
                 return false;
             }
-        }.setOnlyPlayers(true));
+        });
 
         getBaseComponent().addChild(new CommandComponent("report") {
             @Override
@@ -275,7 +272,7 @@ public class CWarpSystem extends CommandBuilder {
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " report §e<GitHub, Spigot-Forum, Direct>");
                 return false;
             }
-        }.setOnlyPlayers(true));
+        });
 
         getComponent("report").addChild(new MultiCommandComponent() {
             @Override
@@ -299,7 +296,7 @@ public class CWarpSystem extends CommandBuilder {
                         base.addExtra(link);
                         base.addExtra(base1);
 
-                        ((Player) sender).spigot().sendMessage(base);
+                        sender.spigot().sendMessage(base);
                         break;
 
                     case "spigot-forum":
@@ -313,7 +310,7 @@ public class CWarpSystem extends CommandBuilder {
                         base.addExtra(link);
                         base.addExtra(base1);
 
-                        ((Player) sender).spigot().sendMessage(base);
+                        sender.spigot().sendMessage(base);
                         break;
 
                     case "direct":
@@ -327,7 +324,7 @@ public class CWarpSystem extends CommandBuilder {
                         base.addExtra(link);
                         base.addExtra(base1);
 
-                        ((Player) sender).spigot().sendMessage(base);
+                        sender.spigot().sendMessage(base);
                         break;
 
                     default:
@@ -336,7 +333,7 @@ public class CWarpSystem extends CommandBuilder {
                 }
                 return false;
             }
-        }.setOnlyPlayers(true));
+        });
 
         getBaseComponent().addChild(new CommandComponent("reload") {
             TimeList<CommandSender> confirm = new TimeList<>();
@@ -527,12 +524,14 @@ public class CWarpSystem extends CommandBuilder {
     }
 
     private static void sendInfoMessage(CommandSender sender) {
+        boolean line = sender instanceof Player;
+
         sender.sendMessage(new String[] {
                 "",
-                "§7§m               §7< §6WarpSystem §7>§m               §7",
+                "§7§m" + (line ? "               " : "---------------") + "§7< §6WarpSystem §7>§m" + (line ? "               " : "---------------") + "§7",
                 "",
                 "     §3Author: §bCodingAir",
-                "     §3Version: §bv" + WarpSystem.getInstance().getDescription().getVersion() + " §7["+ (WarpSystem.getInstance().isPremium() ? "§6Premium" : "§bFree") + "§7]",
+                "     §3Version: §bv" + WarpSystem.getInstance().getDescription().getVersion() + " §7[" + (WarpSystem.getInstance().isPremium() ? "§6Premium" : "§bFree") + "§7]",
                 "",
                 "     §eAvailable on SpigotMc!",
                 ""
