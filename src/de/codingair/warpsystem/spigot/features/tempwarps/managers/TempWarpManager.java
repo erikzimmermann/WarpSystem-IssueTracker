@@ -559,10 +559,13 @@ public class TempWarpManager implements Manager, Ticker {
     }
 
     public TempWarp getWarp(String identifier) {
+        if(identifier == null) return null;
+
         identifier = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', identifier.replace("_", " ")));
         List<TempWarp> warps = new ArrayList<>(this.warps);
 
         for(TempWarp warp : warps) {
+            if(warp.getIdentifier() == null) continue;
             if(warp.getIdentifier().replace("_", " ").equalsIgnoreCase(identifier)) {
                 warps.clear();
                 return warp;
