@@ -44,7 +44,7 @@ public class BungeePacketHandler implements PacketHandler {
                 WarpSystem.getInstance().getDataHandler().send(uuidPacket, server);
                 break;
 
-            case PerformCommandOnBungeePacket:
+            case PerformCommandOnBungeePacket: {
                 PerformCommandOnBungeePacket performCommandOnBungeePacket = (PerformCommandOnBungeePacket) packet;
 
                 ProxiedPlayer p = BungeeCord.getInstance().getPlayer(performCommandOnBungeePacket.getPlayer());
@@ -57,6 +57,7 @@ public class BungeePacketHandler implements PacketHandler {
 
                 WarpSystem.getInstance().getDataHandler().send(answerPacket, server);
                 break;
+            }
         }
     }
 }

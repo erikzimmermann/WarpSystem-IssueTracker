@@ -125,7 +125,7 @@ public class CShortcuts extends CommandBuilder {
                     return false;
                 }
 
-                ShortcutManager.getInstance().getShortcuts().remove(shortcut);
+                ShortcutManager.getInstance().remove(shortcut, true);
                 sender.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_was_removed").replace("%SHORTCUT%", shortcut.getDisplayName()));
                 return false;
             }
