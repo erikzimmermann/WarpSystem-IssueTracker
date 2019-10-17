@@ -48,6 +48,11 @@ public class NPEditor extends Editor<NativePortal> {
         return !this.clone.getBlocks().isEmpty();
     }
 
+    @Override
+    public String finishButtonNameAddition() {
+        return canFinish() ? "" : "§7 (§c" + Lang.get("Portal_Blocks") + "§7)";
+    }
+
     public NativePortal getClone() {
         return clone;
     }
