@@ -27,9 +27,6 @@ public class CTpToggle extends Command {
             return;
         }
 
-        if(TeleportManager.getInstance().toggleDenyForceTps((ProxiedPlayer) sender))
-            sender.sendMessage(Lang.getPrefix() + Lang.get("Teleports_toggled_disabling"));
-        else
-            sender.sendMessage(Lang.getPrefix() + Lang.get("Teleports_toggled_enabling"));
+        Lang.PREMIUM_CHAT(sender);
     }
 }

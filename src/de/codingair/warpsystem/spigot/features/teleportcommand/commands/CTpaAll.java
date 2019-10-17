@@ -34,19 +34,7 @@ public class CTpaAll extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                List<Player> players = new ArrayList<>();
-                for(Player player : Bukkit.getOnlinePlayers()) {
-                    if(player.getName().equals(sender.getName())) continue;
-                    players.add(player);
-                }
-
-                if(TeleportCommandManager.getInstance().hasOpenInvites((Player) sender)) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Open_Requests"));
-                    return false;
-                }
-
-                int i = TeleportCommandManager.getInstance().sendTeleportRequest(new BungeePlayer((Player) sender), true, false, players.toArray(new Player[0]));
-                sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_All").replace("%RECEIVED%", i + "").replace("%MAX%", (Bukkit.getOnlinePlayers().size() - 1) + ""));
+                Lang.PREMIUM_CHAT(sender);
                 return false;
             }
         }.setOnlyPlayers(true), true);

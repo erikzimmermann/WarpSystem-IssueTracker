@@ -29,7 +29,6 @@ public class RandomTeleporterManager implements Manager {
     private double minRange;
     private double maxRange;
     private boolean protectedRegions;
-    private boolean worldBorder;
     private List<Biome> biomeList;
     private List<Player> searching = new ArrayList<>();
 
@@ -51,7 +50,6 @@ public class RandomTeleporterManager implements Manager {
         this.maxRange = config.getDouble("WarpSystem.RandomTeleport.Range.Max", 10000);
 
         this.protectedRegions = config.getBoolean("WarpSystem.RandomTeleport.Support.ProtectedRegions", true);
-        this.worldBorder = config.getBoolean("WarpSystem.RandomTeleport.Support.WorldBorder", true);
         if(config.getBoolean("WarpSystem.RandomTeleport.Support.Biome.Enabled", true)) {
             List<String> configBiomes = config.getStringList("WarpSystem.RandomTeleport.Support.Biome.BiomeList");
             biomeList = new ArrayList<>();
@@ -296,9 +294,5 @@ public class RandomTeleporterManager implements Manager {
 
     public boolean isBuyable() {
         return buyable && MoneyAdapterType.canEnable();
-    }
-
-    public boolean isWorldBorder() {
-        return worldBorder;
     }
 }
