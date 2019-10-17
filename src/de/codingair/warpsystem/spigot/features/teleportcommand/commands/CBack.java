@@ -28,7 +28,7 @@ public class CBack extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                if(!TeleportCommandManager.getInstance().teleportToLastBackLocation((Player) sender)) sender.sendMessage(Lang.getPrefix() + Lang.get("No_last_position_found"));
+                Lang.PREMIUM_CHAT(sender);
                 return false;
             }
         }.setOnlyPlayers(true), true);
