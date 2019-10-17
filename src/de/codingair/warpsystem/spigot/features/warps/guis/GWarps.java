@@ -432,7 +432,9 @@ public class GWarps extends GUI {
                 }
             } else if(icon.isDisabled()) return;
 
-            addButton(new ItemButton(icon.getSlot(), iconBuilder.getItem()) {
+            boolean removeSound = icon.getActions().isEmpty() && !icon.isPage();
+            ItemButton b;
+            addButton(b = new ItemButton(icon.getSlot(), iconBuilder.getItem()) {
                 @Override
                 public void onClick(InventoryClickEvent e) {
                     if(listener != null) {
@@ -525,6 +527,7 @@ public class GWarps extends GUI {
                     }
                 }
             }.setOption(option).setOnlyLeftClick(!editing));
+            if(removeSound && !editing) b.setClickSound2(null);
         }
     }
 

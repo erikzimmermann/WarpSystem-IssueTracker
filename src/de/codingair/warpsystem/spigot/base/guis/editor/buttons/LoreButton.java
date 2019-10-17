@@ -42,7 +42,7 @@ public abstract class LoreButton extends SyncAnvilGUIButton {
         }
 
         List<String> lore2 = new ArrayList<>();
-        if(lore != null && !lore.isEmpty()) lore2.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Reset_Lines"));
+        if(lore != null && !lore.isEmpty()) lore2.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));
 
         return new ItemBuilder(XMaterial.PAPER)
                 .setName("§6§n" + Lang.get("Description"))
@@ -61,7 +61,7 @@ public abstract class LoreButton extends SyncAnvilGUIButton {
     @Override
     public void onOtherClick(InventoryClickEvent e) {
         if(e.getClick() == ClickType.RIGHT) {
-            toChange.removeLore();
+            if(!toChange.getLore().isEmpty()) toChange.getLore().remove(toChange.getLore().size() - 1);
             updatingLore(toChange);
             update();
         }
