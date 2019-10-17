@@ -13,6 +13,7 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.LoreButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.NameButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
@@ -101,65 +102,11 @@ public class PAppearance extends PageItem {
             }
         });
 
-        addButton(new SyncAnvilGUIButton(3, 2, ClickType.LEFT) {
+        addButton(new LoreButton(3, 2, icon.getItemBuilder()) {
             @Override
-            public ItemStack craftItem() {
-                List<String> loreOfItem = icon.getItemBuilder().getLore();
-                List<String> lore = new ArrayList<>();
-                if(loreOfItem == null) lore = null;
-                else {
-                    for(String s : loreOfItem) {
-                        lore.add("§7- '§r" + s + "§7'");
-                    }
-                }
-
-                List<String> lore2 = new ArrayList<>();
-                if(lore != null && !lore.isEmpty()) lore2.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Reset_Lines"));
-
-                return new ItemBuilder(XMaterial.PAPER)
-                        .setName("§6§n" + Lang.get("Description"))
-                        .setLore("§3" + Lang.get("Current") + ": " + (lore == null || lore.isEmpty() ? "§c" + Lang.get("Not_Set") : ""))
-                        .addLore(lore)
-                        .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Add_Line"))
-                        .addLore(lore2)
-                        .getItem();
-            }
-
-            @Override
-            public ItemStack craftAnvilItem(ClickType trigger) {
-                return new ItemBuilder(Material.PAPER).setName(Lang.get("Line") + "...").getItem();
-            }
-
-            @Override
-            public void onOtherClick(InventoryClickEvent e) {
-                if(e.getClick() == ClickType.RIGHT) {
-                    icon.setItem(icon.getItemBuilder().removeLore().getItem());
-                    getLast().updateShowIcon();
-                    update();
-                }
-            }
-
-            @Override
-            public void onClick(AnvilClickEvent e) {
-                if(!e.getSlot().equals(AnvilSlot.OUTPUT)) return;
-
-                String input = e.getInput();
-
-                if(input == null) {
-                    p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Lore"));
-                    return;
-                }
-
-                e.setClose(true);
-                playSound(p);
-
-                icon.setItem(icon.getItemBuilder().addLore(ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', input)).getItem());
+            public void updatingLore(ItemBuilder toChange) {
+                icon.setItem(toChange.getItem());
                 getLast().updateShowIcon();
-                update();
-            }
-
-            @Override
-            public void onClose(AnvilCloseEvent e) {
             }
         }.setOption(option).setOnlyLeftClick(false));
 

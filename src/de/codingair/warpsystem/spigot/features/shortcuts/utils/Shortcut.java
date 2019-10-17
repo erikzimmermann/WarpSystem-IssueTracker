@@ -47,10 +47,12 @@ public class Shortcut extends FeatureObject {
     }
 
     public boolean isActive() {
-        if(getDestination() == null || getDestination().getAdapter() == null) return false;
+        if(getActions().isEmpty()) return false;
 
-        if(getDestination().getType() == DestinationType.GlobalWarp) {
-            return WarpSystem.getInstance().isOnBungeeCord();
+        if(hasAction(Action.WARP)) {
+            if(getDestination().getType() == DestinationType.GlobalWarp || getDestination().getType() == DestinationType.Server) {
+                return WarpSystem.getInstance().isOnBungeeCord();
+            }
         }
 
         return true;

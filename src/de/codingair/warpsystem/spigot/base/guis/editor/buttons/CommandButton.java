@@ -67,6 +67,10 @@ public class CommandButton extends SyncAnvilGUIButton {
 
         if(!input.startsWith("/")) input = "/" + input;
 
+        if(!isOkay(input)) {
+            return;
+        }
+
         e.setClose(true);
 
         CommandAction action = object.getAction(Action.COMMAND);
@@ -85,6 +89,10 @@ public class CommandButton extends SyncAnvilGUIButton {
 
     }
 
+    public boolean isOkay(String command) {
+        return true;
+    }
+
     @Override
     public ItemStack craftAnvilItem(ClickType trigger) {
         return new ItemBuilder(XMaterial.PAPER).setName(Lang.get("Command") + "...").getItem();
@@ -93,7 +101,10 @@ public class CommandButton extends SyncAnvilGUIButton {
     @Override
     public void onOtherClick(InventoryClickEvent e) {
         if(e.getClick() == ClickType.RIGHT) {
-            object.removeAction(Action.COMMAND);
+            if(object.hasAction(Action.COMMAND)) {
+                if(object.getAction(CommandAction.class).getValue().size() == 1) object.removeAction(Action.COMMAND);
+                else object.getAction(CommandAction.class).getValue().remove(object.getAction(CommandAction.class).getValue().size() - 1);
+            }
             update();
         }
     }
