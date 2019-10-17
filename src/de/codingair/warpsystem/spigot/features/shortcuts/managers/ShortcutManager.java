@@ -114,6 +114,8 @@ public class ShortcutManager implements Manager, BungeeFeature {
     }
 
     public boolean hasCommandLoop(Shortcut s, String newCommand) {
+        if(s.getDisplayName().equalsIgnoreCase(newCommand.substring(1))) return true;
+
         return hasCommandLoop(s, s.hasAction(Action.COMMAND) ? new ArrayList<String>(s.getAction(CommandAction.class).getValue()) {{
             add(newCommand);
         }} : new ArrayList<String>() {{
