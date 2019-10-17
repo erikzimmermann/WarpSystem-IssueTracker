@@ -6,6 +6,8 @@ import de.codingair.codingapi.tools.JSON.JSONObject;
 import de.codingair.codingapi.tools.JSON.JSONParser;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
@@ -111,6 +113,33 @@ public class ShortcutManager implements Manager, BungeeFeature {
         file.saveConfig();
     }
 
+    public boolean hasCommandLoop(Shortcut s, String newCommand) {
+        return hasCommandLoop(s, s.hasAction(Action.COMMAND) ? new ArrayList<String>(s.getAction(CommandAction.class).getValue()) {{
+            add(newCommand);
+        }} : new ArrayList<String>() {{
+            add(newCommand);
+        }}, null);
+    }
+
+    public boolean hasCommandLoop(Shortcut s, List<String> newCommands, Shortcut last) {
+        List<String> commands;
+
+        if(last == null) commands = newCommands;
+        else if(last.getDisplayName().equals(s.getDisplayName())) return true;
+        else commands = last.hasAction(Action.COMMAND) ? last.getAction(CommandAction.class).getValue() : null;
+
+        if(commands == null) return false;
+
+        for(String command : commands) {
+            Shortcut next = getShortcut(command.substring(1));
+            if(next == null) continue;
+
+            if(hasCommandLoop(s, newCommands, next)) return true;
+        }
+
+        return false;
+    }
+
     public void reloadCommand(Shortcut s) {
         reloadCommand(s, false);
     }
@@ -133,7 +162,24 @@ public class ShortcutManager implements Manager, BungeeFeature {
 
     @Override
     public void destroy() {
-        this.shortcuts.clear();
+        List<Shortcut> l = new ArrayList<>(this.shortcuts);
+
+        for(Shortcut shortcut : l) {
+            remove(shortcut, false);
+        }
+
+        l.clear();
+    }
+
+    public void remove(Shortcut s, boolean forceUpdate) {
+        this.shortcuts.remove(s);
+        ShortcutExecutor executor = executors.remove(s);
+        if(executor != null) executor.unregister(WarpSystem.getInstance());
+
+        if(forceUpdate)
+            for(Player player : Bukkit.getOnlinePlayers()) {
+                player.updateCommands();
+            }
     }
 
     @Override
