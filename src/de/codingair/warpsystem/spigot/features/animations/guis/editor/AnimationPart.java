@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.features.animations.guis.editor;
 
+import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
@@ -62,13 +63,13 @@ public class AnimationPart extends HotbarGUI {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 if(clickType == ClickType.LEFT_CLICK) {
-                    getPart().setParticle(getPart().getParticle().previous());
-                } else if(clickType == ClickType.SHIFT_LEFT_CLICK) {
                     getPart().setParticle(getPart().getParticle().previous(true));
+                } else if(clickType == ClickType.SHIFT_LEFT_CLICK) {
+                    getPart().setParticle(getPart().getParticle().previous(true, true));
                 } else if(clickType == ClickType.RIGHT_CLICK) {
-                    getPart().setParticle(getPart().getParticle().next());
-                } else if(clickType == ClickType.SHIFT_RIGHT_CLICK) {
                     getPart().setParticle(getPart().getParticle().next(true));
+                } else if(clickType == ClickType.SHIFT_RIGHT_CLICK) {
+                    getPart().setParticle(getPart().getParticle().next(true, true));
                 } else return;
 
                 menu.getAnimPlayer().update();
@@ -87,7 +88,7 @@ public class AnimationPart extends HotbarGUI {
             }
         }));
 
-        setItem(4, new ItemComponent(new ItemBuilder(XMaterial.CYAN_DYE).setName("§7" + Lang.get("Color") + ": §e" + (getColor() == null || !getPart().getParticle().isColorable() ? "§c-" : getColor().getName())).getItem(), new ItemListener() {
+        setItem(4, new ItemComponent(new ItemBuilder(XMaterial.CYAN_DYE).setName("§7" + Lang.get("Color") + ": §e" + (getColor() == null || !getPart().getParticle().isColorable() ? "§c-" : getColorName())).getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 Lang.PREMIUM_CHAT(player);
@@ -189,6 +190,10 @@ public class AnimationPart extends HotbarGUI {
 
     private Color getColor() {
         return getPart() == null ? null : getPart().getColor();
+    }
+
+    private String getColorName() {
+        return getPart() == null ? null : getPart().getParticle() != Particle.NOTE ? getPart().getColor().getName() : getPart().getColor().getNoteName();
     }
 
     private double getRadius() {
