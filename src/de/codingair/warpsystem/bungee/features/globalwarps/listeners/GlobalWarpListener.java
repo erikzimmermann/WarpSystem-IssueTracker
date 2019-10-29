@@ -117,10 +117,9 @@ public class GlobalWarpListener implements Listener, PacketListener {
                                 public void accept(Boolean online) {
                                     if(online) {
                                         WarpSystem.getInstance().getDataHandler().send(answerIntegerPacket, server);
+                                        WarpSystem.getInstance().getDataHandler().send(new TeleportPacket(player, warp, teleportDisplayName, ((PrepareTeleportPacket) packet).getCosts()), otherServer);
 
-                                        p.connect(otherServer, (connected, throwable) -> {
-                                            if(connected) WarpSystem.getInstance().getDataHandler().send(new TeleportPacket(player, warp, teleportDisplayName, ((PrepareTeleportPacket) packet).getCosts()), otherServer);
-                                        });
+                                        p.connect(otherServer, (connected, throwable) -> {});
                                     } else {
                                         answerIntegerPacket.setValue(2);
                                         WarpSystem.getInstance().getDataHandler().send(answerIntegerPacket, server);
