@@ -1,11 +1,14 @@
 package de.codingair.warpsystem.spigot.features.globalwarps.commands;
 
+import de.codingair.codingapi.player.chat.ChatButton;
+import de.codingair.codingapi.player.chat.SimpleMessage;
 import de.codingair.codingapi.player.gui.inventory.guis.ConfirmGUI;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
@@ -63,6 +66,7 @@ public class CGlobalWarps extends CommandBuilder implements BungeeFeature {
         getComponent("create").addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
+                suggestions.addAll(GlobalWarpManager.getInstance().getGlobalWarps().keySet());
             }
 
             @Override
@@ -80,10 +84,60 @@ public class CGlobalWarps extends CommandBuilder implements BungeeFeature {
                         if(created) {
                             player.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Created").replace("%GLOBAL_WARP%", argument));
                         } else {
-                            player.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Create_Name_Already_Exists").replace("%GLOBAL_WARP%", argument));
+                            String name = GlobalWarpManager.getInstance().getCaseCorrectlyName(argument);
+                            SimpleMessage simpleMessage = new SimpleMessage(Lang.getPrefix() + Lang.get("Warp_Confirm_Overwrite").replace("%WARP%", name), WarpSystem.getInstance());
+
+                            simpleMessage.replace("%YES%", new ChatButton(Lang.get("Warp_Confirm_Overwrite_Yes"), Lang.get("Click_Hover")) {
+                                @Override
+                                public void onClick(Player player) {
+                                    ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).updatePosition(name, player.getLocation(), new Callback<Boolean>() {
+                                        @Override
+                                        public void accept(Boolean overwritten) {
+                                            if(overwritten) {
+                                                sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Overwritten"));
+                                            } else {
+                                                sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists").replace("%GLOBAL_WARP%", args[1]));
+                                            }
+                                        }
+                                    });
+                                    simpleMessage.destroy();
+                                }
+                            });
+
+                            simpleMessage.replace("%NO%", new ChatButton(Lang.get("Warp_Confirm_Overwrite_No"), Lang.get("Click_Hover")) {
+                                @Override
+                                public void onClick(Player player) {
+                                    sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Not_Overwritten"));
+                                    simpleMessage.destroy();
+                                }
+                            });
+
+                            simpleMessage.send((Player) sender);
                         }
                     }
                 });
+                return false;
+            }
+        });
+
+        getComponent("create", null).addChild(new CommandComponent("true") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                Player player = (Player) sender;
+                String name = GlobalWarpManager.getInstance().getCaseCorrectlyName(args[1]);
+
+                if(name != null) {
+                    ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).updatePosition(name, player.getLocation(), new Callback<Boolean>() {
+                        @Override
+                        public void accept(Boolean overwritten) {
+                            if(overwritten) {
+                                sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Overwritten"));
+                            } else {
+                                sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists").replace("%GLOBAL_WARP%", args[1]));
+                            }
+                        }
+                    });
+                } else getComponent("create", null).runCommand(sender, args[1], args);
                 return false;
             }
         });
@@ -118,7 +172,7 @@ public class CGlobalWarps extends CommandBuilder implements BungeeFeature {
                             if(keep) {
                                 sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Deleted_Cancel").replace("%GLOBAL_WARP%", name));
                             } else {
-                                ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).delete(argument, new Callback<Boolean>() {
+                                ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).delete(name, new Callback<Boolean>() {
                                     @Override
                                     public void accept(Boolean deleted) {
                                         if(deleted) {
@@ -134,6 +188,27 @@ public class CGlobalWarps extends CommandBuilder implements BungeeFeature {
                 } else {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists").replace("%GLOBAL_WARP%", argument));
                 }
+                return false;
+            }
+        });
+
+        getComponent("delete", null).addChild(new CommandComponent("true") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                String name = GlobalWarpManager.getInstance().getCaseCorrectlyName(args[1]);
+
+                if(name != null) {
+                    ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).delete(name, new Callback<Boolean>() {
+                        @Override
+                        public void accept(Boolean deleted) {
+                            if(deleted) {
+                                sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Deleted").replace("%GLOBAL_WARP%", name));
+                            } else {
+                                sender.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists").replace("%GLOBAL_WARP%", args[1]));
+                            }
+                        }
+                    });
+                } else getComponent("delete", null).runCommand(sender, args[1], args);
                 return false;
             }
         });
