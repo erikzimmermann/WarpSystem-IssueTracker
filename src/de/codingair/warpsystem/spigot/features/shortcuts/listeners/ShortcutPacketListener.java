@@ -25,11 +25,13 @@ public class ShortcutPacketListener implements PacketListener {
 
                 for(String name : ((SendGlobalWarpNamesPacket) packet).getNames().keySet()) {
                     for(Shortcut shortcut : ShortcutManager.getInstance().getShortcuts()) {
+                        if(shortcut.getDestination() == null || shortcut.getDestination().getId() == null) continue;
                         if(shortcut.getDestination().getType() == DestinationType.GlobalWarp && shortcut.getDestination().getId().equals(name)) found.add(shortcut);
                     }
                 }
 
                 for(Shortcut shortcut : ShortcutManager.getInstance().getShortcuts()) {
+                    if(shortcut.getDestination() == null || shortcut.getDestination().getId() == null) continue;
                     if(shortcut.getDestination().getType() == DestinationType.GlobalWarp && !found.contains(shortcut)) delete.add(shortcut);
                 }
 
@@ -46,6 +48,7 @@ public class ShortcutPacketListener implements PacketListener {
 
                         List<Shortcut> toDelete = new ArrayList<>();
                         for(Shortcut shortcut : ShortcutManager.getInstance().getShortcuts()) {
+                            if(shortcut.getDestination() == null || shortcut.getDestination().getId() == null) continue;
                             if(shortcut.getDestination().getType() == DestinationType.GlobalWarp && shortcut.getDestination().getId().equals(globalWarp)) toDelete.add(shortcut);
                         }
 
