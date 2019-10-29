@@ -1,8 +1,13 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters;
 
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.warpsystem.spigot.api.events.PlayerTeleportAcceptEvent;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -12,7 +17,10 @@ public class EmptyAdapter implements DestinationAdapter {
     @Override
     public boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
         if(callback != null) callback.accept(TeleportResult.TELEPORTED);
-        return false;
+        if(message != null)
+            player.sendMessage((message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
+        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> Bukkit.getPluginManager().callEvent(new PlayerTeleportAcceptEvent(player)), 1L);
+        return true;
     }
 
     @Override

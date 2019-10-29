@@ -36,19 +36,19 @@ public class TeleportPacketListener implements PacketListener {
 
             if(player == null || target == null) {
                 answer.setValue(1);
+                WarpSystem.getInstance().getDataHandler().send(answer, BungeeCord.getInstance().getServerInfo(extra));
             } else {
                 TeleportPlayerToPlayerPacket tpPacket = new TeleportPlayerToPlayerPacket(player.getName(), player.getName(), target.getName());
+                WarpSystem.getInstance().getDataHandler().send(tpPacket, target.getServer().getInfo());
+
                 if(!player.getServer().getInfo().equals(target.getServer().getInfo())) {
                     player.connect(target.getServer().getInfo(), (connected, throwable) -> {
-                        if(connected) {
-                            WarpSystem.getInstance().getDataHandler().send(tpPacket, target.getServer().getInfo());
-                        } else answer.setValue(2);
+                        if(!connected) answer.setValue(2);
+                        WarpSystem.getInstance().getDataHandler().send(answer, BungeeCord.getInstance().getServerInfo(extra));
                     });
-                } else
-                    WarpSystem.getInstance().getDataHandler().send(tpPacket, target.getServer().getInfo());
+                } else WarpSystem.getInstance().getDataHandler().send(answer, BungeeCord.getInstance().getServerInfo(extra));
             }
 
-            WarpSystem.getInstance().getDataHandler().send(answer, BungeeCord.getInstance().getServerInfo(extra));
         } else if(PacketType.getByObject(packet) == PacketType.StartTeleportToPlayerPacket) {
             ProxiedPlayer player = BungeeCord.getInstance().getPlayer(((StartTeleportToPlayerPacket) packet).getPlayer());
             if(player != null) WarpSystem.getInstance().getDataHandler().send(packet, player.getServer().getInfo());
