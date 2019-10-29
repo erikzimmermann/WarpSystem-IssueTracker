@@ -7,6 +7,7 @@ import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.api.players.BungeePlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
@@ -33,73 +34,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class TeleportPacketListener implements Listener, PacketListener {
-    private TimeMap<String, Packet> teleport = new TimeMap<>();
-    private TimeList<Player> noTeleport = new TimeList<>();
-
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onJoin(PlayerJoinEvent e) {
-        join(e.getPlayer());
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onTeleport(PlayerTeleportEvent e) {
-        if(noTeleport.contains(e.getPlayer())) e.setCancelled(true);
-    }
-
-    private void join(Player player) {
-        Packet packet = teleport.remove(player.getName());
-
-        if(packet != null) {
-            noTeleport.add(player, 3);
-
-            if(packet instanceof TeleportPlayerToPlayerPacket) {
-                TeleportPlayerToPlayerPacket tpPacket = (TeleportPlayerToPlayerPacket) packet;
-
-                Player gate = Bukkit.getPlayer(tpPacket.getGate());
-                Player other = Bukkit.getPlayer(tpPacket.getTarget());
-
-                if(gate != null && player != null && other != null) {
-                    if(gate != player && tpPacket.isMessageToGate()) gate.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", player.getName()).replace("%warp%", other.getName()));
-
-                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TeleportCommand, new Destination(new LocationAdapter(other.getLocation())),
-                            other.getName(), 0, true,
-                            gate == player ?
-                                    Lang.get("Teleported_To") :
-                                    Lang.get("Teleported_To_By").replace("%gate%", gate.getName()),
-                            true, null), 2L);
-                }
-            } else if(packet instanceof TeleportPlayerToCoordsPacket) {
-                TeleportPlayerToCoordsPacket tpPacket = (TeleportPlayerToCoordsPacket) packet;
-
-                Player gate = Bukkit.getPlayer(tpPacket.getGate());
-                double x = (tpPacket.isRelativeX() ? gate.getLocation().getX() : 0) + tpPacket.getX();
-                double y = (tpPacket.isRelativeY() ? gate.getLocation().getY() : 0) + tpPacket.getY();
-                double z = (tpPacket.isRelativeZ() ? gate.getLocation().getZ() : 0) + tpPacket.getZ();
-                String destination = "x=" + x + ", y=" + y + ", z=" + z;
-
-                if(gate != null && player != null) {
-                    if(gate != player) gate.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", player.getName()).replace("%warp%", destination));
-
-                    Location location = player.getLocation();
-                    location.setX(x);
-                    location.setY(y);
-                    location.setZ(z);
-                    location.setYaw(0);
-                    location.setPitch(0);
-
-                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                        WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TeleportCommand, new Destination(new LocationAdapter(location)),
-                                destination, 0, true,
-                                gate == player ?
-                                        Lang.get("Teleported_To") :
-                                        Lang.get("Teleported_To_By").replace("%gate%", gate.getName()),
-                                true, null);
-                    }, 2L);
-
-                }
-            }
-        }
-    }
 
     @Override
     public void onReceive(Packet packet, String extra) {
@@ -112,14 +46,15 @@ public class TeleportPacketListener implements Listener, PacketListener {
                 Player other = Bukkit.getPlayer(tpPacket.getTarget());
 
                 if(gate != null && player != null && other != null) {
-                    if(gate != player && tpPacket.isMessageToGate()) gate.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", player.getName()).replace("%warp%", other.getName()));
+                    if(gate != player && tpPacket.isMessageToGate())
+                        gate.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", player.getName()).replace("%warp%", other.getName()));
 
                     WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TeleportCommand, new Destination(new LocationAdapter(other.getLocation())),
                             other.getName(), 0, true,
                             gate == player ? Lang.get("Teleported_To") :
                                     Lang.get("Teleported_To_By").replace("%gate%", gate.getName())
                             , false, null);
-                } else teleport.put(tpPacket.getPlayer(), packet, 10);
+                } else TeleportListener.setSpawnPositionOrTeleport(tpPacket.getPlayer(), new de.codingair.codingapi.tools.Location(other.getLocation()), tpPacket.getTarget(), gate == player ? Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", tpPacket.getGate()));
                 break;
             }
 
@@ -186,7 +121,9 @@ public class TeleportPacketListener implements Listener, PacketListener {
                             gate == player ? Lang.get("Teleported_To") :
                                     Lang.get("Teleported_To_By").replace("%gate%", gate.getName())
                             , false, null);
-                } else teleport.put(tpPacket.getPlayer(), packet, 10);
+                } else {
+                    TeleportListener.setSpawnPositionOrTeleport(tpPacket.getPlayer(), new de.codingair.codingapi.tools.Location(null, x, y, z, 0, 0), gate.getDisplayName(), gate == player ? Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", gate.getName()));
+                }
                 break;
             }
         }
