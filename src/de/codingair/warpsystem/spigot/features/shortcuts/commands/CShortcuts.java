@@ -146,7 +146,9 @@ public class CShortcuts extends CommandBuilder {
                 }
 
                 for(Shortcut shortcut : ShortcutManager.getInstance().getShortcuts()) {
-                    message.add("  §7(" + (shortcut.getDestination().getType() + ") §b" + shortcut.getDestination().getId() + " §7« \"§e" + shortcut.getDisplayName() + "§7\""));
+                    if(shortcut.getDestination() == null || shortcut.getDestination().getId() == null)
+                        message.add("  §7\"§e" + shortcut.getDisplayName() + "§7\" » §c-");
+                    else message.add("  §7\"§e" + shortcut.getDisplayName() + "§7\" » §b"+shortcut.getDestination().getId()+" §7(" + shortcut.getDestination().getType() + ")");
                 }
 
                 Collections.sort(message);
