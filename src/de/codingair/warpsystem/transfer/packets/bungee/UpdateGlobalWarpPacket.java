@@ -48,7 +48,8 @@ public class UpdateGlobalWarpPacket implements Packet {
 
     public enum Action {
         ADD(0),
-        DELETE(1);
+        DELETE(1),
+        UPDATE_POSITION(2);
 
         private int id;
 

@@ -3,6 +3,7 @@ package de.codingair.warpsystem.transfer.serializeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 public class SGlobalWarp implements Serializable {
     private String name;
@@ -58,6 +59,16 @@ public class SGlobalWarp implements Serializable {
 
     public SLocation getLoc() {
         return loc;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        SGlobalWarp that = (SGlobalWarp) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(server, that.server) &&
+                Objects.equals(loc, that.loc);
     }
 
     public void setLoc(SLocation loc) {

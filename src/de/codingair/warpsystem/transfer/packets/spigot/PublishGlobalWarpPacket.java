@@ -10,6 +10,7 @@ import java.io.IOException;
 
 public class PublishGlobalWarpPacket extends RequestPacket<Boolean> {
     public SGlobalWarp warp;
+    private boolean overwrite = false;
 
     public PublishGlobalWarpPacket() {
         super(null);
@@ -20,9 +21,16 @@ public class PublishGlobalWarpPacket extends RequestPacket<Boolean> {
         this.warp = warp;
     }
 
+    public PublishGlobalWarpPacket(SGlobalWarp warp, boolean overwrite, Callback<Boolean> callback) {
+        super(callback);
+        this.warp = warp;
+        this.overwrite = overwrite;
+    }
+
     @Override
     public void write(DataOutputStream out) throws IOException {
         this.warp.write(out);
+        out.writeBoolean(overwrite);
         super.write(out);
     }
 
@@ -30,6 +38,11 @@ public class PublishGlobalWarpPacket extends RequestPacket<Boolean> {
     public void read(DataInputStream in) throws IOException {
         this.warp = new SGlobalWarp();
         this.warp.read(in);
+        this.overwrite = in.readBoolean();
         super.read(in);
+    }
+
+    public boolean isOverwrite() {
+        return overwrite;
     }
 }

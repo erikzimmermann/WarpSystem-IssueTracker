@@ -46,14 +46,29 @@ public class GlobalWarpListener implements Listener, PacketListener {
                 ((PublishGlobalWarpPacket) packet).warp.setServer(extra);
 
                 BooleanPacket answerBooleanPacket = new BooleanPacket();
+                boolean overwrite = ((PublishGlobalWarpPacket) packet).isOverwrite();
 
-                if(manager.add(((PublishGlobalWarpPacket) packet).warp)) {
-                    //Added
-                    answerBooleanPacket.setValue(true);
-                    manager.synchronize(((PublishGlobalWarpPacket) packet).warp);
+                if(overwrite) {
+                    SGlobalWarp warp = manager.get(((PublishGlobalWarpPacket) packet).warp.getName());
+                    if(warp != null) {
+                        //Changed
+                        answerBooleanPacket.setValue(true);
+                        warp.setLoc(((PublishGlobalWarpPacket) packet).warp.getLoc());
+                        warp.setServer(((PublishGlobalWarpPacket) packet).warp.getServer());
+                        manager.synchronize(((PublishGlobalWarpPacket) packet).warp);
+                    } else {
+                        //Name already exists
+                        answerBooleanPacket.setValue(false);
+                    }
                 } else {
-                    //Name already exists
-                    answerBooleanPacket.setValue(false);
+                    if(manager.add(((PublishGlobalWarpPacket) packet).warp)) {
+                        //Added
+                        answerBooleanPacket.setValue(true);
+                        manager.synchronize(((PublishGlobalWarpPacket) packet).warp);
+                    } else {
+                        //Name already exists
+                        answerBooleanPacket.setValue(false);
+                    }
                 }
 
                 ((PublishGlobalWarpPacket) packet).applyAsAnswer(answerBooleanPacket);
@@ -119,7 +134,8 @@ public class GlobalWarpListener implements Listener, PacketListener {
                                         WarpSystem.getInstance().getDataHandler().send(answerIntegerPacket, server);
                                         WarpSystem.getInstance().getDataHandler().send(new TeleportPacket(player, warp, teleportDisplayName, ((PrepareTeleportPacket) packet).getCosts()), otherServer);
 
-                                        p.connect(otherServer, (connected, throwable) -> {});
+                                        p.connect(otherServer, (connected, throwable) -> {
+                                        });
                                     } else {
                                         answerIntegerPacket.setValue(2);
                                         WarpSystem.getInstance().getDataHandler().send(answerIntegerPacket, server);
