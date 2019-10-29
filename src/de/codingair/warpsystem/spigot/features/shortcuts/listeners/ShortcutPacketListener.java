@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.features.shortcuts.listeners;
 
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
@@ -46,14 +47,12 @@ public class ShortcutPacketListener implements PacketListener {
                         ((GlobalWarpManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS)).getGlobalWarps().remove(((UpdateGlobalWarpPacket) packet).getName());
                         String globalWarp = ((UpdateGlobalWarpPacket) packet).getName();
 
-                        List<Shortcut> toDelete = new ArrayList<>();
                         for(Shortcut shortcut : ShortcutManager.getInstance().getShortcuts()) {
                             if(shortcut.getDestination() == null || shortcut.getDestination().getId() == null) continue;
-                            if(shortcut.getDestination().getType() == DestinationType.GlobalWarp && shortcut.getDestination().getId().equals(globalWarp)) toDelete.add(shortcut);
+                            if(shortcut.getDestination().getType() == DestinationType.GlobalWarp && shortcut.getDestination().getId().equals(globalWarp)) {
+                                shortcut.removeAction(Action.WARP);
+                            }
                         }
-
-                        ShortcutManager.getInstance().getShortcuts().removeAll(toDelete);
-                        toDelete.clear();
                         break;
                 }
                 break;

@@ -33,6 +33,10 @@ public class GlobalWarpManager implements Manager, BungeeFeature {
         WarpSystem.getInstance().getDataHandler().send(new PublishGlobalWarpPacket(new SGlobalWarp(warpName, new SLocation(loc.getWorld().getName(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch())), callback));
     }
 
+    public void updatePosition(String warpName, Location loc, Callback<Boolean> callback) {
+        WarpSystem.getInstance().getDataHandler().send(new PublishGlobalWarpPacket(new SGlobalWarp(warpName, new SLocation(loc.getWorld().getName(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch())), true, callback));
+    }
+
     public void delete(String warpName, Callback<Boolean> callback) {
         WarpSystem.getInstance().getDataHandler().send(new DeleteGlobalWarpPacket(warpName, callback));
     }

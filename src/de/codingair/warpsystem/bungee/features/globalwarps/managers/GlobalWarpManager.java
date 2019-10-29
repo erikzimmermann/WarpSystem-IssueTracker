@@ -84,7 +84,12 @@ public class GlobalWarpManager implements Manager {
 
     public void synchronize(SGlobalWarp warp) {
         for(ServerInfo server : WarpSystem.getInstance().getServerManager().getOnlineServer()) {
-            WarpSystem.getInstance().getDataHandler().send(new UpdateGlobalWarpPacket(get(warp.getName()) == null ? UpdateGlobalWarpPacket.Action.DELETE.getId() : UpdateGlobalWarpPacket.Action.ADD.getId(), warp.getName(), warp.getServer()), server);
+            int id;
+            if(get(warp.getName()) == null) id = UpdateGlobalWarpPacket.Action.DELETE.getId();
+            else if(get(warp.getName()).equals(warp)) id = UpdateGlobalWarpPacket.Action.ADD.getId();
+            else id = UpdateGlobalWarpPacket.Action.UPDATE_POSITION.getId();
+
+            WarpSystem.getInstance().getDataHandler().send(new UpdateGlobalWarpPacket(id, warp.getName(), warp.getServer()), server);
         }
     }
 
