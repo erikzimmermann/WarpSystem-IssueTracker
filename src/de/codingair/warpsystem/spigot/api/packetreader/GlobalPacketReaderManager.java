@@ -13,9 +13,11 @@ public class GlobalPacketReaderManager {
     private List<GlobalPacketReader> globalPacketReaderList = new ArrayList<>();
 
     public void onEnable() {
-        for(Player player : Bukkit.getOnlinePlayers()) {
-            injectAll(player);
-        }
+        Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> {
+            for(Player player : Bukkit.getOnlinePlayers()) {
+                injectAll(player);
+            }
+        });
     }
 
     public void onDisable() {
@@ -57,7 +59,7 @@ public class GlobalPacketReaderManager {
     }
 
     public void inject(Player player, GlobalPacketReader reader) {
-        new PacketReader(player, reader.getName(), WarpSystem.getInstance()){
+        new PacketReader(player, reader.getName(), WarpSystem.getInstance()) {
             @Override
             public boolean readPacket(Object packet) {
                 return reader.readPacket(player, packet);
