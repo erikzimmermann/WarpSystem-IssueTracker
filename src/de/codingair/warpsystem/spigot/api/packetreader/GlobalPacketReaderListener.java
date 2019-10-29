@@ -1,6 +1,8 @@
 package de.codingair.warpsystem.spigot.api.packetreader;
 
 import de.codingair.warpsystem.spigot.api.SpigotAPI;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -10,7 +12,7 @@ public class GlobalPacketReaderListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        SpigotAPI.getInstance().getGlobalPacketReaderManager().injectAll(e.getPlayer());
+        Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> SpigotAPI.getInstance().getGlobalPacketReaderManager().injectAll(e.getPlayer()));
     }
 
     @EventHandler
