@@ -18,6 +18,7 @@ public class TeleportOptions {
     private String permission;
     private double costs;
     private boolean skip;
+    private boolean noDelayByPass = false;
     private boolean canMove;
     private boolean waitForTeleport; //Waiting for walking teleports
     private String payMessage;
@@ -170,5 +171,13 @@ public class TeleportOptions {
 
     public String getFinalMessage(Player player) {
         return getFinalCosts(player) > 0 ? getPayMessage() : getMessage();
+    }
+
+    public boolean isNoDelayByPass() {
+        return noDelayByPass;
+    }
+
+    public void setNoDelayByPass(boolean noDelayByPass) {
+        this.noDelayByPass = noDelayByPass;
     }
 }
