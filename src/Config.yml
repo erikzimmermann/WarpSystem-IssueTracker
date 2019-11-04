@@ -63,7 +63,7 @@ WarpSystem:
     #Available commands: '/warp <warp>' or '/globalwarp <warp>'
     #Required for '/tp' command for CommandBlocks (CommandBlocks with tp commands inside don't work, if you turn this to false)
     CommandBlocks: true
-    RandomTeleport: true
+    RandomTeleports: true
     TeleportCommand: true
 
   #'TeleportCommand' in 'Functions' (above) have to be toggled to true as well, if you want to use this feature.

@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public class CRandomTP extends CommandBuilder {
     public CRandomTP() {
-        super("randomtp", " WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_RANDOM_TELEPORTER) {
+        super("randomtp", "WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_RANDOM_TELEPORTER) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
