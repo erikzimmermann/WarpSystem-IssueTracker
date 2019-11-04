@@ -183,6 +183,9 @@ public class WarpSystem extends JavaPlugin {
 
             this.startAutoSaver();
 
+            //update command dispatcher for players to synchronize CommandList
+            updateCommandList();
+
             timer.stop();
 
             log(" ");
@@ -253,6 +256,14 @@ public class WarpSystem extends JavaPlugin {
 
             this.ERROR = true;
             Bukkit.getPluginManager().disablePlugin(this);
+        }
+    }
+
+    private void updateCommandList() {
+        if(Version.getVersion().isBiggerThan(Version.v1_12)) {
+            for(Player player : Bukkit.getOnlinePlayers()) {
+                player.updateCommands();
+            }
         }
     }
 
