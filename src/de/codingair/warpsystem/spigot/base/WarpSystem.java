@@ -99,6 +99,7 @@ public class WarpSystem extends JavaPlugin {
     private String server = null;
     private BungeeBukkitListener packetListener;
     private List<BungeeFeature> bungeeFeatureList = new ArrayList<>();
+    private AdvertisementManager advertisementManager;
 
     private TeleportManager teleportManager = new TeleportManager();
     private FileManager fileManager = new FileManager(this);
@@ -183,7 +184,8 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new UUIDListener(), this);
             Bukkit.getPluginManager().registerEvents(new HeadListener(), this);
 
-            AdvertisementManager advertisementManager = new AdvertisementManager();
+            advertisementManager = new AdvertisementManager();
+            this.dataHandler.register(advertisementManager);
 
             this.startAutoSaver();
 
@@ -633,5 +635,9 @@ public class WarpSystem extends JavaPlugin {
 
     private boolean runningFirstTime() {
         return runningFirstTime != null;
+    }
+
+    public AdvertisementManager getAdvertisementManager() {
+        return advertisementManager;
     }
 }

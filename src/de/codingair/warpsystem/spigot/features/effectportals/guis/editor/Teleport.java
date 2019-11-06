@@ -11,7 +11,6 @@ import de.codingair.codingapi.player.gui.hotbar.components.SyncItemComponent;
 import de.codingair.codingapi.player.gui.inventory.gui.Skull;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
-import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
@@ -23,8 +22,6 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.features.effectportals.EffectPortalEditor;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.PortalDestinationAdapter;
-import de.codingair.warpsystem.spigot.features.utils.guis.choosedestination.ChooseDestinationGUI;
-import de.codingair.warpsystem.transfer.packets.spigot.RequestServerStatusPacket;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
