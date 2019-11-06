@@ -474,7 +474,15 @@ public class GWarps extends GUI {
             ItemBuilder iconBuilder = prepareIcon(icon);
 
             if(editing) {
-                String command = icon.getAction(Action.COMMAND) == null ? "0" : icon.getAction(CommandAction.class).getValue().size() + "";
+                List<String> commands = icon.hasAction(Action.COMMAND) ? (List<String>) icon.getAction(Action.COMMAND).getValue() : null;
+                List<String> commandInfo = new ArrayList<>();
+
+                if(commands != null) {
+                    for(String command : commands) {
+                        commandInfo.add("§7- '" + command + "'");
+                    }
+                }
+
                 String permission = icon.getPermission() == null ? "-" : icon.getPermission();
                 String costs = (icon.getAction(Action.COSTS) == null ? "0" : icon.getAction(CostsAction.class).getValue()) + " " + Lang.get("Coins");
 
@@ -485,7 +493,8 @@ public class GWarps extends GUI {
 
                 iconBuilder.addText("§8------------");
 
-                iconBuilder.addText("§7" + Lang.get("Commands") + ": " + command);
+                iconBuilder.addText("§7" + Lang.get("Commands") + ": " + (commandInfo.isEmpty() ? "-" : ""));
+                iconBuilder.addText(commandInfo);
                 iconBuilder.addText("§7" + Lang.get("Permission") + ": " + permission);
                 if(MoneyAdapterType.canEnable()) iconBuilder.addText("§7" + Lang.get("Costs") + ": " + costs);
                 iconBuilder.addText("§8------------");
@@ -501,6 +510,8 @@ public class GWarps extends GUI {
                     List<String> list = TextAlignment.lineBreak(Lang.get("Move_Help"), 80);
                     iconBuilder.addText(list);
                 }
+
+                commandInfo.clear();
             } else if(icon.isDisabled()) return;
 
             boolean removeSound = icon.getActions().isEmpty() && !icon.isPage();

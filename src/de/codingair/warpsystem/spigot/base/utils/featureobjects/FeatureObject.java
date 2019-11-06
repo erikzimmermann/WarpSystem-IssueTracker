@@ -51,7 +51,7 @@ public class FeatureObject implements Serializable {
     }
 
     public FeatureObject(FeatureObject featureObject) {
-        this.actions = featureObject.actions == null ? new ArrayList<>() : new ArrayList<>(featureObject.actions);
+        this.actions = featureObject.actions == null ? new ArrayList<>() : featureObject.getCopyOfActions();
         this.permission = featureObject.permission;
         this.disabled = featureObject.disabled;
         this.skip = featureObject.skip;
@@ -288,6 +288,17 @@ public class FeatureObject implements Serializable {
 
     public List<ActionObject> getActions() {
         return actions;
+    }
+
+    public List<ActionObject> getCopyOfActions() {
+        List<ActionObject> l = new ArrayList<>();
+        if(actions == null) return l;
+
+        for(ActionObject a : actions) {
+            l.add(a.clone());
+        }
+
+        return l;
     }
 
     public String getPermission() {
