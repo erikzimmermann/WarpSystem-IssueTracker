@@ -38,8 +38,8 @@ public enum PacketType {
     PrepareTeleportRequestPacket(33, PrepareTeleportRequestPacket.class),
     StartTeleportToPlayerPacket(34, de.codingair.warpsystem.transfer.packets.general.StartTeleportToPlayerPacket.class),
 
-
     IsOperatorPacket(50, IsOperatorPacket.class),
+    SendDisablePacket(51, SendDisablePacket.class),
 
     BooleanPacket(100, BooleanPacket.class),
     IntegerPacket(101, IntegerPacket.class),

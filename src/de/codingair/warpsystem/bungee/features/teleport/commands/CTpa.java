@@ -3,6 +3,7 @@ package de.codingair.warpsystem.bungee.features.teleport.commands;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.base.language.Lang;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
+import de.codingair.warpsystem.transfer.packets.bungee.SendDisablePacket;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -33,6 +34,7 @@ public class CTpa extends Command {
         }
 
         Lang.PREMIUM_CHAT_ONLY_OPED(sender);
+        WarpSystem.getInstance().getDataHandler().send(new SendDisablePacket(sender.getName(), "TELEPORT_COMMANDS"), ((ProxiedPlayer) sender).getServer().getInfo());
 
         if(args.length != 1) {
             sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpa <§eplayer§7>");

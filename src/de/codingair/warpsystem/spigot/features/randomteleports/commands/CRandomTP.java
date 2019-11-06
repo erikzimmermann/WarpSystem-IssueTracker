@@ -153,7 +153,8 @@ public class CRandomTP extends CommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 if(sender.hasPermission(WarpSystem.PERMISSION_MODIFY_RANDOM_TELEPORTER)) Lang.PREMIUM_CHAT(sender);
-                else if(RandomTeleporterManager.getInstance().isBuyable())
+
+                if(RandomTeleporterManager.getInstance().isBuyable())
                     sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<buy, info>");
                 else {
                     sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info>");
