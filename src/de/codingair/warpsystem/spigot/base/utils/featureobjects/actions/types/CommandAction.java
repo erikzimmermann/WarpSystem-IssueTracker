@@ -76,6 +76,6 @@ public class CommandAction extends ActionObject<List<String>> {
 
     @Override
     public CommandAction clone() {
-        return new CommandAction(getValue());
+        return new CommandAction(new ArrayList<>(getValue()));
     }
 }
