@@ -9,10 +9,10 @@ import org.json.simple.parser.ParseException;
 
 public class Key {
     private String name;
-    private int time;
+    private double time;
     private ItemStack item;
 
-    public Key(String name, int time, ItemStack item) {
+    public Key(String name, double time, ItemStack item) {
         this.name = name;
         this.time = time;
         this.item = item;
@@ -37,10 +37,14 @@ public class Key {
     }
 
     public int getTime() {
+        return (int) time;
+    }
+
+    public double getTimeExact() {
         return time;
     }
 
-    public void setTime(int time) {
+    public void setTime(double time) {
         this.time = time;
     }
 
@@ -67,7 +71,7 @@ public class Key {
         JSONObject json = new JSONObject();
 
         json.put("Name", this.name);
-        json.put("Time", this.time);
+        json.put("Time", getTime());
         json.put("Item", new ItemBuilder(this.item).toJSONString());
 
         return json.toJSONString();

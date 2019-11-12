@@ -144,51 +144,77 @@ public class GEditor extends SimpleGUI {
                 addButton(new SyncButton(3, 2) {
                     private int direction = 0;
                     private long last = 0;
-                    private int increase = 1;
+                    private double increase = 1;
+                    private int clicks = 1;
 
                     @Override
                     public void onClick(InventoryClickEvent e, Player player) {
                         if(warp.getCreatorKey() != null) return;
-                        if(last == 0) last = new Date().getTime();
 
                         if(e.isLeftClick()) {
-                            if(direction != 1) {
-                                increase = 1;
-                                direction = 1;
+                            if(e.isShiftClick()) {
+                                if(warp.getDuration() == TempWarpManager.getManager().getMinTime()) {
+                                    Sound.CLICK.playSound(p, 1, 0.7F);
+                                } else {
+                                    warp.setDuration(TempWarpManager.getManager().getMinTime());
+                                    Sound.CLICK.playSound(p);
+                                }
+
+                                last = 0;
                             } else {
-                                if(new Date().getTime() - last < 250L) increase += 2;
-                                else increase = 1;
+                                if(direction != 1) direction = 1;
+
+                                if(new Date().getTime() - last < 750L) {
+                                    if(clicks >= 4) increase = GCreate.increaseMultiplier(warp.getDurationExact(), direction, increase, clicks);
+                                    clicks++;
+                                } else {
+                                    increase = 1;
+                                    clicks = 1;
+                                }
 
                                 last = new Date().getTime();
+
+                                warp.setDuration(warp.getDurationExact() - TempWarpManager.getManager().getConfig().getDurationSteps() * increase);
+                                if(warp.getDuration() < TempWarpManager.getManager().getMinTime()) {
+                                    warp.setDuration(TempWarpManager.getManager().getMinTime());
+
+                                    Sound.CLICK.playSound(p, 1, 0.7F);
+                                    last = 0;
+                                } else Sound.CLICK.playSound(p);
                             }
-
-                            warp.setDuration(warp.getDuration() - TempWarpManager.getManager().getConfig().getDurationSteps() * increase);
-                            if(warp.getDuration() < TempWarpManager.getManager().getMinTime()) {
-                                warp.setDuration(TempWarpManager.getManager().getMinTime());
-
-                                Sound.CLICK.playSound(p, 1, 0.7F);
-                                increase = 1;
-                            } else Sound.CLICK.playSound(p);
 
                             updatePage();
                         } else if(e.isRightClick()) {
-                            if(direction != 2) {
-                                increase = 1;
-                                direction = 2;
+                            if(e.isShiftClick()) {
+                                if(warp.getDuration() == TempWarpManager.getManager().getMaxTime()) {
+                                    Sound.CLICK.playSound(p, 1, 0.7F);
+                                } else {
+                                    warp.setDuration(TempWarpManager.getManager().getMaxTime());
+                                    Sound.CLICK.playSound(p);
+                                }
+
+                                last = 0;
                             } else {
-                                if(new Date().getTime() - last < 250L) increase += 2;
-                                else increase = 1;
+                                if(direction != 2) direction = 2;
+
+                                if(new Date().getTime() - last < 750L) {
+                                    if(clicks >= 4) increase = GCreate.increaseMultiplier(warp.getDurationExact(), direction, increase, clicks);
+                                    clicks++;
+                                } else {
+                                    increase = 1;
+                                    clicks = 1;
+                                }
 
                                 last = new Date().getTime();
+
+                                warp.setDuration(warp.getDurationExact() + TempWarpManager.getManager().getConfig().getDurationSteps() * increase);
+                                if(warp.getDuration() > TempWarpManager.getManager().getMaxTime()) {
+                                    warp.setDuration(TempWarpManager.getManager().getMaxTime());
+
+                                    Sound.CLICK.playSound(p, 1, 0.7F);
+                                    last = 0;
+                                } else Sound.CLICK.playSound(p);
                             }
-
-                            warp.setDuration(warp.getDuration() + TempWarpManager.getManager().getConfig().getDurationSteps() * increase);
-                            if(warp.getDuration() > TempWarpManager.getManager().getMaxTime()) {
-                                warp.setDuration(TempWarpManager.getManager().getMaxTime());
-
-                                Sound.CLICK.playSound(p, 1, 0.7F);
-                                increase = 1;
-                            } else Sound.CLICK.playSound(p);
 
                             updatePage();
                         }

@@ -78,7 +78,6 @@ public class CTempWarps extends CommandBuilder {
             getComponent("keys").addChild(new CommandComponent("create", WarpSystem.PERMISSION_MODIFY_TEMP_WARPS) {
                 @Override
                 public boolean runCommand(CommandSender sender, String label, String[] args) {
-
                     if(sender instanceof Player) {
                         Player player = (Player) sender;
 
@@ -117,6 +116,31 @@ public class CTempWarps extends CommandBuilder {
                         }, new ItemBuilder(XMaterial.NAME_TAG).setName(Lang.get("Name") + "...").getItem());
                     } else sender.sendMessage(Lang.getPrefix() + "§cThe console can only give keys away.");
 
+                    return false;
+                }
+            });
+
+            getComponent("keys", "create").addChild(new MultiCommandComponent() {
+                @Override
+                public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
+                }
+
+                @Override
+                public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                    if(sender instanceof Player) {
+                        if(TempWarpManager.getManager().getTemplate(ChatColor.translateAlternateColorCodes('&', argument)) != null) {
+                            sender.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
+                            return false;
+                        }
+
+                        ItemStack item = ((Player) sender).getInventory().getItem(((Player) sender).getInventory().getHeldItemSlot());
+
+                        if(item == null || item.getType() == Material.AIR) item = TempWarpManager.KEY_ITEM.clone();
+                        else item = item.clone();
+
+                        Key key = new Key(ChatColor.translateAlternateColorCodes('&', argument), TempWarpManager.getManager().getMinTime(), item);
+                        new TemplateGUI((Player) sender, key, key.clone()).open();
+                    } else sender.sendMessage(Lang.getPrefix() + "§cThe console can only give keys away.");
                     return false;
                 }
             });

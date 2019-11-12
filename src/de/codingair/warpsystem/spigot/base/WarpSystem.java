@@ -338,7 +338,7 @@ public class WarpSystem extends JavaPlugin {
             }
         };
 
-        task.setValue(Bukkit.getScheduler().runTaskTimerAsynchronously(WarpSystem.getInstance(), runnable, 20L, 5 * 60 * 20L));
+        task.setValue(Bukkit.getScheduler().runTaskTimerAsynchronously(WarpSystem.getInstance(), runnable, 20L * 5, 5 * 60 * 20L));
     }
 
     public void reload(boolean save) {
@@ -513,7 +513,9 @@ public class WarpSystem extends JavaPlugin {
                 player.sendMessage("");
                 player.spigot().sendMessage(tc0);
                 player.sendMessage("");
-            } else if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && this.runningFirstTime() && !this.runningFirstTime.contains(player.getName())) {
+            }
+
+            if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && this.runningFirstTime() && !this.runningFirstTime.contains(player.getName())) {
                 this.runningFirstTime.add(player.getName());
                 ConfigFile file = fileManager.getFile("Config");
                 file.getConfig().set("Do_Not_Edit.Last_Version", getDescription().getVersion());

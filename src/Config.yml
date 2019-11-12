@@ -105,7 +105,7 @@ WarpSystem:
   TempWarps:
     #Permission to set the available amount of TempWarps: "WarpSystem.TempWarps.2" (Example for a maximum of 2 TempWarps)
     Time:
-      #sec, min, hour, day
+      #min, hour, day
       Interval: min
       #Step to increase/decrease the duration in the gui
       DurationSteps: 5
