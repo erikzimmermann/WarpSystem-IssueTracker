@@ -164,9 +164,6 @@ public class CTempWarps extends CommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 new GTempWarpList((Player) sender).open();
-//                List<TempWarp> list = TempWarpManager.getManager().getWarps((Player) sender);
-//                drawList((Player) sender, sender.getName(), list);
-//                list.clear();
                 return false;
             }
         });

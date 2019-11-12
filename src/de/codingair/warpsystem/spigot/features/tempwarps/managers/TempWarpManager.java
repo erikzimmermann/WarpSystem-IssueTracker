@@ -133,8 +133,13 @@ public class TempWarpManager implements Manager, Ticker {
         this.keys = config.getBoolean("WarpSystem.TempWarps.Keys", false);
         this.firstPublic = config.getBoolean("WarpSystem.TempWarps.Public_as_create_state", false);
 
-        String timeUnit = config.getString("WarpSystem.TempWarps.Time.Interval", "m");
+        String timeUnit = config.getString("WarpSystem.TempWarps.Time.Interval", "min");
         TimeUnit unit = getTimeUnitOfString(timeUnit);
+        if(unit == null) {
+            unit = TimeUnit.MINUTES;
+            config.set("WarpSystem.TempWarps.Time.Interval", "min");
+            configFile.saveConfig();
+        }
         int durationCosts = config.getInt("WarpSystem.TempWarps.Costs.CostsPerInterval", 5);
         int durationSteps = config.getInt("WarpSystem.TempWarps.Time.DurationSteps", 5);
         int publicCosts = config.getInt("WarpSystem.TempWarps.Costs.PublicCosts", 5);
@@ -672,6 +677,7 @@ public class TempWarpManager implements Manager, Ticker {
     private TimeUnit getTimeUnitOfString(String s) {
         for(TimeUnit value : TimeUnit.values()) {
             switch(value) {
+                case SECONDS:
                 case MILLISECONDS:
                 case NANOSECONDS:
                 case MICROSECONDS:
