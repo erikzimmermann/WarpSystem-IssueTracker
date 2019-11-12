@@ -14,6 +14,7 @@ import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.LoreButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.features.tempwarps.guis.GCreate;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.Key;
 import org.bukkit.ChatColor;
@@ -132,12 +133,11 @@ public class POptions extends PageItem {
         addButton(new SyncButton(creating ? 4 : 3, 2) {
             private int direction = 0;
             private long last = 0;
-            private int increase = 1;
+            private double increase = 1;
+            private int clicks = 1;
 
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
-                if(last == 0) last = new Date().getTime();
-
                 if(e.isLeftClick()) {
                     if(e.isShiftClick()) {
                         if(clone.getTime() == TempWarpManager.getManager().getMinTime()) {
@@ -147,24 +147,26 @@ public class POptions extends PageItem {
                             Sound.CLICK.playSound(p);
                         }
 
-                        increase = 1;
+                        last = 0;
                     } else {
-                        if(direction != 1) {
-                            increase = 1;
-                            direction = 1;
-                        } else {
-                            if(new Date().getTime() - last < 250L) increase += 2;
-                            else increase = 1;
+                        if(direction != 1) direction = 1;
 
-                            last = new Date().getTime();
+                        if(new Date().getTime() - last < 750L) {
+                            if(clicks >= 4) increase = GCreate.increaseMultiplier(clone.getTimeExact(), direction, increase, clicks);
+                            clicks++;
+                        } else {
+                            increase = 1;
+                            clicks = 1;
                         }
 
-                        clone.setTime(clone.getTime() - TempWarpManager.getManager().getConfig().getDurationSteps() * increase);
+                        last = new Date().getTime();
+
+                        clone.setTime(clone.getTimeExact() - TempWarpManager.getManager().getConfig().getDurationSteps() * increase);
                         if(clone.getTime() < TempWarpManager.getManager().getMinTime()) {
                             clone.setTime(TempWarpManager.getManager().getMinTime());
 
                             Sound.CLICK.playSound(p, 1, 0.7F);
-                            increase = 1;
+                            last = 0;
                         } else Sound.CLICK.playSound(p);
                     }
 
@@ -178,24 +180,26 @@ public class POptions extends PageItem {
                             Sound.CLICK.playSound(p);
                         }
 
-                        increase = 1;
+                        last = 0;
                     } else {
-                        if(direction != 2) {
-                            increase = 1;
-                            direction = 2;
-                        } else {
-                            if(new Date().getTime() - last < 250L) increase += 2;
-                            else increase = 1;
+                        if(direction != 2) direction = 2;
 
-                            last = new Date().getTime();
+                        if(new Date().getTime() - last < 750L) {
+                            if(clicks >= 4) increase = GCreate.increaseMultiplier(clone.getTimeExact(), direction, increase, clicks);
+                            clicks++;
+                        } else {
+                            increase = 1;
+                            clicks = 1;
                         }
 
-                        clone.setTime(clone.getTime() + TempWarpManager.getManager().getConfig().getDurationSteps() * increase);
+                        last = new Date().getTime();
+
+                        clone.setTime(clone.getTimeExact() + TempWarpManager.getManager().getConfig().getDurationSteps() * increase);
                         if(clone.getTime() > TempWarpManager.getManager().getMaxTime()) {
                             clone.setTime(TempWarpManager.getManager().getMaxTime());
 
                             Sound.CLICK.playSound(p, 1, 0.7F);
-                            increase = 1;
+                            last = 0;
                         } else Sound.CLICK.playSound(p);
                     }
 
@@ -214,7 +218,7 @@ public class POptions extends PageItem {
 
                 return builder.getItem();
             }
-        }.setOption(option).setOnlyLeftClick(false).setClickSound(null));
+        }.setOption(option).setOnlyLeftClick(false).setClickSound(null).setClickSound2(null));
     }
 
     @Override

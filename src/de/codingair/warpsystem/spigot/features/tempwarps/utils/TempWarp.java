@@ -25,7 +25,7 @@ public class TempWarp {
     private Date startDate;
     private Date endDate;
     private Date expireDate;
-    private int duration;
+    private double duration;
     private boolean isPublic;
     private String message;
     private int teleportCosts;
@@ -113,7 +113,7 @@ public class TempWarp {
     }
 
     public Date calculateEndDate() {
-        return new Date(this.startDate.getTime() + TimeUnit.MILLISECONDS.convert(this.duration, TempWarpManager.getManager().getConfig().getUnit()));
+        return new Date(this.startDate.getTime() + TimeUnit.MILLISECONDS.convert((int) this.duration, TempWarpManager.getManager().getConfig().getUnit()));
     }
 
     public Date getStartDate() {
@@ -129,6 +129,10 @@ public class TempWarp {
     }
 
     public int getDuration() {
+        return (int) duration;
+    }
+
+    public double getDurationExact() {
         return duration;
     }
 
@@ -165,7 +169,7 @@ public class TempWarp {
         this.name = name;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(double duration) {
         this.duration = duration;
         if(this.endDate != null) this.endDate = calculateEndDate();
     }
@@ -276,7 +280,7 @@ public class TempWarp {
     }
 
     public TempWarp clone() {
-        return new TempWarp(this.lastKnownName, this.owner, this.location, this.name, this.message, this.bornDate, this.startDate, this.endDate, this.expireDate, this.duration, this.isPublic, this.teleportCosts, this.paid, this.inactiveSales);
+        return new TempWarp(this.lastKnownName, this.owner, this.location, this.name, this.message, this.bornDate, this.startDate, this.endDate, this.expireDate, (int) this.duration, this.isPublic, this.teleportCosts, this.paid, this.inactiveSales);
     }
 
     public String toJSONString() {
@@ -291,7 +295,7 @@ public class TempWarp {
         json.put("StartDate", this.startDate.getTime() + "");
         json.put("EndDate", this.endDate.getTime() + "");
         json.put("ExpireDate", this.expireDate == null ? null : this.expireDate.getTime() + "");
-        json.put("Duration", this.duration + "");
+        json.put("Duration", getDuration() + "");
         json.put("isPublic", this.isPublic);
         json.put("TeleportCosts", this.teleportCosts);
         json.put("Paid", this.paid);
