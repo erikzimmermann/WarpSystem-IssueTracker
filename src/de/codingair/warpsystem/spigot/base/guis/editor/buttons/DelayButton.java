@@ -26,7 +26,7 @@ public class DelayButton extends SyncButton {
         if(object == null) return new ItemStack(Material.AIR);
 
         return new ItemBuilder(XMaterial.CLOCK)
-                .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Teleport_Delay"))
+                .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Teleport_Delay") + Lang.PREMIUM_LORE)
                 .setLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + (object.isSkip() ?
                                 "§c" + Lang.get("Disabled") :
                                 "§a" + Lang.get("Enabled")), "",
@@ -38,8 +38,7 @@ public class DelayButton extends SyncButton {
     @Override
     public void onClick(InventoryClickEvent e, Player player) {
         if(e.isLeftClick()) {
-            object.setSkip(!object.isSkip());
-            update();
+            Lang.PREMIUM_CHAT(player);
         }
     }
 }
