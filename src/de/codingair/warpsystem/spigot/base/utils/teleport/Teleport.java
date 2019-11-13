@@ -97,7 +97,6 @@ public class Teleport {
             }, new UnmodifiableDestination(this.destination));
             Bukkit.getPluginManager().callEvent(e);
 
-
             this.startTime = System.currentTimeMillis();
             this.animation.setRunning(true);
             this.runnable = new BukkitRunnable() {
