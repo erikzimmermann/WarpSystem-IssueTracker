@@ -12,5 +12,6 @@ public enum TeleportResult {
     NOT_ON_BUNGEE_CORD,
     ERROR,
     ALREADY_ON_TARGET_SERVER,
-    NO_ADAPTER
+    NO_ADAPTER,
+    DENIED_PAYMENT
 }

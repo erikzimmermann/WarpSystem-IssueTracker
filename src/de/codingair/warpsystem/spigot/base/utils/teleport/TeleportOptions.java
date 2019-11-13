@@ -21,6 +21,7 @@ public class TeleportOptions {
     private boolean noDelayByPass = false;
     private boolean canMove;
     private boolean waitForTeleport; //Waiting for walking teleports
+    private boolean confirmPayment = true;
     private String payMessage;
     private String message;
     private boolean silent;
@@ -173,6 +174,14 @@ public class TeleportOptions {
         return getFinalCosts(player) > 0 ? getPayMessage() : getMessage();
     }
 
+    public boolean isConfirmPayment() {
+        return confirmPayment;
+    }
+
+    public void setConfirmPayment(boolean confirmPayment) {
+        this.confirmPayment = confirmPayment;
+    }
+      
     public boolean isNoDelayByPass() {
         return noDelayByPass;
     }

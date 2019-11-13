@@ -4,16 +4,18 @@ import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
+import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.api.events.PlayerGlobalWarpEvent;
 import de.codingair.warpsystem.spigot.api.events.PlayerWarpEvent;
 import de.codingair.warpsystem.spigot.api.events.utils.GlobalWarp;
 import de.codingair.warpsystem.spigot.api.events.utils.Warp;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.utils.options.specific.GeneralOptions;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.teleport.*;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
+import de.codingair.warpsystem.spigot.base.utils.options.specific.GeneralOptions;
+import de.codingair.warpsystem.spigot.base.utils.teleport.*;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
@@ -21,6 +23,10 @@ import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpMa
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -285,14 +291,74 @@ public class TeleportManager {
                 if(options.getFinalCosts(player) > 0) {
                     double bank = MoneyAdapterType.getActive().getMoney(player);
 
-                    if(bank < options.getCosts()) {
+                    if(bank < options.getFinalCosts(player)) {
                         if(options.getCallback() != null) options.getCallback().accept(TeleportResult.NOT_ENOUGH_MONEY);
-                        player.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money").replace("%AMOUNT%", (options.getCosts() % ((int) options.getCosts()) == 0 ? (int) options.getCosts() : options.getCosts()) + ""));
+                        player.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money").replace("%AMOUNT%", (options.getFinalCosts(player) % ((int) options.getFinalCosts(player)) == 0 ? (int) options.getFinalCosts(player) : options.getFinalCosts(player)) + ""));
+                        return;
+                    }
+
+                    if(options.isConfirmPayment()) {
+                        //true = accept; false = timeOut/deny
+
+                        Value<Listener> listenerValue = new Value<>(null);
+
+                        Callback<Boolean> confirmation = new Callback<Boolean>() {
+                            @Override
+                            public void accept(Boolean confirm) {
+                                MessageAPI.sendTitle(player, "§e" + Lang.get("Sneak_to_confirm"), "§6" + Lang.get("Teleport_Costs") + ": §7" + options.getFinalCosts(player) + " " + Lang.get("Coins"), 0, 0, 5);
+                                HandlerList.unregisterAll(listenerValue.getValue());
+
+                                if(confirm) {
+                                    //pay
+                                    teleports.add(teleport);
+                                    MoneyAdapterType.getActive().withdraw(player, options.getFinalCosts(player));
+                                    if(finalSeconds == 0 || options.isSkip()) teleport.teleport();
+                                    else teleport.start();
+                                } else {
+                                    if(options.getCallback() != null) options.getCallback().accept(TeleportResult.DENIED_PAYMENT);
+                                    player.sendMessage(Lang.getPrefix() + Lang.get("Payment_denied").replace("%AMOUNT%", options.getFinalCosts(player) + ""));
+                                }
+                            }
+                        };
+
+                        int timeOut = 10 * 20;
+                        BukkitRunnable runnable = new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                confirmation.accept(false);
+                            }
+                        };
+
+                        listenerValue.setValue(new Listener() {
+                            @EventHandler
+                            public void onWalk(PlayerWalkEvent e) {
+                                if(e.getPlayer().equals(player)) {
+                                    //deny!
+                                    runnable.cancel();
+                                    confirmation.accept(false);
+                                    HandlerList.unregisterAll(this);
+                                }
+                            }
+
+                            @EventHandler
+                            public void onToggleSneak(PlayerToggleSneakEvent e) {
+                                if(e.getPlayer().equals(player) && e.isSneaking()) {
+                                    //confirm!
+                                    runnable.cancel();
+                                    confirmation.accept(true);
+                                    HandlerList.unregisterAll(this);
+                                }
+                            }
+                        });
+                        Bukkit.getPluginManager().registerEvents(listenerValue.getValue(), WarpSystem.getInstance());
+
+                        runnable.runTaskLater(WarpSystem.getInstance(), timeOut + 5); //title fadeIn = 5
+                        MessageAPI.sendTitle(player, "§e" + Lang.get("Sneak_to_confirm"), "§6" + Lang.get("Teleport_Costs") + ": §7" + options.getFinalCosts(player) + " " + Lang.get("Coins"), 5, timeOut, 5);
                         return;
                     }
 
                     teleports.add(teleport);
-                    MoneyAdapterType.getActive().withdraw(player, options.getCosts());
+                    MoneyAdapterType.getActive().withdraw(player, options.getFinalCosts(player));
                 } else teleports.add(teleport);
 
                 if(finalSeconds == 0 || options.isSkip()) teleport.teleport();
@@ -300,7 +366,7 @@ public class TeleportManager {
             }
         };
 
-        if(options.isWaitForTeleport() && !options.isCanMove() && finalSeconds > 0) {
+        if(options.isWaitForTeleport() && !options.isCanMove() && finalSeconds > 0 || (options.isConfirmPayment() && options.getFinalCosts(player) > 0)) {
             waitWhileWalking(player, waiting);
         } else waiting.accept(null);
     }
@@ -330,6 +396,7 @@ public class TeleportManager {
                 }
 
                 if(notMoving == 2) {
+                    MessageAPI.stopSendingActionBar(player);
                     this.cancel();
                     callback.accept(null);
                 }
