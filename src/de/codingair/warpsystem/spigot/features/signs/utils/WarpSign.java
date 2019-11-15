@@ -69,6 +69,7 @@ public class WarpSign extends FeatureObject {
             setPermission((String) json.get("Permissions"));
         }
 
+        setPermission(null);
         return true;
     }
 
@@ -76,6 +77,7 @@ public class WarpSign extends FeatureObject {
     public void write(JSONObject json) {
         super.write(json);
 
+        json.remove("permission");
         json.put("location", this.location.toJSONString(0));
     }
 

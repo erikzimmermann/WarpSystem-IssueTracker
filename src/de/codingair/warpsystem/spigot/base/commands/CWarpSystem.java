@@ -52,15 +52,23 @@ public class CWarpSystem extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, options, animations>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, upgrade, reload, import, news, report, options, animations>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, options, animations>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, upgrade, reload, import, news, report, options, animations>");
                 return false;
             }
         }, true, "ws");
+
+        getBaseComponent().addChild(new CommandComponent("upgrade") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                Lang.PREMIUM_CHAT_UPGRADE(sender);
+                return false;
+            }
+        });
 
         getBaseComponent().addChild(new CommandComponent("shortcut") {
             @Override
@@ -81,30 +89,7 @@ public class CWarpSystem extends CommandBuilder {
         getComponent("animations").addChild(new CommandComponent("activate") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations activate §e<name>");
-                return false;
-            }
-        });
-
-        getComponent("animations", "activate").addChild(new MultiCommandComponent() {
-            @Override
-            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                for(Animation animation : AnimationManager.getInstance().getAnimationList()) {
-                    suggestions.add(animation.getName());
-                }
-            }
-
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                Animation animation = AnimationManager.getInstance().getAnimation(argument);
-
-                if(animation == null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Animation_does_not_exist"));
-                    return false;
-                }
-
-                AnimationManager.getInstance().setActive(animation);
-                sender.sendMessage(Lang.getPrefix() + "§a" + Lang.get("Changes_have_been_saved"));
+                Lang.PREMIUM_CHAT(sender);
                 return false;
             }
         });
@@ -525,13 +510,15 @@ public class CWarpSystem extends CommandBuilder {
 
     private static void sendInfoMessage(CommandSender sender) {
         boolean line = sender instanceof Player;
+        String version = WarpSystem.getInstance().getDescription().getVersion();
+        if(version.contains("-free")) version = version.replace("-free", "");
 
         sender.sendMessage(new String[] {
                 "",
                 "§7§m" + (line ? "               " : "---------------") + "§7< §6WarpSystem §7>§m" + (line ? "               " : "---------------") + "§7",
                 "",
                 "     §3Author: §bCodingAir",
-                "     §3Version: §bv" + WarpSystem.getInstance().getDescription().getVersion() + " §7[" + (WarpSystem.getInstance().isPremium() ? "§6Premium" : "§bFree") + "§7]",
+                "     §3Version: §bv" + version + " §7["+ (WarpSystem.getInstance().isPremium() ? "§6Premium" : "§bFree") + "§7]",
                 "",
                 "     §eAvailable on SpigotMc!",
                 ""
