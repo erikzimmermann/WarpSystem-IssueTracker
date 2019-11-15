@@ -42,7 +42,7 @@ public class Animation implements Serializable {
         this.name = json.get("name");
         this.teleportLoc = json.get("teleportlocation") == null ? null : Location.getByJSONString(json.get("teleportlocation"));
 
-        JSONArray buffArray = json.get("bufflist");
+        JSONArray buffArray = json.get("bufflist", new JSONArray());
         for(Object o : buffArray) {
             JSONObject data = new JSONObject((org.json.simple.JSONObject) o);
             Buff b = new Buff();
@@ -50,7 +50,7 @@ public class Animation implements Serializable {
             buffList.add(b);
         }
 
-        JSONArray particleArray = json.get("particleparts");
+        JSONArray particleArray = json.get("particleparts", new JSONArray());
         for(Object o : particleArray) {
             JSONObject data = new JSONObject((org.json.simple.JSONObject) o);
             ParticlePart p = new ParticlePart();
