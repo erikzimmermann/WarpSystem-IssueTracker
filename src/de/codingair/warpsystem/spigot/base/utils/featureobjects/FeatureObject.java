@@ -120,12 +120,7 @@ public class FeatureObject implements Serializable {
         if(this.actions == null) this.actions = new ArrayList<>();
 
         if(json.get("actions") != null) {
-            JSONArray actionList;
-            try {
-                actionList = (JSONArray) new JSONParser().parse((String) json.get("actions"));
-            } catch(ParseException e) {
-                throw new IconReadException("Could not parse action list.", e);
-            }
+            JSONArray actionList = json.get("actions", new JSONArray());
 
             for(Object o : actionList) {
                 String data = (String) o;
@@ -136,9 +131,8 @@ public class FeatureObject implements Serializable {
                     throw new IconReadException("Could not parse action object.", e);
                 }
 
-                int id = Integer.parseInt(j.get("id") + "");
-                Object value = j.get("value");
-                String validData = value instanceof String ? (String) value : null;
+                int id = j.get("id", 0);
+                String validData = j.get("value");
 
                 Action a = Action.getById(id);
 
@@ -187,7 +181,7 @@ public class FeatureObject implements Serializable {
             }
         }
 
-        json.put("actions", actionList.toJSONString());
+        json.put("actions", actionList);
     }
 
     @Override

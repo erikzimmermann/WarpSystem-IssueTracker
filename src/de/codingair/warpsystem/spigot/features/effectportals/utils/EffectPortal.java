@@ -247,7 +247,7 @@ public class EffectPortal extends FeatureObject implements Removable {
                 setUseLink(true);
             } else {
                 this.animation = AnimationManager.getInstance().getAnimation(json.get("ep.anim.name"));
-                this.teleportSound = json.get("ep.sound.type") == null ? new SoundData(Sound.ENDERMAN_TELEPORT, 0.7F, 1F) : new SoundData(Sound.valueOf(json.get("ep.sound.type")), (float) (double) json.get((Object) "ep.sound.volume"), (float) (double) json.get((Object) "ep.sound.pitch"));
+                this.teleportSound = json.get("ep.sound.type") == null ? new SoundData(Sound.ENDERMAN_TELEPORT, 0.7F, 1F) : new SoundData(Sound.valueOf(json.get("ep.sound.type")), (float) (double) json.get("ep.sound.volume", 1D), (float) (double) json.get("ep.sound.pitch", 1D));
                 linkHelper = json.get("ep.link") == null ? null : new Location((org.json.simple.JSONObject) json.get("ep.link"));
             }
 

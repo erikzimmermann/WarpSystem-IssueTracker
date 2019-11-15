@@ -40,10 +40,10 @@ public class ParticlePart implements Serializable {
 
     @Override
     public boolean read(JSONObject json) {
-        animation = AnimationType.getById(json.get("animation"));
-        particle = Particle.getById(json.get("particle"));
-        radius = json.get("radius");
-        height = json.get("height");
+        animation = AnimationType.getById(json.get("animation", 0));
+        particle = Particle.getById(json.get("particle", 26));
+        radius = json.get("radius", 0D);
+        height = json.get("height", 0D);
         return true;
     }
 
