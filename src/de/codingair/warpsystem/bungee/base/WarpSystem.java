@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.bungee.base;
 
+import de.codingair.codingapi.bungeecord.BungeeAPI;
 import de.codingair.codingapi.bungeecord.files.FileManager;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
@@ -40,6 +41,8 @@ public class WarpSystem extends Plugin {
     public void onEnable() {
         instance = this;
         timer.start();
+
+        BungeeAPI.getInstance().onEnable(this);
 
         log(" ");
         log("________________________________________________________");
@@ -89,6 +92,7 @@ public class WarpSystem extends Plugin {
         this.dataHandler.onDisable();
         save(false);
         destroy();
+        BungeeAPI.getInstance().onDisable();
     }
 
     private void startAutoSaver() {
