@@ -53,7 +53,7 @@ public class CWarps extends CommandBuilder {
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                for(Icon c : manager.getCategories()) {
+                for(Icon c : manager.getPages()) {
                     if(c.getName() == null) continue;
                     if(!c.hasPermission() || sender.hasPermission(c.getPermission())) suggestions.add(c.getNameWithoutColor());
                 }
@@ -61,7 +61,7 @@ public class CWarps extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                Icon category = manager.getCategory(argument);
+                Icon category = manager.getPage(argument);
                 CommandSender target = sender;
 
                 if(category != null && category.hasPermission() && !sender.hasPermission(category.getPermission())) {
@@ -90,7 +90,7 @@ public class CWarps extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                Icon category = manager.getCategory(argument);
+                Icon category = manager.getPage(argument);
 
                 if(category != null && category.hasPermission() && !sender.hasPermission(category.getPermission())) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Page"));

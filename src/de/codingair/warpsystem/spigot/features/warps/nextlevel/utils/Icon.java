@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.features.warps.nextlevel.utils;
 
+import de.codingair.codingapi.server.Color;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject;
@@ -95,9 +96,9 @@ public class Icon extends FeatureObject {
         }
 
         if(json.get("category") != null) {
-            this.page = json.get("category") == null ? null : IconManager.getInstance().getCategory(json.get("category"));
+            this.page = json.get("category") == null ? null : IconManager.getInstance().getPage(json.get("category"));
         } else {
-            this.page = json.get("page") == null ? null : IconManager.getInstance().getCategory(json.get("page"));
+            this.page = json.get("page") == null ? null : IconManager.getInstance().getPage(json.get("page"));
         }
 
         return true;
@@ -122,7 +123,7 @@ public class Icon extends FeatureObject {
         return super.equals(o) &&
                 slot == icon.slot &&
                 isPage == icon.isPage &&
-                name.equals(icon.name) &&
+                getNameWithoutColor().equals(icon.getNameWithoutColor()) &&
                 item.equals(icon.item) &&
                 Objects.equals(page, icon.page);
     }
@@ -132,7 +133,7 @@ public class Icon extends FeatureObject {
     }
 
     public String getNameWithoutColor() {
-        return name == null ? null : ChatColor.stripColor(name);
+        return name == null ? null : Color.removeColor(Color.translateAlternateColorCodes('&', name));
     }
 
     public Icon setName(String name) {
@@ -185,7 +186,7 @@ public class Icon extends FeatureObject {
         return isPage;
     }
 
-    public void setCategory(boolean category) {
+    public void setPage(boolean category) {
         isPage = category;
     }
 }

@@ -3,7 +3,7 @@ package de.codingair.warpsystem.spigot.features.warps.importfilter.filters;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
-import de.codingair.warpsystem.spigot.features.warps.importfilter.CategoryData;
+import de.codingair.warpsystem.spigot.features.warps.importfilter.PageData;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Filter;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Result;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
@@ -53,7 +53,7 @@ public class CategoryWarpsFilter implements Filter {
             Result result = Result.DONE;
 
             for(String s : categories.keySet()) {
-                CategoryData cd = new CategoryData(s, "CategoryWarps." + s);
+                PageData cd = new PageData(s, "CategoryWarps." + s);
 
                 for(String s1 : categories.get(s)) {
                     String path = "Categories." + s + "." + s1;
@@ -71,8 +71,8 @@ public class CategoryWarpsFilter implements Filter {
                     cd.getWarps().add(wd);
                 }
 
-                if(manager.existsCategory(cd.getName()) && result != Result.ERROR) result = Result.UNAVAILABLE_NAME;
-                else if(!manager.importCategoryData(cd)) result = Result.ERROR;
+                if(manager.existsPage(cd.getName()) && result != Result.ERROR) result = Result.UNAVAILABLE_NAME;
+                else if(!manager.importPageData(cd)) result = Result.ERROR;
             }
 
             return result;
