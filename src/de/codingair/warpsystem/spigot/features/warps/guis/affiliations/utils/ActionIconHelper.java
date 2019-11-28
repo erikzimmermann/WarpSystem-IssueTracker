@@ -65,7 +65,7 @@ public class ActionIconHelper {
                 action.value = s.getCommand();
                 break;
             case OPEN_CATEGORY:
-                action.value = manager.getCategory(s.getCategory());
+                action.value = manager.getPage(s.getCategory());
                 break;
             case TELEPORT_TO_WARP:
                 action.value = new SerializableLocation(new Location(Bukkit.getWorld(s.getWorld()), s.getX(), s.getY(), s.getZ(), s.getYaw(), s.getPitch()));

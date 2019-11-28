@@ -20,7 +20,7 @@ public class GEditor extends de.codingair.warpsystem.spigot.base.guis.editor.Edi
                 public void applyTo(Icon clone) {
                     icon.apply(clone);
 
-                    if(icon.isPage() && !IconManager.getInstance().existsCategory(icon.getName())) {
+                    if(icon.isPage() && !IconManager.getInstance().existsPage(icon.getName())) {
                         IconManager.getInstance().getIcons().add(icon);
                     } else if(!icon.isPage() && !IconManager.getInstance().existsIcon(icon.getName())) {
                         IconManager.getInstance().getIcons().add(icon);

@@ -21,7 +21,7 @@ public class WarpData {
         return name;
     }
 
-    public String getCategory() {
+    public String getPage() {
         return category;
     }
 

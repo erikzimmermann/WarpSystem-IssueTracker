@@ -20,7 +20,7 @@ import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionIconHelper;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionObject;
-import de.codingair.warpsystem.spigot.features.warps.importfilter.CategoryData;
+import de.codingair.warpsystem.spigot.features.warps.importfilter.PageData;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.exceptions.IconReadException;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
@@ -36,7 +36,6 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -134,7 +133,7 @@ public class IconManager implements Manager {
 //        WarpSystem.log("      > Check each Category of all Warps");
         for(Warp warp : warps) {
             if(warp.getCategory() == null) continue;
-            if(!existsCategory(warp.getCategory().getName())) {
+            if(!existsPage(warp.getCategory().getName())) {
                 categories.add(warp.getCategory());
             }
         }
@@ -195,7 +194,7 @@ public class IconManager implements Manager {
 
             Icon icon;
             this.icons.add(icon = new Icon(c.getName(), c.getItem(), null, c.getSlot(), c.getPermission(), actions));
-            icon.setCategory(true);
+            icon.setPage(true);
         }
 
         for(Warp c : warps) {
@@ -225,7 +224,7 @@ public class IconManager implements Manager {
             if(world != null) actions.add(new BoundAction(world));
             if(amount > 0) actions.add(new CostsAction(amount));
 
-            this.icons.add(new Icon(c.getName(), c.getItem(), c.getCategory() == null ? null : getCategory(c.getCategory().getName()), c.getSlot(), c.getPermission(), actions));
+            this.icons.add(new Icon(c.getName(), c.getItem(), c.getCategory() == null ? null : getPage(c.getCategory().getName()), c.getSlot(), c.getPermission(), actions));
         }
 
         for(GlobalWarp c : globalWarps) {
@@ -247,7 +246,7 @@ public class IconManager implements Manager {
             if(world != null) actions.add(new BoundAction(world));
             if(amount > 0) actions.add(new CostsAction(amount));
 
-            this.icons.add(new Icon(c.getName(), c.getItem(), c.getCategory() == null ? null : getCategory(c.getCategory().getName()), c.getSlot(), c.getPermission(), actions));
+            this.icons.add(new Icon(c.getName(), c.getItem(), c.getCategory() == null ? null : getPage(c.getCategory().getName()), c.getSlot(), c.getPermission(), actions));
         }
 
         for(DecoIcon c : decoIcons) {
@@ -265,7 +264,7 @@ public class IconManager implements Manager {
             if(world != null) actions.add(new BoundAction(world));
             if(amount > 0) actions.add(new CostsAction(amount));
 
-            this.icons.add(new Icon(c.getName(), c.getItem(), c.getCategory() == null ? null : getCategory(c.getCategory().getName()), c.getSlot(), c.getPermission(), actions));
+            this.icons.add(new Icon(c.getName(), c.getItem(), c.getCategory() == null ? null : getPage(c.getCategory().getName()), c.getSlot(), c.getPermission(), actions));
         }
 
         ActionIconHelper.load = false;
@@ -322,74 +321,51 @@ public class IconManager implements Manager {
 
         clean();
         if(icons > this.icons.size()) {
-            WarpSystem.log("      ...cleaned " + (icons - this.icons.size()) + " (total) icon(s)");
+            WarpSystem.log("      ...cleaned a total of " + (icons - this.icons.size()) + " icon(s)");
         }
 
         WarpSystem.log("      ...got " + this.icons.size() + " " + (this.icons.size() == 1 ? "Icon" : "Icons"));
         return success;
     }
 
-    private void clean() {
+    private void clean(Icon page) {
+        if(page != null && !page.isPage()) throw new IllegalArgumentException("Given icon is not a category!");
         Icon[] iconList = new Icon[54];
-        int remove = 0;
 
-        List<Icon> icons = new ArrayList<>(this.icons);
-        List<String> names = new ArrayList<>();
+        for(Icon icon : getIcons(page)) {
+            Icon other = iconList[icon.getSlot()];
 
-        for(Icon icon : icons) {
-            if(!icon.isPage()) continue;
+            if(other == null) iconList[icon.getSlot()] = icon;
+            else if(other.isPage() && icon.isPage()) {
+                List<Icon> l0 = getIcons(icon);
+                List<Icon> l1 = getIcons(other);
 
-            if(names.contains(icon.getName())) {
-                remove++;
-                this.icons.remove(icon);
-            } else names.add(icon.getName());
-        }
+                if(l0.size() >= l1.size()) {
+                    remove(other);
+                    iconList[icon.getSlot()] = icon;
+                } else {
+                    remove(icon);
+                }
 
-        names.clear();
-
-        if(remove > 0) System.out.println("      ...cleaned " + remove + " category duplicates");
-        remove = 0;
-
-        icons.clear();
-        icons.addAll(getCategories());
-        icons.add(0, null);
-
-        for(Icon page : icons) {
-            for(Icon i : getIcons(page)) {
-                Icon other = iconList[i.getSlot()];
-
-                if(other != null) {
-                    List<Icon> subOther = getIcons(other);
-                    List<Icon> subI = getIcons(i);
-
-                    if(subOther.size() < subI.size()) {
-                        remove++;
-                        remove(other);
-                        iconList[i.getSlot()] = i;
-                    } else {
-                        remove++;
-                        remove(i);
-                    }
-
-                    subOther.clear();
-                    subI.clear();
-                } else iconList[i.getSlot()] = i;
+                l0.clear();
+                l1.clear();
+            } else if(other.isPage() && !icon.isPage()) {
+                remove(icon);
+            } else if(!other.isPage() && icon.isPage()) {
+                remove(other);
+                iconList[icon.getSlot()] = icon;
+            } else {
+                remove(icon);
             }
-
-            iconList = new Icon[54];
         }
 
-        icons.clear();
-        icons.addAll(getIcons(null));
+        List<Icon> pages = getPages(page);
 
-        for(Icon icon : icons) {
-            if(icon.isPage()) continue;
-
-            if(iconList[icon.getSlot()] != null) remove(icon);
-            else iconList[icon.getSlot()] = icon;
+        for(Icon icon : pages) {
+            clean(icon);
         }
 
-        icons.clear();
+        pages.clear();
     }
 
     public void save(boolean saver) {
@@ -426,7 +402,7 @@ public class IconManager implements Manager {
         this.icons.clear();
     }
 
-    public List<Icon> getCategories() {
+    public List<Icon> getPages() {
         List<Icon> icons = new ArrayList<>();
 
         for(Icon icon : this.icons) {
@@ -436,12 +412,12 @@ public class IconManager implements Manager {
         return icons;
     }
 
-    public List<Icon> getCategories(Icon category) {
-        if(category != null && !category.isPage()) throw new IllegalArgumentException("Given icon is not a category!");
+    public List<Icon> getPages(Icon page) {
+        if(page != null && !page.isPage()) throw new IllegalArgumentException("Given icon is not a category!");
         List<Icon> icons = new ArrayList<>();
 
         for(Icon icon : this.icons) {
-            if(icon.isPage() && Objects.equals(category, icon.getPage())) icons.add(icon);
+            if(icon.isPage() && Objects.equals(page, icon.getPage())) icons.add(icon);
         }
 
         return icons;
@@ -451,7 +427,7 @@ public class IconManager implements Manager {
         return WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.GUI.Bound_to_world", false);
     }
 
-    private int getNextFreeSlot(Icon category) {
+    private int getNextFreeSlot(Icon page) {
         int slot = 0;
 
         boolean available;
@@ -464,8 +440,8 @@ public class IconManager implements Manager {
                 break;
             }
 
-            if(category == null) {
-                for(Icon c : getCategories()) {
+            if(page == null) {
+                for(Icon c : getPages()) {
                     if(c.getSlot() == slot) {
                         slot++;
                         available = false;
@@ -474,7 +450,7 @@ public class IconManager implements Manager {
                 }
             }
 
-            for(Icon warp : getIcons(category)) {
+            for(Icon warp : getIcons(page)) {
                 if(warp.getSlot() == slot) {
                     slot++;
                     available = false;
@@ -487,19 +463,19 @@ public class IconManager implements Manager {
         else return -999;
     }
 
-    public boolean importCategoryData(CategoryData categoryData) {
-        if(this.existsCategory(categoryData.getName())) return false;
+    public boolean importPageData(PageData pageData) {
+        if(this.existsPage(pageData.getName())) return false;
 
         int slot = getNextFreeSlot(null);
         if(slot == -999) return false;
 
-        Icon icon = new Icon(categoryData.getName(), STANDARD_ITEM().setName(categoryData.getName()).getItem(), null, slot, categoryData.getPermission());
-        icon.setCategory(true);
+        Icon icon = new Icon(pageData.getName(), STANDARD_ITEM().setName(pageData.getName()).getItem(), null, slot, pageData.getPermission());
+        icon.setPage(true);
         this.icons.add(icon);
 
         boolean result = true;
 
-        for(WarpData warpData : categoryData.getWarps()) {
+        for(WarpData warpData : pageData.getWarps()) {
             if(!importWarpData(warpData)) result = false;
         }
 
@@ -508,42 +484,38 @@ public class IconManager implements Manager {
 
     public boolean importWarpData(WarpData warpData) {
         if(SimpleWarpManager.getInstance().existsWarp(warpData.getName())) return false;
-        if(warpData.getCategory() != null && !existsCategory(warpData.getCategory())) return false;
+        if(warpData.getPage() != null && !existsPage(warpData.getPage())) return false;
         if(this.existsIcon(warpData.getName())) return false;
 
-        Icon category = warpData.getCategory() == null ? null : getCategory(warpData.getCategory());
+        Icon page = warpData.getPage() == null ? null : getPage(warpData.getPage());
 
-        int slot = getNextFreeSlot(category);
+        int slot = getNextFreeSlot(page);
         if(slot == -999) return false;
 
         SimpleWarpManager.getInstance().addWarp(new SimpleWarp(warpData));
 
-        Icon icon = new Icon(warpData.getName(), STANDARD_ITEM().setName(warpData.getName()).getItem(), category, slot, warpData.getPermission(), new WarpAction(new Destination(warpData.getName(), DestinationType.SimpleWarp)));
+        Icon icon = new Icon(warpData.getName(), STANDARD_ITEM().setName(warpData.getName()).getItem(), page, slot, warpData.getPermission(), new WarpAction(new Destination(warpData.getName(), DestinationType.SimpleWarp)));
         this.icons.add(icon);
         return true;
     }
 
     public boolean existsIcon(String name) {
         if(name == null) return false;
-        name = Color.removeColor(name);
-
         return getIcon(name) != null;
     }
 
-    public boolean existsCategory(String name) {
+    public boolean existsPage(String name) {
         if(name == null) return false;
-        name = Color.removeColor(name);
-
-        return getCategory(name) != null;
+        return getPage(name) != null;
     }
 
-    public Icon getCategory(String name) {
+    public Icon getPage(String name) {
         if(name == null) return null;
-        name = ChatColor.stripColor(name);
+        name = Color.removeColor(Color.translateAlternateColorCodes('&', name));
 
         for(Icon icon : this.icons) {
             if(!icon.isPage()) continue;
-            if(ChatColor.stripColor(icon.getName()).equalsIgnoreCase(name)) return icon;
+            if(icon.getNameWithoutColor().equalsIgnoreCase(name)) return icon;
         }
 
         return null;
@@ -551,18 +523,18 @@ public class IconManager implements Manager {
 
     public Icon getIcon(String name) {
         if(name == null) return null;
-        name = ChatColor.stripColor(name);
+        name = Color.removeColor(Color.translateAlternateColorCodes('&', name));
 
         for(Icon icon : this.icons) {
             if(icon.isPage() || icon.getName() == null) continue;
-            if(ChatColor.stripColor(icon.getName()).equalsIgnoreCase(name)) return icon;
+            if(icon.getNameWithoutColor().equalsIgnoreCase(name)) return icon;
         }
 
         return null;
     }
 
     public List<Icon> getIcons(Icon page) {
-        if(page != null && !page.isPage()) throw new IllegalArgumentException("Given icon is not a category!");
+        if(page != null && !page.isPage()) throw new IllegalArgumentException("Given icon is not a page!");
         List<Icon> icons = new ArrayList<>();
 
         for(Icon icon : this.icons) {

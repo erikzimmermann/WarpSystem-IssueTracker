@@ -78,7 +78,7 @@ public class CWarp extends CommandBuilder {
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 if(FeatureType.WARPS.isActive() && WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
                     if(sender.hasPermission(WarpSystem.PERMISSION_USE_WARP_GUI)) {
-                        for(Icon c : manager.getCategories()) {
+                        for(Icon c : manager.getPages()) {
                             if(!c.hasPermission() || sender.hasPermission(c.getPermission())) suggestions.add(c.getNameWithoutColor());
                         }
                     }
@@ -93,7 +93,7 @@ public class CWarp extends CommandBuilder {
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
                 if(FeatureType.WARPS.isActive() && WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
                     if(sender.hasPermission(WarpSystem.PERMISSION_USE_WARP_GUI)) {
-                        Icon category = manager.getCategory(argument);
+                        Icon category = manager.getPage(argument);
 
                         if(category != null && category.hasPermission() && !sender.hasPermission(category.getPermission())) {
                             sender.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Page"));
