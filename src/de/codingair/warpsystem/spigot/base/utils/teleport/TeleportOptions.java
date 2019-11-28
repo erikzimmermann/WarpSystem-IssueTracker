@@ -190,6 +190,7 @@ public class TeleportOptions {
 
     public void setVelocity(Vector velocity) {
         this.velocity = velocity;
+    }
       
     public boolean isNoDelayByPass() {
         return noDelayByPass;
