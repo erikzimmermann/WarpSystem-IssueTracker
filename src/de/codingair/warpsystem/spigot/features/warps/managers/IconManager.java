@@ -319,7 +319,7 @@ public class IconManager implements Manager {
 
         temp.clear();
 
-        clean();
+        clean(null);
         if(icons > this.icons.size()) {
             WarpSystem.log("      ...cleaned a total of " + (icons - this.icons.size()) + " icon(s)");
         }
