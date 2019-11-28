@@ -39,6 +39,7 @@ public class TeleportPacketListener implements PacketListener {
                 WarpSystem.getInstance().getDataHandler().send(answer, BungeeCord.getInstance().getServerInfo(extra));
             } else {
                 TeleportPlayerToPlayerPacket tpPacket = new TeleportPlayerToPlayerPacket(player.getName(), player.getName(), target.getName());
+                tpPacket.setCosts(p.getCosts());
                 WarpSystem.getInstance().getDataHandler().send(tpPacket, target.getServer().getInfo());
 
                 if(!player.getServer().getInfo().equals(target.getServer().getInfo())) {
