@@ -269,7 +269,7 @@ public class TeleportManager {
                         if(options.getCallback() != null) options.getCallback().accept(object);
                         if(finalResultCallback != null) finalResultCallback.accept(object);
                     }
-                });
+                }).setVelocity(options.getVelocity());
 
                 SimulatedTeleportResult simulated = teleport.simulate(player);
                 if(simulated.getError() != null) {

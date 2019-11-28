@@ -31,6 +31,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.util.List;
 
@@ -57,6 +58,7 @@ public class Teleport {
     private boolean afterEffects;
     private Callback<TeleportResult> callback;
     private List<Chunk> preLoadedChunks = null;
+    private Vector velocity = null;
 
     public Teleport(Player player, Destination destination, Origin origin, String displayName, String permission, int seconds, double costs, String message, boolean canMove, boolean silent, SoundData teleportSound, boolean afterEffects, Callback<TeleportResult> callback) {
         this.player = player;
@@ -219,7 +221,7 @@ public class Teleport {
 
                 Bukkit.getPluginManager().registerEvents(new Listener() {
                     @EventHandler
-                    public void onTeleportEd(PlayerTeleportAcceptEvent e) {
+                    public void onTeleported(PlayerTeleportAcceptEvent e) {
                         if(player.equals(e.getPlayer())) {
                             if(player.isOnline()) {
                                 sendLoadedChunks();
@@ -229,6 +231,7 @@ public class Teleport {
 
                                 if(event.isRunAfterEffects()) playAfterEffects(player);
                                 if(teleportSound != null) teleportSound.play(player);
+                                if(velocity != null) player.setVelocity(velocity);
                             }
 
                             HandlerList.unregisterAll(this);
@@ -330,5 +333,14 @@ public class Teleport {
 
     public void setPermission(String permission) {
         this.permission = permission;
+    }
+
+    public Vector getVelocity() {
+        return velocity;
+    }
+
+    public Teleport setVelocity(Vector velocity) {
+        this.velocity = velocity;
+        return this;
     }
 }
