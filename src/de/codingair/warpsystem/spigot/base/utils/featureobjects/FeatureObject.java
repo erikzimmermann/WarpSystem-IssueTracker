@@ -115,7 +115,7 @@ public class FeatureObject implements Serializable {
 
         this.disabled = Boolean.parseBoolean(json.get("disabled") + "");
         this.permission = json.get("permission") == null ? null : (String) json.get("permission");
-        this.skip = json.get("skip", false);
+        this.skip = json.get("skip", false, false);
 
         if(this.actions == null) this.actions = new ArrayList<>();
 
@@ -132,7 +132,7 @@ public class FeatureObject implements Serializable {
                 }
 
                 int id = j.get("id", 0);
-                String validData = j.get("value");
+                String validData = j.get("value", true);
 
                 Action a = Action.getById(id);
 
