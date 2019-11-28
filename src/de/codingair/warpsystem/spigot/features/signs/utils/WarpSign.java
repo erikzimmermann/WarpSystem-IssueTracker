@@ -47,9 +47,9 @@ public class WarpSign extends FeatureObject {
         super.read(json);
 
         if(json.get("Loc") != null) {
-            this.location = Location.getByJSONString((String) json.get("Loc"));
+            this.location = Location.getByJSONString(json.get("Loc", true));
         } else if(json.get("location") != null) {
-            this.location = Location.getByJSONString((String) json.get("location"));
+            this.location = Location.getByJSONString(json.get("location", true));
         }
 
         if(json.get("Destination") != null) {
@@ -58,7 +58,7 @@ public class WarpSign extends FeatureObject {
             addAction(new WarpAction(destination));
         } else if(json.get("Warp") != null) {
             //Old pattern
-            Icon warp = ((IconManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS)).getIcon((String) json.get("Warp"));
+            Icon warp = ((IconManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS)).getIcon(json.get("Warp"));
             if(warp != null) {
                 Destination destination = new Destination(warp.getName(), DestinationType.SimpleWarp);
                 addAction(new WarpAction(destination));
@@ -66,7 +66,7 @@ public class WarpSign extends FeatureObject {
         }
 
         if(json.get("Permissions") != null) {
-            setPermission((String) json.get("Permissions"));
+            setPermission(json.get("Permissions"));
         }
 
         return true;

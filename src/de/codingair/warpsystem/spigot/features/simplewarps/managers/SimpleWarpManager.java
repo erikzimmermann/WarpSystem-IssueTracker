@@ -86,6 +86,7 @@ public class SimpleWarpManager implements Manager {
     }
 
     public SimpleWarp getWarp(String warp) {
+        if(warp == null) return null;
         warp = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', warp));
         return this.warps.get(warp.toLowerCase());
     }
