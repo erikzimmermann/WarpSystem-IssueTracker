@@ -19,6 +19,7 @@ public class TeleportOptions {
     private String permission;
     private double costs;
     private boolean skip;
+    private boolean noDelayByPass = false;
     private boolean canMove;
     private boolean waitForTeleport; //Waiting for walking teleports
     private boolean confirmPayment = true;
@@ -189,5 +190,12 @@ public class TeleportOptions {
 
     public void setVelocity(Vector velocity) {
         this.velocity = velocity;
+      
+    public boolean isNoDelayByPass() {
+        return noDelayByPass;
+    }
+
+    public void setNoDelayByPass(boolean noDelayByPass) {
+        this.noDelayByPass = noDelayByPass;
     }
 }
