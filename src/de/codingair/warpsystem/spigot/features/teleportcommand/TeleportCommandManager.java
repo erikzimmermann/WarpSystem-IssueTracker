@@ -47,6 +47,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
 
     private int expireDelay = 30;
     private int backHistorySize = 3;
+    private int tpaCosts = 0;
     private boolean bungeeCord = false;
     private boolean tpaAllNotifySender = true;
 
@@ -70,6 +71,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
 
         if(file.getConfig().getBoolean("WarpSystem.Functions.TeleportCommand", true)) {
             expireDelay = file.getConfig().getInt("WarpSystem.TeleportCommands.TeleportRequests.ExpireDelay", 30);
+            tpaCosts = file.getConfig().getInt("WarpSystem.TeleportCommands.TeleportRequests.Teleport_Costs", 0);
             bungeeCord = file.getConfig().getBoolean("WarpSystem.TeleportCommands.BungeeCord", true);
             tpaAllNotifySender = file.getConfig().getBoolean("WarpSystem.TeleportCommands.TeleportRequests.Notify_TpaAll_Sender", true);
 
@@ -229,6 +231,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
                             TeleportOptions options = new TeleportOptions(tpToSender ? sender.getSpigotPlayer().getLocation() : player.getLocation(), tpToSender ? sender.getName() : player.getName());
                             options.setOrigin(Origin.CustomTeleportCommands);
                             options.setWaitForTeleport(true);
+                            options.setCosts(tpaCosts);
                             options.setCallback(new Callback<TeleportResult>() {
                                 @Override
                                 public void accept(TeleportResult object) {
@@ -246,33 +249,42 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
                             player.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_not_valid").replace("%PLAYER%", ChatColor.stripColor(sender.getDisplayName())));
                         }
                     } else {
-                        if(finalNotifySender) sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_accepted_sender").replace("%PLAYER%", ChatColor.stripColor(player.getDisplayName())));
-                        player.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_accepted_other").replace("%PLAYER%", ChatColor.stripColor(sender.getDisplayName())));
-
                         if(tpToSender) {
-                            TeleportOptions options = new TeleportOptions(new Destination(new EmptyAdapter()), null);
+                            TeleportOptions options = new TeleportOptions(new Destination(new EmptyAdapter()), sender.getDisplayName());
                             options.setOrigin(Origin.CustomTeleportCommands);
                             options.setWaitForTeleport(true);
                             options.setMessage(null);
+                            options.setPayMessage(null);
+                            options.setCosts(tpaCosts);
+                            options.setPaymentDeniedMessage(null);
                             options.setCallback(new Callback<TeleportResult>() {
                                 @Override
                                 public void accept(TeleportResult result) {
                                     //move
+
                                     WarpSystem.getInstance().getDataHandler().send(new ClearInvitesPacket(sender.getName()));
-                                    WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportPlayerToPlayerPacket(player.getName(), sender.getName(), new Callback<Integer>() {
-                                        @Override
-                                        public void accept(Integer result) {
-                                            if(result == 0) {
-                                                //teleported
-                                            } else {
-                                                player.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_not_valid").replace("%PLAYER%", ChatColor.stripColor(sender.getDisplayName())));
+                                    if(result == TeleportResult.TELEPORTED) {
+                                        if(finalNotifySender) sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_accepted_sender").replace("%PLAYER%", ChatColor.stripColor(player.getDisplayName())));
+                                        player.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_accepted_other").replace("%PLAYER%", ChatColor.stripColor(sender.getDisplayName())));
+
+                                        WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportPlayerToPlayerPacket(player.getName(), sender.getName(), new Callback<Integer>() {
+                                            @Override
+                                            public void accept(Integer result) {
+                                                if(result == 0) {
+                                                    //teleported
+                                                } else {
+                                                    player.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_not_valid").replace("%PLAYER%", ChatColor.stripColor(sender.getDisplayName())));
+                                                }
                                             }
-                                        }
-                                    }));
+                                        }).setCosts(tpaCosts));
+                                    } else {
+                                        if(finalNotifySender) sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_denied_sender").replace("%PLAYER%", ChatColor.stripColor(player.getDisplayName())));
+                                        player.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_denied_other").replace("%PLAYER%", ChatColor.stripColor(sender.getDisplayName())));
+                                    }
                                 }
                             });
 
-                            WarpSystem.getInstance().getTeleportManager().teleport(tpToSender ? player : sender.getSpigotPlayer(), options);
+                            WarpSystem.getInstance().getTeleportManager().teleport(player, options);
                         } else {
                             //tp other
                             WarpSystem.getInstance().getDataHandler().send(new StartTeleportToPlayerPacket(sender.getName(), player.getName(), player.getDisplayName(), sender.getName()));
@@ -290,11 +302,8 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
                 if(finalNotifySender) sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_denied_sender").replace("%PLAYER%", ChatColor.stripColor(player.getDisplayName())));
                 player.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_denied_other").replace("%PLAYER%", ChatColor.stripColor(sender.getDisplayName())));
 
-                if(sender.onSpigot()) {
-                    if(receiver.length == 1) hasInvites.remove(sender.getName());
-                } else {
-                    WarpSystem.getInstance().getDataHandler().send(new ClearInvitesPacket(sender.getName()));
-                }
+                if(sender.onSpigot() && receiver.length == 1) hasInvites.remove(sender.getName());
+                WarpSystem.getInstance().getDataHandler().send(new ClearInvitesPacket(sender.getName()));
 
                 m.destroy();
             }
@@ -320,5 +329,9 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
 
     public static TeleportCommandManager getInstance() {
         return WarpSystem.getInstance().getDataManager().getManager(FeatureType.TELEPORT_COMMAND);
+    }
+
+    public int getTpaCosts() {
+        return this.tpaCosts;
     }
 }

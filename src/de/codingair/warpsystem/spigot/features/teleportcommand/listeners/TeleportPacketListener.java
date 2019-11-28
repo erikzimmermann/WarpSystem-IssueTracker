@@ -1,13 +1,12 @@
 package de.codingair.warpsystem.spigot.features.teleportcommand.listeners;
 
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.codingapi.tools.time.TimeList;
-import de.codingair.codingapi.tools.time.TimeMap;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.api.players.BungeePlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
@@ -27,11 +26,7 @@ import de.codingair.warpsystem.transfer.utils.PacketListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class TeleportPacketListener implements Listener, PacketListener {
 
@@ -49,12 +44,19 @@ public class TeleportPacketListener implements Listener, PacketListener {
                     if(gate != player && tpPacket.isMessageToGate())
                         gate.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", player.getName()).replace("%warp%", other.getName()));
 
-                    WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TeleportCommand, new Destination(new LocationAdapter(other.getLocation())),
-                            other.getName(), 0, true,
-                            gate == player ? Lang.get("Teleported_To") :
-                                    Lang.get("Teleported_To_By").replace("%gate%", gate.getName())
-                            , false, null);
-                } else TeleportListener.setSpawnPositionOrTeleport(tpPacket.getPlayer(), new de.codingair.codingapi.tools.Location(other.getLocation()), tpPacket.getTarget(), gate == player ? Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", tpPacket.getGate()));
+                    TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(other.getLocation())), other.getName());
+                    options.setCosts(Math.max(tpPacket.getCosts(), 0));
+                    options.setSkip(true);
+                    options.setConfirmPayment(false);
+                    options.setOrigin(Origin.TeleportCommand);
+                    options.setMessage(gate == player ? Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", gate.getName()));
+
+                    if(options.getFinalCosts(player) > 0) MoneyAdapterType.getActive().deposit(player, options.getFinalCosts(player));
+
+                    WarpSystem.getInstance().getTeleportManager().teleport(player, options);
+                } else {
+                    TeleportListener.setSpawnPositionOrTeleport(tpPacket.getPlayer(), new de.codingair.codingapi.tools.Location(other.getLocation()), tpPacket.getTarget(), gate == player ? Math.max(tpPacket.getCosts(), 0) > 0 ? Lang.get("Money_Paid").replace("%AMOUNT%", tpPacket.getCosts() + "") : Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", tpPacket.getGate()));
+                }
                 break;
             }
 
@@ -70,25 +72,30 @@ public class TeleportPacketListener implements Listener, PacketListener {
 
                 if(player == null) return;
 
-                TeleportOptions options = new TeleportOptions(new Destination(new EmptyAdapter()), null);
+                TeleportOptions options = new TeleportOptions(new Destination(new EmptyAdapter()), tpPacket.getToDisplayName());
                 options.setOrigin(Origin.CustomTeleportCommands);
                 options.setWaitForTeleport(true);
                 options.setMessage(null);
+                options.setPayMessage(null);
+                options.setCosts(TeleportCommandManager.getInstance().getTpaCosts());
                 options.setCallback(new Callback<TeleportResult>() {
                     @Override
                     public void accept(TeleportResult result) {
                         //move
                         WarpSystem.getInstance().getDataHandler().send(new ClearInvitesPacket(tpPacket.getTeleportRequestSender()));
-                        WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportPlayerToPlayerPacket(player.getName(), tpPacket.getTo(), new Callback<Integer>() {
-                            @Override
-                            public void accept(Integer result) {
-                                if(result == 0) {
-                                    //teleported
-                                } else {
-                                    player.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_not_valid").replace("%PLAYER%", ChatColor.stripColor(tpPacket.getToDisplayName())));
+
+                        if(result == TeleportResult.TELEPORTED) {
+                            WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportPlayerToPlayerPacket(player.getName(), tpPacket.getTo(), new Callback<Integer>() {
+                                @Override
+                                public void accept(Integer result) {
+                                    if(result == 0) {
+                                        //teleported
+                                    } else {
+                                        player.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_not_valid").replace("%PLAYER%", ChatColor.stripColor(tpPacket.getToDisplayName())));
+                                    }
                                 }
-                            }
-                        }));
+                            }).setCosts(TeleportCommandManager.getInstance().getTpaCosts()));
+                        }
                     }
                 });
 

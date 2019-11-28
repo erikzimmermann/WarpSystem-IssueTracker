@@ -83,6 +83,8 @@ WarpSystem:
     #TpAll: Only players from servers with 'BungeeCord: true' will be teleported to you.
     BungeeCord: true
     TeleportRequests:
+      #Teleport costs for a transportation via tpa or tpaHere; The teleported player has to pay
+      Teleport_Costs: 0
       #In seconds
       ExpireDelay: 30
       #true: The teleport request SENDER will be notified about every accepted or denied teleport request. |false: The teleport request SENDER won't get any accept or deny messages

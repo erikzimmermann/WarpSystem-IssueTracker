@@ -8,6 +8,7 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
+import net.minecraft.server.v1_14_R1.PacketPlayOutEntityHeadRotation;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -23,6 +24,7 @@ public class TeleportOptions {
     private boolean waitForTeleport; //Waiting for walking teleports
     private boolean confirmPayment = true;
     private String payMessage;
+    private String paymentDeniedMessage;
     private String message;
     private boolean silent;
     private SoundData teleportSound;
@@ -49,6 +51,7 @@ public class TeleportOptions {
         this.waitForTeleport = false;
         this.message = Lang.getPrefix() + (displayName == null ? Lang.get("Teleported_To") : Lang.get("Teleported_To").replace("%warp%", displayName));
         this.payMessage = Lang.getPrefix() + (displayName == null ? Lang.get("Money_Paid") : Lang.get("Money_Paid").replace("%warp%", displayName));
+        this.payMessage = Lang.getPrefix() + Lang.get("Payment_denied");
         this.silent = false;
         this.teleportSound = new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F);
         this.afterEffects = true;
@@ -189,5 +192,14 @@ public class TeleportOptions {
 
     public void setVelocity(Vector velocity) {
         this.velocity = velocity;
+    }
+
+    public String getPaymentDeniedMessage(Player player) {
+        if(this.paymentDeniedMessage == null) return null;
+        return this.paymentDeniedMessage.replace("%AMOUNT%", getFinalCosts(player) + "");
+    }
+
+    public void setPaymentDeniedMessage(String paymentDeniedMessage) {
+        this.paymentDeniedMessage = paymentDeniedMessage;
     }
 }
