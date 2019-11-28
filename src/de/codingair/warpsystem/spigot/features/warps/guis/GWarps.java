@@ -16,7 +16,6 @@ import de.codingair.warpsystem.spigot.base.guis.options.OptionsGUI;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.BoundAction;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
@@ -257,7 +256,7 @@ public class GWarps extends GUI {
                     && this.cursorIcon != icon) addToGUI(p, icon);
         }
 
-        List<Icon> cIcons = manager.getCategories(page);
+        List<Icon> cIcons = manager.getPages(page);
         for(Icon icon : cIcons) {
             if(!icon.hasPermission() && (hideAll(p) || hideAll(p, "Page")) && !editing) continue;
             BoundAction bound = icon.getAction(Action.BOUND_TO_WORLD);
@@ -399,7 +398,7 @@ public class GWarps extends GUI {
                                                 }
 
                                                 if(category) {
-                                                    if(manager.existsCategory(input)) {
+                                                    if(manager.existsPage(input)) {
                                                         p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                                                         return;
                                                     }
@@ -421,7 +420,7 @@ public class GWarps extends GUI {
                                             if(e.isSubmitted())
                                                 e.setPost(() -> {
                                                     Icon icon = new Icon(input, item, GWarps.this.page, slot, null);
-                                                    icon.setCategory(category);
+                                                    icon.setPage(category);
 
                                                     Icon clone = icon.clone().addAction(new WarpAction(new Destination()));
                                                     new GEditor(p, icon, clone).open();

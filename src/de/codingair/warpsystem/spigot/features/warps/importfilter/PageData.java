@@ -3,11 +3,11 @@ package de.codingair.warpsystem.spigot.features.warps.importfilter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryData {
+public class PageData {
     private String name, permission;
     private List<WarpData> warps = new ArrayList<>();
 
-    public CategoryData(String name, String permission) {
+    public PageData(String name, String permission) {
         this.name = name;
         this.permission = permission;
     }

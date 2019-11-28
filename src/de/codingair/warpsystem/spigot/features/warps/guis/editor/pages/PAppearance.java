@@ -1,11 +1,8 @@
 package de.codingair.warpsystem.spigot.features.warps.guis.editor.pages;
 
-import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
-import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
-import de.codingair.codingapi.player.gui.anvil.AnvilSlot;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
-import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncAnvilGUIButton;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
+import de.codingair.codingapi.server.Color;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
@@ -18,16 +15,11 @@ import de.codingair.warpsystem.spigot.base.guis.editor.buttons.NameButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PAppearance extends PageItem {
     private String startName;
@@ -79,14 +71,15 @@ public class PAppearance extends PageItem {
         addButton(new NameButton(2, 2, true, new Value<>(icon.getName())) {
             @Override
             public String acceptName(String name) {
+                name = Color.removeColor(Color.translateAlternateColorCodes('&', name));
                 if(startName != null && startName.equalsIgnoreCase(name)) return null;
 
                 if(icon.isPage()) {
-                    if((icon.getName() == null || !icon.getName().equalsIgnoreCase(name)) && IconManager.getInstance().existsCategory(name)) {
+                    if((icon.getName() == null || !icon.getName().equalsIgnoreCase(name)) && IconManager.getInstance().existsPage(name)) {
                         return Lang.getPrefix() + Lang.get("Name_Already_Exists");
                     }
                 } else {
-                    if((icon.getName() == null || !icon.getName().equalsIgnoreCase(name)) && IconManager.getInstance().existsIcon(name)) {
+                    if((icon.getName() == null || !icon.getNameWithoutColor().equalsIgnoreCase(name)) && IconManager.getInstance().existsIcon(name)) {
                         return Lang.getPrefix() + Lang.get("Name_Already_Exists");
                     }
                 }
