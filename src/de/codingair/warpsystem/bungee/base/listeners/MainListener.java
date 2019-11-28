@@ -4,6 +4,7 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.bungee.api.ServerSwitchAttemptEvent;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
+import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
 import de.codingair.warpsystem.transfer.packets.bungee.PrepareLoginMessagePacket;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPacket;
 import de.codingair.warpsystem.transfer.packets.general.BooleanPacket;
@@ -42,6 +43,7 @@ public class MainListener implements Listener, PacketListener {
         switch(PacketType.getByObject(packet)) {
             case RequestInitialPacket: {
                 WarpSystem.getInstance().getServerManager().sendInitialPacket(server);
+                TeleportManager.getInstance().clearAll();
                 break;
             }
 

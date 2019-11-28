@@ -316,7 +316,7 @@ public class TeleportManager {
                                     else teleport.start();
                                 } else {
                                     if(options.getCallback() != null) options.getCallback().accept(TeleportResult.DENIED_PAYMENT);
-                                    player.sendMessage(Lang.getPrefix() + Lang.get("Payment_denied").replace("%AMOUNT%", options.getFinalCosts(player) + ""));
+                                    if(options.getPaymentDeniedMessage(player) != null) player.sendMessage(options.getPaymentDeniedMessage(player));
                                 }
                             }
                         };

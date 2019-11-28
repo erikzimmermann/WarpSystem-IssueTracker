@@ -10,6 +10,7 @@ import java.io.IOException;
 public class PrepareTeleportPlayerToPlayerPacket extends RequestPacket<Integer> {
     private String player;
     private String destinationPlayer;
+    private int costs = 0;
 
     public PrepareTeleportPlayerToPlayerPacket() {
     }
@@ -25,6 +26,7 @@ public class PrepareTeleportPlayerToPlayerPacket extends RequestPacket<Integer> 
         super.write(out);
         out.writeUTF(player);
         out.writeUTF(destinationPlayer);
+        out.writeInt(this.costs);
     }
 
     @Override
@@ -32,6 +34,7 @@ public class PrepareTeleportPlayerToPlayerPacket extends RequestPacket<Integer> 
         super.read(in);
         this.player = in.readUTF();
         this.destinationPlayer = in.readUTF();
+        this.costs = in.readInt();
     }
 
     public String getPlayer() {
@@ -40,5 +43,14 @@ public class PrepareTeleportPlayerToPlayerPacket extends RequestPacket<Integer> 
 
     public String getDestinationPlayer() {
         return destinationPlayer;
+    }
+
+    public int getCosts() {
+        return costs;
+    }
+
+    public PrepareTeleportPlayerToPlayerPacket setCosts(int costs) {
+        this.costs = costs;
+        return this;
     }
 }

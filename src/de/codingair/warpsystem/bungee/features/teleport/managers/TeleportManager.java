@@ -105,6 +105,10 @@ public class TeleportManager implements Manager {
         this.hasInvites.remove(name);
     }
 
+    public void clearAll() {
+        this.hasInvites.clear();
+    }
+
     /**
      * @param sender     ProxiedPlayer
      * @param tpToSender boolean
