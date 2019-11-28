@@ -182,9 +182,7 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new HeadListener(), this);
 
             this.startAutoSaver();
-
-            //update command dispatcher for players to synchronize CommandList
-            updateCommandList();
+            afterOnEnable();
 
             timer.stop();
 
@@ -257,6 +255,13 @@ public class WarpSystem extends JavaPlugin {
             this.ERROR = true;
             Bukkit.getPluginManager().disablePlugin(this);
         }
+    }
+
+    private void afterOnEnable() {
+        Bukkit.getScheduler().runTask(this, () -> {
+            //update command dispatcher for players to synchronize CommandList
+            updateCommandList();
+        });
     }
 
     private void updateCommandList() {

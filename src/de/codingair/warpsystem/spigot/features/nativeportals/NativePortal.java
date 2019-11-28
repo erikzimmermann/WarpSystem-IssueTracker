@@ -94,8 +94,8 @@ public class NativePortal extends FeatureObject {
             destination = new Destination((String) json.get("Destination"));
         } else if(json.get("Warp") != null || json.get("GlobalWarp") != null) {
             //old pattern
-            SimpleWarp warp = json.get("Warp") == null ? null : SimpleWarpManager.getInstance().getWarp(json.get("Warp"));
-            String globalWarp = json.get("GlobalWarp") == null ? null : (String) json.get("GlobalWarp");
+            SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(json.get("Warp"));
+            String globalWarp = json.get("GlobalWarp");
 
             if(warp != null) {
                 destination = new Destination(warp.getName(), DestinationType.SimpleWarp);
@@ -114,9 +114,9 @@ public class NativePortal extends FeatureObject {
 
         JSONArray jsonArray = null;
         if(json.get("Blocks") != null) {
-            jsonArray = (JSONArray) new JSONParser().parse((String) json.get("Blocks"));
+            jsonArray = json.get("Blocks", new JSONArray());
         } else if(json.get("blocks") != null) {
-            jsonArray = (JSONArray) new JSONParser().parse((String) json.get("blocks"));
+            jsonArray = json.get("blocks", new JSONArray());
         }
 
         this.blocks = new ArrayList<>();
