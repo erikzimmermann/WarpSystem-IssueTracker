@@ -10,6 +10,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class TeleportOptions {
     private Origin origin;
@@ -27,6 +28,7 @@ public class TeleportOptions {
     private SoundData teleportSound;
     private boolean afterEffects;
     private Callback<TeleportResult> callback;
+    private Vector velocity = null;
 
     public TeleportOptions() {
         this((Destination) null, null);
@@ -179,5 +181,13 @@ public class TeleportOptions {
 
     public void setConfirmPayment(boolean confirmPayment) {
         this.confirmPayment = confirmPayment;
+    }
+
+    public Vector getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(Vector velocity) {
+        this.velocity = velocity;
     }
 }
