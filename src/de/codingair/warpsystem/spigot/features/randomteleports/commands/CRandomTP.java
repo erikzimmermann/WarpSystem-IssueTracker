@@ -41,9 +41,9 @@ public class CRandomTP extends CommandBuilder {
                         sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<blocks, info, go>");
                 } else {
                     if(RandomTeleporterManager.getInstance().isBuyable())
-                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<buy, info, go>");
+                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<buy, info>");
                     else {
-                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, go>");
+                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info>");
                     }
                 }
                 return false;
@@ -123,6 +123,14 @@ public class CRandomTP extends CommandBuilder {
             }
         });
 
+        getComponent("blocks").addChild(new CommandComponent("remove") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Block_Destroy_Info"));
+                return false;
+            }
+        });
+
         getBaseComponent().addChild(new CommandComponent("info") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
@@ -155,7 +163,13 @@ public class CRandomTP extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("go") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                RandomTeleporterManager.getInstance().tryToTeleport((Player) sender);
+                if(sender.hasPermission(WarpSystem.PERMISSION_MODIFY_RANDOM_TELEPORTER)) Lang.PREMIUM_CHAT(sender);
+
+                if(RandomTeleporterManager.getInstance().isBuyable())
+                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<buy, info>");
+                else {
+                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info>");
+                }
                 return false;
             }
         });
