@@ -25,7 +25,7 @@ import java.util.List;
 public class Particles extends HotbarGUI {
     private Menu menu;
     private List<ParticlePart> parts;
-    private AnimationPart[] animations = new AnimationPart[1];
+    private AnimationPart[] animations = new AnimationPart[5];
 
     public Particles(Player player, Menu menu) {
         super(player, WarpSystem.getInstance(), 2);
@@ -37,7 +37,9 @@ public class Particles extends HotbarGUI {
         this.menu = menu;
         this.parts = menu.getClone().getParticleParts();
 
-        this.animations[0] = new AnimationPart(player, 0, menu);
+        for(int i = 0; i < 5; i++) {
+            this.animations[i] = new AnimationPart(player, i, menu);
+        }
 
         initialize();
     }
@@ -46,71 +48,53 @@ public class Particles extends HotbarGUI {
         setItem(0, new ItemComponent(new ItemBuilder(Skull.ArrowLeft).setName("§7» §c" + Lang.get("Back") + "§7 «").getItem()).setLink(menu), false);
         setItem(1, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
 
-        setItem(2, new ItemComponent(new ItemStack(Material.AIR)));
-        setItem(3, new ItemComponent(new ItemStack(Material.AIR)));
+        for(int i = 0; i < 5; i++) {
+            int id = i;
 
-        setItem(2, new ItemComponent(new ItemBuilder(parts.size() >= 1 ? XMaterial.NETHER_STAR : XMaterial.BARRIER)
-                .setName("§c" + Lang.get("Animation") + " #" + (1))
-                .getItem(), new ItemListener() {
-            @Override
-            public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-                if(clickType == ClickType.LEFT_CLICK) {
-                    ic.setLink(animations[0]);
+            if(i < parts.size() + 1) {
+                setItem(id + 2, new ItemComponent(new ItemBuilder(parts.size() >= id + 1 ? XMaterial.NETHER_STAR : XMaterial.BARRIER)
+                        .setName("§c" + Lang.get("Animation") + " #" + (id + 1))
+                        .getItem(), new ItemListener() {
+                    @Override
+                    public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
+                        if(clickType == ClickType.LEFT_CLICK) {
+                            ic.setLink(animations[id]);
 
-                    if(menu.getClone().getParticleParts().size() == 0) {
-                        menu.getClone().getParticleParts().add(new ParticlePart(AnimationType.CIRCLE, Particle.FLAME, 1, 1, CustomAnimation.MAX_SPEED));
-                        animations[0].initialize();
-                        menu.getAnimPlayer().update();
+                            if(menu.getClone().getParticleParts().size() == id) {
+                                menu.getClone().getParticleParts().add(new ParticlePart(AnimationType.CIRCLE, Particle.FLAME, 1, 1, CustomAnimation.MAX_SPEED));
+                                animations[id].initialize();
+                                menu.getAnimPlayer().update();
 
-                        ic.setItem(new ItemBuilder(parts.size() >= 1 ? XMaterial.NETHER_STAR : XMaterial.BARRIER)
-                                .setName("§c" + Lang.get("Animation") + " #" + (1))
-                                .getItem());
+                                ic.setItem(new ItemBuilder(parts.size() >= id + 1 ? XMaterial.NETHER_STAR : XMaterial.BARRIER)
+                                        .setName("§c" + Lang.get("Animation") + " #" + (id + 1))
+                                        .getItem());
 
-                        initialize();
-                    } else animations[0].initialize();
-                } else {
-                    ic.setLink(null);
-                    if(clickType == ClickType.RIGHT_CLICK && parts.size() >= 1) {
-                        parts.remove(0);
-                        menu.getAnimPlayer().update();
-                        onHover(gui, ic, ic, player);
-                        initialize();
+                                initialize();
+                            } else animations[id].initialize();
+                        } else {
+                            ic.setLink(null);
+                            if(clickType == ClickType.RIGHT_CLICK && parts.size() >= id + 1) {
+                                parts.remove(id);
+                                menu.getAnimPlayer().update();
+                                onHover(gui, ic, ic, player);
+                                initialize();
+                            }
+                        }
                     }
-                }
-            }
 
-            @Override
-            public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                if(parts.size() >= 1) {
-                    MessageAPI.sendActionBar(getPlayer(), Menu.ACTION_BAR(parts.get(0).getAnimation().getDisplayName(), "§e" + Lang.get("Edit"), "§c" + Lang.get("Delete")), WarpSystem.getInstance(), Integer.MAX_VALUE);
-                } else MessageAPI.sendActionBar(getPlayer(), "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Add"), WarpSystem.getInstance(), Integer.MAX_VALUE);
-            }
+                    @Override
+                    public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
+                        if(parts.size() >= id + 1) {
+                            MessageAPI.sendActionBar(getPlayer(), Menu.ACTION_BAR(parts.get(id).getAnimation().getDisplayName(), "§e" + Lang.get("Edit"), "§c" + Lang.get("Delete")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                        } else MessageAPI.sendActionBar(getPlayer(), "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Add"), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                    }
 
-            @Override
-            public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
-                MessageAPI.stopSendingActionBar(getPlayer());
-            }
-        }).setLink(this.animations[0]));
-
-        if(!this.parts.isEmpty()) {
-            setItem(3, new ItemComponent(new ItemBuilder(XMaterial.BARRIER)
-                    .setName("§c" + Lang.get("Animation") + " #" + 2)
-                    .getItem(), new ItemListener() {
-                @Override
-                public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-                    Lang.PREMIUM_CHAT(player);
-                }
-
-                @Override
-                public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                    MessageAPI.sendActionBar(player, Lang.PREMIUM_HOTBAR, WarpSystem.getInstance(), Integer.MAX_VALUE);
-                }
-
-                @Override
-                public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
-                    MessageAPI.stopSendingActionBar(player);
-                }
-            }));
+                    @Override
+                    public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
+                        MessageAPI.stopSendingActionBar(getPlayer());
+                    }
+                }).setLink(this.animations[id]));
+            } else setItem(id + 2, new ItemComponent(new ItemStack(Material.AIR)));
         }
     }
 

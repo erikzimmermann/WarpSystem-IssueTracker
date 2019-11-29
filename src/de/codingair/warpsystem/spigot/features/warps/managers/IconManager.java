@@ -311,14 +311,6 @@ public class IconManager implements Manager {
         }
 
         int icons = this.icons.size();
-
-        List<Icon> temp = new ArrayList<>(this.icons);
-        for(Icon icon : temp) {
-            if(icon.isPage() && icon.getPage() != null) this.icons.remove(icon);
-        }
-
-        temp.clear();
-
         clean(null);
         if(icons > this.icons.size()) {
             WarpSystem.log("      ...cleaned a total of " + (icons - this.icons.size()) + " icon(s)");

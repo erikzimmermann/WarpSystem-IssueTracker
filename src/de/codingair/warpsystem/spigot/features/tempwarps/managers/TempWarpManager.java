@@ -179,6 +179,11 @@ public class TempWarpManager implements Manager, Ticker {
             data.add(warp.toJSONString());
         }
 
+        saveTemplates();
+        for(Player player : Bukkit.getOnlinePlayers()) {
+            saveKeys(player, false);
+        }
+
         config.set("Warps", data);
         configFile.saveConfig();
 

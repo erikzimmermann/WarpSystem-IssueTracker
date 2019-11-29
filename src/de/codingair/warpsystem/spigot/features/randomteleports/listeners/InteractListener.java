@@ -15,12 +15,11 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class InteractListener implements Listener {
-    private TimeList<Player> blocked = new TimeList<>();
     private TimeList<Player> addingNewBlock = new TimeList<>();
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
-        if(e.getAction() != Action.RIGHT_CLICK_BLOCK || blocked.contains(e.getPlayer())) return;
+        if(e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         Block b = e.getClickedBlock();
         if(b == null) return;
         org.bukkit.Location loc = b.getLocation();
@@ -29,13 +28,11 @@ public class InteractListener implements Listener {
             RandomTeleporterManager.getInstance().getInteractBlocks().add(new Location(loc));
             e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Block_Added"));
             addingNewBlock.remove(e.getPlayer());
-            blocked.add(e.getPlayer(), 1);
             return;
         }
 
         for(Location l : RandomTeleporterManager.getInstance().getInteractBlocks()) {
             if(l.equals(loc)) {
-                blocked.add(e.getPlayer(), 1);
                 RandomTeleporterManager.getInstance().tryToTeleport(e.getPlayer());
                 break;
             }

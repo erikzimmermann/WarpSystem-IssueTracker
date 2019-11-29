@@ -3,10 +3,17 @@ package de.codingair.warpsystem.spigot.features.teleportcommand.commands;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
+import de.codingair.warpsystem.spigot.api.players.BungeePlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.ad.features.utils.Feature;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CTpAll extends CommandBuilder {
     public CTpAll() {
@@ -23,13 +30,21 @@ public class CTpAll extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                Lang.PREMIUM_CHAT(sender);
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                Lang.PREMIUM_CHAT(sender);
-                WarpSystem.getInstance().getAdvertisementManager().sendDisableMessage(sender, Feature.TELEPORT_COMMANDS);
+                int i = 0;
+
+                for(Player player : Bukkit.getOnlinePlayers()) {
+                    if(player.getName().equals(sender.getName())) continue;
+                    if(TeleportCommandManager.getInstance().deniesForceTps(player)) continue;
+
+                    WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.CustomTeleportCommands, ((Player) sender).getLocation(), sender.getName(), true);
+                    i++;
+                }
+
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Teleport_all").replace("%AMOUNT%", i + "").replace("%MAX%", (Bukkit.getOnlinePlayers().size() - 1) + ""));
                 return false;
             }
         }.setOnlyPlayers(true), true);

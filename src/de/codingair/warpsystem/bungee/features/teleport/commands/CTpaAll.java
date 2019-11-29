@@ -3,7 +3,6 @@ package de.codingair.warpsystem.bungee.features.teleport.commands;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.base.language.Lang;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
-import de.codingair.warpsystem.transfer.packets.bungee.SendDisablePacket;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -30,7 +29,32 @@ public class CTpaAll extends Command {
             return;
         }
 
-        Lang.PREMIUM_CHAT(sender);
-        WarpSystem.getInstance().getDataHandler().send(new SendDisablePacket(sender.getName(), "TELEPORT_COMMANDS"), ((ProxiedPlayer) sender).getServer().getInfo());
+        if(TeleportManager.getInstance().hasOpenInvites((ProxiedPlayer) sender)) {
+            sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Open_Requests"));
+            return;
+        }
+
+        List<ProxiedPlayer> players = new ArrayList<>();
+        int max = 0;
+
+        if(!TeleportManager.getInstance().isAccessible(((ProxiedPlayer) sender).getServer().getInfo())) {
+            for(ProxiedPlayer receiver : ((ProxiedPlayer) sender).getServer().getInfo().getPlayers()) {
+                if(!receiver.getName().equals(sender.getName())) {
+                    max++;
+                    if(!TeleportManager.getInstance().deniesTpaRequests(receiver)) players.add(receiver);
+                }
+            }
+        } else {
+            for(ProxiedPlayer receiver : BungeeCord.getInstance().getPlayers()) {
+                if(!receiver.getName().equals(sender.getName())
+                        && TeleportManager.getInstance().isAccessible(receiver.getServer().getInfo())) {
+                    max++;
+                    if(!TeleportManager.getInstance().deniesTpaRequests(receiver)) players.add(receiver);
+                }
+            }
+        }
+
+        TeleportManager.getInstance().sendTeleportRequest((ProxiedPlayer) sender, true, false, players.toArray(new ProxiedPlayer[0]));
+        sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_All").replace("%RECEIVED%", players.size() + "").replace("%MAX%", max + ""));
     }
 }

@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 
 public class AnimationPart extends HotbarGUI {
     private Menu menu;
+    private ParticleRotation rotation;
     private int slot;
 
     public AnimationPart(Player player, int slot, Menu menu) {
@@ -29,6 +30,7 @@ public class AnimationPart extends HotbarGUI {
         setClickSound(new SoundData(Sound.CLICK, 0.5F, 1F));
 
         this.menu = menu;
+        rotation = new ParticleRotation(player, slot, menu);
         this.slot = slot;
     }
 
@@ -91,17 +93,32 @@ public class AnimationPart extends HotbarGUI {
         setItem(4, new ItemComponent(new ItemBuilder(XMaterial.CYAN_DYE).setName("§7" + Lang.get("Color") + ": §e" + (getColor() == null || !getPart().getParticle().isColorable() ? "§c-" : getColorName())).getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-                Lang.PREMIUM_CHAT(player);
+                if(!getPart().getParticle().isColorable()) return;
+
+                if(clickType == ClickType.LEFT_CLICK) {
+                    if(getPart().getColor() == null) getPart().setColor(Color.RED);
+                    else getPart().setColor(getColor().previous());
+                } else if(clickType == ClickType.RIGHT_CLICK) {
+                    if(getPart().getColor() == null) getPart().setColor(Color.RED);
+                    else getPart().setColor(getColor().next());
+                }
+
+                menu.getAnimPlayer().update();
+                updateDisplayName(ic, "§7" + Lang.get("Color") + ": §e" + (getColor() == null || !getPart().getParticle().isColorable() ? "§c-" : getColorName()));
             }
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(player, Lang.PREMIUM_HOTBAR, WarpSystem.getInstance(), Integer.MAX_VALUE);
+                if(getPart().getParticle().isColorable()) {
+                    MessageAPI.sendActionBar(getPlayer(), Menu.PREVIOUS_NEXT(Lang.get("Particle_Effect")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                } else {
+                    MessageAPI.sendActionBar(getPlayer(), "§c" + Lang.get("ParticleType_Doesnt_Support_Colors"), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                }
             }
 
             @Override
             public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
-                MessageAPI.stopSendingActionBar(player);
+                MessageAPI.stopSendingActionBar(getPlayer());
             }
         }));
 
@@ -153,32 +170,24 @@ public class AnimationPart extends HotbarGUI {
             }
         }));
 
-        setItem(7, new ItemComponent(new ItemBuilder(XMaterial.BLAZE_ROD).setName("§7» §c" + Lang.get("Rotation") + "§7 «").getItem(), new ItemListener() {
-            @Override
-            public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-                Lang.PREMIUM_CHAT(player);
-            }
-
-            @Override
-            public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(player, Lang.PREMIUM_HOTBAR, WarpSystem.getInstance(), Integer.MAX_VALUE);
-            }
-
-            @Override
-            public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
-                MessageAPI.stopSendingActionBar(player);
-            }
-        }), false);
+        setItem(7, new ItemComponent(new ItemBuilder(XMaterial.BLAZE_ROD).setName("§7» §c" + Lang.get("Rotation") + "§7 «").getItem()).setLink(this.rotation), false);
 
         setItem(8, new ItemComponent(new ItemBuilder(XMaterial.SUGAR).setName("§7" + Lang.get("Animation_Speed") + ": §e" + getSpeed()).getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-                Lang.PREMIUM_CHAT(player);
+                if(clickType == ClickType.LEFT_CLICK) {
+                    getPart().setSpeed(getPart().getSpeed() - 1);
+                } else if(clickType == ClickType.RIGHT_CLICK) {
+                    getPart().setSpeed(getPart().getSpeed() + 1);
+                } else return;
+
+                menu.getAnimPlayer().update();
+                updateDisplayName(ic, "§7" + Lang.get("Animation_Speed") + ": §e" + getSpeed());
             }
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(player, Lang.PREMIUM_HOTBAR, WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), Menu.MINUS_PLUS(Lang.get("Animation_Speed")), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -186,6 +195,8 @@ public class AnimationPart extends HotbarGUI {
                 MessageAPI.stopSendingActionBar(getPlayer());
             }
         }));
+
+        this.rotation.initialize();
     }
 
     private Color getColor() {

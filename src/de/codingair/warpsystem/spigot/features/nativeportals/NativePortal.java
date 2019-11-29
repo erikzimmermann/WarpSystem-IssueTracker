@@ -1,8 +1,9 @@
 package de.codingair.warpsystem.spigot.features.nativeportals;
 
+import de.codingair.codingapi.server.Sound;
+import de.codingair.codingapi.server.SoundData;
 import de.codingair.codingapi.server.blocks.utils.Axis;
 import de.codingair.codingapi.tools.Area;
-import de.codingair.codingapi.tools.JSON.JSONObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
@@ -20,6 +21,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.json.simple.JSONArray;
+import de.codingair.codingapi.tools.JSON.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.util.ArrayList;
@@ -76,17 +78,13 @@ public class NativePortal extends FeatureObject {
     @Override
     public boolean read(JSONObject json) throws Exception {
         super.read(json);
-        setSkip(true);
-        setPermission(null);
 
-        try {
-            if(json.get("Type") != null) {
-                this.type = PortalType.valueOf(json.get("Type"));
-            } else if(json.get("type") != null) {
-                this.type = PortalType.valueOf(json.get("type"));
-            }
-        } catch(IllegalArgumentException ex) {
-            this.type = PortalType.WATER;
+        if(json.get("skip") == null) setSkip(true);
+
+        if(json.get("Type") != null) {
+            this.type = PortalType.valueOf(json.get("Type"));
+        } else if(json.get("type") != null) {
+            this.type = PortalType.valueOf(json.get("type"));
         }
 
         Destination destination = null;
@@ -151,7 +149,6 @@ public class NativePortal extends FeatureObject {
     public void write(JSONObject json) {
         super.write(json);
 
-        json.remove("permission");
         json.put("type", type == null ? null : type.name());
         json.put("name", displayName);
 

@@ -43,11 +43,16 @@ public class AnimationManager implements Manager {
             }
         }
 
-        active = new Animation("§Standard§", new ParticlePart(AnimationType.CIRCLE, Particle.FLAME, 1, 1, CustomAnimation.MAX_SPEED));
+        active = getAnimation(config.getString("Active", null));
+        if(active == null) active = createStandard();
 
         WarpSystem.log("    ...got " + animationList.size() + " animation(s)");
 
         return success;
+    }
+
+    private Animation createStandard() {
+        return new Animation("§Standard§", new ParticlePart(AnimationType.CIRCLE, Particle.FLAME, 1, 1, CustomAnimation.MAX_SPEED));
     }
 
     @Override
@@ -63,6 +68,7 @@ public class AnimationManager implements Manager {
         }
 
         file.getConfig().set("Animations", dataList);
+        file.getConfig().set("Active", active == null ? null : active.getName().equals("§Standard§") ? null : active.getName());
         file.saveConfig();
 
         if(!saver) WarpSystem.log("    ...saved " + animationList.size() + " animation(s)");
@@ -91,6 +97,10 @@ public class AnimationManager implements Manager {
 
     public boolean removeAnimation(Animation animation) {
         if(!this.animationList.remove(animation)) return false;
+
+        if(this.active == animation) {
+            this.active = createStandard();
+        }
         return true;
     }
 
@@ -104,6 +114,10 @@ public class AnimationManager implements Manager {
 
     public Animation getActive() {
         return active;
+    }
+
+    public void setActive(Animation active) {
+        this.active = active;
     }
 
     public static AnimationManager getInstance() {

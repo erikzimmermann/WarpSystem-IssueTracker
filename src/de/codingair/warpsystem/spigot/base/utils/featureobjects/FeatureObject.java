@@ -14,8 +14,6 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
-import de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal;
-import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.exceptions.IconReadException;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
@@ -135,14 +133,6 @@ public class FeatureObject implements Serializable {
                 String validData = j.get("value", true);
 
                 Action a = Action.getById(id);
-
-                if(this instanceof Shortcut) {
-                    switch(a) {
-                        case COSTS:
-                        case COMMAND: continue;
-                    }
-                }
-
                 if(a != null) {
                     ActionObject<?> ao;
                     try {
