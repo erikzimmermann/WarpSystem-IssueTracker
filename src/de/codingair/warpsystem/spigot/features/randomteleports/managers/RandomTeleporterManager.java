@@ -14,6 +14,7 @@ import de.codingair.warpsystem.spigot.features.randomteleports.listeners.Interac
 import de.codingair.warpsystem.spigot.features.randomteleports.utils.RandomLocationCalculator;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -31,6 +32,7 @@ public class RandomTeleporterManager implements Manager {
     private boolean protectedRegions;
     private boolean worldBorder;
     private List<Biome> biomeList;
+    private List<World> worldList = new ArrayList<>();
     private List<Player> searching = new ArrayList<>();
 
     private List<Location> interactBlocks = new ArrayList<>();
@@ -49,6 +51,13 @@ public class RandomTeleporterManager implements Manager {
         this.costs = config.getDouble("WarpSystem.RandomTeleport.Buyable.Costs", 500.0);
         this.minRange = config.getDouble("WarpSystem.RandomTeleport.Range.Min", 1000);
         this.maxRange = config.getDouble("WarpSystem.RandomTeleport.Range.Max", 10000);
+
+        if(config.getBoolean("WarpSystem.RandomTeleport.Worlds.Enabled", false)) {
+            for(String name : config.getStringList("WarpSystem.RandomTeleport.Worlds.List")) {
+                World w = Bukkit.getWorld(name);
+                if(w != null) this.worldList.add(w);
+            }
+        }
 
         this.protectedRegions = config.getBoolean("WarpSystem.RandomTeleport.Support.ProtectedRegions", true);
         this.worldBorder = config.getBoolean("WarpSystem.RandomTeleport.Support.WorldBorder", true);
@@ -300,5 +309,9 @@ public class RandomTeleporterManager implements Manager {
 
     public boolean isWorldBorder() {
         return worldBorder;
+    }
+
+    public List<World> getWorldList() {
+        return worldList;
     }
 }
