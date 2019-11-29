@@ -11,11 +11,13 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.EmptyAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.util.Vector;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.HashMap;
@@ -65,6 +67,19 @@ public class TeleportListener implements Listener {
         Player p = e.getPlayer();
 
         if(!WarpSystem.getInstance().getTeleportManager().isTeleporting(p) || WarpSystem.getInstance().getTeleportManager().getTeleport(e.getPlayer()).isCanMove()) return;
+
+        Block exact = p.getLocation().getBlock();
+        Block below = p.getLocation().subtract(0, 0.5, 0).getBlock();
+        
+        if(exact.getType().name().contains("WATER") || below.getType().name().contains("WATER")
+                || exact.getType().name().contains("LAVA") || below.getType().name().contains("LAVA")
+                || exact.getType().name().contains("KELP") || below.getType().name().contains("KELP")
+                || exact.getType().name().contains("SEAGRASS") || below.getType().name().contains("SEAGRASS")
+        ) {
+            Vector v = e.getTo().subtract(e.getFrom()).toVector();
+            if(Math.abs(v.getX()) + Math.abs(v.getZ()) <= 0.05 && Math.abs(v.getY()) < 0.25) return;
+        }
+
         WarpSystem.getInstance().getTeleportManager().cancelTeleport(p);
     }
 
