@@ -30,9 +30,7 @@ public class RandomTeleporterManager implements Manager {
     private double minRange;
     private double maxRange;
     private boolean protectedRegions;
-    private boolean worldBorder;
     private List<Biome> biomeList;
-    private List<World> worldList = new ArrayList<>();
     private List<Player> searching = new ArrayList<>();
 
     private List<Location> interactBlocks = new ArrayList<>();
@@ -52,15 +50,7 @@ public class RandomTeleporterManager implements Manager {
         this.minRange = config.getDouble("WarpSystem.RandomTeleport.Range.Min", 1000);
         this.maxRange = config.getDouble("WarpSystem.RandomTeleport.Range.Max", 10000);
 
-        if(config.getBoolean("WarpSystem.RandomTeleport.Worlds.Enabled", false)) {
-            for(String name : config.getStringList("WarpSystem.RandomTeleport.Worlds.List")) {
-                World w = Bukkit.getWorld(name);
-                if(w != null) this.worldList.add(w);
-            }
-        }
-
         this.protectedRegions = config.getBoolean("WarpSystem.RandomTeleport.Support.ProtectedRegions", true);
-        this.worldBorder = config.getBoolean("WarpSystem.RandomTeleport.Support.WorldBorder", true);
         if(config.getBoolean("WarpSystem.RandomTeleport.Support.Biome.Enabled", true)) {
             List<String> configBiomes = config.getStringList("WarpSystem.RandomTeleport.Support.Biome.BiomeList");
             biomeList = new ArrayList<>();
@@ -305,13 +295,5 @@ public class RandomTeleporterManager implements Manager {
 
     public boolean isBuyable() {
         return buyable && MoneyAdapterType.canEnable();
-    }
-
-    public boolean isWorldBorder() {
-        return worldBorder;
-    }
-
-    public List<World> getWorldList() {
-        return worldList;
     }
 }
