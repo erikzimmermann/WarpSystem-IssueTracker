@@ -1,6 +1,6 @@
 name: WarpSystem
 author: CodingAir
-version: '4.1.7-free'
+version: '4.1.8-free'
 description: WarpSystem
 main: de.codingair.warpsystem.bungee.base.WarpSystem
 
