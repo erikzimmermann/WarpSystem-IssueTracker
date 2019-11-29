@@ -144,7 +144,7 @@ public class RandomTeleporterManager implements Manager {
 
             if(perm.toLowerCase().startsWith("warpsystem.randomteleporters.max.")) {
                 String s = perm.substring(33);
-                if(s.equals("*")) return -1;
+                if(s.equals("*") || s.equalsIgnoreCase("n")) return -1;
 
                 try {
                     return Integer.parseInt(s);
@@ -168,7 +168,7 @@ public class RandomTeleporterManager implements Manager {
 
             if(perm.toLowerCase().startsWith("warpsystem.randomteleporters.free.")) {
                 String s = perm.substring(34);
-                if(s.equals("*")) return -1;
+                if(s.equals("*") || s.equalsIgnoreCase("n")) return -1;
 
                 try {
                     return Integer.parseInt(s);

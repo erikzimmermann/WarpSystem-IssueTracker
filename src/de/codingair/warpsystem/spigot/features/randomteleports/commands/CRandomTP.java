@@ -59,6 +59,9 @@ public class CRandomTP extends CommandBuilder {
                     if(!RandomTeleporterManager.getInstance().canBuy((Player) sender)) {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Bought_Too_Much").replace("%AMOUNT%", RandomTeleporterManager.getInstance().getMaxTeleportAmount((Player) sender) + ""));
                         return false;
+                    } else if(RandomTeleporterManager.getInstance().getFreeTeleportAmount((Player) sender) == -1) {
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Info_Unlimited"));
+                        return false;
                     }
 
                     double bank = MoneyAdapterType.getActive().getMoney((Player) sender);
@@ -93,7 +96,7 @@ public class CRandomTP extends CommandBuilder {
                             }
                         }.setHover(Lang.get("Click_Hover")));
 
-                        sm.send((Player) sender);
+                        sm.send(sender);
                     } else {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Not_Enough_Money").replace("%AMOUNT%", (costs + "").endsWith(".0") ? (costs + "").substring(0, (costs + "").length() - 2) : (costs + "")));
                     }
