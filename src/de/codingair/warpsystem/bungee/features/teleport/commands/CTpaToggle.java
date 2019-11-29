@@ -3,7 +3,6 @@ package de.codingair.warpsystem.bungee.features.teleport.commands;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.base.language.Lang;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
-import de.codingair.warpsystem.transfer.packets.bungee.SendDisablePacket;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -26,7 +25,9 @@ public class CTpaToggle extends Command {
             return;
         }
 
-        Lang.PREMIUM_CHAT(sender);
-        WarpSystem.getInstance().getDataHandler().send(new SendDisablePacket(sender.getName(), "TELEPORT_COMMANDS"), ((ProxiedPlayer) sender).getServer().getInfo());
+        if(TeleportManager.getInstance().toggleDenyTpaRequest((ProxiedPlayer) sender))
+            sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_toggled_disabling"));
+        else
+            sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_toggled_enabling"));
     }
 }

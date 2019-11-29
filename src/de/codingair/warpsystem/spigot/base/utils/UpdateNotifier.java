@@ -15,7 +15,7 @@ public class UpdateNotifier {
     private String updateInfo = null;
 
     private final static String premium = "https://github.com/CodingAir/WarpSystem-IssueTracker/releases/latest";
-    private final static String free = "https://www.spigotmc.org/resources/warps-portals-and-more-warp-teleport-system-1-8-1-14.29595/updates";
+    private final static String free = "https://www.spigotmc.org/resources/warps-portals-and-more-warp-teleport-system-1-8-1-13.29595/updates";
 
     private boolean needsUpdate = false;
     private UpdateCheckerAdapter adapter;
