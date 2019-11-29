@@ -49,7 +49,7 @@ public class TempWarpManager implements Manager, Ticker {
             if(perm.equals("*") || perm.equalsIgnoreCase("warpsystem.*")) return true;
             if(perm.toLowerCase().startsWith("warpsystem.tempwarps.")) {
                 String s = perm.substring(21);
-                if(s.equals("*")) return true;
+                if(s.equals("*") || s.equalsIgnoreCase("n")) return true;
 
                 try {
                     int amount = Integer.parseInt(s);
@@ -60,10 +60,6 @@ public class TempWarpManager implements Manager, Ticker {
         }
 
         return false;
-    }
-
-    public static String PERMISSION(int amount) {
-        return "WarpSystem.TempWarps." + amount;
     }
 
     public static String ERROR_NOT_AVAILABLE(String name) {
