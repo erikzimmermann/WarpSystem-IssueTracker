@@ -49,7 +49,12 @@ public class RandomLocationCalculator implements Runnable {
 
     private Location calculate(Player player) throws InterruptedException {
         start = System.currentTimeMillis();
-        Location location = new Location(player.getLocation());
+        Location location;
+
+        List<World> availableWorlds = RandomTeleporterManager.getInstance().getWorldList();
+        if(!availableWorlds.isEmpty()) location = Location.getByLocation(availableWorlds.get((int) (Math.random() * availableWorlds.size())).getSpawnLocation());
+        else location = new Location(player.getLocation());
+
         double x = player.getLocation().getX();
         double z = player.getLocation().getZ();
 
@@ -165,7 +170,7 @@ public class RandomLocationCalculator implements Runnable {
 
     private boolean isInsideOfWorldBorder(Location location) {
         WorldBorder border = location.getWorld().getWorldBorder();
-        return border == null || Area.isInArea(location, border.getCenter(), border.getSize()/ 2, false, 0);
+        return border == null || Area.isInArea(location, border.getCenter(), border.getSize() / 2, false, 0);
     }
 
     private boolean isProtected(Location location) throws InterruptedException {

@@ -183,6 +183,13 @@ WarpSystem:
     Range:
       Min: 1000
       Max: 10000
+    Worlds:
+      Enabled: false
+      #If enabled: Plugin selects a random world of this list for a random teleport
+      List:
+      - World
+      - World_Nether
+      - World_End
     Support:
       #If enabled, the player will be teleported to a random position, which is not in a protected region
       ProtectedRegions: true
