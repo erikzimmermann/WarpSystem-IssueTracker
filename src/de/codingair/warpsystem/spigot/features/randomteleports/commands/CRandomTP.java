@@ -123,6 +123,14 @@ public class CRandomTP extends CommandBuilder {
             }
         });
 
+        getComponent("blocks").addChild(new CommandComponent("remove") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Block_Destroy_Info"));
+                return false;
+            }
+        });
+
         getBaseComponent().addChild(new CommandComponent("info") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
