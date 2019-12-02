@@ -56,6 +56,7 @@ public class EffectPortalManager implements Manager {
                 this.effectPortals.add(effectPortal);
             } catch(Exception e) {
                 e.printStackTrace();
+                success = false;
             }
         }
 
