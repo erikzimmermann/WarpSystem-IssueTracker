@@ -132,7 +132,7 @@ public class FeatureObject implements Serializable {
                 }
 
                 int id = j.get("id", 0);
-                String validData = j.get("value", true);
+                String validData = j.getRaw("value");
 
                 Action a = Action.getById(id);
 

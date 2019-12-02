@@ -251,10 +251,10 @@ public class EffectPortal extends FeatureObject implements Removable {
                 linkHelper = json.get("ep.link") == null ? null : new Location((org.json.simple.JSONObject) json.get("ep.link"));
             }
 
-            this.location = Location.getByJSONString(json.get("ep.loc", true));
+            this.location = Location.getByJSONString(json.getRaw("ep.loc"));
             this.name = json.get("ep.name");
             this.holoText = json.get("ep.holo.text");
-            this.holoStatus = json.get("ep.holo.state");
+            this.holoStatus = json.getBoolean("ep.holo.state");
             this.holoPos = json.get("ep.holo.pos") == null ? null : new Location((org.json.simple.JSONObject) json.get("ep.holo.pos"));
         }
 

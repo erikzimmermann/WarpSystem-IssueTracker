@@ -84,7 +84,7 @@ public class Icon extends FeatureObject {
         super.read(json);
 
         this.name = json.get("name") == null ? null : (String) json.get("name");
-        ItemBuilder builder = ItemBuilder.getFromJSON(json.get("item", true));
+        ItemBuilder builder = ItemBuilder.getFromJSON(json.getRaw("item"));
         this.item = builder.getItem();
 
         this.slot = Integer.parseInt(json.get("slot") + "");
