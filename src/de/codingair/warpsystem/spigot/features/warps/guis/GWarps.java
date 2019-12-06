@@ -49,12 +49,11 @@ public class GWarps extends GUI {
     private Icon page;
     private boolean editing;
 
-    private boolean moving = false, cloning = false;
+    private boolean moving = false;
     private ItemStack cursor = null;
     private int oldSlot = -999;
     private Icon cursorIcon = null;
     private boolean showMenu = true;
-    private int emptySlots = 0;
 
     private GUIListener listener;
     private boolean canEdit;
@@ -121,7 +120,7 @@ public class GWarps extends GUI {
         addListener(new InterfaceListener() {
             @Override
             public void onInvClickEvent(InventoryClickEvent e) {
-                if(!cloning && cursorIcon != null && cursorIcon.getPage() == GWarps.this.page && cursorIcon.getSlot() == e.getSlot()) {
+                if(cursorIcon != null && cursorIcon.getPage() == GWarps.this.page && cursorIcon.getSlot() == e.getSlot()) {
                     e.getView().setCursor(new ItemStack(Material.AIR));
                     setMoving(false, e.getSlot());
                     Sound.CLICK.playSound(getPlayer(), 0.7F, 1F);
@@ -136,14 +135,6 @@ public class GWarps extends GUI {
                 if(moving) {
                     //cancel
                     setMoving(false, oldSlot);
-                    e.getView().setCursor(new ItemStack(Material.AIR));
-                } else if(cloning) {
-                    //cancel
-                    cloning = false;
-                    oldSlot = -999;
-                    cursor = null;
-                    cursorIcon = null;
-
                     e.getView().setCursor(new ItemStack(Material.AIR));
                 }
             }
@@ -182,7 +173,7 @@ public class GWarps extends GUI {
         if(editing) {
             noneBuilder = new ItemBuilder(Material.BARRIER).setHideStandardLore(true)
                     .setName("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Set_Icon"))
-                    .setLore("§3" + Lang.get("Rightclick") + ": §b" + Lang.get("Fast_Delete"));
+                    .setLore("§3" + Lang.get("Rightclick") + ": §b" + Lang.get("Fast_Delete") + Lang.PREMIUM_LORE);
         } else {
             noneBuilder = new ItemBuilder(IconManager.getInstance().getBackground()).setHideName(true).setHideStandardLore(true).setHideEnchantments(true);
         }
@@ -208,7 +199,7 @@ public class GWarps extends GUI {
             addButton(new ItemButton(0, builder.getItem()) {
                 @Override
                 public void onClick(InventoryClickEvent e) {
-                    if(moving || cloning) return;
+                    if(moving) return;
 
                     if(e.isLeftClick()) {
                         if(e.isShiftClick()) {
@@ -266,59 +257,16 @@ public class GWarps extends GUI {
                     && this.cursorIcon != icon) addToGUI(p, icon);
         }
 
-        emptySlots = 0;
         for(int i = 0; i < size; i++) {
             if(editing) {
                 final int slot = i;
                 if(slot == oldSlot && cursorIcon != null && !cursorIcon.isPage() && cursorIcon.getPage() == this.page) continue;
 
                 if(getItem(i) == null || getItem(i).getType().equals(Material.AIR)) {
-                    emptySlots++;
                     addButton(new ItemButton(i, none.clone()) {
                         @Override
                         public void onClick(InventoryClickEvent clickEvent) {
-                            if(cloning) {
-                                if(cursorIcon == null) {
-                                    cloning = false;
-                                    clickEvent.getView().setCursor(new ItemStack(Material.AIR));
-                                    return;
-                                }
-
-                                if(clickEvent.isLeftClick()) {
-                                    IconManager.getInstance().getIcons().add(cursorIcon);
-                                    cursorIcon.setPage(GWarps.this.page);
-                                    cursorIcon.setSlot(clickEvent.getSlot());
-                                    clickEvent.getView().setCursor(new ItemStack(Material.AIR));
-
-                                    oldSlot = -999;
-                                    cursor = null;
-                                    cursorIcon = null;
-                                    cloning = false;
-
-                                    reinitialize();
-                                } else if(clickEvent.isRightClick()) {
-                                    IconManager.getInstance().getIcons().add(cursorIcon);
-                                    cursorIcon.setPage(GWarps.this.page);
-                                    cursorIcon.setSlot(clickEvent.getSlot());
-
-                                    cursor.setAmount(cursor.getAmount() - 1);
-
-                                    if(cursor.getAmount() == 0) {
-                                        oldSlot = -999;
-                                        cursor = null;
-                                        cursorIcon = null;
-                                        cloning = false;
-                                    } else {
-                                        cursorIcon = cursorIcon.clone();
-                                        cursorIcon.setName(getCopiedName(cursorIcon.getName()));
-                                    }
-
-                                    clickEvent.getView().setCursor(cursor == null ? new ItemStack(Material.AIR) : cursor);
-                                    reinitialize();
-                                }
-
-                                return;
-                            } else if(moving) {
+                            if(moving) {
                                 if(clickEvent.isLeftClick()) {
                                     cursorIcon.setPage(GWarps.this.page);
                                     cursorIcon.setSlot(clickEvent.getSlot());
@@ -327,11 +275,6 @@ public class GWarps extends GUI {
                                 }
 
                                 return;
-                            }
-
-                            if(clickEvent.isRightClick()) {
-                                clickEvent.getView().setCursor(none.clone());
-                                cloning = true;
                             }
 
                             if(!clickEvent.isLeftClick()) return;
@@ -434,7 +377,7 @@ public class GWarps extends GUI {
                                 }
                             };
 
-                            new GChooseIconType(p, callback).open();
+                            new GChooseIconType(p, page, callback).open();
                         }
                     }.setOption(option).setOnlyLeftClick(false));
                 }
@@ -499,9 +442,9 @@ public class GWarps extends GUI {
                 iconBuilder.addText("§8------------");
                 iconBuilder.addText("§3" + Lang.get("Leftclick") + ": §7" + Lang.get("Edit"));
                 iconBuilder.addText("§3" + Lang.get("Shift_Leftclick") + ": §7" + Lang.get("Move"));
-                iconBuilder.addText("§3" + Lang.get("Rightclick") + ": §7" + ChatColor.stripColor(Lang.get("Change_Item")));
+                iconBuilder.addText("§3" + Lang.get("Rightclick") + ": §7" + ChatColor.stripColor(Lang.get("Change_Item")) + Lang.PREMIUM_LORE);
                 iconBuilder.addText("§3" + Lang.get("Shift_Rightclick") + ": §7" + ChatColor.stripColor(Lang.get("Delete")));
-                iconBuilder.addText("§3" + Lang.get("Pick_Block_Click") + ": §7" + ChatColor.stripColor(Lang.get("Copy")));
+                iconBuilder.addText("§3" + Lang.get("Pick_Block_Click") + ": §7" + ChatColor.stripColor(Lang.get("Copy")) + Lang.PREMIUM_LORE);
 
                 if(!icon.isPage()) {
                     iconBuilder.addText("§8------------");
@@ -528,33 +471,8 @@ public class GWarps extends GUI {
                     }
 
                     if(editing) {
-                        if(cloning && cursorIcon == null) {
-                            //fast deleting
-                            IconManager.getInstance().remove(icon);
-                            reinitialize();
-                            return;
-                        }
-
-                        if((e.getClick() == ClickType.UNKNOWN || e.getClick() == ClickType.MIDDLE) && emptySlots > 0) {
-                            if(!moving && cursorIcon == null && cursor == null) {
-                                cloning = true;
-                                cursorIcon = icon.clone();
-
-                                cursorIcon.setName(getCopiedName(cursorIcon.getName()));
-                                cursor = e.getCurrentItem().clone();
-                                cursor.setAmount(emptySlots);
-
-                                e.setCursor(cursor.clone());
-                            }
-                        } else if(e.isLeftClick()) {
-                            if(cloning) {
-                                cloning = false;
-                                oldSlot = -999;
-                                cursor = null;
-                                cursorIcon = null;
-
-                                e.getView().setCursor(new ItemStack(Material.AIR));
-                            } else if(moving) {
+                        if(e.isLeftClick()) {
+                            if(moving) {
                                 if(icon.isPage() && icon.getPage() != cursorIcon.getPage()) return;
                                 Icon otherCat = null;
                                 if(!cursorIcon.isPage()) {
@@ -582,9 +500,7 @@ public class GWarps extends GUI {
                                 }
                             }
                         } else if(e.isRightClick()) {
-                            if(cloning) {
-                                return;
-                            } else if(moving) {
+                            if(moving) {
                                 if(icon.isPage() && !cursorIcon.isPage()) {
                                     GWarps.this.page = icon;
                                     reinitialize();
@@ -606,15 +522,7 @@ public class GWarps extends GUI {
                                         }
                                     }, GWarps.this::open).open();
                                 } else {
-                                    if(p.getInventory().getItem(p.getInventory().getHeldItemSlot()) == null || p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType() == Material.AIR
-                                            || icon.getItem().getType() == p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType()) {
-                                        p.sendMessage(Lang.getPrefix() + Lang.get("No_Item_In_Hand"));
-                                        return;
-                                    }
-
-                                    icon.changeItem(p.getInventory().getItem(p.getInventory().getHeldItemSlot()));
-                                    GWarps.this.reinitialize();
-                                    updateInventory(p);
+                                    Lang.PREMIUM_CHAT(p);
                                 }
                             }
                         }
