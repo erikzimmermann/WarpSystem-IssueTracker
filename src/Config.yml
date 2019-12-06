@@ -181,7 +181,7 @@ WarpSystem:
       Enabled: true
       Costs: 500
     Range:
-      #Don't use to high y values! It will cause lags!!
+      #Don't use too high y values! It would cause lags!!
       Highest_Y:
         Nether: 126
         End: 80
