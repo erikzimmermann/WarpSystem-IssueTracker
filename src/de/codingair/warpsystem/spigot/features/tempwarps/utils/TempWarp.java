@@ -1,12 +1,12 @@
 package de.codingair.warpsystem.spigot.features.tempwarps.utils;
 
+import de.codingair.codingapi.tools.JSON.JSONObject;
+import de.codingair.codingapi.tools.JSON.JSONParser;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.Date;
@@ -288,14 +288,14 @@ public class TempWarp {
 
         json.put("Owner", this.owner.toString());
         json.put("LastKnownName", this.lastKnownName);
-        json.put("Location", this.location == null ? null : this.location.toJSONString(4));
+        json.put("Location", this.location);
         json.put("Name", this.name);
         json.put("Message", this.message);
-        json.put("BornDate", this.bornDate.getTime() + "");
-        json.put("StartDate", this.startDate.getTime() + "");
-        json.put("EndDate", this.endDate.getTime() + "");
-        json.put("ExpireDate", this.expireDate == null ? null : this.expireDate.getTime() + "");
-        json.put("Duration", getDuration() + "");
+        json.put("BornDate", this.bornDate);
+        json.put("StartDate", this.startDate);
+        json.put("EndDate", this.endDate);
+        json.put("ExpireDate", this.expireDate);
+        json.put("Duration", getDuration());
         json.put("isPublic", this.isPublic);
         json.put("TeleportCosts", this.teleportCosts);
         json.put("Paid", this.paid);
@@ -310,22 +310,22 @@ public class TempWarp {
         try {
             JSONObject json = (JSONObject) new JSONParser().parse(s);
 
-            UUID owner = UUID.fromString((String) json.get("Owner"));
-            String lastKnownName = (String) json.get("LastKnownName");
-            Location location = json.get("Location") == null ? null : Location.getByJSONString((String) json.get("Location"));
-            String name = (String) json.get("Name");
-            String teleportMessage = json.get("Message") == null ? null : (String) json.get("Message");
-            Date bornDate = new Date(Long.parseLong((String) json.get("BornDate")));
-            Date startDate = new Date(Long.parseLong((String) json.get("StartDate")));
-            Date endDate = new Date(Long.parseLong((String) json.get("EndDate")));
-            Date expireDate = json.get("ExpireDate") == null ? null : new Date(Long.parseLong((String) json.get("ExpireDate")));
-            int timeIntervals = Integer.parseInt(json.get("Duration") + "");
-            boolean isPublic = (boolean) json.get("isPublic");
-            int teleportCosts = Integer.parseInt(json.get("TeleportCosts") + "");
-            int paid = Integer.parseInt(json.get("Paid") + "");
-            int inactiveSales = Integer.parseInt(json.get("InactiveSales") + "");
-            String creatorKey = json.get("Key") == null ? null : (String) json.get("Key");
-            boolean notify = json.get("Notify") != null && (boolean) json.get("Notify");
+            UUID owner = UUID.fromString(json.get("Owner"));
+            String lastKnownName = json.get("LastKnownName");
+            Location location = json.getLocation("Location");
+            String name = json.get("Name");
+            String teleportMessage = json.get("Message");
+            Date bornDate = json.getDate("BornDate");
+            Date startDate = json.getDate("StartDate");
+            Date endDate = json.getDate("EndDate");
+            Date expireDate = json.getDate("ExpireDate");
+            int timeIntervals = json.getInteger("Duration");
+            boolean isPublic = json.getBoolean("isPublic");
+            int teleportCosts = json.getInteger("TeleportCosts");
+            int paid = json.getInteger("Paid");
+            int inactiveSales = json.getInteger("InactiveSales");
+            String creatorKey = json.get("Key");
+            boolean notify = json.getBoolean("Notify");
 
             TempWarp warp = new TempWarp(lastKnownName, owner, location, name, teleportMessage, bornDate, startDate, endDate, expireDate, timeIntervals, isPublic, teleportCosts, paid, inactiveSales);
             warp.setCreatorKey(creatorKey);

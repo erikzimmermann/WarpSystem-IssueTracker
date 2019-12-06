@@ -83,16 +83,15 @@ public class Icon extends FeatureObject {
     public boolean read(JSONObject json) throws Exception {
         super.read(json);
 
-        this.name = json.get("name") == null ? null : (String) json.get("name");
-        ItemBuilder builder = ItemBuilder.getFromJSON(json.getRaw("item"));
-        this.item = builder.getItem();
+        this.name = json.get("name");
+        this.item = json.getItemStack("item");
 
-        this.slot = Integer.parseInt(json.get("slot") + "");
+        this.slot = json.getInteger("slot") ;
 
         if(json.get("isCategory") != null) {
             this.isPage = Boolean.parseBoolean(json.get("isCategory") + "");
         } else {
-            this.isPage = Boolean.parseBoolean(json.get("isPage") + "");
+            this.isPage = json.getBoolean("isPage");
         }
 
         if(json.get("category") != null) {
@@ -108,9 +107,8 @@ public class Icon extends FeatureObject {
     public void write(JSONObject json) {
         super.write(json);
 
-        ItemBuilder builder = new ItemBuilder(this.item);
         json.put("name", this.name);
-        json.put("item", builder.toJSONString());
+        json.put("item", this.item);
         json.put("slot", this.slot);
         json.put("isPage", this.isPage);
         json.put("page", this.page == null ? null : this.page.getName());

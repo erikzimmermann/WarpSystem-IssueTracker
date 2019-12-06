@@ -1,10 +1,10 @@
 package de.codingair.warpsystem.spigot.features.tempwarps.utils;
 
+import de.codingair.codingapi.tools.JSON.JSONObject;
+import de.codingair.codingapi.tools.JSON.JSONParser;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class Key {
@@ -72,7 +72,7 @@ public class Key {
 
         json.put("Name", this.name);
         json.put("Time", getTime());
-        json.put("Item", new ItemBuilder(this.item).toJSONString());
+        json.put("Item", this.item);
 
         return json.toJSONString();
     }
@@ -81,9 +81,9 @@ public class Key {
         try {
             JSONObject json = (JSONObject) new JSONParser().parse(s);
 
-            String name = (String) json.get("Name");
-            int time = Integer.parseInt(json.get("Time") + "");
-            ItemStack item = ItemBuilder.getFromJSON((String) json.get("Item")).getItem();
+            String name = json.get("Name");
+            int time = json.getInteger("Time");
+            ItemStack item = json.getItemStack("Item");
 
             return new Key(name, time, item);
         } catch(ParseException e) {
