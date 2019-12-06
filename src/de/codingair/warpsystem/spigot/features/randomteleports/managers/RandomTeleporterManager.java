@@ -21,6 +21,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +34,11 @@ public class RandomTeleporterManager implements Manager {
     private boolean worldBorder;
     private List<Biome> biomeList;
     private List<World> worldList = new ArrayList<>();
-    private List<Player> searching = new ArrayList<>();
+    private HashMap<Player, RandomLocationCalculator> searching = new HashMap<>();
+
+    private int worldHeight;
+    private int netherHeight;
+    private int endHeight;
 
     private List<Location> interactBlocks = new ArrayList<>();
     private InteractListener listener = new InteractListener();
@@ -51,6 +56,10 @@ public class RandomTeleporterManager implements Manager {
         this.costs = config.getDouble("WarpSystem.RandomTeleport.Buyable.Costs", 500.0);
         this.minRange = config.getDouble("WarpSystem.RandomTeleport.Range.Min", 1000);
         this.maxRange = config.getDouble("WarpSystem.RandomTeleport.Range.Max", 10000);
+
+        this.worldHeight = config.getInt("WarpSystem.RandomTeleport.Range.Highest_Y.Normal_World", 72);
+        this.netherHeight = config.getInt("WarpSystem.RandomTeleport.Range.Highest_Y.Nether", 126);
+        this.endHeight = config.getInt("WarpSystem.RandomTeleport.Range.Highest_Y.End", 72);
 
         if(config.getBoolean("WarpSystem.RandomTeleport.Worlds.Enabled", false)) {
             for(String name : config.getStringList("WarpSystem.RandomTeleport.Worlds.List")) {
@@ -191,17 +200,20 @@ public class RandomTeleporterManager implements Manager {
     }
 
     public void tryToTeleport(Player player) {
+        RandomLocationCalculator c;
+        if((c = searching.get(player)) != null) {
+            if(System.currentTimeMillis() - c.getLastReaction() > 5000) {
+                searching.remove(player);
+                player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_No_Location_Found"));
+            } else player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Already_Searching"));
+
+            return;
+        }
+
         if(!canTeleport(player)) {
             player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_No_Teleports_Left"));
             return;
         }
-
-        if(searching.contains(player)) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Already_Searching"));
-            return;
-        }
-
-        searching.add(player);
 
         RandomLocationCalculator t = new RandomLocationCalculator(player, new Callback<Location>() {
             @Override
@@ -224,6 +236,9 @@ public class RandomTeleporterManager implements Manager {
                 searching.remove(player);
             }
         });
+
+        player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Searching"));
+        searching.put(player, t);
         Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), t);
     }
 
@@ -313,5 +328,17 @@ public class RandomTeleporterManager implements Manager {
 
     public List<World> getWorldList() {
         return worldList;
+    }
+
+    public int getWorldHeight() {
+        return worldHeight;
+    }
+
+    public int getNetherHeight() {
+        return netherHeight;
+    }
+
+    public int getEndHeight() {
+        return endHeight;
     }
 }
