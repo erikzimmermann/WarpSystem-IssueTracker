@@ -11,7 +11,6 @@ import de.codingair.codingapi.player.gui.hotbar.components.SyncItemComponent;
 import de.codingair.codingapi.player.gui.inventory.gui.Skull;
 import de.codingair.codingapi.server.Sound;
 import de.codingair.codingapi.server.SoundData;
-import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
@@ -23,8 +22,6 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.features.effectportals.EffectPortalEditor;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.PortalDestinationAdapter;
-import de.codingair.warpsystem.spigot.features.utils.guis.choosedestination.ChooseDestinationGUI;
-import de.codingair.warpsystem.transfer.packets.spigot.RequestServerStatusPacket;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -48,22 +45,10 @@ public class Teleport extends HotbarGUI {
         if(getPortal().getDestination().getId() != null && getPortal().getDestination().getAdapter() != null) {
             if(getPortal().getDestination().getAdapter() instanceof PortalDestinationAdapter) {
                 destination = Lang.get("Effect_Portal");
-            } else {
-                switch(getPortal().getDestination().getType()) {
-                    case SimpleWarp:
-                        destination = getPortal().getDestination().getId() + " §8(§b" + Lang.get("SimpleWarp") + "§8)";
-                        break;
-
-                    case GlobalWarp:
-                        destination = getPortal().getDestination().getId() + " §8(§b" + Lang.get("GlobalWarp") + "§8)";
-                        break;
-                }
             }
         }
 
         setItem(2, new ItemComponent(new ItemBuilder(XMaterial.ENDER_EYE).setName("§7" + Lang.get("Destination") + ": §e" + (destination == null ? "§c-" : destination)).getItem(), new ItemListener() {
-            private boolean removed = false;
-
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 if(API.getRemovable(player, AnvilGUI.class) != null) return;
@@ -125,7 +110,6 @@ public class Teleport extends HotbarGUI {
                                     onUnhover(gui, ic, ic, player);
                                     onHover(gui, ic, ic, player);
 
-                                    removed = true;
                                     updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §e" + Lang.get("Effect_Portal"));
 
                                     e.setClose(true);
@@ -145,56 +129,10 @@ public class Teleport extends HotbarGUI {
                         getPortal().setLink(null);
 
                         getPortal().update();
-                        removed = true;
                         updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §c-");
                         onHover(gui, ic, ic, player);
                     } else {
-                        new ChooseDestinationGUI(player, new Callback<Destination>() {
-                            @Override
-                            public void accept(Destination destination) {
-                                if(destination == null) return;
-                                if(getPortal().getDestination().getType() == DestinationType.EffectPortal) {
-                                    EffectPortal link = getPortal().getLink();
-                                    getPortal().setLink(null);
-                                    link.destroy();
-                                }
-
-                                getPortal().getDestination().apply(destination);
-                                getPortal().update();
-                                onUnhover(gui, ic, ic, player);
-                                onHover(gui, ic, ic, player);
-
-                                String dest = null;
-                                switch(getPortal().getDestination().getType()) {
-                                    case SimpleWarp:
-                                        dest = getPortal().getDestination().getId() + " §8(§b" + Lang.get("SimpleWarp") + "§8)";
-                                        break;
-
-                                    case GlobalWarp:
-                                        dest = getPortal().getDestination().getId() + " §8(§b" + Lang.get("GlobalWarp") + "§8)";
-                                        break;
-
-                                    case Server:
-                                        removed = false;
-                                        dest = getPortal().getDestination().getId() + " §8(§b" + Lang.get("Server") + " §7- " + Lang.get("Pinging") + "...§8)";
-                                        WarpSystem.getInstance().getDataHandler().send(new RequestServerStatusPacket(getPortal().getDestination().getId(), new Callback<Boolean>() {
-                                            @Override
-                                            public void accept(Boolean online) {
-                                                if(removed) {
-                                                    removed = false;
-                                                    return;
-                                                }
-
-                                                String newName = getPortal().getDestination().getId() + " §8(§b" + Lang.get("Server") + " §7- " + (online ? "§a" + Lang.get("Online") : "§c" + Lang.get("Offline")) + "§8)";
-                                                updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §e" + newName);
-                                            }
-                                        }));
-                                        break;
-                                }
-
-                                updateDisplayName(ic, "§7" + Lang.get("Destination") + ": §e" + (dest == null ? "§c-" : dest));
-                            }
-                        }).open();
+                        Lang.PREMIUM_CHAT(player);
                     }
                 }
             }
@@ -222,37 +160,16 @@ public class Teleport extends HotbarGUI {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 if(clickType == ClickType.LEFT_CLICK || clickType == ClickType.RIGHT_CLICK) {
-                    AnvilGUI.openAnvil(WarpSystem.getInstance(), player, new AnvilListener() {
-                        @Override
-                        public void onClick(AnvilClickEvent e) {
-                            if(e.getSlot() == AnvilSlot.OUTPUT) {
-
-                                if(e.getInput() == null) {
-                                    player.sendMessage(Lang.getPrefix() + "§c" + Lang.get("Enter_Something"));
-                                    return;
-                                }
-
-                                if(clickType == ClickType.LEFT_CLICK || !getPortal().hasDestinationPortal()) getPortal().setName(e.getInput());
-                                else getPortal().getLink().setName(e.getInput());
-
-                                onHover(gui, ic, ic, player);
-                                e.setClose(true);
-                            }
-                        }
-
-                        @Override
-                        public void onClose(AnvilCloseEvent e) {
-                        }
-                    }, new ItemBuilder(XMaterial.NAME_TAG).setName(clickType == ClickType.LEFT_CLICK || !getPortal().hasDestinationPortal() ? getPortal().getName() : getPortal().getLink().getName()).getItem());
+                    Lang.PREMIUM_CHAT(player);
                 }
             }
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
                 if(getPortal().hasDestinationPortal())
-                    MessageAPI.sendActionBar(getPlayer(), EffectPortalEditor.ACTION_BAR(Lang.get("Name"), "§7(§e" + getPortal().getName() + "§7) §e1. " + Lang.get("Effect_Portal"), "2. " + Lang.get("Effect_Portal") + " §7(§e" + getPortal().getLink().getName() + "§7)"), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                    MessageAPI.sendActionBar(getPlayer(), EffectPortalEditor.ACTION_BAR(Lang.get("Name") + Lang.PREMIUM_LORE, "§7(§e" + getPortal().getName() + "§7) §e1. " + Lang.get("Effect_Portal"), "2. " + Lang.get("Effect_Portal") + " §7(§e" + getPortal().getLink().getName() + "§7)"), WarpSystem.getInstance(), Integer.MAX_VALUE);
                 else
-                    MessageAPI.sendActionBar(getPlayer(), "§7" + Lang.get("Leftclick") + ": §e" + Lang.get("Change"), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                    MessageAPI.sendActionBar(getPlayer(), "§7" + Lang.get("Leftclick") + ": §e" + Lang.get("Change") + Lang.PREMIUM_LORE, WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
