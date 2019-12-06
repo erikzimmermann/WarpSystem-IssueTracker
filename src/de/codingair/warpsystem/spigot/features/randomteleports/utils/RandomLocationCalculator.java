@@ -89,7 +89,6 @@ public class RandomLocationCalculator implements Runnable {
 
     private int getHighestY(World w) {
         switch(w.getEnvironment()) {
-            case NORMAL: return RandomTeleporterManager.getInstance().getWorldHeight();
             case NETHER: return RandomTeleporterManager.getInstance().getNetherHeight();
             case THE_END: return RandomTeleporterManager.getInstance().getEndHeight();
             default: return 72;

@@ -36,7 +36,6 @@ public class RandomTeleporterManager implements Manager {
     private List<World> worldList = new ArrayList<>();
     private HashMap<Player, RandomLocationCalculator> searching = new HashMap<>();
 
-    private int worldHeight;
     private int netherHeight;
     private int endHeight;
 
@@ -57,7 +56,6 @@ public class RandomTeleporterManager implements Manager {
         this.minRange = config.getDouble("WarpSystem.RandomTeleport.Range.Min", 1000);
         this.maxRange = config.getDouble("WarpSystem.RandomTeleport.Range.Max", 10000);
 
-        this.worldHeight = config.getInt("WarpSystem.RandomTeleport.Range.Highest_Y.Normal_World", 72);
         this.netherHeight = config.getInt("WarpSystem.RandomTeleport.Range.Highest_Y.Nether", 126);
         this.endHeight = config.getInt("WarpSystem.RandomTeleport.Range.Highest_Y.End", 72);
 
@@ -328,10 +326,6 @@ public class RandomTeleporterManager implements Manager {
 
     public List<World> getWorldList() {
         return worldList;
-    }
-
-    public int getWorldHeight() {
-        return worldHeight;
     }
 
     public int getNetherHeight() {
