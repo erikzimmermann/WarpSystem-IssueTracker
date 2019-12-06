@@ -25,18 +25,18 @@ public class Buff implements Serializable {
     @Override
     public boolean read(JSONObject json) {
         this.type = PotionEffectType.getByName(json.get("type"));
-        this.level = Integer.parseInt(json.get("level") + "");
-        this.timeBeforeTeleport = Integer.parseInt(json.get("timebeforeteleport") + "");
-        this.timeAfterTeleport = Integer.parseInt(json.get("timeafterteleport") + "");
+        this.level = json.getInteger("level");
+        this.timeBeforeTeleport = json.getInteger("timebeforeteleport");
+        this.timeAfterTeleport = json.getInteger("timeafterteleport");
         return true;
     }
 
     @Override
     public void write(JSONObject json) {
         json.put("type", this.type.getName());
-        json.put("level", this.level + "");
-        json.put("timebeforeteleport", this.timeBeforeTeleport + "");
-        json.put("timeafterteleport", this.timeAfterTeleport + "");
+        json.put("level", this.level);
+        json.put("timebeforeteleport", this.timeBeforeTeleport);
+        json.put("timeafterteleport", this.timeAfterTeleport);
     }
 
     @Override

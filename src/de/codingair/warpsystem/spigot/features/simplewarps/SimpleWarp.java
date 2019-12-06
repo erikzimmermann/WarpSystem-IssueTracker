@@ -1,13 +1,13 @@
 package de.codingair.warpsystem.spigot.features.simplewarps;
 
+import de.codingair.codingapi.tools.JSON.JSONObject;
+import de.codingair.codingapi.tools.JSON.JSONParser;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.features.simplewarps.utils.actions.Action;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
@@ -152,9 +152,9 @@ public class SimpleWarp {
         JSONObject json = (JSONObject) new JSONParser().parse(s);
 
         this.name = ((String) json.get("Name")).replace(" ", "_");
-        this.permission = json.get("Permission") == null ? null : (String) json.get("Permission");
+        this.permission = json.get("Permission");
 
-        JSONArray array = (JSONArray) new JSONParser().parse((String) json.get("Actions"));
+        JSONArray array = json.get("Actions");
         this.actionList = new ArrayList<>();
         for(Object o : array) {
             String data = (String) o;
@@ -165,12 +165,12 @@ public class SimpleWarp {
             }
         }
 
-        this.location = Location.getByJSONString((String) json.get("Location"));
-        this.created = new Date(Long.parseLong(json.get("Created") + ""));
-        this.lastChange = new Date(Long.parseLong(json.get("LastChange") + ""));
-        this.lastChanger = (String) json.get("LastChanger");
-        this.teleports = Integer.parseInt(json.get("Teleports") + "");
-        this.costs = Double.parseDouble(json.get("Costs") + "");
+        this.location = json.getLocation("Location");
+        this.created = new Date(json.getLong("Created"));
+        this.lastChange = new Date(json.getLong("LastChange"));
+        this.lastChanger = json.get("LastChanger");
+        this.teleports = json.getInteger("Teleports");
+        this.costs = json.getDouble("Costs");
     }
 
     public void apply(SimpleWarp warp) {

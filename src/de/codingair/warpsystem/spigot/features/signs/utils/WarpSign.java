@@ -49,7 +49,7 @@ public class WarpSign extends FeatureObject {
         if(json.get("Loc") != null) {
             this.location = Location.getByJSONString(json.getRaw("Loc"));
         } else if(json.get("location") != null) {
-            this.location = Location.getByJSONString(json.getRaw("location"));
+            this.location = json.getLocation("location");
         }
 
         if(json.get("Destination") != null) {

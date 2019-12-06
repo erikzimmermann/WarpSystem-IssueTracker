@@ -336,7 +336,7 @@ public class CTempWarps extends CommandBuilder {
                     return false;
                 }
 
-                TempWarpManager.getManager().create((Player) sender);
+                TempWarpManager.getManager().create((Player) sender, args.length == 2 ? args[1] : null);
                 return false;
             }
         });
