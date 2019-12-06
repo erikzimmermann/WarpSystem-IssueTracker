@@ -43,11 +43,7 @@ public class SimpleWarpAdapter implements DestinationAdapter {
 
             if(silent) TeleportListener.TELEPORTS.put(player, finalLoc);
             player.teleport(finalLoc);
-
             warp.increaseTeleports();
-
-            if(message != null)
-                player.sendMessage((message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
 
             if(callback != null) callback.accept(TeleportResult.TELEPORTED);
             return true;

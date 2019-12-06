@@ -27,9 +27,11 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -195,7 +197,7 @@ public class Teleport {
     public void teleport() {
         WarpSystem.getInstance().getTeleportManager().getTeleports().remove(this);
 
-        Callback teleport = new Callback() {
+        Callback<?> teleport = new Callback<Object>() {
             private boolean used = false;
 
             @Override
@@ -214,12 +216,15 @@ public class Teleport {
                 if(seconds == 0) preLoadChunks(1);
 
                 Location from = player.getLocation();
-
-                if(!destination.teleport(player, message, displayName, permission == null, silent, costs, callback)) {
-                    return;
-                }
-
                 Bukkit.getPluginManager().registerEvents(new Listener() {
+                    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+                    public void onTeleport(PlayerTeleportEvent e) {
+                        if(player.equals(e.getPlayer()) && e.isCancelled()) {
+                            player.sendMessage(Lang.getPrefix() + Lang.get("Teleport_Cancelled"));
+                            HandlerList.unregisterAll(this);
+                        }
+                    }
+
                     @EventHandler
                     public void onTeleported(PlayerTeleportAcceptEvent e) {
                         if(player.equals(e.getPlayer())) {
@@ -229,12 +234,13 @@ public class Teleport {
                                 PlayerTeleportedEvent event = new PlayerTeleportedEvent(player, from, origin, afterEffects);
                                 Bukkit.getPluginManager().callEvent(event);
 
+                                destination.sendMessage(player, message, displayName, costs);
                                 if(event.isRunAfterEffects()) playAfterEffects(player);
                                 if(teleportSound != null) teleportSound.play(player);
                                 if(velocity != null) player.setVelocity(velocity);
-                            }
 
-                            HandlerList.unregisterAll(this);
+                                HandlerList.unregisterAll(this);
+                            }
                         }
                     }
 
@@ -243,6 +249,8 @@ public class Teleport {
                         if(player.equals(e.getPlayer())) HandlerList.unregisterAll(this);
                     }
                 }, WarpSystem.getInstance());
+
+                if(!destination.teleport(player, message, displayName, permission == null, silent, costs, callback)) return;
             }
         };
 
