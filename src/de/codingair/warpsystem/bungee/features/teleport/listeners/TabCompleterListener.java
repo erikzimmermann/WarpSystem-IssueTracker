@@ -20,31 +20,7 @@ public class TabCompleterListener implements Listener {
 
         TeleportCommandOptions options = TeleportManager.getInstance().getOptions(((ProxiedPlayer) e.getSender()).getServer().getInfo());
 
-        if(cmd.equalsIgnoreCase("teleport") || cmd.equalsIgnoreCase("tp")) {
-            e.getSuggestions().clear();
-            if(options == null || !options.isTp()) return;
-            if(!((ProxiedPlayer) e.getSender()).hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) return;
-
-            int deep = args.length - 1;
-
-            if(e.getCursor().endsWith(" ")) {
-                if(deep == 1 && Character.isDigit(args[1].charAt(0)) && BungeeCord.getInstance().getPlayer(args[1]) == null) return;
-                if(deep == 0 || deep == 1) {
-                    for(ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
-                        e.getSuggestions().add(player.getName());
-                    }
-                }
-            } else {
-                if(deep == 1 || deep == 2) {
-                    String last = args[deep];
-
-                    for(ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
-                        if(!player.getName().toLowerCase().startsWith(last.toLowerCase())) continue;
-                        e.getSuggestions().add(player.getName());
-                    }
-                }
-            }
-        } else if(cmd.equalsIgnoreCase("tpa")) {
+        if(cmd.equalsIgnoreCase("tpa")) {
             e.getSuggestions().clear();
             if(options == null || !options.isTpa()) return;
             if(!((ProxiedPlayer) e.getSender()).hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPA)) return;
@@ -81,21 +57,6 @@ public class TabCompleterListener implements Listener {
                     )) continue;
                     e.getSuggestions().add(player.getName());
                 }
-            }
-        } else if(cmd.equalsIgnoreCase("tpall")) {
-            e.getSuggestions().clear();
-            if(options == null || !options.isTpaAll()) return;
-            if(!((ProxiedPlayer) e.getSender()).hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TPALL)) return;
-
-            e.getSuggestions().add("true");
-            e.getSuggestions().add("false");
-        } else if(cmd.equalsIgnoreCase("tphere")) {
-            e.getSuggestions().clear();
-            if(options == null || !options.isTp()) return;
-            if(!((ProxiedPlayer) e.getSender()).hasPermission(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) return;
-
-            for(ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
-                e.getSuggestions().add(player.getName());
             }
         }
     }
