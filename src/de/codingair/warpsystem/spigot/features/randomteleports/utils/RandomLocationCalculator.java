@@ -24,6 +24,7 @@ public class RandomLocationCalculator implements Runnable {
     private PermissionPlayer check;
     private Callback<Location> callback;
     private long start;
+    private long lastReaction = 0;
 
     public RandomLocationCalculator(Player player, Callback<Location> callback) {
         this.player = player;
@@ -62,18 +63,13 @@ public class RandomLocationCalculator implements Runnable {
         double maxRange = RandomTeleporterManager.getInstance().getMaxRange();
 
         Random r = new Random();
-        int i = 0;
 
         long maxTime = (long) ((maxRange - minRange) / 2);
         if(maxTime < 1000) maxTime = 1000;
         if(maxTime > 5000) maxTime = 5000;
 
         do {
-            if(i == 0) i++;
-            else if(i == 1) {
-                player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Searching"));
-                i++;
-            }
+            lastReaction = System.currentTimeMillis();
 
             double xNext = r.nextDouble() * (maxRange - minRange) + minRange;
             double zNext = r.nextDouble() * (maxRange - minRange) + minRange;
@@ -91,20 +87,29 @@ public class RandomLocationCalculator implements Runnable {
         return location;
     }
 
+    private int getHighestY(World w) {
+        switch(w.getEnvironment()) {
+            case NORMAL: return RandomTeleporterManager.getInstance().getWorldHeight();
+            case NETHER: return RandomTeleporterManager.getInstance().getNetherHeight();
+            case THE_END: return RandomTeleporterManager.getInstance().getEndHeight();
+            default: return 72;
+        }
+    }
+
     private int calculateYCoord(Location location) {
         Location loc = location.clone();
-        loc.setY(72);
+        if(location.getWorld().getEnvironment() != World.Environment.NORMAL) loc.setY(getHighestY(loc.getWorld()));
 
         if(location.getWorld().getEnvironment() == World.Environment.NETHER) {
             boolean underRoof = false;
             int free = 0;
 
-            while(free > 2 && underRoof) {
+            while(free < 2) {
                 if(underRoof) {
                     if(loc.getBlock().getType() == Material.AIR) free++;
-                } else if(loc.getBlock().getType() != Material.AIR) underRoof = true;
+                } else if(loc.getBlock().getType() != Material.AIR && !loc.getBlock().getType().name().contains("VOID")) underRoof = true;
 
-                loc.setY(loc.getY() - 1);
+                loc.setY(loc.getY() - (underRoof ? 1 : 5));
             }
 
             while(loc.getBlock().getType() == Material.AIR) {
@@ -140,16 +145,18 @@ public class RandomLocationCalculator implements Runnable {
     }
 
     private boolean correct(Location location, boolean safety) throws InterruptedException {
-        if(safety && !isSafe(location)) return false;
         if(RandomTeleporterManager.getInstance().getBiomeList() != null && !RandomTeleporterManager.getInstance().getBiomeList().contains(location.getBlock().getBiome())) return false;
         if(RandomTeleporterManager.getInstance().isProtectedRegions() && isProtected(location)) return false;
         if(RandomTeleporterManager.getInstance().isWorldBorder() && !isInsideOfWorldBorder(location)) return false;
 
-        if(location.getBlock().getType().name().toLowerCase().contains("lava")) return false;
-        Location below = location.clone();
-        below.setY(below.getY() - 1);
+        if(safety) {
+            Location above = location.clone();
+            above.setY(above.getY() + 1);
+            Location below = location.clone();
+            below.setY(below.getY() - 1);
 
-        return !below.getBlock().getType().name().toLowerCase().contains("lava");
+            return above.getBlock().getType() == Material.AIR && isSafe(location) && isSafe(below);
+        } else return true;
     }
 
     private boolean isSafe(Location location) {
@@ -160,6 +167,7 @@ public class RandomLocationCalculator implements Runnable {
         unsafe.add("VOID");
         unsafe.add("LAVA");
         unsafe.add("FIRE");
+        unsafe.add("MAGMA");
 
         for(String s : unsafe) {
             if(b.getType().name().toLowerCase().contains(s.toLowerCase())) return false;
@@ -188,5 +196,9 @@ public class RandomLocationCalculator implements Runnable {
             this.wait();
             return event.isCancelled();
         }
+    }
+
+    public long getLastReaction() {
+        return lastReaction;
     }
 }
