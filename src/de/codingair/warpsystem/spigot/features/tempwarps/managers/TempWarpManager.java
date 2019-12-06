@@ -386,6 +386,10 @@ public class TempWarpManager implements Manager, Ticker {
     }
 
     public void create(Player player) {
+        create(player, null);
+    }
+
+    public void create(Player player, String name) {
         Value<Key> value = null;
         if(keys) {
             List<String> keyList = TempWarpManager.getManager().getKeys(player);
@@ -402,6 +406,8 @@ public class TempWarpManager implements Manager, Ticker {
 
         if(keys) warp.setDuration(value.getValue().getTime());
         else warp.setDuration(minTime);
+
+        if(name != null) warp.setName(name);
         warp.setPublic(this.firstPublic);
 
         new GCreate(player, warp, value).open();

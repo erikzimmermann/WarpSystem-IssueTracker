@@ -113,9 +113,9 @@ public class FeatureObject implements Serializable {
     public boolean read(JSONObject json) throws Exception {
         destroy();
 
-        this.disabled = Boolean.parseBoolean(json.get("disabled") + "");
-        this.permission = json.get("permission") == null ? null : (String) json.get("permission");
-        this.skip = json.get("skip", false, false);
+        this.disabled = json.getBoolean("disabled");
+        this.permission = json.get("permission");
+        this.skip = json.getBoolean("skip");
 
         if(this.actions == null) this.actions = new ArrayList<>();
 
@@ -131,7 +131,7 @@ public class FeatureObject implements Serializable {
                     throw new IconReadException("Could not parse action object.", e);
                 }
 
-                int id = j.get("id", 0);
+                int id = j.getInteger("id");
                 String validData = j.getRaw("value");
 
                 Action a = Action.getById(id);
@@ -173,7 +173,7 @@ public class FeatureObject implements Serializable {
 
         JSONArray actionList = new JSONArray();
         if(this.actions != null) {
-            for(ActionObject action : this.actions) {
+            for(ActionObject<?> action : this.actions) {
                 JSONObject jo = new JSONObject();
                 jo.put("id", action.getType().getId());
                 jo.put("value", action.write());

@@ -66,7 +66,7 @@ public class EffectPortalEditor implements Removable {
 
     @Override
     public void destroy() {
-        exit(false);
+        exit(true);
     }
 
     @Override

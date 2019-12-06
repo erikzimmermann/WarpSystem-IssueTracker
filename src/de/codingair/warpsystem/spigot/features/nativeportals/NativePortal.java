@@ -20,7 +20,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
 
 import java.util.ArrayList;
 import java.util.Collections;

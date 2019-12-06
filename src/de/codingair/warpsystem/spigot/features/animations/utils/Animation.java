@@ -40,7 +40,7 @@ public class Animation implements Serializable {
         particleParts.clear();
 
         this.name = json.get("name");
-        this.teleportLoc = json.get("teleportlocation") == null ? null : Location.getByJSONString(json.get("teleportlocation"));
+        this.teleportLoc = json.getLocation("teleportlocation");
 
         JSONArray buffArray = json.get("bufflist", new JSONArray());
         for(Object o : buffArray) {
@@ -70,7 +70,7 @@ public class Animation implements Serializable {
     @Override
     public void write(JSONObject json) {
         json.put("name", this.name);
-        json.put("teleportlocation", this.teleportLoc == null ? null : this.teleportLoc.toJSONString(4));
+        json.put("teleportlocation", this.teleportLoc);
 
         JSONArray buffArray = new JSONArray();
         for(Buff buff : this.buffList) {

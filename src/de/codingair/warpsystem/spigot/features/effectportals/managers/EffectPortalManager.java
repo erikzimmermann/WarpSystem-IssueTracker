@@ -44,7 +44,7 @@ public class EffectPortalManager implements Manager {
                 }
             }
 
-            WarpSystem.log("    ...got " + this.effectPortals.size() + " Portal(s)");
+            WarpSystem.log("    ...got " + this.effectPortals.size() + " EffectPortal(s)");
         }
 
         int temp = this.effectPortals.size();
@@ -61,7 +61,7 @@ public class EffectPortalManager implements Manager {
             }
         }
 
-        WarpSystem.log("    ...got " + (effectPortals.size() - temp) + " Portal(s)");
+        WarpSystem.log("    ...got " + (effectPortals.size() - temp) + " EffectPortal(s)");
 
         //Check duplicates
         List<EffectPortal> duplicates = new ArrayList<>();
@@ -78,7 +78,7 @@ public class EffectPortalManager implements Manager {
         }
 
         if(!duplicates.isEmpty()) {
-            WarpSystem.log("    > " + duplicates.size() + " duplicated Portal(s) - Removing...");
+            WarpSystem.log("    > " + duplicates.size() + " duplicated EffectPortal(s) - Removing...");
             this.effectPortals.removeAll(duplicates);
             duplicates.clear();
         }
@@ -140,7 +140,7 @@ public class EffectPortalManager implements Manager {
         file.getConfig().set("Portals", data);
         file.saveConfig();
 
-        if(!saver) WarpSystem.log("    ...saved " + data.size() + " Portal(s)");
+        if(!saver) WarpSystem.log("    ...saved " + data.size() + " EffectPortal(s)");
     }
 
     @Override

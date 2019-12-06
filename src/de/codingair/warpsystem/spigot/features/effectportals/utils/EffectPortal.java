@@ -247,15 +247,15 @@ public class EffectPortal extends FeatureObject implements Removable {
                 setUseLink(true);
             } else {
                 this.animation = AnimationManager.getInstance().getAnimation(json.get("ep.anim.name"));
-                this.teleportSound = json.get("ep.sound.type") == null ? new SoundData(Sound.ENDERMAN_TELEPORT, 0.7F, 1F) : new SoundData(Sound.valueOf(json.get("ep.sound.type")), (float) (double) json.get("ep.sound.volume", 1D), (float) (double) json.get("ep.sound.pitch", 1D));
-                linkHelper = json.get("ep.link") == null ? null : new Location((org.json.simple.JSONObject) json.get("ep.link"));
+                this.teleportSound = json.get("ep.sound.type") == null ? new SoundData(Sound.ENDERMAN_TELEPORT, 0.7F, 1F) : new SoundData(json.get("ep.sound.type", Sound.class), json.getFloat("ep.sound.volume"), json.getFloat("ep.sound.pitch"));
+                linkHelper = json.getLocation("ep.link");
             }
 
-            this.location = Location.getByJSONString(json.getRaw("ep.loc"));
+            this.location = json.getLocation("ep.loc");
             this.name = json.get("ep.name");
             this.holoText = json.get("ep.holo.text");
             this.holoStatus = json.getBoolean("ep.holo.state");
-            this.holoPos = json.get("ep.holo.pos") == null ? null : new Location((org.json.simple.JSONObject) json.get("ep.holo.pos"));
+            this.holoPos = json.getLocation("ep.holo.pos");
         }
 
         this.holoPos.setYaw(0);
@@ -271,17 +271,17 @@ public class EffectPortal extends FeatureObject implements Removable {
         if(!useLink()) {
             //main
             json.put("ep.anim.name", this.animation == null ? null : this.animation.getName());
-            json.put("ep.sound.type", teleportSound == null ? null : teleportSound.getSound().name());
+            json.put("ep.sound.type", teleportSound == null ? null : teleportSound.getSound());
             json.put("ep.sound.volume", teleportSound == null ? null : teleportSound.getVolume());
             json.put("ep.sound.pitch", teleportSound == null ? null : teleportSound.getPitch());
-            json.put("ep.link", this.link == null ? null : this.link.getLocation().toJSON(4));
+            json.put("ep.link", this.link == null ? null : this.link.getLocation());
         }
 
-        json.put("ep.loc", this.location.toJSONString(4));
+        json.put("ep.loc", this.location);
         json.put("ep.name", this.name);
         json.put("ep.holo.state", this.holoStatus);
         json.put("ep.holo.text", this.holoText);
-        json.put("ep.holo.pos", this.holoPos.toJSON(4));
+        json.put("ep.holo.pos", this.holoPos);
     }
 
     @Override

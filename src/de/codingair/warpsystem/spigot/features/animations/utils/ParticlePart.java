@@ -42,8 +42,8 @@ public class ParticlePart implements Serializable {
     public boolean read(JSONObject json) {
         animation = AnimationType.getById(json.get("animation", 0));
         particle = Particle.getById(json.get("particle", 26));
-        radius = json.get("radius", 0D);
         height = json.get("height", 0D);
+        radius = json.get("radius", 0D);
         return true;
     }
 
