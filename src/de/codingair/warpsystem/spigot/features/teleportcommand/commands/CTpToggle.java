@@ -4,10 +4,9 @@ import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.ad.features.utils.Feature;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class CTpToggle extends CommandBuilder {
     public CTpToggle() {
@@ -24,14 +23,13 @@ public class CTpToggle extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
+                Lang.PREMIUM_CHAT(sender);
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                if(TeleportCommandManager.getInstance().toggleDenyForceTps((Player) sender))
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Teleports_toggled_disabling"));
-                else
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Teleports_toggled_enabling"));
+                Lang.PREMIUM_CHAT(sender);
+                WarpSystem.getInstance().getAdvertisementManager().sendDisableMessage(sender, Feature.TELEPORT_COMMANDS);
                 return false;
             }
         }.setOnlyPlayers(true), true);
