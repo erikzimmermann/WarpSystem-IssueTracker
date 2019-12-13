@@ -151,7 +151,7 @@ public class WarpSystem extends JavaPlugin {
 
             PERMISSION_ADMIN = this.fileManager.getFile("Config").getConfig().getString("WarpSystem.Admin.Permission", "WarpSystem.Admin");
 
-            this.runningFirstTime = !fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "2.1.0").equals(getDescription().getVersion()) ? new ArrayList<>() : null;
+            this.runningFirstTime = fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "0").equals("0") ? new ArrayList<>() : null;
             if(this.runningFirstTime()) createBackup();
 
             log("Loading features");
@@ -264,10 +264,8 @@ public class WarpSystem extends JavaPlugin {
     }
 
     private void afterOnEnable() {
-        Bukkit.getScheduler().runTask(this, () -> {
-            //update command dispatcher for players to synchronize CommandList
-            updateCommandList();
-        });
+        //update command dispatcher for players to synchronize CommandList
+        Bukkit.getScheduler().runTask(this, this::updateCommandList);
     }
 
     private void updateCommandList() {
@@ -527,9 +525,6 @@ public class WarpSystem extends JavaPlugin {
 
             if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && this.runningFirstTime() && !this.runningFirstTime.contains(player.getName())) {
                 this.runningFirstTime.add(player.getName());
-                ConfigFile file = fileManager.getFile("Config");
-                file.getConfig().set("Do_Not_Edit.Last_Version", getDescription().getVersion());
-                file.saveConfig();
 
                 FancyMessage message = new FancyMessage(player, MessageTypes.INFO_MESSAGE, true);
                 message.addMessages("                         §c§l§n" + getDescription().getName() + " §c- §l" + getDescription().getVersion());
@@ -544,6 +539,12 @@ public class WarpSystem extends JavaPlugin {
                 message.addMessages("");
                 message.addMessages("    §bCodingAir");
                 message.send();
+            }
+
+            ConfigFile file = fileManager.getFile("Config");
+            if(!file.getConfig().getString("Do_Not_Edit.Last_Version").equals(getDescription().getVersion())) {
+                file.getConfig().set("Do_Not_Edit.Last_Version", getDescription().getVersion());
+                file.saveConfig();
             }
         }
     }
