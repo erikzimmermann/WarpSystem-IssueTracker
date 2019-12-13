@@ -75,11 +75,17 @@ public class NativePortal extends FeatureObject {
     @Override
     public boolean read(JSONObject json) throws Exception {
         super.read(json);
+        setSkip(true);
+        setPermission(null);
 
-        if(json.get("Type") != null) {
-            this.type = PortalType.valueOf(json.get("Type"));
-        } else if(json.get("type") != null) {
-            this.type = PortalType.valueOf(json.get("type"));
+        try {
+            if(json.get("Type") != null) {
+                this.type = PortalType.valueOf(json.get("Type"));
+            } else if(json.get("type") != null) {
+                this.type = PortalType.valueOf(json.get("type"));
+            }
+        } catch(IllegalArgumentException ex) {
+            this.type = PortalType.WATER;
         }
 
         Destination destination = null;
@@ -144,6 +150,7 @@ public class NativePortal extends FeatureObject {
     public void write(JSONObject json) {
         super.write(json);
 
+        json.remove("permission");
         json.put("type", type == null ? null : type.name());
         json.put("name", displayName);
 
