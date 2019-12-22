@@ -432,7 +432,7 @@ public class TempWarpManager implements Manager, Ticker {
         }
 
         if(warp.isExpired()) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_is_expired"));
+            player.sendMessage(Lang.getPrefix() + Lang.get("Warp_is_expired"));
             return;
         }
 
@@ -465,7 +465,7 @@ public class TempWarpManager implements Manager, Ticker {
         }
 
         if(!warp.isExpired()) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_is_not_expired"));
+            player.sendMessage(Lang.getPrefix() + Lang.get("Warp_is_not_epired"));
             return;
         }
 

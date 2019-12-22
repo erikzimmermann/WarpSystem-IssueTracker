@@ -7,7 +7,7 @@ import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Layout;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Page;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SimpleGUI;
-import de.codingair.codingapi.server.Sound;
+import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.tools.time.TimeList;

@@ -1,14 +1,14 @@
 package de.codingair.warpsystem.spigot.base.guis.editor;
 
+import de.codingair.codingapi.player.gui.inventory.gui.GUI;
 import de.codingair.codingapi.player.gui.inventory.gui.GUIListener;
-import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Page;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SimpleGUI;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
-import de.codingair.codingapi.server.Sound;
-import de.codingair.codingapi.server.SoundData;
+import de.codingair.codingapi.server.sounds.Sound;
+import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -20,10 +20,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Editor<C> extends SimpleGUI {
@@ -31,6 +29,7 @@ public class Editor<C> extends SimpleGUI {
     public static final String ITEM_SUB_TITLE_COLOR = "§3";
     public static final String TITLE_COLOR = "§c§n";
 
+    private SoundData successSound = null;
     private PageItem[] pages;
     private C clone;
     private Backup<C> backup;
@@ -87,6 +86,27 @@ public class Editor<C> extends SimpleGUI {
         });
     }
 
+    public void updatePage() {
+        if(getCurrent() != null) {
+            getCurrent().initialize(getPlayer());
+
+            for(int i = 10; i < 16; i++) {
+                removeButton(i);
+                Button b = getCurrent().getButton(i);
+                if(b != null) addButton(b);
+                else setItem(i, null);
+            }
+            for(int i = 19; i < 25; i++) {
+                removeButton(i);
+                Button b = getCurrent().getButton(i);
+                if(b != null) addButton(b);
+                else setItem(i, null);
+            }
+
+            GUI.updateInventory(getPlayer());
+        }
+    }
+
     private void update() {
         updatePageItems();
         updateShowIcon();
@@ -106,7 +126,6 @@ public class Editor<C> extends SimpleGUI {
     public void initControllButtons() {
         ItemButtonOption option = new ItemButtonOption();
         option.setOnlyLeftClick(true);
-        option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1));
 
         addButton(new SyncButton(8) {
             @Override
@@ -117,13 +136,13 @@ public class Editor<C> extends SimpleGUI {
 
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
-                if(canCancel()){
+                if(canCancel()) {
                     setClosingByButton(true);
                     player.closeInventory();
                     backup.cancel(clone);
                 }
             }
-        }.setOption(option));
+        }.setOption(option).setClickSound2(getCancelSound()));
 
         addButton(new SyncButton(8, 2) {
             @Override
@@ -134,14 +153,19 @@ public class Editor<C> extends SimpleGUI {
 
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
-                if(canFinish()){
+                if(canFinish()) {
                     setClosingByButton(true);
                     player.closeInventory();
                     backup.applyTo(clone);
-                    getPlayer().sendMessage(Lang.getPrefix() + "§a" + Lang.get("Changes_have_been_saved"));
+                    getSuccessSound().play(player);
+                    getPlayer().sendMessage(getSuccessMessage());
                 }
             }
         }.setOption(option));
+    }
+
+    public String getSuccessMessage() {
+        return Lang.getPrefix() + "§a" + Lang.get("Changes_have_been_saved");
     }
 
     public void updatePageItems() {
@@ -183,7 +207,7 @@ public class Editor<C> extends SimpleGUI {
     }
 
     public void updateShowIcon() {
-        setItem(8,1, this.showIcon.buildIcon());
+        setItem(8, 1, this.showIcon.buildIcon());
     }
 
     @Override
@@ -213,5 +237,13 @@ public class Editor<C> extends SimpleGUI {
 
     public PageItem[] getPages() {
         return pages;
+    }
+
+    public SoundData getSuccessSound() {
+        return successSound;
+    }
+
+    public void setSuccessSound(SoundData successSound) {
+        this.successSound = successSound;
     }
 }

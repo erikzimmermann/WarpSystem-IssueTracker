@@ -1,11 +1,10 @@
 package de.codingair.warpsystem.spigot.base.utils.featureobjects.actions;
 
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.Serializable;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
+import de.codingair.codingapi.tools.io.DataWriter;
+import de.codingair.codingapi.tools.io.Serializable;
 import org.bukkit.entity.Player;
-import org.json.simple.JSONObject;
 
-public abstract class ActionObject<T> {
+public abstract class ActionObject<T> implements Serializable {
     private Action type;
     private T value;
 

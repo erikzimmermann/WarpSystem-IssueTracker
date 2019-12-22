@@ -1,10 +1,13 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport.destinations;
 
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.tools.io.DataWriter;
+import de.codingair.codingapi.tools.io.Serializable;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.DestinationAdapter;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -12,7 +15,7 @@ import org.bukkit.util.Vector;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 
-public class Destination {
+public class Destination implements Serializable {
     private String id;
     private DestinationType type;
     private DestinationAdapter adapter;
@@ -38,7 +41,7 @@ public class Destination {
 
     public Destination(DestinationAdapter adapter) {
         this.id = null;
-        this.type = DestinationType.UNKNOWN;
+        this.type = DestinationType.getByAdapter(adapter);
         this.adapter = adapter;
     }
 
@@ -150,7 +153,57 @@ public class Destination {
         this.adapter = adapter;
     }
 
-    public String toJSONString() {
+    @Override
+    public boolean read(DataWriter d) throws Exception {
+        this.type = DestinationType.getById(d.getInteger("type"));
+        this.adapter = type.getInstance();
+
+        if(type == DestinationType.Location) {
+            de.codingair.codingapi.tools.Location loc = new de.codingair.codingapi.tools.Location();
+            d.getSerializable("id", loc);
+            ((LocationAdapter) this.adapter).setLocation(loc);
+        } else id = d.getRaw("id");
+
+        this.offsetX = d.getDouble("oX");
+        this.offsetY = d.getDouble("oY");
+        this.offsetZ = d.getDouble("oZ");
+        this.signedX = d.getInteger("sX");
+        this.signedY = d.getInteger("sY");
+        this.signedZ = d.getInteger("sZ");
+        return true;
+    }
+
+    @Override
+    public void write(DataWriter d) {
+        d.put("type", type.getId());
+
+        Object id;
+        if(type == DestinationType.Location) {
+            id = new de.codingair.codingapi.tools.Location(buildLocation());
+        } else id = this.id;
+
+        d.put("id", id);
+        d.put("oX", offsetX);
+        d.put("oY", offsetY);
+        d.put("oZ", offsetZ);
+        d.put("sX", signedX);
+        d.put("sY", signedY);
+        d.put("sZ", signedZ);
+    }
+
+    @Override
+    public void destroy() {
+        this.type = null;
+        this.id = null;
+        this.offsetX = 0;
+        this.offsetY = 0;
+        this.offsetZ = 0;
+        this.signedX = 0;
+        this.signedY = 0;
+        this.signedZ = 0;
+    }
+
+    public JSONArray toJSONArray() {
         if(this.type == DestinationType.UNKNOWN) throw new IllegalArgumentException("Cannot serialize unknown destination!");
 
         JSONArray json = new JSONArray();
@@ -165,7 +218,11 @@ public class Destination {
             json.add(signedZ);
         }
 
-        return json.toJSONString();
+        return json;
+    }
+
+    public String toJSONString() {
+        return toJSONArray().toJSONString();
     }
 
     @Override

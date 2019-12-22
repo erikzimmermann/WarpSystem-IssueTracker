@@ -2,8 +2,8 @@ package de.codingair.warpsystem.spigot.base.managers;
 
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
-import de.codingair.codingapi.server.Sound;
-import de.codingair.codingapi.server.SoundData;
+import de.codingair.codingapi.server.sounds.Sound;
+import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.utils.Value;

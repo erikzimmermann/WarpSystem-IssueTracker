@@ -9,6 +9,7 @@ import de.codingair.codingapi.server.fancymessages.FancyMessage;
 import de.codingair.codingapi.server.fancymessages.MessageTypes;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.api.SpigotAPI;
 import de.codingair.warpsystem.spigot.base.commands.CWarpSystem;
@@ -24,6 +25,7 @@ import de.codingair.warpsystem.spigot.base.utils.options.OptionBundle;
 import de.codingair.warpsystem.spigot.base.utils.options.Options;
 import de.codingair.warpsystem.spigot.base.utils.options.specific.*;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestInitialPacket;
+import de.codingair.warpsystem.transfer.packets.spigot.RequestUUIDPacket;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
 import de.codingair.warpsystem.utils.Manager;
 import net.md_5.bungee.api.ChatColor;
@@ -42,6 +44,7 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class WarpSystem extends JavaPlugin {
@@ -63,6 +66,7 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_USE_GLOBAL_WARPS = "WarpSystem.Use.GlobalWarps";
     public static final String PERMISSION_USE_SIMPLE_WARPS = "WarpSystem.Use.SimpleWarps";
     public static final String PERMISSION_USE_TEMP_WARPS = "WarpSystem.Use.TempWarps";
+    public static final String PERMISSION_USE_PLAYER_WARPS = "WarpSystem.Use.PlayerWarps";
     public static final String PERMISSION_USE_PORTALS = "WarpSystem.Use.Portals";
     public static final String PERMISSION_USE_NATIVE_PORTALS = "WarpSystem.Use.NativePortals";
     public static final String PERMISSION_USE_RANDOM_TELEPORTER = "WarpSystem.Use.RandomTeleporters";

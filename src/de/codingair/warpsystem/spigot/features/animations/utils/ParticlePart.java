@@ -5,8 +5,8 @@ import de.codingair.codingapi.particles.animations.customanimations.AnimationTyp
 import de.codingair.codingapi.particles.animations.customanimations.CustomAnimation;
 import de.codingair.codingapi.particles.animations.movables.MovableMid;
 import de.codingair.codingapi.particles.utils.Color;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.Serializable;
-import de.codingair.codingapi.tools.JSON.JSONObject;
+import de.codingair.codingapi.tools.io.DataWriter;
+import de.codingair.codingapi.tools.io.Serializable;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
@@ -39,16 +39,16 @@ public class ParticlePart implements Serializable {
     }
 
     @Override
-    public boolean read(JSONObject json) {
-        animation = AnimationType.getById(json.get("animation", 0));
-        particle = Particle.getById(json.get("particle", 26));
-        height = json.get("height", 0D);
-        radius = json.get("radius", 0D);
-        speed = json.get("speed", CustomAnimation.MAX_SPEED);
-        color = json.get("color", Color.class);
-        xRotation = json.get("xrot", 0);
-        yRotation = json.get("yrot", 0);
-        zRotation = json.get("zrot", 0);
+    public boolean read(DataWriter d) {
+        animation = AnimationType.getById(d.get("animation", 0));
+        particle = Particle.getById(d.get("particle", 26));
+        height = d.get("height", 0D);
+        radius = d.get("radius", 0D);
+        speed = d.get("speed", CustomAnimation.MAX_SPEED);
+        color = d.get("color", Color.class);
+        xRotation = d.get("xrot", 0);
+        yRotation = d.get("yrot", 0);
+        zRotation = d.get("zrot", 0);
 
         if(color == null) color = Color.RED;
         if(speed < CustomAnimation.MIN_SPEED) speed = CustomAnimation.MAX_SPEED;
@@ -56,16 +56,16 @@ public class ParticlePart implements Serializable {
     }
 
     @Override
-    public void write(JSONObject json) {
-        json.put("animation", animation.getId());
-        json.put("particle", particle.getId());
-        json.put("height", height);
-        json.put("radius", radius);
-        json.put("speed", speed);
-        json.put("color", color);
-        json.put("xrot", xRotation);
-        json.put("yrot", yRotation);
-        json.put("zrot", zRotation);
+    public void write(DataWriter d) {
+        d.put("animation", animation.getId());
+        d.put("particle", particle.getId());
+        d.put("height", height);
+        d.put("radius", radius);
+        d.put("speed", speed);
+        d.put("color", color);
+        d.put("xrot", xRotation);
+        d.put("yrot", yRotation);
+        d.put("zrot", zRotation);
     }
 
     @Override

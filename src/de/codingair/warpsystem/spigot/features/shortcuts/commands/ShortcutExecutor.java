@@ -32,6 +32,7 @@ public class ShortcutExecutor extends CommandBuilder {
             }
         }.setOnlyPlayers(true), false);
 
+        setTemporarily(true);
         setHighestPriority(true);
     }
 }

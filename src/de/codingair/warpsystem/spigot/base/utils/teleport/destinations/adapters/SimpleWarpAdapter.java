@@ -7,8 +7,6 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResul
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
-import de.codingair.warpsystem.spigot.features.simplewarps.utils.actions.Action;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -33,10 +31,6 @@ public class SimpleWarpAdapter implements DestinationAdapter {
                 player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"));
                 if(callback != null) callback.accept(TeleportResult.NO_PERMISSION);
                 return false;
-            }
-
-            for(Action action : warp.getActionList()) {
-                action.onRun(player);
             }
 
             Location finalLoc = warp.getLocation().clone().add(randomOffset);

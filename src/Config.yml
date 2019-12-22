@@ -49,6 +49,7 @@ WarpSystem:
       WarpSigns: true
       TempWarps: true
       CommandBlocks: true
+      PlayerWarps: true
     Teleport_Cancel_Message: true
 
   Functions:
@@ -65,6 +66,7 @@ WarpSystem:
     CommandBlocks: true
     RandomTeleports: true
     TeleportCommand: true
+    PlayerWarps: true
 
   #'TeleportCommand' in 'Functions' (above) have to be toggled to true as well, if you want to use this feature.
   TeleportCommands:

@@ -4,6 +4,7 @@ import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.serializable.SerializableLocation;
 import de.codingair.codingapi.server.Color;
 import de.codingair.codingapi.tools.Location;
+import de.codingair.codingapi.tools.io.yml.ConfigWriter;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -43,11 +44,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
-import de.codingair.codingapi.tools.JSON.JSONObject;
-import de.codingair.codingapi.tools.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.JSON.JSONParser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class IconManager implements Manager {
@@ -76,8 +78,12 @@ public class IconManager implements Manager {
         FileConfiguration config = file.getConfig();
 
         WarpSystem.log("    > Loading background");
-        String data = config.getString("Background_Item", null);
-        this.background = data == null ? null : ItemBuilder.getFromJSON(data).getItem();
+        Object data = config.get("Background_Item", null);
+
+        if(data instanceof String) {
+            this.background = ItemBuilder.getFromJSON((String) data).getItem();
+        } else this.background = new ConfigWriter(file).getItemStack("Background_Item");
+
         if(this.background == null) {
             WarpSystem.log("      ...no background available > create standard");
             this.background = new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem();
@@ -85,20 +91,33 @@ public class IconManager implements Manager {
 
         WarpSystem.log("    > Loading Icons");
         icons.clear();
-        List<String> iconList = config.getStringList("Icons");
-        for(String s : iconList) {
-            try {
-                JSONObject json = (JSONObject) new JSONParser().parse(s);
+        for(Object s : config.getList("Icons")) {
+            if(s instanceof Map) {
+                JSON json = new JSON((Map<?, ?>) s);
+
                 Icon icon = new Icon();
                 try {
                     icon.read(json);
                     icons.add(icon);
-                } catch(IconReadException e) {
+                } catch(Exception e) {
                     e.printStackTrace();
                     success = false;
                 }
-            } catch(Exception e) {
-                e.printStackTrace();
+            } else if(s instanceof String) {
+                try {
+                    JSON json = (JSON) new JSONParser().parse((String) s);
+
+                    Icon icon = new Icon();
+                    try {
+                        icon.read(json);
+                        icons.add(icon);
+                    } catch(IconReadException e) {
+                        e.printStackTrace();
+                        success = false;
+                    }
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -188,7 +207,7 @@ public class IconManager implements Manager {
             ActionObject bound = c.getAction(Action.BOUND_TO_WORLD);
             String world = bound == null ? null : bound.getValue();
 
-            List<de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject> actions = new ArrayList<>();
+            List<de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject<?>> actions = new ArrayList<>();
             if(s != null) actions.add(new CommandAction(s));
             if(world != null) actions.add(new BoundAction(world));
 
@@ -218,7 +237,7 @@ public class IconManager implements Manager {
             ActionObject bound = c.getAction(Action.BOUND_TO_WORLD);
             String world = bound == null ? null : bound.getValue();
 
-            List<de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject> actions = new ArrayList<>();
+            List<de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject<?>> actions = new ArrayList<>();
             if(created) actions.add(new WarpAction(new Destination(c.getIdentifier().replace(" ", "_"), DestinationType.SimpleWarp)));
             if(s != null) actions.add(new CommandAction(s));
             if(world != null) actions.add(new BoundAction(world));
@@ -240,7 +259,7 @@ public class IconManager implements Manager {
             ActionObject bound = c.getAction(Action.BOUND_TO_WORLD);
             String world = bound == null ? null : bound.getValue();
 
-            List<de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject> actions = new ArrayList<>();
+            List<de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject<?>> actions = new ArrayList<>();
             actions.add(new WarpAction(new Destination(gWarp, DestinationType.GlobalWarp)));
             if(s != null) actions.add(new CommandAction(s));
             if(world != null) actions.add(new BoundAction(world));
@@ -259,7 +278,7 @@ public class IconManager implements Manager {
             ActionObject bound = c.getAction(Action.BOUND_TO_WORLD);
             String world = bound == null ? null : bound.getValue();
 
-            List<de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject> actions = new ArrayList<>();
+            List<de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject<?>> actions = new ArrayList<>();
             if(s != null) actions.add(new CommandAction(s));
             if(world != null) actions.add(new BoundAction(world));
             if(amount > 0) actions.add(new CostsAction(amount));
@@ -367,16 +386,18 @@ public class IconManager implements Manager {
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
         FileConfiguration config = file.getConfig();
 
+        ConfigWriter writer = new ConfigWriter(file);
+
         if(!saver) WarpSystem.log("    > Saving background");
-        config.set("Background_Item", new ItemBuilder(this.background).toJSONString());
+        writer.put("Background_Item", this.background);
         if(!saver) WarpSystem.log("      ...saved 1 background");
 
         if(!saver) WarpSystem.log("    > Saving Icons");
-        List<String> icons = new ArrayList<>();
+        List<JSON> icons = new ArrayList<>();
         for(Icon icon : this.icons) {
-            JSONObject json = new JSONObject();
+            JSON json = new JSON();
             icon.write(json);
-            icons.add(json.toJSONString());
+            icons.add(json);
         }
         config.set("Icons", icons);
         if(!saver) WarpSystem.log("      ...saved " + icons.size() + " Icon(s)");

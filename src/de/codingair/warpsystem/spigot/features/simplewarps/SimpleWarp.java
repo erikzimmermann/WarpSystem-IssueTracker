@@ -1,9 +1,10 @@
 package de.codingair.warpsystem.spigot.features.simplewarps;
 
-import de.codingair.codingapi.tools.JSON.JSONObject;
-import de.codingair.codingapi.tools.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.DataWriter;
+import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import de.codingair.codingapi.tools.Location;
-import de.codingair.warpsystem.spigot.features.simplewarps.utils.actions.Action;
+import de.codingair.codingapi.tools.io.Serializable;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -14,10 +15,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SimpleWarp {
+public class SimpleWarp implements Serializable {
     private String name;
     private String permission;
-    private List<Action> actionList;
     private Location location;
 
     private Date created;
@@ -27,7 +27,10 @@ public class SimpleWarp {
 
     private double costs;
 
-    public SimpleWarp(String s) throws ParseException {
+    public SimpleWarp() {
+    }
+
+    public SimpleWarp(String s) throws Exception {
         apply(s);
     }
 
@@ -36,7 +39,6 @@ public class SimpleWarp {
         this.permission = data.getPermission();
         this.location = new Location(data.getWorld(), data.getX(), data.getY(), data.getZ(), data.getYaw(), data.getPitch());
 
-        this.actionList = new ArrayList<>();
         this.created = new Date();
         this.lastChange = new Date();
         this.lastChanger = "System";
@@ -53,9 +55,47 @@ public class SimpleWarp {
         this.lastChange = new Date();
         this.lastChanger = player.getName();
         this.teleports = 0;
-        this.actionList = new ArrayList<>();
 
         this.costs = 0;
+    }
+
+    @Override
+    public boolean read(DataWriter d) throws Exception {
+        this.name = ((String) d.get("Name")).replace(" ", "_");
+        this.permission = d.get("Permission");
+        this.location = d.getLocation("Location");
+        this.created = d.getDate("Created");
+        this.lastChange = d.getDate("LastChange");
+        this.lastChanger = d.get("LastChanger");
+        this.teleports = d.getInteger("Teleports");
+        this.costs = d.getDouble("Costs");
+        return true;
+    }
+
+    @Override
+    public void write(DataWriter d) {
+        this.location.trim(4);
+
+        d.put("Name", this.name);
+        d.put("Permission", this.permission);
+        d.put("Location", this.location);
+        d.put("Created", this.created.getTime());
+        d.put("LastChange", this.lastChange.getTime());
+        d.put("LastChanger", this.lastChanger);
+        d.put("Teleports", this.teleports);
+        d.put("Costs", this.costs);
+    }
+
+    @Override
+    public String toString() {
+        JSON json = new JSON();
+        write(json);
+        return json.toJSONString();
+    }
+
+    @Override
+    public void destroy() {
+
     }
 
     public String getName() {
@@ -80,10 +120,6 @@ public class SimpleWarp {
 
     public void setPermission(String permission) {
         this.permission = permission;
-    }
-
-    public List<Action> getActionList() {
-        return actionList;
     }
 
     public Location getLocation() {
@@ -131,52 +167,15 @@ public class SimpleWarp {
         this.costs = costs;
     }
 
-    @Override
-    public String toString() {
-        JSONObject json = new JSONObject();
-
-        json.put("Name", this.name);
-        json.put("Permission", this.permission);
-        json.put("Actions", JSONArray.toJSONString(this.actionList));
-        json.put("Location", this.location.toJSONString(4));
-        json.put("Created", this.created.getTime());
-        json.put("LastChange", this.lastChange.getTime());
-        json.put("LastChanger", this.lastChanger);
-        json.put("Teleports", this.teleports);
-        json.put("Costs", this.costs);
-
-        return json.toJSONString();
-    }
-
-    private void apply(String s) throws ParseException {
-        JSONObject json = (JSONObject) new JSONParser().parse(s);
-
-        this.name = ((String) json.get("Name")).replace(" ", "_");
-        this.permission = json.get("Permission");
-
-        JSONArray array = json.get("Actions");
-        this.actionList = new ArrayList<>();
-        for(Object o : array) {
-            String data = (String) o;
-            try {
-                this.actionList.add(Action.read(data));
-            } catch(ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-                throw new IllegalStateException("Couldn't revive action of SimpleWarp '" + this.name + "'.");
-            }
-        }
-
-        this.location = json.getLocation("Location");
-        this.created = new Date(json.getLong("Created"));
-        this.lastChange = new Date(json.getLong("LastChange"));
-        this.lastChanger = json.get("LastChanger");
-        this.teleports = json.getInteger("Teleports");
-        this.costs = json.getDouble("Costs");
+    private void apply(String s) throws Exception {
+        JSON json = (JSON) new JSONParser().parse(s);
+        read(json);
     }
 
     public void apply(SimpleWarp warp) {
         try {
             this.apply(warp.toString());
-        } catch(ParseException e) {
+        } catch(Exception e) {
             e.printStackTrace();
         }
     }
@@ -184,7 +183,7 @@ public class SimpleWarp {
     public SimpleWarp clone() {
         try {
             return new SimpleWarp(toString());
-        } catch(ParseException e) {
+        } catch(Exception e) {
             e.printStackTrace();
             return null;
         }

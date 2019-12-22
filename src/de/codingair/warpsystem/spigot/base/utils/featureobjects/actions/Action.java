@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.base.utils.featureobjects.actions;
 
+import de.codingair.codingapi.tools.io.Serializable;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.BoundAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
@@ -34,5 +35,14 @@ public enum Action {
         }
 
         return null;
+    }
+
+    public Serializable getNewInstance() {
+        try {
+            return clazz.newInstance();
+        } catch(InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

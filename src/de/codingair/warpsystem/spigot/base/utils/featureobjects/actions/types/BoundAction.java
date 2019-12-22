@@ -1,12 +1,13 @@
 package de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types;
 
+import de.codingair.codingapi.tools.io.DataWriter;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject;
 import org.bukkit.entity.Player;
 
 public class BoundAction extends ActionObject<String> {
-    public BoundAction(String command) {
-        super(Action.BOUND_TO_WORLD, command);
+    public BoundAction(String world) {
+        super(Action.BOUND_TO_WORLD, world);
     }
 
     public BoundAction() {
@@ -31,6 +32,17 @@ public class BoundAction extends ActionObject<String> {
     @Override
     public boolean usable() {
         return getValue() != null;
+    }
+
+    @Override
+    public boolean read(DataWriter d) {
+        setValue(d.get("world"));
+        return true;
+    }
+
+    @Override
+    public void write(DataWriter d) {
+        d.put("world", getValue());
     }
 
     @Override

@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.spigot.features.tempwarps.utils;
 
-import de.codingair.codingapi.tools.JSON.JSONObject;
-import de.codingair.codingapi.tools.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
@@ -68,7 +68,7 @@ public class Key {
     }
 
     public String toJSONString() {
-        JSONObject json = new JSONObject();
+        JSON json = new JSON();
 
         json.put("Name", this.name);
         json.put("Time", getTime());
@@ -79,7 +79,7 @@ public class Key {
 
     public static Key getByJSONString(String s) {
         try {
-            JSONObject json = (JSONObject) new JSONParser().parse(s);
+            JSON json = (JSON) new JSONParser().parse(s);
 
             String name = json.get("Name");
             int time = json.getInteger("Time");

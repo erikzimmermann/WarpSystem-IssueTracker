@@ -9,11 +9,12 @@ import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
-import de.codingair.codingapi.tools.JSON.JSONObject;
-import de.codingair.codingapi.tools.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.JSON.JSONParser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SignManager implements Manager {
     private List<WarpSign> warpSigns = new ArrayList<>();
@@ -27,30 +28,36 @@ public class SignManager implements Manager {
         this.warpSigns.clear();
 
         WarpSystem.log("  > Loading WarpSigns");
-        List<String> data = file.getConfig().getStringList("WarpSigns");
+        List<?> data = file.getConfig().getList("WarpSigns");
         if(data != null) {
-            for(String s : data) {
+            for(Object s : data) {
                 WarpSign warpSign = new WarpSign();
-                try {
-                    warpSign.read((JSONObject) new JSONParser().parse(s));
-                } catch(Exception e) {
-                    e.printStackTrace();
+
+                if(s instanceof Map) {
+                    try {
+                        JSON json = new JSON((Map<?, ?>) s);
+                        warpSign.read(json);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        success = false;
+                    }
+                } else if(s instanceof String) {
+                    try {
+                        warpSign.read((JSON) new JSONParser().parse((String) s));
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                    }
                 }
 
-                if(warpSign != null) {
-                    if(warpSign.getLocation() != null && warpSign.getLocation().getWorld() != null && warpSign.getLocation().getBlock() != null) {
-                        if(warpSign.getLocation().getBlock().getState() instanceof Sign) {
-                            this.warpSigns.add(warpSign);
-                        } else {
-                            WarpSystem.log("    > Loaded WarpSign at location without sign! (Skip)");
-                            success = false;
-                        }
+                if(warpSign.getLocation() != null && warpSign.getLocation().getWorld() != null && warpSign.getLocation().getBlock() != null) {
+                    if(warpSign.getLocation().getBlock().getState() instanceof Sign) {
+                        this.warpSigns.add(warpSign);
                     } else {
-                        WarpSystem.log("    > Loaded WarpSign with missing world! (Skip)");
+                        WarpSystem.log("    > Loaded WarpSign at location without sign! (Skip)");
                         success = false;
                     }
                 } else {
-                    WarpSystem.log("    > Could not load WarpSign! (Skip)");
+                    WarpSystem.log("    > Loaded WarpSign with missing world! (Skip)");
                     success = false;
                 }
             }
@@ -69,11 +76,11 @@ public class SignManager implements Manager {
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
         if(!saver) WarpSystem.log("  > Saving WarpSigns");
 
-        List<String> data = new ArrayList<>();
+        List<JSON> data = new ArrayList<>();
         for(WarpSign s : this.warpSigns) {
-            JSONObject json = new JSONObject();
+            JSON json = new JSON();
             s.write(json);
-            data.add(json.toJSONString());
+            data.add(json);
         }
 
         file.getConfig().set("WarpSigns", data);

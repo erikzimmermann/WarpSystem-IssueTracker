@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types;
 
+import de.codingair.codingapi.tools.io.DataWriter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
@@ -20,6 +21,17 @@ public class WarpAction extends ActionObject<Destination> {
         if(s != null) {
             setValue(new Destination(s));
         }
+    }
+
+    @Override
+    public boolean read(DataWriter d) {
+        setValue(d.getSerializable("destination", new Destination()));
+        return true;
+    }
+
+    @Override
+    public void write(DataWriter d) {
+        d.put("destination", getValue());
     }
 
     @Override

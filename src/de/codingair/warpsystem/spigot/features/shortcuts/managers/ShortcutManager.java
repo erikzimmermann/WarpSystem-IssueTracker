@@ -2,8 +2,8 @@ package de.codingair.warpsystem.spigot.features.shortcuts.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.server.Version;
-import de.codingair.codingapi.tools.JSON.JSONObject;
-import de.codingair.codingapi.tools.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ShortcutManager implements Manager, BungeeFeature {
     private List<Shortcut> shortcuts = new ArrayList<>();
@@ -63,12 +64,21 @@ public class ShortcutManager implements Manager, BungeeFeature {
             this.shortcuts.add(new Shortcut(destination, key.replace(" ", "_")));
         }
 
-        List<String> data = config.getStringList("Shortcuts");
-        if(data != null) {
-            for(String datum : data) {
+        for(Object datum : config.getList("Shortcuts")) {
+            if(datum instanceof Map) {
                 try {
                     Shortcut s = new Shortcut();
-                    JSONObject json = (JSONObject) new JSONParser().parse(datum);
+                    JSON json = new JSON((Map<?, ?>) datum);
+                    s.read(json);
+                    s.setDisplayName(s.getDisplayName().replace(" ", "_"));
+                    this.shortcuts.add(s);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            } else if(datum instanceof String) {
+                try {
+                    Shortcut s = new Shortcut();
+                    JSON json = (JSON) new JSONParser().parse((String) datum);
                     s.read(json);
                     s.setDisplayName(s.getDisplayName().replace(" ", "_"));
                     this.shortcuts.add(s);
@@ -99,11 +109,11 @@ public class ShortcutManager implements Manager, BungeeFeature {
 
         for(String key : config.getKeys(false)) config.set(key, null);
 
-        List<String> data = new ArrayList<>();
+        List<JSON> data = new ArrayList<>();
         for(Shortcut sc : this.shortcuts) {
-            JSONObject json = new JSONObject();
+            JSON json = new JSON();
             sc.write(json);
-            data.add(json.toJSONString());
+            data.add(json);
         }
 
         config.set("Shortcuts", data);

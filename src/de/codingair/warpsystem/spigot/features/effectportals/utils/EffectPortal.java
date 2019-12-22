@@ -5,10 +5,11 @@ import de.codingair.codingapi.API;
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.particles.animations.standalone.AnimationType;
 import de.codingair.codingapi.player.Hologram;
-import de.codingair.codingapi.server.Sound;
-import de.codingair.codingapi.server.SoundData;
+import de.codingair.codingapi.server.sounds.Sound;
+import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.HitBox;
-import de.codingair.codingapi.tools.JSON.JSONObject;
+import de.codingair.codingapi.tools.io.DataWriter;
+import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.utils.ChatColor;
@@ -111,38 +112,38 @@ public class EffectPortal extends FeatureObject implements Removable {
     }
 
     @Override
-    public boolean read(JSONObject json) throws Exception {
-        super.read(json);
+    public boolean read(DataWriter d) throws Exception {
+        super.read(d);
 
-        if(json.get("skip") == null) setSkip(true);
+        if(d.get("skip") == null) setSkip(true);
 
-        if(json.get("Destination") != null) {
+        if(d.get("Destination") != null) {
             //old pattern
 
             Destination destination;
             try {
-                destination = new Destination((String) json.get("Destination"));
+                destination = new Destination((String) d.get("Destination"));
             } catch(Throwable ex) {
-                destination = new Destination(json.get("Destination"), DestinationType.EffectPortal);
+                destination = new Destination(d.get("Destination"), DestinationType.EffectPortal);
             }
 
             if(destination.getType() == DestinationType.EffectPortal) addAction(new WarpAction(destination));
             else removeAction(Action.WARP);
 
-            this.location = Location.getByJSONString(json.get("Start"));
-            AnimationType animationType = AnimationType.valueOf(json.get("AnimationType"));
-            double animationHeight = Double.parseDouble(json.get("AnimationHeight") + "");
-            Particle particle = Particle.valueOf(json.get("Particle"));
-            double teleportRadius = Double.parseDouble(json.get("TeleportRadius") + "");
-            this.name = this.holoText = json.get("StartName");
-            String destinationName = json.get("DestinationName");
-            double hologramHeight = Double.parseDouble(json.get("HologramHeight") + "");
-            Sound sound = Sound.valueOf(json.get("TeleportSound"));
-            float soundVolume = Float.parseFloat(json.get("TeleportSoundVolume") + "");
-            float soundPitch = Float.parseFloat(json.get("TeleportSoundPitch") + "");
-            this.holoStatus = json.get("StartHoloStatus") == null || Boolean.parseBoolean(json.get("StartHoloStatus") + "");
-            boolean destinationHoloStatus = json.get("DestinationHoloStatus") == null || Boolean.parseBoolean(json.get("DestinationHoloStatus") + "");
-            setPermission(json.get("Permission") == null ? null : (String) json.get("Permission"));
+            this.location = Location.getByJSONString(d.get("Start"));
+            AnimationType animationType = AnimationType.valueOf(d.get("AnimationType"));
+            double animationHeight = Double.parseDouble(d.get("AnimationHeight") + "");
+            Particle particle = Particle.valueOf(d.get("Particle"));
+            double teleportRadius = Double.parseDouble(d.get("TeleportRadius") + "");
+            this.name = this.holoText = d.get("StartName");
+            String destinationName = d.get("DestinationName");
+            double hologramHeight = Double.parseDouble(d.get("HologramHeight") + "");
+            Sound sound = Sound.valueOf(d.get("TeleportSound"));
+            float soundVolume = Float.parseFloat(d.get("TeleportSoundVolume") + "");
+            float soundPitch = Float.parseFloat(d.get("TeleportSoundPitch") + "");
+            this.holoStatus = d.get("StartHoloStatus") == null || Boolean.parseBoolean(d.get("StartHoloStatus") + "");
+            boolean destinationHoloStatus = d.get("DestinationHoloStatus") == null || Boolean.parseBoolean(d.get("DestinationHoloStatus") + "");
+            setPermission(d.get("Permission") == null ? null : (String) d.get("Permission"));
 
             this.teleportSound = new SoundData(sound, soundVolume, soundPitch);
 
@@ -164,12 +165,12 @@ public class EffectPortal extends FeatureObject implements Removable {
                 link.setUseLink(true);
                 link.setLocation(Location.getByLocation(getDestination().buildLocation()));
 
-                Destination d = new Destination();
-                d.setId(getLocation().toJSONString(4));
-                d.setAdapter(new PortalDestinationAdapter());
-                d.setType(DestinationType.EffectPortal);
+                Destination dest = new Destination();
+                dest.setId(getLocation().toJSONString(4));
+                dest.setAdapter(new PortalDestinationAdapter());
+                dest.setType(DestinationType.EffectPortal);
 
-                link.addAction(new WarpAction(d));
+                link.addAction(new WarpAction(dest));
                 link.setUseLink(true);
                 setLink(link);
 
@@ -183,21 +184,21 @@ public class EffectPortal extends FeatureObject implements Removable {
 
             holoPos = Location.getByLocation(location);
             holoPos.setY(holoPos.getY() + hologramHeight);
-        } else if(json.get("start") != null) {
-            this.location = Location.getByJSONString(json.get("start"));
+        } else if(d.get("start") != null) {
+            this.location = Location.getByJSONString(d.get("start"));
 
-            AnimationType animationType = AnimationType.valueOf(json.get("animationtype"));
-            double animationHeight = Double.parseDouble(json.get("animationheight") + "");
-            Particle particle = Particle.valueOf(json.get("particle"));
-            double teleportRadius = Double.parseDouble(json.get("teleportradius") + "");
-            this.name = this.holoText = json.get("startname");
-            String destinationName = json.get("destinationname") == null ? null : (String) json.get("destinationname");
-            this.holoStatus = json.get("startholostatus") == null || Boolean.parseBoolean(json.get("startholostatus") + "");
-            boolean destinationHoloStatus = json.get("destinationholostatus") == null || Boolean.parseBoolean(json.get("destinationholostatus") + "");
+            AnimationType animationType = AnimationType.valueOf(d.get("animationtype"));
+            double animationHeight = Double.parseDouble(d.get("animationheight") + "");
+            Particle particle = Particle.valueOf(d.get("particle"));
+            double teleportRadius = Double.parseDouble(d.get("teleportradius") + "");
+            this.name = this.holoText = d.get("startname");
+            String destinationName = d.get("destinationname") == null ? null : (String) d.get("destinationname");
+            this.holoStatus = d.get("startholostatus") == null || Boolean.parseBoolean(d.get("startholostatus") + "");
+            boolean destinationHoloStatus = d.get("destinationholostatus") == null || Boolean.parseBoolean(d.get("destinationholostatus") + "");
 
-            Sound sound = Sound.valueOf(json.get("teleportsound"));
-            float soundVolume = Float.parseFloat(json.get("teleportsoundvolume") + "");
-            float soundPitch = Float.parseFloat(json.get("teleportsoundpitch") + "");
+            Sound sound = Sound.valueOf(d.get("teleportsound"));
+            float soundVolume = Float.parseFloat(d.get("teleportsoundvolume") + "");
+            float soundPitch = Float.parseFloat(d.get("teleportsoundpitch") + "");
 
             SoundData teleportSound = new SoundData(sound, soundVolume, soundPitch);
 
@@ -210,7 +211,7 @@ public class EffectPortal extends FeatureObject implements Removable {
             AnimationManager.getInstance().addAnimation(animation);
             this.animation = AnimationManager.getInstance().getAnimation(name);
 
-            double hologramHeight = Double.parseDouble(json.get("hologramheight") + "");
+            double hologramHeight = Double.parseDouble(d.get("hologramheight") + "");
             if(hasDestinationPortal()) {
                 Location destinationHoloPos = Location.getByLocation(getDestination().buildLocation().clone());
                 destinationHoloPos.setY(destinationHoloPos.getY() + hologramHeight);
@@ -221,12 +222,12 @@ public class EffectPortal extends FeatureObject implements Removable {
                 link.apply(this);
                 link.setLocation(Location.getByLocation(getDestination().buildLocation()));
 
-                Destination d = new Destination();
-                d.setId(getLocation().toJSONString(4));
-                d.setAdapter(new PortalDestinationAdapter());
-                d.setType(DestinationType.EffectPortal);
+                Destination dest = new Destination();
+                dest.setId(getLocation().toJSONString(4));
+                dest.setAdapter(new PortalDestinationAdapter());
+                dest.setType(DestinationType.EffectPortal);
 
-                link.addAction(new WarpAction(d));
+                link.addAction(new WarpAction(dest));
                 link.setUseLink(true);
                 setLink(link);
 
@@ -241,20 +242,20 @@ public class EffectPortal extends FeatureObject implements Removable {
             holoPos = Location.getByLocation(location);
             holoPos.setY(holoPos.getY() + hologramHeight);
         } else {
-            if(json.get("ep.anim.name") == null) {
+            if(d.get("ep.anim.name") == null) {
                 //link
                 setUseLink(true);
             } else {
-                this.animation = AnimationManager.getInstance().getAnimation(json.get("ep.anim.name"));
-                this.teleportSound = json.get("ep.sound.type") == null ? new SoundData(Sound.ENDERMAN_TELEPORT, 0.7F, 1F) : new SoundData(json.get("ep.sound.type", Sound.class), json.getFloat("ep.sound.volume"), json.getFloat("ep.sound.pitch"));
-                linkHelper = json.getLocation("ep.link");
+                this.animation = AnimationManager.getInstance().getAnimation(d.get("ep.anim.name"));
+                this.teleportSound = d.get("ep.sound.type") == null ? new SoundData(Sound.ENDERMAN_TELEPORT, 0.7F, 1F) : new SoundData(d.get("ep.sound.type", Sound.class), d.getFloat("ep.sound.volume"), d.getFloat("ep.sound.pitch"));
+                linkHelper = d.getLocation("ep.link");
             }
 
-            this.location = json.getLocation("ep.loc");
-            this.name = json.get("ep.name");
-            this.holoText = json.get("ep.holo.text");
-            this.holoStatus = json.getBoolean("ep.holo.state");
-            this.holoPos = json.getLocation("ep.holo.pos");
+            this.location = d.getLocation("ep.loc");
+            this.name = d.get("ep.name");
+            this.holoText = d.get("ep.holo.text");
+            this.holoStatus = d.getBoolean("ep.holo.state");
+            this.holoPos = d.getLocation("ep.holo.pos");
         }
 
         this.holoPos.setYaw(0);
@@ -264,23 +265,23 @@ public class EffectPortal extends FeatureObject implements Removable {
     }
 
     @Override
-    public void write(JSONObject json) {
-        super.write(json);
+    public void write(DataWriter d) {
+        super.write(d);
 
         if(!useLink()) {
             //main
-            json.put("ep.anim.name", this.animation == null ? null : this.animation.getName());
-            json.put("ep.sound.type", teleportSound == null ? null : teleportSound.getSound());
-            json.put("ep.sound.volume", teleportSound == null ? null : teleportSound.getVolume());
-            json.put("ep.sound.pitch", teleportSound == null ? null : teleportSound.getPitch());
-            json.put("ep.link", this.link == null ? null : this.link.getLocation());
+            d.put("ep.anim.name", this.animation == null ? null : this.animation.getName());
+            d.put("ep.sound.type", teleportSound == null ? null : teleportSound.getSound());
+            d.put("ep.sound.volume", teleportSound == null ? null : teleportSound.getVolume());
+            d.put("ep.sound.pitch", teleportSound == null ? null : teleportSound.getPitch());
+            d.put("ep.link", this.link == null ? null : this.link.getLocation());
         }
 
-        json.put("ep.loc", this.location);
-        json.put("ep.name", this.name);
-        json.put("ep.holo.state", this.holoStatus);
-        json.put("ep.holo.text", this.holoText);
-        json.put("ep.holo.pos", this.holoPos);
+        d.put("ep.loc", this.location);
+        d.put("ep.name", this.name);
+        d.put("ep.holo.state", this.holoStatus);
+        d.put("ep.holo.text", this.holoText);
+        d.put("ep.holo.pos", this.holoPos);
     }
 
     @Override
@@ -309,11 +310,11 @@ public class EffectPortal extends FeatureObject implements Removable {
     }
 
     public void add(Player player) {
-        this.hologram.addPlayer(player);
+        if(this.hologram != null) this.hologram.addPlayer(player);
     }
 
     public void remove(Player player) {
-        this.hologram.removePlayer(player);
+        if(this.hologram != null) this.hologram.removePlayer(player);
     }
 
     public void update() {

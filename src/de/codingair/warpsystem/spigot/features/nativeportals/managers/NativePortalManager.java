@@ -9,7 +9,6 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Teleport;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.nativeportals.NativePortal;
 import de.codingair.warpsystem.spigot.features.nativeportals.PortalEditor;
@@ -18,14 +17,15 @@ import de.codingair.warpsystem.spigot.features.nativeportals.guis.DeleteGUI;
 import de.codingair.warpsystem.spigot.features.nativeportals.guis.NPEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.listeners.EditorListener;
 import de.codingair.warpsystem.spigot.features.nativeportals.listeners.PortalListener;
-import de.codingair.codingapi.tools.JSON.JSONObject;
+import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import de.codingair.codingapi.tools.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.JSON.JSONParser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class NativePortalManager implements Manager {
     private List<NativePortal> nativePortals = new ArrayList<>();
@@ -65,17 +65,28 @@ public class NativePortalManager implements Manager {
 
         WarpSystem.log("  > Loading NativePortals");
         int fails = 0;
-        for(String s : file.getConfig().getStringList("NativePortals")) {
+        for(Object s : file.getConfig().getList("NativePortals")) {
             NativePortal p = new NativePortal();
-            try {
-                p.read((JSONObject) new JSONParser().parse(s));
-                if(p != null) addPortal(p);
-                else {
+
+            if(s instanceof Map) {
+                try {
+                    JSON json = new JSON((Map<?, ?>) s);
+                    p.read(json);
+                    addPortal(p);
+                } catch(Exception e) {
+                    e.printStackTrace();
                     fails++;
                     success = false;
                 }
-            } catch(Exception e) {
-                e.printStackTrace();
+            } else if(s instanceof String) {
+                try {
+                    p.read((JSON) new JSONParser().parse((String) s));
+                    addPortal(p);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    fails++;
+                    success = false;
+                }
             }
         }
 
@@ -92,12 +103,12 @@ public class NativePortalManager implements Manager {
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
         if(!saver) WarpSystem.log("  > Saving NativePortals...");
 
-        List<String> data = new ArrayList<>();
+        List<JSON> data = new ArrayList<>();
 
         for(NativePortal nativePortal : this.nativePortals) {
-            JSONObject json = new JSONObject();
+            JSON json = new JSON();
             nativePortal.write(json);
-            data.add(json.toJSONString());
+            data.add(json);
         }
 
         if(!saver) hideAll();

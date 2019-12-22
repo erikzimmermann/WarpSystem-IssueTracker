@@ -2,8 +2,8 @@ package de.codingair.warpsystem.spigot.base.utils.teleport;
 
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.server.Environment;
-import de.codingair.codingapi.server.Sound;
-import de.codingair.codingapi.server.SoundData;
+import de.codingair.codingapi.server.sounds.Sound;
+import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.server.reflections.PacketUtils;

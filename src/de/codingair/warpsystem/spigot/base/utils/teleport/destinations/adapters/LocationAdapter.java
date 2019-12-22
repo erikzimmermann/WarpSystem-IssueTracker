@@ -13,19 +13,24 @@ import org.bukkit.util.Vector;
 public class LocationAdapter implements DestinationAdapter {
     private Location location;
 
+    public LocationAdapter() {
+    }
+
     public LocationAdapter(Location location) {
         this.location = location;
     }
 
     @Override
     public boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
-        if(this.location == null) {
+        Location location = buildLocation(id);
+
+        if(location == null) {
             player.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
             if(callback != null) callback.accept(TeleportResult.DESTINATION_DOES_NOT_EXIST);
             return false;
         }
 
-        if(this.location.getWorld() == null) {
+        if(location.getWorld() == null) {
             player.sendMessage(Lang.getPrefix() + Lang.get("World_Not_Exists"));
             if(callback != null) callback.accept(TeleportResult.WORLD_DOES_NOT_EXIST);
             return false;
@@ -41,11 +46,13 @@ public class LocationAdapter implements DestinationAdapter {
 
     @Override
     public SimulatedTeleportResult simulate(Player player, String id, boolean checkPermission) {
-        if(this.location == null) {
+        Location location = buildLocation(id);
+
+        if(location == null) {
             return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"), TeleportResult.DESTINATION_DOES_NOT_EXIST);
         }
 
-        if(this.location.getWorld() == null) {
+        if(location.getWorld() == null) {
             return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("World_Not_Exists"), TeleportResult.WORLD_DOES_NOT_EXIST);
         } else return new SimulatedTeleportResult(null, TeleportResult.TELEPORTED);
     }
@@ -57,6 +64,10 @@ public class LocationAdapter implements DestinationAdapter {
 
     @Override
     public Location buildLocation(String id) {
-        return location.clone();
+        return id == null ? location.clone() : de.codingair.codingapi.tools.Location.getByJSONString(id);
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }
