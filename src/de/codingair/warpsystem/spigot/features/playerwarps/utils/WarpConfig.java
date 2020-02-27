@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.tempwarps.playerwarps.utils;
+package de.codingair.warpsystem.spigot.features.playerwarps.utils;
 
 import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.JSON.JSONParser;

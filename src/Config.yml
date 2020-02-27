@@ -106,51 +106,71 @@ WarpSystem:
       #false: '/warp <warp>' teleports you to warps
       GUI: false
 
-  TempWarps:
-    #Permission to set the available amount of TempWarps: "WarpSystem.TempWarps.2" (Example for a maximum of 2 TempWarps)
+  PlayerWarps:
+    #Time format: "0d, 0h, 0m, 0s" - Unnecessary values can be removed (examples: "1d, 5m", "10s", "5h")!
     Time:
-      #min, hour, day
-      Interval: min
-      #Step to increase/decrease the duration in the gui
-      DurationSteps: 5
-      Min_Time: 5
-      Max_Time: 43200
-    #When a TempWarp expires, then it's inactive. (When "Time_After_Expiration" is expired too, the TempWarp will be deleted.)
+      Min_Time: 0d, 0h, 5m
+      Max_Time: 30d, 0h, 0m
     Inactive:
-      #Time in seconds after an expiration. After that time, the TempWarp will be deleted.
-      Time_After_Expiration: 86400
-      #Time in seconds to remind a player, if a TempWarp is inactive
+      #Time after an expiration. After that time, the PlayerWarp will be deleted.
+      #Inactive PlayerWarps cannot be used for teleportation purposes.
+      Time_After_Expiration: 1d, 0h, 0m
+      #Time to remind a player, if a PlayerWarp is going to be deleted (already inactive)
       Reminds:
-      - 43200
-      - 21600
-      - 3600
-      - 1800
-      - 900
-      - 600
-      - 300
-      - 180
-      - 60
-      - 30
-      - 10
-      - 5
-    Name:
-      Edit_Costs: 400
-    Refund: true
-    Message:
-      Min_character_length: 5
-      Max_character_length: 50
-      Refund_by_removing_message: 0
-      Edit_Costs: 200
-    Custom_Teleport_Costs:
-      Max_Costs: 500
-      #Step to increase/decrease costs in gui
-      Cost_Steps: 50
-      #Percent of custom TeleportCosts
-      TeleportCosts: 50
+      - 12h
+      - 6h
+      - 1h
+      - 30m
+      - 15m
+      - 5m
+      - 4m
+      - 3m
+      - 2m
+      - 1m
+      - 1m
     Costs:
-      CostsPerInterval: 1
-      PublicCosts: 100
-      MessageCosts: 200
+      #Factor calculation: (time left / time from born to expiration) > decreases proportionally to the remaining PlayerWarp time - factor decreases with rising "from born to expiration"-time
+      Internal_Refund_Factor: false
+      Round_costs_to_natural_numbers: false
+      Create: 200
+      Edit: 0
+      PublicWarp: 100
+      Personal_Item: 200
+      #Costs per minute
+      Active_Time: 0.5
+      #Multiplicated with custom TeleportCosts - e.g. set PlayerWarp teleport fee to 100 > Costs: 100 * 25 = 2500
+      Teleport_Fee: 25
+      Trusted_Member: 50
+      Editing:
+        #Costs for editing existing values
+        Name: 400
+        Target_Position: 200
+        Personal_Item: 100
+      Text:
+        #Costs per character
+        Teleport_Message: 2
+        Warp_Description: 2
+    Teleport_Message:
+      Length:
+        Min: 5
+        Max: 50
+    Warp_Description:
+      Max_Lines: 3
+      Line_Length:
+        Min: 5
+        Max: 25
+    Teleport_Fee:
+      #Custom PlayerWarp teleport fee
+      Max: 500
+    Refunds:
+      #Values in % (e.g. 1 = 100%, 0.25 = 25%)
+      Personal_Item: 0.5
+      Warp_Description: 0.5
+      Teleport_Message: 0.5
+      PublicWarp: 0.5
+      Teleport_Fee: 0.5
+      Active_Time: 1
+      Trusted_Member: 0.5
     Support:
       #If enabled, the player can't create TempWarps in regions, where he cannot build
       ProtectedRegions: false
@@ -248,4 +268,4 @@ WarpSystem:
         - MESA_CLEAR_ROCK
 
 Do_Not_Edit:
-  Last_Version: 0
+  Last_Version: "0"

@@ -1,5 +1,6 @@
-package de.codingair.warpsystem.spigot.features.tempwarps.playerwarps.utils;
+package de.codingair.warpsystem.spigot.features.playerwarps.utils;
 
+import de.codingair.codingapi.API;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.io.DataWriter;
 import de.codingair.codingapi.tools.io.JSON.JSON;
@@ -7,28 +8,28 @@ import de.codingair.codingapi.tools.io.Serializable;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
+import de.codingair.warpsystem.spigot.api.players.Head;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.managers.HeadManager;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.PWEditor;
+import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.json.simple.JSONArray;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerWarp extends FeatureObject {
     private User owner;
     private List<User> trusted;
 
     private String name;
-    private List<String> description;
     private String teleportMessage;
     private ItemBuilder item;
 
@@ -37,15 +38,14 @@ public class PlayerWarp extends FeatureObject {
 
     private long born;
     private long started;
-    private long expired;
     private long time;
     private String creatorKey = null;
+    private boolean notify;
 
     public PlayerWarp() {
         super();
         owner = new User("owner");
         trusted = new ArrayList<>();
-        description = new ArrayList<>();
     }
 
     public PlayerWarp(Player player, String name) {
@@ -54,7 +54,6 @@ public class PlayerWarp extends FeatureObject {
         owner.id = player.getUniqueId();
         owner.name = player.getName();
 
-        this.item = new ItemBuilder();
         resetItem();
         addAction(new WarpAction(new Destination(Location.getByLocation(player.getLocation()).toJSONString(2), DestinationType.Location)));
     }
@@ -80,18 +79,23 @@ public class PlayerWarp extends FeatureObject {
             PlayerWarp w = (PlayerWarp) object;
 
             this.owner = w.owner;
-            this.trusted = w.trusted;
+
+            if(this.trusted == null) this.trusted = new ArrayList<>(w.trusted);
+            else {
+                this.trusted.clear();
+                this.trusted.addAll(w.trusted);
+            }
+
             this.name = w.name;
-            this.description = w.description;
             this.teleportMessage = w.teleportMessage;
-            this.item = w.item;
+            this.item = w.item.clone();
             this.isPublic = w.isPublic;
             this.teleportCosts = w.teleportCosts;
             this.born = w.born;
             this.started = w.started;
-            this.expired = w.expired;
             this.time = w.time;
             this.creatorKey = w.creatorKey;
+            this.notify = w.notify;
         }
     }
 
@@ -109,16 +113,15 @@ public class PlayerWarp extends FeatureObject {
         this.owner.write(d);
         d.put("trusted", array);
         d.put("name", name);
-        d.put("dscrptn", description);
         d.put("tpmsg", teleportMessage);
         d.put("item", item);
         d.put("public", isPublic);
         d.put("tpcosts", teleportCosts);
         d.put("born", born);
         d.put("started", started == born ? 0 : started);
-        d.put("expired", expired);
         d.put("time", time);
         d.put("key", creatorKey);
+        d.put("notify", notify);
     }
 
     @Override
@@ -126,15 +129,16 @@ public class PlayerWarp extends FeatureObject {
         this.owner.read(d);
         this.trusted = new ArrayList<>();
         this.name = d.get("name");
-        this.description = d.getList("dscrptn");
         this.teleportMessage = d.get("tpmsg");
         this.item = d.getItemBuilder("item");
         this.isPublic = d.getBoolean("public");
         this.born = d.getLong("born");
         this.started = d.getLong("started");
-        this.expired = d.getLong("expired");
         this.time = d.getLong("time");
         this.creatorKey = d.get("key");
+        this.notify = d.getBoolean("notify");
+
+        if(born > 0 && started == 0) started = born;
 
         JSONArray array = d.getList("trusted");
         if(array != null)
@@ -148,21 +152,53 @@ public class PlayerWarp extends FeatureObject {
         return super.read(d);
     }
 
-    public PlayerWarp changeItem(ItemStack item) {
-        ItemBuilder builder = new ItemBuilder(item);
-        this.item.setType(item.getType()).setData(builder.getData());
+    public PlayerWarp changeItem(ItemBuilder item) {
+        if(this.item == null) {
+            return setItem(item);
+        }
+
+        this.item.setType(item.getType())
+                .setData(item.getData())
+                .setDurability(item.getDurability())
+                .setAmount(item.getAmount())
+                .setEnchantments(item.getEnchantments())
+                .setSkullId(item.getSkullId())
+                .setColor(item.getColor())
+                .setCustomModel(item.getCustomModel())
+                .setPotionData(item.getPotionData())
+        ;
         return this;
+    }
+
+    public boolean isSameItem(ItemBuilder item) {
+        if(this.item == null && item == null) return true;
+
+        if(this.item != null && item != null) {
+            return this.item.getType() == item.getType()
+                    && this.item.getData() == item.getData()
+                    && this.item.getDurability() == item.getDurability()
+                    && this.item.getAmount() == item.getAmount()
+                    && this.item.getEnchantments() == item.getEnchantments()
+                    && Objects.equals(this.item.getSkullId(), item.getSkullId())
+                    && this.item.getColor() == item.getColor()
+                    && this.item.getCustomModel() == item.getCustomModel()
+                    && this.item.getPotionData() == item.getPotionData();
+        } else return false;
     }
 
     public PlayerWarp resetItem() {
-        this.item.setType(XMaterial.PLAYER_HEAD);
-        if(this.owner.getPlayer() != null) this.item.setSkullId(this.owner.getPlayer());
-        if(!this.item.getName().startsWith("§f")) this.item.setName("§f" + getName(true));
-        return this;
+        if(isStandardItem()) return this;
+
+        ItemBuilder builder = new ItemBuilder(XMaterial.PLAYER_HEAD);
+        String id = WarpSystem.getInstance().getHeadManager().getSkinId(owner.getId());
+        if(id != null) builder.setSkullId(id);
+        if(!builder.getName().startsWith("§f")) builder.setName("§f" + getName(true));
+
+        return changeItem(builder);
     }
 
     public boolean isStandardItem() {
-        return this.item.getType() == XMaterial.PLAYER_HEAD.parseMaterial() && this.item.getSkullId().equals(WarpSystem.getInstance().getHeadManager().getSkinId(this.owner.id));
+        return this.item != null && this.item.getType() == XMaterial.PLAYER_HEAD.parseMaterial() && Objects.equals(this.item.getSkullId(), WarpSystem.getInstance().getHeadManager().getSkinId(this.owner.id));
     }
 
     public PlayerWarp clone() {
@@ -222,11 +258,7 @@ public class PlayerWarp extends FeatureObject {
 
     public void setName(String name) {
         this.name = name;
-        this.item.setName(getName(true));
-    }
-
-    public List<String> getDescription() {
-        return description;
+        this.item.setName("§f" + getName(true));
     }
 
     public String getTeleportMessage() {
@@ -241,8 +273,9 @@ public class PlayerWarp extends FeatureObject {
         return item;
     }
 
-    public void setItem(ItemBuilder item) {
+    public PlayerWarp setItem(ItemBuilder item) {
         this.item = item;
+        return this;
     }
 
     public boolean isPublic() {
@@ -262,6 +295,12 @@ public class PlayerWarp extends FeatureObject {
         this.teleportCosts = teleportCosts;
     }
 
+    public boolean born() {
+        if(this.born > 0) return false;
+        this.born = System.currentTimeMillis();
+        return true;
+    }
+
     public long getBorn() {
         return born;
     }
@@ -274,16 +313,22 @@ public class PlayerWarp extends FeatureObject {
         this.started = started;
     }
 
-    public long getExpired() {
-        return expired;
-    }
-
-    public void setExpired(long expired) {
-        this.expired = expired;
+    public boolean isExpired() {
+        return started > 0 && started + time < System.currentTimeMillis();
     }
 
     public long getTime() {
         return time;
+    }
+
+    public long getLeftTime() {
+        if(this.started == 0) return this.time;
+        else return Math.max(started + time - System.currentTimeMillis(), 0);
+    }
+
+    public long getPassedTime() {
+        if(this.started == 0) return 0;
+        else return Math.min(System.currentTimeMillis() - started, time);
     }
 
     public PlayerWarp setTime(long time) {
@@ -293,6 +338,30 @@ public class PlayerWarp extends FeatureObject {
 
     public String getCreatorKey() {
         return creatorKey;
+    }
+
+    public boolean isBeingEdited() {
+        if(owner == null || owner.getPlayer() == null) return false;
+        return API.getRemovable(owner.getPlayer(), PWEditor.class) != null;
+    }
+
+    public void setNotify(boolean notify) {
+        this.notify = notify;
+    }
+
+    public boolean isNotify() {
+        return notify;
+    }
+
+    public long getExpireDate() {
+        if(this.started == 0) return 0;
+        return this.started + this.time;
+    }
+
+    public float getRefundFactor() {
+        if(this.started == 0) return 1;
+        else if(PlayerWarpManager.getManager().isInternalRefundFactor()) return ((float) (int) (((float) getLeftTime() / (float) (getExpireDate() - getBorn())) * 10000)) /10000;
+        else return 1;
     }
 
     public static class User implements Serializable {

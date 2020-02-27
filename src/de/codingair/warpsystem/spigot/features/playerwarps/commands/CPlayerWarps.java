@@ -1,5 +1,7 @@
-package de.codingair.warpsystem.spigot.features.tempwarps.playerwarps.commands;
+package de.codingair.warpsystem.spigot.features.playerwarps.commands;
 
+import de.codingair.codingapi.player.chat.ChatButton;
+import de.codingair.codingapi.player.chat.SimpleMessage;
 import de.codingair.codingapi.player.gui.anvil.*;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
@@ -9,16 +11,14 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.commands.WarpSystemBaseComponent;
 import de.codingair.warpsystem.spigot.base.utils.commands.WarpSystemCommandBuilder;
-import de.codingair.warpsystem.spigot.features.tempwarps.guis.keys.TemplateGUI;
-import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
-import de.codingair.warpsystem.spigot.features.tempwarps.playerwarps.guis.PWEditor;
-import de.codingair.warpsystem.spigot.features.tempwarps.playerwarps.managers.PlayerWarpManager;
-import de.codingair.warpsystem.spigot.features.tempwarps.playerwarps.utils.PlayerWarp;
-import de.codingair.warpsystem.spigot.features.tempwarps.utils.Key;
-import org.bukkit.ChatColor;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.PWEditor;
+import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CPlayerWarps extends WarpSystemCommandBuilder {
@@ -38,6 +38,68 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
 
         //list, create, edit, delete, setAsOwnRespawn
 
+        getBaseComponent().addChild(new CommandComponent("delete") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " delete §e<warp>");
+                return false;
+            }
+        });
+
+        getComponent("delete").addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
+                List<PlayerWarp> l = PlayerWarpManager.getManager().getWarps((Player) sender);
+
+                for(PlayerWarp warp : l) {
+                    suggestions.add(warp.getName(false));
+                }
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                PlayerWarp warp = PlayerWarpManager.getManager().getWarp(argument);
+
+                if(warp == null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
+                    return false;
+                }
+
+                if(!warp.isOwner((Player) sender)) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_no_access"));
+                    return false;
+                }
+
+                SimpleMessage message = new SimpleMessage(Lang.getPrefix() + Lang.get("Warp_Delete_Info").replace("%NAME%", warp.getName()), WarpSystem.getInstance());
+
+                List<String> lore = Lang.getStringList("Warp_Delete_Button_Info");
+                List<String> prepared = new ArrayList<>();
+                for(String s : lore) {
+                    prepared.add(s
+                            .replace("%REFUND%", cut(PlayerWarpManager.getManager().calculateRefund(warp)) + "")
+                            .replace("%NAME%", warp.getName())
+                    );
+                }
+
+                message.replace("%HERE%", new ChatButton(Lang.get("Warp_Delete_Info_Here"), prepared) {
+                    @Override
+                    public void onClick(Player player) {
+                        double refund = PlayerWarpManager.getManager().delete(warp);
+                        if(refund == -1) return;
+                        MoneyAdapterType.getActive().deposit((Player) sender, refund);
+
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Deleted_Info").replace("%NAME%", warp.getName(true)).replace("%PRICE%", cut(refund) + ""));
+                        message.destroy();
+                    }
+                });
+
+                message.setTimeOut(60);
+
+                message.send(sender);
+                return false;
+            }
+        });
+
         getBaseComponent().addChild(new CommandComponent("edit") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
@@ -49,7 +111,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
         getComponent("edit").addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                List<PlayerWarp> l = PlayerWarpManager.getInstance().getWarps((Player) sender);
+                List<PlayerWarp> l = PlayerWarpManager.getManager().getWarps((Player) sender);
 
                 for(PlayerWarp warp : l) {
                     suggestions.add(warp.getName(false));
@@ -58,7 +120,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                PlayerWarp warp = PlayerWarpManager.getInstance().getWarp(argument);
+                PlayerWarp warp = PlayerWarpManager.getManager().getWarp(argument);
 
                 if(warp == null) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
@@ -89,7 +151,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                             return;
                         }
 
-                        if(PlayerWarpManager.getInstance().exists(input)) {
+                        if(PlayerWarpManager.getManager().exists(input)) {
                             e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                             return;
                         }
@@ -115,7 +177,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                if(PlayerWarpManager.getInstance().exists(argument)) {
+                if(PlayerWarpManager.getManager().exists(argument)) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                     return false;
                 }
@@ -124,5 +186,10 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                 return false;
             }
         });
+    }
+
+    public static Number cut(double n) {
+        if(n == (int) n) return (int) n;
+        else return ((double) (int) (n * 100)) / 100;
     }
 }

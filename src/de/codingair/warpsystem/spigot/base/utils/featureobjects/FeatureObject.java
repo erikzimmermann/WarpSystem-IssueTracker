@@ -49,7 +49,7 @@ public class FeatureObject implements Serializable {
     }
 
     public FeatureObject(FeatureObject featureObject) {
-        this.actions = featureObject.actions == null ? new ArrayList<>() : featureObject.getCopyOfActions();
+        this.actions = featureObject.getCopyOfActions();
         this.permission = featureObject.permission;
         this.disabled = featureObject.disabled;
         this.skip = featureObject.skip;
@@ -218,15 +218,17 @@ public class FeatureObject implements Serializable {
         this.disabled = object.disabled;
         this.permission = object.permission;
         this.performed = object.performed;
-        this.actions = object.actions == null ? new ArrayList<>() : new ArrayList<>(object.actions);
+        this.actions = object.getCopyOfActions();
         checkActionList();
     }
 
     public void checkActionList() {
-        List<ActionObject> l = new ArrayList<>(this.actions);
+        List<ActionObject<?>> l = new ArrayList<>(this.actions);
 
-        for(ActionObject object : l) {
-            if(!object.usable()) this.actions.remove(object);
+        for(ActionObject<?> object : l) {
+            if(!object.usable()) {
+                this.actions.remove(object);
+            }
         }
 
         l.clear();
@@ -242,16 +244,16 @@ public class FeatureObject implements Serializable {
                 actions.equals(object.actions);
     }
 
-    public <T extends ActionObject> T getAction(Action action) {
-        for(ActionObject ao : this.actions) {
+    public <T extends ActionObject<?>> T getAction(Action action) {
+        for(ActionObject<?> ao : this.actions) {
             if(ao.getType() == action) return (T) ao;
         }
 
         return null;
     }
 
-    public <T extends ActionObject> T getAction(Class<T> clazz) {
-        for(ActionObject ao : this.actions) {
+    public <T extends ActionObject<?>> T getAction(Class<T> clazz) {
+        for(ActionObject<?> ao : this.actions) {
             if(ao.getClass() == clazz) return (T) ao;
         }
 
@@ -263,18 +265,18 @@ public class FeatureObject implements Serializable {
     }
 
     public boolean removeAction(Action action) {
-        ActionObject ao = getAction(action);
+        ActionObject<?> ao = getAction(action);
         if(ao == null) return false;
         this.actions.remove(ao);
         return true;
     }
 
-    public FeatureObject addAction(ActionObject action) {
+    public FeatureObject addAction(ActionObject<?> action) {
         return addAction(action, true);
     }
 
-    public FeatureObject addAction(ActionObject action, boolean overwrite) {
-        ActionObject ao = getAction(action.getType());
+    public FeatureObject addAction(ActionObject<?> action, boolean overwrite) {
+        ActionObject<?> ao = getAction(action.getType());
         if(ao != null) {
             if(overwrite) this.actions.remove(ao);
             else return this;

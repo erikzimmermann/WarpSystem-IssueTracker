@@ -1,12 +1,12 @@
-package de.codingair.warpsystem.spigot.features.tempwarps.playerwarps.commands;
+package de.codingair.warpsystem.spigot.features.playerwarps.commands;
 
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.commands.WarpSystemBaseComponent;
 import de.codingair.warpsystem.spigot.base.utils.commands.WarpSystemCommandBuilder;
-import de.codingair.warpsystem.spigot.features.tempwarps.playerwarps.managers.PlayerWarpManager;
-import de.codingair.warpsystem.spigot.features.tempwarps.playerwarps.utils.PlayerWarp;
+import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -29,7 +29,7 @@ public class CPlayerWarp extends WarpSystemCommandBuilder {
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                List<PlayerWarp> l = PlayerWarpManager.getInstance().getWarps((Player) sender, true);
+                List<PlayerWarp> l = PlayerWarpManager.getManager().getWarps((Player) sender, true);
 
                 for(PlayerWarp warp : l) {
                     suggestions.add(warp.getName(false));
@@ -40,7 +40,7 @@ public class CPlayerWarp extends WarpSystemCommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                PlayerWarp warp = PlayerWarpManager.getInstance().getWarp(argument);
+                PlayerWarp warp = PlayerWarpManager.getManager().getWarp(argument);
 
                 if(warp == null) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));

@@ -123,7 +123,7 @@ public class DestinationPage extends PageItem {
                                         updateDestinationButtons();
 
                                         e.setClose(true);
-                                        playSound(player);
+                                        playSound(e.getClickType(), player);
                                     }
                                 }
 
@@ -214,7 +214,7 @@ public class DestinationPage extends PageItem {
                                         update();
 
                                         e.setClose(true);
-                                        playSound(player);
+                                        playSound(e.getClickType(), player);
                                     }
                                 }
 

@@ -31,7 +31,7 @@ public class NativePortal extends FeatureObject {
     private PortalType type;
     private boolean editMode = false;
 
-    private List<PortalBlock> blocks;
+    private List<PortalBlock> blocks = new ArrayList<>();
     private boolean visible = false;
     private List<PortalListener> listeners = new ArrayList<>();
 
@@ -180,8 +180,8 @@ public class NativePortal extends FeatureObject {
         this.type = null;
         this.cachedEdges = null;
         this.cachedAxis = null;
-        this.blocks.clear();
-        this.listeners.clear();
+        if(this.blocks != null) this.blocks.clear();
+        if(this.listeners != null) this.listeners.clear();
     }
 
     @Override
@@ -199,6 +199,7 @@ public class NativePortal extends FeatureObject {
         this.type = nativePortal.getType();
         this.listeners.clear();
         this.listeners.addAll(nativePortal.getListeners());
+        this.displayName = nativePortal.getDisplayName();
 
         if(visible) setVisible(true);
     }

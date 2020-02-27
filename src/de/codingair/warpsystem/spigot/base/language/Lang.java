@@ -73,6 +73,18 @@ public class Lang {
         return get("Prefix");
     }
 
+    public static List<String> getStringList(String key) {
+        List<String> l = getLanguageFile(getCurrentLanguage()).getStringList(key);
+        List<String> prepared = new ArrayList<>();
+
+        for(String s : l) {
+            if(s == null) prepared.add(null);
+            else prepared.add(ChatColor.translateAlternateColorCodes('&', s));
+        }
+
+        return prepared;
+    }
+
     public static String get(String key) {
         String text = getLanguageFile(getCurrentLanguage()).getString(key);
 

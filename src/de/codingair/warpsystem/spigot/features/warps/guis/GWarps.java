@@ -365,8 +365,8 @@ public class GWarps extends GUI {
                                             e.setClose(false);
 
                                             if(e.getSlot().equals(AnvilSlot.OUTPUT)) {
-                                                playSound(p);
                                                 input = e.getInput();
+                                                playSound(e.getClickType(), p);
 
                                                 if(input == null) {
                                                     p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));

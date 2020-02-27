@@ -130,10 +130,16 @@ public class Destination implements Serializable {
     }
 
     public String getId() {
+        if(this.adapter instanceof LocationAdapter && ((LocationAdapter) this.adapter).getLocation() != null) {
+            return new de.codingair.codingapi.tools.Location(((LocationAdapter) this.adapter).getLocation()).toJSONString(2);
+        }
         return id;
     }
 
     public void setId(String id) {
+        if(this.adapter instanceof LocationAdapter && ((LocationAdapter) this.adapter).getLocation() != null) {
+            ((LocationAdapter) this.adapter).setLocation(null);
+        }
         this.id = id;
     }
 
@@ -230,8 +236,8 @@ public class Destination implements Serializable {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         Destination that = (Destination) o;
-        if(id == null) return that.id == null && type == that.type;
-        return id.equals(that.id)
+        if(getId() == null) return that.getId() == null && type == that.type;
+        return getId().equals(that.getId())
                 && type == that.type
                 && offsetX == that.offsetX
                 && offsetY == that.offsetY
@@ -243,9 +249,9 @@ public class Destination implements Serializable {
 
     public Destination clone() {
         Destination destination = new Destination();
-        destination.id = id;
+        destination.id = getId();
         destination.type = type;
-        destination.adapter = adapter;
+        destination.adapter = adapter == null ? null : type.getInstance();
         destination.offsetX = offsetX;
         destination.offsetY = offsetY;
         destination.offsetZ = offsetZ;
@@ -257,7 +263,7 @@ public class Destination implements Serializable {
 
     @Override
     public String toString() {
-        return "Destination{id=" + this.id + ", " + this.type + "}";
+        return "Destination{id=" + getId() + ", " + this.type + "}";
     }
 
     public double getOffsetX() {

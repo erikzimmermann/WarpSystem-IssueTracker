@@ -6,7 +6,6 @@ import de.codingair.warpsystem.spigot.base.utils.options.Options;
 import de.codingair.warpsystem.spigot.base.utils.options.specific.FeatureOptions;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
-import de.codingair.warpsystem.spigot.features.tempwarps.playerwarps.utils.PlayerWarp;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
 
 public enum Origin {
@@ -25,7 +24,7 @@ public enum Origin {
     TeleportCommand,
     Custom,
     CustomTeleportCommands,
-    PlayerWarp(de.codingair.warpsystem.spigot.features.tempwarps.playerwarps.utils.PlayerWarp.class, "PlayerWarps"),
+    PlayerWarp(de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp.class, "PlayerWarps"),
     UNKNOWN;
 
     private Class<? extends FeatureObject> clazz = null;

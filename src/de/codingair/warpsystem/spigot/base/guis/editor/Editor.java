@@ -148,7 +148,7 @@ public class Editor<C> extends SimpleGUI {
             @Override
             public ItemStack craftItem() {
                 boolean finish = canFinish();
-                return new ItemBuilder(finish ? XMaterial.LIME_TERRACOTTA : XMaterial.LIGHT_GRAY_TERRACOTTA).setName((finish ? "§a" : "§7") + Lang.get("Finish") + finishButtonNameAddition()).getItem();
+                return new ItemBuilder(finish ? XMaterial.LIME_TERRACOTTA : XMaterial.LIGHT_GRAY_TERRACOTTA).setName((finish ? "§a" : "§7") + Lang.get("Finish") + finishButtonNameAddition()).addLore(finishButtonLoreAddition()).getItem();
             }
 
             @Override
@@ -157,8 +157,12 @@ public class Editor<C> extends SimpleGUI {
                     setClosingByButton(true);
                     player.closeInventory();
                     backup.applyTo(clone);
-                    getSuccessSound().play(player);
-                    getPlayer().sendMessage(getSuccessMessage());
+
+                    SoundData sound = getSuccessSound();
+                    if(sound != null) sound.play(player);
+
+                    String msg = getSuccessMessage();
+                    if(msg != null) getPlayer().sendMessage(msg);
                 }
             }
         }.setOption(option));
@@ -196,6 +200,10 @@ public class Editor<C> extends SimpleGUI {
 
     public String finishButtonNameAddition() {
         return "";
+    }
+
+    public List<String> finishButtonLoreAddition() {
+        return null;
     }
 
     public boolean canFinish() {

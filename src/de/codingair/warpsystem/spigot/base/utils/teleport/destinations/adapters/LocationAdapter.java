@@ -64,10 +64,14 @@ public class LocationAdapter implements DestinationAdapter {
 
     @Override
     public Location buildLocation(String id) {
-        return id == null ? location.clone() : de.codingair.codingapi.tools.Location.getByJSONString(id);
+        return this.location == null ? id == null ? null : de.codingair.codingapi.tools.Location.getByJSONString(id) : this.location;
     }
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public Location getLocation() {
+        return location;
     }
 }
