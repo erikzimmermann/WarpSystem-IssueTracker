@@ -3,28 +3,57 @@ package de.codingair.warpsystem.spigot.features.playerwarps.managers;
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
+import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.yml.ConfigWriter;
+import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Ticker;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.playerwarps.guis.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarp;
 import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarps;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.Category;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
 import de.codingair.warpsystem.spigot.features.tempwarps.guis.GCreate;
 import de.codingair.warpsystem.spigot.features.tempwarps.guis.GDelete;
 import de.codingair.warpsystem.spigot.features.tempwarps.guis.GTempWarpList;
+import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.json.simple.JSONArray;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class PlayerWarpManager implements Manager, Ticker {
+    public static boolean hasPermission(Player player) {
+        if(player.isOp()) return true;
+
+        int warps = PlayerWarpManager.getManager().getWarps(player).size() + 1;
+        for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
+            String perm = effectivePermission.getPermission();
+
+            if(perm.equals("*") || perm.equalsIgnoreCase("warpsystem.*")) return true;
+            if(perm.toLowerCase().startsWith("warpsystem.playerwarps.")) {
+                String s = perm.substring(24);
+                if(s.equals("*") || s.equalsIgnoreCase("n")) return true;
+
+                try {
+                    int amount = Integer.parseInt(s);
+                    if(amount >= warps) return true;
+                } catch(Throwable ignored) {
+                }
+            }
+        }
+
+        return false;
+    }
+
     private HashMap<UUID, List<PlayerWarp>> warps = new HashMap<>();
+    private List<Category> warpCategories = new ArrayList<>();
 
     private long minTime;
     private long maxTime;
@@ -58,12 +87,19 @@ public class PlayerWarpManager implements Manager, Ticker {
     private double editCosts;
     private boolean naturalNumbers;
     private boolean internalRefundFactor;
+    private boolean economy;
+    private boolean forcePlayerHead;
+    private boolean customTeleportCosts;
+    private int classesMin;
+    private int classesMax;
+    private boolean classes;
 
     @Override
     public boolean load() {
         boolean success = true;
 
         this.warps.clear();
+        this.warpCategories.clear();
 
         if(WarpSystem.getInstance().getFileManager().getFile("PlayerWarps") == null) WarpSystem.getInstance().getFileManager().loadFile("PlayerWarps", "/Memory/");
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("PlayerWarps");
@@ -95,6 +131,9 @@ public class PlayerWarpManager implements Manager, Ticker {
         this.editCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Edit", 200);
         this.naturalNumbers = config.getBoolean("WarpSystem.PlayerWarps.Costs.Round_costs_to_natural_numbers", false);
         this.internalRefundFactor = config.getBoolean("WarpSystem.PlayerWarps.Costs.Internal_Refund_Factor", false);
+        this.economy = config.getBoolean("WarpSystem.PlayerWarps.General.Economy", true);
+        this.forcePlayerHead = config.getBoolean("WarpSystem.PlayerWarps.General.Force_Player_Head", false);
+        this.customTeleportCosts = config.getBoolean("WarpSystem.PlayerWarps.General.Custom_teleport_costs", true);
 
         //Costs - Editing
         this.nameChangeCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Editing.Name", 400);
@@ -135,6 +174,21 @@ public class PlayerWarpManager implements Manager, Ticker {
         this.activeTimeRefund = config.getDouble("WarpSystem.PlayerWarps.Refunds.Active_Time", 1);
         this.trustedMemberRefund = config.getDouble("WarpSystem.PlayerWarps.Refunds.Trusted_Member", 0.5);
 
+        //Classes
+        this.classes = config.getBoolean("WarpSystem.PlayerWarps.Categories.Enabled", true);
+        this.classesMin = config.getInt("WarpSystem.PlayerWarps.Categories.Min", 1);
+        this.classesMax = config.getInt("WarpSystem.PlayerWarps.Categories.Max", 2);
+
+        List<?> l = config.getList("WarpSystem.PlayerWarps.General.Categories.Classes");
+        if(l != null)
+            for(Object o : l) {
+                JSON json = new JSON((Map<Object, Object>) o);
+                for(Object key : json.keySet(false)) {
+                    Category c = json.getSerializable((String) key, new Category());
+                    if(c != null) this.warpCategories.add(c);
+                }
+            }
+
         //loading PlayerWarps
         for(String key : file.getConfig().getKeys(false)) {
             ConfigWriter w = new ConfigWriter(file, key);
@@ -153,8 +207,9 @@ public class PlayerWarpManager implements Manager, Ticker {
         new CPlayerWarp().register(WarpSystem.getInstance());
         new CPlayerWarps().register(WarpSystem.getInstance());
 
+        WarpSystem.log("    ...got " + warpCategories.size() + " Class(es)");
         WarpSystem.log("    ...got " + size + " PlayerWarp(s)");
-        API.addTicker(this);
+        if(isEconomy()) API.addTicker(this);
 
         return success;
     }
@@ -176,6 +231,18 @@ public class PlayerWarpManager implements Manager, Ticker {
 
             entries += data.size();
         }
+
+        JSONArray array = new JSONArray();
+        for(Category c : this.warpCategories) {
+            JSON json = new JSON();
+            json.put(ChatColor.stripColor(c.getName()), c);
+            array.add(json);
+        }
+
+        ConfigFile config = WarpSystem.getInstance().getFileManager().getFile("Config");
+        ConfigWriter writer = new ConfigWriter(config);
+        writer.put("WarpSystem.PlayerWarps.General.Categories.Classes", array);
+        config.saveConfig();
 
         file.saveConfig();
         if(!saver) WarpSystem.log("    ...saved " + entries + " PlayerWarp(s)");
@@ -354,6 +421,21 @@ public class PlayerWarpManager implements Manager, Ticker {
         return null;
     }
 
+    public List<PlayerWarp> getPublicWarps() {
+        List<PlayerWarp> warps = new ArrayList<>();
+        for(List<PlayerWarp> value : this.warps.values()) {
+            for(PlayerWarp warp : value) {
+                if(warp.isPublic()) warps.add(warp);
+            }
+        }
+
+        return warps;
+    }
+
+    public Set<UUID> getUUIDs() {
+        return this.warps.keySet();
+    }
+
     public List<PlayerWarp> getWarps(Player player) {
         return getWarps(player.getUniqueId());
     }
@@ -419,6 +501,7 @@ public class PlayerWarpManager implements Manager, Ticker {
     public double calculateRefund(PlayerWarp warp) {
         double refund = 0;
         if(warp == null) return -1;
+        if(!isEconomy()) return 0;
 
         //personal item
         if(!warp.isStandardItem()) refund += PlayerWarpManager.getManager().getItemCosts() * PlayerWarpManager.getManager().getPersonalItemRefund() * warp.getRefundFactor();
@@ -581,5 +664,41 @@ public class PlayerWarpManager implements Manager, Ticker {
 
     public boolean isInternalRefundFactor() {
         return internalRefundFactor;
+    }
+
+    public boolean isEconomy() {
+        return economy;
+    }
+
+    public boolean isForcePlayerHead() {
+        return forcePlayerHead;
+    }
+
+    public List<Category> getWarpClasses() {
+        return warpCategories;
+    }
+
+    public Category getWarpClass(String name) {
+        for(Category c : this.warpCategories) {
+            if(ChatColor.stripColor(c.getName()).equals(ChatColor.stripColor(name))) return c;
+        }
+
+        return null;
+    }
+
+    public boolean isCustomTeleportCosts() {
+        return customTeleportCosts;
+    }
+
+    public int getClassesMin() {
+        return classesMin;
+    }
+
+    public int getClassesMax() {
+        return classesMax;
+    }
+
+    public boolean isClasses() {
+        return classes;
     }
 }

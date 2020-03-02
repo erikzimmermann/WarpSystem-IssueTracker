@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.playerwarps.guis.pages;
+package de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages;
 
 import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
@@ -14,7 +14,7 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.playerwarps.guis.PWEditor;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
 import org.bukkit.Bukkit;
@@ -40,7 +40,6 @@ public class PTrusted extends PageItem {
                 .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Trusted_members"))
                 .setLore(getFreeMessage(warp, original))
                 .addLore(PWEditor.getCostsMessage(Math.max(warp.getTrusted().size() - original.getTrusted().size(), 0) * PlayerWarpManager.getManager().getTrustedMemberCosts()))
-                .addLore("")
                 .addLore(Lang.getStringList("PlayerWarp_Trusted_Benefits"));
 
         return builder.getItem();
@@ -52,7 +51,7 @@ public class PTrusted extends PageItem {
 
     private static String getFreeMessage(PlayerWarp warp, PlayerWarp original) {
         if(warp.getTrusted().size() - original.getTrusted().size() >= 0) return null;
-        return Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Free") + ": §7" + -(warp.getTrusted().size() - original.getTrusted().size()) + " " + Lang.get("Trusted_members");
+        return PWEditor.getFreeMessage(-(warp.getTrusted().size() - original.getTrusted().size()) + " " + Lang.get("Trusted_members"));
     }
 
     @Override

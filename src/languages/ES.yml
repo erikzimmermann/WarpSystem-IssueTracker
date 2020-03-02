@@ -423,7 +423,10 @@ Enter_Amount_between: '&7Please enter a number between §c%X%§7 and §c%Y%§7.'
 Target_Position: 'Target position'
 World: 'World'
 Direction: 'Direction'
+Warp_expiring: '&7Your Warp "&b%NAME%&7" has &cexpired&7. You have &b%TIME_LEFT% &7left to reactivate it.'
 Warp_Created: '&7Your Warp "&b%NAME%&7" &7was activated for &c%PRICE% Coin(s)&7!'
+Warp_Created_Free: '&7Your Warp "&b%NAME%&7" &7was activated &asuccessfully&7!'
+Warp_Edited: '&7Your Warp "&b%NAME%&7" was &aedited successfully&7.'
 Warp_Edited_Pay: '&7Your Warp "&b%NAME%&7" was &aedited &7for &c%PRICE% Coin(s)&7.'
 Warp_Edited_Refund: '&7Your Warp "&b%NAME%&7" was &aedited&7. You got &a%PRICE% Coin(s) &7back!'
 Warp_Delete_Info: '&7Click %HERE%&7 to &cdelete&7 your warp "&b%NAME%&7".'
@@ -432,10 +435,12 @@ Warp_Delete_Button_Info:
   - "&7Refund: &a%REFUND% Coin(s)"
   - "&7Click: &4Delete"
 Warp_Deleted_Info: '&7Your Warp "&b%NAME%&7" was &cdeleted&7. You got &a%PRICE% Coin(s) &7back!'
+Warp_Maximum_of_Warps: '&7You &ccannot &7create more than &b%AMOUNT% &7warp(s)!'
 Enter_Something_between: '&7Please enter something between §c%X%§7 and §c%Y%§7.'
 Free: 'Free'
 Characters: 'Character(s)'
 PlayerWarp_Trusted_Benefits:
+- ''
 - '&7Benefits:'
 - '&7- No teleport costs'
 - '&7- Private PlayerWarp access'
@@ -443,3 +448,15 @@ Yourself_Trusted_Info: '&7You &ccannot &7make &cyourself&7 a &ctrusted member&7.
 Refund: 'Refund'
 Construction_Costs: 'Create costs'
 Processing_Costs: 'Edit costs'
+Classes: Classes
+PlayerWarp_Classes:
+- ''
+- '&7Choose %MIN% to %MAX% classes to describe your'
+- '&7warp in more detail.'
+Filter: 'Filter'
+Filter_Own_Warps: "own warps"
+Filter_All_Warps: "all warps"
+Filter_All_Players: "players"
+Filter_Classes: "classes"
+Next_Filter: 'Next filter'
+Previous_Filter: 'Previous filter'

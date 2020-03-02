@@ -8,19 +8,16 @@ import de.codingair.codingapi.tools.io.Serializable;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
-import de.codingair.warpsystem.spigot.api.players.Head;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.managers.HeadManager;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
-import de.codingair.warpsystem.spigot.features.playerwarps.guis.PWEditor;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.json.simple.JSONArray;
 
 import java.util.*;
@@ -28,6 +25,7 @@ import java.util.*;
 public class PlayerWarp extends FeatureObject {
     private User owner;
     private List<User> trusted;
+    private List<Category> classes;
 
     private String name;
     private String teleportMessage;
@@ -46,6 +44,7 @@ public class PlayerWarp extends FeatureObject {
         super();
         owner = new User("owner");
         trusted = new ArrayList<>();
+        classes = new ArrayList<>();
     }
 
     public PlayerWarp(Player player, String name) {
@@ -86,6 +85,12 @@ public class PlayerWarp extends FeatureObject {
                 this.trusted.addAll(w.trusted);
             }
 
+            if(this.classes == null) this.classes = new ArrayList<>(w.classes);
+            else {
+                this.classes.clear();
+                this.classes.addAll(w.classes);
+            }
+
             this.name = w.name;
             this.teleportMessage = w.teleportMessage;
             this.item = w.item.clone();
@@ -103,15 +108,21 @@ public class PlayerWarp extends FeatureObject {
     public void write(DataWriter d) {
         super.write(d);
 
-        JSONArray array = new JSONArray();
+        JSONArray trustedMembers = new JSONArray();
         for(User user : this.trusted) {
             JSON userJson = new JSON();
             user.write(userJson);
-            array.add(userJson);
+            trustedMembers.add(userJson);
+        }
+
+        JSONArray classes = new JSONArray();
+        for(Category c : this.classes) {
+            classes.add(ChatColor.stripColor(c.getName()));
         }
 
         this.owner.write(d);
-        d.put("trusted", array);
+        d.put("trusted", trustedMembers);
+        d.put("classes", classes);
         d.put("name", name);
         d.put("tpmsg", teleportMessage);
         d.put("item", item);
@@ -127,7 +138,13 @@ public class PlayerWarp extends FeatureObject {
     @Override
     public boolean read(DataWriter d) throws Exception {
         this.owner.read(d);
-        this.trusted = new ArrayList<>();
+
+        if(this.trusted == null) this.trusted = new ArrayList<>();
+        else this.trusted.clear();
+
+        if(this.classes == null) this.classes = new ArrayList<>();
+        else this.classes.clear();
+
         this.name = d.get("name");
         this.teleportMessage = d.get("tpmsg");
         this.item = d.getItemBuilder("item");
@@ -148,6 +165,20 @@ public class PlayerWarp extends FeatureObject {
                 user.read(data);
                 trusted.add(user);
             }
+
+        array = d.getList("classes");
+        if(array != null)
+            for(Object o : array) {
+                String name = (String) o;
+                Category c = PlayerWarpManager.getManager().getWarpClass(name);
+                if(c != null) this.classes.add(c);
+            }
+
+        //check "force player heads"
+        if(PlayerWarpManager.getManager().isForcePlayerHead()) resetItem();
+
+        //check "custom teleport costs"
+        if(!PlayerWarpManager.getManager().isCustomTeleportCosts()) this.teleportCosts = 0;
 
         return super.read(d);
     }
@@ -188,13 +219,19 @@ public class PlayerWarp extends FeatureObject {
 
     public PlayerWarp resetItem() {
         if(isStandardItem()) return this;
+        return changeItem(getStandardItemBuilder());
+    }
 
+    private ItemBuilder getStandardItemBuilder() {
         ItemBuilder builder = new ItemBuilder(XMaterial.PLAYER_HEAD);
+
         String id = WarpSystem.getInstance().getHeadManager().getSkinId(owner.getId());
         if(id != null) builder.setSkullId(id);
-        if(!builder.getName().startsWith("§f")) builder.setName("§f" + getName(true));
 
-        return changeItem(builder);
+        if(!builder.getName().startsWith("§f")) builder.setName("§f" + getName(true));
+        if(this.item != null && this.item.getLore() != null && !this.item.getLore().isEmpty()) builder.setLore(this.item.getLore());
+
+        return builder;
     }
 
     public boolean isStandardItem() {
@@ -362,6 +399,14 @@ public class PlayerWarp extends FeatureObject {
         if(this.started == 0) return 1;
         else if(PlayerWarpManager.getManager().isInternalRefundFactor()) return ((float) (int) (((float) getLeftTime() / (float) (getExpireDate() - getBorn())) * 10000)) /10000;
         else return 1;
+    }
+
+    public List<Category> getClasses() {
+        return classes;
+    }
+
+    public boolean hasClass(Category c) {
+        return this.classes.contains(c);
     }
 
     public static class User implements Serializable {

@@ -15,10 +15,7 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -136,13 +133,14 @@ public class Editor<C> extends SimpleGUI {
 
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
-                if(canCancel()) {
-                    setClosingByButton(true);
-                    player.closeInventory();
-                    backup.cancel(clone);
-                }
+                backup.cancel(clone);
             }
-        }.setOption(option).setClickSound2(getCancelSound()));
+
+            @Override
+            public boolean canClick(ClickType click) {
+                return canCancel();
+            }
+        }.setOption(option).setClickSound2(getCancelSound()).setCloseOnClick(true));
 
         addButton(new SyncButton(8, 2) {
             @Override
@@ -153,19 +151,20 @@ public class Editor<C> extends SimpleGUI {
 
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
-                if(canFinish()) {
-                    setClosingByButton(true);
-                    player.closeInventory();
-                    backup.applyTo(clone);
+                backup.applyTo(clone);
 
-                    SoundData sound = getSuccessSound();
-                    if(sound != null) sound.play(player);
+                SoundData sound = getSuccessSound();
+                if(sound != null) sound.play(player);
 
-                    String msg = getSuccessMessage();
-                    if(msg != null) getPlayer().sendMessage(msg);
-                }
+                String msg = getSuccessMessage();
+                if(msg != null) getPlayer().sendMessage(msg);
             }
-        }.setOption(option));
+
+            @Override
+            public boolean canClick(ClickType click) {
+                return canFinish();
+            }
+        }.setOption(option).setCloseOnClick(true));
     }
 
     public String getSuccessMessage() {

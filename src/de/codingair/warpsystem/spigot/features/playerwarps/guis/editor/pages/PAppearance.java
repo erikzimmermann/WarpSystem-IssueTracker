@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.playerwarps.guis.pages;
+package de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages;
 
 import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
@@ -16,7 +16,7 @@ import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.LoreButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.playerwarps.guis.PWEditor;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
 import org.bukkit.Material;
@@ -48,65 +48,67 @@ public class PAppearance extends PageItem {
     public void initialize(Player p) {
         ItemButtonOption option = new ItemButtonOption();
         option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
+        int slot = 1;
 
-        addButton(new SyncButton(1, 2) {
-            @Override
-            public ItemStack craftItem() {
-                ItemBuilder builder = new ItemBuilder(XMaterial.ITEM_FRAME).setName("§6§n" + Lang.get("Item"));
+        if(!PlayerWarpManager.getManager().isForcePlayerHead())
+            addButton(new SyncButton(slot++, 2) {
+                @Override
+                public ItemStack craftItem() {
+                    ItemBuilder builder = new ItemBuilder(XMaterial.ITEM_FRAME).setName("§6§n" + Lang.get("Item"));
 
-                if(!warp.isStandardItem()) {
-                    if(original.isStandardItem()) builder.addLore(PWEditor.getCostsMessage(PlayerWarpManager.getManager().getItemCosts()));
-                    else if(!warp.isSameItem(original.getItem())) builder.addLore(PWEditor.getCostsMessage(PlayerWarpManager.getManager().getItemChangeCosts()));
+                    if(!warp.isStandardItem()) {
+                        if(original.isStandardItem()) builder.addLore(PWEditor.getCostsMessage(PlayerWarpManager.getManager().getItemCosts()));
+                        else if(!warp.isSameItem(original.getItem())) builder.addLore(PWEditor.getCostsMessage(PlayerWarpManager.getManager().getItemChangeCosts()));
+                    }
+
+                    if(p.getInventory().getItem(p.getInventory().getHeldItemSlot()) == null || p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType() == Material.AIR)
+                        builder.addLore("§c" + Lang.get("No_Item_In_Hand"));
+                    else if(warp.getItem().getType() != p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType())
+                        builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Item"));
+
+                    if(!warp.isStandardItem()) {
+                        if(builder.getLore() == null || builder.getLore().size() <= 1) builder.addLore("");
+                        builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));
+                    } else if(!warp.isSameItem(original.getItem())) {
+                        if(builder.getLore() == null || builder.getLore().size() <= 1) builder.addLore("");
+                        builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §c" + Lang.get("Reset"));
+                    }
+
+                    return builder.getItem();
                 }
 
-                if(p.getInventory().getItem(p.getInventory().getHeldItemSlot()) == null || p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType() == Material.AIR)
-                    builder.addLore("§c" + Lang.get("No_Item_In_Hand"));
-                else if(warp.getItem().getType() != p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType())
-                    builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Item"));
+                @Override
+                public void onClick(InventoryClickEvent e, Player player) {
+                    if(e.isLeftClick()) {
+                        warp.changeItem(new ItemBuilder(player.getInventory().getItem(player.getInventory().getHeldItemSlot())));
 
-                if(!warp.isStandardItem()) {
-                    if(builder.getLore() == null || builder.getLore().size() <= 1) builder.addLore("");
-                    builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));
-                } else if(!warp.isSameItem(original.getItem())) {
-                    if(builder.getLore() == null || builder.getLore().size() <= 1) builder.addLore("");
-                    builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §c" + Lang.get("Reset"));
+                        getLast().updateShowIcon();
+                        update();
+                        updateCosts();
+                    } else if(e.isRightClick()) {
+                        if(!warp.isStandardItem()) warp.resetItem();
+                        else if(!warp.isSameItem(original.getItem())) warp.changeItem(original.getItem());
+
+                        getLast().updateShowIcon();
+                        update();
+                        updateCosts();
+                    }
                 }
 
-                return builder.getItem();
-            }
+                @Override
+                public boolean canClick(ClickType click) {
+                    if(click == ClickType.LEFT) {
+                        return !(p.getInventory().getItem(p.getInventory().getHeldItemSlot()) == null || p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType() == Material.AIR
+                                || warp.getItem().getType() == p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType());
+                    } else if(click == ClickType.RIGHT) {
+                        return !warp.isStandardItem() || !warp.isSameItem(original.getItem());
+                    }
 
-            @Override
-            public void onClick(InventoryClickEvent e, Player player) {
-                if(e.isLeftClick()) {
-                    warp.changeItem(new ItemBuilder(player.getInventory().getItem(player.getInventory().getHeldItemSlot())));
-
-                    getLast().updateShowIcon();
-                    update();
-                    updateCosts();
-                } else if(e.isRightClick()) {
-                    if(!warp.isStandardItem()) warp.resetItem();
-                    else if(!warp.isSameItem(original.getItem())) warp.changeItem(original.getItem());
-
-                    getLast().updateShowIcon();
-                    update();
-                    updateCosts();
+                    return false;
                 }
-            }
+            }.setOption(option));
 
-            @Override
-            public boolean canClick(ClickType click) {
-                if(click == ClickType.LEFT) {
-                    return !(p.getInventory().getItem(p.getInventory().getHeldItemSlot()) == null || p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType() == Material.AIR
-                            || warp.getItem().getType() == p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType());
-                } else if(click == ClickType.RIGHT) {
-                    return !warp.isStandardItem() || !warp.isSameItem(original.getItem());
-                }
-
-                return false;
-            }
-        }.setOption(option));
-
-        addButton(new SyncAnvilGUIButton(2, 2, ClickType.LEFT) {
+        addButton(new SyncAnvilGUIButton(slot++, 2, ClickType.LEFT) {
             @Override
             public ItemStack craftItem() {
                 if(warp.getName() == null) return new ItemStack(Material.AIR);
@@ -169,7 +171,7 @@ public class PAppearance extends PageItem {
             }
         }.setOption(option));
 
-        addButton(new LoreButton(3, 2, warp.getItem()) {
+        addButton(new LoreButton(slot++, 2, warp.getItem()) {
             @Override
             public boolean canClick(ClickType click) {
                 if(click == ClickType.LEFT) {
@@ -213,15 +215,15 @@ public class PAppearance extends PageItem {
                     }
 
                 length = -length;
-                if(warp.getItem().getLore() != null)
+                if(warp.getItem().getLore() != null) {
                     for(String s : warp.getItem().getLore()) {
                         length += s.replaceFirst("§f", "").length();
                     }
-
+                }
 
                 ItemBuilder builder = new ItemBuilder(XMaterial.PAPER).setName("§6§n" + Lang.get("Description"));
 
-                if(length < 0) builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Free") + ": §7" + -length + " " + Lang.get("Characters"));
+                if(length < 0) builder.addLore(PWEditor.getFreeMessage(-length + " " + Lang.get("Characters")));
                 else builder.setLore(PWEditor.getCostsMessage(PlayerWarpManager.getManager().getDescriptionCosts() * length));
 
                 builder.addLore("§3" + Lang.get("Current") + ": " + (lore == null || lore.isEmpty() ? "§c" + Lang.get("Not_Set") : ""))
@@ -278,7 +280,7 @@ public class PAppearance extends PageItem {
             }
         }.setOption(option));
 
-        addButton(new SyncAnvilGUIButton(4, 2, ClickType.LEFT) {
+        addButton(new SyncAnvilGUIButton(slot++, 2, ClickType.LEFT) {
             @Override
             public boolean canClick(ClickType click) {
                 if(click == ClickType.RIGHT) {
@@ -287,6 +289,7 @@ public class PAppearance extends PageItem {
 
                 return click == ClickType.LEFT;
             }
+
             @Override
             public ItemStack craftItem() {
                 ItemBuilder builder = new ItemBuilder(XMaterial.ENDER_EYE).setName("§6§n" + Lang.get("Teleport_Message"));
@@ -294,14 +297,15 @@ public class PAppearance extends PageItem {
                 List<String> msg = TextAlignment.lineBreak((warp.getTeleportMessage() == null ? "§c" + Lang.get("Not_Set") : "§7\"§f" + ChatColor.translateAlternateColorCodes('&', warp.getTeleportMessage()) + "§7\""), 100);
 
                 int length = (warp.getTeleportMessage() == null ? 0 : warp.getTeleportMessage().length()) - (original.getTeleportMessage() == null ? 0 : original.getTeleportMessage().length());
-                if(length < 0) builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Free") + ": §7" + -length + " " + Lang.get("Characters"));
+                if(length < 0) builder.addLore(PWEditor.getFreeMessage(-length + " " + Lang.get("Characters")));
                 else builder.addLore(PWEditor.getCostsMessage(length * PlayerWarpManager.getManager().getMessageCosts()));
 
                 builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + msg.remove(0));
                 if(!msg.isEmpty()) builder.addLore(msg);
 
                 builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Change"));
-                if(warp.getTeleportMessage() != null || !Objects.equals(warp.getTeleportMessage(), original.getTeleportMessage())) builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §c" + (Objects.equals(warp.getTeleportMessage(), original.getTeleportMessage()) ? Lang.get("Remove") : Lang.get("Reset")));
+                if(warp.getTeleportMessage() != null || !Objects.equals(warp.getTeleportMessage(), original.getTeleportMessage()))
+                    builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §c" + (Objects.equals(warp.getTeleportMessage(), original.getTeleportMessage()) ? Lang.get("Remove") : Lang.get("Reset")));
 
                 return builder.getItem();
             }

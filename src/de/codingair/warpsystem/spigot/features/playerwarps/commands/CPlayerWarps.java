@@ -12,7 +12,8 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.commands.WarpSystemBaseComponent;
 import de.codingair.warpsystem.spigot.base.utils.commands.WarpSystemCommandBuilder;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
-import de.codingair.warpsystem.spigot.features.playerwarps.guis.PWEditor;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.PWList;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
 import org.bukkit.command.CommandSender;
@@ -140,6 +141,11 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
         getBaseComponent().addChild(new CommandComponent("create") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
+                if(!PlayerWarpManager.hasPermission((Player) sender)) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Maximum_of_Warps").replace("%AMOUNT%", PlayerWarpManager.getManager().getWarps((Player) sender).size() + ""));
+                    return false;
+                }
+
                 AnvilGUI.openAnvil(WarpSystem.getInstance(), (Player) sender, new AnvilListener() {
                     @Override
                     public void onClick(AnvilClickEvent e) {
@@ -177,12 +183,25 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                if(!PlayerWarpManager.hasPermission((Player) sender)) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Maximum_of_Warps").replace("%AMOUNT%", PlayerWarpManager.getManager().getWarps((Player) sender).size() + ""));
+                    return false;
+                }
+
                 if(PlayerWarpManager.getManager().exists(argument)) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                     return false;
                 }
 
                 new PWEditor((Player) sender, argument).open();
+                return false;
+            }
+        });
+
+        getBaseComponent().addChild(new CommandComponent("list") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                new PWList((Player) sender).open();
                 return false;
             }
         });

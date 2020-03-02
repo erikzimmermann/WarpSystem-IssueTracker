@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.playerwarps.guis;
+package de.codingair.warpsystem.spigot.features.playerwarps.guis.editor;
 
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.sounds.MusicData;
@@ -9,9 +9,10 @@ import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
-import de.codingair.warpsystem.spigot.features.playerwarps.guis.pages.PAppearance;
-import de.codingair.warpsystem.spigot.features.playerwarps.guis.pages.POptions;
-import de.codingair.warpsystem.spigot.features.playerwarps.guis.pages.PTrusted;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.PAppearance;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.PClasses;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.POptions;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.PTrusted;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
 import org.bukkit.entity.Player;
@@ -51,7 +52,12 @@ public class PWEditor extends Editor<PlayerWarp> {
             public void cancel(PlayerWarp clone) {
                 clone.destroy();
             }
-        }, () -> clone.getItem().getItem(), new PAppearance(p, clone, warp, PlayerWarpManager.getManager().exists(warp.getName())), new POptions(p, clone, warp, PlayerWarpManager.getManager().exists(warp.getName())), new PTrusted(p, clone, warp));
+        }, () -> clone.getItem().getItem(),
+                new PAppearance(p, clone, warp, PlayerWarpManager.getManager().exists(warp.getName())),
+                new POptions(p, clone, warp, PlayerWarpManager.getManager().exists(warp.getName())),
+                new PTrusted(p, clone, warp),
+                PlayerWarpManager.getManager().isClasses() ? new PClasses(p, clone, warp) : null
+        );
 
         this.original = warp;
         this.warp = clone;
@@ -84,8 +90,13 @@ public class PWEditor extends Editor<PlayerWarp> {
     }
 
     public static String getCostsMessage(double costs) {
-        if(costs == 0) return null;
+        if(costs == 0 || !PlayerWarpManager.getManager().isEconomy()) return null;
         return Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Costs") + ": §7" + cut(costs) + " " + Lang.get("Coins");
+    }
+
+    public static String getFreeMessage(String free) {
+        if(free == null || !PlayerWarpManager.getManager().isEconomy()) return null;
+        return Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Free") + ": §7" + free;
     }
 
     public static Number cut(double n) {
@@ -116,7 +127,7 @@ public class PWEditor extends Editor<PlayerWarp> {
 
     private static double[] calculate(boolean creating, PlayerWarp original, PlayerWarp warp) {
         double[] costs = new double[10];
-        if(warp == null) return costs;
+        if(!PlayerWarpManager.getManager().isEconomy() || warp == null) return costs;
 
         //personal item
         if(!warp.isStandardItem()) {
@@ -318,8 +329,10 @@ public class PWEditor extends Editor<PlayerWarp> {
 
     @Override
     public String getSuccessMessage() {
-        if(creating) return Lang.getPrefix() + Lang.get("Warp_Created").replace("%NAME%", warp.getName()).replace("%PRICE%", paid + "");
-        else if(paid.doubleValue() == 0) return super.getSuccessMessage();
+        if(creating) {
+            if(paid.doubleValue() > 0) return Lang.getPrefix() + Lang.get("Warp_Created").replace("%NAME%", warp.getName()).replace("%PRICE%", paid + "");
+            else return Lang.getPrefix() + Lang.get("Warp_Created_Free").replace("%NAME%", warp.getName());
+        } else if(paid.doubleValue() == 0) return Lang.getPrefix() + Lang.get("Warp_Edited").replace("%NAME%", warp.getName());
         else if(paid.doubleValue() > 0) return Lang.getPrefix() + Lang.get("Warp_Edited_Pay").replace("%NAME%", warp.getName()).replace("%PRICE%", paid + "");
         else return Lang.getPrefix() + Lang.get("Warp_Edited_Refund").replace("%NAME%", warp.getName()).replace("%PRICE%", cut(-paid.doubleValue()) + "");
     }
