@@ -261,6 +261,8 @@ public class EffectPortal extends FeatureObject implements Removable {
         this.holoPos.setYaw(0);
         this.holoPos.setPitch(0);
 
+        if(!useLink && this.teleportSound.getSound() == null) this.teleportSound.setSound(Sound.ENDERMAN_TELEPORT);
+
         return true;
     }
 

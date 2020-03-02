@@ -133,7 +133,7 @@ public class DestinationPage extends PageItem {
                                 }
                             }, new ItemBuilder(XMaterial.NAME_TAG).setName(Lang.get("Name") + "...").getItem());
                         } else {
-                            new GSimpleWarpList(p) {
+                            getLast().changeGUI(new GSimpleWarpList(p) {
                                 @Override
                                 public void onClick(SimpleWarp value, ClickType clickType) {
                                     destination.setId(value.getName());
@@ -141,13 +141,13 @@ public class DestinationPage extends PageItem {
                                     destination.setAdapter(DestinationType.SimpleWarp.getInstance());
                                     updateDestinationButtons();
 
-                                    this.setClosingForGUI(true);
-                                    getLast().open();
+//                                    this.setClosingForGUI(true);
+                                    fallBack();
                                 }
 
                                 @Override
                                 public void onClose() {
-                                    getLast().open();
+                                    fallBack();
                                 }
 
                                 @Override
@@ -155,7 +155,7 @@ public class DestinationPage extends PageItem {
                                     lore.add("");
                                     lore.add("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose"));
                                 }
-                            }.open();
+                            }, true);
                         }
                     } else if(e.isRightClick()) {
                         if(e.isShiftClick()) {
@@ -282,7 +282,7 @@ public class DestinationPage extends PageItem {
                 public void onClick(InventoryClickEvent e, Player player) {
                     if(e.isLeftClick()) {
                         getLast().setClosingForGUI(true);
-                        new GGlobalWarpList(player) {
+                        getLast().changeGUI(new GGlobalWarpList(player) {
                             @Override
                             public void onClick(String warp, ClickType clickType) {
                                 destination.setId(warp);
@@ -296,7 +296,6 @@ public class DestinationPage extends PageItem {
 
                             @Override
                             public void onClose() {
-                                getLast().open();
                             }
 
                             @Override
@@ -304,7 +303,7 @@ public class DestinationPage extends PageItem {
                                 lore.add("");
                                 lore.add("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose"));
                             }
-                        }.open();
+                        }, true);
                     } else if(e.isRightClick()) {
                         destination.setId(null);
                         destination.setAdapter(null);

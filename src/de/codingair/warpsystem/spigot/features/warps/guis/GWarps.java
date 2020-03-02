@@ -211,15 +211,11 @@ public class GWarps extends GUI {
                     if(moving || cloning) return;
 
                     if(e.isLeftClick()) {
-                        if(e.isShiftClick()) {
-                            IconManager.getInstance().setBackground(getPlayer().getInventory().getItem(getPlayer().getInventory().getHeldItemSlot()));
-                            reinitialize();
-                            setTitle(getTitle(GWarps.this.page, listener, getPlayer()));
-                        } else {
-                            editing = !editing;
-                            reinitialize();
-                            setTitle(getTitle(GWarps.this.page, listener, getPlayer()));
-                        }
+                        if(e.isShiftClick()) IconManager.getInstance().setBackground(getPlayer().getInventory().getItem(getPlayer().getInventory().getHeldItemSlot()));
+                        else editing = !editing;
+
+                        reinitialize();
+                        setTitle(getTitle(GWarps.this.page, listener, getPlayer()));
                     } else {
                         if(e.isShiftClick()) {
                             showMenu = !showMenu;
@@ -577,8 +573,7 @@ public class GWarps extends GUI {
                                 } else {
                                     Icon clone = icon.clone();
                                     if(!clone.hasAction(Action.WARP)) clone.addAction(new WarpAction(new Destination()));
-
-                                    new GEditor(p, icon, clone).open();
+                                    changeGUI(new GEditor(p, icon, clone), true);
                                 }
                             }
                         } else if(e.isRightClick()) {
@@ -592,7 +587,7 @@ public class GWarps extends GUI {
                                 }
                             } else {
                                 if(e.isShiftClick()) {
-                                    new IconDeleteGUI(p, new Callback<Boolean>() {
+                                    changeGUI(new IconDeleteGUI(p, new Callback<Boolean>() {
                                         @Override
                                         public void accept(Boolean delete) {
                                             if(delete) {
@@ -604,7 +599,7 @@ public class GWarps extends GUI {
 
                                             GWarps.this.reinitialize();
                                         }
-                                    }, GWarps.this::open).open();
+                                    }, null), true);
                                 } else {
                                     if(p.getInventory().getItem(p.getInventory().getHeldItemSlot()) == null || p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType() == Material.AIR
                                             || icon.getItem().getType() == p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType()) {

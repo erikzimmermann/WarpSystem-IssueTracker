@@ -26,12 +26,12 @@ public class GEditor extends de.codingair.warpsystem.spigot.base.guis.editor.Edi
                         IconManager.getInstance().getIcons().add(icon);
                     }
 
-                    new GWarps(p, icon.getPage(), true).open();
+//                    new GWarps(p, icon.getPage(), true).open();
                 }
 
                 @Override
                 public void cancel(Icon value) {
-                    new GWarps(p, icon.getPage(), true).open();
+//                    new GWarps(p, icon.getPage(), true).open();
                 }
             }, new ShowIcon() {
                 @Override

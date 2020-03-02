@@ -35,7 +35,6 @@ public class PWPage extends Page {
     @Override
     public void initialize(Player p) {
         getButtons().clear();
-        System.out.println("get new data");
         Node<List<Button>, Boolean> data = filter.getListItems((size / 9) * 7, page, extra);
 
         int slot = 0;

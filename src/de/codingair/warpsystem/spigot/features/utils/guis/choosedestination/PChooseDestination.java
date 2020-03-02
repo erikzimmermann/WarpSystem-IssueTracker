@@ -1,17 +1,20 @@
 package de.codingair.warpsystem.spigot.features.utils.guis.choosedestination;
 
-import de.codingair.codingapi.player.gui.anvil.*;
+import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
+import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
+import de.codingair.codingapi.player.gui.anvil.AnvilSlot;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Page;
+import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncAnvilGUIButton;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
-import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
 import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.simplewarps.guis.GSimpleWarpList;
@@ -36,7 +39,6 @@ public class PChooseDestination extends Page {
     public void initialize(Player p) {
         ItemButtonOption option = new ItemButtonOption();
         option.setClickSound(Sound.CLICK.bukkitSound());
-        option.setCloseOnClick(true);
 
         addButton(new SyncButton(2) {
             @Override
@@ -46,12 +48,13 @@ public class PChooseDestination extends Page {
 
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
-                new GSimpleWarpList(p) {
+                getLast().changeGUI(new GSimpleWarpList(p) {
                     boolean got = false;
 
                     @Override
                     public void onClick(SimpleWarp warp, ClickType clickType) {
                         got = true;
+                        setUseFallbackGUI(false);
                         getPlayer().closeInventory();
                         callback.accept(new Destination(warp.getName(), DestinationType.SimpleWarp));
                     }
@@ -59,7 +62,7 @@ public class PChooseDestination extends Page {
                     @Override
                     public void onClose() {
                         if(got) return;
-                        getLast().open();
+                        fallBack();
                     }
 
                     @Override
@@ -67,7 +70,7 @@ public class PChooseDestination extends Page {
                         lore.add("");
                         lore.add("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose"));
                     }
-                }.open();
+                }, true);
             }
         }.setOption(option));
 
@@ -79,20 +82,21 @@ public class PChooseDestination extends Page {
 
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
-                new GGlobalWarpList(player){
+                getLast().changeGUI(new GGlobalWarpList(player) {
                     boolean got = false;
 
                     @Override
                     public void onClick(String warp, ClickType clickType) {
                         got = true;
-                        p.closeInventory();
+                        setUseFallbackGUI(false);
+                        getPlayer().closeInventory();
                         callback.accept(new Destination(warp, DestinationType.GlobalWarp));
                     }
 
                     @Override
                     public void onClose() {
                         if(got) return;
-                        getLast().open();
+                        fallBack();
                     }
 
                     @Override
@@ -100,35 +104,36 @@ public class PChooseDestination extends Page {
                         lore.add("");
                         lore.add("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose"));
                     }
-                }.open();
+                }, true);
             }
         }.setOption(option));
 
-        addButton(new SyncButton(6) {
+        addButton(new SyncAnvilGUIButton(6, ClickType.LEFT) {
             @Override
-            public void onClick(InventoryClickEvent e, Player player) {
-                AnvilGUI.openAnvil(WarpSystem.getInstance(), player, new AnvilListener() {
-                    @Override
-                    public void onClick(AnvilClickEvent e) {
-                        if(!e.getSlot().equals(AnvilSlot.OUTPUT)) return;
+            public void onClick(AnvilClickEvent e) {
+                if(!e.getSlot().equals(AnvilSlot.OUTPUT)) return;
 
-                        String input = e.getInput();
+                String input = e.getInput();
 
-                        if(input == null) {
-                            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
-                            return;
-                        }
+                if(input == null) {
+                    e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
+                    return;
+                }
 
-                        e.setClose(true);
-                        callback.accept(new Destination(input, DestinationType.Server));
-                    }
+                e.setClose(true);
+                callback.accept(new Destination(input, DestinationType.Server));
+            }
 
-                    @Override
-                    public void onClose(AnvilCloseEvent e) {
-                        if(e.getSubmittedText() == null)
-                            Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> getLast().open());
-                    }
-                }, new ItemBuilder(XMaterial.PAPER).setName(Lang.get("Server") + "...").getItem());
+            @Override
+            public void onClose(AnvilCloseEvent e) {
+                e.setPost(() -> {
+                    if(e.getSubmittedText() == null) getLast().open();
+                });
+            }
+
+            @Override
+            public ItemStack craftAnvilItem(ClickType trigger) {
+                return new ItemBuilder(XMaterial.PAPER).setName(Lang.get("Server") + "...").getItem();
             }
 
             @Override
