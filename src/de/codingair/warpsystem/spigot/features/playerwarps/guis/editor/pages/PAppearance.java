@@ -171,14 +171,23 @@ public class PAppearance extends PageItem {
             }
         }.setOption(option));
 
-        addButton(new LoreButton(slot++, 2, warp.getItem()) {
+        addButton(new SyncAnvilGUIButton(slot++, 2, ClickType.LEFT) {
+            @Override
+            public void onClose(AnvilCloseEvent e) {
+            }
+
+            @Override
+            public ItemStack craftAnvilItem(ClickType trigger) {
+                return new ItemBuilder(Material.PAPER).setName(Lang.get("Line") + "...").getItem();
+            }
+            
             @Override
             public boolean canClick(ClickType click) {
                 if(click == ClickType.LEFT) {
-                    return warp.getItem().getLore() == null || warp.getItem().getLore().size() < PlayerWarpManager.getManager().getDescriptionMaxLines();
+                    return warp.getDescription() == null || warp.getDescription().size() < PlayerWarpManager.getManager().getDescriptionMaxLines();
                 } else if(click == ClickType.RIGHT) {
-                    boolean empty0 = warp.getItem().getLore() == null || warp.getItem().getLore().isEmpty();
-                    boolean empty1 = original.getItem().getLore() == null || original.getItem().getLore().isEmpty();
+                    boolean empty0 = warp.getDescription() == null || warp.getDescription().isEmpty();
+                    boolean empty1 = original.getDescription() == null || original.getDescription().isEmpty();
                     return !empty0 || !empty1;
                 }
 
@@ -188,9 +197,9 @@ public class PAppearance extends PageItem {
             @Override
             public void onOtherClick(InventoryClickEvent e) {
                 if(e.getClick() == ClickType.RIGHT) {
-                    if(!warp.getItem().getLore().isEmpty()) {
-                        warp.getItem().getLore().remove(warp.getItem().getLore().size() - 1);
-                    } else warp.getItem().setLore(original.getItem().getLore());
+                    if(!warp.getDescription().isEmpty()) {
+                        warp.getDescription().remove(warp.getDescription().size() - 1);
+                    } else warp.setDescription(new ArrayList<>(original.getDescription()));
 
                     updatingLore(warp.getItem());
                     update();
@@ -199,7 +208,7 @@ public class PAppearance extends PageItem {
 
             @Override
             public ItemStack craftItem() {
-                List<String> loreOfItem = warp.getItem().getLore();
+                List<String> loreOfItem = warp.getDescription();
                 List<String> lore = new ArrayList<>();
                 if(loreOfItem == null) lore = null;
                 else {
@@ -209,14 +218,14 @@ public class PAppearance extends PageItem {
                 }
 
                 int length = 0;
-                if(original.getItem().getLore() != null)
-                    for(String s : original.getItem().getLore()) {
+                if(original.getDescription() != null)
+                    for(String s : original.getDescription()) {
                         length += s.replaceFirst("§f", "").length();
                     }
 
                 length = -length;
-                if(warp.getItem().getLore() != null) {
-                    for(String s : warp.getItem().getLore()) {
+                if(warp.getDescription() != null) {
+                    for(String s : warp.getDescription()) {
                         length += s.replaceFirst("§f", "").length();
                     }
                 }
@@ -232,8 +241,8 @@ public class PAppearance extends PageItem {
                 if(lore == null || lore.size() < PlayerWarpManager.getManager().getDescriptionMaxLines())
                     builder.addLore("§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Add_Line"));
 
-                boolean empty0 = warp.getItem().getLore() == null || warp.getItem().getLore().isEmpty();
-                boolean empty1 = original.getItem().getLore() == null || original.getItem().getLore().isEmpty();
+                boolean empty0 = warp.getDescription() == null || warp.getDescription().isEmpty();
+                boolean empty1 = original.getDescription() == null || original.getDescription().isEmpty();
 
                 if(!empty0 || !empty1)
                     builder.addLore("§3" + Lang.get("Rightclick") + ": §c" + (!empty0 ? Lang.get("Remove") : Lang.get("Reset")));
@@ -263,17 +272,16 @@ public class PAppearance extends PageItem {
 
                 e.setClose(true);
 
-                warp.getItem().addLore(org.bukkit.ChatColor.WHITE + org.bukkit.ChatColor.translateAlternateColorCodes('&', input));
+                warp.addDescription(org.bukkit.ChatColor.WHITE + org.bukkit.ChatColor.translateAlternateColorCodes('&', input));
                 updatingLore(warp.getItem());
                 update();
             }
 
             @Override
             public boolean canTrigger(InventoryClickEvent e, ClickType trigger, Player player) {
-                return warp.getItem().getLore() == null || warp.getItem().getLore().size() < PlayerWarpManager.getManager().getDescriptionMaxLines();
+                return warp.getDescription() == null || warp.getDescription().size() < PlayerWarpManager.getManager().getDescriptionMaxLines();
             }
 
-            @Override
             public void updatingLore(ItemBuilder toChange) {
                 getLast().updateShowIcon();
                 updateCosts();

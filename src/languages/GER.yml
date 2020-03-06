@@ -461,3 +461,11 @@ Filter_All_Players: "Spieler"
 Filter_Classes: "Klassen"
 Next_Filter: 'Nächster Filter'
 Previous_Filter: 'vorheriger Filter'
+Maximum_reached: 'Maximum erreicht'
+Player: 'Spieler'
+Warps: 'Warps'
+Select: 'Auswählen'
+Deselect: 'Abwählen'
+Teleports: 'Teleports'
+Search_Short: 'Suchen'
+Reset_Search: 'Suche zurücksetzen'

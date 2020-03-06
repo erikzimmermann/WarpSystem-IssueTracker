@@ -141,7 +141,6 @@ public class DestinationPage extends PageItem {
                                     destination.setAdapter(DestinationType.SimpleWarp.getInstance());
                                     updateDestinationButtons();
 
-//                                    this.setClosingForGUI(true);
                                     fallBack();
                                 }
 

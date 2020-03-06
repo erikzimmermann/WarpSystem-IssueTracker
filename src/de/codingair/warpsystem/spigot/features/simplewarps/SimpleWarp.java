@@ -1,19 +1,15 @@
 package de.codingair.warpsystem.spigot.features.simplewarps;
 
 import de.codingair.codingapi.tools.io.DataWriter;
-import de.codingair.codingapi.tools.io.JSON.JSON;
-import de.codingair.codingapi.tools.io.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.types.JSON.JSON;
+import de.codingair.codingapi.tools.io.types.JSON.JSONParser;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.io.Serializable;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.ParseException;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class SimpleWarp implements Serializable {
     private String name;

@@ -19,8 +19,8 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.exceptions.IconReadException;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
-import de.codingair.codingapi.tools.io.JSON.JSONParser;
-import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.types.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.types.JSON.JSON;
 import org.json.simple.parser.ParseException;
 
 import java.util.*;
@@ -106,8 +106,12 @@ public class FeatureObject implements Serializable {
             }
         }
 
-        performed++;
+        if(doesIncreasePerformStats(player)) performed++;
         return this;
+    }
+
+    public boolean doesIncreasePerformStats(Player player) {
+        return true;
     }
 
     @Override

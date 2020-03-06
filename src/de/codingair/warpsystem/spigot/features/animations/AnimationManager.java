@@ -3,15 +3,15 @@ package de.codingair.warpsystem.spigot.features.animations;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.files.loader.UTFConfig;
 import de.codingair.codingapi.particles.Particle;
+import de.codingair.codingapi.particles.animations.customanimations.AnimationType;
 import de.codingair.codingapi.particles.animations.customanimations.CustomAnimation;
+import de.codingair.codingapi.tools.io.types.JSON.JSON;
+import de.codingair.codingapi.tools.io.types.JSON.JSONParser;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.animations.utils.Animation;
-import de.codingair.codingapi.particles.animations.customanimations.AnimationType;
 import de.codingair.warpsystem.spigot.features.animations.utils.ParticlePart;
 import de.codingair.warpsystem.utils.Manager;
-import de.codingair.codingapi.tools.io.JSON.JSON;
-import de.codingair.codingapi.tools.io.JSON.JSONParser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,30 +32,32 @@ public class AnimationManager implements Manager {
         destroy();
 
         boolean success = true;
-        for(Object data : config.getList("Animations")) {
+        List<?> l = config.getList("Animations");
+        if(l != null)
+            for(Object data : l) {
 
-            if(data instanceof Map) {
-                try {
-                    Animation a = new Animation();
-                    JSON json = new JSON((Map<?, ?>) data);
-                    a.read(json);
-                    animationList.add(a);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                    success = false;
-                }
-            } else if(data instanceof String) {
-                try {
-                    Animation a = new Animation();
-                    JSON json = (JSON) new JSONParser().parse((String) data);
-                    a.read(json);
-                    animationList.add(a);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                    success = false;
+                if(data instanceof Map) {
+                    try {
+                        Animation a = new Animation();
+                        JSON json = new JSON((Map<?, ?>) data);
+                        a.read(json);
+                        animationList.add(a);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        success = false;
+                    }
+                } else if(data instanceof String) {
+                    try {
+                        Animation a = new Animation();
+                        JSON json = (JSON) new JSONParser().parse((String) data);
+                        a.read(json);
+                        animationList.add(a);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        success = false;
+                    }
                 }
             }
-        }
 
         active = getAnimation(config.getString("Active", null));
         if(active == null) active = createStandard();

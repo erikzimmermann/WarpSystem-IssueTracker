@@ -5,7 +5,7 @@ import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.io.DataWriter;
 import de.codingair.codingapi.tools.io.Serializable;
-import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.types.JSON.JSON;
 import org.json.simple.JSONArray;
 
 import java.util.ArrayList;

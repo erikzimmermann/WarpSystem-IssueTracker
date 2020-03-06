@@ -117,7 +117,49 @@ WarpSystem:
         Min: 1
         Max: 2
         Enabled: true
-        Classes: []
+        Classes:
+        - Shop:
+            Type: EMERALD
+            Lore:
+              - '&7This class marks a warp'
+              - '&7as a &aShop&7!'
+            Amount: 1
+            Name: '&a&lShop'
+        - Home:
+            Type: OAK_DOOR
+            Lore:
+              - '&7This class marks a warp'
+              - '&7as a &cHome&7!'
+            Amount: 1
+            Name: '&c&lHome'
+        - Farm:
+            Type: FARMLAND
+            Lore:
+              - '&7This class marks a warp'
+              - '&7as a &9Farm&7!'
+            Amount: 1
+            Name: '&9&lFarm'
+        - PvP-Zone:
+            Type: IRON_SWORD
+            Lore:
+              - '&7This class marks a warp'
+              - '&7as a &ePvP-Zone&7!'
+            Amount: 1
+            Name: '&e&lPvP-Zone'
+        - Hunting-Area:
+            Type: BOW
+            Lore:
+              - '&7This class marks a warp'
+              - '&7as a &bHunting-Area&7!'
+            Amount: 1
+            Name: '&b&lHunting-Area'
+        - Miscellaneous:
+            Type: ENDER_EYE
+            Lore:
+              - '&7This class marks a warp'
+              - '&7as a &3miscellaneous &7warp!'
+            Amount: 1
+            Name: '&3&lMiscellaneous'
     #Time format: "0d, 0h, 0m, 0s" - Unnecessary values can be removed (examples: "1d, 5m", "10s", "5h")!
     Time:
       Min_Time: 0d, 0h, 5m

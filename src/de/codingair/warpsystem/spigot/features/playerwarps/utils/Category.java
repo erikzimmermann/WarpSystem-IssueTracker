@@ -9,14 +9,16 @@ import java.util.List;
 
 public class Category implements Serializable {
     private ItemBuilder builder;
+    private int id;
 
     public Category() {
     }
 
-    public Category(ItemBuilder builder, String name, List<String> description) {
+    public Category(ItemBuilder builder, String name, int id, List<String> description) {
         assert builder != null && builder.getType() != Material.AIR && name != null;
 
         this.builder = builder;
+        this.id = id;
         this.builder.setName(name);
         this.builder.setLore(description);
     }
@@ -24,12 +26,16 @@ public class Category implements Serializable {
     @Override
     public boolean read(DataWriter d) throws Exception {
         this.builder = new ItemBuilder();
+        this.id = d.getInteger("id");
         return this.builder.read(d);
     }
 
     @Override
     public void write(DataWriter d) {
+        this.builder.setHideStandardLore(false);
+        this.builder.setAmount(0);
         this.builder.write(d);
+        d.put("id", id);
     }
 
     @Override
@@ -38,7 +44,7 @@ public class Category implements Serializable {
     }
 
     public ItemBuilder getBuilder() {
-        return builder;
+        return builder.setAmount(1).setHideStandardLore(true);
     }
 
     public void setBuilder(ItemBuilder builder) {
@@ -47,6 +53,10 @@ public class Category implements Serializable {
 
     public String getName() {
         return this.builder.getName();
+    }
+
+    public int getId() {
+        return id;
     }
 
     public void setName(String name) {

@@ -3,12 +3,14 @@ package de.codingair.warpsystem.spigot.features.playerwarps.utils;
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.io.DataWriter;
-import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.Serializable;
+import de.codingair.codingapi.tools.io.types.JSON.JSON;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
@@ -20,14 +22,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.*;
 
-public class PlayerWarp extends FeatureObject {
+public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem.transfer.serializeable.Serializable {
     private User owner;
     private List<User> trusted;
     private List<Category> classes;
 
     private String name;
+    private List<String> description;
     private String teleportMessage;
     private ItemBuilder item;
 
@@ -44,6 +50,7 @@ public class PlayerWarp extends FeatureObject {
         super();
         owner = new User("owner");
         trusted = new ArrayList<>();
+        description = new ArrayList<>();
         classes = new ArrayList<>();
     }
 
@@ -67,7 +74,13 @@ public class PlayerWarp extends FeatureObject {
         TeleportOptions options = new TeleportOptions((Destination) null, this.name);
         if(this.teleportMessage != null) options.setMessage(ChatColor.translateAlternateColorCodes('&', this.teleportMessage));
 
+
         return super.perform(player, options);
+    }
+
+    @Override
+    public boolean doesIncreasePerformStats(Player player) {
+        return !isOwner(player) && !isTrusted(player);
     }
 
     @Override
@@ -83,6 +96,12 @@ public class PlayerWarp extends FeatureObject {
             else {
                 this.trusted.clear();
                 this.trusted.addAll(w.trusted);
+            }
+
+            if(this.description == null) this.description = new ArrayList<>(w.description);
+            else {
+                this.description.clear();
+                this.description.addAll(w.description);
             }
 
             if(this.classes == null) this.classes = new ArrayList<>(w.classes);
@@ -105,6 +124,63 @@ public class PlayerWarp extends FeatureObject {
     }
 
     @Override
+    public void write(DataOutputStream o) throws IOException {
+        //byte mask: PUBLIC | ITEM_SKULL | ITEM_COLOR | ITEM_DATA | TELEPORT_MESSAGE | BORN == START | CREATOR_KEY | NOTIFY
+        byte b = (byte) (isPublic ? 1 : 0);
+        b |= (item.getSkullId() != null ? 1 : 0) << 1;
+        b |= (item.getColor() != null ? 1 : 0) << 2;
+        b |= (item.getData() != (byte) 0 ? 1 : 0) << 3;
+        b |= (teleportMessage != null ? 1 : 0) << 4;
+        b |= (born == started ? 1 : 0) << 5;
+        b |= (creatorKey != null ? 1 : 0) << 6;
+        b |= (notify ? 1 : 0) << 7;
+
+        o.writeByte(b);                                                 //options
+
+        this.owner.write(o);                                            //owner
+        o.writeUTF(this.name);                                          //name
+        o.writeInt(description.size());                                 //description
+        for(String s : description) {
+            o.writeUTF(s);
+        }
+        if(teleportMessage != null) o.writeUTF(teleportMessage);        //teleportMessage
+
+        o.writeUTF(item.getType().name());                              //item
+        if(item.getData() != (byte) 0) o.writeByte(item.getData());
+        if(item.getColor() != null) {
+            o.writeByte(item.getColor().getColor().getRed());
+            o.writeByte(item.getColor().getColor().getGreen());
+            o.writeByte(item.getColor().getColor().getBlue());
+        }
+        if(item.getSkullId() != null) o.writeUTF(item.getSkullId());
+
+        o.writeDouble(teleportCosts);                                   //teleport costs
+        o.writeLong(born);                                              //born
+        if(born != started) o.writeLong(started);                       //started
+        o.writeLong(time);                                              //time
+        if(creatorKey != null) o.writeUTF(creatorKey);                  //creator key
+
+        o.writeByte(trusted.size());                                    //trusted members
+        for(User user : trusted) {
+            user.write(o);
+        }
+
+        o.writeByte(classes.size());                                    //classes
+        for(Category c : classes) {
+            o.writeUTF(c.getName());
+        }
+        /*
+        d.put("classes", classes);
+         */
+    }
+
+    @Override
+    public void read(DataInputStream i) throws IOException {
+        this.owner.read(i);
+        //todo
+    }
+
+    @Override
     public void write(DataWriter d) {
         super.write(d);
 
@@ -121,9 +197,8 @@ public class PlayerWarp extends FeatureObject {
         }
 
         this.owner.write(d);
-        d.put("trusted", trustedMembers);
-        d.put("classes", classes);
         d.put("name", name);
+        d.put("description", description);
         d.put("tpmsg", teleportMessage);
         d.put("item", item);
         d.put("public", isPublic);
@@ -133,22 +208,25 @@ public class PlayerWarp extends FeatureObject {
         d.put("time", time);
         d.put("key", creatorKey);
         d.put("notify", notify);
+        d.put("trusted", trustedMembers);
+        d.put("classes", classes);
     }
 
     @Override
     public boolean read(DataWriter d) throws Exception {
-        this.owner.read(d);
-
         if(this.trusted == null) this.trusted = new ArrayList<>();
         else this.trusted.clear();
 
         if(this.classes == null) this.classes = new ArrayList<>();
         else this.classes.clear();
 
+        this.owner.read(d);
         this.name = d.get("name");
+        this.description = d.getList("description");
         this.teleportMessage = d.get("tpmsg");
         this.item = d.getItemBuilder("item");
         this.isPublic = d.getBoolean("public");
+        this.teleportCosts = d.getLong("tpcosts");
         this.born = d.getLong("born");
         this.started = d.getLong("started");
         this.time = d.getLong("time");
@@ -228,9 +306,6 @@ public class PlayerWarp extends FeatureObject {
         String id = WarpSystem.getInstance().getHeadManager().getSkinId(owner.getId());
         if(id != null) builder.setSkullId(id);
 
-        if(!builder.getName().startsWith("§f")) builder.setName("§f" + getName(true));
-        if(this.item != null && this.item.getLore() != null && !this.item.getLore().isEmpty()) builder.setLore(this.item.getLore());
-
         return builder;
     }
 
@@ -251,7 +326,7 @@ public class PlayerWarp extends FeatureObject {
     }
 
     public boolean isOwner(Player player) {
-        return isOwner(player.getUniqueId());
+        return player != null && isOwner(player.getUniqueId());
     }
 
     public boolean isOwner(UUID id) {
@@ -275,7 +350,7 @@ public class PlayerWarp extends FeatureObject {
     }
 
     public boolean canTeleport(Player player) {
-        return isOwner(player) || isTrusted(player);
+        return isPublic || isOwner(player) || isTrusted(player);
     }
 
     public String getName() {
@@ -307,7 +382,22 @@ public class PlayerWarp extends FeatureObject {
     }
 
     public ItemBuilder getItem() {
-        return item;
+        return getItem(null);
+    }
+
+    public ItemBuilder getItem(String highlight) {
+        ItemBuilder b = item.clone()
+                .setName(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Name") + ": §f" + (highlight == null ? name : ChatColor.highlight(name, highlight, "§e§n", "§f", true)))
+                .setLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Description") + ":" + (description.isEmpty() ? " §c-" : ""))
+                .addLore(getPreparedDescription());
+
+        b.addLore("");
+        b.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Owner") + ": §f" + owner.getName());
+
+        if(teleportCosts > 0) b.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Costs") + ": §f" + teleportCosts);
+        if(isPublic) b.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Teleports") + ": §f" + getPerformed());
+
+        return b;
     }
 
     public PlayerWarp setItem(ItemBuilder item) {
@@ -397,7 +487,7 @@ public class PlayerWarp extends FeatureObject {
 
     public float getRefundFactor() {
         if(this.started == 0) return 1;
-        else if(PlayerWarpManager.getManager().isInternalRefundFactor()) return ((float) (int) (((float) getLeftTime() / (float) (getExpireDate() - getBorn())) * 10000)) /10000;
+        else if(PlayerWarpManager.getManager().isInternalRefundFactor()) return ((float) (int) (((float) getLeftTime() / (float) (getExpireDate() - getBorn())) * 10000)) / 10000;
         else return 1;
     }
 
@@ -409,7 +499,31 @@ public class PlayerWarp extends FeatureObject {
         return this.classes.contains(c);
     }
 
-    public static class User implements Serializable {
+    public List<String> getDescription() {
+        return description;
+    }
+
+    public void addDescription(String line) {
+        this.description.add(line);
+    }
+
+    public void setDescription(List<String> description) {
+        this.description = description;
+    }
+
+    private List<String> getPreparedDescription() {
+        if(description.isEmpty()) return null;
+
+        List<String> description = new ArrayList<>();
+
+        for(String s : this.description) {
+            description.add("§f" + s);
+        }
+
+        return description;
+    }
+
+    public static class User implements Serializable, de.codingair.warpsystem.transfer.serializeable.Serializable {
         private String jsonPrefix;
         private String name;
         private UUID id;
@@ -430,6 +544,19 @@ public class PlayerWarp extends FeatureObject {
             this.jsonPrefix = jsonPrefix;
             this.name = name;
             this.id = id;
+        }
+
+        @Override
+        public void write(DataOutputStream o) throws IOException {
+            o.writeUTF(this.name);
+            o.writeLong(this.id.getMostSignificantBits());
+            o.writeLong(this.id.getLeastSignificantBits());
+        }
+
+        @Override
+        public void read(DataInputStream i) throws IOException {
+            this.name = i.readUTF();
+            this.id = new UUID(i.readLong(), i.readLong());
         }
 
         @Override

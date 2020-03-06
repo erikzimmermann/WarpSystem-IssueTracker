@@ -1,9 +1,11 @@
 package de.codingair.warpsystem.spigot.features.playerwarps.guis.list;
 
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
+import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.utils.Node;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.filters.*;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -28,8 +30,8 @@ public enum FilterType {
         this.id = id;
     }
 
-    public Node<List<Button>, Boolean> getListItems(int maxSize, int page, Object... extra) {
-        return instance.getListItems(maxSize, page, extra);
+    public Node<List<Button>, Integer> getListItems(int maxSize, int page, Player player, String search, Object... extra) {
+        return instance.getListItems(maxSize, page, player, search, extra);
     }
 
     public FilterType next() {
@@ -52,7 +54,19 @@ public enum FilterType {
         return instance.deleteExtraBeforeChangeFilter();
     }
 
+    public PWPage.FilterButton getControllButton(PWPage page, int warps) {
+        return instance.getControllButton(page, warps);
+    }
+
     public Object[] getStandardExtra(PWList list) {
         return instance.getStandardExtra(list);
+    }
+
+    public boolean createButtonInList() {
+        return instance.createButtonInList();
+    }
+
+    public boolean searchable(PWPage page) {
+        return instance.searchable(page);
     }
 }

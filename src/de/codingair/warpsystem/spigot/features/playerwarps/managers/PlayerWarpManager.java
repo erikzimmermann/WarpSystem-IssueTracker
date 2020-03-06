@@ -3,8 +3,10 @@ package de.codingair.warpsystem.spigot.features.playerwarps.managers;
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
-import de.codingair.codingapi.tools.io.JSON.JSON;
-import de.codingair.codingapi.tools.io.yml.ConfigWriter;
+import de.codingair.codingapi.tools.io.types.ConfigWriter;
+import de.codingair.codingapi.tools.io.types.JSON.JSON;
+import de.codingair.codingapi.tools.items.ItemBuilder;
+import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Ticker;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -18,7 +20,6 @@ import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
 import de.codingair.warpsystem.spigot.features.tempwarps.guis.GCreate;
 import de.codingair.warpsystem.spigot.features.tempwarps.guis.GDelete;
 import de.codingair.warpsystem.spigot.features.tempwarps.guis.GTempWarpList;
-import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -183,9 +184,12 @@ public class PlayerWarpManager implements Manager, Ticker {
         if(l != null)
             for(Object o : l) {
                 JSON json = new JSON((Map<Object, Object>) o);
-                for(Object key : json.keySet(false)) {
-                    Category c = json.getSerializable((String) key, new Category());
-                    if(c != null) this.warpCategories.add(c);
+                Category c = new Category();
+                try {
+                    c.read(json);
+                    this.warpCategories.add(c);
+                } catch(Exception e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -232,10 +236,42 @@ public class PlayerWarpManager implements Manager, Ticker {
             entries += data.size();
         }
 
+        if(warpCategories.isEmpty()) {
+            this.warpCategories.add(new Category(new ItemBuilder(XMaterial.EMERALD), "&a&lShop", 0, new ArrayList<String>() {{
+                add("&7This class marks a warp");
+                add("&7as a &aShop&7!");
+            }}));
+
+            this.warpCategories.add(new Category(new ItemBuilder(XMaterial.OAK_DOOR), "&c&lHome", 0, new ArrayList<String>() {{
+                add("&7This class marks a warp");
+                add("&7as a &cHome&7!");
+            }}));
+
+            this.warpCategories.add(new Category(new ItemBuilder(XMaterial.FARMLAND), "&9&lFarm", 0, new ArrayList<String>() {{
+                add("&7This class marks a warp");
+                add("&7as a &9Farm&7!");
+            }}));
+
+            this.warpCategories.add(new Category(new ItemBuilder(XMaterial.IRON_SWORD), "&e&lPvP-Zone", 0, new ArrayList<String>() {{
+                add("&7This class marks a warp");
+                add("&7as a &ePvP-Zone&7!");
+            }}));
+
+            this.warpCategories.add(new Category(new ItemBuilder(XMaterial.BOW), "&b&lHunting-Area", 0, new ArrayList<String>() {{
+                add("&7This class marks a warp");
+                add("&7as a &bHunting-Area&7!");
+            }}));
+
+            this.warpCategories.add(new Category(new ItemBuilder(XMaterial.ENDER_EYE), "&3&lMiscellaneous", 0, new ArrayList<String>() {{
+                add("&7This class marks a warp");
+                add("&7as a &3miscellaneous &7warp!");
+            }}));
+        }
+
         JSONArray array = new JSONArray();
         for(Category c : this.warpCategories) {
             JSON json = new JSON();
-            json.put(ChatColor.stripColor(c.getName()), c);
+            c.write(json);
             array.add(json);
         }
 
@@ -421,6 +457,32 @@ public class PlayerWarpManager implements Manager, Ticker {
         return null;
     }
 
+    public List<PlayerWarp> filter(List<Category> classes, Player toTeleport) {
+        List<PlayerWarp> warps = getWarps(toTeleport, true);
+
+        for(int i = 0; i < warps.size(); i++) {
+            PlayerWarp pw = warps.get(i);
+            List<Category> categories = pw.getClasses();
+            boolean match = false;
+
+            for(Category c : classes) {
+                for(Category cat : categories) {
+                    if(c.equals(cat)) {
+                        match = true;
+                        break;
+                    }
+                }
+            }
+
+            if(!match) {
+                warps.remove(i);
+                i--;
+            }
+        }
+
+        return warps;
+    }
+
     public List<PlayerWarp> getPublicWarps() {
         List<PlayerWarp> warps = new ArrayList<>();
         for(List<PlayerWarp> value : this.warps.values()) {
@@ -429,6 +491,10 @@ public class PlayerWarpManager implements Manager, Ticker {
             }
         }
 
+        return warps;
+    }
+
+    public HashMap<UUID, List<PlayerWarp>> getWarps() {
         return warps;
     }
 
@@ -445,13 +511,38 @@ public class PlayerWarpManager implements Manager, Ticker {
         return l == null ? new ArrayList<>() : l;
     }
 
+    /**
+     * @param id         Owner of warps
+     * @param toTeleport Player, who wants to see the warps
+     * @return A list with usable PlayerWarps of id
+     */
+    public List<PlayerWarp> getUsableWarpsOf(UUID id, Player toTeleport) {
+        List<PlayerWarp> warps = new ArrayList<>();
+
+        for(PlayerWarp warp : getWarps(id)) {
+            if(warp.canTeleport(toTeleport)) warps.add(warp);
+        }
+
+        return warps;
+    }
+
+    public int getTrustedWarpAmountOf(UUID id, Player trustedPlayer) {
+        int i = 0;
+
+        for(PlayerWarp warp : getWarps(id)) {
+            if(warp.canTeleport(trustedPlayer)) i++;
+        }
+
+        return i;
+    }
+
     public List<PlayerWarp> getWarps(Player player, boolean trusted) {
         if(!trusted) return getWarps(player);
-        List<PlayerWarp> warps = new ArrayList<>(getWarps(player));
+        List<PlayerWarp> warps = new ArrayList<>();
 
         for(List<PlayerWarp> ws : this.warps.values()) {
             for(PlayerWarp warp : ws) {
-                if(warp.isTrusted(player)) warps.add(warp);
+                if(warp.canTeleport(player)) warps.add(warp);
             }
         }
 

@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.spigot.features.simplewarps.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
-import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.types.JSON.JSON;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
@@ -11,7 +11,6 @@ import de.codingair.warpsystem.spigot.features.simplewarps.commands.CSetWarp;
 import de.codingair.warpsystem.spigot.features.simplewarps.commands.CWarp;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.ChatColor;
-import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,29 +31,31 @@ public class SimpleWarpManager implements Manager {
 
         WarpSystem.log("  > Loading SimpleWarps");
 
-        for(Object w : file.getConfig().getList("Warps")) {
-            if(w instanceof Map) {
-                try {
-                    JSON json = new JSON((Map<?, ?>) w);
-                    SimpleWarp warp = new SimpleWarp();
+        List<?> l = file.getConfig().getList("Warps");
+        if(l != null)
+            for(Object w : l) {
+                if(w instanceof Map) {
+                    try {
+                        JSON json = new JSON((Map<?, ?>) w);
+                        SimpleWarp warp = new SimpleWarp();
 
-                    warp.read(json);
+                        warp.read(json);
 
-                    warps.put(warp.getName(true).toLowerCase(), warp);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                    errors = true;
-                }
-            } else if(w instanceof String) {
-                try {
-                    SimpleWarp warp = new SimpleWarp((String) w);
-                    warps.put(warp.getName(true).toLowerCase(), warp);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                    errors = true;
+                        warps.put(warp.getName(true).toLowerCase(), warp);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        errors = true;
+                    }
+                } else if(w instanceof String) {
+                    try {
+                        SimpleWarp warp = new SimpleWarp((String) w);
+                        warps.put(warp.getName(true).toLowerCase(), warp);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        errors = true;
+                    }
                 }
             }
-        }
 
         WarpSystem.log("    ...got " + warps.size() + " SimpleWarp(s)");
 

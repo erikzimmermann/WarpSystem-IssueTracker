@@ -4,16 +4,24 @@ import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.serializable.SerializableLocation;
 import de.codingair.codingapi.server.Color;
 import de.codingair.codingapi.tools.Location;
-import de.codingair.codingapi.tools.io.yml.ConfigWriter;
+import de.codingair.codingapi.tools.io.types.ConfigWriter;
+import de.codingair.codingapi.tools.io.types.JSON.JSON;
+import de.codingair.codingapi.tools.io.types.JSON.JSONParser;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.BoundAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.simplewarps.commands.CWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.commands.CWarps;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
@@ -25,12 +33,6 @@ import de.codingair.warpsystem.spigot.features.warps.importfilter.PageData;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.exceptions.IconReadException;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.BoundAction;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
-import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
-import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.utils.Manager;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -44,8 +46,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
-import de.codingair.codingapi.tools.io.JSON.JSON;
-import de.codingair.codingapi.tools.io.JSON.JSONParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,35 +91,37 @@ public class IconManager implements Manager {
 
         WarpSystem.log("    > Loading Icons");
         icons.clear();
-        for(Object s : config.getList("Icons")) {
-            if(s instanceof Map) {
-                JSON json = new JSON((Map<?, ?>) s);
-
-                Icon icon = new Icon();
-                try {
-                    icon.read(json);
-                    icons.add(icon);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                    success = false;
-                }
-            } else if(s instanceof String) {
-                try {
-                    JSON json = (JSON) new JSONParser().parse((String) s);
+        List<?> l = file.getConfig().getList("Icons");
+        if(l != null)
+            for(Object s : l) {
+                if(s instanceof Map) {
+                    JSON json = new JSON((Map<?, ?>) s);
 
                     Icon icon = new Icon();
                     try {
                         icon.read(json);
                         icons.add(icon);
-                    } catch(IconReadException e) {
+                    } catch(Exception e) {
                         e.printStackTrace();
                         success = false;
                     }
-                } catch(Exception e) {
-                    e.printStackTrace();
+                } else if(s instanceof String) {
+                    try {
+                        JSON json = (JSON) new JSONParser().parse((String) s);
+
+                        Icon icon = new Icon();
+                        try {
+                            icon.read(json);
+                            icons.add(icon);
+                        } catch(IconReadException e) {
+                            e.printStackTrace();
+                            success = false;
+                        }
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-        }
 
 //        WarpSystem.log("    > Loading Categories");
         List<Category> categories = new ArrayList<>();

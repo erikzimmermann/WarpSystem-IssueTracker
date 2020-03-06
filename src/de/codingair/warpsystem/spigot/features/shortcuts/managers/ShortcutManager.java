@@ -2,8 +2,8 @@ package de.codingair.warpsystem.spigot.features.shortcuts.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.server.Version;
-import de.codingair.codingapi.tools.io.JSON.JSON;
-import de.codingair.codingapi.tools.io.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.types.JSON.JSON;
+import de.codingair.codingapi.tools.io.types.JSON.JSONParser;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
@@ -64,29 +64,31 @@ public class ShortcutManager implements Manager, BungeeFeature {
             this.shortcuts.add(new Shortcut(destination, key.replace(" ", "_")));
         }
 
-        for(Object datum : config.getList("Shortcuts")) {
-            if(datum instanceof Map) {
-                try {
-                    Shortcut s = new Shortcut();
-                    JSON json = new JSON((Map<?, ?>) datum);
-                    s.read(json);
-                    s.setDisplayName(s.getDisplayName().replace(" ", "_"));
-                    this.shortcuts.add(s);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
-            } else if(datum instanceof String) {
-                try {
-                    Shortcut s = new Shortcut();
-                    JSON json = (JSON) new JSONParser().parse((String) datum);
-                    s.read(json);
-                    s.setDisplayName(s.getDisplayName().replace(" ", "_"));
-                    this.shortcuts.add(s);
-                } catch(Exception e) {
-                    e.printStackTrace();
+        List<?> l = file.getConfig().getList("Shortcuts");
+        if(l != null)
+            for(Object datum : l) {
+                if(datum instanceof Map) {
+                    try {
+                        Shortcut s = new Shortcut();
+                        JSON json = new JSON((Map<?, ?>) datum);
+                        s.read(json);
+                        s.setDisplayName(s.getDisplayName().replace(" ", "_"));
+                        this.shortcuts.add(s);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                    }
+                } else if(datum instanceof String) {
+                    try {
+                        Shortcut s = new Shortcut();
+                        JSON json = (JSON) new JSONParser().parse((String) datum);
+                        s.read(json);
+                        s.setDisplayName(s.getDisplayName().replace(" ", "_"));
+                        this.shortcuts.add(s);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-        }
 
         new CShortcuts().register(WarpSystem.getInstance());
 

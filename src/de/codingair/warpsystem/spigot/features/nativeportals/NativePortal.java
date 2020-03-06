@@ -3,7 +3,7 @@ package de.codingair.warpsystem.spigot.features.nativeportals;
 import de.codingair.codingapi.server.blocks.utils.Axis;
 import de.codingair.codingapi.tools.Area;
 import de.codingair.codingapi.tools.io.DataWriter;
-import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.types.JSON.JSON;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;

@@ -1,6 +1,8 @@
 package de.codingair.warpsystem.spigot.features.effectportals.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
+import de.codingair.codingapi.tools.io.types.JSON.JSON;
+import de.codingair.codingapi.tools.io.types.JSON.JSONParser;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.features.FeatureType;
@@ -9,8 +11,6 @@ import de.codingair.warpsystem.spigot.features.effectportals.listeners.PortalLis
 import de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
-import de.codingair.codingapi.tools.io.JSON.JSON;
-import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -35,28 +35,30 @@ public class EffectPortalManager implements Manager {
         int temp = this.effectPortals.size();
 
         WarpSystem.log("  > Loading Portals (from Portals)");
-        for(Object s : file.getConfig().getList("Portals")) {
-            EffectPortal effectPortal = new EffectPortal();
+        List<?> l = file.getConfig().getList("Portals");
+        if(l != null)
+            for(Object s : l) {
+                EffectPortal effectPortal = new EffectPortal();
 
-            if(s instanceof Map) {
-                try {
-                    JSON json = new JSON((Map<?, ?>) s);
-                    effectPortal.read(json);
-                    this.effectPortals.add(effectPortal);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                    success = false;
-                }
-            } else if(s instanceof String) {
-                try {
-                    effectPortal.read((JSON) new JSONParser().parse((String) s));
-                    this.effectPortals.add(effectPortal);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                    success = false;
+                if(s instanceof Map) {
+                    try {
+                        JSON json = new JSON((Map<?, ?>) s);
+                        effectPortal.read(json);
+                        this.effectPortals.add(effectPortal);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        success = false;
+                    }
+                } else if(s instanceof String) {
+                    try {
+                        effectPortal.read((JSON) new JSONParser().parse((String) s));
+                        this.effectPortals.add(effectPortal);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        success = false;
+                    }
                 }
             }
-        }
 
         WarpSystem.log("    ...got " + (effectPortals.size() - temp) + " EffectPortal(s)");
 

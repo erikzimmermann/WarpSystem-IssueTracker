@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.features.playerwarps.commands;
 import de.codingair.codingapi.player.chat.ChatButton;
 import de.codingair.codingapi.player.chat.SimpleMessage;
 import de.codingair.codingapi.player.gui.anvil.*;
+import de.codingair.codingapi.player.gui.inventory.gui.GUI;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.items.ItemBuilder;
@@ -32,7 +33,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, edit, list>");
+                new PWList((Player) sender).open();
                 return false;
             }
         }.setOnlyPlayers(true), "pwarps", "pws");
@@ -89,7 +90,9 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                         if(refund == -1) return;
                         MoneyAdapterType.getActive().deposit((Player) sender, refund);
 
-                        sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Deleted_Info").replace("%NAME%", warp.getName(true)).replace("%PRICE%", cut(refund) + ""));
+                        if(refund > 0) sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Deleted_Info").replace("%NAME%", warp.getName(true)).replace("%PRICE%", CPlayerWarps.cut(refund) + ""));
+                        else sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_was_deleted").replace("%NAME%", warp.getName(true)));
+
                         message.destroy();
                     }
                 });
@@ -141,37 +144,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
         getBaseComponent().addChild(new CommandComponent("create") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                if(!PlayerWarpManager.hasPermission((Player) sender)) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Maximum_of_Warps").replace("%AMOUNT%", PlayerWarpManager.getManager().getWarps((Player) sender).size() + ""));
-                    return false;
-                }
-
-                AnvilGUI.openAnvil(WarpSystem.getInstance(), (Player) sender, new AnvilListener() {
-                    @Override
-                    public void onClick(AnvilClickEvent e) {
-                        if(!e.getSlot().equals(AnvilSlot.OUTPUT)) return;
-                        String input = e.getInput();
-
-                        if(input == null) {
-                            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
-                            return;
-                        }
-
-                        if(PlayerWarpManager.getManager().exists(input)) {
-                            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
-                            return;
-                        }
-
-                        e.setClose(true);
-                    }
-
-                    @Override
-                    public void onClose(AnvilCloseEvent e) {
-                        if(e.isSubmitted()) {
-                            e.setPost(() -> new PWEditor(e.getPlayer(), e.getSubmittedText()).open());
-                        }
-                    }
-                }, new ItemBuilder(XMaterial.NAME_TAG).setName(Lang.get("Name") + "...").getItem());
+                createPlayerWarp((Player) sender, null);
                 return false;
             }
         });
@@ -210,5 +183,46 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
     public static Number cut(double n) {
         if(n == (int) n) return (int) n;
         else return ((double) (int) (n * 100)) / 100;
+    }
+    
+    public static void createPlayerWarp(Player p, GUI fallBack) {
+        if(!PlayerWarpManager.hasPermission(p)) {
+            p.sendMessage(Lang.getPrefix() + Lang.get("Warp_Maximum_of_Warps").replace("%AMOUNT%", PlayerWarpManager.getManager().getWarps(p).size() + ""));
+            return;
+        }
+
+        AnvilGUI.openAnvil(WarpSystem.getInstance(), p, new AnvilListener() {
+            @Override
+            public void onClick(AnvilClickEvent e) {
+                if(!e.getSlot().equals(AnvilSlot.OUTPUT)) return;
+                String input = e.getInput();
+
+                if(input == null) {
+                    e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
+                    return;
+                }
+
+                if(PlayerWarpManager.getManager().exists(input)) {
+                    e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
+                    return;
+                }
+
+                e.setClose(true);
+            }
+
+            @Override
+            public void onClose(AnvilCloseEvent e) {
+                if(e.isSubmitted()) {
+                    e.setPost(() -> {
+                        if(fallBack != null) {
+                            GUI g = new PWEditor(e.getPlayer(), e.getSubmittedText());
+                            g.setFallbackGUI(fallBack);
+                            fallBack.changeGUI(g, true);
+                        }
+                        else new PWEditor(e.getPlayer(), e.getSubmittedText()).open();
+                    });
+                } else if(fallBack != null) fallBack.open();
+            }
+        }, new ItemBuilder(XMaterial.NAME_TAG).setName(Lang.get("Name") + "...").getItem());
     }
 }

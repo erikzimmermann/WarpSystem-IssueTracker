@@ -1,6 +1,5 @@
 package de.codingair.warpsystem.spigot.base.utils.featureobjects.actions;
 
-import de.codingair.codingapi.tools.io.DataWriter;
 import de.codingair.codingapi.tools.io.Serializable;
 import org.bukkit.entity.Player;
 

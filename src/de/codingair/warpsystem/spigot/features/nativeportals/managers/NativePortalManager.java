@@ -4,6 +4,8 @@ import de.codingair.codingapi.API;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.tools.io.types.JSON.JSON;
+import de.codingair.codingapi.tools.io.types.JSON.JSONParser;
 import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -17,11 +19,9 @@ import de.codingair.warpsystem.spigot.features.nativeportals.guis.DeleteGUI;
 import de.codingair.warpsystem.spigot.features.nativeportals.guis.NPEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.listeners.EditorListener;
 import de.codingair.warpsystem.spigot.features.nativeportals.listeners.PortalListener;
-import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import de.codingair.codingapi.tools.io.JSON.JSONParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,30 +65,32 @@ public class NativePortalManager implements Manager {
 
         WarpSystem.log("  > Loading NativePortals");
         int fails = 0;
-        for(Object s : file.getConfig().getList("NativePortals")) {
-            NativePortal p = new NativePortal();
+        List<?> l = file.getConfig().getList("NativePortals");
+        if(l != null)
+            for(Object s : l) {
+                NativePortal p = new NativePortal();
 
-            if(s instanceof Map) {
-                try {
-                    JSON json = new JSON((Map<?, ?>) s);
-                    p.read(json);
-                    addPortal(p);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                    fails++;
-                    success = false;
-                }
-            } else if(s instanceof String) {
-                try {
-                    p.read((JSON) new JSONParser().parse((String) s));
-                    addPortal(p);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                    fails++;
-                    success = false;
+                if(s instanceof Map) {
+                    try {
+                        JSON json = new JSON((Map<?, ?>) s);
+                        p.read(json);
+                        addPortal(p);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        fails++;
+                        success = false;
+                    }
+                } else if(s instanceof String) {
+                    try {
+                        p.read((JSON) new JSONParser().parse((String) s));
+                        addPortal(p);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        fails++;
+                        success = false;
+                    }
                 }
             }
-        }
 
         if(fails > 0) WarpSystem.log("    > " + fails + " Error(s)");
         WarpSystem.log("    ...got " + nativePortals.size() + " NativePortal(s)");
