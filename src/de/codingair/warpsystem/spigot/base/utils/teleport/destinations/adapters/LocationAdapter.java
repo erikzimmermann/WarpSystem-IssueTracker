@@ -1,23 +1,26 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters;
 
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public class LocationAdapter implements DestinationAdapter {
-    private Location location;
+    protected Location location;
 
     public LocationAdapter() {
     }
 
     public LocationAdapter(Location location) {
         this.location = location;
+    }
+
+    public LocationAdapter(org.bukkit.Location location) {
+        this.location = new Location(location);
     }
 
     @Override

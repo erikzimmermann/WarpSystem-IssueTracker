@@ -9,7 +9,7 @@ import de.codingair.warpsystem.spigot.features.globalwarps.commands.CGlobalWarp;
 import de.codingair.warpsystem.spigot.features.globalwarps.commands.CGlobalWarps;
 import de.codingair.warpsystem.spigot.features.globalwarps.listeners.GlobalWarpListener;
 import de.codingair.warpsystem.transfer.packets.spigot.DeleteGlobalWarpPacket;
-import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPacket;
+import de.codingair.warpsystem.transfer.packets.spigot.PrepareGlobalWarpTeleportPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.PublishGlobalWarpPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestGlobalWarpNamesPacket;
 import de.codingair.warpsystem.transfer.serializeable.SGlobalWarp;
@@ -61,26 +61,26 @@ public class GlobalWarpManager implements Manager, BungeeFeature {
         return false;
     }
 
-    public void teleport(Player player, String display, String name, Callback<PrepareTeleportPacket.Result> callback) {
+    public void teleport(Player player, String display, String name, Callback<PrepareGlobalWarpTeleportPacket.Result> callback) {
         teleport(player, display, name, 0, callback);
     }
 
-    public void teleport(Player player, String display, String name, double costs, Callback<PrepareTeleportPacket.Result> callback) {
+    public void teleport(Player player, String display, String name, double costs, Callback<PrepareGlobalWarpTeleportPacket.Result> callback) {
         if(name == null) {
-            callback.accept(PrepareTeleportPacket.Result.WARP_NOT_EXISTS);
+            callback.accept(PrepareGlobalWarpTeleportPacket.Result.WARP_NOT_EXISTS);
             return;
         }
 
         name = getCaseCorrectlyName(name);
         if(!this.globalWarps.containsKey(name)) {
-            callback.accept(PrepareTeleportPacket.Result.WARP_NOT_EXISTS);
+            callback.accept(PrepareGlobalWarpTeleportPacket.Result.WARP_NOT_EXISTS);
             return;
         }
 
-        WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportPacket(player.getName(), name, display, costs, new Callback<Integer>() {
+        WarpSystem.getInstance().getDataHandler().send(new PrepareGlobalWarpTeleportPacket(player.getName(), name, display, costs, new Callback<Integer>() {
             @Override
             public void accept(Integer object) {
-                callback.accept(PrepareTeleportPacket.Result.getById(object));
+                callback.accept(PrepareGlobalWarpTeleportPacket.Result.getById(object));
             }
         }));
     }

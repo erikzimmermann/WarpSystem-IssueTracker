@@ -15,7 +15,6 @@ import java.io.IOException;
 
 public class ChannelListener implements Listener {
     private BungeeDataHandler bungeeDataHandler;
-//    private List<byte[]> bytes = new ArrayList<>();
 
     public ChannelListener(BungeeDataHandler bungeeDataHandler) {
         this.bungeeDataHandler = bungeeDataHandler;

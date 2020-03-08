@@ -1,10 +1,10 @@
 package de.codingair.warpsystem.spigot.features.simplewarps;
 
-import de.codingair.codingapi.tools.io.DataWriter;
-import de.codingair.codingapi.tools.io.types.JSON.JSON;
-import de.codingair.codingapi.tools.io.types.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.utils.DataWriter;
+import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import de.codingair.codingapi.tools.Location;
-import de.codingair.codingapi.tools.io.Serializable;
+import de.codingair.codingapi.tools.io.utils.Serializable;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

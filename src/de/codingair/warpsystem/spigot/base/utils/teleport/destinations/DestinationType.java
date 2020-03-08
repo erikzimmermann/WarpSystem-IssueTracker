@@ -12,6 +12,7 @@ public enum DestinationType {
     EffectPortal(4, PortalDestinationAdapter.class),
     Server(5, ServerAdapter.class),
     Location(6, LocationAdapter.class),
+    GlobalLocation(7, GlobalLocationAdapter.class),
     ;
 
     private int id;

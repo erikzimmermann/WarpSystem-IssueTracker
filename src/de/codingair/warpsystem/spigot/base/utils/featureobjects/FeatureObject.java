@@ -1,10 +1,12 @@
 package de.codingair.warpsystem.spigot.base.utils.featureobjects;
 
+import com.google.common.base.CharMatcher;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.codingapi.tools.io.DataWriter;
-import de.codingair.codingapi.tools.io.Serializable;
+import de.codingair.codingapi.tools.io.lib.ParseException;
+import de.codingair.codingapi.tools.io.utils.DataWriter;
+import de.codingair.codingapi.tools.io.utils.Serializable;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
@@ -17,11 +19,11 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.exceptions.IconReadException;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.json.simple.JSONArray;
-import de.codingair.codingapi.tools.io.types.JSON.JSONParser;
-import de.codingair.codingapi.tools.io.types.JSON.JSON;
-import org.json.simple.parser.ParseException;
+import de.codingair.codingapi.tools.io.lib.JSONArray;
+import de.codingair.codingapi.tools.io.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.JSON.JSON;
 
 import java.util.*;
 
@@ -30,7 +32,7 @@ public class FeatureObject implements Serializable {
     private String permission = null;
     private boolean disabled = false;
     private boolean skip = false;
-    private int performed = 0;
+    protected int performed = 0;
 
     public FeatureObject() {
         this.actions = new ArrayList<>();
@@ -106,12 +108,8 @@ public class FeatureObject implements Serializable {
             }
         }
 
-        if(doesIncreasePerformStats(player)) performed++;
+        performed++;
         return this;
-    }
-
-    public boolean doesIncreasePerformStats(Player player) {
-        return true;
     }
 
     @Override
@@ -120,6 +118,8 @@ public class FeatureObject implements Serializable {
 
         this.disabled = d.getBoolean("disabled");
         this.permission = d.get("permission");
+        if(this.permission != null) this.permission = ChatColor.stripColor(CharMatcher.WHITESPACE.trimFrom(this.permission));
+
         this.skip = d.getBoolean("skip");
         this.performed = d.getInteger("performed");
 

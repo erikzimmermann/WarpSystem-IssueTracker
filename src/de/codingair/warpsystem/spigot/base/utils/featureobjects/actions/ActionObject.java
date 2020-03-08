@@ -1,6 +1,6 @@
 package de.codingair.warpsystem.spigot.base.utils.featureobjects.actions;
 
-import de.codingair.codingapi.tools.io.Serializable;
+import de.codingair.codingapi.tools.io.utils.Serializable;
 import org.bukkit.entity.Player;
 
 public abstract class ActionObject<T> implements Serializable {

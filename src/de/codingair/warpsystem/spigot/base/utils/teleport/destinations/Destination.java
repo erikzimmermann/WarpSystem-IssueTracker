@@ -1,8 +1,8 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport.destinations;
 
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.codingapi.tools.io.DataWriter;
-import de.codingair.codingapi.tools.io.Serializable;
+import de.codingair.codingapi.tools.io.utils.DataWriter;
+import de.codingair.codingapi.tools.io.utils.Serializable;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
@@ -164,7 +164,9 @@ public class Destination implements Serializable {
         this.type = DestinationType.getById(d.getInteger("type"));
         this.adapter = type.getInstance();
 
-        if(type == DestinationType.Location) {
+        if(adapter != null && adapter instanceof Serializable) {
+            ((Serializable) adapter).read(d);
+        } else if(type == DestinationType.Location) {
             de.codingair.codingapi.tools.Location loc = new de.codingair.codingapi.tools.Location();
             d.getSerializable("id", loc);
             ((LocationAdapter) this.adapter).setLocation(loc);
@@ -183,12 +185,16 @@ public class Destination implements Serializable {
     public void write(DataWriter d) {
         d.put("type", type.getId());
 
-        Object id;
-        if(type == DestinationType.Location) {
-            id = new de.codingair.codingapi.tools.Location(buildLocation());
-        } else id = this.id;
+        if(adapter != null && adapter instanceof Serializable) {
+            ((Serializable) adapter).write(d);
+        } else {
+            Object id;
+            if(type == DestinationType.Location) {
+                id = new de.codingair.codingapi.tools.Location(buildLocation());
+            } else id = this.id;
 
-        d.put("id", id);
+            d.put("id", id);
+        }
         d.put("oX", offsetX);
         d.put("oY", offsetY);
         d.put("oZ", offsetZ);

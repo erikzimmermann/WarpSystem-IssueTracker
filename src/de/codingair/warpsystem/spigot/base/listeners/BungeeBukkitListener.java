@@ -40,6 +40,8 @@ public class BungeeBukkitListener implements PacketListener, Listener {
     public void onReceive(Packet packet, String extra) {
         switch(PacketType.getByObject(packet)) {
             case InitialPacket: {
+                WarpSystem.getInstance().setCurrentServer(((InitialPacket) packet).getServerName());
+
                 String version = ((InitialPacket) packet).getVersion();
                 if(version.equals(WarpSystem.getInstance().getDescription().getVersion())) {
                     if(WarpSystem.getInstance().getBungeePluginVersion() == null || !WarpSystem.getInstance().getBungeePluginVersion().equals(version)) {

@@ -1,13 +1,13 @@
 package de.codingair.warpsystem.spigot.features.tempwarps.utils;
 
-import de.codingair.codingapi.tools.io.types.JSON.JSON;
-import de.codingair.codingapi.tools.io.types.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.json.simple.parser.ParseException;
+import de.codingair.codingapi.tools.io.lib.ParseException;
 
 import java.util.Date;
 import java.util.UUID;
@@ -313,7 +313,9 @@ public class TempWarp {
             UUID owner = UUID.fromString(json.get("Owner"));
             String lastKnownName = json.get("LastKnownName");
             Location location = json.getLocation("Location");
-            String name = json.get("Name");
+            Object nameTemp = json.get("Name");
+            String name = nameTemp + "";
+
             String teleportMessage = json.get("Message");
             Date bornDate = json.getDate("BornDate");
             Date startDate = json.getDate("StartDate");

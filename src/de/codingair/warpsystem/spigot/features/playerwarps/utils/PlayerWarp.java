@@ -2,9 +2,9 @@ package de.codingair.warpsystem.spigot.features.playerwarps.utils;
 
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.tools.Location;
-import de.codingair.codingapi.tools.io.DataWriter;
-import de.codingair.codingapi.tools.io.Serializable;
-import de.codingair.codingapi.tools.io.types.JSON.JSON;
+import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.utils.DataWriter;
+import de.codingair.codingapi.tools.io.utils.Serializable;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
@@ -12,15 +12,18 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.GlobalLocationAdapter;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.entity.Player;
-import org.json.simple.JSONArray;
+import de.codingair.codingapi.tools.io.lib.JSONArray;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -61,7 +64,7 @@ public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem
         owner.name = player.getName();
 
         resetItem();
-        addAction(new WarpAction(new Destination(Location.getByLocation(player.getLocation()).toJSONString(2), DestinationType.Location)));
+        addAction(new WarpAction(new Destination(new GlobalLocationAdapter(WarpSystem.getInstance().getCurrentServer(), Location.getByLocation(player.getLocation())))));
     }
 
     private PlayerWarp(PlayerWarp warp) {
@@ -74,13 +77,8 @@ public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem
         TeleportOptions options = new TeleportOptions((Destination) null, this.name);
         if(this.teleportMessage != null) options.setMessage(ChatColor.translateAlternateColorCodes('&', this.teleportMessage));
 
-
+        performed--;
         return super.perform(player, options);
-    }
-
-    @Override
-    public boolean doesIncreasePerformStats(Player player) {
-        return !isOwner(player) && !isTrusted(player);
     }
 
     @Override
@@ -125,21 +123,23 @@ public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem
 
     @Override
     public void write(DataOutputStream o) throws IOException {
-        //byte mask: PUBLIC | ITEM_SKULL | ITEM_COLOR | ITEM_DATA | TELEPORT_MESSAGE | BORN == START | CREATOR_KEY | NOTIFY
+        if(!WarpSystem.getInstance().isOnBungeeCord()) throw new IllegalStateException("Only for BungeeCord");
+
+        //byte mask: PUBLIC | ITEM_SKULL | ITEM_COLOR | ITEM_DATA | TELEPORT_MESSAGE | BORN == START | CREATOR_KEY | TELEPORT_COSTS
         byte b = (byte) (isPublic ? 1 : 0);
         b |= (item.getSkullId() != null ? 1 : 0) << 1;
         b |= (item.getColor() != null ? 1 : 0) << 2;
         b |= (item.getData() != (byte) 0 ? 1 : 0) << 3;
         b |= (teleportMessage != null ? 1 : 0) << 4;
-        b |= (born == started ? 1 : 0) << 5;
+        b |= (born != started ? 1 : 0) << 5;
         b |= (creatorKey != null ? 1 : 0) << 6;
-        b |= (notify ? 1 : 0) << 7;
+        b |= (teleportCosts > 0 ? 1 : 0) << 7;
 
         o.writeByte(b);                                                 //options
 
         this.owner.write(o);                                            //owner
         o.writeUTF(this.name);                                          //name
-        o.writeInt(description.size());                                 //description
+        o.writeByte(description.size());                                //description
         for(String s : description) {
             o.writeUTF(s);
         }
@@ -154,7 +154,8 @@ public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem
         }
         if(item.getSkullId() != null) o.writeUTF(item.getSkullId());
 
-        o.writeDouble(teleportCosts);                                   //teleport costs
+        if(teleportCosts > 0) o.writeDouble(teleportCosts);             //teleport costs
+        o.writeBoolean(notify);                                         //notify
         o.writeLong(born);                                              //born
         if(born != started) o.writeLong(started);                       //started
         o.writeLong(time);                                              //time
@@ -167,17 +168,83 @@ public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem
 
         o.writeByte(classes.size());                                    //classes
         for(Category c : classes) {
-            o.writeUTF(c.getName());
+            o.writeByte(c.getId());
         }
-        /*
-        d.put("classes", classes);
-         */
+
+        o.writeInt(performed);                                         //feature object data values
+        Destination d = getAction(WarpAction.class).getValue();
+        o.writeUTF(WarpSystem.getInstance().getCurrentServer());
+        Location l = (Location) d.buildLocation();
+        o.writeUTF(l.getWorldName());
+        o.writeDouble(l.getX());
+        o.writeDouble(l.getY());
+        o.writeDouble(l.getZ());
+        o.writeFloat(l.getYaw());
+        o.writeFloat(l.getPitch());
     }
 
     @Override
     public void read(DataInputStream i) throws IOException {
-        this.owner.read(i);
-        //todo
+        if(!WarpSystem.getInstance().isOnBungeeCord()) throw new IllegalStateException("Only for BungeeCord");
+
+        if(this.trusted == null) this.trusted = new ArrayList<>();
+        else this.trusted.clear();
+
+        if(this.classes == null) this.classes = new ArrayList<>();
+        else this.classes.clear();
+
+        if(this.description == null) this.description = new ArrayList<>();
+        else this.description.clear();
+
+        byte options = i.readByte();                                    //options
+        this.isPublic = (options & 1) != 0;
+        boolean skull = (options & (1 << 1)) != 0;
+        boolean color = (options & (1 << 2)) != 0;
+        boolean data = (options & (1 << 3)) != 0;
+        boolean teleportMessage = (options & (1 << 4)) != 0;
+        boolean differentStart = (options & (1 << 5)) != 0;
+        boolean hasKey = (options & (1 << 6)) != 0;
+        boolean teleportCosts = (options & (1 << 7)) != 0;
+
+        this.owner.read(i);                                             //owner
+        this.name = i.readUTF();                                        //name
+
+        int size = i.readByte();                                        //description
+        for(int i1 = 0; i1 < size; i1++) {
+            description.add(i.readUTF());
+        }
+
+        if(teleportMessage) this.teleportMessage = i.readUTF();         //teleport message
+
+        this.item = new ItemBuilder(XMaterial.fromString(i.readUTF())); //item
+        if(data) this.item.setData(i.readByte());
+        if(color) this.item.setColor(DyeColor.getByColor(Color.fromBGR(i.readByte(), i.readByte(), i.readByte())));
+        if(skull) this.item.setSkullId(i.readUTF());
+
+        if(teleportCosts) this.teleportCosts = i.readDouble();          //teleport costs
+        this.notify = i.readBoolean();                                  //notify
+        this.born = i.readLong();                                       //born
+        if(differentStart) this.started = i.readLong();                 //start
+        this.time = i.readLong();                                       //time
+        if(hasKey) this.creatorKey = i.readUTF();                       //creator key
+
+        size = i.readByte();                                            //trusted members
+        for(int i1 = 0; i1 < size; i1++) {
+            User user = new User();
+            user.read(i);
+            trusted.add(user);
+        }
+
+        size = i.readByte();                                            //classes
+        for(int i1 = 0; i1 < size; i1++) {
+            Category c = PlayerWarpManager.getManager().getWarpClass(i.readByte());
+            if(c != null) classes.add(c);
+        }
+
+        performed = i.readInt();                                       //feature object data values
+        String server = i.readUTF();
+        Location l = new Location(i.readUTF(), i.readDouble(), i.readDouble(), i.readDouble(), i.readFloat(), i.readFloat());
+        addAction(new WarpAction(new Destination(new GlobalLocationAdapter(server, l))));
     }
 
     @Override
@@ -521,6 +588,12 @@ public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem
         }
 
         return description;
+    }
+
+    public static PlayerWarp readInitially(DataInputStream i) throws IOException {
+        PlayerWarp w = new PlayerWarp();
+        w.read(i);
+        return w;
     }
 
     public static class User implements Serializable, de.codingair.warpsystem.transfer.serializeable.Serializable {

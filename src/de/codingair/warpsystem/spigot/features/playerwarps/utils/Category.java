@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.spigot.features.playerwarps.utils;
 
-import de.codingair.codingapi.tools.io.DataWriter;
-import de.codingair.codingapi.tools.io.Serializable;
+import de.codingair.codingapi.tools.io.utils.DataWriter;
+import de.codingair.codingapi.tools.io.utils.Serializable;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import org.bukkit.Material;
 

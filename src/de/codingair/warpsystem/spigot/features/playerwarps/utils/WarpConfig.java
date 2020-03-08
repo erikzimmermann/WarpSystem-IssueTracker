@@ -1,9 +1,9 @@
 package de.codingair.warpsystem.spigot.features.playerwarps.utils;
 
-import de.codingair.codingapi.tools.io.types.JSON.JSON;
-import de.codingair.codingapi.tools.io.types.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarpConfig;
-import org.json.simple.parser.ParseException;
+import de.codingair.codingapi.tools.io.lib.ParseException;
 
 import java.util.concurrent.TimeUnit;
 

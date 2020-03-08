@@ -5,6 +5,7 @@ import de.codingair.warpsystem.spigot.features.teleportcommand.packets.TeleportC
 import de.codingair.warpsystem.transfer.packets.bungee.*;
 import de.codingair.warpsystem.transfer.packets.general.BooleanPacket;
 import de.codingair.warpsystem.transfer.packets.general.IntegerPacket;
+import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpsPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.*;
 
 public enum PacketType {
@@ -16,7 +17,7 @@ public enum PacketType {
     RequestServerStatusPacket(5, RequestServerStatusPacket.class),
 
     PublishGlobalWarpPacket(10, PublishGlobalWarpPacket.class),
-    PrepareTeleportPacket(11, PrepareTeleportPacket.class),
+    PrepareTeleportPacket(11, PrepareGlobalWarpTeleportPacket.class),
     TeleportPacket(12, TeleportPacket.class),
     DeleteGlobalWarpPacket(13, DeleteGlobalWarpPacket.class),
     RequestGlobalWarpNamesPacket(14, RequestGlobalWarpNamesPacket.class),
@@ -37,6 +38,9 @@ public enum PacketType {
     PrepareTeleportPlayerToPlayerPacket(32, PrepareTeleportPlayerToPlayerPacket.class),
     PrepareTeleportRequestPacket(33, PrepareTeleportRequestPacket.class),
     StartTeleportToPlayerPacket(34, de.codingair.warpsystem.transfer.packets.general.StartTeleportToPlayerPacket.class),
+
+    SendPlayerWarpsPacket(40, SendPlayerWarpsPacket.class),
+    RegisterServerForPlayerWarps(41, RegisterServerForPlayerWarps.class),
 
     BooleanPacket(100, BooleanPacket.class),
     IntegerPacket(101, IntegerPacket.class),

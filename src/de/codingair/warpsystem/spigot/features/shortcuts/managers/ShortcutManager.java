@@ -2,8 +2,8 @@ package de.codingair.warpsystem.spigot.features.shortcuts.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.server.Version;
-import de.codingair.codingapi.tools.io.types.JSON.JSON;
-import de.codingair.codingapi.tools.io.types.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;

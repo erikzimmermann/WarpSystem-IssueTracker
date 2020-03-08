@@ -5,8 +5,8 @@ import de.codingair.codingapi.particles.animations.customanimations.AnimationTyp
 import de.codingair.codingapi.particles.animations.customanimations.CustomAnimation;
 import de.codingair.codingapi.particles.animations.movables.MovableMid;
 import de.codingair.codingapi.particles.utils.Color;
-import de.codingair.codingapi.tools.io.DataWriter;
-import de.codingair.codingapi.tools.io.Serializable;
+import de.codingair.codingapi.tools.io.utils.DataWriter;
+import de.codingair.codingapi.tools.io.utils.Serializable;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
