@@ -4,6 +4,7 @@ import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.sounds.MusicData;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.Backup;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -15,9 +16,13 @@ import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.POp
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.PTrusted;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarpData;
+import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpsPacket;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class PWEditor extends Editor<PlayerWarp> {
     private PlayerWarp original;
@@ -35,26 +40,40 @@ public class PWEditor extends Editor<PlayerWarp> {
 
     private PWEditor(Player p, PlayerWarp warp, PlayerWarp clone) {
         super(p, clone, new Backup<PlayerWarp>(warp) {
-            @Override
-            public void applyTo(PlayerWarp clone) {
-                boolean creating = !PlayerWarpManager.getManager().exists(warp.getName());
-                Number costs = calculateCosts(creating, warp, clone);
-                MoneyAdapterType.getActive().withdraw(p, costs.doubleValue());
+                    @Override
+                    public void applyTo(PlayerWarp clone) {
+                        boolean creating = !PlayerWarpManager.getManager().existsOwn(p, warp.getName());
+                        Number costs = calculateCosts(creating, warp, clone);
+                        MoneyAdapterType.getActive().withdraw(p, costs.doubleValue());
 
-                clone.setStarted(clone.getStarted() + clone.getPassedTime());
-                warp.apply(clone);
-                clone.destroy();
+                        clone.setStarted(System.currentTimeMillis());
 
-                if(creating) PlayerWarpManager.getManager().add(warp);
-            }
+                        if(creating || warp.isSource()) {
+                            warp.apply(clone);
+                            if(creating) PlayerWarpManager.getManager().add(warp);
 
-            @Override
-            public void cancel(PlayerWarp clone) {
-                clone.destroy();
-            }
-        }, () -> clone.getItem().getItem(),
-                new PAppearance(p, clone, warp, PlayerWarpManager.getManager().exists(warp.getName())),
-                new POptions(p, clone, warp, PlayerWarpManager.getManager().exists(warp.getName())),
+                            PlayerWarpData data = warp.getData();
+                            SendPlayerWarpsPacket packet = new SendPlayerWarpsPacket(new ArrayList<PlayerWarpData>() {{
+                                this.add(data);
+                            }});
+                            packet.setClearable(true);
+
+                            WarpSystem.getInstance().getDataHandler().send(packet);
+                        } else {
+                            PlayerWarpManager.getManager().sync(warp, clone);
+                            warp.apply(clone);
+                        }
+
+                        clone.destroy();
+                    }
+
+                    @Override
+                    public void cancel(PlayerWarp clone) {
+                        clone.destroy();
+                    }
+                }, () -> clone.getItem().getItem(),
+                new PAppearance(p, clone, warp, PlayerWarpManager.getManager().existsOwn(p, warp.getName())),
+                new POptions(p, clone, warp, PlayerWarpManager.getManager().existsOwn(p, warp.getName())),
                 new PTrusted(p, clone, warp),
                 PlayerWarpManager.getManager().isClasses() ? new PClasses(p, clone, warp) : null
         );
@@ -64,7 +83,7 @@ public class PWEditor extends Editor<PlayerWarp> {
 
         if(clone.getLeftTime() < PlayerWarpManager.getManager().getMinTime()) clone.setTime(PlayerWarpManager.getManager().getMinTime());
 
-        this.creating = !PlayerWarpManager.getManager().exists(warp.getName());
+        this.creating = !PlayerWarpManager.getManager().existsOwn(p, warp.getName());
 
         setOpenSound(new SoundData(Sound.LEVEL_UP, 0.7F, 1.5F));
         setCancelSound(new SoundData(Sound.ITEM_BREAK, 0.7F, 1F));
@@ -91,7 +110,8 @@ public class PWEditor extends Editor<PlayerWarp> {
 
     public static String getCostsMessage(double costs) {
         if(costs == 0 || !PlayerWarpManager.getManager().isEconomy()) return null;
-        return Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Costs") + ": §7" + cut(costs) + " " + Lang.get("Coins");
+        Number n = cut(costs);
+        return Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Costs") + ": §7" + (n instanceof Integer ? n.intValue() : n) + " " + Lang.get("Coins");
     }
 
     public static String getFreeMessage(String free) {
@@ -100,13 +120,12 @@ public class PWEditor extends Editor<PlayerWarp> {
     }
 
     public static Number cut(double n) {
-        if(n == (int) n) return (int) n;
-        else {
-            double d = ((double) (int) (n * 100)) / 100;
+        double d = ((double) (int) (n * 100)) / 100;
 
-            if(PlayerWarpManager.getManager().isNaturalNumbers()) return Math.round(d);
-            else return d;
-        }
+        if(PlayerWarpManager.getManager().isNaturalNumbers()) d = Math.ceil(d);
+
+        if(d == (int) d) return (int) d;
+        else return d;
     }
 
     private Number calculateCosts() {

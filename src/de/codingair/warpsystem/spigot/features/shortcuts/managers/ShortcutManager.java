@@ -32,7 +32,7 @@ public class ShortcutManager implements Manager, BungeeFeature {
     private ShortcutPacketListener listener;
 
     @Override
-    public boolean load() {
+    public boolean load(boolean loader) {
         WarpSystem.getInstance().getBungeeFeatureList().add(this);
 
         if(WarpSystem.getInstance().getFileManager().getFile("Shortcuts") == null) WarpSystem.getInstance().getFileManager().loadFile("Shortcuts", "/Memory/");

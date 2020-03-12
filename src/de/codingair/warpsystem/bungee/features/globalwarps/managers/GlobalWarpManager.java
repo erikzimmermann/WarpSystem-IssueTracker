@@ -20,14 +20,14 @@ public class GlobalWarpManager implements Manager {
     private List<SGlobalWarp> globalWarps = new ArrayList<>();
     private GlobalWarpListener listener;
 
-    public boolean load() {
+    public boolean load(boolean loader) {
         WarpSystem.getInstance().getFileManager().loadFile("GlobalWarps", "/");
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("GlobalWarps");
         Configuration config = file.getConfig();
 
         BungeeCord.getInstance().getPluginManager().registerListener(WarpSystem.getInstance(), listener = new GlobalWarpListener());
 
-        WarpSystem.log("  > Loading locations of GlobalWarps");
+        if(!loader) WarpSystem.log("  > Loading locations of GlobalWarps");
 
         this.globalWarps = new ArrayList<>();
 

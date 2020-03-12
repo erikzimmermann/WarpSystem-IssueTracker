@@ -86,7 +86,7 @@ public class GlobalWarpManager implements Manager, BungeeFeature {
     }
 
     @Override
-    public boolean load() {
+    public boolean load(boolean loader) {
         this.globalWarps.clear();
         this.commandExecutorList.clear();
 

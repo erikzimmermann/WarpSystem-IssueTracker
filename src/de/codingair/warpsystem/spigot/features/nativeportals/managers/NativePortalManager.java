@@ -36,7 +36,7 @@ public class NativePortalManager implements Manager {
     private boolean sendMessage;
 
     @Override
-    public boolean load() {
+    public boolean load(boolean loader) {
         ConfigFile config = WarpSystem.getInstance().getFileManager().getFile("Config");
         Object test = config.getConfig().get("WarpSystem.Send.Teleport_Message.NativePortals", null);
         if(test == null) {

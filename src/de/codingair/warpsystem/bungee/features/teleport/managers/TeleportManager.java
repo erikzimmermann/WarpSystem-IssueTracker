@@ -24,8 +24,8 @@ public class TeleportManager implements Manager {
     private List<String> denyForceTps = new ArrayList<>();
 
     @Override
-    public boolean load() {
-        WarpSystem.log("  > Initializing TeleportManager");
+    public boolean load(boolean loader) {
+        if(!loader) WarpSystem.log("  > Initializing TeleportManager");
 
         CTeleport teleport;
         BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), teleport = new CTeleport());

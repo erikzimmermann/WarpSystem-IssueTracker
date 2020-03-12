@@ -100,6 +100,8 @@ public class Lang {
             throw new IllegalStateException("Unknown translation key: '" + key + "' >> Check " + getCurrentLanguage() + ".yml at '" + key + "'");
         }
 
+        text = text.replace("\\n", "\n");
+
         text = ChatColor.translateAlternateColorCodes('&', text);
         return text;
     }

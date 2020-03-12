@@ -62,7 +62,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
     private CBack back;
 
     @Override
-    public boolean load() {
+    public boolean load(boolean loader) {
         WarpSystem.getInstance().getBungeeFeatureList().add(this);
         Bukkit.getPluginManager().registerEvents(new TeleportListener(), WarpSystem.getInstance());
         Bukkit.getPluginManager().registerEvents(new BackListener(), WarpSystem.getInstance());

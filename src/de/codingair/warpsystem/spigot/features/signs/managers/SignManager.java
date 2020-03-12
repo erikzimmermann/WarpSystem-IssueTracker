@@ -20,7 +20,7 @@ public class SignManager implements Manager {
     private List<WarpSign> warpSigns = new ArrayList<>();
 
     @Override
-    public boolean load() {
+    public boolean load(boolean loader) {
         boolean success = true;
         if(WarpSystem.getInstance().getFileManager().getFile("Teleporters") == null) WarpSystem.getInstance().getFileManager().loadFile("Teleporters", "/Memory/");
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");

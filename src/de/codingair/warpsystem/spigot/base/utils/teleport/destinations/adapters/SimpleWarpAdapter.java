@@ -71,7 +71,7 @@ public class SimpleWarpAdapter implements DestinationAdapter {
     }
 
     @Override
-    public Location buildLocation(String id) {
+    public de.codingair.codingapi.tools.Location buildLocation(String id) {
         SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(id);
         return warp == null ? null : warp.getLocation().clone();
     }

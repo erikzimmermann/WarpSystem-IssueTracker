@@ -49,7 +49,7 @@ public class PortalDestinationAdapter implements DestinationAdapter {
     }
 
     @Override
-    public Location buildLocation(String id) {
+    public de.codingair.codingapi.tools.Location buildLocation(String id) {
         return de.codingair.codingapi.tools.Location.getByJSONString(id);
     }
 }

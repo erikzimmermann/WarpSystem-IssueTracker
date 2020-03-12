@@ -1,99 +1,134 @@
-package de.codingair.warpsystem.bungee.features.playerwarps.utils;
+package de.codingair.warpsystem.spigot.features.playerwarps.utils;
 
 import de.codingair.codingapi.tools.io.JSON.BungeeJSON;
 import de.codingair.codingapi.tools.io.lib.JSONArray;
 import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.warpsystem.transfer.serializeable.Serializable;
-import net.md_5.bungee.BungeeCord;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-public class PlayerWarp implements Serializable, de.codingair.codingapi.tools.io.utils.Serializable {
-    private String name;
+public class PlayerWarpData implements Serializable, de.codingair.codingapi.tools.io.utils.Serializable {
+    protected String name;
 
-    private User owner;
-    private List<User> trusted;
+    protected User owner;
+    protected List<User> trusted;
 
-    private String type, skullId;
-    private byte red, green, blue, data;
+    protected String type, skullId;
+    protected Byte red, green, blue, data;
 
-    private boolean isPublic;
-    private String teleportMessage;
-    private double teleportCosts;
-    private List<Byte> classes;
-    private List<String> description;
+    protected Boolean isPublic;
+    protected String teleportMessage;
+    protected Double teleportCosts;
+    protected List<Byte> classes;
+    protected List<String> description;
 
-    private long born, started, time;
+    protected Long born, started, time;
 
-    private String creatorKey;
-    private boolean notify;
+    protected String creatorKey;
+    protected Boolean notify;
 
-    private int performed;
-    private String server, world;
-    private double x, y, z;
-    private float yaw, pitch;
+    protected Integer performed;
+    protected String server, world;
+    protected Double x, y, z;
+    protected Float yaw, pitch;
 
-    public PlayerWarp() {
+    public PlayerWarpData() {
         owner = new User();
         trusted = new ArrayList<>();
         classes = new ArrayList<>();
         description = new ArrayList<>();
     }
 
-    public void apply(PlayerWarp w) {
-        this.owner = w.owner;
-
-        if(this.trusted == null) this.trusted = new ArrayList<>(w.trusted);
-        else {
-            this.trusted.clear();
-            this.trusted.addAll(w.trusted);
+    public void apply(PlayerWarpData w) {
+        if(w.trusted != null) {
+            if(this.trusted == null) this.trusted = new ArrayList<>(w.trusted);
+            else {
+                this.trusted.clear();
+                this.trusted.addAll(w.trusted);
+            }
         }
 
-        if(this.description == null) this.description = new ArrayList<>(w.description);
-        else {
-            this.description.clear();
-            this.description.addAll(w.description);
+        if(w.description != null) {
+            if(this.description == null) this.description = new ArrayList<>(w.description);
+            else {
+                this.description.clear();
+                this.description.addAll(w.description);
+            }
         }
 
-        if(this.classes == null) this.classes = new ArrayList<>(w.classes);
-        else {
-            this.classes.clear();
-            this.classes.addAll(w.classes);
+        if(w.classes != null) {
+            if(this.classes == null) this.classes = new ArrayList<>(w.classes);
+            else {
+                this.classes.clear();
+                this.classes.addAll(w.classes);
+            }
         }
 
-        this.name = w.name;
-        this.teleportMessage = w.teleportMessage;
+        if(w.owner != null) this.owner = w.owner;
+        if(w.name != null) this.name = w.name;
+        if(w.teleportMessage != null) this.teleportMessage = w.teleportMessage;
 
-        this.type = w.type;
-        this.skullId = w.skullId;
-        this.red = w.red;
-        this.green = w.green;
-        this.blue = w.blue;
-        this.data = w.data;
+        if(w.type != null) this.type = w.type;
+        if(w.skullId != null) this.skullId = w.skullId;
+        if(w.red != null) this.red = w.red;
+        if(w.green != null) this.green = w.green;
+        if(w.blue != null) this.blue = w.blue;
+        if(w.data != null) this.data = w.data;
 
-        this.isPublic = w.isPublic;
-        this.teleportCosts = w.teleportCosts;
-        this.born = w.born;
-        this.started = w.started;
-        this.time = w.time;
-        this.creatorKey = w.creatorKey;
-        this.notify = w.notify;
+        if(w.isPublic != null) this.isPublic = w.isPublic;
+        if(w.teleportCosts != null) this.teleportCosts = w.teleportCosts;
+        if(w.born != null) this.born = w.born;
+        if(w.started != null) this.started = w.started;
+        if(w.time != null) this.time = w.time;
+        if(w.creatorKey != null) this.creatorKey = w.creatorKey;
+        if(w.notify != null) this.notify = w.notify;
 
-        this.performed = w.performed;
-        this.server = w.server;
-        this.world = w.world;
-        this.x = w.x;
-        this.y = w.y;
-        this.z = w.z;
-        this.yaw = w.yaw;
-        this.pitch = w.pitch;
+        if(w.performed != null) this.performed = w.performed;
+        if(w.server != null) this.server = w.server;
+        if(w.world != null) this.world = w.world;
+        if(w.x != null) this.x = w.x;
+        if(w.y != null) this.y = w.y;
+        if(w.z != null) this.z = w.z;
+        if(w.yaw != null) this.yaw = w.yaw;
+        if(w.pitch != null) this.pitch = w.pitch;
+    }
+
+    public PlayerWarpUpdate diff(PlayerWarpData oldData) {
+        PlayerWarpUpdate u = new PlayerWarpUpdate(oldData.getName(), oldData.getOwner().getId());
+        u.apply(this);
+
+        if(Objects.equals(owner, oldData.owner)) u.owner = null;
+        if(Objects.equals(name, oldData.name)) u.name = null;
+        if(Objects.equals(teleportMessage, oldData.teleportMessage)) u.teleportMessage = null;
+        if(Objects.equals(type, oldData.type)) u.type = null;
+        if(Objects.equals(skullId, oldData.skullId)) u.skullId = null;
+        if(Objects.equals(red, oldData.red) && Objects.equals(green, oldData.green) && Objects.equals(blue, oldData.blue)) {
+            u.red = null;
+            u.green = null;
+            u.blue = null;
+        }
+        if(Objects.equals(data, oldData.data)) u.data = null;
+        if(Objects.equals(teleportCosts, oldData.teleportCosts)) u.teleportCosts = null;
+        if(Objects.equals(born, oldData.born)) u.born = null;
+        if(Objects.equals(started, oldData.started)) u.started = null;
+        if(Objects.equals(time, oldData.time)) u.time = null;
+        if(Objects.equals(creatorKey, oldData.creatorKey)) u.creatorKey = null;
+        if(Objects.equals(performed, oldData.performed)) u.performed = null;
+        if(Objects.equals(server, oldData.server)) u.server = null;
+        if(Objects.equals(world, oldData.world)) u.world = null;
+        if(Objects.equals(x, oldData.x)) u.x = null;
+        if(Objects.equals(y, oldData.y)) u.y = null;
+        if(Objects.equals(z, oldData.z)) u.z = null;
+        if(Objects.equals(yaw, oldData.yaw)) u.yaw = null;
+        if(Objects.equals(pitch, oldData.pitch)) u.pitch = null;
+        if(Objects.equals(classes, oldData.classes)) u.classes = null;
+        if(Objects.equals(trusted, oldData.trusted)) u.trusted = null;
+        if(Objects.equals(description, oldData.description)) u.description = null;
+
+        return u;
     }
 
     @Override
@@ -101,12 +136,12 @@ public class PlayerWarp implements Serializable, de.codingair.codingapi.tools.io
         //byte mask: PUBLIC | ITEM_SKULL | ITEM_COLOR | ITEM_DATA | TELEPORT_MESSAGE | BORN == START | CREATOR_KEY | NOTIFY
         byte b = (byte) (isPublic ? 1 : 0);
         b |= (skullId != null ? 1 : 0) << 1;
-        b |= (red != 0 || green != 0 || blue != 0 ? 1 : 0) << 2;
-        b |= (data != (byte) 0 ? 1 : 0) << 3;
+        b |= (red != null && green != null && blue != null ? 1 : 0) << 2;
+        b |= (data != null ? 1 : 0) << 3;
         b |= (teleportMessage != null ? 1 : 0) << 4;
-        b |= (born == started ? 1 : 0) << 5;
+        b |= (!born.equals(started) ? 1 : 0) << 5;
         b |= (creatorKey != null ? 1 : 0) << 6;
-        b |= (teleportCosts > 0 ? 1 : 0) << 7;
+        b |= (teleportCosts != null ? 1 : 0) << 7;
 
         o.writeByte(b);                                                 //options
 
@@ -119,18 +154,18 @@ public class PlayerWarp implements Serializable, de.codingair.codingapi.tools.io
         if(teleportMessage != null) o.writeUTF(teleportMessage);        //teleportMessage
 
         o.writeUTF(type);                              //item
-        if(data != (byte) 0) o.writeByte(data);
-        if(red != 0 || green != 0 || blue != 0) {
+        if(data != null) o.writeByte(data);
+        if(red != null && green != null && blue != null) {
             o.writeByte(red);
             o.writeByte(green);
             o.writeByte(blue);
         }
         if(skullId != null) o.writeUTF(skullId);
 
-        if(teleportCosts > 0) o.writeDouble(teleportCosts);             //teleport costs
+        if(teleportCosts != null) o.writeDouble(teleportCosts);             //teleport costs
         o.writeBoolean(notify);                                         //notify
         o.writeLong(born);                                              //born
-        if(born != started) o.writeLong(started);                       //started
+        if(!born.equals(started)) o.writeLong(started);                       //started
         o.writeLong(time);                                              //time
         if(creatorKey != null) o.writeUTF(creatorKey);                  //creator key
 
@@ -183,9 +218,7 @@ public class PlayerWarp implements Serializable, de.codingair.codingapi.tools.io
             description.add(i.readUTF());
         }
 
-        if(teleportMessage) {
-            this.teleportMessage = i.readUTF();         //teleport message
-        }
+        if(teleportMessage) this.teleportMessage = i.readUTF();         //teleport message
 
         this.type = i.readUTF();                                        //item
         if(data) this.data = i.readByte();
@@ -199,9 +232,7 @@ public class PlayerWarp implements Serializable, de.codingair.codingapi.tools.io
         if(teleportCosts) this.teleportCosts = i.readDouble();          //teleport costs
         this.notify = i.readBoolean();                                  //notify
         this.born = i.readLong();                                       //born
-        if(differentStart) {
-            this.started = i.readLong();                 //start
-        }
+        if(differentStart) this.started = i.readLong();                 //start
         this.time = i.readLong();                                       //time
         if(hasKey) this.creatorKey = i.readUTF();                       //creator key
 
@@ -230,7 +261,7 @@ public class PlayerWarp implements Serializable, de.codingair.codingapi.tools.io
     @Override
     public void write(DataWriter d) {
         JSONArray trustedMembers = new JSONArray();
-        for(PlayerWarp.User user : this.trusted) {
+        for(PlayerWarpData.User user : this.trusted) {
             BungeeJSON userJson = new BungeeJSON();
             user.write(userJson);
             trustedMembers.add(userJson);
@@ -280,23 +311,23 @@ public class PlayerWarp implements Serializable, de.codingair.codingapi.tools.io
         else this.classes.clear();
 
         this.owner.read(d);
-        this.name = d.get("name");
+        this.name = d.getString("name");
         this.description = d.getList("description");
-        this.teleportMessage = d.get("tpmsg");
+        this.teleportMessage = d.getString("tpmsg");
 
-        this.type = d.get("type");
+        this.type = d.getString("type");
         this.data = d.getInteger("data").byteValue();
-        this.skullId = d.get("skull");
+        this.skullId = d.getString("skull");
         this.red = d.getInteger("red").byteValue();
         this.green = d.getInteger("green").byteValue();
         this.blue = d.getInteger("blue").byteValue();
 
         this.isPublic = d.getBoolean("public");
-        this.teleportCosts = d.getLong("tpcosts");
+        this.teleportCosts = d.getDouble("tpcosts");
         this.born = d.getLong("born");
         this.started = d.getLong("started");
         this.time = d.getLong("time");
-        this.creatorKey = d.get("key");
+        this.creatorKey = d.getString("key");
         this.notify = d.getBoolean("notify");
 
         if(born > 0 && started == 0) started = born;
@@ -305,7 +336,7 @@ public class PlayerWarp implements Serializable, de.codingair.codingapi.tools.io
         if(array != null)
             for(Object o : array) {
                 BungeeJSON data = new BungeeJSON((Map<?, ?>) o);
-                PlayerWarp.User user = new PlayerWarp.User();
+                PlayerWarpData.User user = new PlayerWarpData.User();
                 user.read(data);
                 trusted.add(user);
             }
@@ -313,12 +344,13 @@ public class PlayerWarp implements Serializable, de.codingair.codingapi.tools.io
         array = d.getList("classes");
         if(array != null)
             for(Object o : array) {
-                this.classes.add((byte) o);
+                Number n = (Number) o;
+                this.classes.add(n.byteValue());
             }
 
         performed = d.getInteger("performed");
-        server = d.get("server", null, true);
-        world = d.get("world", null, true);
+        server = d.getString("server");
+        world = d.getString("world");
         x = d.getDouble("x");
         y = d.getDouble("y");
         z = d.getDouble("z");
@@ -329,99 +361,264 @@ public class PlayerWarp implements Serializable, de.codingair.codingapi.tools.io
 
     @Override
     public void destroy() {
+        if(this.classes != null) this.classes.clear();
+        if(this.trusted != null) this.trusted.clear();
+        if(this.description != null) this.description.clear();
 
+        name = null;
+        owner = null;
+        trusted = null;
+        type = null;
+        skullId = null;
+        red = null;
+        green = null;
+        blue = null;
+        data = null;
+        isPublic = null;
+        teleportMessage = null;
+        teleportCosts = null;
+        classes = null;
+        description = null;
+        born = null;
+        started = null;
+        time = null;
+        creatorKey = null;
+        notify = null;
+        performed = null;
+        server = null;
+        world = null;
+        x = null;
+        y = null;
+        z = null;
+        yaw = null;
+        pitch = null;
+    }
+
+    public long getExpireDate() {
+        if(this.started == 0) return 0;
+        return this.started + this.time;
     }
 
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public User getOwner() {
         return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     public List<User> getTrusted() {
         return trusted;
     }
 
+    public void setTrusted(List<User> trusted) {
+        this.trusted = trusted;
+    }
+
     public String getType() {
         return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getSkullId() {
         return skullId;
     }
 
-    public byte getRed() {
+    public void setSkullId(String skullId) {
+        this.skullId = skullId;
+    }
+
+    public Byte getRed() {
         return red;
     }
 
-    public byte getGreen() {
+    public void setRed(Byte red) {
+        this.red = red;
+    }
+
+    public Byte getGreen() {
         return green;
     }
 
-    public byte getBlue() {
+    public void setGreen(Byte green) {
+        this.green = green;
+    }
+
+    public Byte getBlue() {
         return blue;
     }
 
-    public byte getData() {
+    public void setBlue(Byte blue) {
+        this.blue = blue;
+    }
+
+    public Byte getData() {
         return data;
     }
 
-    public boolean isPublic() {
+    public void setData(Byte data) {
+        this.data = data;
+    }
+
+    public Boolean getPublic() {
         return isPublic;
+    }
+
+    public void setPublic(Boolean aPublic) {
+        isPublic = aPublic;
     }
 
     public String getTeleportMessage() {
         return teleportMessage;
     }
 
-    public double getTeleportCosts() {
+    public void setTeleportMessage(String teleportMessage) {
+        this.teleportMessage = teleportMessage;
+    }
+
+    public Double getTeleportCosts() {
         return teleportCosts;
+    }
+
+    public void setTeleportCosts(Double teleportCosts) {
+        this.teleportCosts = teleportCosts;
     }
 
     public List<Byte> getClasses() {
         return classes;
     }
 
+    public void setClasses(List<Byte> classes) {
+        this.classes = classes;
+    }
+
     public List<String> getDescription() {
         return description;
     }
 
-    public long getBorn() {
+    public void setDescription(List<String> description) {
+        this.description = description;
+    }
+
+    public Long getBorn() {
         return born;
     }
 
-    public long getStarted() {
+    public void setBorn(Long born) {
+        this.born = born;
+    }
+
+    public Long getStarted() {
         return started;
     }
 
-    public long getTime() {
+    public void setStarted(Long started) {
+        this.started = started;
+    }
+
+    public Long getTime() {
         return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
     }
 
     public String getCreatorKey() {
         return creatorKey;
     }
 
-    public boolean isNotify() {
+    public void setCreatorKey(String creatorKey) {
+        this.creatorKey = creatorKey;
+    }
+
+    public Boolean getNotify() {
         return notify;
     }
 
-    public void setStarted(long time) {
-        this.started = time;
+    public void setNotify(Boolean notify) {
+        this.notify = notify;
+    }
+
+    public Integer getPerformed() {
+        return performed;
+    }
+
+    public void setPerformed(Integer performed) {
+        this.performed = performed;
+    }
+
+    public String getServer() {
+        return server;
+    }
+
+    public void setServer(String server) {
+        this.server = server;
+    }
+
+    public String getWorld() {
+        return world;
+    }
+
+    public void setWorld(String world) {
+        this.world = world;
+    }
+
+    public Double getX() {
+        return x;
+    }
+
+    public void setX(Double x) {
+        this.x = x;
+    }
+
+    public Double getY() {
+        return y;
+    }
+
+    public void setY(Double y) {
+        this.y = y;
+    }
+
+    public Double getZ() {
+        return z;
+    }
+
+    public void setZ(Double z) {
+        this.z = z;
+    }
+
+    public Float getYaw() {
+        return yaw;
+    }
+
+    public void setYaw(Float yaw) {
+        this.yaw = yaw;
+    }
+
+    public Float getPitch() {
+        return pitch;
+    }
+
+    public void setPitch(Float pitch) {
+        this.pitch = pitch;
     }
 
     public boolean born() {
         if(this.born > 0) return false;
         this.born = System.currentTimeMillis();
         return true;
-    }
-
-    public static PlayerWarp readInitially(DataInputStream i) throws IOException {
-        PlayerWarp w = new PlayerWarp();
-        w.read(i);
-        return w;
     }
 
     public static class User implements de.codingair.codingapi.tools.io.utils.Serializable, de.codingair.warpsystem.transfer.serializeable.Serializable {
@@ -432,16 +629,11 @@ public class PlayerWarp implements Serializable, de.codingair.codingapi.tools.io
         public User() {
         }
 
-        public User(ProxiedPlayer player) {
-            this.name = player.getName();
-            this.id = player.getUniqueId();
-        }
-
-        protected User(String jsonPrefix) {
+        public User(String jsonPrefix) {
             this.jsonPrefix = jsonPrefix;
         }
 
-        protected User(String jsonPrefix, String name, UUID id) {
+        public User(String jsonPrefix, String name, UUID id) {
             this.jsonPrefix = jsonPrefix;
             this.name = name;
             this.id = id;
@@ -474,6 +666,21 @@ public class PlayerWarp implements Serializable, de.codingair.codingapi.tools.io
             d.put(p() + "id", id.toString());
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if(this == o) return true;
+            if(o == null || getClass() != o.getClass()) return false;
+            User user = (User) o;
+            return Objects.equals(jsonPrefix, user.jsonPrefix) &&
+                    Objects.equals(name, user.name) &&
+                    Objects.equals(id, user.id);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(jsonPrefix, name, id);
+        }
+
         private String p() {
             return jsonPrefix == null ? "" : jsonPrefix + ".";
         }
@@ -493,12 +700,6 @@ public class PlayerWarp implements Serializable, de.codingair.codingapi.tools.io
 
         public UUID getId() {
             return id;
-        }
-
-        public ProxiedPlayer getPlayer() {
-            ProxiedPlayer p = BungeeCord.getInstance().getPlayer(id);
-            if(p != null && !p.getName().equals(name)) name = p.getName();
-            return p;
         }
     }
 }

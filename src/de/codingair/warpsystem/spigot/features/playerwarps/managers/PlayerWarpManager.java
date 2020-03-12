@@ -2,7 +2,6 @@ package de.codingair.warpsystem.spigot.features.playerwarps.managers;
 
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.files.ConfigFile;
-import de.codingair.codingapi.player.gui.inventory.gui.GUI;
 import de.codingair.codingapi.tools.io.ConfigWriter;
 import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.lib.JSONArray;
@@ -20,25 +19,27 @@ import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.listeners.PlayerWarpListener;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.Category;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
-import de.codingair.warpsystem.spigot.features.tempwarps.guis.GCreate;
-import de.codingair.warpsystem.spigot.features.tempwarps.guis.GDelete;
-import de.codingair.warpsystem.spigot.features.tempwarps.guis.GTempWarpList;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarpData;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarpUpdate;
+import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpUpdatePacket;
 import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpsPacket;
-import de.codingair.warpsystem.transfer.packets.spigot.RegisterServerForPlayerWarps;
-import de.codingair.warpsystem.transfer.serializeable.Serializable;
+import de.codingair.warpsystem.transfer.packets.spigot.MoveLocalPlayerWarpsPacket;
+import de.codingair.warpsystem.transfer.packets.spigot.RegisterServerForPlayerWarpsPacket;
 import de.codingair.warpsystem.utils.Manager;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
     public static boolean hasPermission(Player player) {
         if(player.isOp()) return true;
 
-        int warps = PlayerWarpManager.getManager().getWarps(player).size() + 1;
+        int warps = PlayerWarpManager.getManager().getOwnWarps(player).size() + 1;
         for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
             String perm = effectivePermission.getPermission();
 
@@ -59,10 +60,11 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
     }
 
     private HashMap<UUID, List<PlayerWarp>> warps = new HashMap<>();
+    private HashMap<String, UUID> names = new HashMap<>();
     private List<Category> warpCategories = new ArrayList<>();
 
     private boolean bungeeCord;
-    private PlayerWarpListener packetListener;
+    private PlayerWarpListener listener = new PlayerWarpListener();
 
     private long minTime;
     private long maxTime;
@@ -104,7 +106,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
     private boolean classes;
 
     @Override
-    public boolean load() {
+    public boolean load(boolean loader) {
         boolean success = true;
 
         this.warps.clear();
@@ -225,7 +227,8 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
         WarpSystem.log("    ...got " + size + " PlayerWarp(s)");
         if(isEconomy()) API.addTicker(this);
 
-        if(bungeeCord) WarpSystem.getInstance().getBungeeFeatureList().add(this);
+        WarpSystem.getInstance().getBungeeFeatureList().add(this);
+        Bukkit.getPluginManager().registerEvents(this.listener, WarpSystem.getInstance());
 
         return success;
     }
@@ -249,7 +252,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
                 }
             }
             file.getConfig().set("PlayerWarps", a);
-        } else WarpSystem.log("    ...skipping PlayerWarp(s) > Saved on BungeeCord");
+        } else if(!saver) WarpSystem.log("    ...skipping PlayerWarp(s) > Saved on BungeeCord");
 
         if(warpCategories.isEmpty()) {
             this.warpCategories.add(new Category(new ItemBuilder(XMaterial.EMERALD), "&a&lShop", 1, new ArrayList<String>() {{
@@ -301,27 +304,56 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
 
     @Override
     public void onConnect() {
-        WarpSystem.getInstance().getDataHandler().register(packetListener = new PlayerWarpListener());
+        WarpSystem.getInstance().getDataHandler().register(listener);
 
-        if(!PlayerWarpManager.getManager().getWarps().isEmpty()) {
-            List<Serializable> l = new ArrayList<>();
+        if(bungeeCord) {
+            if(!PlayerWarpManager.getManager().getWarps().isEmpty()) {
+                List<PlayerWarpData> l = new ArrayList<>();
 
-            for(List<PlayerWarp> value : PlayerWarpManager.getManager().getWarps().values()) {
-                l.addAll(value);
+                for(List<PlayerWarp> value : PlayerWarpManager.getManager().getWarps().values()) {
+                    for(PlayerWarp w : value) {
+                        l.add(w.getData());
+                    }
+                }
+
+                SendPlayerWarpsPacket p = new SendPlayerWarpsPacket(l);
+                p.setClearable(true);
+                WarpSystem.getInstance().getDataHandler().send(p);
             }
 
-            System.out.println("Sending UploadPlayerWarpsPacket with " + l.size() + " warps...");
-            SendPlayerWarpsPacket p = new SendPlayerWarpsPacket(l);
-            WarpSystem.getInstance().getDataHandler().send(p);
-            System.out.println("  ...sent!");
-        }
+            WarpSystem.getInstance().getDataHandler().send(new RegisterServerForPlayerWarpsPacket(isEconomy()));
+        } else WarpSystem.getInstance().getDataHandler().send(new MoveLocalPlayerWarpsPacket());
 
-        WarpSystem.getInstance().getDataHandler().send(new RegisterServerForPlayerWarps());
     }
 
     @Override
     public void onDisconnect() {
-        WarpSystem.getInstance().getDataHandler().register(packetListener);
+        WarpSystem.getInstance().getDataHandler().unregister(listener);
+    }
+
+    public boolean sync(PlayerWarp old, PlayerWarp warp) {
+        if(!bungeeCord) return false;
+
+        if(warp.isSource()) {
+            SendPlayerWarpsPacket packet = new SendPlayerWarpsPacket(new ArrayList<PlayerWarpData>() {{
+                add(warp.getData());
+            }});
+            packet.setClearable(true);
+            WarpSystem.getInstance().getDataHandler().send(packet);
+            return true;
+        } else return sync(old.getData(), warp.getData());
+    }
+
+    public boolean sync(PlayerWarpData old, PlayerWarpData warp) {
+        if(!bungeeCord) return false;
+        PlayerWarpUpdate update = warp.diff(old);
+
+        if(update.isEmpty()) return false;
+
+        WarpSystem.getInstance().getDataHandler().send(new SendPlayerWarpUpdatePacket(update));
+        old.destroy();
+        warp.destroy();
+        return true;
     }
 
     @Override
@@ -338,8 +370,11 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
 
         l.clear();
 
-        for(List<PlayerWarp> value : warps.values()) {
-            for(PlayerWarp warp : value) {
+        List<List<PlayerWarp>> mapCopy = new ArrayList<>(warps.values());
+        for(List<PlayerWarp> value : mapCopy) {
+            List<PlayerWarp> copy = new ArrayList<>(value);
+
+            for(PlayerWarp warp : copy) {
                 if(warp.isBeingEdited()) continue;
                 if(warp.isExpired()) {
                     if(-(warp.getExpireDate() - System.currentTimeMillis()) <= 1000) {
@@ -366,22 +401,16 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
                     if(inactive.before(new Date())) {
                         //Delete
                         delete(warp);
+                        warp.destroy();
                         Player player = warp.getOwner().getPlayer();
-                        if(player != null) {
-                            GTempWarpList list = API.getRemovable(player, GTempWarpList.class);
-                            if(list != null) list.reinitialize();
-
-                            GUI gui = API.getRemovable(player, GCreate.class);
-                            if(gui != null) gui.close();
-                            gui = API.getRemovable(player, GDelete.class);
-                            if(gui != null) gui.close();
-
-                            player.sendMessage(Lang.getPrefix() + Lang.get("Warp_was_deleted").replace("%NAME%", warp.getName()));
-                        }
+                        if(player != null) player.sendMessage(Lang.getPrefix() + Lang.get("Warp_was_deleted").replace("%NAME%", warp.getName()));
                     }
                 }
             }
+
+            copy.clear();
         }
+        mapCopy.clear();
     }
 
     @Override
@@ -391,7 +420,19 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
 
     @Override
     public void destroy() {
+        this.warps.clear();
+        this.names.clear();
+        this.warpCategories.clear();
+    }
 
+    public void checkPlayerWarpOwnerNames(Player player) {
+        List<PlayerWarp> warps = new ArrayList<>(getOwnWarps(player));
+
+        for(PlayerWarp warp : warps) {
+            warp.getOwner().setName(player.getName());
+        }
+
+        warps.clear();
     }
 
     public static String convertInTimeFormat(long time) {
@@ -522,7 +563,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
 
         return warps;
     }
-    
+
     public void updateWarp(PlayerWarp warp) {
         PlayerWarp w = getWarp(warp.getOwner().getId(), warp.getName());
 
@@ -549,13 +590,25 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
         return this.warps.keySet();
     }
 
-    public List<PlayerWarp> getWarps(Player player) {
-        return getWarps(player.getUniqueId());
+    public List<PlayerWarp> getOwnWarps(Player player) {
+        return getOwnWarps(WarpSystem.getInstance().getUUIDManager().get(player));
     }
 
-    public List<PlayerWarp> getWarps(UUID id) {
+    public List<PlayerWarp> getOwnWarps(UUID id) {
         List l = warps.get(id);
         return l == null ? new ArrayList<>() : l;
+    }
+
+    public String checkSymbols(String name, String highlighter, String reset) {
+        StringBuilder finalName = new StringBuilder();
+
+        for(char c : name.toCharArray()) {
+            if(!Pattern.matches("[A-Za-z0-9\\p{Blank}]*", c + "")) {
+                finalName.append(highlighter).append(c).append(reset);
+            } else finalName.append(c);
+        }
+
+        return finalName.toString().equals(name) ? null : finalName.toString();
     }
 
     /**
@@ -566,7 +619,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
     public List<PlayerWarp> getUsableWarpsOf(UUID id, Player toTeleport) {
         List<PlayerWarp> warps = new ArrayList<>();
 
-        for(PlayerWarp warp : getWarps(id)) {
+        for(PlayerWarp warp : getOwnWarps(id)) {
             if(warp.canTeleport(toTeleport)) warps.add(warp);
         }
 
@@ -576,7 +629,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
     public int getTrustedWarpAmountOf(UUID id, Player trustedPlayer) {
         int i = 0;
 
-        for(PlayerWarp warp : getWarps(id)) {
+        for(PlayerWarp warp : getOwnWarps(id)) {
             if(warp.canTeleport(trustedPlayer)) i++;
         }
 
@@ -584,7 +637,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
     }
 
     public List<PlayerWarp> getWarps(Player player, boolean trusted) {
-        if(!trusted) return getWarps(player);
+        if(!trusted) return getOwnWarps(player);
         List<PlayerWarp> warps = new ArrayList<>();
 
         for(List<PlayerWarp> ws : this.warps.values()) {
@@ -596,35 +649,113 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
         return warps;
     }
 
-    public PlayerWarp getWarp(String name) {
-        return getWarp(name, null);
-    }
+    public List<PlayerWarp> getForeignAvailableWarps(Player player) {
+        List<PlayerWarp> warps = new ArrayList<>();
 
-    public PlayerWarp getWarp(String name, PlayerWarp except) {
-        for(List<PlayerWarp> warps : warps.values()) {
-            for(PlayerWarp warp : warps) {
-                if(warp.equals(except)) continue;
-                if(warp.equalsName(name)) return warp;
+        for(List<PlayerWarp> ws : this.warps.values()) {
+            for(PlayerWarp warp : ws) {
+                if(player.equals(warp.getOwner().getPlayer())) continue;
+                if(warp.canTeleport(player)) warps.add(warp);
             }
         }
 
-        return null;
+        return warps;
+    }
+
+    public PlayerWarp getWarp(Player player, String name) {
+        return getWarp(player, name, null);
+    }
+
+    //<player>.<name>
+    //<name> « private warps haben vorrang
+    public PlayerWarp getWarp(Player player, String name, PlayerWarp except) {
+        name = name.replace(" ", "_");
+
+        String[] a = name.split("\\.", -1);
+        if(a.length > 2) {
+            return null;
+        }
+
+        String prefer = a.length == 2 ? a[0] : null;
+        name = a[a.length - 1];
+
+        PlayerWarp searched = null;
+
+        if(prefer == null) {
+            List<PlayerWarp> warps = this.warps.get(WarpSystem.getInstance().getUUIDManager().get(player));
+
+            if(warps != null) {
+                warps = new ArrayList<>(warps);
+
+                for(PlayerWarp warp : warps) {
+                    if(warp.equals(except)) continue;
+                    if(warp.equalsName(name)) {
+                        searched = warp;
+                        break;
+                    }
+                }
+
+                warps.clear();
+                if(searched != null) return searched;
+            }
+
+            List<List<PlayerWarp>> lists = new ArrayList<>(this.warps.values());
+            for(List<PlayerWarp> list : lists) {
+                warps = new ArrayList<>(list);
+
+                for(PlayerWarp warp : warps) {
+                    if(warp.equals(except)) continue;
+                    if(warp.equalsName(name)) {
+                        searched = warp;
+                        break;
+                    }
+                }
+
+                warps.clear();
+            }
+            lists.clear();
+        } else {
+            UUID id = names.get(prefer);
+            if(id != null) {
+                List<PlayerWarp> warps = this.warps.get(id);
+
+                if(warps != null) {
+                    warps = new ArrayList<>(warps);
+
+                    for(PlayerWarp warp : warps) {
+                        if(warp.equals(except)) continue;
+                        if(warp.equalsName(name)) {
+                            searched = warp;
+                            break;
+                        }
+                    }
+
+                    warps.clear();
+                }
+            }
+        }
+
+        return searched;
     }
 
     public PlayerWarp getWarp(UUID id, String name) {
-        for(PlayerWarp w : getWarps(id)) {
+        for(PlayerWarp w : getOwnWarps(id)) {
             if(w.equalsName(name)) return w;
         }
 
         return null;
     }
 
-    public boolean exists(String name) {
-        return exists(name, null);
+    public boolean exists(Player player, String name) {
+        return exists(player, name, null);
+    }
+
+    public boolean existsOwn(Player player, String name) {
+        return existsOwn(player, name, null);
     }
 
     public void add(PlayerWarp warp) {
-        List<PlayerWarp> warps = getWarps(warp.getOwner().getId());
+        List<PlayerWarp> warps = getOwnWarps(warp.getOwner().getId());
         warps.add(warp);
 
         if(warp.getStarted() == 0) {
@@ -632,14 +763,18 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
             warp.born();
         }
 
+        names.putIfAbsent(warp.getOwner().getName(), warp.getOwner().getId());
         this.warps.putIfAbsent(warp.getOwner().getId(), warps);
     }
 
     public double delete(PlayerWarp warp) {
-        List<PlayerWarp> warps = getWarps(warp.getOwner().getId());
+        List<PlayerWarp> warps = getOwnWarps(warp.getOwner().getId());
         double refund = warps.remove(warp) ? calculateRefund(warp) : -1;
 
-        if(warps.isEmpty()) this.warps.remove(warp.getOwner().getId());
+        if(warps.isEmpty()) {
+            this.warps.remove(warp.getOwner().getId());
+            this.names.remove(warp.getOwner().getName());
+        }
 
         return refund;
     }
@@ -684,8 +819,13 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
         return refund;
     }
 
-    public boolean exists(String name, PlayerWarp except) {
-        return getWarp(name, except) != null;
+    public boolean exists(Player player, String name, PlayerWarp except) {
+        return getWarp(player, name, except) != null;
+    }
+
+    public boolean existsOwn(Player player, String name, PlayerWarp except) {
+        String[] a = name.split("\\.", -1);
+        return exists(player, player.getName() + "." + a[a.length - 1], except);
     }
 
     public static PlayerWarpManager getManager() {
@@ -862,5 +1002,13 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
 
     public void setBungeeCord(boolean bungeeCord) {
         this.bungeeCord = bungeeCord;
+    }
+
+    public long getInactiveTime() {
+        return inactiveTime;
+    }
+
+    public void setInactiveTime(long inactiveTime) {
+        this.inactiveTime = inactiveTime;
     }
 }

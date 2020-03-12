@@ -41,7 +41,7 @@ public class RandomTeleporterManager implements Manager {
     private InteractListener listener = new InteractListener();
 
     @Override
-    public boolean load() {
+    public boolean load(boolean loader) {
         if(WarpSystem.getInstance().getFileManager().getFile("PlayData") == null) WarpSystem.getInstance().getFileManager().loadFile("PlayData", "/Memory/");
         if(WarpSystem.getInstance().getFileManager().getFile("Config") == null) WarpSystem.getInstance().getFileManager().loadFile("Config", "/");
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");

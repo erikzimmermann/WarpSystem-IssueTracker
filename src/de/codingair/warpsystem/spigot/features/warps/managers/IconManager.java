@@ -65,7 +65,7 @@ public class IconManager implements Manager {
         return ((IconManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS));
     }
 
-    public boolean load() {
+    public boolean load(boolean loader) {
         if(WarpSystem.getInstance().getFileManager().getFile("ActionIcons") == null) WarpSystem.getInstance().getFileManager().loadFile("ActionIcons", "/Memory/");
 
         //Load

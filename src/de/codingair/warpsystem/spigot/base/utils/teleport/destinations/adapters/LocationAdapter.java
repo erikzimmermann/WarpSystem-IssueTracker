@@ -9,7 +9,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-public class LocationAdapter implements DestinationAdapter {
+public class LocationAdapter implements DestinationAdapter, CloneableAdapter {
     protected Location location;
 
     public LocationAdapter() {
@@ -21,6 +21,11 @@ public class LocationAdapter implements DestinationAdapter {
 
     public LocationAdapter(org.bukkit.Location location) {
         this.location = new Location(location);
+    }
+
+    @Override
+    public LocationAdapter clone() {
+        return new LocationAdapter(location.clone());
     }
 
     @Override

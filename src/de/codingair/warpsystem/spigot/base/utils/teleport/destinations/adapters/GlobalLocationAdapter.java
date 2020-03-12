@@ -9,6 +9,7 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.transfer.packets.general.PrepareCoordinationTeleportPacket;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -21,6 +22,11 @@ public class GlobalLocationAdapter extends LocationAdapter implements Serializab
     public GlobalLocationAdapter(String server, Location location) {
         super(location);
         this.server = server;
+    }
+
+    @Override
+    public GlobalLocationAdapter clone() {
+        return new GlobalLocationAdapter(server, location.clone());
     }
 
     @Override
@@ -63,6 +69,27 @@ public class GlobalLocationAdapter extends LocationAdapter implements Serializab
                 return true;
             }
         } else {
+            PrepareCoordinationTeleportPacket packet = new PrepareCoordinationTeleportPacket(player.getName(), server, location.getWorldName(), displayName, message, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch(), costs, new Callback<Integer>() {
+                @Override
+                public void accept(Integer result) {
+                    if(callback == null) return;
+                    switch(result) {
+                        case 0:
+                            callback.accept(TeleportResult.TELEPORTED);
+                            break;
+                        case 1:
+                            callback.accept(TeleportResult.SERVER_NOT_AVAILABLE);
+                            break;
+                        case 2:
+                            callback.accept(TeleportResult.WORLD_DOES_NOT_EXIST);
+                            break;
+                        default:
+                            callback.accept(TeleportResult.CANCELLED);
+                    }
+                }
+            });
+
+            WarpSystem.getInstance().getDataHandler().send(packet);
             return true;
         }
     }
@@ -92,5 +119,13 @@ public class GlobalLocationAdapter extends LocationAdapter implements Serializab
     @Override
     public Location buildLocation(String id) {
         return this.location == null ? id == null ? null : de.codingair.codingapi.tools.Location.getByJSONString(id) : this.location;
+    }
+
+    public String getServer() {
+        return server;
+    }
+
+    public void setServer(String server) {
+        this.server = server;
     }
 }

@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.features.playerwarps.utils;
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.lib.JSONArray;
 import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.codingapi.tools.io.utils.Serializable;
 import de.codingair.codingapi.tools.items.ItemBuilder;
@@ -23,18 +24,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Player;
-import de.codingair.codingapi.tools.io.lib.JSONArray;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.*;
 
-public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem.transfer.serializeable.Serializable {
+public class PlayerWarp extends FeatureObject {
     private User owner;
     private List<User> trusted;
     private List<Category> classes;
 
+    private boolean source = false;
     private String name;
     private List<String> description;
     private String teleportMessage;
@@ -60,7 +61,7 @@ public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem
     public PlayerWarp(Player player, String name) {
         this();
         this.name = name;
-        owner.id = player.getUniqueId();
+        owner.id = WarpSystem.getInstance().getUUIDManager().get(player);
         owner.name = player.getName();
 
         resetItem();
@@ -121,130 +122,121 @@ public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem
         }
     }
 
-    @Override
-    public void write(DataOutputStream o) throws IOException {
-        if(!WarpSystem.getInstance().isOnBungeeCord()) throw new IllegalStateException("Only for BungeeCord");
+    public PlayerWarpData getData() {
+        PlayerWarpData data = new PlayerWarpData();
 
-        //byte mask: PUBLIC | ITEM_SKULL | ITEM_COLOR | ITEM_DATA | TELEPORT_MESSAGE | BORN == START | CREATOR_KEY | TELEPORT_COSTS
-        byte b = (byte) (isPublic ? 1 : 0);
-        b |= (item.getSkullId() != null ? 1 : 0) << 1;
-        b |= (item.getColor() != null ? 1 : 0) << 2;
-        b |= (item.getData() != (byte) 0 ? 1 : 0) << 3;
-        b |= (teleportMessage != null ? 1 : 0) << 4;
-        b |= (born != started ? 1 : 0) << 5;
-        b |= (creatorKey != null ? 1 : 0) << 6;
-        b |= (teleportCosts > 0 ? 1 : 0) << 7;
+        data.setName(this.name);
+        data.setOwner(new PlayerWarpData.User(this.owner.jsonPrefix, this.owner.name, this.owner.id));
 
-        o.writeByte(b);                                                 //options
-
-        this.owner.write(o);                                            //owner
-        o.writeUTF(this.name);                                          //name
-        o.writeByte(description.size());                                //description
-        for(String s : description) {
-            o.writeUTF(s);
+        List<PlayerWarpData.User> trusted = new ArrayList<>();
+        for(User user : this.trusted) {
+            trusted.add(new PlayerWarpData.User(user.jsonPrefix, user.name, user.id));
         }
-        if(teleportMessage != null) o.writeUTF(teleportMessage);        //teleportMessage
+        data.setTrusted(trusted);
 
-        o.writeUTF(item.getType().name());                              //item
-        if(item.getData() != (byte) 0) o.writeByte(item.getData());
-        if(item.getColor() != null) {
-            o.writeByte(item.getColor().getColor().getRed());
-            o.writeByte(item.getColor().getColor().getGreen());
-            o.writeByte(item.getColor().getColor().getBlue());
+        data.setType(this.item.getType().name());
+        data.setSkullId(this.item.getSkullId());
+        if(this.item.getColor() != null) {
+            data.setRed((byte) this.item.getColor().getColor().getRed());
+            data.setGreen((byte) this.item.getColor().getColor().getGreen());
+            data.setBlue((byte) this.item.getColor().getColor().getBlue());
         }
-        if(item.getSkullId() != null) o.writeUTF(item.getSkullId());
+        data.setData(this.item.getData());
 
-        if(teleportCosts > 0) o.writeDouble(teleportCosts);             //teleport costs
-        o.writeBoolean(notify);                                         //notify
-        o.writeLong(born);                                              //born
-        if(born != started) o.writeLong(started);                       //started
-        o.writeLong(time);                                              //time
-        if(creatorKey != null) o.writeUTF(creatorKey);                  //creator key
+        data.setPublic(this.isPublic);
+        data.setTeleportMessage(this.teleportMessage);
+        data.setTeleportCosts(this.teleportCosts);
 
-        o.writeByte(trusted.size());                                    //trusted members
-        for(User user : trusted) {
-            user.write(o);
+        List<Byte> classes = new ArrayList<>();
+        for(Category c : this.classes) {
+            classes.add((byte) c.getId());
         }
+        data.setClasses(classes);
 
-        o.writeByte(classes.size());                                    //classes
-        for(Category c : classes) {
-            o.writeByte(c.getId());
-        }
+        data.setDescription(new ArrayList<>(this.description));
+        data.setBorn(this.born);
+        data.setStarted(this.started);
+        data.setTime(this.time);
+        data.setCreatorKey(this.creatorKey);
+        data.setNotify(this.notify);
+        data.setPerformed(this.performed);
 
-        o.writeInt(performed);                                         //feature object data values
         Destination d = getAction(WarpAction.class).getValue();
-        o.writeUTF(WarpSystem.getInstance().getCurrentServer());
-        Location l = (Location) d.buildLocation();
-        o.writeUTF(l.getWorldName());
-        o.writeDouble(l.getX());
-        o.writeDouble(l.getY());
-        o.writeDouble(l.getZ());
-        o.writeFloat(l.getYaw());
-        o.writeFloat(l.getPitch());
+        GlobalLocationAdapter a = (GlobalLocationAdapter) d.getAdapter();
+        data.setServer(a.getServer() == null ? WarpSystem.getInstance().getCurrentServer() : a.getServer());
+
+        Location l = a.getLocation();
+        data.setWorld(l.getWorldName());
+        data.setX(l.getX());
+        data.setY(l.getY());
+        data.setZ(l.getZ());
+        data.setYaw(l.getYaw());
+        data.setPitch(l.getPitch());
+
+        return data;
     }
 
-    @Override
-    public void read(DataInputStream i) throws IOException {
-        if(!WarpSystem.getInstance().isOnBungeeCord()) throw new IllegalStateException("Only for BungeeCord");
+    public void setData(PlayerWarpData d) {
+        if(d.name != null) this.name = d.name;
+        if(d.owner != null) this.owner = new User("owner", d.owner.getName(), d.owner.getId());
 
-        if(this.trusted == null) this.trusted = new ArrayList<>();
-        else this.trusted.clear();
+        if(d.trusted != null) {
+            if(this.trusted == null) this.trusted = new ArrayList<>();
+            else this.trusted.clear();
 
-        if(this.classes == null) this.classes = new ArrayList<>();
-        else this.classes.clear();
-
-        if(this.description == null) this.description = new ArrayList<>();
-        else this.description.clear();
-
-        byte options = i.readByte();                                    //options
-        this.isPublic = (options & 1) != 0;
-        boolean skull = (options & (1 << 1)) != 0;
-        boolean color = (options & (1 << 2)) != 0;
-        boolean data = (options & (1 << 3)) != 0;
-        boolean teleportMessage = (options & (1 << 4)) != 0;
-        boolean differentStart = (options & (1 << 5)) != 0;
-        boolean hasKey = (options & (1 << 6)) != 0;
-        boolean teleportCosts = (options & (1 << 7)) != 0;
-
-        this.owner.read(i);                                             //owner
-        this.name = i.readUTF();                                        //name
-
-        int size = i.readByte();                                        //description
-        for(int i1 = 0; i1 < size; i1++) {
-            description.add(i.readUTF());
+            for(PlayerWarpData.User user : d.trusted) {
+                trusted.add(new User(null, user.getName(), user.getId()));
+            }
         }
 
-        if(teleportMessage) this.teleportMessage = i.readUTF();         //teleport message
+        if(this.item == null) this.item = new ItemBuilder();
+        if(d.data != null) this.item.setData(d.data);
+        if(d.type != null) this.item.setType(XMaterial.requestXMaterial(d.type, d.data));
+        else if(d.data != null) this.item.setType(XMaterial.requestXMaterial(item.getType().name(), d.data));
 
-        this.item = new ItemBuilder(XMaterial.fromString(i.readUTF())); //item
-        if(data) this.item.setData(i.readByte());
-        if(color) this.item.setColor(DyeColor.getByColor(Color.fromBGR(i.readByte(), i.readByte(), i.readByte())));
-        if(skull) this.item.setSkullId(i.readUTF());
+        if(d.skullId != null) this.item.setSkullId(d.skullId);
+        if(d.red != null && d.green != null && d.blue != null) this.item.setColor(DyeColor.getByColor(Color.fromBGR(d.red, d.green, d.blue)));
 
-        if(teleportCosts) this.teleportCosts = i.readDouble();          //teleport costs
-        this.notify = i.readBoolean();                                  //notify
-        this.born = i.readLong();                                       //born
-        if(differentStart) this.started = i.readLong();                 //start
-        this.time = i.readLong();                                       //time
-        if(hasKey) this.creatorKey = i.readUTF();                       //creator key
+        if(d.isPublic != null) this.isPublic = d.isPublic;
+        if(d.teleportMessage != null) this.teleportMessage = d.teleportMessage;
+        if(d.teleportCosts != null) this.teleportCosts = d.teleportCosts;
 
-        size = i.readByte();                                            //trusted members
-        for(int i1 = 0; i1 < size; i1++) {
-            User user = new User();
-            user.read(i);
-            trusted.add(user);
+        if(d.classes != null) {
+            if(this.classes == null) this.classes = new ArrayList<>();
+            else this.classes.clear();
+
+            for(Byte b : d.classes) {
+                Category c = PlayerWarpManager.getManager().getWarpClass(b);
+                if(c != null) classes.add(c);
+            }
         }
 
-        size = i.readByte();                                            //classes
-        for(int i1 = 0; i1 < size; i1++) {
-            Category c = PlayerWarpManager.getManager().getWarpClass(i.readByte());
-            if(c != null) classes.add(c);
-        }
+        if(d.description != null) {
+            if(this.description == null) this.description = new ArrayList<>();
+            else this.description.clear();
 
-        performed = i.readInt();                                       //feature object data values
-        String server = i.readUTF();
-        Location l = new Location(i.readUTF(), i.readDouble(), i.readDouble(), i.readDouble(), i.readFloat(), i.readFloat());
-        addAction(new WarpAction(new Destination(new GlobalLocationAdapter(server, l))));
+            this.description.addAll(d.description);
+        }
+        if(d.born != null) this.born = d.born;
+        if(d.started != null) this.started = d.started;
+        if(d.time != null) this.time = d.time;
+        if(d.creatorKey != null) this.creatorKey = d.creatorKey;
+        if(d.notify != null) this.notify = d.notify;
+        if(d.performed != null) this.performed = d.performed;
+
+        boolean createDestination = getAction(Action.WARP) == null;
+        GlobalLocationAdapter a = createDestination ? new GlobalLocationAdapter(null, new Location()) : (GlobalLocationAdapter) ((Destination) getAction(Action.WARP).getValue()).getAdapter();
+        Location l = a.getLocation();
+
+        if(d.server != null) a.setServer(d.server);
+        if(d.world != null) l.setWorldName(d.world);
+        if(d.x != null) l.setX(d.x);
+        if(d.y != null) l.setY(d.y);
+        if(d.z != null) l.setZ(d.z);
+        if(d.yaw != null) l.setYaw(d.yaw);
+        if(d.pitch != null) l.setPitch(d.pitch);
+
+        if(createDestination) addAction(new WarpAction(new Destination(a)));
     }
 
     @Override
@@ -288,16 +280,16 @@ public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem
         else this.classes.clear();
 
         this.owner.read(d);
-        this.name = d.get("name");
+        this.name = d.getString("name");
         this.description = d.getList("description");
-        this.teleportMessage = d.get("tpmsg");
+        this.teleportMessage = d.getString("tpmsg");
         this.item = d.getItemBuilder("item");
         this.isPublic = d.getBoolean("public");
-        this.teleportCosts = d.getLong("tpcosts");
+        this.teleportCosts = d.getDouble("tpcosts");
         this.born = d.getLong("born");
         this.started = d.getLong("started");
         this.time = d.getLong("time");
-        this.creatorKey = d.get("key");
+        this.creatorKey = d.getString("key");
         this.notify = d.getBoolean("notify");
 
         if(born > 0 && started == 0) started = born;
@@ -326,6 +318,14 @@ public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem
         if(!PlayerWarpManager.getManager().isCustomTeleportCosts()) this.teleportCosts = 0;
 
         return super.read(d);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        if(this.trusted != null) this.trusted.clear();
+        if(this.classes != null) this.classes.clear();
+        if(this.description != null) this.description.clear();
     }
 
     public PlayerWarp changeItem(ItemBuilder item) {
@@ -432,7 +432,7 @@ public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem
 
     public boolean equalsName(String name) {
         if(name == null) return false;
-        return getName(false).equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name)));
+        return getName(false).replace(" ", "_").equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name.replace(" ", "_"))));
     }
 
     public void setName(String name) {
@@ -590,10 +590,12 @@ public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem
         return description;
     }
 
-    public static PlayerWarp readInitially(DataInputStream i) throws IOException {
-        PlayerWarp w = new PlayerWarp();
-        w.read(i);
-        return w;
+    public boolean isSource() {
+        return source;
+    }
+
+    public void setSource(boolean source) {
+        this.source = source;
     }
 
     public static class User implements Serializable, de.codingair.warpsystem.transfer.serializeable.Serializable {
@@ -606,7 +608,12 @@ public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem
 
         public User(Player player) {
             this.name = player.getName();
-            this.id = player.getUniqueId();
+            this.id = WarpSystem.getInstance().getUUIDManager().get(player);
+        }
+
+        public User(String name, UUID id) {
+            this.name = name;
+            this.id = id;
         }
 
         protected User(String jsonPrefix) {
@@ -634,15 +641,15 @@ public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem
 
         @Override
         public boolean read(DataWriter d) {
-            this.name = d.get(p() + "name");
-            this.id = UUID.fromString(d.get(p() + "id"));
+            this.name = d.getString(p() + "name");
+            this.id = UUID.fromString(d.getString(p() + "id"));
 
             return true;
         }
 
         @Override
         public void write(DataWriter d) {
-            d.put(p() + "name", name);
+            d.put(p() + "name", this.name);
             d.put(p() + "id", id.toString());
         }
 
@@ -656,7 +663,7 @@ public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem
         }
 
         public String getName() {
-            return name;
+            return this.name;
         }
 
         public void setName(String name) {
@@ -669,7 +676,7 @@ public class PlayerWarp extends FeatureObject implements de.codingair.warpsystem
 
         public Player getPlayer() {
             Player p = Bukkit.getPlayer(id);
-            if(p != null && !p.getName().equals(name)) name = p.getName();
+            if(p != null && !p.getName().equals(this.name)) this.name = p.getName();
             return p;
         }
     }

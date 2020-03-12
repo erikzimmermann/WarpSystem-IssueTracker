@@ -34,7 +34,7 @@ public class AllPlayers implements Filter {
         List<PlayerWarp> publicWarps = special != null ? PlayerWarpManager.getManager().getUsableWarpsOf(special, player) : null;
 
         if(uuids != null) {
-            uuids.sort(Comparator.comparing(o -> PlayerWarpManager.getManager().getWarps(o).get(0).getOwner().getName().toLowerCase()));
+            uuids.sort(Comparator.comparing(o -> PlayerWarpManager.getManager().getOwnWarps(o).get(0).getOwner().getName().toLowerCase()));
         } else if(publicWarps != null) {
             publicWarps.sort(Comparator.comparing(o -> o.getName(false).toLowerCase()));
         }
@@ -59,7 +59,7 @@ public class AllPlayers implements Filter {
                     continue;
                 }
 
-                PlayerWarp.User user = PlayerWarpManager.getManager().getWarps(id).get(0).getOwner();
+                PlayerWarp.User user = PlayerWarpManager.getManager().getOwnWarps(id).get(0).getOwner();
 
                 if(search != null && !user.getName().toLowerCase().contains(search)) {
                     noMatch++;

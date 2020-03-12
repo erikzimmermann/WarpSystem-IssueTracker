@@ -24,7 +24,7 @@ public class AnimationManager implements Manager {
     private Animation active = null;
 
     @Override
-    public boolean load() {
+    public boolean load(boolean loader) {
         if(WarpSystem.getInstance().getFileManager().getFile("Animations") == null) WarpSystem.getInstance().getFileManager().loadFile("Animations", "/Memory/");
         WarpSystem.log("  > Loading Animations");
 

@@ -151,7 +151,7 @@ public class ClassesFilter implements Filter {
     @Override
     public boolean searchable(PWPage page) {
         return page.getExtra() != null && page.getExtra().length == 2;
-}
+    }
 
     public static class ExtendedFilterButton extends PWPage.FilterButton {
         private int warps = -1;
@@ -173,7 +173,8 @@ public class ClassesFilter implements Filter {
                     .setLore(page.getSearch() == null || !page.getFilter().searchable(page) ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Search_Short") + ": §7'§f" + page.getSearch() + "§7'",
                             extra.length == 1 ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Warps") + ": §f" + warps,
                             "",
-                            Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": " + (extra.length == 1 ? "§a" + Lang.get("Accept") : "§c" + Lang.get("Back")),
+                            extra.length == 1 ? Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": " + "§a" + Lang.get("Accept") : null,
+                            Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": " + "§c" + (extra.length == 1 ? Lang.get("Reset") : Lang.get("Back")),
                             page.getFilter().searchable(page) ? Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Shift_Rightclick") + ": §7" + (page.getSearch() == null ? Lang.get("Search_Short") : Lang.get("Reset_Search")) : null)
                     .getItem();
         }
@@ -181,10 +182,12 @@ public class ClassesFilter implements Filter {
         @Override
         public void onOtherClick(InventoryClickEvent e) {
             if(e.isShiftClick() && e.isRightClick()) page.setSearch(null);
-            else {
+            else if(e.isLeftClick()){
                 Object[] extra = page.getExtra();
                 if(extra.length == 1) page.setExtra(true, null, extra[0]);
                 else page.setExtra(true, extra[1]);
+            } else if(e.isRightClick()) {
+                page.setExtra(true, (Object[]) null);
             }
 
             page.resetPage();
@@ -192,7 +195,8 @@ public class ClassesFilter implements Filter {
 
         @Override
         public boolean canClick(ClickType click) {
-            return click == ClickType.LEFT || (page.getFilter().searchable(page) && click == ClickType.SHIFT_RIGHT);
+            Object[] extra = page.getExtra();
+            return (extra.length == 1 && click == ClickType.LEFT) || click == ClickType.RIGHT || (page.getFilter().searchable(page) && click == ClickType.SHIFT_RIGHT);
         }
     }
 }

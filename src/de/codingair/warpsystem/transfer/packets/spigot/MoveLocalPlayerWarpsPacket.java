@@ -6,8 +6,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class RegisterServerForPlayerWarps implements Packet {
-    public RegisterServerForPlayerWarps() {
+public class MoveLocalPlayerWarpsPacket implements Packet {
+    public MoveLocalPlayerWarpsPacket() {
     }
 
     @Override

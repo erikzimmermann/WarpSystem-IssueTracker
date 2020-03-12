@@ -8,12 +8,14 @@ import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.GlobalLocationAdapter;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
@@ -158,7 +160,9 @@ public class POptions extends PageItem {
                 }
 
                 Destination d = (Destination) warp.getAction(Action.WARP).getValue();
-                Location l = d.buildLocation();
+                GlobalLocationAdapter a = (GlobalLocationAdapter) d.getAdapter();
+                Location l = a.getLocation();
+                if(a.getServer() != null) builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Server") + ": §7" + a.getServer());
                 builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("World") + ": §7" + l.getWorld().getName());
                 builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Position") + ": §7" + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ());
                 builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Direction") + ": §7" + cut(l.getYaw()) + ", " + cut(l.getPitch()));
@@ -184,14 +188,22 @@ public class POptions extends PageItem {
             public void onClick(InventoryClickEvent e, Player player) {
                 if(e.getClick() == ClickType.LEFT && !equalsLocation(((Destination) warp.getAction(Action.WARP).getValue()).buildLocation(), p.getLocation())) {
                     Destination d = (Destination) warp.getAction(Action.WARP).getValue();
-                    d.setId(new de.codingair.codingapi.tools.Location(player.getLocation()).toJSONString(2));
+                    GlobalLocationAdapter a = (GlobalLocationAdapter) d.getAdapter();
+                    de.codingair.codingapi.tools.Location l = a.getLocation();
+                    l.apply(player.getLocation());
+                    a.setServer(WarpSystem.getInstance().getCurrentServer());
 
                     update();
                     updateCosts();
                 } else if(e.getClick() == ClickType.RIGHT && !original.getAction(WarpAction.class).getValue().equals(warp.getAction(WarpAction.class).getValue())) {
                     Destination d = (Destination) warp.getAction(Action.WARP).getValue();
+                    GlobalLocationAdapter a = (GlobalLocationAdapter) d.getAdapter();
+                    de.codingair.codingapi.tools.Location l = (de.codingair.codingapi.tools.Location) d.buildLocation();
                     Destination old = (Destination) original.getAction(Action.WARP).getValue();
-                    d.setId(old.getId());
+                    GlobalLocationAdapter aOld = (GlobalLocationAdapter) d.getAdapter();
+                    de.codingair.codingapi.tools.Location lOld = (de.codingair.codingapi.tools.Location) old.buildLocation();
+                    l.apply(lOld);
+                    a.setServer(aOld.getServer());
 
                     update();
                     updateCosts();

@@ -23,7 +23,7 @@ public class EffectPortalManager implements Manager {
     private double maxParticleDistance = 70D;
 
     @Override
-    public boolean load() {
+    public boolean load(boolean loader) {
         if(WarpSystem.getInstance().getFileManager().getFile("Teleporters") == null) WarpSystem.getInstance().getFileManager().loadFile("Teleporters", "/Memory/");
         boolean success = true;
 

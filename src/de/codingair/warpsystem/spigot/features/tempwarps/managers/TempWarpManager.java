@@ -97,7 +97,7 @@ public class TempWarpManager implements Manager, Ticker {
     private TeleportManager teleportManager = new TeleportManager();
 
     @Override
-    public boolean load() {
+    public boolean load(boolean loader) {
         if(!MoneyAdapterType.canEnable()) {
             WarpSystem.log("  > No Money-Plugin > Ignoring TempWarps");
             return true;

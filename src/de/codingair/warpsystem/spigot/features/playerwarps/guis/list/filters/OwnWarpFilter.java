@@ -30,7 +30,7 @@ import java.util.List;
 public class OwnWarpFilter implements Filter {
     @Override
     public Node<List<Button>, Integer> getListItems(int maxSize, int page, Player player, String search, Object... extra) {
-        List<PlayerWarp> warps = PlayerWarpManager.getManager().getWarps(player);
+        List<PlayerWarp> warps = PlayerWarpManager.getManager().getOwnWarps(player);
 
         List<Button> buttons = new ArrayList<>();
         if(createButtonInList() && PlayerWarpManager.hasPermission(player)) maxSize--;

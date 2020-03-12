@@ -160,8 +160,8 @@ WarpSystem:
       Min_Time: 0d, 0h, 5m
       Max_Time: 30d, 0h, 0m
     Inactive:
-      #Time after an expiration. After that time, the PlayerWarp will be deleted.
-      #Inactive PlayerWarps cannot be used for teleportation purposes.
+      #Time after an expiration. After that time, the PlayerWarp will be deleted. Inactive PlayerWarps cannot be used for teleportation purposes.
+      #IMPORTANT: If BungeeCord is enabled, you have to set this value in the Config.yml in the WarpSystem folder on your BungeeCord!! (It will be ignored here.)
       Time_After_Expiration: 1d, 0h, 0m
       #Time to remind a player, if a PlayerWarp is going to be deleted (already inactive)
       Reminds:
@@ -204,7 +204,7 @@ WarpSystem:
       Max_Lines: 3
       Line_Length:
         Min: 5
-        Max: 25
+        Max: 35
     Teleport_Fee:
       #Custom PlayerWarp teleport fee
       Max: 500

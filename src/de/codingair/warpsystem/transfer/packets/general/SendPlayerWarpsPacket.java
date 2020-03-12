@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.transfer.packets.general;
 
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarpData;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
-import de.codingair.warpsystem.transfer.serializeable.Serializable;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -10,9 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SendPlayerWarpsPacket implements Packet {
-    private List<Serializable> l;
+    private List<PlayerWarpData> l;
+    private boolean clearable = false;
 
-    public SendPlayerWarpsPacket(List<Serializable> list) {
+    public SendPlayerWarpsPacket(List<PlayerWarpData> list) {
         this.l = list;
     }
 
@@ -23,8 +24,18 @@ public class SendPlayerWarpsPacket implements Packet {
     @Override
     public void write(DataOutputStream o) throws IOException {
         o.writeShort(l.size());
-        for(Serializable s : l) {
-            s.write(o);
+
+        if(clearable) {
+            for(PlayerWarpData s : l) {
+                s.write(o);
+                s.destroy();
+            }
+
+            l.clear();
+        } else {
+            for(PlayerWarpData s : l) {
+                s.write(o);
+            }
         }
     }
 
@@ -32,28 +43,22 @@ public class SendPlayerWarpsPacket implements Packet {
     public void read(DataInputStream i) throws IOException {
         int size = i.readShort();
 
-        boolean spigot = true;
-
-        try {
-            Class.forName("org.bukkit.plugin.java.JavaPlugin");
-        } catch(Exception e) {
-            spigot = false;
-        }
-
-        if(spigot) {
-            //Spigot
-            for(int i1 = 0; i1 < size; i1++) {
-                l.add(de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp.readInitially(i));
-            }
-        } else {
-            //BungeeCord
-            for(int i1 = 0; i1 < size; i1++) {
-                l.add(de.codingair.warpsystem.bungee.features.playerwarps.utils.PlayerWarp.readInitially(i));
-            }
+        for(int i1 = 0; i1 < size; i1++) {
+            PlayerWarpData w = new PlayerWarpData();
+            w.read(i);
+            l.add(w);
         }
     }
 
-    public List<Serializable> getSerializables() {
+    public List<PlayerWarpData> getData() {
         return l;
+    }
+
+    public boolean isClearable() {
+        return clearable;
+    }
+
+    public void setClearable(boolean clearable) {
+        this.clearable = clearable;
     }
 }

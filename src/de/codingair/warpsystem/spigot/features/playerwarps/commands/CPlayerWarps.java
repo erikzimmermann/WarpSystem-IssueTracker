@@ -28,7 +28,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
         super("playerwarps", new WarpSystemBaseComponent(WarpSystem.PERMISSION_USE_PLAYER_WARPS) {
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, edit, delete, list>");
             }
 
             @Override
@@ -51,7 +51,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
         getComponent("delete").addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                List<PlayerWarp> l = PlayerWarpManager.getManager().getWarps((Player) sender);
+                List<PlayerWarp> l = PlayerWarpManager.getManager().getOwnWarps((Player) sender);
 
                 for(PlayerWarp warp : l) {
                     suggestions.add(warp.getName(false));
@@ -60,7 +60,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                PlayerWarp warp = PlayerWarpManager.getManager().getWarp(argument);
+                PlayerWarp warp = PlayerWarpManager.getManager().getWarp((Player) sender, argument);
 
                 if(warp == null) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
@@ -115,7 +115,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
         getComponent("edit").addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                List<PlayerWarp> l = PlayerWarpManager.getManager().getWarps((Player) sender);
+                List<PlayerWarp> l = PlayerWarpManager.getManager().getOwnWarps((Player) sender);
 
                 for(PlayerWarp warp : l) {
                     suggestions.add(warp.getName(false));
@@ -124,7 +124,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                PlayerWarp warp = PlayerWarpManager.getManager().getWarp(argument);
+                PlayerWarp warp = PlayerWarpManager.getManager().getWarp((Player) sender, argument);
 
                 if(warp == null) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
@@ -157,11 +157,17 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
                 if(!PlayerWarpManager.hasPermission((Player) sender)) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Maximum_of_Warps").replace("%AMOUNT%", PlayerWarpManager.getManager().getWarps((Player) sender).size() + ""));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Maximum_of_Warps").replace("%AMOUNT%", PlayerWarpManager.getManager().getOwnWarps((Player) sender).size() + ""));
                     return false;
                 }
 
-                if(PlayerWarpManager.getManager().exists(argument)) {
+                String forbidden = PlayerWarpManager.getManager().checkSymbols(argument, "§c", "§f");
+                if(forbidden != null) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Forbidden_Symbols").replace("%NAME_HINT%", forbidden));
+                    return false;
+                }
+
+                if(PlayerWarpManager.getManager().existsOwn((Player) sender, argument)) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                     return false;
                 }
@@ -187,7 +193,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
     
     public static void createPlayerWarp(Player p, GUI fallBack) {
         if(!PlayerWarpManager.hasPermission(p)) {
-            p.sendMessage(Lang.getPrefix() + Lang.get("Warp_Maximum_of_Warps").replace("%AMOUNT%", PlayerWarpManager.getManager().getWarps(p).size() + ""));
+            p.sendMessage(Lang.getPrefix() + Lang.get("Warp_Maximum_of_Warps").replace("%AMOUNT%", PlayerWarpManager.getManager().getOwnWarps(p).size() + ""));
             return;
         }
 
@@ -202,7 +208,13 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                     return;
                 }
 
-                if(PlayerWarpManager.getManager().exists(input)) {
+                String forbidden = PlayerWarpManager.getManager().checkSymbols(input, "§c", "§f");
+                if(forbidden != null) {
+                    p.sendMessage(Lang.getPrefix() + Lang.get("Forbidden_Symbols").replace("%NAME_HINT%", forbidden));
+                    return;
+                }
+
+                if(PlayerWarpManager.getManager().existsOwn(p, input)) {
                     e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                     return;
                 }

@@ -24,7 +24,7 @@ public class SimpleWarpManager implements Manager {
     private ConfigFile file;
 
     @Override
-    public boolean load() {
+    public boolean load(boolean loader) {
         if(WarpSystem.getInstance().getFileManager().getFile("SimpleWarps") == null) WarpSystem.getInstance().getFileManager().loadFile("SimpleWarps", "/Memory/");
         this.file = WarpSystem.getInstance().getFileManager().getFile("SimpleWarps");
         boolean errors = false;

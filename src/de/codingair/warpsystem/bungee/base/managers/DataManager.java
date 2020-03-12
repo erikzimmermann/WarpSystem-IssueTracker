@@ -21,10 +21,10 @@ public class DataManager {
         }
     }
 
-    public boolean load() {
+    public boolean load(boolean hidePrints) {
         boolean success = true;
         for(Manager manager : this.managers) {
-            if(!manager.load()) success = false;
+            if(!manager.load(hidePrints)) success = false;
         }
         return success;
     }
@@ -33,6 +33,11 @@ public class DataManager {
         for(Manager manager : this.managers) {
             manager.save(saver);
         }
+    }
+
+    public boolean reload() {
+        save(true);
+        return load(true);
     }
 
     public <T extends Manager> T getManager(FeatureType type) {

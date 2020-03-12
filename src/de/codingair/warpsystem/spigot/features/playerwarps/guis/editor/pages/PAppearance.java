@@ -149,7 +149,7 @@ public class PAppearance extends PageItem {
                     return;
                 }
 
-                if(!startName.equalsIgnoreCase(warp.getName()) && !warp.getName(false).equalsIgnoreCase(warp.getName()) && PlayerWarpManager.getManager().exists(warp.getName())) {
+                if(!startName.equalsIgnoreCase(warp.getName()) && !warp.getName(false).equalsIgnoreCase(warp.getName()) && PlayerWarpManager.getManager().existsOwn(p, warp.getName())) {
                     e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                     return;
                 }

@@ -6,10 +6,10 @@ import de.codingair.codingapi.tools.io.utils.Serializable;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.CloneableAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.DestinationAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.json.simple.JSONArray;
@@ -99,10 +99,15 @@ public class Destination implements Serializable {
 
     public void sendMessage(Player player, String message, String displayName, double costs) {
         if(adapter == null || message == null) return;
-        player.sendMessage((message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
+        player.sendMessage(getMessage(player, message, displayName, costs));
     }
 
-    public Location buildLocation() {
+    public String getMessage(Player player, String message, String displayName, double costs) {
+        if(adapter == null || message == null) return null;
+        return (message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName));
+    }
+
+    public org.bukkit.Location buildLocation() {
         if(offsetX != 0 || offsetY != 0 || offsetZ != 0) {
             double offsetX = signedX == 1 ? Math.random() * this.offsetX : signedX == -1 ? Math.random() * -this.offsetX : Math.random() * 2 * this.offsetX - this.offsetX;
             double offsetY = signedY == 1 ? Math.random() * this.offsetY : signedY == -1 ? Math.random() * -this.offsetY : Math.random() * 2 * this.offsetY - this.offsetY;
@@ -257,7 +262,7 @@ public class Destination implements Serializable {
         Destination destination = new Destination();
         destination.id = getId();
         destination.type = type;
-        destination.adapter = adapter == null ? null : type.getInstance();
+        destination.adapter = adapter instanceof CloneableAdapter ? ((CloneableAdapter) adapter).clone() : adapter == null ? null : type.getInstance();
         destination.offsetX = offsetX;
         destination.offsetY = offsetY;
         destination.offsetZ = offsetZ;
