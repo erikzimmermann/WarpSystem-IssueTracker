@@ -44,6 +44,7 @@ public enum PacketType {
     PrepareCoordinationTeleportPacket(44, PrepareCoordinationTeleportPacket.class),
     SendPlayerWarpOptionsPacket(45, SendPlayerWarpOptionsPacket.class),
     DeletePlayerWarpPacket(46, DeletePlayerWarpPacket.class),
+    PlayerWarpTeleportProcessPacket(47, PlayerWarpTeleportProcessPacket.class),
 
     BooleanPacket(100, BooleanPacket.class),
     IntegerPacket(101, IntegerPacket.class),

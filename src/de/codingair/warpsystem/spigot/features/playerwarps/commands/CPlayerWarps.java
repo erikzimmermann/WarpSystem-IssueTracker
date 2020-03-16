@@ -8,6 +8,7 @@ import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.commands.WarpSystemBaseComponent;
@@ -17,8 +18,11 @@ import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.PWList;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
+import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockBreakEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +90,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                 message.replace("%HERE%", new ChatButton(Lang.get("Warp_Delete_Info_Here"), prepared) {
                     @Override
                     public void onClick(Player player) {
-                        double refund = PlayerWarpManager.getManager().delete(warp);
+                        double refund = PlayerWarpManager.getManager().delete(warp, true);
                         if(refund == -1) return;
                         MoneyAdapterType.getActive().deposit((Player) sender, refund);
 
@@ -161,6 +165,11 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                     return false;
                 }
 
+                if(PlayerWarpManager.isProtected((Player) sender)) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Create_Protected"));
+                    return false;
+                }
+
                 String forbidden = PlayerWarpManager.getManager().checkSymbols(argument, "§c", "§f");
                 if(forbidden != null) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Forbidden_Symbols").replace("%NAME_HINT%", forbidden));
@@ -194,6 +203,11 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
     public static void createPlayerWarp(Player p, GUI fallBack) {
         if(!PlayerWarpManager.hasPermission(p)) {
             p.sendMessage(Lang.getPrefix() + Lang.get("Warp_Maximum_of_Warps").replace("%AMOUNT%", PlayerWarpManager.getManager().getOwnWarps(p).size() + ""));
+            return;
+        }
+
+        if(PlayerWarpManager.isProtected(p)) {
+            p.sendMessage(Lang.getPrefix() + Lang.get("Create_Protected"));
             return;
         }
 

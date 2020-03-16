@@ -91,23 +91,24 @@ public class RandomTeleporterManager implements Manager {
         file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
         config = file.getConfig();
 
-        for(Object s : config.getList("RandomTeleporter.InteractBlocks")) {
+        List<?> l = config.getList("RandomTeleporter.InteractBlocks");
+        if(l != null)
+            for(Object s : l) {
+                if(s instanceof Map) {
+                    JSON json = new JSON((Map<?, ?>) s);
+                    Location loc = new Location();
+                    try {
+                        loc.read(json);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        continue;
+                    }
 
-            if(s instanceof Map) {
-                JSON json = new JSON((Map<?, ?>) s);
-                Location l = new Location();
-                try {
-                    l.read(json);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                    continue;
+                    this.interactBlocks.add(loc);
+                } else if(s instanceof String) {
+                    this.interactBlocks.add(Location.getByJSONString((String) s));
                 }
-
-                this.interactBlocks.add(l);
-            } else if(s instanceof String) {
-                this.interactBlocks.add(Location.getByJSONString((String) s));
             }
-        }
 
         Bukkit.getPluginManager().registerEvents(this.listener, WarpSystem.getInstance());
         new CRandomTP().register(WarpSystem.getInstance());

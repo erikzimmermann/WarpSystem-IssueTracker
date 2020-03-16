@@ -80,9 +80,11 @@ public class IconManager implements Manager {
         WarpSystem.log("    > Loading background");
         Object data = config.get("Background_Item", null);
 
-        if(data instanceof String) {
-            this.background = ItemBuilder.getFromJSON((String) data).getItem();
-        } else this.background = new ConfigWriter(file).getItemStack("Background_Item");
+        if(data != null) {
+            if(data instanceof String) {
+                this.background = ItemBuilder.getFromJSON((String) data).getItem();
+            } else this.background = new ConfigWriter(file).getItemStack("Background_Item");
+        }
 
         if(this.background == null) {
             WarpSystem.log("      ...no background available > create standard");

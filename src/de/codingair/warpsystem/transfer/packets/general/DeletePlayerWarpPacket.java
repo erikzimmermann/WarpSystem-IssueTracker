@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.transfer.packets.bungee;
+package de.codingair.warpsystem.transfer.packets.general;
 
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 

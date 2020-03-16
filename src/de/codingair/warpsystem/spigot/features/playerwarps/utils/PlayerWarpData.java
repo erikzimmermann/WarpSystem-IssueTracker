@@ -22,6 +22,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
     protected Boolean isPublic;
     protected String teleportMessage;
     protected Double teleportCosts;
+    protected Byte inactiveSales;
     protected List<Byte> classes;
     protected List<String> description;
 
@@ -80,6 +81,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
 
         if(w.isPublic != null) this.isPublic = w.isPublic;
         if(w.teleportCosts != null) this.teleportCosts = w.teleportCosts;
+        if(w.inactiveSales != null) this.inactiveSales = w.inactiveSales;
         if(w.born != null) this.born = w.born;
         if(w.started != null) this.started = w.started;
         if(w.time != null) this.time = w.time;
@@ -112,6 +114,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         }
         if(Objects.equals(data, oldData.data)) u.data = null;
         if(Objects.equals(teleportCosts, oldData.teleportCosts)) u.teleportCosts = null;
+        if(Objects.equals(inactiveSales, oldData.inactiveSales)) u.inactiveSales = null;
         if(Objects.equals(born, oldData.born)) u.born = null;
         if(Objects.equals(started, oldData.started)) u.started = null;
         if(Objects.equals(time, oldData.time)) u.time = null;
@@ -162,7 +165,8 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         }
         if(skullId != null) o.writeUTF(skullId);
 
-        if(teleportCosts != null) o.writeDouble(teleportCosts);             //teleport costs
+        if(teleportCosts != null) o.writeDouble(teleportCosts);         //teleport costs
+        o.writeByte(inactiveSales == null ? 0 : inactiveSales);         //inactive sales
         o.writeBoolean(notify);                                         //notify
         o.writeLong(born);                                              //born
         if(!born.equals(started)) o.writeLong(started);                       //started
@@ -230,6 +234,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         if(skull) this.skullId = i.readUTF();
 
         if(teleportCosts) this.teleportCosts = i.readDouble();          //teleport costs
+        this.inactiveSales = i.readByte();                              //inactive sales
         this.notify = i.readBoolean();                                  //notify
         this.born = i.readLong();                                       //born
         if(differentStart) this.started = i.readLong();                 //start
@@ -284,6 +289,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
 
         d.put("public", isPublic);
         d.put("tpcosts", teleportCosts);
+        d.put("sales", inactiveSales);
         d.put("born", born);
         d.put("started", started == born ? 0 : started);
         d.put("time", time);
@@ -324,6 +330,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
 
         this.isPublic = d.getBoolean("public");
         this.teleportCosts = d.getDouble("tpcosts");
+        this.inactiveSales = d.getByte("sales");
         this.born = d.getLong("born");
         this.started = d.getLong("started");
         this.time = d.getLong("time");
@@ -377,6 +384,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         isPublic = null;
         teleportMessage = null;
         teleportCosts = null;
+        inactiveSales = null;
         classes = null;
         description = null;
         born = null;
@@ -495,6 +503,19 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         this.teleportCosts = teleportCosts;
     }
 
+    public Integer getInactiveSales() {
+        if(inactiveSales == null) return null;
+        return ((int) inactiveSales) & 0xFF;
+    }
+
+    public void increaseInactiveSales() {
+        inactiveSales = (byte) (getInactiveSales() + 1);
+    }
+
+    public void setInactiveSales(Byte inactiveSales) {
+        this.inactiveSales = inactiveSales;
+    }
+
     public List<Byte> getClasses() {
         return classes;
     }
@@ -557,6 +578,10 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
 
     public void setPerformed(Integer performed) {
         this.performed = performed;
+    }
+
+    public void increasePerformed() {
+        performed++;
     }
 
     public String getServer() {

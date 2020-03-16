@@ -5,8 +5,10 @@ import de.codingair.warpsystem.bungee.features.playerwarps.managers.PlayerWarpMa
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarpData;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarpUpdate;
 import de.codingair.warpsystem.transfer.packets.bungee.SendPlayerWarpOptionsPacket;
+import de.codingair.warpsystem.transfer.packets.general.DeletePlayerWarpPacket;
 import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpUpdatePacket;
 import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpsPacket;
+import de.codingair.warpsystem.transfer.packets.spigot.PlayerWarpTeleportProcessPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.RegisterServerForPlayerWarpsPacket;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
@@ -38,6 +40,11 @@ public class PlayerWarpListener implements PacketListener, Listener {
                 PlayerWarpManager.getInstance().updateWarp(w);
             }
 
+            //forwarding
+            PlayerWarpManager.getInstance().interactWithServers(s -> {
+                if(s.getName().equalsIgnoreCase(extra)) return;
+                WarpSystem.getInstance().getDataHandler().send(packet, s);
+            });
         } else if(packet.getType() == PacketType.RegisterServerForPlayerWarpsPacket) {
             List<PlayerWarpData> l = new ArrayList<>();
 
@@ -64,7 +71,7 @@ public class PlayerWarpListener implements PacketListener, Listener {
             }
 
             for(Serializable w : l) {
-                PlayerWarpManager.getInstance().delete((PlayerWarpData) w);
+                PlayerWarpManager.getInstance().delete((PlayerWarpData) w, true);
             }
 
             ServerInfo server = BungeeCord.getInstance().getServerInfo(extra);
@@ -84,6 +91,32 @@ public class PlayerWarpListener implements PacketListener, Listener {
                 WarpSystem.getInstance().getDataHandler().send(packet, s);
             });
             update.destroy();
+        } else if(packet.getType() == PacketType.PlayerWarpTeleportProcessPacket) {
+            PlayerWarpTeleportProcessPacket p = (PlayerWarpTeleportProcessPacket) packet;
+
+            PlayerWarpData w = PlayerWarpManager.getInstance().getWarp(p.getId(), p.getName());
+
+            if(p.increaseSales()) w.increaseInactiveSales();
+            if(p.resetSales()) w.setInactiveSales((byte) 0);
+            if(p.increasePerformed()) w.increasePerformed();
+
+            //forwarding
+            PlayerWarpManager.getInstance().interactWithServers(s -> {
+                if(s.getName().equalsIgnoreCase(extra)) return;
+                WarpSystem.getInstance().getDataHandler().send(packet, s);
+            });
+        } else if(packet.getType() == PacketType.DeletePlayerWarpPacket) {
+            DeletePlayerWarpPacket p = (DeletePlayerWarpPacket) packet;
+
+            PlayerWarpData w = PlayerWarpManager.getInstance().getWarp(p.getId(), p.getName());
+
+            PlayerWarpManager.getInstance().delete(w, false);
+
+            //forwarding
+            PlayerWarpManager.getInstance().interactWithServers(s -> {
+                if(s.getName().equalsIgnoreCase(extra)) return;
+                WarpSystem.getInstance().getDataHandler().send(packet, s);
+            });
         }
     }
 

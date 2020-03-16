@@ -2,6 +2,7 @@ package de.codingair.warpsystem.spigot.features.teleportcommand.listeners;
 
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.utils.ChatColor;
+import de.codingair.codingapi.utils.ImprovedDouble;
 import de.codingair.warpsystem.spigot.api.players.BungeePlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -51,11 +52,11 @@ public class TeleportPacketListener implements Listener, PacketListener {
                     options.setOrigin(Origin.TeleportCommand);
                     options.setMessage(gate == player ? Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", gate.getName()));
 
-                    if(options.getFinalCosts(player) > 0) MoneyAdapterType.getActive().deposit(player, options.getFinalCosts(player));
+                    if(options.getFinalCosts(player).doubleValue() > 0) MoneyAdapterType.getActive().deposit(player, options.getFinalCosts(player).doubleValue());
 
                     WarpSystem.getInstance().getTeleportManager().teleport(player, options);
                 } else {
-                    TeleportListener.setSpawnPositionOrTeleport(tpPacket.getPlayer(), new de.codingair.codingapi.tools.Location(other.getLocation()), tpPacket.getTarget(), gate == player ? Math.max(tpPacket.getCosts(), 0) > 0 ? Lang.get("Money_Paid").replace("%AMOUNT%", tpPacket.getCosts() + "") : Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", tpPacket.getGate()));
+                    TeleportListener.setSpawnPositionOrTeleport(tpPacket.getPlayer(), new de.codingair.codingapi.tools.Location(other.getLocation()), tpPacket.getTarget(), gate == player ? Math.max(tpPacket.getCosts(), 0) > 0 ? Lang.get("Money_Paid").replace("%AMOUNT%", new ImprovedDouble(tpPacket.getCosts()) + "") : Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", tpPacket.getGate()));
                 }
                 break;
             }
@@ -78,7 +79,7 @@ public class TeleportPacketListener implements Listener, PacketListener {
                 options.setMessage(null);
                 options.setPayMessage(null);
                 options.setCosts(TeleportCommandManager.getInstance().getTpaCosts());
-                options.setCallback(new Callback<TeleportResult>() {
+                options.addCallback(new Callback<TeleportResult>() {
                     @Override
                     public void accept(TeleportResult result) {
                         //move

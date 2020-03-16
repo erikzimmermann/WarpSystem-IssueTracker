@@ -7,7 +7,7 @@ import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.features.FeatureType;
 import de.codingair.warpsystem.bungee.features.playerwarps.listeners.PlayerWarpListener;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarpData;
-import de.codingair.warpsystem.transfer.packets.bungee.DeletePlayerWarpPacket;
+import de.codingair.warpsystem.transfer.packets.general.DeletePlayerWarpPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.SendPlayerWarpOptionsPacket;
 import de.codingair.warpsystem.utils.Manager;
 import net.md_5.bungee.BungeeCord;
@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class PlayerWarpManager implements Manager {
     private HashMap<UUID, List<PlayerWarpData>> warps = new HashMap<>();
     private List<ServerInfo> activeServers = new ArrayList<>();
-    private List<ServerInfo> timeDependent = new ArrayList<>();
+    private List<String> timeDependent = new ArrayList<>();
     private PlayerWarpListener listener = null;
     private ScheduledTask task = null;
 
@@ -106,13 +106,13 @@ public class PlayerWarpManager implements Manager {
                 List<PlayerWarpData> warps = new ArrayList<>(value);
 
                 for(PlayerWarpData warp : warps) {
-                    if(timeDependent.contains(warp.getServer())) continue;
+                    if(!timeDependent.contains(warp.getServer())) continue;
 
                     Date inactive = new Date(warp.getExpireDate() + this.inactiveTime);
 
                     if(inactive.before(new Date())) {
                         //Delete
-                        delete(warp);
+                        delete(warp, true);
                     }
                 }
 
@@ -200,20 +200,25 @@ public class PlayerWarpManager implements Manager {
     }
 
     public void interactWithTimeDependentServers(ServerInteraction runnable) {
-        List<ServerInfo> activeServers = new ArrayList<>(this.timeDependent);
-        for(ServerInfo activeServer : activeServers) {
-            runnable.interact(activeServer);
+        List<String> activeServers = new ArrayList<>(this.timeDependent);
+        for(String activeServer : activeServers) {
+            ServerInfo info = BungeeCord.getInstance().getServerInfo(activeServer);
+            if(info != null) runnable.interact(info);
         }
         activeServers.clear();
     }
 
-    public boolean delete(PlayerWarpData warp) {
+    public boolean delete(PlayerWarpData warp, boolean informServers) {
+        if(warp == null) return false;
+
         List<PlayerWarpData> warps = getWarps(warp.getOwner().getId());
         boolean result = warps.remove(warp);
         if(warps.isEmpty()) this.warps.remove(warp.getOwner().getId());
 
-        DeletePlayerWarpPacket packet = new DeletePlayerWarpPacket(warp.getName(), warp.getOwner().getId());
-        interactWithServers(server -> WarpSystem.getInstance().getDataHandler().send(packet, server));
+        if(informServers) {
+            DeletePlayerWarpPacket packet = new DeletePlayerWarpPacket(warp.getName(), warp.getOwner().getId());
+            interactWithServers(server -> WarpSystem.getInstance().getDataHandler().send(packet, server));
+        }
 
         return result;
     }
@@ -270,11 +275,11 @@ public class PlayerWarpManager implements Manager {
 
     public boolean setTimeDependent(ServerInfo info, boolean timeDependent) {
         if(timeDependent) {
-            if(!this.timeDependent.contains(info)) {
-                this.timeDependent.add(info);
+            if(!this.timeDependent.contains(info.getName())) {
+                this.timeDependent.add(info.getName());
                 return false;
             } else return true;
-        } else return this.timeDependent.remove(info);
+        } else return this.timeDependent.remove(info.getName());
     }
 
     public long getInactiveTime() {

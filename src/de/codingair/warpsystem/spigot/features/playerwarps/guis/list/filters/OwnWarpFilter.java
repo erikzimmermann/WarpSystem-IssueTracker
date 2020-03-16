@@ -7,6 +7,7 @@ import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.utils.ChatColor;
+import de.codingair.codingapi.utils.ImprovedDouble;
 import de.codingair.codingapi.utils.Node;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
@@ -53,25 +54,40 @@ public class OwnWarpFilter implements Filter {
                 boolean confirmDeletion = false;
                 private BukkitRunnable runnable;
 
+                private Number cut(Number n) {
+                    if(n.intValue() == n.doubleValue()) return n.intValue();
+                    return n.doubleValue();
+                }
+
                 @Override
                 public ItemStack craftItem() {
-                    return w.getItem(search).addLore("§8§m                         ", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Teleport"),
-                            Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §7" + Lang.get("Edit"),
-                            "", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Shift_Rightclick") + ": " + (confirmDeletion ? "§4" : "§7") + ChatColor.stripColor(Lang.get("Delete")) + (confirmDeletion ? " §7(§c" + ChatColor.stripColor(Lang.get("Confirm")) + "§7)" : ""))
+                    return w.getItem(search)
+                            .addLore(w.getInactiveSales() == 0 ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Earned") + ": §7" + cut(w.getInactiveSales() * w.getTeleportCosts()) + " " + Lang.get("Coins"))
+                            .addLore("§8§m                         ", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Teleport"),
+                                    Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §7" + Lang.get("Edit"),
+                                    "", w.getInactiveSales() == 0 ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Shift_Leftclick") + ": §a" + Lang.get("Draw_Money"),
+                                    Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Shift_Rightclick") + ": " + (confirmDeletion ? "§4" : "§7") + ChatColor.stripColor(Lang.get("Delete")) + (confirmDeletion ? " §7(§c" + ChatColor.stripColor(Lang.get("Confirm")) + "§7)" : ""))
                             .getItem();
                 }
 
                 @Override
                 public void onClick(InventoryClickEvent e, Player player) {
-                    if(e.isLeftClick()) w.perform(player);
-                    else if(e.isRightClick() && !e.isShiftClick()) {
+                    if(e.isLeftClick()) {
+                        if(e.isShiftClick()) {
+                            //draw money
+                            double money = w.collectInactiveSales(player);
+                            player.sendMessage(Lang.getPrefix() + Lang.get("Warp_Draw_Money_Info").replace("%NAME%", w.getName()).replace("%AMOUNT%", new ImprovedDouble(money).toString()));
+
+                            update();
+                        } else w.perform(player);
+                    } else if(e.isRightClick() && !e.isShiftClick()) {
                         GUI g = new PWEditor(player, w);
                         g.setOpenSound(null);
                         getInterface().changeGUI(g, true);
                     } else {
                         if(confirmDeletion) {
                             //delete
-                            double refund = PlayerWarpManager.getManager().delete(w);
+                            double refund = PlayerWarpManager.getManager().delete(w, true);
                             if(refund == -1) return;
                             MoneyAdapterType.getActive().deposit(player, refund);
 
@@ -100,7 +116,7 @@ public class OwnWarpFilter implements Filter {
 
                 @Override
                 public boolean canClick(ClickType click) {
-                    return click == ClickType.LEFT || click == ClickType.RIGHT || click == ClickType.SHIFT_RIGHT;
+                    return click == ClickType.LEFT || click == ClickType.RIGHT || click == ClickType.SHIFT_RIGHT || (click == ClickType.SHIFT_LEFT && w.getInactiveSales() > 0);
                 }
             };
 

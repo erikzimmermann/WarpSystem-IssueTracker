@@ -169,7 +169,7 @@ public class AllPlayers implements Filter {
             return Head.RED_PLUS.getItemBuilder()
                     .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Filter") + ":§7 " + FilterType.ALL_PLAYERS.getFilterName())
                     .setLore(page.getSearch() == null || !page.getFilter().searchable(page) ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Search_Short") + ": §7'§f" + page.getSearch() + "§7'",
-                            "", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §c" + Lang.get("Back"),
+                            "", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §c" + Lang.get("Back"),
                             page.getFilter().searchable(page) ? Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Shift_Rightclick") + ": §7" + (page.getSearch() == null ? Lang.get("Search_Short") : Lang.get("Reset_Search")) : null)
                     .getItem();
         }
@@ -183,7 +183,7 @@ public class AllPlayers implements Filter {
 
         @Override
         public boolean canClick(ClickType click) {
-            return click == ClickType.LEFT || (page.getFilter().searchable(page) && click == ClickType.SHIFT_RIGHT);
+            return click == ClickType.RIGHT || (page.getFilter().searchable(page) && click == ClickType.SHIFT_RIGHT);
         }
     }
 }

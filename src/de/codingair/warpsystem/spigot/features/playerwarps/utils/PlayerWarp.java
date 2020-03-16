@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.features.playerwarps.utils;
 
 import de.codingair.codingapi.API;
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.lib.JSONArray;
@@ -15,11 +16,15 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
+import de.codingair.warpsystem.spigot.base.utils.money.Adapter;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.GlobalLocationAdapter;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
+import de.codingair.warpsystem.transfer.packets.spigot.PlayerWarpTeleportProcessPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
@@ -43,6 +48,7 @@ public class PlayerWarp extends FeatureObject {
 
     private boolean isPublic;
     private double teleportCosts;
+    private byte inactiveSales;
 
     private long born;
     private long started;
@@ -76,9 +82,36 @@ public class PlayerWarp extends FeatureObject {
     @Override
     public FeatureObject perform(Player player) {
         TeleportOptions options = new TeleportOptions((Destination) null, this.name);
+
+        options.addCallback(new Callback<TeleportResult>() {
+            @Override
+            public void accept(TeleportResult res) {
+                if(res == TeleportResult.TELEPORTED) {
+                    PlayerWarpTeleportProcessPacket packet = WarpSystem.getInstance().isOnBungeeCord() ? new PlayerWarpTeleportProcessPacket(name, owner.getId()) : null;
+                    if(packet != null && !isOwner(player) && !isTrusted(player)) packet.setIncreasePerformed(true);
+
+                    if(options.getFinalCosts(player).doubleValue() > 0 && !isOwner(player) && !isTrusted(player)) {
+                        if(packet != null) packet.setIncreaseSales(true);
+                        increaseInactiveSales();
+                    }
+
+                    if(packet != null) {
+                        //update on BungeeCord
+                        WarpSystem.getInstance().getDataHandler().send(packet);
+                    }
+
+                    PlayerWarpManager.getManager().updateGUIs();
+                }
+            }
+        });
+
         if(this.teleportMessage != null) options.setMessage(ChatColor.translateAlternateColorCodes('&', this.teleportMessage));
 
-        performed--;
+        if(isOwner(player) || isTrusted(player)) performed--;
+        else {
+            options.setCosts(this.teleportCosts);
+        }
+
         return super.perform(player, options);
     }
 
@@ -114,6 +147,7 @@ public class PlayerWarp extends FeatureObject {
             this.item = w.item.clone();
             this.isPublic = w.isPublic;
             this.teleportCosts = w.teleportCosts;
+            this.inactiveSales = w.inactiveSales;
             this.born = w.born;
             this.started = w.started;
             this.time = w.time;
@@ -146,6 +180,7 @@ public class PlayerWarp extends FeatureObject {
         data.setPublic(this.isPublic);
         data.setTeleportMessage(this.teleportMessage);
         data.setTeleportCosts(this.teleportCosts);
+        data.setInactiveSales(this.inactiveSales);
 
         List<Byte> classes = new ArrayList<>();
         for(Category c : this.classes) {
@@ -200,6 +235,7 @@ public class PlayerWarp extends FeatureObject {
         if(d.isPublic != null) this.isPublic = d.isPublic;
         if(d.teleportMessage != null) this.teleportMessage = d.teleportMessage;
         if(d.teleportCosts != null) this.teleportCosts = d.teleportCosts;
+        if(d.getInactiveSales() != null) this.inactiveSales = d.inactiveSales;
 
         if(d.classes != null) {
             if(this.classes == null) this.classes = new ArrayList<>();
@@ -262,6 +298,7 @@ public class PlayerWarp extends FeatureObject {
         d.put("item", item);
         d.put("public", isPublic);
         d.put("tpcosts", teleportCosts);
+        d.put("sales", inactiveSales);
         d.put("born", born);
         d.put("started", started == born ? 0 : started);
         d.put("time", time);
@@ -286,6 +323,7 @@ public class PlayerWarp extends FeatureObject {
         this.item = d.getItemBuilder("item");
         this.isPublic = d.getBoolean("public");
         this.teleportCosts = d.getDouble("tpcosts");
+        this.inactiveSales = d.getByte("sales");
         this.born = d.getLong("born");
         this.started = d.getLong("started");
         this.time = d.getLong("time");
@@ -362,9 +400,9 @@ public class PlayerWarp extends FeatureObject {
         } else return false;
     }
 
-    public PlayerWarp resetItem() {
-        if(isStandardItem()) return this;
-        return changeItem(getStandardItemBuilder());
+    public void resetItem() {
+        if(isStandardItem()) return;
+        changeItem(getStandardItemBuilder());
     }
 
     private ItemBuilder getStandardItemBuilder() {
@@ -459,10 +497,10 @@ public class PlayerWarp extends FeatureObject {
                 .addLore(getPreparedDescription());
 
         b.addLore("");
-        b.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Owner") + ": §f" + owner.getName());
+        b.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Owner") + ": §7" + owner.getName());
 
-        if(teleportCosts > 0) b.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Costs") + ": §f" + teleportCosts);
-        if(isPublic) b.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Teleports") + ": §f" + getPerformed());
+        if(teleportCosts > 0) b.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Costs") + ": §7" + getCutTeleportCosts() + " " + Lang.get("Coins"));
+        if(isPublic) b.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Teleports") + ": §7" + getPerformed());
 
         return b;
     }
@@ -485,18 +523,27 @@ public class PlayerWarp extends FeatureObject {
         return teleportCosts;
     }
 
+    public Number getCutTeleportCosts() {
+        Number n = teleportCosts;
+        if(n.intValue() == teleportCosts) return n.intValue();
+        return teleportCosts;
+    }
+
     public void setTeleportCosts(double teleportCosts) {
         this.teleportCosts = teleportCosts;
     }
 
-    public boolean born() {
-        if(this.born > 0) return false;
+    public void born() {
+        if(this.born > 0) return;
         this.born = System.currentTimeMillis();
-        return true;
     }
 
     public long getBorn() {
         return born;
+    }
+
+    public void setBorn(long born) {
+        this.born = born;
     }
 
     public long getStarted() {
@@ -532,6 +579,10 @@ public class PlayerWarp extends FeatureObject {
 
     public String getCreatorKey() {
         return creatorKey;
+    }
+
+    public void setCreatorKey(String creatorKey) {
+        this.creatorKey = creatorKey;
     }
 
     public boolean isBeingEdited() {
@@ -596,6 +647,44 @@ public class PlayerWarp extends FeatureObject {
 
     public void setSource(boolean source) {
         this.source = source;
+    }
+
+    public void increasePerformed() {
+        performed++;
+    }
+
+    public int getInactiveSales() {
+        return ((int) inactiveSales) & 0xFF;
+    }
+
+    public void resetInactiveSales() {
+        inactiveSales = 0;
+    }
+
+    public void setInactiveSales(int inactiveSales) {
+        this.inactiveSales = (byte) Math.min(inactiveSales, 256);
+    }
+
+    public void increaseInactiveSales() {
+        inactiveSales = (byte) (getInactiveSales() + 1);
+    }
+
+    public double collectInactiveSales(Player player) {
+        double money = getInactiveSales() * teleportCosts;
+
+        Adapter a = MoneyAdapterType.getActive();
+        if(a != null) {
+            resetInactiveSales();
+
+            if(WarpSystem.getInstance().isOnBungeeCord()) {
+                PlayerWarpTeleportProcessPacket packet = new PlayerWarpTeleportProcessPacket(name, owner.getId(), false, true, false);
+                WarpSystem.getInstance().getDataHandler().send(packet);
+            }
+
+            a.deposit(player, money);
+        } else return 0;
+
+        return money;
     }
 
     public static class User implements Serializable, de.codingair.warpsystem.transfer.serializeable.Serializable {
@@ -672,6 +761,10 @@ public class PlayerWarp extends FeatureObject {
 
         public UUID getId() {
             return id;
+        }
+
+        public void setId(UUID id) {
+            this.id = id;
         }
 
         public Player getPlayer() {

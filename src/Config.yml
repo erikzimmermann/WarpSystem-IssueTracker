@@ -47,7 +47,6 @@ WarpSystem:
       NativePortals: true
       Portals: true
       WarpSigns: true
-      TempWarps: true
       CommandBlocks: true
       PlayerWarps: true
     Teleport_Cancel_Message: true
@@ -60,7 +59,6 @@ WarpSystem:
     WarpSigns: true
     GlobalWarps: true
     Shortcuts: true
-    TempWarps: true
     #Available commands: '/warp <warp>' or '/globalwarp <warp>'
     #Required for '/tp' command for CommandBlocks (CommandBlocks with tp commands inside don't work, if you turn this to false)
     CommandBlocks: true
@@ -108,16 +106,22 @@ WarpSystem:
 
   PlayerWarps:
     General:
+      Support:
+        #If enabled, the player can't create PlayerWarps in regions, where he cannot build
+        ProtectedRegions: true
       BungeeCord: true
       #Disables all types of costs, active time selector, teleport costs
       Economy: false
       #The item of PlayerWarp is automatically the head of its owner and cannot be changed
       Force_Player_Head: false
       Custom_teleport_costs: true
+      #Turn this to true, if you want, that all PlayerWarps should be public when you create them. The state can always be changed.
+      Public_as_create_state: false
       Categories:
+        Enabled: true
         Min: 1
         Max: 2
-        Enabled: true
+        #The IDs must be identical on every Spigot server.
         Classes:
         - Type: EMERALD
           Lore:
@@ -217,28 +221,6 @@ WarpSystem:
       Teleport_Fee: 0.5
       Active_Time: 1
       Trusted_Member: 0.5
-    Support:
-      #If enabled, the player can't create TempWarps in regions, where he cannot build
-      ProtectedRegions: false
-    #If enabled, players won't be able to buy TempWarps. The only way to create TempWarps then is with keys (1x Key = 1x TempWarp). Create templates and give your players keys with the "/twarps keys" command!
-    Keys: true
-    #Turn this to true, if you want, that all TempWarps should be public when you create them. The state can always be changed.
-    Public_as_create_state: true
-    List_Info:
-      #The varaible names are case sensitive!
-      #Available variables: %PLAYER%, %ONLINE_TIME%, %TELEPORT_COSTS%, %TIME_BEFORE_DELETE%, %END_TIME%, %NAME%, %ID%
-      #TeleportCosts won't be displayed, if the costs = 0. Furthermore, you cannot use "deleted in" will only be displayed if the tempwarp is expired.
-      Own_Warp_Info:
-      - '&8Owner: %PLAYER%'
-      - '&8Online: %ONLINE_TIME%'
-      - '&8Coins: %TELEPORT_COSTS% Coin(s)'
-      - ''
-      - '&cdeleted in &n%TIME_BEFORE_DELETE%'
-      - '&8Ends in: %END_TIME%'
-      Other_Warp_Info:
-      - '&8Owner: %PLAYER%'
-      - '&8Online: %ONLINE_TIME%'
-      - '&8Coins: %TELEPORT_COSTS% Coin(s)'
 
   #The standard and max amount of random teleports will be configured with permissions:
   #"warpsystem.randomteleporters.free.1" » This permissions means, that the player with that permission has a standard amount of 1 free random teleports

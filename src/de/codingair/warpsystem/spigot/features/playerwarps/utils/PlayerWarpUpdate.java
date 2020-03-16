@@ -64,6 +64,7 @@ public class PlayerWarpUpdate extends PlayerWarpData implements Serializable {
         b |= (z != null ? 1 : 0) << 4;
         b |= (yaw != null ? 1 : 0) << 5;
         b |= (pitch != null ? 1 : 0) << 6;
+        b |= (inactiveSales != null ? 1 : 0) << 7;
         return b;
     }
 
@@ -135,6 +136,7 @@ public class PlayerWarpUpdate extends PlayerWarpData implements Serializable {
         if(z != null) o.writeDouble(z);
         if(yaw != null) o.writeFloat(yaw);
         if(pitch != null) o.writeFloat(pitch);
+        if(inactiveSales != null) o.writeByte(inactiveSales);
     }
 
     @Override
@@ -203,6 +205,7 @@ public class PlayerWarpUpdate extends PlayerWarpData implements Serializable {
         if((options & (1 << 4)) != 0) z = i.readDouble();
         if((options & (1 << 5)) != 0) yaw = i.readFloat();
         if((options & (1 << 6)) != 0) pitch = i.readFloat();
+        if((options & (1 << 7)) != 0) inactiveSales = i.readByte();
     }
 
     public String getOriginName() {

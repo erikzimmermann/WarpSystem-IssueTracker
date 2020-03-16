@@ -52,13 +52,15 @@ public class PWEditor extends Editor<PlayerWarp> {
                             warp.apply(clone);
                             if(creating) PlayerWarpManager.getManager().add(warp);
 
-                            PlayerWarpData data = warp.getData();
-                            SendPlayerWarpsPacket packet = new SendPlayerWarpsPacket(new ArrayList<PlayerWarpData>() {{
-                                this.add(data);
-                            }});
-                            packet.setClearable(true);
+                            if(WarpSystem.getInstance().isOnBungeeCord()) {
+                                PlayerWarpData data = warp.getData();
+                                SendPlayerWarpsPacket packet = new SendPlayerWarpsPacket(new ArrayList<PlayerWarpData>() {{
+                                    this.add(data);
+                                }});
+                                packet.setClearable(true);
 
-                            WarpSystem.getInstance().getDataHandler().send(packet);
+                                WarpSystem.getInstance().getDataHandler().send(packet);
+                            }
                         } else {
                             PlayerWarpManager.getManager().sync(warp, clone);
                             warp.apply(clone);

@@ -70,6 +70,10 @@ public class PWList extends SimpleGUI {
         setOpenSound(null);
     }
 
+    public void updateList() {
+        getMain().updateEntries();
+    }
+
     @Override
     public void initialize(Player p) {
         getMain().initialize(p);

@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.base.utils.teleport;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.utils.ImprovedDouble;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
@@ -11,6 +12,9 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TeleportOptions {
     private Origin origin;
@@ -28,7 +32,7 @@ public class TeleportOptions {
     private boolean silent;
     private SoundData teleportSound;
     private boolean afterEffects;
-    private Callback<TeleportResult> callback;
+    private List<Callback<TeleportResult>> callback = new ArrayList<>();
     private Vector velocity = null;
 
     public TeleportOptions() {
@@ -54,7 +58,10 @@ public class TeleportOptions {
         this.silent = false;
         this.teleportSound = new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F);
         this.afterEffects = true;
-        this.callback = null;
+    }
+
+    public void destroy() {
+        callback.clear();
     }
 
     public Origin getOrigin() {
@@ -93,8 +100,8 @@ public class TeleportOptions {
         return costs;
     }
 
-    public double getFinalCosts(Player player) {
-        return costs > 0 && MoneyAdapterType.getActive() != null && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs) ? costs : 0;
+    public Number getFinalCosts(Player player) {
+        return new ImprovedDouble(costs > 0 && MoneyAdapterType.getActive() != null && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs) ? costs : 0).get();
     }
 
     public void setCosts(double costs) {
@@ -157,12 +164,14 @@ public class TeleportOptions {
         this.afterEffects = afterEffects;
     }
 
-    public Callback<TeleportResult> getCallback() {
-        return callback;
+    public void runCallbacks(TeleportResult result) {
+        for(Callback<TeleportResult> teleportResultCallback : this.callback) {
+            teleportResultCallback.accept(result);
+        }
     }
 
-    public void setCallback(Callback<TeleportResult> callback) {
-        this.callback = callback;
+    public void addCallback(Callback<TeleportResult> callback) {
+        this.callback.add(callback);
     }
 
     public String getPayMessage() {
@@ -174,7 +183,7 @@ public class TeleportOptions {
     }
 
     public String getFinalMessage(Player player) {
-        return getFinalCosts(player) > 0 ? getPayMessage() : getMessage();
+        return getFinalCosts(player).doubleValue() > 0 ? getPayMessage() : getMessage();
     }
 
     public boolean isConfirmPayment() {

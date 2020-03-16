@@ -8,6 +8,7 @@ import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.server.reflections.PacketUtils;
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.utils.ImprovedDouble;
 import de.codingair.warpsystem.spigot.api.events.PlayerTeleportAcceptEvent;
 import de.codingair.warpsystem.spigot.api.events.PlayerTeleportedEvent;
 import de.codingair.warpsystem.spigot.api.events.PreTeleportAttemptEvent;
@@ -210,7 +211,7 @@ public class Teleport {
                 if(destination == null) return;
 
                 if(message != null) {
-                    message = (message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName));
+                    message = (message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", new ImprovedDouble(costs) + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName));
                 }
 
                 if(seconds == 0) preLoadChunks(1);

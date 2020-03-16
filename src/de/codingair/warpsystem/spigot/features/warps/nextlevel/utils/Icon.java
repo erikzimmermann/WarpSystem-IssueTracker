@@ -149,7 +149,15 @@ public class Icon extends FeatureObject {
 
     public Icon changeItem(ItemStack item) {
         ItemBuilder builder = new ItemBuilder(item);
-        this.item = new ItemBuilder(this.item).setType(item.getType()).setData(builder.getData()).getItem();
+        ItemBuilder base = new ItemBuilder(this.item);
+
+        builder.setName(base.getName());
+        builder.setLore(base.getLore());
+        builder.setHideStandardLore(true);
+        builder.setHideEnchantments(true);
+        builder.setEnchantments(base.getEnchantments());
+
+        this.item = builder.getItem();
         return this;
     }
 

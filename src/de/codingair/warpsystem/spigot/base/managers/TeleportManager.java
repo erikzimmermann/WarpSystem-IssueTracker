@@ -2,9 +2,9 @@ package de.codingair.warpsystem.spigot.base.managers;
 
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
+import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
-import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.api.events.PlayerGlobalWarpEvent;
@@ -186,7 +186,7 @@ public class TeleportManager {
         options.setSilent(silent);
         options.setTeleportSound(teleportSound);
         options.setAfterEffects(afterEffects);
-        options.setCallback(callback);
+        options.addCallback(callback);
 
         teleport(player, options);
     }
@@ -206,7 +206,7 @@ public class TeleportManager {
         }
 
         if((options.getDestination().getType() == DestinationType.GlobalWarp || options.getDestination().getType() == DestinationType.Server) && !WarpSystem.getInstance().isOnBungeeCord()) {
-            if(options.getCallback() != null) options.getCallback().accept(TeleportResult.NOT_ON_BUNGEE_CORD);
+            options.runCallbacks(TeleportResult.NOT_ON_BUNGEE_CORD);
             player.sendMessage(Lang.getPrefix() + Lang.get("Server_Is_Not_Online"));
             return;
         }
@@ -227,7 +227,7 @@ public class TeleportManager {
             Bukkit.getPluginManager().callEvent(event);
 
             if(event.isCancelled()) {
-                if(options.getCallback() != null) options.getCallback().accept(TeleportResult.CANCELLED_BY_SYSTEM);
+                options.runCallbacks(TeleportResult.CANCELLED_BY_SYSTEM);
                 if(event.getTeleportResultCallback() != null) event.getTeleportResultCallback().accept(TeleportResult.CANCELLED_BY_SYSTEM);
                 return;
             }
@@ -244,7 +244,7 @@ public class TeleportManager {
             Bukkit.getPluginManager().callEvent(event);
 
             if(event.isCancelled()) {
-                if(options.getCallback() != null) options.getCallback().accept(TeleportResult.CANCELLED_BY_SYSTEM);
+                options.runCallbacks(TeleportResult.CANCELLED_BY_SYSTEM);
                 if(event.getTeleportResultCallback() != null) event.getTeleportResultCallback().accept(TeleportResult.CANCELLED_BY_SYSTEM);
                 return;
             }
@@ -266,20 +266,22 @@ public class TeleportManager {
                 Teleport teleport = new Teleport(player, options.getDestination(), options.getOrigin(), options.getDisplayName(), options.getPermission(), finalSeconds, options.getCosts(), finalMessage, options.isCanMove(), options.isSilent(), options.getTeleportSound(), options.isAfterEffects(), new Callback<TeleportResult>() {
                     @Override
                     public void accept(TeleportResult object) {
-                        if(options.getCallback() != null) options.getCallback().accept(object);
+                        options.runCallbacks(object);
                         if(finalResultCallback != null) finalResultCallback.accept(object);
+
+                        options.destroy();
                     }
                 }).setVelocity(options.getVelocity());
 
                 SimulatedTeleportResult simulated = teleport.simulate(player);
                 if(simulated.getError() != null) {
                     player.sendMessage(simulated.getError());
-                    if(options.getCallback() != null) options.getCallback().accept(simulated.getResult());
+                    options.runCallbacks(simulated.getResult());
                     return;
                 }
 
                 if(simulated.getResult() == TeleportResult.NO_ADAPTER) {
-                    if(options.getCallback() != null) options.getCallback().accept(simulated.getResult());
+                    options.runCallbacks(simulated.getResult());
                     return;
                 }
 
@@ -288,12 +290,12 @@ public class TeleportManager {
                 } catch(Throwable ignored) {
                 }
 
-                if(options.getFinalCosts(player) > 0) {
+                if(options.getFinalCosts(player).doubleValue() > 0) {
                     double bank = MoneyAdapterType.getActive().getMoney(player);
 
-                    if(bank < options.getFinalCosts(player)) {
-                        if(options.getCallback() != null) options.getCallback().accept(TeleportResult.NOT_ENOUGH_MONEY);
-                        player.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money").replace("%AMOUNT%", (options.getFinalCosts(player) % ((int) options.getFinalCosts(player)) == 0 ? (int) options.getFinalCosts(player) : options.getFinalCosts(player)) + ""));
+                    if(bank < options.getFinalCosts(player).doubleValue()) {
+                        options.runCallbacks(TeleportResult.NOT_ENOUGH_MONEY);
+                        player.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money").replace("%AMOUNT%", options.getFinalCosts(player).toString()));
                         return;
                     }
 
@@ -311,11 +313,13 @@ public class TeleportManager {
                                 if(confirm) {
                                     //pay
                                     teleports.add(teleport);
-                                    MoneyAdapterType.getActive().withdraw(player, options.getFinalCosts(player));
+                                    MoneyAdapterType.getActive().withdraw(player, options.getFinalCosts(player).doubleValue());
                                     if(finalSeconds == 0 || options.isSkip()) teleport.teleport();
                                     else teleport.start();
                                 } else {
-                                    if(options.getCallback() != null) options.getCallback().accept(TeleportResult.DENIED_PAYMENT);
+
+                                    Sound.ITEM_BREAK.playSound(player, 0.7F, 0.9F);
+                                    options.runCallbacks(TeleportResult.DENIED_PAYMENT);
                                     if(options.getPaymentDeniedMessage(player) != null) player.sendMessage(options.getPaymentDeniedMessage(player));
                                 }
                             }
@@ -353,12 +357,13 @@ public class TeleportManager {
                         Bukkit.getPluginManager().registerEvents(listenerValue.getValue(), WarpSystem.getInstance());
 
                         runnable.runTaskLater(WarpSystem.getInstance(), timeOut + 5); //title fadeIn = 5
+                        Sound.NOTE_PIANO.playSound(player, 0.7F, 1.1F);
                         MessageAPI.sendTitle(player, "§e" + Lang.get("Sneak_to_confirm"), "§6" + Lang.get("Teleport_Costs") + ": §7" + options.getFinalCosts(player) + " " + Lang.get("Coins"), 5, timeOut, 5);
                         return;
                     }
 
                     teleports.add(teleport);
-                    MoneyAdapterType.getActive().withdraw(player, options.getFinalCosts(player));
+                    MoneyAdapterType.getActive().withdraw(player, options.getFinalCosts(player).doubleValue());
                 } else teleports.add(teleport);
 
                 if(finalSeconds == 0 || options.isSkip()) teleport.teleport();
@@ -366,7 +371,7 @@ public class TeleportManager {
             }
         };
 
-        if(options.isWaitForTeleport() && !options.isCanMove() && finalSeconds > 0 || (options.isConfirmPayment() && options.getFinalCosts(player) > 0)) {
+        if(options.isWaitForTeleport() && !options.isCanMove() && finalSeconds > 0 || (options.isConfirmPayment() && options.getFinalCosts(player).doubleValue() > 0)) {
             waitWhileWalking(player, waiting);
         } else waiting.accept(null);
     }

@@ -9,18 +9,20 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Ticker;
+import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarp;
 import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarps;
+import de.codingair.warpsystem.spigot.features.playerwarps.commands.CTempWarp;
+import de.codingair.warpsystem.spigot.features.playerwarps.commands.CTempWarps;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.PWList;
 import de.codingair.warpsystem.spigot.features.playerwarps.listeners.PlayerWarpListener;
-import de.codingair.warpsystem.spigot.features.playerwarps.utils.Category;
-import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
-import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarpData;
-import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarpUpdate;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.*;
+import de.codingair.warpsystem.transfer.packets.general.DeletePlayerWarpPacket;
 import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpUpdatePacket;
 import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpsPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.MoveLocalPlayerWarpsPacket;
@@ -29,6 +31,7 @@ import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.*;
@@ -101,6 +104,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
     private boolean economy;
     private boolean forcePlayerHead;
     private boolean customTeleportCosts;
+    private boolean protectedRegions;
     private int classesMin;
     private int classesMax;
     private boolean classes;
@@ -115,11 +119,13 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
         if(WarpSystem.getInstance().getFileManager().getFile("PlayerWarps") == null) WarpSystem.getInstance().getFileManager().loadFile("PlayerWarps", "/Memory/");
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("PlayerWarps");
 
-        WarpSystem.log("  > Loading PlayerWarps");
         int size = 0;
 
         ConfigFile configFile = WarpSystem.getInstance().getFileManager().getFile("Config");
         FileConfiguration config = configFile.getConfig();
+
+        this.bungeeCord = config.getBoolean("WarpSystem.PlayerWarps.General.BungeeCord", true);
+        WarpSystem.log("  > Loading PlayerWarps [Bungee: " + bungeeCord + "]");
 
         // Timings
         this.minTime = convertFromTimeFormat(config.getString("WarpSystem.PlayerWarps.Time.Min_Time", null), 300000);
@@ -138,7 +144,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
         this.inactiveTime = convertFromTimeFormat(config.getString("WarpSystem.PlayerWarps.Inactive.Time_After_Expiration", null), 2592000000L);
 
         //Costs - Generally
-        this.bungeeCord = config.getBoolean("WarpSystem.PlayerWarps.General.BungeeCord", true);
+        this.protectedRegions = config.getBoolean("WarpSystem.PlayerWarps.General.Support.ProtectedRegions", true);
         this.createCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Create", 200);
         this.editCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Edit", 200);
         this.naturalNumbers = config.getBoolean("WarpSystem.PlayerWarps.Costs.Round_costs_to_natural_numbers", false);
@@ -174,7 +180,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
         this.descriptionMaxLines = config.getInt("WarpSystem.PlayerWarps.Warp_Description.Max_Lines", 3);
 
         //generally
-        this.firstPublic = config.getBoolean("WarpSystem.PlayerWarps.Public_as_create_state", false);
+        this.firstPublic = config.getBoolean("WarpSystem.PlayerWarps.General.Public_as_create_state", false);
         this.trustedMemberCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Trusted_Member", 50);
 
         //refund
@@ -220,11 +226,21 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
                 }
             }
 
+        List<PlayerWarp> imported = TempWarpAdapter.convertTempWarps(true);
+        for(PlayerWarp playerWarp : imported) {
+            add(playerWarp);
+        }
+
         new CPlayerWarp().register(WarpSystem.getInstance());
         new CPlayerWarps().register(WarpSystem.getInstance());
+        new CTempWarps().register(WarpSystem.getInstance());
+        new CTempWarp().register(WarpSystem.getInstance());
 
         WarpSystem.log("    ...got " + warpCategories.size() + " Class(es)");
-        WarpSystem.log("    ...got " + size + " PlayerWarp(s)");
+        if(!imported.isEmpty()) WarpSystem.log("    ...got " + imported.size() + " imported TempWarp(s)");
+        imported.clear();
+
+        if(!bungeeCord) WarpSystem.log("    ...got " + size + " PlayerWarp(s)");
         if(isEconomy()) API.addTicker(this);
 
         WarpSystem.getInstance().getBungeeFeatureList().add(this);
@@ -241,7 +257,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
         file.clearConfig();
 
         JSONArray a = null;
-        if(!bungeeCord) {
+        if(!bungeeCord || !WarpSystem.getInstance().isOnBungeeCord()) {
             a = new JSONArray();
 
             for(List<PlayerWarp> data : this.warps.values()) {
@@ -332,9 +348,10 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
     }
 
     public boolean sync(PlayerWarp old, PlayerWarp warp) {
-        if(!bungeeCord) return false;
+        if(!bungeeCord || !WarpSystem.getInstance().isOnBungeeCord()) return false;
 
         if(warp.isSource()) {
+            warp.setSource(false);
             SendPlayerWarpsPacket packet = new SendPlayerWarpsPacket(new ArrayList<PlayerWarpData>() {{
                 add(warp.getData());
             }});
@@ -345,7 +362,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
     }
 
     public boolean sync(PlayerWarpData old, PlayerWarpData warp) {
-        if(!bungeeCord) return false;
+        if(!bungeeCord || !WarpSystem.getInstance().isOnBungeeCord()) return false;
         PlayerWarpUpdate update = warp.diff(old);
 
         if(update.isEmpty()) return false;
@@ -400,7 +417,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
 
                     if(inactive.before(new Date())) {
                         //Delete
-                        delete(warp);
+                        delete(warp, false);
                         warp.destroy();
                         Player player = warp.getOwner().getPlayer();
                         if(player != null) player.sendMessage(Lang.getPrefix() + Lang.get("Warp_was_deleted").replace("%NAME%", warp.getName()));
@@ -756,6 +773,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
 
     public void add(PlayerWarp warp) {
         List<PlayerWarp> warps = getOwnWarps(warp.getOwner().getId());
+        if(getWarp(warp.getOwner().getId(), warp.getName()) != null) return;
         warps.add(warp);
 
         if(warp.getStarted() == 0) {
@@ -767,7 +785,8 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
         this.warps.putIfAbsent(warp.getOwner().getId(), warps);
     }
 
-    public double delete(PlayerWarp warp) {
+    public double delete(PlayerWarp warp, boolean informBungee) {
+        if(warp == null) return 0;
         List<PlayerWarp> warps = getOwnWarps(warp.getOwner().getId());
         double refund = warps.remove(warp) ? calculateRefund(warp) : -1;
 
@@ -776,7 +795,22 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
             this.names.remove(warp.getOwner().getName());
         }
 
+        if(informBungee && bungeeCord && WarpSystem.getInstance().isOnBungeeCord()) {
+            DeletePlayerWarpPacket packet = new DeletePlayerWarpPacket(warp.getName(), warp.getOwner().getId());
+            WarpSystem.getInstance().getDataHandler().send(packet);
+        }
+
         return refund;
+    }
+
+    public void updateGUIs() {
+        List<PWList> guis = API.getRemovables(PWList.class);
+
+        for(PWList gui : guis) {
+            gui.updateList();
+        }
+
+        guis.clear();
     }
 
     public double calculateRefund(PlayerWarp warp) {
@@ -1010,5 +1044,18 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
 
     public void setInactiveTime(long inactiveTime) {
         this.inactiveTime = inactiveTime;
+    }
+
+    public boolean isProtectedRegions() {
+        return protectedRegions;
+    }
+
+    public static boolean isProtected(Player player) {
+        if(!getManager().isProtectedRegions()) return false;
+
+        PermissionPlayer check = new PermissionPlayer(player);
+        BlockBreakEvent event = new BlockBreakEvent(player.getLocation().getBlock(), check);
+        Bukkit.getPluginManager().callEvent(event);
+        return event.isCancelled();
     }
 }

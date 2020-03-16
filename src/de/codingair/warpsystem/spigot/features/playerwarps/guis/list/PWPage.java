@@ -54,6 +54,17 @@ public class PWPage extends Page {
         getLast().changePage(PWPage.this, true);
     }
 
+    public void updateEntries() {
+        initialize(getLast().getPlayer());
+
+        if(page > maxPage) {
+            page = maxPage;
+            initialize(getLast().getPlayer());
+        }
+
+        getLast().changePage(PWPage.this, true);
+    }
+
     @Override
     public void initialize(Player p) {
         getButtons().clear();
@@ -73,7 +84,13 @@ public class PWPage extends Page {
         if(filter.createButtonInList()) addButton(new SyncButton(slot) {
             @Override
             public ItemStack craftItem() {
-                return new ItemBuilder(XMaterial.NETHER_STAR).setName((PlayerWarpManager.hasPermission(p) ? "§b" + Lang.get("Create") : "§7" + Lang.get("Create") + " (§c" + Lang.get("Maximum_reached") + "§7)")).getItem();
+                ItemBuilder builder = new ItemBuilder(XMaterial.NETHER_STAR);
+
+                if(PlayerWarpManager.isProtected(p)) builder.setName("§7" + Lang.get("Create") + " (§c" + Lang.get("Protected_Area") + "§7)");
+                else if(PlayerWarpManager.hasPermission(p)) builder.setName("§b" + Lang.get("Create"));
+                else builder.setName("§7" + Lang.get("Create") + " (§c" + Lang.get("Maximum_reached") + "§7)");
+
+                return builder.getItem();
             }
 
             @Override
@@ -83,7 +100,7 @@ public class PWPage extends Page {
 
             @Override
             public boolean canClick(ClickType click) {
-                return click == ClickType.LEFT && PlayerWarpManager.hasPermission(p);
+                return click == ClickType.LEFT && !PlayerWarpManager.isProtected(p) && PlayerWarpManager.hasPermission(p);
             }
         }.setOption(new StandardButtonOption()));
 

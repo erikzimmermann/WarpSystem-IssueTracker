@@ -83,12 +83,12 @@ public class FeatureObject implements Serializable {
         if(getAction(Action.WARP) != null) {
             Origin origin = Origin.getByClass(this);
 
-            options.setCosts(getAction(CostsAction.class) == null ? 0 : getAction(CostsAction.class).getValue());
+            if(getAction(CostsAction.class) != null) options.setCosts(getAction(CostsAction.class).getValue());
             options.setOrigin(origin);
             options.setPermission(this.permission == null ? TeleportManager.NO_PERMISSION : permission);
             if(!origin.sendTeleportMessage()) options.setMessage(null);
 
-            options.setCallback(new Callback<TeleportResult>() {
+            options.addCallback(new Callback<TeleportResult>() {
                 @Override
                 public void accept(TeleportResult result) {
                     if(result == TeleportResult.TELEPORTED) {

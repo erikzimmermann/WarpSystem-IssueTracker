@@ -167,7 +167,13 @@ public class POptions extends PageItem {
                 builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Position") + ": §7" + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ());
                 builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Direction") + ": §7" + cut(l.getYaw()) + ", " + cut(l.getPitch()));
 
-                builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": " + (equalsLocation(l, p.getLocation()) ? "§7" : "§a") + Lang.get("Change"));
+                String info;
+
+                if(PlayerWarpManager.isProtected(p)) info = "§7" + Lang.get("Change") + " (§c" + Lang.get("Protected_Area") + "§7)";
+                else if(equalsLocation(l, p.getLocation())) info = "§7" + Lang.get("Change");
+                else info = "§a" + Lang.get("Change");
+
+                builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": " + info);
 
                 if(!original.getAction(WarpAction.class).getValue().equals(warp.getAction(WarpAction.class).getValue())) {
                     builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §c" + Lang.get("Reset"));
@@ -180,7 +186,7 @@ public class POptions extends PageItem {
 
             @Override
             public boolean canClick(ClickType click) {
-                return click == ClickType.LEFT && !equalsLocation(((Destination) warp.getAction(Action.WARP).getValue()).buildLocation(), p.getLocation())
+                return click == ClickType.LEFT && !PlayerWarpManager.isProtected(p) && !equalsLocation(((Destination) warp.getAction(Action.WARP).getValue()).buildLocation(), p.getLocation())
                         || click == ClickType.RIGHT && !original.getAction(WarpAction.class).getValue().equals(warp.getAction(WarpAction.class).getValue());
             }
 
@@ -262,15 +268,11 @@ public class POptions extends PageItem {
                         } else if(editing > 0) {
                             TimeUnit unit = getUnits()[editing - 1];
                             long time = TimeUnit.MILLISECONDS.convert(1, unit);
+                            long min = PlayerWarpManager.getManager().getMinTime();
 
-                            if(warp.getLeftTime() > 0) {
-                                long min = PlayerWarpManager.getManager().getMinTime();
-
-                                if(warp.getTime() > min && warp.getTime() - time < min) warp.setTime(min);
-                                else warp.setTime(warp.getTime() - time);
-
-                                if(warp.getTime() < min) warp.setTime(PlayerWarpManager.getManager().getMaxTime());
-                            }
+                            if(warp.getTime() == min) warp.setTime(PlayerWarpManager.getManager().getMaxTime());
+                            else if(warp.getTime() > min && warp.getTime() - time < min) warp.setTime(min);
+                            else warp.setTime(warp.getTime() - time);
                         }
                         update();
                     } else if(e.isRightClick()) {
@@ -280,13 +282,12 @@ public class POptions extends PageItem {
                         } else {
                             TimeUnit unit = getUnits()[editing - 1];
                             long time = TimeUnit.MILLISECONDS.convert(1, unit);
-
                             long max = PlayerWarpManager.getManager().getMaxTime();
 
-                            if(warp.getTime() < max && warp.getTime() + time > max) warp.setTime(max);
+                            if(warp.getTime() == max) warp.setTime(PlayerWarpManager.getManager().getMinTime());
+                            else if(warp.getTime() < max && warp.getTime() + time > max) warp.setTime(max);
+                            else if(warp.getTime() < 60000) warp.setTime(time);
                             else warp.setTime(warp.getTime() + time);
-
-                            if(warp.getTime() > max) warp.setTime(PlayerWarpManager.getManager().getMinTime());
                         }
                         update();
                     } else {
