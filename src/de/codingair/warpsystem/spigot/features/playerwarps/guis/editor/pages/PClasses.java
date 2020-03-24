@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages;
 
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
+import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
@@ -44,20 +45,45 @@ public class PClasses extends PageItem {
 
         ItemBuilder builder = new ItemBuilder(XMaterial.WRITABLE_BOOK).setHideStandardLore(true)
                 .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Classes"))
-                .setLore(getFreeMessage(warp, original))
-                .addLore(PWEditor.getCostsMessage(Math.max(warp.getTrusted().size() - original.getTrusted().size(), 0) * PlayerWarpManager.getManager().getTrustedMemberCosts()))
+                .setLore(getFreeMessage(warp, original, this))
+                .addLore(PWEditor.getCostsMessage(Math.max(warp.getTrusted().size() - original.getTrusted().size(), 0) * PlayerWarpManager.getManager().getTrustedMemberCosts(), PClasses.this))
                 .addLore(modified);
 
+        if(!warp.getClasses().equals(original.getClasses())) {
+            builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Shift_Rightclick") + ": §c" + Lang.get("Reset"));
+        }
+
         return builder.getItem();
+    }
+
+    @Override
+    public Button getPageButton() {
+        return new Button(0, getPageItem()) {
+            @Override
+            public void onClick(InventoryClickEvent e, Player player) {
+                if(e.getClick() == ClickType.SHIFT_RIGHT) {
+                    warp.getClasses().clear();
+                    warp.getClasses().addAll(original.getClasses());
+
+                    getLast().updatePage();
+                    updateIcon();
+                }
+            }
+
+            @Override
+            public boolean canClick(ClickType click) {
+                return click == ClickType.LEFT || (click == ClickType.SHIFT_RIGHT && !warp.getClasses().equals(original.getClasses()));
+            }
+        };
     }
 
     private void updateIcon() {
         getLast().updatePageItems();
     }
 
-    private static String getFreeMessage(PlayerWarp warp, PlayerWarp original) {
+    private static String getFreeMessage(PlayerWarp warp, PlayerWarp original, PageItem page) {
         if(warp.getTrusted().size() - original.getTrusted().size() >= 0) return null;
-        return PWEditor.getFreeMessage(-(warp.getTrusted().size() - original.getTrusted().size()) + " " + Lang.get("Trusted_members"));
+        return PWEditor.getFreeMessage(-(warp.getTrusted().size() - original.getTrusted().size()) + " " + Lang.get("Trusted_members"), page);
     }
 
     @Override
@@ -85,9 +111,9 @@ public class PClasses extends PageItem {
                     if(warp.hasClass(c)) {
                         builder.addEnchantment(Enchantment.DAMAGE_ALL, 1);
                         builder.setHideEnchantments(true);
-                        builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §c" + Lang.get("Remove"));
+                        builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §c" + Lang.get("Remove") + "§8 (§7" + warp.getClasses().size() + "/" + PlayerWarpManager.getManager().getClassesMax() + "§8)");
                     } else {
-                        builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Add"));
+                        builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Add") + "§8 (§7" + warp.getClasses().size() + "/" + PlayerWarpManager.getManager().getClassesMax() + "§8)");
                     }
 
                     return builder.getItem();
@@ -100,11 +126,12 @@ public class PClasses extends PageItem {
 
                     getLast().updatePage();
                     updateIcon();
+                    getLast().updateControllButtons();
                 }
 
                 @Override
                 public boolean canClick(ClickType click) {
-                    return click == ClickType.LEFT;
+                    return click == ClickType.LEFT && (warp.hasClass(c) || warp.getClasses().size() + 1 <= PlayerWarpManager.getManager().getClassesMax());
                 }
             }.setOption(option));
         }

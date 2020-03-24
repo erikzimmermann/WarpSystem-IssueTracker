@@ -37,7 +37,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
     protected Float yaw, pitch;
 
     public PlayerWarpData() {
-        owner = new User();
+        owner = new User("owner");
         trusted = new ArrayList<>();
         classes = new ArrayList<>();
         description = new ArrayList<>();
@@ -317,7 +317,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         else this.classes.clear();
 
         this.owner.read(d);
-        this.name = d.getString("name");
+        this.name = d.getString("name").replace(".", "_");
         this.description = d.getList("description");
         this.teleportMessage = d.getString("tpmsg");
 

@@ -78,4 +78,9 @@ public class PermissionButton extends SyncAnvilGUIButton {
             update();
         }
     }
+
+    @Override
+    public boolean canClick(ClickType click) {
+        return click == ClickType.LEFT || (click == ClickType.RIGHT && object.getPermission() != null);
+    }
 }

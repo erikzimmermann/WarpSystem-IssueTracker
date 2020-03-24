@@ -5,10 +5,10 @@ import de.codingair.codingapi.player.chat.SimpleMessage;
 import de.codingair.codingapi.player.gui.anvil.*;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
-import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
+import de.codingair.codingapi.server.commands.builder.MultiTextCommandComponent;
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
-import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.commands.WarpSystemBaseComponent;
@@ -17,12 +17,10 @@ import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.PWList;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.PWMultiCommandComponent;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
-import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,13 +50,23 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
             }
         });
 
-        getComponent("delete").addChild(new MultiCommandComponent() {
+        getComponent("delete").addChild(new MultiTextCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                List<PlayerWarp> l = PlayerWarpManager.getManager().getOwnWarps((Player) sender);
+                if(sender.hasPermission(WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS)) {
+                    PlayerWarpManager.getManager().interactWithWarps(new Callback<PlayerWarp>() {
+                        @Override
+                        public void accept(PlayerWarp warp) {
+                            suggestions.add(warp.getOwner().getName() + "." + warp.getName(false).replace(" ", "_"));
+                            if(!suggestions.contains(warp.getOwner().getName())) suggestions.add(warp.getOwner().getName());
+                        }
+                    });
+                } else {
+                    List<PlayerWarp> l = PlayerWarpManager.getManager().getOwnWarps((Player) sender);
 
-                for(PlayerWarp warp : l) {
-                    suggestions.add(warp.getName(false));
+                    for(PlayerWarp warp : l) {
+                        suggestions.add(warp.getName(false).replace(" ", "_"));
+                    }
                 }
             }
 
@@ -116,13 +124,25 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
             }
         });
 
-        getComponent("edit").addChild(new MultiCommandComponent() {
+        getComponent("edit").addChild(new PWMultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                List<PlayerWarp> l = PlayerWarpManager.getManager().getOwnWarps((Player) sender);
+                if(sender.hasPermission(WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS)) {
+                    PlayerWarpManager.getManager().interactWithWarps(new Callback<PlayerWarp>() {
+                        @Override
+                        public void accept(PlayerWarp warp) {
+                            suggestions.add(warp.getOwner().getName() + "." + warp.getName(false).replace(" ", "_"));
+                            if(!suggestions.contains(warp.getOwner().getName())) suggestions.add(warp.getOwner().getName());
+                        }
+                    });
+                } else {
+                    List<PlayerWarp> l = new ArrayList<>(PlayerWarpManager.getManager().getOwnWarps((Player) sender));
 
-                for(PlayerWarp warp : l) {
-                    suggestions.add(warp.getName(false));
+                    for(PlayerWarp warp : l) {
+                        suggestions.add(warp.getName(false).replace(" ", "_"));
+                    }
+
+                    l.clear();
                 }
             }
 
@@ -135,7 +155,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                     return false;
                 }
 
-                if(!warp.isOwner((Player) sender)) {
+                if(!warp.isOwner((Player) sender) && !sender.hasPermission(WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS)) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_no_access"));
                     return false;
                 }
@@ -153,7 +173,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
             }
         });
 
-        getComponent("create").addChild(new MultiCommandComponent() {
+        getComponent("create").addChild(new MultiTextCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
             }
@@ -167,6 +187,11 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
 
                 if(PlayerWarpManager.isProtected((Player) sender)) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Create_Protected"));
+                    return false;
+                }
+
+                if(argument.length() < PlayerWarpManager.getManager().getNameMinLength() || argument.length() > PlayerWarpManager.getManager().getNameMaxLength()) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Name_Too_Long_Too_Short").replace("%MIN%", PlayerWarpManager.getManager().getNameMinLength() + "").replace("%MAX%", PlayerWarpManager.getManager().getNameMaxLength() + ""));
                     return false;
                 }
 
@@ -199,7 +224,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
         if(n == (int) n) return (int) n;
         else return ((double) (int) (n * 100)) / 100;
     }
-    
+
     public static void createPlayerWarp(Player p, GUI fallBack) {
         if(!PlayerWarpManager.hasPermission(p)) {
             p.sendMessage(Lang.getPrefix() + Lang.get("Warp_Maximum_of_Warps").replace("%AMOUNT%", PlayerWarpManager.getManager().getOwnWarps(p).size() + ""));
@@ -244,8 +269,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                             GUI g = new PWEditor(e.getPlayer(), e.getSubmittedText());
                             g.setFallbackGUI(fallBack);
                             fallBack.changeGUI(g, true);
-                        }
-                        else new PWEditor(e.getPlayer(), e.getSubmittedText()).open();
+                        } else new PWEditor(e.getPlayer(), e.getSubmittedText()).open();
                     });
                 } else if(fallBack != null) fallBack.open();
             }

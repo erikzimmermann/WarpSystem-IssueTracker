@@ -14,7 +14,6 @@ import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
-import de.codingair.warpsystem.spigot.base.guis.editor.buttons.LoreButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
@@ -57,8 +56,8 @@ public class PAppearance extends PageItem {
                     ItemBuilder builder = new ItemBuilder(XMaterial.ITEM_FRAME).setName("§6§n" + Lang.get("Item"));
 
                     if(!warp.isStandardItem()) {
-                        if(original.isStandardItem()) builder.addLore(PWEditor.getCostsMessage(PlayerWarpManager.getManager().getItemCosts()));
-                        else if(!warp.isSameItem(original.getItem())) builder.addLore(PWEditor.getCostsMessage(PlayerWarpManager.getManager().getItemChangeCosts()));
+                        if(original.isStandardItem()) builder.addLore(PWEditor.getCostsMessage(PlayerWarpManager.getManager().getItemCosts(), PAppearance.this));
+                        else if(!warp.isSameItem(original.getItem())) builder.addLore(PWEditor.getCostsMessage(PlayerWarpManager.getManager().getItemChangeCosts(), PAppearance.this));
                     }
 
                     if(p.getInventory().getItem(p.getInventory().getHeldItemSlot()) == null || p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType() == Material.AIR)
@@ -115,7 +114,7 @@ public class PAppearance extends PageItem {
 
                 return new ItemBuilder(XMaterial.NAME_TAG)
                         .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Name"))
-                        .setLore(PWEditor.getCostsMessage(editing && !original.getName().equals(warp.getName()) ? PlayerWarpManager.getManager().getNameChangeCosts() : 0))
+                        .setLore(PWEditor.getCostsMessage(editing && !original.getName().equals(warp.getName()) ? PlayerWarpManager.getManager().getNameChangeCosts() : 0, PAppearance.this))
                         .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + "§7'§r" + org.bukkit.ChatColor.translateAlternateColorCodes('&', warp.getName()) + "§7'")
                         .addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Name"),
                                 (warp.getName().equals(startName) ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §c" + Lang.get("Reset")))
@@ -146,6 +145,11 @@ public class PAppearance extends PageItem {
 
                 if(input == null) {
                     e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
+                    return;
+                }
+
+                if(input.length() < PlayerWarpManager.getManager().getNameMinLength() || input.length() > PlayerWarpManager.getManager().getNameMaxLength()) {
+                    p.sendMessage(Lang.getPrefix() + Lang.get("Name_Too_Long_Too_Short").replace("%MIN%", PlayerWarpManager.getManager().getNameMinLength() + "").replace("%MAX%", PlayerWarpManager.getManager().getNameMaxLength() + ""));
                     return;
                 }
 
@@ -232,8 +236,8 @@ public class PAppearance extends PageItem {
 
                 ItemBuilder builder = new ItemBuilder(XMaterial.PAPER).setName("§6§n" + Lang.get("Description"));
 
-                if(length < 0) builder.addLore(PWEditor.getFreeMessage(-length + " " + Lang.get("Characters")));
-                else builder.setLore(PWEditor.getCostsMessage(PlayerWarpManager.getManager().getDescriptionCosts() * length));
+                if(length < 0) builder.addLore(PWEditor.getFreeMessage(-length + " " + Lang.get("Characters"), PAppearance.this));
+                else builder.setLore(PWEditor.getCostsMessage(PlayerWarpManager.getManager().getDescriptionCosts() * length, PAppearance.this));
 
                 builder.addLore("§3" + Lang.get("Current") + ": " + (lore == null || lore.isEmpty() ? "§c" + Lang.get("Not_Set") : ""))
                         .addLore(lore).addLore("");
@@ -305,8 +309,8 @@ public class PAppearance extends PageItem {
                 List<String> msg = TextAlignment.lineBreak((warp.getTeleportMessage() == null ? "§c" + Lang.get("Not_Set") : "§7\"§f" + ChatColor.translateAlternateColorCodes('&', warp.getTeleportMessage()) + "§7\""), 100);
 
                 int length = (warp.getTeleportMessage() == null ? 0 : warp.getTeleportMessage().length()) - (original.getTeleportMessage() == null ? 0 : original.getTeleportMessage().length());
-                if(length < 0) builder.addLore(PWEditor.getFreeMessage(-length + " " + Lang.get("Characters")));
-                else builder.addLore(PWEditor.getCostsMessage(length * PlayerWarpManager.getManager().getMessageCosts()));
+                if(length < 0) builder.addLore(PWEditor.getFreeMessage(-length + " " + Lang.get("Characters"), PAppearance.this));
+                else builder.addLore(PWEditor.getCostsMessage(length * PlayerWarpManager.getManager().getMessageCosts(), PAppearance.this));
 
                 builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + msg.remove(0));
                 if(!msg.isEmpty()) builder.addLore(msg);

@@ -1,12 +1,17 @@
 package de.codingair.warpsystem.spigot.features.playerwarps.guis.editor;
 
+import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.sounds.MusicData;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
+import de.codingair.codingapi.tools.items.ItemBuilder;
+import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.Backup;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
+import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
@@ -19,6 +24,10 @@ import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarpData;
 import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpsPacket;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,15 +44,17 @@ public class PWEditor extends Editor<PlayerWarp> {
     }
 
     public PWEditor(Player p, PlayerWarp warp) {
-        this(p, warp, warp.clone());
+        this(p, warp, warp.clone().setTime(warp.getLeftTime()));
     }
 
     private PWEditor(Player p, PlayerWarp warp, PlayerWarp clone) {
         super(p, clone, new Backup<PlayerWarp>(warp) {
+
                     @Override
                     public void applyTo(PlayerWarp clone) {
-                        boolean creating = !PlayerWarpManager.getManager().existsOwn(p, warp.getName());
-                        Number costs = calculateCosts(creating, warp, clone);
+                        boolean isOwner = warp.isOwner(p);
+                        boolean creating = isOwner && !PlayerWarpManager.getManager().existsOwn(p, warp.getName());
+                        Number costs = calculateCosts(creating, warp, isOwner ? clone : null);
                         MoneyAdapterType.getActive().withdraw(p, costs.doubleValue());
 
                         clone.setStarted(System.currentTimeMillis());
@@ -74,10 +85,10 @@ public class PWEditor extends Editor<PlayerWarp> {
                         clone.destroy();
                     }
                 }, () -> clone.getItem().getItem(),
-                new PAppearance(p, clone, warp, PlayerWarpManager.getManager().existsOwn(p, warp.getName())),
-                new POptions(p, clone, warp, PlayerWarpManager.getManager().existsOwn(p, warp.getName())),
+                new PAppearance(p, clone, warp, !warp.isOwner(p) || PlayerWarpManager.getManager().existsOwn(p, warp.getName())),
+                new POptions(p, clone, warp, !warp.isOwner(p) || PlayerWarpManager.getManager().existsOwn(p, warp.getName())),
                 new PTrusted(p, clone, warp),
-                PlayerWarpManager.getManager().isClasses() ? new PClasses(p, clone, warp) : null
+               (PlayerWarpManager.getManager().isClasses() ? new PClasses(p, clone, warp) : null)
         );
 
         this.original = warp;
@@ -85,7 +96,7 @@ public class PWEditor extends Editor<PlayerWarp> {
 
         if(clone.getLeftTime() < PlayerWarpManager.getManager().getMinTime()) clone.setTime(PlayerWarpManager.getManager().getMinTime());
 
-        this.creating = !PlayerWarpManager.getManager().existsOwn(p, warp.getName());
+        this.creating = warp.isOwner(getPlayer()) && !PlayerWarpManager.getManager().existsOwn(p, warp.getName());
 
         setOpenSound(new SoundData(Sound.LEVEL_UP, 0.7F, 1.5F));
         setCancelSound(new SoundData(Sound.ITEM_BREAK, 0.7F, 1F));
@@ -96,6 +107,57 @@ public class PWEditor extends Editor<PlayerWarp> {
         setSuccessSound(music0);
 
         initControllButtons();
+    }
+
+    @Override
+    public void initControllButtons() {
+        super.initControllButtons();
+
+        if(warp != null && !warp.isOwner(getPlayer())) {
+            ItemButtonOption option = new ItemButtonOption();
+            option.setOnlyLeftClick(true);
+
+            addButton(new SyncButton(8, 2) {
+                private BukkitRunnable runnable;
+
+                @Override
+                public ItemStack craftItem() {
+                    boolean finish = canFinish();
+                    return new ItemBuilder(finish ? XMaterial.LIME_TERRACOTTA : XMaterial.LIGHT_GRAY_TERRACOTTA).setName((finish ? "§a" : "§7") + Lang.get("Finish") + finishButtonNameAddition()).addLore((runnable != null ? "§7» §c" + ChatColor.stripColor(Lang.get("Confirm")) : null)).addLore(finishButtonLoreAddition()).getItem();
+                }
+
+                @Override
+                public void onClick(InventoryClickEvent e, Player player) {
+                    if(runnable != null) {
+                        //save
+                        close();
+                        getBackup().applyTo(getClone());
+
+                        SoundData sound = getSuccessSound();
+                        if(sound != null) sound.play(player);
+
+                        String msg = getSuccessMessage();
+                        if(msg != null) getPlayer().sendMessage(msg);
+                    } else {
+                        runnable = new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                runnable = null;
+                                update();
+                            }
+                        };
+                        runnable.runTaskLater(WarpSystem.getInstance(), 20);
+
+                        update();
+                    }
+                }
+
+                @Override
+                public boolean canClick(ClickType click) {
+                    return canFinish();
+                }
+            }.setOption(option));
+        }
     }
 
     public void updateTime() {
@@ -110,14 +172,14 @@ public class PWEditor extends Editor<PlayerWarp> {
         ((SyncButton) getButtonAt(8, 2)).update();
     }
 
-    public static String getCostsMessage(double costs) {
-        if(costs == 0 || !PlayerWarpManager.getManager().isEconomy()) return null;
+    public static String getCostsMessage(double costs, PageItem page) {
+        if(costs == 0 || !PlayerWarpManager.getManager().isEconomy() || (page.getLast() != null && !((PWEditor) page.getLast()).getClone().isOwner(page.getLast().getPlayer()))) return null;
         Number n = cut(costs);
         return Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Costs") + ": §7" + (n instanceof Integer ? n.intValue() : n) + " " + Lang.get("Coins");
     }
 
-    public static String getFreeMessage(String free) {
-        if(free == null || !PlayerWarpManager.getManager().isEconomy()) return null;
+    public static String getFreeMessage(String free, PageItem page) {
+        if(free == null || !PlayerWarpManager.getManager().isEconomy() || (page.getLast() != null && !((PWEditor) page.getLast()).getClone().isOwner(page.getLast().getPlayer()))) return null;
         return Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Free") + ": §7" + free;
     }
 
@@ -131,7 +193,7 @@ public class PWEditor extends Editor<PlayerWarp> {
     }
 
     private Number calculateCosts() {
-        return paid = calculateCosts(creating, original, warp);
+        return paid = calculateCosts(creating, original, warp != null && warp.isOwner(getPlayer()) ? warp : null);
     }
 
     private static Number calculateCosts(boolean creating, PlayerWarp original, PlayerWarp warp) {
@@ -206,7 +268,7 @@ public class PWEditor extends Editor<PlayerWarp> {
         else {
             long diff;
             if(warp.getLeftTime() <= 0) diff = -original.getLeftTime();
-            else diff = warp.getTime() + original.getPassedTime() - original.getTime();
+            else diff = warp.getTime() - original.getLeftTime();
 
             if(diff > 0) costs[7] = (diff / 60000D) * PlayerWarpManager.getManager().getActiveTimeCosts();
             else if(diff < 0) costs[7] = (diff / 60000D) * PlayerWarpManager.getManager().getActiveTimeCosts() * PlayerWarpManager.getManager().getActiveTimeRefund() * original.getRefundFactor();
@@ -235,21 +297,37 @@ public class PWEditor extends Editor<PlayerWarp> {
 
     @Override
     public boolean canFinish() {
-        if(this.warp == null) return false;
+        if(this.warp == null || (PlayerWarpManager.getManager().isClasses() && warp.getClasses().size() < PlayerWarpManager.getManager().getClassesMin())) return false;
+        if(!warp.isOwner(getPlayer())) return true;
         return canPay(getPlayer(), calculateCosts().doubleValue());
     }
 
     @Override
     public String finishButtonNameAddition() {
         Number costs = calculateCosts();
-        return costs.doubleValue() == 0 ? "" : "§7 - " + (costs.doubleValue() >= 0 ? (Lang.get("Costs") + ": " + (canPay(getPlayer(), costs.doubleValue()) ? "§a" : "§c") + costs + " " + Lang.get("Coins")) :
+        return warp != null && !warp.isOwner(getPlayer()) ? "§7 - §c" + Lang.get("Admin") : costs.doubleValue() == 0 ? "" : "§7 - " + (costs.doubleValue() >= 0 ? (Lang.get("Costs") + ": " + (canPay(getPlayer(), costs.doubleValue()) ? "§a" : "§c") + costs + " " + Lang.get("Coins")) :
                 Lang.get("Refund") + ": §a" + cut(-costs.doubleValue()) + " " + Lang.get("Coins"));
     }
 
     @Override
     public List<String> finishButtonLoreAddition() {
         List<String> lore = new ArrayList<>();
-        double[] costs = calculate(creating, original, warp);
+
+        if(warp != null && PlayerWarpManager.getManager().isClasses() && warp.getClasses().size() < PlayerWarpManager.getManager().getClassesMin()) {
+            List<String> l = Lang.getStringList("PlayerWarp_Classes");
+            List<String> modified = new ArrayList<>();
+            for(String s : l) {
+                if(s.trim().isEmpty()) continue;
+                modified.add(s.replace("%MIN%", PlayerWarpManager.getManager().getClassesMin() + "").replace("%MAX%", PlayerWarpManager.getManager().getClassesMax() + ""));
+            }
+            l.clear();
+
+            lore.add("");
+            lore.addAll(modified);
+            modified.clear();
+        }
+
+        double[] costs = calculate(creating, original, warp != null && warp.isOwner(getPlayer()) ? warp : null);
         double[] copy = Arrays.copyOf(costs, costs.length);
         Arrays.sort(copy);
 

@@ -57,12 +57,12 @@ public class SimpleWarp implements Serializable {
 
     @Override
     public boolean read(DataWriter d) throws Exception {
-        this.name = ((String) d.get("Name")).replace(" ", "_");
-        this.permission = d.get("Permission");
+        this.name = d.getString("Name").replace(" ", "_");
+        this.permission = d.getString("Permission");
         this.location = d.getLocation("Location");
         this.created = d.getDate("Created");
         this.lastChange = d.getDate("LastChange");
-        this.lastChanger = d.get("LastChanger");
+        this.lastChanger = d.getString("LastChanger");
         this.teleports = d.getInteger("Teleports");
         this.costs = d.getDouble("Costs");
         return true;

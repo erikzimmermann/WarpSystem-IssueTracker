@@ -1,6 +1,6 @@
 name: WarpSystem
 author: CodingAir
-version: '4.2.0_beta_05'
+version: '4.2.0'
 description: WarpSystem
 main: de.codingair.warpsystem.spigot.base.WarpSystem
 softdepend: [Multiverse-Core, Vault, Essentials, MultiWorld]

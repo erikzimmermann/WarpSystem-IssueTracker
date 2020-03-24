@@ -173,7 +173,6 @@ public class Editor<C> extends SimpleGUI {
 
     public void updatePageItems() {
         ItemButtonOption option = new ItemButtonOption();
-        option.setOnlyLeftClick(true);
         option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1));
 
         int slot = 1;
@@ -187,11 +186,8 @@ public class Editor<C> extends SimpleGUI {
                 item.setHideEnchantments(true);
             } else link = page;
 
-            Button b = new Button(slot++, item.getItem()) {
-                @Override
-                public void onClick(InventoryClickEvent e, Player player) {
-                }
-            }.setOption(option);
+            Button b = page.getPageButton().setOption(option);
+            b.setSlot(slot++);
             b.setLink(link);
             addButton(b);
         }

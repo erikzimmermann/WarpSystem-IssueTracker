@@ -34,10 +34,11 @@ public class PlayerWarpListener implements PacketListener, Listener {
         PlayerWarpManager.getManager().checkPlayerWarpOwnerNames(e.getPlayer());
         List<PlayerWarp> notify = new ArrayList<>();
 
+        boolean timeDependent = PlayerWarpManager.getManager().isEconomy();
         double money = 0;
         List<PlayerWarp> warps = PlayerWarpManager.getManager().getOwnWarps(e.getPlayer());
         for(PlayerWarp warp : warps) {
-            if(warp.isExpired()) {
+            if(timeDependent && warp.isExpired()) {
                 notify.add(warp);
             }
 

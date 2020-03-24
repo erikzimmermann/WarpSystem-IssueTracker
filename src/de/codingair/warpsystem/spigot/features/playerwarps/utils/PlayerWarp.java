@@ -317,7 +317,7 @@ public class PlayerWarp extends FeatureObject {
         else this.classes.clear();
 
         this.owner.read(d);
-        this.name = d.getString("name");
+        this.name = d.getString("name").replace(".", "_");
         this.description = d.getList("description");
         this.teleportMessage = d.getString("tpmsg");
         this.item = d.getItemBuilder("item");
@@ -431,7 +431,7 @@ public class PlayerWarp extends FeatureObject {
     }
 
     public boolean isOwner(Player player) {
-        return player != null && isOwner(player.getUniqueId());
+        return player != null && isOwner(WarpSystem.getInstance().getUUIDManager().get(player));
     }
 
     public boolean isOwner(UUID id) {
@@ -443,7 +443,7 @@ public class PlayerWarp extends FeatureObject {
     }
 
     public boolean isTrusted(Player player) {
-        return isTrusted(player.getUniqueId());
+        return isTrusted(WarpSystem.getInstance().getUUIDManager().get(player));
     }
 
     public boolean isTrusted(UUID id) {
@@ -749,6 +749,21 @@ public class PlayerWarp extends FeatureObject {
         @Override
         public void destroy() {
 
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if(this == o) return true;
+            if(o == null || getClass() != o.getClass()) return false;
+            User user = (User) o;
+            return jsonPrefix.equals(user.jsonPrefix) &&
+                    name.equals(user.name) &&
+                    id.equals(user.id);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(jsonPrefix, name, id);
         }
 
         public String getName() {

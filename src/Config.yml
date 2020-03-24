@@ -117,9 +117,19 @@ WarpSystem:
       Custom_teleport_costs: true
       #Turn this to true, if you want, that all PlayerWarps should be public when you create them. The state can always be changed.
       Public_as_create_state: false
+      Command_References:
+      - 'tempwarps'
+      - 'twarps'
+      - 'tws'
+      - 'tempwarp'
+      - 'twarp'
+      - 'tw'
+      - 'home'
+      - 'homes'
+      Name_Blacklist: []
       Categories:
         Enabled: true
-        Min: 1
+        Min: 0
         Max: 2
         #The IDs must be identical on every Spigot server.
         Classes:
@@ -200,6 +210,9 @@ WarpSystem:
         #Costs per character
         Teleport_Message: 2
         Warp_Description: 2
+    Name_Length:
+      Min: 3
+      Max: 20
     Teleport_Message:
       Length:
         Min: 5

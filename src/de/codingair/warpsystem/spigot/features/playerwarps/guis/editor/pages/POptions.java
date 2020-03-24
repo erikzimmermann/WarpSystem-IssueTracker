@@ -44,7 +44,6 @@ public class POptions extends PageItem {
     public void initialize(Player p) {
         ItemButtonOption option = new ItemButtonOption();
         option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
-        option.setOnlyLeftClick(true);
         int slot = 1;
 
         addButton(new SyncButton(slot++, 2) {
@@ -66,8 +65,8 @@ public class POptions extends PageItem {
 
                 builder.setName(Editor.ITEM_TITLE_COLOR + Lang.get("Status"));
 
-                if(original.isPublic() && !warp.isPublic()) builder.addLore(PWEditor.getFreeMessage(Lang.get("Public")));
-                else if(!original.isPublic() && warp.isPublic()) builder.addLore(PWEditor.getCostsMessage(PlayerWarpManager.getManager().getPublicCosts()));
+                if(original.isPublic() && !warp.isPublic()) builder.addLore(PWEditor.getFreeMessage(Lang.get("Public"), POptions.this));
+                else if(!original.isPublic() && warp.isPublic()) builder.addLore(PWEditor.getCostsMessage(PlayerWarpManager.getManager().getPublicCosts(), POptions.this));
 
                 builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " +
                         (warp.isPublic() ?
@@ -75,7 +74,7 @@ public class POptions extends PageItem {
                                 "§e" + Lang.get("Private")
                         ));
 
-                builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Toggle"));
+                builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": " + (warp.isPublic() == original.isPublic() ? "§a" + Lang.get("Toggle") : "§c" + Lang.get("Reset")));
 
                 return builder.getItem();
             }
@@ -120,8 +119,8 @@ public class POptions extends PageItem {
                     builder.setName(Editor.ITEM_TITLE_COLOR + Lang.get("Teleport_Costs"));
 
                     double costs = warp.getTeleportCosts() - original.getTeleportCosts();
-                    if(costs > 0) builder.addLore(PWEditor.getCostsMessage(costs * PlayerWarpManager.getManager().getTeleportCosts()));
-                    else if(costs < 0) builder.addLore(PWEditor.getFreeMessage("≤" + original.getTeleportCosts() + " " + Lang.get("Coins")));
+                    if(costs > 0) builder.addLore(PWEditor.getCostsMessage(costs * PlayerWarpManager.getManager().getTeleportCosts(), POptions.this));
+                    else if(costs < 0) builder.addLore(PWEditor.getFreeMessage("≤" + original.getTeleportCosts() + " " + Lang.get("Coins"), POptions.this));
 
                     builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": §e" + PWEditor.cut(warp.getTeleportCosts()) + " " + Lang.get("Coins"));
                     builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Change"));
@@ -146,7 +145,7 @@ public class POptions extends PageItem {
                         updateCosts();
                     }
                 }
-            }.setOption(option).setOnlyLeftClick(false));
+            }.setOption(option));
 
         addButton(new SyncButton(slot++, 2) {
             @Override
@@ -156,14 +155,15 @@ public class POptions extends PageItem {
                 builder.setName(Editor.ITEM_TITLE_COLOR + Lang.get("Target_Position"));
 
                 if(PlayerWarpManager.getManager().isEconomy() && !original.getAction(WarpAction.class).getValue().equals(warp.getAction(WarpAction.class).getValue())) {
-                    builder.addLore(PWEditor.getCostsMessage(PlayerWarpManager.getManager().getPositionChangeCosts()), "");
+                    String costsMessage = PWEditor.getCostsMessage(PlayerWarpManager.getManager().getPositionChangeCosts(), POptions.this);
+                    builder.addLore(costsMessage, costsMessage != null ? "" : null);
                 }
 
                 Destination d = (Destination) warp.getAction(Action.WARP).getValue();
                 GlobalLocationAdapter a = (GlobalLocationAdapter) d.getAdapter();
-                Location l = a.getLocation();
+                de.codingair.codingapi.tools.Location l = a.getLocation();
                 if(a.getServer() != null) builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Server") + ": §7" + a.getServer());
-                builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("World") + ": §7" + l.getWorld().getName());
+                builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("World") + ": §7" + l.getWorldName());
                 builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Position") + ": §7" + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ());
                 builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Direction") + ": §7" + cut(l.getYaw()) + ", " + cut(l.getPitch()));
 
@@ -215,11 +215,17 @@ public class POptions extends PageItem {
                     updateCosts();
                 }
             }
-        }.setOption(option).setOnlyLeftClick(false));
+        }.setOption(option));
 
         if(PlayerWarpManager.getManager().isEconomy())
             addButton(new SyncButton(slot++, 2) {
                 private int editing = 0;
+
+                @Override
+                public boolean canClick(ClickType click) {
+                    if(editing > 0) return click == ClickType.LEFT || click == ClickType.RIGHT || click == ClickType.SHIFT_LEFT || click == ClickType.SHIFT_RIGHT;
+                    else return click == ClickType.LEFT || click == ClickType.RIGHT || click == ClickType.SHIFT_RIGHT;
+                }
 
                 @Override
                 public ItemStack craftItem() {
@@ -228,10 +234,11 @@ public class POptions extends PageItem {
                     builder.setName(Editor.ITEM_TITLE_COLOR + Lang.get("Active_Time"));
 
                     if(isEditing && original.getLeftTime() > 500) {
-                        long diff = warp.getTime() + original.getPassedTime() - original.getTime();
+                        long diff;
                         if(warp.getLeftTime() <= 0) diff = -original.getLeftTime();
+                        else diff = warp.getTime() - original.getLeftTime();
 
-                        builder.addLore(PWEditor.getCostsMessage(diff / 60000D * PlayerWarpManager.getManager().getActiveTimeCosts()));
+                        builder.addLore(PWEditor.getCostsMessage(diff / 60000D * PlayerWarpManager.getManager().getActiveTimeCosts(), POptions.this));
 
                         if(editing == 0) {
                             builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": §7" + PlayerWarpManager.convertInTimeFormat(original.getLeftTime(), 0, "", ""));
@@ -242,7 +249,7 @@ public class POptions extends PageItem {
                         builder.addLore((diff >= 0 ? "§2+ " : "§4- ") + PlayerWarpManager.convertInTimeFormat(Math.abs(diff), 0, "", ""));
                         builder.addLore("§7= " + (editing == 0 ? "§e" : "§7") + PlayerWarpManager.convertInTimeFormat(warp.getTime(), editing, "§e", "§7"));
                     } else {
-                        builder.addLore(PWEditor.getCostsMessage(warp.getTime() / 60000D * PlayerWarpManager.getManager().getActiveTimeCosts()));
+                        builder.addLore(PWEditor.getCostsMessage(warp.getTime() / 60000D * PlayerWarpManager.getManager().getActiveTimeCosts(), POptions.this));
                         builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + (editing == 0 ? "§e" : "§7") + PlayerWarpManager.convertInTimeFormat(isEditing ? warp.getTime() : warp.getLeftTime(), editing, "§e", "§7"));
                     }
 
@@ -254,6 +261,7 @@ public class POptions extends PageItem {
                     } else {
                         builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Choose"));
                         builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §a" + Lang.get("Change"));
+                        builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Shift_Rightclick") + ": §c" + Lang.get("Reset"));
                     }
 
                     return builder.getItem();
@@ -270,25 +278,33 @@ public class POptions extends PageItem {
                             long time = TimeUnit.MILLISECONDS.convert(1, unit);
                             long min = PlayerWarpManager.getManager().getMinTime();
 
+                            long ms = warp.getTime() - (((long) (warp.getTime() / 60000D)) * 60000);
+
                             if(warp.getTime() == min) warp.setTime(PlayerWarpManager.getManager().getMaxTime());
                             else if(warp.getTime() > min && warp.getTime() - time < min) warp.setTime(min);
+                            else if(ms > 500 && warp.getTime() - ms >= min) warp.setTime(warp.getTime() - ms - (unit != TimeUnit.MINUTES ? time : 0));
                             else warp.setTime(warp.getTime() - time);
                         }
                         update();
                     } else if(e.isRightClick()) {
-                        if(e.isShiftClick() || editing == 0) {
-                            editing++;
-                            if(editing - 1 == getUnits().length) editing = 0;
-                        } else {
-                            TimeUnit unit = getUnits()[editing - 1];
-                            long time = TimeUnit.MILLISECONDS.convert(1, unit);
-                            long max = PlayerWarpManager.getManager().getMaxTime();
+                        if(editing > 0 || !e.isShiftClick()) {
+                            if(e.isShiftClick() || editing == 0) {
+                                editing++;
+                                if(editing - 1 == getUnits().length) editing = 0;
+                            } else {
+                                TimeUnit unit = getUnits()[editing - 1];
+                                long time = TimeUnit.MILLISECONDS.convert(1, unit);
+                                long max = PlayerWarpManager.getManager().getMaxTime();
 
-                            if(warp.getTime() == max) warp.setTime(PlayerWarpManager.getManager().getMinTime());
-                            else if(warp.getTime() < max && warp.getTime() + time > max) warp.setTime(max);
-                            else if(warp.getTime() < 60000) warp.setTime(time);
-                            else warp.setTime(warp.getTime() + time);
-                        }
+                                long ms = warp.getTime() - (((long) (warp.getTime() / 60000D)) * 60000);
+
+                                if(warp.getTime() == max) warp.setTime(PlayerWarpManager.getManager().getMinTime());
+                                else if(warp.getTime() < max && warp.getTime() + time > max) warp.setTime(max);
+                                else if(ms > 500 && warp.getTime() + (60000L - ms) <= max) warp.setTime(warp.getTime() + ((unit == TimeUnit.MINUTES ? 60000 : 0) - ms) + (unit != TimeUnit.MINUTES ? time : 0));
+                                else warp.setTime(warp.getTime() + time);
+                            }
+                        } else warp.setTime(Math.max(original.getLeftTime(), PlayerWarpManager.getManager().getMinTime()));
+
                         update();
                     } else {
                         getInterface().setClosingByButton(true);
@@ -343,7 +359,7 @@ public class POptions extends PageItem {
                 private TimeUnit[] getUnits() {
                     return new TimeUnit[] {TimeUnit.DAYS, TimeUnit.HOURS, TimeUnit.MINUTES};
                 }
-            }.setOption(option).setOnlyLeftClick(false));
+            }.setOption(option));
     }
 
     private boolean equalsLocation(Location loc0, Location loc1) {

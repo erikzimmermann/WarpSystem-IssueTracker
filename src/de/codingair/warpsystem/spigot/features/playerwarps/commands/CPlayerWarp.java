@@ -1,12 +1,12 @@
 package de.codingair.warpsystem.spigot.features.playerwarps.commands;
 
-import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.commands.WarpSystemBaseComponent;
 import de.codingair.warpsystem.spigot.base.utils.commands.WarpSystemCommandBuilder;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.PWList;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.PWMultiCommandComponent;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,13 +28,14 @@ public class CPlayerWarp extends WarpSystemCommandBuilder {
             }
         }.setOnlyPlayers(true), "pwarp", "pw");
 
-        getBaseComponent().addChild(new MultiCommandComponent() {
+        getBaseComponent().addChild(new PWMultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 List<PlayerWarp> l = new ArrayList<>(PlayerWarpManager.getManager().getOwnWarps((Player) sender));
 
                 for(PlayerWarp warp : l) {
-                    suggestions.add(warp.getName(false).replace(" ", "_"));
+                    String name = warp.getName(false).replace(" ", "_");
+                    suggestions.add(name);
                 }
 
                 l.clear();
@@ -42,19 +43,9 @@ public class CPlayerWarp extends WarpSystemCommandBuilder {
                 for(PlayerWarp warp : l) {
                     String name = warp.getName(false).replace(" ", "_");
                     suggestions.add((suggestions.contains(name) ? warp.getOwner().getName() + "." : "") + name);
+                    if(!suggestions.contains(warp.getOwner().getName())) suggestions.add(warp.getOwner().getName());
                 }
                 l.clear();
-            }
-
-            @Override
-            public boolean matchTabComplete(CommandSender sender, String suggestion, String argument) {
-                String[] a = argument.split("\\.", -1);
-                argument = a[a.length - 1].toLowerCase();
-
-                a = suggestion.split("\\.", -1);
-                suggestion = a[a.length - 1].toLowerCase();
-
-                return suggestion.startsWith(argument);
             }
 
             @Override
@@ -63,6 +54,11 @@ public class CPlayerWarp extends WarpSystemCommandBuilder {
 
                 if(warp == null) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
+                    return false;
+                }
+
+                if(PlayerWarpManager.getManager().isEconomy() && warp.isExpired()) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_is_expired"));
                     return false;
                 }
 

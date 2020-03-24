@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.features.playerwarps.guis.list.filters;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.utils.Node;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.PWList;
@@ -20,7 +21,7 @@ import java.util.List;
 public class AllWarps implements Filter {
     @Override
     public Node<List<Button>, Integer> getListItems(int maxSize, int page, Player player, String search, Object... extra) {
-        List<PlayerWarp> warps = PlayerWarpManager.getManager().getPublicWarps();
+        List<PlayerWarp> warps = PlayerWarpManager.getManager().getWarps(player, true);
         warps.sort(Comparator.comparing(o -> o.getName(false).toLowerCase()));
 
         List<Button> buttons = new ArrayList<>();
@@ -36,7 +37,9 @@ public class AllWarps implements Filter {
                 continue;
             }
 
-            SyncButton b = new SyncButton(0) {
+            SyncButton b;
+            if(w.isOwner(player) || player.hasPermission(WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS)) b = OwnWarpFilter.getOwnWarpIcon(w, search);
+            else b = new SyncButton(0) {
                 @Override
                 public ItemStack craftItem() {
                     return w.getItem(search).addLore("§8§m                         ", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Teleport"))

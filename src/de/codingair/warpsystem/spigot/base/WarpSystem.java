@@ -56,6 +56,7 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_MODIFY_NATIVE_PORTALS = "WarpSystem.Modify.NativePortals";
     public static final String PERMISSION_MODIFY_RANDOM_TELEPORTER = "WarpSystem.Modify.RandomTeleporters";
     public static final String PERMISSION_MODIFY_TEMP_WARPS = "WarpSystem.Modify.TempWarps";
+    public static final String PERMISSION_MODIFY_PLAYER_WARPS = "WarpSystem.Modify.PlayerWarps";
     public static final String PERMISSION_USE_WARP_GUI = "WarpSystem.Use.WarpGUI";
     public static final String PERMISSION_WARP_GUI_OTHER = "WarpSystem.WarpGUI.Other";
     public static final String PERMISSION_HIDE_ALL_ICONS = "WarpGUI.HideAll";

@@ -171,6 +171,7 @@ public class TeleportOptions {
     }
 
     public void addCallback(Callback<TeleportResult> callback) {
+        if(callback == null) return;
         this.callback.add(callback);
     }
 
