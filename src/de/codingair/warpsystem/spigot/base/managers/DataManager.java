@@ -29,7 +29,7 @@ public class DataManager {
     public boolean load() {
         boolean success = true;
         for(Manager manager : this.managers) {
-            if(!manager.load()) success = false;
+            if(!manager.load(false)) success = false;
         }
 
         WarpSystem.getInstance().getFileManager().getFile("Config").saveConfig();

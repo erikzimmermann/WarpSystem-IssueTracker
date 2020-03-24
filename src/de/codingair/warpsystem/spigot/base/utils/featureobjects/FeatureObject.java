@@ -1,8 +1,12 @@
 package de.codingair.warpsystem.spigot.base.utils.featureobjects;
 
-import de.codingair.codingapi.server.Sound;
-import de.codingair.codingapi.server.SoundData;
+import com.google.common.base.CharMatcher;
+import de.codingair.codingapi.server.sounds.Sound;
+import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.tools.io.lib.ParseException;
+import de.codingair.codingapi.tools.io.utils.DataWriter;
+import de.codingair.codingapi.tools.io.utils.Serializable;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
@@ -15,44 +19,43 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.exceptions.IconReadException;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.json.simple.JSONArray;
-import de.codingair.codingapi.tools.JSON.JSONParser;
-import de.codingair.codingapi.tools.JSON.JSONObject;
-import org.json.simple.parser.ParseException;
+import de.codingair.codingapi.tools.io.lib.JSONArray;
+import de.codingair.codingapi.tools.io.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.JSON.JSON;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class FeatureObject implements Serializable {
-    private List<ActionObject> actions;
+    private List<ActionObject<?>> actions;
     private String permission = null;
     private boolean disabled = false;
     private boolean skip = false;
+    protected int performed = 0;
 
     public FeatureObject() {
         this.actions = new ArrayList<>();
     }
 
-    public FeatureObject(String permission, boolean disabled, List<ActionObject> actions) {
+    public FeatureObject(String permission, boolean disabled, List<ActionObject<?>> actions) {
         this.permission = permission;
         this.disabled = disabled;
         this.actions = actions == null ? new ArrayList<>() : actions;
     }
 
-    public FeatureObject(String permission, boolean disabled, ActionObject... actions) {
+    public FeatureObject(String permission, boolean disabled, ActionObject<?>... actions) {
         this.permission = permission;
         this.disabled = disabled;
         this.actions = new ArrayList<>(Arrays.asList(actions));
     }
 
     public FeatureObject(FeatureObject featureObject) {
-        this.actions = featureObject.actions == null ? new ArrayList<>() : featureObject.getCopyOfActions();
+        this.actions = featureObject.getCopyOfActions();
         this.permission = featureObject.permission;
         this.disabled = featureObject.disabled;
         this.skip = featureObject.skip;
+        this.performed = featureObject.performed;
     }
 
     public FeatureObject perform(Player player) {
@@ -80,16 +83,16 @@ public class FeatureObject implements Serializable {
         if(getAction(Action.WARP) != null) {
             Origin origin = Origin.getByClass(this);
 
-            options.setCosts(getAction(CostsAction.class) == null ? 0 : getAction(CostsAction.class).getValue());
+            if(getAction(CostsAction.class) != null) options.setCosts(getAction(CostsAction.class).getValue());
             options.setOrigin(origin);
             options.setPermission(this.permission == null ? TeleportManager.NO_PERMISSION : permission);
             if(!origin.sendTeleportMessage()) options.setMessage(null);
 
-            options.setCallback(new Callback<TeleportResult>() {
+            options.addCallback(new Callback<TeleportResult>() {
                 @Override
                 public void accept(TeleportResult result) {
                     if(result == TeleportResult.TELEPORTED) {
-                        for(ActionObject action : actions) {
+                        for(ActionObject<?> action : actions) {
                             if(action.getType() == Action.WARP || action.getType() == Action.COSTS) continue;
                             action.perform(player);
                         }
@@ -99,38 +102,47 @@ public class FeatureObject implements Serializable {
 
             WarpSystem.getInstance().getTeleportManager().teleport(player, options);
         } else if(getAction(Action.COSTS) == null || getAction(Action.COSTS).perform(player)) {
-            for(ActionObject action : this.actions) {
+            for(ActionObject<?> action : this.actions) {
                 if(action.getType() == Action.WARP || action.getType() == Action.COSTS) continue;
                 action.perform(player);
             }
         }
+
+        performed++;
         return this;
     }
 
     @Override
-    public boolean read(JSONObject json) throws Exception {
+    public boolean read(DataWriter d) throws Exception {
         destroy();
 
-        this.disabled = json.getBoolean("disabled");
-        this.permission = json.get("permission");
-        this.skip = json.getBoolean("skip");
+        this.disabled = d.getBoolean("disabled");
+        this.permission = d.get("permission");
+        if(this.permission != null) this.permission = ChatColor.stripColor(CharMatcher.WHITESPACE.trimFrom(this.permission));
+
+        this.skip = d.getBoolean("skip");
+        this.performed = d.getInteger("performed");
 
         if(this.actions == null) this.actions = new ArrayList<>();
 
-        if(json.get("actions") != null) {
-            JSONArray actionList = json.get("actions", new JSONArray());
+        if(d.get("actions") != null) {
+            JSONArray actionList = d.getList("actions");
 
             for(Object o : actionList) {
-                String data = (String) o;
-                JSONObject j;
-                try {
-                    j = (JSONObject) new JSONParser().parse(data);
-                } catch(ParseException e) {
-                    throw new IconReadException("Could not parse action object.", e);
-                }
+                JSON j;
+
+                if(o instanceof String) {
+                    String data = (String) o;
+                    try {
+                        j = (JSON) new JSONParser().parse(data);
+                    } catch(ParseException e) {
+                        throw new IconReadException("Could not parse action object.", e);
+                    }
+                } else j = new JSON((Map<?, ?>) o);
 
                 int id = j.getInteger("id");
-                String validData = j.getRaw("value");
+
+                Object validData = j.getRaw("value");
 
                 Action a = Action.getById(id);
                 if(a != null) {
@@ -141,10 +153,14 @@ public class FeatureObject implements Serializable {
                         throw new IconReadException("Could not initialize action object instance.", e);
                     }
 
-                    try {
-                        ao.read(validData);
-                    } catch(Exception e) {
-                        throw new ActionObjectReadException("Could not read ActionObject properly.", e);
+                    if(validData instanceof String) {
+                        try {
+                            ao.read((String) validData);
+                        } catch(Exception e) {
+                            throw new ActionObjectReadException("Could not read ActionObject properly.", e);
+                        }
+                    } else {
+                        j.read(ao, "value");
                     }
 
                     this.actions.add(ao);
@@ -156,22 +172,23 @@ public class FeatureObject implements Serializable {
     }
 
     @Override
-    public void write(JSONObject json) {
-        json.put("disabled", this.disabled);
-        json.put("permission", this.permission);
-        json.put("skip", this.skip);
+    public void write(DataWriter d) {
+        d.put("disabled", this.disabled);
+        d.put("permission", this.permission);
+        d.put("skip", this.skip);
+        d.put("performed", this.performed);
 
         JSONArray actionList = new JSONArray();
         if(this.actions != null) {
             for(ActionObject<?> action : this.actions) {
-                JSONObject jo = new JSONObject();
+                JSON jo = new JSON();
                 jo.put("id", action.getType().getId());
-                jo.put("value", action.write());
-                actionList.add(jo.toJSONString());
+                jo.put("value", action);
+                actionList.add(jo);
             }
         }
 
-        json.put("actions", actionList);
+        d.put("actions", actionList);
     }
 
     @Override
@@ -186,10 +203,10 @@ public class FeatureObject implements Serializable {
     }
 
     public void commitClonedActions() {
-        List<ActionObject> a = getActions();
-        List<ActionObject> cloned = new ArrayList<>();
+        List<ActionObject<?>> a = getActions();
+        List<ActionObject<?>> cloned = new ArrayList<>();
 
-        for(ActionObject ao : a) {
+        for(ActionObject<?> ao : a) {
             cloned.add(ao.clone());
         }
 
@@ -204,15 +221,18 @@ public class FeatureObject implements Serializable {
         this.skip = object.skip;
         this.disabled = object.disabled;
         this.permission = object.permission;
-        this.actions = object.actions == null ? new ArrayList<>() : new ArrayList<>(object.actions);
+        this.performed = object.performed;
+        this.actions = object.getCopyOfActions();
         checkActionList();
     }
 
     public void checkActionList() {
-        List<ActionObject> l = new ArrayList<>(this.actions);
+        List<ActionObject<?>> l = new ArrayList<>(this.actions);
 
-        for(ActionObject object : l) {
-            if(!object.usable()) this.actions.remove(object);
+        for(ActionObject<?> object : l) {
+            if(!object.usable()) {
+                this.actions.remove(object);
+            }
         }
 
         l.clear();
@@ -228,16 +248,16 @@ public class FeatureObject implements Serializable {
                 actions.equals(object.actions);
     }
 
-    public <T extends ActionObject> T getAction(Action action) {
-        for(ActionObject ao : this.actions) {
+    public <T extends ActionObject<?>> T getAction(Action action) {
+        for(ActionObject<?> ao : this.actions) {
             if(ao.getType() == action) return (T) ao;
         }
 
         return null;
     }
 
-    public <T extends ActionObject> T getAction(Class<T> clazz) {
-        for(ActionObject ao : this.actions) {
+    public <T extends ActionObject<?>> T getAction(Class<T> clazz) {
+        for(ActionObject<?> ao : this.actions) {
             if(ao.getClass() == clazz) return (T) ao;
         }
 
@@ -249,18 +269,18 @@ public class FeatureObject implements Serializable {
     }
 
     public boolean removeAction(Action action) {
-        ActionObject ao = getAction(action);
+        ActionObject<?> ao = getAction(action);
         if(ao == null) return false;
         this.actions.remove(ao);
         return true;
     }
 
-    public FeatureObject addAction(ActionObject action) {
+    public FeatureObject addAction(ActionObject<?> action) {
         return addAction(action, true);
     }
 
-    public FeatureObject addAction(ActionObject action, boolean overwrite) {
-        ActionObject ao = getAction(action.getType());
+    public FeatureObject addAction(ActionObject<?> action, boolean overwrite) {
+        ActionObject<?> ao = getAction(action.getType());
         if(ao != null) {
             if(overwrite) this.actions.remove(ao);
             else return this;
@@ -270,15 +290,15 @@ public class FeatureObject implements Serializable {
         return this;
     }
 
-    public List<ActionObject> getActions() {
+    public List<ActionObject<?>> getActions() {
         return actions;
     }
 
-    public List<ActionObject> getCopyOfActions() {
-        List<ActionObject> l = new ArrayList<>();
+    public List<ActionObject<?>> getCopyOfActions() {
+        List<ActionObject<?>> l = new ArrayList<>();
         if(actions == null) return l;
 
-        for(ActionObject a : actions) {
+        for(ActionObject<?> a : actions) {
             l.add(a.clone());
         }
 
@@ -313,5 +333,9 @@ public class FeatureObject implements Serializable {
 
     public void setSkip(boolean skip) {
         this.skip = skip;
+    }
+
+    public int getPerformed() {
+        return performed;
     }
 }

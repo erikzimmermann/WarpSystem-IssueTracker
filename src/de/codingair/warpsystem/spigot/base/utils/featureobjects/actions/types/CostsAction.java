@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types;
 
+import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
@@ -46,6 +47,17 @@ public class CostsAction extends ActionObject<Double> {
 
         MoneyAdapterType.getActive().withdraw(player, prize);
         return true;
+    }
+
+    @Override
+    public boolean read(DataWriter d) {
+        setValue(d.getDouble("costs"));
+        return true;
+    }
+
+    @Override
+    public void write(DataWriter d) {
+        d.put("costs", getValue());
     }
 
     @Override

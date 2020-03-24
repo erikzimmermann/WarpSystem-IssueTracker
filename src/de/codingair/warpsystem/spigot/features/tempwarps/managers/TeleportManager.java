@@ -32,13 +32,13 @@ public class TeleportManager {
     public boolean tryToTeleport(Player player, TempWarp warp) {
         if(!warp.isPublic() && !warp.isOwner(player)) {
             //not reachable
-            player.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_is_private"));
+            player.sendMessage(Lang.getPrefix() + Lang.get("Warp_is_private"));
             return false;
         }
 
         if(warp.isExpired()) {
             //not active
-            player.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_is_expired"));
+            player.sendMessage(Lang.getPrefix() + Lang.get("Warp_is_expired"));
             return false;
         }
 

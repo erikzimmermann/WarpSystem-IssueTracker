@@ -7,7 +7,7 @@ import de.codingair.codingapi.player.gui.inventory.gui.simple.Page;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SimpleGUI;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncAnvilGUIButton;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
-import de.codingair.codingapi.server.Sound;
+import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -272,7 +272,7 @@ public class GEditor extends SimpleGUI {
 
                         if(input == null || input.toCharArray().length < TempWarpManager.getManager().getMinMessageCharLength() || input.toCharArray().length > TempWarpManager.getManager().getMaxMessageCharLength()) {
                             p.sendMessage(Lang.getPrefix() +
-                                    Lang.get("TempWarp_Message_Too_Long_Too_Short")
+                                    Lang.get("Message_Too_Long_Too_Short")
                                             .replace("%MIN%", TempWarpManager.getManager().getMinMessageCharLength() + "")
                                             .replace("%MAX%", TempWarpManager.getManager().getMaxMessageCharLength() + "")
                             );

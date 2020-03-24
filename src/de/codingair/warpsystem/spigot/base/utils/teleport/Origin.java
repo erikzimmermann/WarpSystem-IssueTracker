@@ -24,6 +24,7 @@ public enum Origin {
     TeleportCommand,
     Custom,
     CustomTeleportCommands,
+    PlayerWarp(de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp.class, "PlayerWarps"),
     UNKNOWN;
 
     private Class<? extends FeatureObject> clazz = null;

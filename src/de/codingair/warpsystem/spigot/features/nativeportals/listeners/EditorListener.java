@@ -1,6 +1,6 @@
 package de.codingair.warpsystem.spigot.features.nativeportals.listeners;
 
-import de.codingair.codingapi.server.Sound;
+import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;
 import org.bukkit.Material;

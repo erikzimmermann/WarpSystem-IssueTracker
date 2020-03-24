@@ -17,16 +17,25 @@ public class SendUUIDPacket extends AnswerPacket<UUID> {
 
     @Override
     public void write(DataOutputStream out) throws IOException {
-        out.writeLong(getValue().getMostSignificantBits());
-        out.writeLong(getValue().getLeastSignificantBits());
+        byte b = (byte) (getValue() != null ? 1 : 0);
+        out.writeByte(b);
+
+        if(getValue() != null) {
+            out.writeLong(getValue().getMostSignificantBits());
+            out.writeLong(getValue().getLeastSignificantBits());
+        }
         super.write(out);
     }
 
     @Override
     public void read(DataInputStream in) throws IOException {
-        long most = in.readLong();
-        long least = in.readLong();
-        setValue(new UUID(most, least));
+        byte b = in.readByte();
+
+        if((b & 1) != 0) {
+            long most = in.readLong();
+            long least = in.readLong();
+            setValue(new UUID(most, least));
+        } else setValue(null);
         super.read(in);
     }
 }

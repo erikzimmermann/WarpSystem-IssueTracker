@@ -39,7 +39,7 @@ public class ServerManager implements Listener {
     }
 
     public void sendInitialPacket(ServerInfo server) {
-        WarpSystem.getInstance().getDataHandler().send(new InitialPacket(WarpSystem.getInstance().getDescription().getVersion()), server);
+        WarpSystem.getInstance().getDataHandler().send(new InitialPacket(WarpSystem.getInstance().getDescription().getVersion(), server.getName()), server);
     }
 
     public void setStatus(ServerInfo info, boolean online) {

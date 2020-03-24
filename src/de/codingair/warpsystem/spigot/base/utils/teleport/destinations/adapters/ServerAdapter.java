@@ -1,12 +1,12 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters;
 
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.transfer.packets.spigot.PrepareServerSwitchPacket;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 

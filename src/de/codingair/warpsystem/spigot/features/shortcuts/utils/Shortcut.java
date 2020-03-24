@@ -1,12 +1,12 @@
 package de.codingair.warpsystem.spigot.features.shortcuts.utils;
 
+import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
-import de.codingair.codingapi.tools.JSON.JSONObject;
 
 public class Shortcut extends FeatureObject {
     private String displayName;
@@ -25,15 +25,15 @@ public class Shortcut extends FeatureObject {
     }
 
     @Override
-    public boolean read(JSONObject json) throws Exception {
-        this.displayName = json.get("Name");
-        return super.read(json);
+    public boolean read(DataWriter d) throws Exception {
+        this.displayName = d.get("Name");
+        return super.read(d);
     }
 
     @Override
-    public void write(JSONObject json) {
-        json.put("Name", this.displayName);
-        super.write(json);
+    public void write(DataWriter d) {
+        d.put("Name", this.displayName);
+        super.write(d);
     }
 
     @Override

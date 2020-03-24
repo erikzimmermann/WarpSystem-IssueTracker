@@ -2,9 +2,10 @@ package de.codingair.warpsystem.spigot.features.randomteleports.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.files.loader.UTFConfig;
-import de.codingair.codingapi.server.Sound;
+import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
+import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
@@ -20,10 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class RandomTeleporterManager implements Manager {
     private boolean buyable;
@@ -43,7 +41,7 @@ public class RandomTeleporterManager implements Manager {
     private InteractListener listener = new InteractListener();
 
     @Override
-    public boolean load() {
+    public boolean load(boolean loader) {
         if(WarpSystem.getInstance().getFileManager().getFile("PlayData") == null) WarpSystem.getInstance().getFileManager().loadFile("PlayData", "/Memory/");
         if(WarpSystem.getInstance().getFileManager().getFile("Config") == null) WarpSystem.getInstance().getFileManager().loadFile("Config", "/");
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
@@ -93,10 +91,24 @@ public class RandomTeleporterManager implements Manager {
         file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
         config = file.getConfig();
 
-        List<String> interactBlocks = config.getStringList("RandomTeleporter.InteractBlocks");
-        for(String s : interactBlocks) {
-            this.interactBlocks.add(Location.getByJSONString(s));
-        }
+        List<?> l = config.getList("RandomTeleporter.InteractBlocks");
+        if(l != null)
+            for(Object s : l) {
+                if(s instanceof Map) {
+                    JSON json = new JSON((Map<?, ?>) s);
+                    Location loc = new Location();
+                    try {
+                        loc.read(json);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        continue;
+                    }
+
+                    this.interactBlocks.add(loc);
+                } else if(s instanceof String) {
+                    this.interactBlocks.add(Location.getByJSONString((String) s));
+                }
+            }
 
         Bukkit.getPluginManager().registerEvents(this.listener, WarpSystem.getInstance());
         new CRandomTP().register(WarpSystem.getInstance());
@@ -112,9 +124,12 @@ public class RandomTeleporterManager implements Manager {
 
         if(!saver) WarpSystem.log("  > Saving RandomTeleporters");
 
-        List<String> interactBlocks = new ArrayList<>();
+        List<JSON> interactBlocks = new ArrayList<>();
         for(Location l : this.interactBlocks) {
-            interactBlocks.add(l.toJSONString(4));
+            JSON json = new JSON();
+            l.trim(0);
+            l.write(json);
+            interactBlocks.add(json);
         }
 
         config.set("RandomTeleporter.InteractBlocks", interactBlocks);

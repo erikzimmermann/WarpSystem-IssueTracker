@@ -1,14 +1,16 @@
 package de.codingair.warpsystem.spigot.features.animations.utils;
 
-import de.codingair.codingapi.server.Sound;
-import de.codingair.codingapi.server.SoundData;
+import de.codingair.codingapi.server.sounds.Sound;
+import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.Location;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.Serializable;
-import de.codingair.codingapi.tools.JSON.JSONObject;
-import org.json.simple.JSONArray;
+import de.codingair.codingapi.tools.io.utils.DataWriter;
+import de.codingair.codingapi.tools.io.utils.Serializable;
+import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.lib.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Animation implements Serializable {
     private String name = null;
@@ -35,60 +37,60 @@ public class Animation implements Serializable {
     }
 
     @Override
-    public boolean read(JSONObject json) {
+    public boolean read(DataWriter d) {
         buffList.clear();
         particleParts.clear();
 
-        this.name = json.get("name");
-        this.teleportLoc = json.getLocation("teleportlocation");
+        this.name = d.get("name");
+        this.teleportLoc = d.getLocation("teleportlocation");
 
-        JSONArray buffArray = json.get("bufflist", new JSONArray());
+        JSONArray buffArray = d.getList("bufflist");
         for(Object o : buffArray) {
-            JSONObject data = new JSONObject((org.json.simple.JSONObject) o);
+            JSON data = new JSON((Map<?, ?>) o);
             Buff b = new Buff();
             b.read(data);
             buffList.add(b);
         }
 
-        JSONArray particleArray = json.get("particleparts", new JSONArray());
+        JSONArray particleArray = d.getList("particleparts");
         for(Object o : particleArray) {
-            JSONObject data = new JSONObject((org.json.simple.JSONObject) o);
+            JSON data = new JSON((Map<?, ?>) o);
             ParticlePart p = new ParticlePart();
             p.read(data);
             particleParts.add(p);
         }
 
-        String[] data = json.get("ticksound") == null ? null : ((String) json.get("ticksound")).split("#", -1);
+        String[] data = d.get("ticksound") == null ? null : ((String) d.get("ticksound")).split("#", -1);
         tickSound = data == null ? null : new SoundData(Sound.valueOf(data[0]), Float.parseFloat(data[1]), Float.parseFloat(data[2]));
 
-        data = json.get("teleportsound") == null ? null : ((String) json.get("teleportsound")).split("#", -1);
+        data = d.get("teleportsound") == null ? null : ((String) d.get("teleportsound")).split("#", -1);
         teleportSound = data == null ? null : new SoundData(Sound.valueOf(data[0]), Float.parseFloat(data[1]), Float.parseFloat(data[2]));
         return true;
     }
 
     @Override
-    public void write(JSONObject json) {
-        json.put("name", this.name);
-        json.put("teleportlocation", this.teleportLoc);
+    public void write(DataWriter d) {
+        d.put("name", this.name);
+        d.put("teleportlocation", this.teleportLoc);
 
         JSONArray buffArray = new JSONArray();
         for(Buff buff : this.buffList) {
-            JSONObject data = new JSONObject();
+            JSON data = new JSON();
             buff.write(data);
             buffArray.add(data);
         }
-        json.put("bufflist", buffArray);
+        d.put("bufflist", buffArray);
 
         JSONArray particleArray = new JSONArray();
         for(ParticlePart part : this.particleParts) {
-            JSONObject data = new JSONObject();
+            JSON data = new JSON();
             part.write(data);
             particleArray.add(data);
         }
-        json.put("particleparts", particleArray);
+        d.put("particleparts", particleArray);
 
-        json.put("ticksound", tickSound == null ? null : tickSound.getSound().name() + "#" + tickSound.getVolume() + "#" + tickSound.getPitch());
-        json.put("teleportsound", teleportSound == null ? null : teleportSound.getSound().name() + "#" + teleportSound.getVolume() + "#" + teleportSound.getPitch());
+        d.put("ticksound", tickSound == null ? null : tickSound.getSound().name() + "#" + tickSound.getVolume() + "#" + tickSound.getPitch());
+        d.put("teleportsound", teleportSound == null ? null : teleportSound.getSound().name() + "#" + teleportSound.getVolume() + "#" + teleportSound.getPitch());
     }
 
     @Override

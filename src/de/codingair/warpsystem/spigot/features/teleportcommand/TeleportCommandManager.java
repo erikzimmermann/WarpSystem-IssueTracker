@@ -62,7 +62,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
     private CBack back;
 
     @Override
-    public boolean load() {
+    public boolean load(boolean loader) {
         WarpSystem.getInstance().getBungeeFeatureList().add(this);
         Bukkit.getPluginManager().registerEvents(new TeleportListener(), WarpSystem.getInstance());
         Bukkit.getPluginManager().registerEvents(new BackListener(), WarpSystem.getInstance());
@@ -145,7 +145,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
         if(locations == null) return false;
 
         TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(locations.get(0))), Lang.get("Last_Position"));
-        options.setCallback(new Callback<TeleportResult>() {
+        options.addCallback(new Callback<TeleportResult>() {
             @Override
             public void accept(TeleportResult result) {
                 if(result == TeleportResult.TELEPORTED) {
@@ -232,7 +232,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
                             options.setOrigin(Origin.CustomTeleportCommands);
                             options.setWaitForTeleport(true);
                             options.setCosts(tpaCosts);
-                            options.setCallback(new Callback<TeleportResult>() {
+                            options.addCallback(new Callback<TeleportResult>() {
                                 @Override
                                 public void accept(TeleportResult object) {
                                     if(receiver.length == 1) hasInvites.remove(sender.getName());
@@ -257,7 +257,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
                             options.setPayMessage(null);
                             options.setCosts(tpaCosts);
                             options.setPaymentDeniedMessage(null);
-                            options.setCallback(new Callback<TeleportResult>() {
+                            options.addCallback(new Callback<TeleportResult>() {
                                 @Override
                                 public void accept(TeleportResult result) {
                                     //move

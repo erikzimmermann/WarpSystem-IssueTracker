@@ -4,6 +4,7 @@ import de.codingair.codingapi.bungeecord.BungeeAPI;
 import de.codingair.codingapi.bungeecord.files.FileManager;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
+import de.codingair.warpsystem.bungee.base.commands.CWarpSystem;
 import de.codingair.warpsystem.bungee.base.language.Lang;
 import de.codingair.warpsystem.bungee.base.listeners.MainListener;
 import de.codingair.warpsystem.bungee.base.managers.DataManager;
@@ -21,6 +22,7 @@ import java.nio.channels.FileChannel;
 import java.util.concurrent.TimeUnit;
 
 public class WarpSystem extends Plugin {
+    public static final String PERMISSION_MODIFY_SYSTEM = "WarpSystem.Modify.System";
     public static final String PERMISSION_USE_TELEPORT_COMMAND = "WarpSystem.Use.TeleportCommand";
     public static final String PERMISSION_USE_TELEPORT_COMMAND_TP = PERMISSION_USE_TELEPORT_COMMAND + ".Tp";
     public static final String PERMISSION_USE_TELEPORT_COMMAND_TP_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpToggle";
@@ -66,9 +68,11 @@ public class WarpSystem extends Plugin {
         this.dataHandler.register(listener);
         this.serverManager.run();
 
+        BungeeCord.getInstance().getPluginManager().registerCommand(this, new CWarpSystem());
+
         log("Loading features");
         boolean createBackup = false;
-        if(!this.dataManager.load()) createBackup = true;
+        if(!this.dataManager.load(true)) createBackup = true;
 
         if(createBackup) {
             log("Loading with errors > Create backup...");
@@ -97,7 +101,7 @@ public class WarpSystem extends Plugin {
 
     private void startAutoSaver() {
         WarpSystem.log("Starting AutoSaver");
-        BungeeCord.getInstance().getScheduler().schedule(this, () -> save(true), 20, 20, TimeUnit.MINUTES);
+        BungeeCord.getInstance().getScheduler().schedule(this, () -> save(true), 10, 10, TimeUnit.MINUTES);
     }
 
     private void destroy() {

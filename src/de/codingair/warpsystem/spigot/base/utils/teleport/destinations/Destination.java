@@ -1,18 +1,22 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport.destinations;
 
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.tools.io.utils.DataWriter;
+import de.codingair.codingapi.tools.io.utils.Serializable;
+import de.codingair.codingapi.utils.ImprovedDouble;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.CloneableAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.DestinationAdapter;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 
-public class Destination {
+public class Destination implements Serializable {
     private String id;
     private DestinationType type;
     private DestinationAdapter adapter;
@@ -38,7 +42,7 @@ public class Destination {
 
     public Destination(DestinationAdapter adapter) {
         this.id = null;
-        this.type = DestinationType.UNKNOWN;
+        this.type = DestinationType.getByAdapter(adapter);
         this.adapter = adapter;
     }
 
@@ -96,10 +100,15 @@ public class Destination {
 
     public void sendMessage(Player player, String message, String displayName, double costs) {
         if(adapter == null || message == null) return;
-        player.sendMessage((message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", costs + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName)));
+        player.sendMessage(getMessage(player, message, displayName, costs));
     }
 
-    public Location buildLocation() {
+    public String getMessage(Player player, String message, String displayName, double costs) {
+        if(adapter == null || message == null) return null;
+        return (message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", new ImprovedDouble(costs).toString()).replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName));
+    }
+
+    public org.bukkit.Location buildLocation() {
         if(offsetX != 0 || offsetY != 0 || offsetZ != 0) {
             double offsetX = signedX == 1 ? Math.random() * this.offsetX : signedX == -1 ? Math.random() * -this.offsetX : Math.random() * 2 * this.offsetX - this.offsetX;
             double offsetY = signedY == 1 ? Math.random() * this.offsetY : signedY == -1 ? Math.random() * -this.offsetY : Math.random() * 2 * this.offsetY - this.offsetY;
@@ -127,10 +136,16 @@ public class Destination {
     }
 
     public String getId() {
+        if(this.adapter instanceof LocationAdapter && ((LocationAdapter) this.adapter).getLocation() != null) {
+            return new de.codingair.codingapi.tools.Location(((LocationAdapter) this.adapter).getLocation()).toJSONString(2);
+        }
         return id;
     }
 
     public void setId(String id) {
+        if(this.adapter instanceof LocationAdapter && ((LocationAdapter) this.adapter).getLocation() != null) {
+            ((LocationAdapter) this.adapter).setLocation(null);
+        }
         this.id = id;
     }
 
@@ -150,7 +165,63 @@ public class Destination {
         this.adapter = adapter;
     }
 
-    public String toJSONString() {
+    @Override
+    public boolean read(DataWriter d) throws Exception {
+        this.type = DestinationType.getById(d.getInteger("type"));
+        this.adapter = type.getInstance();
+
+        if(adapter != null && adapter instanceof Serializable) {
+            ((Serializable) adapter).read(d);
+        } else if(type == DestinationType.Location) {
+            de.codingair.codingapi.tools.Location loc = new de.codingair.codingapi.tools.Location();
+            d.getSerializable("id", loc);
+            ((LocationAdapter) this.adapter).setLocation(loc);
+        } else id = d.getRaw("id");
+
+        this.offsetX = d.getDouble("oX");
+        this.offsetY = d.getDouble("oY");
+        this.offsetZ = d.getDouble("oZ");
+        this.signedX = d.getInteger("sX");
+        this.signedY = d.getInteger("sY");
+        this.signedZ = d.getInteger("sZ");
+        return true;
+    }
+
+    @Override
+    public void write(DataWriter d) {
+        d.put("type", type.getId());
+
+        if(adapter != null && adapter instanceof Serializable) {
+            ((Serializable) adapter).write(d);
+        } else {
+            Object id;
+            if(type == DestinationType.Location) {
+                id = new de.codingair.codingapi.tools.Location(buildLocation());
+            } else id = this.id;
+
+            d.put("id", id);
+        }
+        d.put("oX", offsetX);
+        d.put("oY", offsetY);
+        d.put("oZ", offsetZ);
+        d.put("sX", signedX);
+        d.put("sY", signedY);
+        d.put("sZ", signedZ);
+    }
+
+    @Override
+    public void destroy() {
+        this.type = null;
+        this.id = null;
+        this.offsetX = 0;
+        this.offsetY = 0;
+        this.offsetZ = 0;
+        this.signedX = 0;
+        this.signedY = 0;
+        this.signedZ = 0;
+    }
+
+    public JSONArray toJSONArray() {
         if(this.type == DestinationType.UNKNOWN) throw new IllegalArgumentException("Cannot serialize unknown destination!");
 
         JSONArray json = new JSONArray();
@@ -165,7 +236,11 @@ public class Destination {
             json.add(signedZ);
         }
 
-        return json.toJSONString();
+        return json;
+    }
+
+    public String toJSONString() {
+        return toJSONArray().toJSONString();
     }
 
     @Override
@@ -173,8 +248,8 @@ public class Destination {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         Destination that = (Destination) o;
-        if(id == null) return that.id == null && type == that.type;
-        return id.equals(that.id)
+        if(getId() == null) return that.getId() == null && type == that.type;
+        return getId().equals(that.getId())
                 && type == that.type
                 && offsetX == that.offsetX
                 && offsetY == that.offsetY
@@ -186,9 +261,9 @@ public class Destination {
 
     public Destination clone() {
         Destination destination = new Destination();
-        destination.id = id;
+        destination.id = getId();
         destination.type = type;
-        destination.adapter = adapter;
+        destination.adapter = adapter instanceof CloneableAdapter ? ((CloneableAdapter) adapter).clone() : adapter == null ? null : type.getInstance();
         destination.offsetX = offsetX;
         destination.offsetY = offsetY;
         destination.offsetZ = offsetZ;
@@ -200,7 +275,7 @@ public class Destination {
 
     @Override
     public String toString() {
-        return "Destination{id=" + this.id + ", " + this.type + "}";
+        return "Destination{id=" + getId() + ", " + this.type + "}";
     }
 
     public double getOffsetX() {

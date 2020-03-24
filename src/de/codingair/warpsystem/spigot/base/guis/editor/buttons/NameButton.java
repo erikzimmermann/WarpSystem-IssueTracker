@@ -21,7 +21,7 @@ public abstract class NameButton extends SyncAnvilGUIButton {
 
     public NameButton(int x, int y, boolean acceptNull, Value<String> name) {
         super(x, y, ClickType.LEFT);
-        
+
         this.acceptNull = acceptNull;
         this.name = name;
         update(false);

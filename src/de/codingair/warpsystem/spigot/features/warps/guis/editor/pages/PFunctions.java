@@ -1,8 +1,8 @@
 package de.codingair.warpsystem.spigot.features.warps.guis.editor.pages;
 
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
-import de.codingair.codingapi.server.Sound;
-import de.codingair.codingapi.server.SoundData;
+import de.codingair.codingapi.server.sounds.Sound;
+import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;

@@ -19,10 +19,12 @@ public class HeadManager {
     }
 
     public Head getHead(UUID uuid) {
-        checkFile();
+        return new Head(getSkinId(uuid));
+    }
 
-        String id = this.file.getConfig().getString(uuid.toString());
-        return new Head(id);
+    public String getSkinId(UUID uuid) {
+        checkFile();
+        return this.file.getConfig().getString(uuid.toString());
     }
 
     /*
