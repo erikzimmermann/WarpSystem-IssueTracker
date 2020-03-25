@@ -47,7 +47,7 @@ public class CTpaHere extends CommandBuilder {
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 for(Player player : Bukkit.getOnlinePlayers()) {
                     if(player.getName().equals(sender.getName()) || TeleportCommandManager.getInstance().deniesTpaRequests(player)) continue;
-                    suggestions.add(ChatColor.stripColor(player.getDisplayName()));
+                    suggestions.add(ChatColor.stripColor(player.getName()));
                 }
             }
 
