@@ -96,7 +96,7 @@ public class CRandomTP extends CommandBuilder {
                             }
                         }.setHover(Lang.get("Click_Hover")));
 
-                        sm.send(sender);
+                        sm.send((Player) sender);
                     } else {
                         sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Not_Enough_Money").replace("%AMOUNT%", (costs + "").endsWith(".0") ? (costs + "").substring(0, (costs + "").length() - 2) : (costs + "")));
                     }
