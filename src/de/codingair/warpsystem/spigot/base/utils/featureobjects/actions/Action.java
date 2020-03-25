@@ -1,16 +1,14 @@
 package de.codingair.warpsystem.spigot.base.utils.featureobjects.actions;
 
 import de.codingair.codingapi.tools.io.utils.Serializable;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.BoundAction;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.*;
 
 public enum Action {
     WARP(0, WarpAction.class),
     COMMAND(1, CommandAction.class),
     COSTS(2, CostsAction.class),
     BOUND_TO_WORLD(3, BoundAction.class),
+    MESSAGE(4, MessageAction.class),
     ;
 
     private int id;
