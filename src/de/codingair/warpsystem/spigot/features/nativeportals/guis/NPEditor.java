@@ -7,7 +7,7 @@ import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.pages.DestinationPage;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.nativeportals.NativePortal;
-import de.codingair.warpsystem.spigot.features.nativeportals.guis.pages.PAppearance;
+import de.codingair.warpsystem.spigot.features.nativeportals.guis.pages.POptions;
 import de.codingair.warpsystem.spigot.features.nativeportals.guis.pages.PMaterial;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
 import org.bukkit.entity.Player;
@@ -36,7 +36,7 @@ public class NPEditor extends Editor<NativePortal> {
                 clone.destroy();
                 nativePortal.setVisible(true);
             }
-        }, () -> new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setHideName(true).getItem(), new PAppearance(p, clone), new PMaterial(p, clone), new DestinationPage(p, getMainTitle(), clone.getDestination()));
+        }, () -> new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setHideName(true).getItem(), new POptions(p, clone), new PMaterial(p, clone), new DestinationPage(p, getMainTitle(), clone.getDestination()));
 
         this.clone = clone;
         initControllButtons();
