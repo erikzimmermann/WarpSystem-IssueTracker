@@ -34,6 +34,7 @@ public class Shortcut extends FeatureObject {
     public void write(DataWriter d) {
         d.put("Name", this.displayName);
         super.write(d);
+        setPermission(null);
     }
 
     @Override

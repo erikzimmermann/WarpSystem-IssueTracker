@@ -19,6 +19,10 @@ import de.codingair.warpsystem.transfer.packets.spigot.PlayerWarpTeleportProcess
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -45,7 +49,7 @@ public class PlayerWarpListener implements PacketListener, Listener {
             money += warp.getInactiveSales() * warp.getTeleportCosts();
         }
 
-        if(money > 0 || !notify.isEmpty()) {
+        if(money > 0 || !notify.isEmpty() || (e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS) && !PlayerWarpManager.getManager().isHideLimitInfo())) {
             double finalMoney = money;
             Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
                 if(!notify.isEmpty()) {
@@ -67,6 +71,30 @@ public class PlayerWarpListener implements PacketListener, Listener {
 
                     message.setTimeOut(60);
 
+                    message.send(e.getPlayer());
+                }
+
+                if((e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS) && !PlayerWarpManager.getManager().isHideLimitInfo())) {
+                    SimpleMessage message = new SimpleMessage(Lang.getPrefix() + "§7PlayerWarps are §climited §7to §c2 warps §7per §7player. §8[", WarpSystem.getInstance());
+
+                    TextComponent upgrade = new TextComponent("§6§nPremium");
+                    upgrade.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/premium-warps-portals-and-more-warp-teleport-system-1-8-1-14.66035/"));
+                    upgrade.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {new TextComponent("§8» §6§lClick §8«")}));
+
+                    message.add(upgrade);
+                    message.add("§8 | ");
+
+                    message.add(new ChatButton("§7Hide", "§7» Click «") {
+                        @Override
+                        public void onClick(Player player) {
+                            PlayerWarpManager.getManager().setHideLimitInfo(true);
+                            PlayerWarpManager.getManager().save(true);
+                            player.sendMessage(Lang.getPrefix() + "§7You won't see this message again.");
+                            message.destroy();
+                        }
+                    });
+
+                    message.add("§8]");
                     message.send(e.getPlayer());
                 }
             }, 5 * 20L);
