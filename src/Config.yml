@@ -234,6 +234,8 @@ WarpSystem:
       Teleport_Fee: 0.5
       Active_Time: 1
       Trusted_Member: 0.5
+    #Info that every player can only create max 2 warps
+    Hide_Limit_Info: false
 
   #The standard and max amount of random teleports will be configured with permissions:
   #"warpsystem.randomteleporters.free.1" » This permissions means, that the player with that permission has a standard amount of 1 free random teleports
@@ -251,6 +253,7 @@ WarpSystem:
       Min: 1000
       Max: 10000
     Worlds:
+      # Premium feature - Random world list won't be supported even it's set to 'true'
       Enabled: false
       #If enabled: Plugin selects a random world of this list for a random teleport
       List:
@@ -260,7 +263,8 @@ WarpSystem:
     Support:
       #If enabled, the player will be teleported to a random position, which is not in a protected region
       ProtectedRegions: true
-      #If enabled, the player will be teleported to a random position, which is inside of the WorldBorder
+      # If enabled, the player will be teleported to a random position, which is inside of the WorldBorder
+      # Premium feature - WorldBorder won't be supported even it's set to 'true'
       WorldBorder: true
       #If enabled, the player will be teleported to a random position, in one of the listed biomes
       Biome:

@@ -77,6 +77,9 @@ public class NativePortal extends FeatureObject {
     @Override
     public boolean read(DataWriter d) throws Exception {
         super.read(d);
+        setSkip(true);
+        setPermission(null);
+        removeAction(Action.COMMAND);
 
         if(d.get("Type") != null) {
             this.type = PortalType.valueOf(d.get("Type"));
@@ -159,6 +162,7 @@ public class NativePortal extends FeatureObject {
     public void write(DataWriter d) {
         super.write(d);
 
+        d.remove("permission");
         d.put("type", type == null ? null : type.name());
         d.put("name", displayName);
 
