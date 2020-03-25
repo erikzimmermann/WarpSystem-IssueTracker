@@ -16,8 +16,8 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarp;
-import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarps;
 import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarpReference;
+import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarps;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.PWList;
 import de.codingair.warpsystem.spigot.features.playerwarps.listeners.PlayerWarpListener;
@@ -32,7 +32,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -41,26 +40,8 @@ import java.util.regex.Pattern;
 
 public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
     public static boolean hasPermission(Player player) {
-        if(player.isOp()) return true;
-
         int warps = PlayerWarpManager.getManager().getOwnWarps(player).size() + 1;
-        for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
-            String perm = effectivePermission.getPermission();
-
-            if(perm.equals("*") || perm.equalsIgnoreCase("warpsystem.*")) return true;
-            if(perm.toLowerCase().startsWith("warpsystem.playerwarps.")) {
-                String s = perm.substring(23);
-                if(s.equals("*") || s.equalsIgnoreCase("n")) return true;
-
-                try {
-                    int amount = Integer.parseInt(s);
-                    if(amount >= warps) return true;
-                } catch(Throwable ignored) {
-                }
-            }
-        }
-
-        return false;
+        return warps <= 2; //premium can use more than 2 warps
     }
 
     private HashMap<UUID, List<PlayerWarp>> warps = new HashMap<>();
@@ -70,6 +51,8 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
 
     private boolean bungeeCord;
     private PlayerWarpListener listener = new PlayerWarpListener();
+
+    private boolean hideLimitInfo = false;
 
     private long minTime;
     private long maxTime;
@@ -148,6 +131,8 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
         }
 
         this.inactiveTime = convertFromTimeFormat(config.getString("WarpSystem.PlayerWarps.Inactive.Time_After_Expiration", null), 2592000000L);
+
+        this.hideLimitInfo = config.getBoolean("WarpSystem.PlayerWarps.Hide_Limit_Info", false);
 
         //Costs - Generally
         this.protectedRegions = config.getBoolean("WarpSystem.PlayerWarps.General.Support.ProtectedRegions", true);
@@ -323,6 +308,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
         ConfigFile config = WarpSystem.getInstance().getFileManager().getFile("Config");
         ConfigWriter writer = new ConfigWriter(config);
         writer.put("WarpSystem.PlayerWarps.General.Categories.Classes", array);
+        writer.put("WarpSystem.PlayerWarps.Hide_Limit_Info", hideLimitInfo);
         config.saveConfig();
 
         file.saveConfig();
@@ -1146,5 +1132,13 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
 
     public int getNameMaxLength() {
         return nameMaxLength;
+    }
+
+    public boolean isHideLimitInfo() {
+        return hideLimitInfo;
+    }
+
+    public void setHideLimitInfo(boolean hideLimitInfo) {
+        this.hideLimitInfo = hideLimitInfo;
     }
 }

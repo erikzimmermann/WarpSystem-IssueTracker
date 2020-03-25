@@ -32,9 +32,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class DestinationPage extends PageItem {
-    private String server = null;
-    private boolean online = false;
-    private boolean pinging = false;
     private Destination destination;
 
     public DestinationPage(Player player, String title, Destination destination) {
@@ -49,97 +46,44 @@ public class DestinationPage extends PageItem {
         option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
 
         addButton(new SyncButton(1, 2) {
-            private int editingOffset = 0;
-
             @Override
             public ItemStack craftItem() {
                 String name = null;
                 if(destination.getType() == DestinationType.SimpleWarp) name = destination.getId();
 
                 List<String> lore = new ArrayList<>();
-                if(editingOffset == 0) {
-                    lore.add("");
-                    lore.add("§3" + Lang.get("Leftclick") + ": §a" + (name == null ? Lang.get("Set") : Lang.get("Change")));
-                    if(name != null) lore.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));
-                    else lore.add("§3" + Lang.get("Shift_Leftclick") + ": §a" + Lang.get("Create"));
-                }
+                if(name != null) lore.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));
+                else lore.add("§3" + Lang.get("Shift_Leftclick") + ": §a" + Lang.get("Create") + Lang.PREMIUM_LORE);
 
                 ItemBuilder builder = new ItemBuilder(XMaterial.ENDER_PEARL).setName(Editor.ITEM_TITLE_COLOR + Lang.get("SimpleWarps"))
-                        .setLore("§3" + Lang.get("Current") + ": " + (name == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + ChatColor.translateAlternateColorCodes('&', name.replace("_", " ")) + "§7'"))
+                        .setLore("§3" + Lang.get("Current") + ": " + (name == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + ChatColor.translateAlternateColorCodes('&', name.replace("_", " ")) + "§7'"),
+                                "", "§3" + Lang.get("Leftclick") + ": §a" + (name == null ? Lang.get("Set") : Lang.get("Change")))
                         .addLore(lore);
 
                 builder.addLore(" ");
-                builder.addLore("§6" + (editingOffset == 0 ? "" : "§n") + Lang.get("Max_Random_Offset"));
-
-                if(editingOffset != 0) {
-                    double value = editingOffset == 1 ? destination.getOffsetX() : editingOffset == 2 ? destination.getOffsetY() : destination.getOffsetZ();
-
-                    builder.addLore(" ");
-                    builder.addLore("§3" + Lang.get("Leftclick") + ": §" + (value == 0 ? "c" : "a") + Lang.get("Reduce"));
-                    builder.addLore("§3" + Lang.get("Rightclick") + ": §" + (value == 100 ? "c" : "a") + Lang.get("Enlarge"));
-                    builder.addLore("§3" + Lang.get("Shift_Leftclick") + ": §a" + Lang.get("Choose"));
-                }
-
-                builder.addLore("§3" + Lang.get("Shift_Rightclick") + ": §b" + (editingOffset == 0 ? Lang.get("Edit") : "↓ §8(§7" + Lang.get("Close") + "§8)"));
-
-                if(editingOffset != 0) builder.addLore(" ");
-
-                builder.addLore("  §8» §7X: §e" + destination.getOffsetX() + (editingOffset == 1 ? " §c§l«" : ""));
-                builder.addLore("  §8» §7Y: §e" + destination.getOffsetY() + (editingOffset == 2 ? " §c§l«" : ""));
-                builder.addLore("  §8» §7Z: §e" + destination.getOffsetZ() + (editingOffset == 3 ? " §c§l«" : ""));
+                builder.addLore("§6" + Lang.get("Max_Random_Offset") + Lang.PREMIUM_LORE);
+                builder.addLore("§3" + Lang.get("Shift_Rightclick") + ": §b" + Lang.get("Edit"));
+                builder.addLore("  §8» §7X: §e" + (destination.getOffsetX() == 0 ? "0" : destination.getSignedX() == 1 ? "0 - " + destination.getOffsetX() : destination.getSignedX() == 0 ? "-" + destination.getOffsetX() + " - " + destination.getOffsetX() : "-" +  + destination.getOffsetX() + " - 0"));
+                builder.addLore("  §8» §7Y: §e" + (destination.getOffsetY() == 0 ? "0" : destination.getSignedY() == 1 ? "0 - " + destination.getOffsetY() : destination.getSignedY() == 0 ? "-" + destination.getOffsetY() + " - " + destination.getOffsetY() : "-" +  + destination.getOffsetY() + " - 0"));
+                builder.addLore("  §8» §7Z: §e" + (destination.getOffsetZ() == 0 ? "0" : destination.getSignedZ() == 1 ? "0 - " + destination.getOffsetZ() : destination.getSignedZ() == 0 ? "-" + destination.getOffsetZ() + " - " + destination.getOffsetZ() : "-" +  + destination.getOffsetZ() + " - 0"));
 
                 return builder.getItem();
             }
 
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
-                if(editingOffset == 0) {
-                    if(e.isLeftClick()) {
-                        getLast().setClosingForGUI(true);
-                        if(e.isShiftClick()) {
-                            AnvilGUI.openAnvil(WarpSystem.getInstance(), player, new AnvilListener() {
-                                @Override
-                                public void onClick(AnvilClickEvent e) {
-                                    if(e.getSlot() == AnvilSlot.OUTPUT) {
-                                        String input = e.getInput();
+                if(e.isLeftClick()) {
+                    if(e.isShiftClick()) {
+                        Lang.PREMIUM_CHAT(player);
+                    } else {
 
-                                        if(input == null) {
-                                            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
-                                            return;
-                                        }
-
-                                        if(SimpleWarpManager.getInstance().existsWarp(input)) {
-                                            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
-                                            return;
-                                        }
-
-                                        player.sendMessage(Lang.getPrefix() + Lang.get("SimpleWarp_Created").replace("%WARP%", ChatColor.translateAlternateColorCodes('&', input)));
-                                        SimpleWarp w;
-                                        SimpleWarpManager.getInstance().addWarp(w = new SimpleWarp(player, input, null));
-
-                                        destination.setId(w.getName());
-                                        destination.setType(DestinationType.SimpleWarp);
-                                        destination.setAdapter(DestinationType.SimpleWarp.getInstance());
-                                        updateDestinationButtons();
-
-                                        e.setClose(true);
-                                        playSound(e.getClickType(), player);
-                                    }
-                                }
-
-                                @Override
-                                public void onClose(AnvilCloseEvent e) {
-                                    e.setPost(() -> getLast().open());
-                                }
-                            }, new ItemBuilder(XMaterial.NAME_TAG).setName(Lang.get("Name") + "...").getItem());
-                        } else {
-                            getLast().changeGUI(new GSimpleWarpList(p) {
-                                @Override
-                                public void onClick(SimpleWarp value, ClickType clickType) {
-                                    destination.setId(value.getName());
-                                    destination.setType(DestinationType.SimpleWarp);
-                                    destination.setAdapter(DestinationType.SimpleWarp.getInstance());
-                                    updateDestinationButtons();
+                        getLast().changeGUI(new GSimpleWarpList(p) {
+                            @Override
+                            public void onClick(SimpleWarp value, ClickType clickType) {
+                                destination.setId(value.getName());
+                                destination.setType(DestinationType.SimpleWarp);
+                                destination.setAdapter(DestinationType.SimpleWarp.getInstance());
+                                updateDestinationButtons();
 
                                     fallBack();
                                 }
@@ -158,103 +102,13 @@ public class DestinationPage extends PageItem {
                         }
                     } else if(e.isRightClick()) {
                         if(e.isShiftClick()) {
-                            editingOffset++;
-                            if(editingOffset == 4) editingOffset = 0;
-                            update();
+                            Lang.PREMIUM_CHAT(player);
                         } else {
                             destination.setId(null);
                             destination.setAdapter(null);
                             destination.setType(null);
 
-                            updateDestinationButtons();
-                        }
-                    }
-                } else {
-                    if(e.isLeftClick()) {
-                        if(e.isShiftClick()) {
-                            getLast().setClosingForGUI(true);
-                            AnvilGUI.openAnvil(WarpSystem.getInstance(), player, new AnvilListener() {
-                                @Override
-                                public void onClick(AnvilClickEvent e) {
-                                    if(e.getSlot() == AnvilSlot.OUTPUT) {
-                                        String input = e.getInput();
-
-                                        if(input == null) {
-                                            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number"));
-                                            return;
-                                        }
-
-                                        input = input.replace(",", ".");
-                                        double value;
-
-                                        try {
-                                            value = Double.parseDouble(input);
-                                        } catch(NumberFormatException ex) {
-                                            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number"));
-                                            return;
-                                        }
-
-                                        if(value < 0) {
-                                            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number"));
-                                            return;
-                                        }
-
-                                        if(value > 100) value = 100;
-                                        value = trim(value);
-
-                                        if(editingOffset == 1) {
-                                            destination.setOffsetX(value);
-                                        } else if(editingOffset == 2) {
-                                            destination.setOffsetY(value);
-                                        } else if(editingOffset == 3) {
-                                            destination.setOffsetZ(value);
-                                        }
-
-                                        update();
-
-                                        e.setClose(true);
-                                        playSound(e.getClickType(), player);
-                                    }
-                                }
-
-                                @Override
-                                public void onClose(AnvilCloseEvent e) {
-                                    e.setPost(() -> getLast().open());
-                                }
-                            }, new ItemBuilder(XMaterial.NAME_TAG).setName("" + (editingOffset == 1 ? destination.getOffsetX() : editingOffset == 2 ? destination.getOffsetY() : destination.getOffsetZ())).getItem());
-                        } else {
-                            if(editingOffset == 1) {
-                                destination.setOffsetX(trim(destination.getOffsetX() - 1));
-                                if(destination.getOffsetX() < 0) destination.setOffsetX(0);
-                            } else if(editingOffset == 2) {
-                                destination.setOffsetY(trim(destination.getOffsetY() - 1));
-                                if(destination.getOffsetY() < 0) destination.setOffsetY(0);
-                            } else if(editingOffset == 3) {
-                                destination.setOffsetZ(trim(destination.getOffsetZ() - 1));
-                                if(destination.getOffsetZ() < 0) destination.setOffsetZ(0);
-                            }
-
-                            update();
-                        }
-                    } else if(e.isRightClick()) {
-                        if(e.isShiftClick()) {
-                            editingOffset++;
-                            if(editingOffset == 4) editingOffset = 0;
-                            update();
-                        } else {
-                            if(editingOffset == 1) {
-                                destination.setOffsetX(trim(destination.getOffsetX() + 1));
-                                if(destination.getOffsetX() > 100) destination.setOffsetX(0);
-                            } else if(editingOffset == 2) {
-                                destination.setOffsetY(trim(destination.getOffsetY() + 1));
-                                if(destination.getOffsetY() > 100) destination.setOffsetY(0);
-                            } else if(editingOffset == 3) {
-                                destination.setOffsetZ(trim(destination.getOffsetZ() + 1));
-                                if(destination.getOffsetZ() > 100) destination.setOffsetZ(0);
-                            }
-
-                            update();
-                        }
+                        updateDestinationButtons();
                     }
                 }
             }
@@ -313,104 +167,20 @@ public class DestinationPage extends PageItem {
                 }
             }.setOption(option));
 
-            addButton(new SyncAnvilGUIButton(3, 2, ClickType.LEFT) {
+            addButton(new SyncButton(3, 2) {
                 @Override
                 public ItemStack craftItem() {
-                    String name = null;
-                    if(destination.getType() == DestinationType.Server) name = destination.getId();
+                    if(destination.getType() == DestinationType.Server) ;
 
-                    List<String> lore = name == null ? null : new ArrayList<>();
-                    if(lore != null) {
-                        lore.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));
-                        lore.add("");
-                        lore.add("§3" + Lang.get("Shift_Leftclick") + ": §b" + Lang.get("Refresh"));
-                    }
-
-                    List<String> onlineStatus = new ArrayList<>();
-
-                    if(!Objects.equals(server, name)) {
-                        server = name;
-                        if(server != null) {
-                            pinging = true;
-                            WarpSystem.getInstance().getDataHandler().send(new RequestServerStatusPacket(server, new Callback<Boolean>() {
-                                @Override
-                                public void accept(Boolean online) {
-                                    DestinationPage.this.pinging = false;
-                                    DestinationPage.this.online = online;
-                                    ((SyncButton) getButton(3, 2)).update();
-                                }
-                            }));
-                        }
-                    }
-
-                    if(server != null) {
-                        onlineStatus.add("§3" + Lang.get("Status") + ": " + (pinging ? "§7" + Lang.get("Pinging") + "..." : (online ? "§a" + Lang.get("Online") : "§c" + Lang.get("Offline"))));
-                    }
-
-                    ItemStack item = new ItemBuilder(XMaterial.ENDER_CHEST).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Server"))
-                            .setLore("§3" + Lang.get("Current") + ": " + (name == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + ChatColor.translateAlternateColorCodes('&', name) + "§7'"))
-                            .addLore(onlineStatus)
-                            .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + (name == null ? Lang.get("Set") : Lang.get("Change")))
-                            .addLore(lore)
+                    return new ItemBuilder(XMaterial.ENDER_CHEST).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Server") + Lang.PREMIUM_LORE)
+                            .setLore("§3" + Lang.get("Current") + ": " + "§c" + Lang.get("Not_Set"))
+                            .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + (Lang.get("Set")))
                             .getItem();
-
-                    if(lore != null) lore.clear();
-                    if(onlineStatus != null) onlineStatus.clear();
-                    return item;
                 }
 
                 @Override
-                public void onClick(AnvilClickEvent e) {
-                    if(!e.getSlot().equals(AnvilSlot.OUTPUT)) return;
-
-                    String input = e.getInput();
-
-                    if(input == null) {
-                        e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
-                        return;
-                    }
-
-                    destination.setId(input);
-                    destination.setType(DestinationType.Server);
-                    destination.setAdapter(DestinationType.Server.getInstance());
-                    updateDestinationButtons();
-                    e.setClose(true);
-                }
-
-                @Override
-                public void onClose(AnvilCloseEvent e) {
-                }
-
-                @Override
-                public ItemStack craftAnvilItem(ClickType trigger) {
-                    String name = null;
-                    if(destination.getType() == DestinationType.Server) name = destination.getId();
-
-                    return new ItemBuilder(XMaterial.PAPER).setName(name != null ? name : (Lang.get("Server") + "...")).getItem();
-                }
-
-                @Override
-                public void onOtherClick(InventoryClickEvent e) {
-                    if(e.isRightClick()) {
-                        destination.setId(null);
-                        destination.setAdapter(null);
-                        destination.setType(null);
-
-                        updateDestinationButtons();
-                    } else if(e.isShiftClick() && e.isLeftClick()) {
-                        if(server != null && !pinging) {
-                            pinging = true;
-                            update();
-                            WarpSystem.getInstance().getDataHandler().send(new RequestServerStatusPacket(server, new Callback<Boolean>() {
-                                @Override
-                                public void accept(Boolean online) {
-                                    DestinationPage.this.pinging = false;
-                                    DestinationPage.this.online = online;
-                                    update();
-                                }
-                            }));
-                        }
-                    }
+                public void onClick(InventoryClickEvent e, Player player) {
+                    Lang.PREMIUM_CHAT(player);
                 }
             }.setOption(option));
         }

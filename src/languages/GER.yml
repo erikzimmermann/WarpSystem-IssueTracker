@@ -431,11 +431,14 @@ Forbidden_Symbols: '&7''&f%NAME_HINT%&7'' beinhaltet &cverbotene Zeichen&7!'
 Warp_Edited: '&7Dein Warp "&b%NAME%&7" wurde &aerfolgreich &7bearbeitet&7.'
 Warp_Edited_Pay: '&7Dein Warp "&b%NAME%&7" wurde für &c%PRICE% Coin(s) &abearbeitet&7.'
 Warp_Edited_Refund: '&7Dein Warp "&b%NAME%&7" wurde &abearbeitet&7. Du bekamst &a%PRICE% Coin(s) &7zurück!'
+Warp_Deletion_In: '&7Dein Warp "&b%NAME%&7" wird in &b%TIME_LEFT%&7 &cgelöscht&7!'
+Warp_was_deleted: '&7Dein Warp "&c%NAME%&7" wurde &cpermanent gelöscht&7.'
 Warp_Delete_Info: '&7Klicke %HERE%&7 um deinen Warp "&b%NAME%&7" zu &clöschen&7.'
 Warp_Delete_Info_Here: '&e&nhier'
 Warp_Delete_Button_Info:
-  - "&7Erstattung: &a%REFUND% Coin(s)"
-  - "&7Klick: &4Löschen"
+- '&7Warp: "&b%NAME%&7"'
+- "&7Erstattung: &a%REFUND% Coin(s)"
+- "&7Klick: &4Löschen"
 Warp_Deleted_Info: '&7Dein Warp "&b%NAME%&7" wurde &cgelöscht&7. Du bekamst &a%PRICE% Coin(s) &7zurück!'
 Warp_Maximum_of_Warps: '&7Du kannst &cnicht &7mehr als &b%AMOUNT% &7Warp(s) erstellen!'
 Warp_Money_Available: '&7Du hast &a%AMOUNT% Coin(s) &7mit deinen Warps verdient, hole es dir %BUTTON%&7 ab!'
