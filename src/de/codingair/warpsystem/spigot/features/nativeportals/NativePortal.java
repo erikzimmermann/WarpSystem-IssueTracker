@@ -79,6 +79,7 @@ public class NativePortal extends FeatureObject {
         super.read(d);
         setSkip(true);
         setPermission(null);
+        removeAction(Action.COMMAND);
 
         if(d.get("Type") != null) {
             this.type = PortalType.valueOf(d.get("Type"));

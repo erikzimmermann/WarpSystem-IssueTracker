@@ -19,6 +19,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal;
+import de.codingair.warpsystem.spigot.features.nativeportals.NativePortal;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.exceptions.IconReadException;
 import org.bukkit.ChatColor;
