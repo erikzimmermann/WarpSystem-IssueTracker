@@ -11,6 +11,7 @@ import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CommandButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.DelayButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.NameButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -28,11 +29,11 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class PAppearance extends PageItem {
+public class POptions extends PageItem {
     private NativePortal nativePortal;
 
-    public PAppearance(Player p, NativePortal nativePortal) {
-        super(p, NPEditor.getMainTitle(), new ItemBuilder(XMaterial.ITEM_FRAME).setName("§6§n" + Lang.get("Appearance")).getItem(), false);
+    public POptions(Player p, NativePortal nativePortal) {
+        super(p, NPEditor.getMainTitle(), new ItemBuilder(XMaterial.COMMAND_BLOCK).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Options")).getItem(), false);
 
         this.nativePortal = nativePortal;
         initialize(p);
@@ -120,6 +121,22 @@ public class PAppearance extends PageItem {
         addButton(new SyncButton(3, 2) {
             @Override
             public ItemStack craftItem() {
+                return new ItemBuilder(XMaterial.REDSTONE)
+                        .setName("§6§n" + Lang.get("Command") + Lang.PREMIUM_LORE)
+                        .setLore("§3" + Lang.get("Current") + ": " + "§c" + Lang.get("Not_Set"))
+                        .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Add"))
+                        .getItem();
+            }
+
+            @Override
+            public void onClick(InventoryClickEvent e, Player player) {
+                Lang.PREMIUM_CHAT(player);
+            }
+        }.setOption(option));
+
+        addButton(new SyncButton(4, 2) {
+            @Override
+            public ItemStack craftItem() {
                 return new ItemBuilder(XMaterial.ENDER_EYE)
                         .setName("§6§n" + Lang.get("Permission") + Lang.PREMIUM_LORE)
                         .addLore("§3" + Lang.get("Current") + ": " + "§c" + Lang.get("Not_Set"))
@@ -133,6 +150,6 @@ public class PAppearance extends PageItem {
             }
         }.setOption(option));
 
-        addButton(new DelayButton(4, 2, nativePortal).setOption(option));
+        addButton(new DelayButton(5, 2, nativePortal).setOption(option));
     }
 }
