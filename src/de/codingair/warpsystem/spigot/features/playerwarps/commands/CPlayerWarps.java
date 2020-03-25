@@ -114,7 +114,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
 
                 message.setTimeOut(60);
 
-                message.send(sender);
+                message.send((Player) sender);
                 return false;
             }
         });
