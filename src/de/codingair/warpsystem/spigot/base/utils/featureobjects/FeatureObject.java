@@ -179,6 +179,7 @@ public class FeatureObject implements Serializable {
             }
         }
 
+        checkActionList();
         return true;
     }
 
