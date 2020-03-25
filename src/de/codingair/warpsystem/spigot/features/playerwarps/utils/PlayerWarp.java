@@ -310,6 +310,7 @@ public class PlayerWarp extends FeatureObject {
 
     @Override
     public boolean read(DataWriter d) throws Exception {
+        boolean success = super.read(d);
         if(this.trusted == null) this.trusted = new ArrayList<>();
         else this.trusted.clear();
 
@@ -354,8 +355,7 @@ public class PlayerWarp extends FeatureObject {
 
         //check "custom teleport costs"
         if(!PlayerWarpManager.getManager().isCustomTeleportCosts()) this.teleportCosts = 0;
-
-        return super.read(d);
+        return success;
     }
 
     @Override
@@ -732,7 +732,6 @@ public class PlayerWarp extends FeatureObject {
         public boolean read(DataWriter d) {
             this.name = d.getString(p() + "name");
             this.id = UUID.fromString(d.getString(p() + "id"));
-
             return true;
         }
 

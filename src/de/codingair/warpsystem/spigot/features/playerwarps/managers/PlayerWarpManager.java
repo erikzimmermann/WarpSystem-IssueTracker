@@ -350,7 +350,6 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
 
             WarpSystem.getInstance().getDataHandler().send(new RegisterServerForPlayerWarpsPacket(isEconomy()));
         } else WarpSystem.getInstance().getDataHandler().send(new MoveLocalPlayerWarpsPacket());
-
     }
 
     @Override
