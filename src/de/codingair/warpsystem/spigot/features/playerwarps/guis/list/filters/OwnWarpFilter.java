@@ -104,10 +104,11 @@ public class OwnWarpFilter implements Filter {
                         //delete
                         double refund = PlayerWarpManager.getManager().delete(w, true);
                         if(refund == -1) return;
-                        MoneyAdapterType.getActive().deposit(player, refund);
 
-                        if(refund > 0) player.sendMessage(Lang.getPrefix() + Lang.get("Warp_Deleted_Info").replace("%NAME%", w.getName(true)).replace("%PRICE%", CPlayerWarps.cut(refund) + ""));
-                        else player.sendMessage(Lang.getPrefix() + Lang.get("Warp_was_deleted").replace("%NAME%", w.getName(true)));
+                        if(refund > 0 && PlayerWarpManager.getManager().isEconomy() && w.isOwner(player)) {
+                            MoneyAdapterType.getActive().deposit(player, refund);
+                            player.sendMessage(Lang.getPrefix() + Lang.get("w_Deleted_Info").replace("%NAME%", w.getName(true)).replace("%PRICE%", CPlayerWarps.cut(refund) + ""));
+                        } else player.sendMessage(Lang.getPrefix() + Lang.get("Warp_was_deleted").replace("%NAME%", w.getName(true)));
 
                         if(!runnable.isCancelled()) runnable.cancel();
                         runnable = null;

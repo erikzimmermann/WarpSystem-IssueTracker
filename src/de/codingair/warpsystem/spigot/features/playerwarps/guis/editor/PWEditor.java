@@ -63,7 +63,7 @@ public class PWEditor extends Editor<PlayerWarp> {
                             warp.apply(clone);
                             if(creating) PlayerWarpManager.getManager().add(warp);
 
-                            if(WarpSystem.getInstance().isOnBungeeCord()) {
+                            if(PlayerWarpManager.getManager().checkBungeeCord()) {
                                 PlayerWarpData data = warp.getData();
                                 SendPlayerWarpsPacket packet = new SendPlayerWarpsPacket(new ArrayList<PlayerWarpData>() {{
                                     this.add(data);

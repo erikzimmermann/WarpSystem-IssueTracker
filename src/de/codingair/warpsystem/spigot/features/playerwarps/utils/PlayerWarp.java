@@ -87,7 +87,7 @@ public class PlayerWarp extends FeatureObject {
             @Override
             public void accept(TeleportResult res) {
                 if(res == TeleportResult.TELEPORTED) {
-                    PlayerWarpTeleportProcessPacket packet = WarpSystem.getInstance().isOnBungeeCord() ? new PlayerWarpTeleportProcessPacket(name, owner.getId()) : null;
+                    PlayerWarpTeleportProcessPacket packet = PlayerWarpManager.getManager().checkBungeeCord() ? new PlayerWarpTeleportProcessPacket(name, owner.getId()) : null;
                     if(packet != null && !isOwner(player) && !isTrusted(player)) packet.setIncreasePerformed(true);
 
                     if(options.getFinalCosts(player).doubleValue() > 0 && !isOwner(player) && !isTrusted(player)) {
@@ -676,7 +676,7 @@ public class PlayerWarp extends FeatureObject {
         if(a != null) {
             resetInactiveSales();
 
-            if(WarpSystem.getInstance().isOnBungeeCord()) {
+            if(PlayerWarpManager.getManager().checkBungeeCord()) {
                 PlayerWarpTeleportProcessPacket packet = new PlayerWarpTeleportProcessPacket(name, owner.getId(), false, true, false);
                 WarpSystem.getInstance().getDataHandler().send(packet);
             }
