@@ -119,8 +119,8 @@ public class POptions extends PageItem {
             }
         }.setOption(option));
 
-        addButton(new PermissionButton(3, 2, nativePortal).setOption(option));
-        addButton(new DelayButton(4, 2, nativePortal).setOption(option));
-        addButton(new CommandButton(5, 2, nativePortal).setOption(option));
+        addButton(new CommandButton(3, 2, nativePortal).setOption(option));
+        addButton(new PermissionButton(4, 2, nativePortal).setOption(option));
+        addButton(new DelayButton(5, 2, nativePortal).setOption(option));
     }
 }
