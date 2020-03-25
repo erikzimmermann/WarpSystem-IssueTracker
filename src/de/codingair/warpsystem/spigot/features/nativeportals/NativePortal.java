@@ -107,9 +107,9 @@ public class NativePortal extends FeatureObject {
         if(destination != null) addAction(new WarpAction(destination));
 
         if(d.get("Name") != null) {
-            this.displayName = d.get("Name");
+            this.displayName = d.getString("Name");
         } else if(d.get("name") != null) {
-            this.displayName = d.get("name");
+            this.displayName = d.getString("name");
         }
 
         JSONArray jsonArray = null;

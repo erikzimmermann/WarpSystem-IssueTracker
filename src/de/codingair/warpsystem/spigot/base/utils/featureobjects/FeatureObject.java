@@ -120,7 +120,7 @@ public class FeatureObject implements Serializable {
         destroy();
 
         this.disabled = d.getBoolean("disabled");
-        this.permission = d.get("permission");
+        this.permission = d.getString("permission");
         if(this.permission != null) this.permission = ChatColor.stripColor(CharMatcher.WHITESPACE.trimFrom(this.permission));
 
         this.skip = d.getBoolean("skip");

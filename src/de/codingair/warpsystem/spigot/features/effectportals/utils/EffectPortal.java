@@ -184,9 +184,9 @@ public class EffectPortal extends FeatureObject implements Removable {
             holoPos = Location.getByLocation(location);
             holoPos.setY(holoPos.getY() + hologramHeight);
         } else if(d.get("start") != null) {
-            this.location = Location.getByJSONString(d.get("start"));
+            this.location = Location.getByJSONString(d.getString("start"));
 
-            AnimationType animationType = AnimationType.valueOf(d.get("animationtype"));
+            AnimationType animationType = AnimationType.valueOf(d.getString("animationtype"));
             double animationHeight = Double.parseDouble(d.get("animationheight") + "");
             Particle particle = Particle.valueOf(d.get("particle"));
             double teleportRadius = Double.parseDouble(d.get("teleportradius") + "");
@@ -242,18 +242,18 @@ public class EffectPortal extends FeatureObject implements Removable {
             holoPos = Location.getByLocation(location);
             holoPos.setY(holoPos.getY() + hologramHeight);
         } else {
-            if(d.get("ep.anim.name") == null) {
+            if(d.getString("ep.anim.name") == null) {
                 //link
                 setUseLink(true);
             } else {
-                this.animation = AnimationManager.getInstance().getAnimation(d.get("ep.anim.name"));
+                this.animation = AnimationManager.getInstance().getAnimation(d.getString("ep.anim.name"));
                 this.teleportSound = d.get("ep.sound.type") == null ? new SoundData(Sound.ENDERMAN_TELEPORT, 0.7F, 1F) : new SoundData(d.get("ep.sound.type", Sound.class), d.getFloat("ep.sound.volume"), d.getFloat("ep.sound.pitch"));
                 linkHelper = d.getLocation("ep.link");
             }
 
             this.location = d.getLocation("ep.loc");
-            this.name = d.get("ep.name");
-            this.holoText = d.get("ep.holo.text");
+            this.name = d.getString("ep.name");
+            this.holoText = d.getString("ep.holo.text");
             this.holoStatus = d.getBoolean("ep.holo.state");
             this.holoPos = d.getLocation("ep.holo.pos");
         }
