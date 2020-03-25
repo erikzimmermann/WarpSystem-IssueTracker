@@ -41,7 +41,7 @@ public class Animation implements Serializable {
         buffList.clear();
         particleParts.clear();
 
-        this.name = d.get("name");
+        this.name = d.getString("name");
         this.teleportLoc = d.getLocation("teleportlocation");
 
         JSONArray buffArray = d.getList("bufflist");
@@ -60,10 +60,10 @@ public class Animation implements Serializable {
             particleParts.add(p);
         }
 
-        String[] data = d.get("ticksound") == null ? null : ((String) d.get("ticksound")).split("#", -1);
+        String[] data = d.getString("ticksound") == null ? null : d.getString("ticksound").split("#", -1);
         tickSound = data == null ? null : new SoundData(Sound.valueOf(data[0]), Float.parseFloat(data[1]), Float.parseFloat(data[2]));
 
-        data = d.get("teleportsound") == null ? null : ((String) d.get("teleportsound")).split("#", -1);
+        data = d.getString("teleportsound") == null ? null : d.getString("teleportsound").split("#", -1);
         teleportSound = data == null ? null : new SoundData(Sound.valueOf(data[0]), Float.parseFloat(data[1]), Float.parseFloat(data[2]));
         return true;
     }

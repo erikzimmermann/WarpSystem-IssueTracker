@@ -26,7 +26,7 @@ public class Shortcut extends FeatureObject {
 
     @Override
     public boolean read(DataWriter d) throws Exception {
-        this.displayName = d.get("Name");
+        this.displayName = d.getString("Name");
         return super.read(d);
     }
 

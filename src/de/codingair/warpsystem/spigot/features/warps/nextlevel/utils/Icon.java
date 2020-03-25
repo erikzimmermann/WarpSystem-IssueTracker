@@ -83,7 +83,7 @@ public class Icon extends FeatureObject {
     public boolean read(DataWriter d) throws Exception {
         super.read(d);
 
-        this.name = d.get("name");
+        this.name = d.getString("name");
         this.item = d.getItemStack("item");
 
         this.slot = d.getInteger("slot") ;
