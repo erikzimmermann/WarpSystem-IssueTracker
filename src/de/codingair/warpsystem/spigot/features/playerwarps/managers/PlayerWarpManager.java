@@ -862,7 +862,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
             this.names.remove(warp.getOwner().getName());
         }
 
-        if(informBungee && bungeeCord && WarpSystem.getInstance().isOnBungeeCord()) {
+        if(informBungee && checkBungeeCord()) {
             DeletePlayerWarpPacket packet = new DeletePlayerWarpPacket(warp.getName(), warp.getOwner().getId());
             WarpSystem.getInstance().getDataHandler().send(packet);
         }
@@ -917,6 +917,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
         length = warp.getTrusted().size();
         if(length > 0) refund += length * PlayerWarpManager.getManager().getTrustedMemberCosts() * PlayerWarpManager.getManager().getTrustedMemberRefund() * warp.getRefundFactor();
 
+        if(isNaturalNumbers()) return Math.ceil(refund);
         return refund;
     }
 
@@ -1099,6 +1100,10 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
 
     public boolean isBungeeCord() {
         return bungeeCord;
+    }
+
+    public boolean checkBungeeCord() {
+        return isBungeeCord() && WarpSystem.getInstance().isOnBungeeCord();
     }
 
     public long getInactiveTime() {

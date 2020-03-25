@@ -79,7 +79,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                     return false;
                 }
 
-                if(!warp.isOwner((Player) sender)) {
+                if(!warp.isOwner((Player) sender) && !sender.hasPermission(WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS)) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_no_access"));
                     return false;
                 }
@@ -89,6 +89,8 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                 List<String> lore = Lang.getStringList("Warp_Delete_Button_Info");
                 List<String> prepared = new ArrayList<>();
                 for(String s : lore) {
+                    if(!PlayerWarpManager.getManager().isEconomy() && s.contains("REFUND")) continue;
+
                     prepared.add(s
                             .replace("%REFUND%", cut(PlayerWarpManager.getManager().calculateRefund(warp)) + "")
                             .replace("%NAME%", warp.getName())
@@ -100,10 +102,11 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                     public void onClick(Player player) {
                         double refund = PlayerWarpManager.getManager().delete(warp, true);
                         if(refund == -1) return;
-                        MoneyAdapterType.getActive().deposit((Player) sender, refund);
 
-                        if(refund > 0) sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Deleted_Info").replace("%NAME%", warp.getName(true)).replace("%PRICE%", CPlayerWarps.cut(refund) + ""));
-                        else sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_was_deleted").replace("%NAME%", warp.getName(true)));
+                        if(refund > 0 && PlayerWarpManager.getManager().isEconomy() && warp.isOwner(player)) {
+                            MoneyAdapterType.getActive().deposit((Player) sender, refund);
+                            sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_Deleted_Info").replace("%NAME%", warp.getName(true)).replace("%PRICE%", CPlayerWarps.cut(refund) + ""));
+                        } else sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_was_deleted").replace("%NAME%", warp.getName(true)));
 
                         message.destroy();
                     }
