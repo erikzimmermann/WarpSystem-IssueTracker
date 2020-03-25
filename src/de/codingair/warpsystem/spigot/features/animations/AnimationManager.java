@@ -3,19 +3,20 @@ package de.codingair.warpsystem.spigot.features.animations;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.files.loader.UTFConfig;
 import de.codingair.codingapi.particles.Particle;
+import de.codingair.codingapi.particles.animations.customanimations.AnimationType;
 import de.codingair.codingapi.particles.animations.customanimations.CustomAnimation;
+import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.animations.utils.Animation;
-import de.codingair.codingapi.particles.animations.customanimations.AnimationType;
 import de.codingair.warpsystem.spigot.features.animations.utils.ParticlePart;
 import de.codingair.warpsystem.utils.Manager;
-import de.codingair.codingapi.tools.JSON.JSONObject;
-import de.codingair.codingapi.tools.JSON.JSONParser;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class AnimationManager implements Manager {
     private static AnimationManager instance = null;
@@ -23,7 +24,7 @@ public class AnimationManager implements Manager {
     private Animation active = null;
 
     @Override
-    public boolean load() {
+    public boolean load(boolean loader) {
         if(WarpSystem.getInstance().getFileManager().getFile("Animations") == null) WarpSystem.getInstance().getFileManager().loadFile("Animations", "/Memory/");
         WarpSystem.log("  > Loading Animations");
 
@@ -31,17 +32,32 @@ public class AnimationManager implements Manager {
         destroy();
 
         boolean success = true;
-        for(String data : config.getStringList("Animations")) {
-            try {
-                Animation a = new Animation();
-                JSONObject json = (JSONObject) new JSONParser().parse(data);
-                a.read(json);
-                animationList.add(a);
-            } catch(Exception e) {
-                e.printStackTrace();
-                success = false;
+        List<?> l = config.getList("Animations");
+        if(l != null)
+            for(Object data : l) {
+
+                if(data instanceof Map) {
+                    try {
+                        Animation a = new Animation();
+                        JSON json = new JSON((Map<?, ?>) data);
+                        a.read(json);
+                        animationList.add(a);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        success = false;
+                    }
+                } else if(data instanceof String) {
+                    try {
+                        Animation a = new Animation();
+                        JSON json = (JSON) new JSONParser().parse((String) data);
+                        a.read(json);
+                        animationList.add(a);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        success = false;
+                    }
+                }
             }
-        }
 
         active = new Animation("§Standard§", new ParticlePart(AnimationType.CIRCLE, Particle.FLAME, 1, 1, CustomAnimation.MAX_SPEED));
 
@@ -55,11 +71,11 @@ public class AnimationManager implements Manager {
         if(!saver) WarpSystem.log("  > Saving Animations");
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Animations");
 
-        List<String> dataList = new ArrayList<>();
+        List<JSON> dataList = new ArrayList<>();
         for(Animation animation : this.animationList) {
-            JSONObject json = new JSONObject();
+            JSON json = new JSON();
             animation.write(json);
-            dataList.add(json.toJSONString());
+            dataList.add(json);
         }
 
         file.getConfig().set("Animations", dataList);

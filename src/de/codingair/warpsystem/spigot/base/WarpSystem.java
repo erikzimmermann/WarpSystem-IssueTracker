@@ -57,6 +57,7 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_MODIFY_NATIVE_PORTALS = "WarpSystem.Modify.NativePortals";
     public static final String PERMISSION_MODIFY_RANDOM_TELEPORTER = "WarpSystem.Modify.RandomTeleporters";
     public static final String PERMISSION_MODIFY_TEMP_WARPS = "WarpSystem.Modify.TempWarps";
+    public static final String PERMISSION_MODIFY_PLAYER_WARPS = "WarpSystem.Modify.PlayerWarps";
     public static final String PERMISSION_USE_WARP_GUI = "WarpSystem.Use.WarpGUI";
     public static final String PERMISSION_WARP_GUI_OTHER = "WarpSystem.WarpGUI.Other";
     public static final String PERMISSION_HIDE_ALL_ICONS = "WarpGUI.HideAll";
@@ -64,6 +65,7 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_USE_GLOBAL_WARPS = "WarpSystem.Use.GlobalWarps";
     public static final String PERMISSION_USE_SIMPLE_WARPS = "WarpSystem.Use.SimpleWarps";
     public static final String PERMISSION_USE_TEMP_WARPS = "WarpSystem.Use.TempWarps";
+    public static final String PERMISSION_USE_PLAYER_WARPS = "WarpSystem.Use.PlayerWarps";
     public static final String PERMISSION_USE_PORTALS = "WarpSystem.Use.Portals";
     public static final String PERMISSION_USE_NATIVE_PORTALS = "WarpSystem.Use.NativePortals";
     public static final String PERMISSION_USE_RANDOM_TELEPORTER = "WarpSystem.Use.RandomTeleporters";
@@ -360,7 +362,7 @@ public class WarpSystem extends JavaPlugin {
 
     private void startAutoSaver() {
         WarpSystem.log("Starting AutoSaver");
-        Bukkit.getScheduler().scheduleAsyncRepeatingTask(WarpSystem.getInstance(), () -> save(true), 20 * 60 * 20, 20 * 60 * 20);
+        Bukkit.getScheduler().scheduleAsyncRepeatingTask(WarpSystem.getInstance(), () -> save(true), 10 * 60 * 20, 10 * 60 * 20);
     }
 
     private void destroy() {

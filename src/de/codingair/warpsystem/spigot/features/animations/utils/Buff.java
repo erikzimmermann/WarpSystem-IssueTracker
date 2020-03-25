@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.spigot.features.animations.utils;
 
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.Serializable;
-import de.codingair.codingapi.tools.JSON.JSONObject;
+import de.codingair.codingapi.tools.io.utils.DataWriter;
+import de.codingair.codingapi.tools.io.utils.Serializable;
 import org.bukkit.potion.PotionEffectType;
 
 public class Buff implements Serializable {
@@ -23,20 +23,20 @@ public class Buff implements Serializable {
     }
 
     @Override
-    public boolean read(JSONObject json) {
-        this.type = PotionEffectType.getByName(json.get("type"));
-        this.level = json.getInteger("level");
-        this.timeBeforeTeleport = json.getInteger("timebeforeteleport");
-        this.timeAfterTeleport = json.getInteger("timeafterteleport");
+    public boolean read(DataWriter d) {
+        this.type = PotionEffectType.getByName(d.get("type"));
+        this.level = d.getInteger("level");
+        this.timeBeforeTeleport = d.getInteger("timebeforeteleport");
+        this.timeAfterTeleport = d.getInteger("timeafterteleport");
         return true;
     }
 
     @Override
-    public void write(JSONObject json) {
-        json.put("type", this.type.getName());
-        json.put("level", this.level);
-        json.put("timebeforeteleport", this.timeBeforeTeleport);
-        json.put("timeafterteleport", this.timeAfterTeleport);
+    public void write(DataWriter d) {
+        d.put("type", this.type.getName());
+        d.put("level", this.level);
+        d.put("timebeforeteleport", this.timeBeforeTeleport);
+        d.put("timeafterteleport", this.timeAfterTeleport);
     }
 
     @Override

@@ -61,7 +61,7 @@ public abstract class LoreButton extends SyncAnvilGUIButton {
     @Override
     public void onOtherClick(InventoryClickEvent e) {
         if(e.getClick() == ClickType.RIGHT) {
-            if(!toChange.getLore().isEmpty()) toChange.getLore().remove(toChange.getLore().size() - 1);
+            if(toChange.getLore() != null && !toChange.getLore().isEmpty()) toChange.getLore().remove(toChange.getLore().size() - 1);
             updatingLore(toChange);
             update();
         }
@@ -79,7 +79,6 @@ public abstract class LoreButton extends SyncAnvilGUIButton {
         }
 
         e.setClose(true);
-        playSound(e.getPlayer());
 
         toChange.addLore(ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', input));
         updatingLore(toChange);

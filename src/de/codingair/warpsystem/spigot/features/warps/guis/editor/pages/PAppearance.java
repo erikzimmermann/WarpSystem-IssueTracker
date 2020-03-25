@@ -3,8 +3,8 @@ package de.codingair.warpsystem.spigot.features.warps.guis.editor.pages;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.Color;
-import de.codingair.codingapi.server.Sound;
-import de.codingair.codingapi.server.SoundData;
+import de.codingair.codingapi.server.sounds.Sound;
+import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.Value;
@@ -24,10 +24,10 @@ import org.bukkit.inventory.ItemStack;
 public class PAppearance extends PageItem {
     private String startName;
     private Icon icon;
-    
+
     public PAppearance(Player p, Icon icon) {
         super(p, Editor.TITLE_COLOR + Lang.get("Item_Editing"), new ItemBuilder(XMaterial.ITEM_FRAME).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Appearance")).getItem(), false);
-        
+
         this.icon = icon;
         this.startName = this.icon.getName();
         initialize(p);
@@ -42,9 +42,13 @@ public class PAppearance extends PageItem {
         addButton(new SyncButton(1, 2) {
             @Override
             public ItemStack craftItem() {
-                String info = p.getInventory().getItem(p.getInventory().getHeldItemSlot()) == null || p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType() == Material.AIR ?
+                ItemStack item = p.getInventory().getItem(p.getInventory().getHeldItemSlot());
+                ItemBuilder inHand = null;
+                if(item != null) inHand = new ItemBuilder(p.getInventory().getItem(p.getInventory().getHeldItemSlot()));
+
+                String info = item == null || item.getType() == Material.AIR ?
                         "§c" + Lang.get("No_Item_In_Hand") :
-                        icon.getItem().getType() == p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType() ?
+                        icon.getItemBuilder().equals(inHand) ?
                                 "§c" + Lang.get("Cant_Change_Item")
                                 : "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Item");
 
@@ -58,8 +62,11 @@ public class PAppearance extends PageItem {
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
                 if(e.isLeftClick()) {
-                    if(p.getInventory().getItem(p.getInventory().getHeldItemSlot()) == null || p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType() == Material.AIR
-                            || icon.getItem().getType() == p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType()) return;
+                    ItemStack item = p.getInventory().getItem(p.getInventory().getHeldItemSlot());
+                    ItemBuilder inHand = null;
+                    if(item != null) inHand = new ItemBuilder(p.getInventory().getItem(p.getInventory().getHeldItemSlot()));
+
+                    if(icon.getItemBuilder().equals(inHand)) return;
 
                     icon.changeItem(player.getInventory().getItem(player.getInventory().getHeldItemSlot()));
                     getLast().updateShowIcon();

@@ -2,8 +2,8 @@ package de.codingair.warpsystem.spigot.features.nativeportals.guis.pages;
 
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
-import de.codingair.codingapi.server.Sound;
-import de.codingair.codingapi.server.SoundData;
+import de.codingair.codingapi.server.sounds.Sound;
+import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
@@ -13,6 +13,7 @@ import de.codingair.warpsystem.spigot.features.nativeportals.NativePortal;
 import de.codingair.warpsystem.spigot.features.nativeportals.guis.NPEditor;
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -30,7 +31,6 @@ public class PMaterial extends PageItem {
     public void initialize(Player p) {
         ItemButtonOption option = new ItemButtonOption();
         option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1));
-        option.setOnlyLeftClick(true);
 
         addButton(new SyncButton(1, 2) {
             @Override
@@ -52,6 +52,11 @@ public class PMaterial extends PageItem {
                 PortalType next = PortalType.WATER;
                 clone.setType(next);
                 for(int i = 1; i < 6; i++) ((SyncButton) getButton(i, 2)).update();
+            }
+
+            @Override
+            public boolean canClick(ClickType click) {
+                return click == ClickType.LEFT && clone.getType() != PortalType.WATER;
             }
         }.setOption(option));
 
@@ -76,6 +81,11 @@ public class PMaterial extends PageItem {
                 clone.setType(next);
                 for(int i = 1; i < 6; i++) ((SyncButton) getButton(i, 2)).update();
             }
+
+            @Override
+            public boolean canClick(ClickType click) {
+                return click == ClickType.LEFT && clone.getType() != PortalType.LAVA;
+            }
         }.setOption(option));
 
         addButton(new SyncButton(3, 2) {
@@ -92,6 +102,11 @@ public class PMaterial extends PageItem {
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
                 Lang.PREMIUM_CHAT(player);
+            }
+
+            @Override
+            public boolean canClick(ClickType click) {
+                return click == ClickType.LEFT;
             }
         }.setOption(option));
 
@@ -116,6 +131,11 @@ public class PMaterial extends PageItem {
                 clone.setType(next);
                 for(int i = 1; i < 6; i++) ((SyncButton) getButton(i, 2)).update();
             }
+
+            @Override
+            public boolean canClick(ClickType click) {
+                return click == ClickType.LEFT && clone.getType() != PortalType.NETHER;
+            }
         }.setOption(option));
 
         addButton(new SyncButton(5, 2) {
@@ -138,6 +158,11 @@ public class PMaterial extends PageItem {
                 PortalType next = PortalType.END;
                 clone.setType(next);
                 for(int i = 1; i < 6; i++) ((SyncButton) getButton(i, 2)).update();
+            }
+
+            @Override
+            public boolean canClick(ClickType click) {
+                return click == ClickType.LEFT && clone.getType() != PortalType.END;
             }
         }.setOption(option));
     }

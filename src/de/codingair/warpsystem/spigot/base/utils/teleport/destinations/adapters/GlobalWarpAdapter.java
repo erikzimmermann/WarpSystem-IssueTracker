@@ -1,22 +1,22 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters;
 
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
-import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPacket;
-import org.bukkit.Location;
+import de.codingair.warpsystem.transfer.packets.spigot.PrepareGlobalWarpTeleportPacket;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public class GlobalWarpAdapter implements DestinationAdapter {
     @Override
     public boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
-        GlobalWarpManager.getInstance().teleport(player, displayName, id, costs, new Callback<PrepareTeleportPacket.Result>() {
+        GlobalWarpManager.getInstance().teleport(player, displayName, id, costs, new Callback<PrepareGlobalWarpTeleportPacket.Result>() {
             @Override
-            public void accept(PrepareTeleportPacket.Result result) {
+            public void accept(PrepareGlobalWarpTeleportPacket.Result result) {
                 switch(result) {
                     case TELEPORTED:
                         if(callback != null) callback.accept(TeleportResult.TELEPORTED);

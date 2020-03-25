@@ -1,31 +1,24 @@
 package de.codingair.warpsystem.spigot.features.warps.guis.utils;
 
-import com.mojang.authlib.GameProfile;
-import de.codingair.codingapi.player.data.gameprofile.GameProfileUtils;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import org.bukkit.inventory.ItemStack;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import java.util.Base64;
-import java.util.UUID;
 
 public enum Head {
-    RED_ARROW_UP("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmQ5Mjg3NjE2MzQzZDgzM2U5ZTczMTcxNTljYWEyY2IzZTU5NzQ1MTEzOTYyYzEzNzkwNTJjZTQ3ODg4NGZhIn19fQ=="),
-    RED_ARROW_RIGHT("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmNmZTg4NDVhOGQ1ZTYzNWZiODc3MjhjY2M5Mzg5NWQ0MmI0ZmMyZTZhNTNmMWJhNzhjODQ1MjI1ODIyIn19fQ=="),
-    RED_ARROW_LEFT("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjg0ZjU5NzEzMWJiZTI1ZGMwNThhZjg4OGNiMjk4MzFmNzk1OTliYzY3Yzk1YzgwMjkyNWNlNGFmYmEzMzJmYyJ9fX0="),
-    RED_ARROW_DOWN("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTM4NTJiZjYxNmYzMWVkNjdjMzdkZTRiMGJhYTJjNWY4ZDhmY2E4MmU3MmRiY2FmY2JhNjY5NTZhODFjNCJ9fX0="),
-    CYAN_ARROW_RIGHT("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmZmNTVmMWIzMmMzNDM1YWMxYWIzZTVlNTM1YzUwYjUyNzI4NWRhNzE2ZTU0ZmU3MDFjOWI1OTM1MmFmYzFjIn19fQ=="),
-    CYAN_ARROW_LEFT("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjc2OGVkYzI4ODUzYzQyNDRkYmM2ZWViNjNiZDQ5ZWQ1NjhjYTIyYTg1MmEwYTU3OGIyZjJmOWZhYmU3MCJ9fX0="),
-    CYAN_ARROW_UP("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGIyMjFjYjk2MDdjOGE5YmYwMmZlZjVkNzYxNGUzZWIxNjljYzIxOWJmNDI1MGZkNTcxNWQ1ZDJkNjA0NWY3In19fQ=="),
-    CYAN_ARROW_DOWN("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDhhYWI2ZDlhMGJkYjA3YzEzNWM5Nzg2MmU0ZWRmMzYzMTk0Mzg1MWVmYzU0NTQ2M2Q2OGU3OTNhYjQ1YTNkMyJ9fX0="),
-    CYAN_PLUS("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGQ4YjcxNzNkODQxZjI1NjNlYzEwODg4OGIwZjc5NzkxN2VmYzE4YmUyNzg2MWYwYTY3NjFhYTNlZDkxY2UifX19"),
-    GRAY_ARROW_RIGHT("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjMyY2E2NjA1NmI3Mjg2M2U5OGY3ZjMyYmQ3ZDk0YzdhMGQ3OTZhZjY5MWM5YWMzYTkxMzYzMzEzNTIyODhmOSJ9fX0="),
-    GRAY_ARROW_LEFT("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODY5NzFkZDg4MWRiYWY0ZmQ2YmNhYTkzNjE0NDkzYzYxMmY4Njk2NDFlZDU5ZDFjOTM2M2EzNjY2YTVmYTYifX19"),
-    GRAY_ARROW_UP("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2Y0NmFiYWQ5MjRiMjIzNzJiYzk2NmE2ZDUxN2QyZjFiOGI1N2ZkZDI2MmI0ZTA0ZjQ4MzUyZTY4M2ZmZjkyIn19fQ=="),
-    GRAY_ARROW_DOWN("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmU5YWU3YTRiZTY1ZmNiYWVlNjUxODEzODlhMmY3ZDQ3ZTJlMzI2ZGI1OWVhM2ViNzg5YTkyYzg1ZWE0NiJ9fX0="),
-    GRAY_PLUS("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTBjOTdlNGI2OGFhYWFlODQ3MmUzNDFiMWQ4NzJiOTNiMzZkNGViNmVhODllY2VjMjZhNjZlNmM0ZTE3OCJ9fX0=");
+    RED_ARROW_UP("2d9287616343d833e9e7317159caa2cb3e59745113962c1379052ce478884fa"),
+    RED_ARROW_RIGHT("fcfe8845a8d5e635fb87728ccc93895d42b4fc2e6a53f1ba78c845225822"),
+    RED_ARROW_LEFT("f84f597131bbe25dc058af888cb29831f79599bc67c95c802925ce4afba332fc"),
+    RED_ARROW_DOWN("a3852bf616f31ed67c37de4b0baa2c5f8d8fca82e72dbcafcba66956a81c4"),
+    RED_PLUS("ac731c3c723f67d2cfb1a1192b947086fba32aea472d347a5ed5d7642f73b"),
+    CYAN_ARROW_RIGHT("6ff55f1b32c3435ac1ab3e5e535c50b527285da716e54fe701c9b59352afc1c"),
+    CYAN_ARROW_LEFT("6768edc28853c4244dbc6eeb63bd49ed568ca22a852a0a578b2f2f9fabe70"),
+    CYAN_ARROW_UP("4b221cb9607c8a9bf02fef5d7614e3eb169cc219bf4250fd5715d5d2d6045f7"),
+    CYAN_ARROW_DOWN("d8aab6d9a0bdb07c135c97862e4edf3631943851efc545463d68e793ab45a3d3"),
+    CYAN_PLUS("dd8b7173d841f2563ec108888b0f797917efc18be27861f0a6761aa3ed91ce"),
+    GRAY_ARROW_RIGHT("f32ca66056b72863e98f7f32bd7d94c7a0d796af691c9ac3a9136331352288f9"),
+    GRAY_ARROW_LEFT("86971dd881dbaf4fd6bcaa93614493c612f869641ed59d1c9363a3666a5fa6"),
+    GRAY_ARROW_UP("3f46abad924b22372bc966a6d517d2f1b8b57fdd262b4e04f48352e683fff92"),
+    GRAY_ARROW_DOWN("be9ae7a4be65fcbaee65181389a2f7d47e2e326db59ea3eb789a92c85ea46"),
+    GRAY_PLUS("10c97e4b68aaaae8472e341b1d872b93b36d4eb6ea89ecec26a66e6c4e178");
 
     private String data;
 
@@ -33,23 +26,11 @@ public enum Head {
         this.data = data;
     }
 
-    private GameProfile convert() {
-        String data = new String(Base64.getDecoder().decode(this.data));
-
-        try {
-            JSONObject json = (JSONObject) new JSONParser().parse(data);
-            json = (JSONObject) json.get("textures");
-            json = (JSONObject) json.get("SKIN");
-
-            String url = (String) json.get("url");
-            return GameProfileUtils.getGameProfile(UUID.randomUUID(), "Name", 10, "Signature", url, null);
-        } catch(ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public ItemStack getItem() {
+        return getItemBuilder().getItem();
     }
 
-    public ItemStack getItem() {
-        return new ItemBuilder(convert()).getItem();
+    public ItemBuilder getItemBuilder() {
+        return new ItemBuilder(data);
     }
 }

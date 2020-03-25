@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.features.simplewarps.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
+import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
@@ -10,11 +11,11 @@ import de.codingair.warpsystem.spigot.features.simplewarps.commands.CSetWarp;
 import de.codingair.warpsystem.spigot.features.simplewarps.commands.CWarp;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.ChatColor;
-import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SimpleWarpManager implements Manager {
     private static SimpleWarpManager instance = null;
@@ -23,26 +24,38 @@ public class SimpleWarpManager implements Manager {
     private ConfigFile file;
 
     @Override
-    public boolean load() {
+    public boolean load(boolean loader) {
         if(WarpSystem.getInstance().getFileManager().getFile("SimpleWarps") == null) WarpSystem.getInstance().getFileManager().loadFile("SimpleWarps", "/Memory/");
         this.file = WarpSystem.getInstance().getFileManager().getFile("SimpleWarps");
         boolean errors = false;
 
         WarpSystem.log("  > Loading SimpleWarps");
 
-        List<String> l = file.getConfig().getStringList("Warps");
+        List<?> l = file.getConfig().getList("Warps");
+        if(l != null)
+            for(Object w : l) {
+                if(w instanceof Map) {
+                    try {
+                        JSON json = new JSON((Map<?, ?>) w);
+                        SimpleWarp warp = new SimpleWarp();
 
-        if(l != null && !l.isEmpty()) {
-            for(String w : l) {
-                try {
-                    SimpleWarp warp = new SimpleWarp(w);
-                    warps.put(warp.getName(true).toLowerCase(), warp);
-                } catch(ParseException e) {
-                    e.printStackTrace();
-                    errors = true;
+                        warp.read(json);
+
+                        warps.put(warp.getName(true).toLowerCase(), warp);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        errors = true;
+                    }
+                } else if(w instanceof String) {
+                    try {
+                        SimpleWarp warp = new SimpleWarp((String) w);
+                        warps.put(warp.getName(true).toLowerCase(), warp);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                        errors = true;
+                    }
                 }
             }
-        }
 
         WarpSystem.log("    ...got " + warps.size() + " SimpleWarp(s)");
 
@@ -57,10 +70,12 @@ public class SimpleWarpManager implements Manager {
     @Override
     public void save(boolean saver) {
         if(!saver) WarpSystem.log("  > Saving SimpleWarps");
-        List<String> finalData = new ArrayList<>();
+        List<JSON> finalData = new ArrayList<>();
 
         for(SimpleWarp warp : this.warps.values()) {
-            finalData.add(warp.toString());
+            JSON json = new JSON();
+            warp.write(json);
+            finalData.add(json);
         }
 
         file.getConfig().set("Warps", finalData);

@@ -55,7 +55,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
     private CBack back;
 
     @Override
-    public boolean load() {
+    public boolean load(boolean loader) {
         WarpSystem.getInstance().getBungeeFeatureList().add(this);
         Bukkit.getPluginManager().registerEvents(new TeleportListener(), WarpSystem.getInstance());
 
@@ -189,7 +189,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
                             options.setWaitForTeleport(true);
                             options.setCosts(tpaCosts);
                             options.setNoDelayByPass(true);
-                            options.setCallback(new Callback<TeleportResult>() {
+                            options.addCallback(new Callback<TeleportResult>() {
                                 @Override
                                 public void accept(TeleportResult object) {
                                     if(receiver.length == 1) hasInvites.remove(sender.getName());
@@ -215,7 +215,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
                             options.setCosts(tpaCosts);
                             options.setPaymentDeniedMessage(null);
                             options.setNoDelayByPass(true);
-                            options.setCallback(new Callback<TeleportResult>() {
+                            options.addCallback(new Callback<TeleportResult>() {
                                 @Override
                                 public void accept(TeleportResult result) {
                                     //move

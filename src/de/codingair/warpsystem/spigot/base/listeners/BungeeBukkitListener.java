@@ -1,9 +1,13 @@
 package de.codingair.warpsystem.spigot.base.listeners;
 
+import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.time.TimeMap;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.GlobalLocationAdapter;
 import de.codingair.warpsystem.transfer.packets.bungee.InitialPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.PrepareLoginMessagePacket;
+import de.codingair.warpsystem.transfer.packets.bungee.TeleportPacket;
+import de.codingair.warpsystem.transfer.packets.general.PrepareCoordinationTeleportPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.IsOperatorPacket;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
@@ -69,6 +73,8 @@ public class BungeeBukkitListener implements PacketListener, Listener {
     public void onReceive(Packet packet, String extra) {
         switch(PacketType.getByObject(packet)) {
             case InitialPacket: {
+                WarpSystem.getInstance().setCurrentServer(((InitialPacket) packet).getServerName());
+
                 String version = ((InitialPacket) packet).getVersion();
                 if(version.equals(WarpSystem.getInstance().getDescription().getVersion())) {
                     if(WarpSystem.getInstance().getBungeePluginVersion() == null || !WarpSystem.getInstance().getBungeePluginVersion().equals(version)) {
@@ -106,6 +112,12 @@ public class BungeeBukkitListener implements PacketListener, Listener {
                 if(Bukkit.getPlayer(p.getPlayer()) != null) {
                     Bukkit.getPlayer(p.getPlayer()).sendMessage(p.getMessage());
                 } else loginMessage.put(p.getPlayer(), p.getMessage(), 10);
+                break;
+            }
+
+            case PrepareCoordinationTeleportPacket: {
+                PrepareCoordinationTeleportPacket p = (PrepareCoordinationTeleportPacket) packet;
+                TeleportListener.setSpawnPositionOrTeleport(p.getPlayer(), new Location(p.getWorld(), p.getX(), p.getY(), p.getZ(), p.getYaw(), p.getPitch()), p.getDestinationName(), p.getMessage());
                 break;
             }
         }

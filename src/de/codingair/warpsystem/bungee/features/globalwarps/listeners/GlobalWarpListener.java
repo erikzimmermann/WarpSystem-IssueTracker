@@ -10,7 +10,7 @@ import de.codingair.warpsystem.transfer.packets.bungee.TeleportPacket;
 import de.codingair.warpsystem.transfer.packets.general.BooleanPacket;
 import de.codingair.warpsystem.transfer.packets.general.IntegerPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.DeleteGlobalWarpPacket;
-import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPacket;
+import de.codingair.warpsystem.transfer.packets.spigot.PrepareGlobalWarpTeleportPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.PublishGlobalWarpPacket;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
@@ -93,9 +93,9 @@ public class GlobalWarpListener implements Listener, PacketListener {
                 break;
 
             case PrepareTeleportPacket:
-                String player = ((PrepareTeleportPacket) packet).getPlayer();
-                String teleport = ((PrepareTeleportPacket) packet).getTeleportName();
-                String teleportDisplayName = ((PrepareTeleportPacket) packet).getDisplayName();
+                String player = ((PrepareGlobalWarpTeleportPacket) packet).getPlayer();
+                String teleport = ((PrepareGlobalWarpTeleportPacket) packet).getTeleportName();
+                String teleportDisplayName = ((PrepareGlobalWarpTeleportPacket) packet).getDisplayName();
                 warp = manager.get(teleport);
 
                 if(warp == null) {
@@ -112,11 +112,11 @@ public class GlobalWarpListener implements Listener, PacketListener {
                 else if(otherServer == null) answerIntegerPacket.setValue(2);
                 else answerIntegerPacket.setValue(0);
 
-                ((PrepareTeleportPacket) packet).applyAsAnswer(answerIntegerPacket);
+                ((PrepareGlobalWarpTeleportPacket) packet).applyAsAnswer(answerIntegerPacket);
 
                 if(p.getServer().getInfo().equals(otherServer)) {
                     WarpSystem.getInstance().getDataHandler().send(answerIntegerPacket, server);
-                    WarpSystem.getInstance().getDataHandler().send(new TeleportPacket(player, warp, teleportDisplayName, ((PrepareTeleportPacket) packet).getCosts()), otherServer);
+                    WarpSystem.getInstance().getDataHandler().send(new TeleportPacket(player, warp, teleportDisplayName, ((PrepareGlobalWarpTeleportPacket) packet).getCosts()), otherServer);
                 } else {
                     Value<Boolean> modifiedEvent = new Value<>(false);
                     ServerSwitchAttemptEvent e = new ServerSwitchAttemptEvent(p, otherServer, new Callback() {
@@ -132,7 +132,7 @@ public class GlobalWarpListener implements Listener, PacketListener {
                                 public void accept(Boolean online) {
                                     if(online) {
                                         WarpSystem.getInstance().getDataHandler().send(answerIntegerPacket, server);
-                                        WarpSystem.getInstance().getDataHandler().send(new TeleportPacket(player, warp, teleportDisplayName, ((PrepareTeleportPacket) packet).getCosts()), otherServer);
+                                        WarpSystem.getInstance().getDataHandler().send(new TeleportPacket(player, warp, teleportDisplayName, ((PrepareGlobalWarpTeleportPacket) packet).getCosts()), otherServer);
 
                                         p.connect(otherServer, (connected, throwable) -> {
                                         });

@@ -5,8 +5,8 @@ import de.codingair.codingapi.particles.animations.customanimations.AnimationTyp
 import de.codingair.codingapi.particles.animations.customanimations.CustomAnimation;
 import de.codingair.codingapi.particles.animations.movables.MovableMid;
 import de.codingair.codingapi.particles.utils.Color;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.Serializable;
-import de.codingair.codingapi.tools.JSON.JSONObject;
+import de.codingair.codingapi.tools.io.utils.DataWriter;
+import de.codingair.codingapi.tools.io.utils.Serializable;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
@@ -39,20 +39,23 @@ public class ParticlePart implements Serializable {
     }
 
     @Override
-    public boolean read(JSONObject json) {
-        animation = AnimationType.getById(json.get("animation", 0));
-        particle = Particle.getById(json.get("particle", 26));
-        height = json.get("height", 0D);
-        radius = json.get("radius", 0D);
+    public boolean read(DataWriter d) {
+        animation = AnimationType.getById(d.get("animation", 0));
+        particle = Particle.getById(d.get("particle", 26));
+        height = d.getDouble("height");
+        radius = d.getDouble("radius");
+
+        if(color == null) color = Color.RED;
+        if(speed < CustomAnimation.MIN_SPEED) speed = CustomAnimation.MAX_SPEED;
         return true;
     }
 
     @Override
-    public void write(JSONObject json) {
-        json.put("animation", animation.getId());
-        json.put("particle", particle.getId());
-        json.put("height", height);
-        json.put("radius", radius);
+    public void write(DataWriter d) {
+        d.put("animation", animation.getId());
+        d.put("particle", particle.getId());
+        d.put("height", height);
+        d.put("radius", radius);
     }
 
     @Override

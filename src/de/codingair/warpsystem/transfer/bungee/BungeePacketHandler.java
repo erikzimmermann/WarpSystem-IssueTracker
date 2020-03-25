@@ -39,7 +39,8 @@ public class BungeePacketHandler implements PacketHandler {
                 break;
 
             case RequestUUIDPacket:
-                SendUUIDPacket uuidPacket = new SendUUIDPacket(BungeeCord.getInstance().getPlayer(((RequestUUIDPacket) packet).getName()).getUniqueId());
+                ProxiedPlayer pp = BungeeCord.getInstance().getPlayer(((RequestUUIDPacket) packet).getName());
+                SendUUIDPacket uuidPacket = new SendUUIDPacket(pp == null ? null : pp.getUniqueId());
                 ((RequestUUIDPacket) packet).applyAsAnswer(uuidPacket);
                 WarpSystem.getInstance().getDataHandler().send(uuidPacket, server);
                 break;

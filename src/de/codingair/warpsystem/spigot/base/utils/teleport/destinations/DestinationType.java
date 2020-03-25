@@ -11,6 +11,8 @@ public enum DestinationType {
     GlobalWarp(3, GlobalWarpAdapter.class),
     EffectPortal(4, PortalDestinationAdapter.class),
     Server(5, ServerAdapter.class),
+    Location(6, LocationAdapter.class),
+    GlobalLocation(7, GlobalLocationAdapter.class),
     ;
 
     private int id;
@@ -27,6 +29,24 @@ public enum DestinationType {
 
     public Class<? extends DestinationAdapter> getAdapter() {
         return adapter;
+    }
+
+    public static DestinationType getByAdapter(DestinationAdapter adapter) {
+        if(adapter == null) return UNKNOWN;
+
+        for(DestinationType value : values()) {
+            if(adapter.getClass().equals(value.adapter)) return value;
+        }
+
+        return UNKNOWN;
+    }
+
+    public static DestinationType getById(int id) {
+        for(DestinationType value : values()) {
+            if(value.getId() == id) return value;
+        }
+
+        return UNKNOWN;
     }
 
     public DestinationAdapter getInstance() {

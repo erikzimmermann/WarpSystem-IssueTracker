@@ -52,7 +52,7 @@ public class BungeeDataHandler implements DataHandler {
             return;
         }
 
-        if(packet instanceof RequestPacket) {
+        if(packet instanceof RequestPacket && ((RequestPacket) packet).getCallback() != null) {
             if(callbacks.get(((RequestPacket) packet).getUniqueId()) != null) ((RequestPacket) packet).checkUUID(this.callbacks.keySet());
             callbacks.put(((RequestPacket) packet).getUniqueId(), ((RequestPacket) packet).getCallback());
         }

@@ -1,13 +1,13 @@
 package de.codingair.warpsystem.spigot.features.tempwarps.utils;
 
-import de.codingair.codingapi.tools.JSON.JSONObject;
-import de.codingair.codingapi.tools.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.json.simple.parser.ParseException;
+import de.codingair.codingapi.tools.io.lib.ParseException;
 
 import java.util.Date;
 import java.util.UUID;
@@ -284,7 +284,7 @@ public class TempWarp {
     }
 
     public String toJSONString() {
-        JSONObject json = new JSONObject();
+        JSON json = new JSON();
 
         json.put("Owner", this.owner.toString());
         json.put("LastKnownName", this.lastKnownName);
@@ -308,12 +308,14 @@ public class TempWarp {
 
     public static TempWarp getByJSONString(String s) {
         try {
-            JSONObject json = (JSONObject) new JSONParser().parse(s);
+            JSON json = (JSON) new JSONParser().parse(s);
 
             UUID owner = UUID.fromString(json.get("Owner"));
             String lastKnownName = json.get("LastKnownName");
             Location location = json.getLocation("Location");
-            String name = json.get("Name");
+            Object nameTemp = json.get("Name");
+            String name = nameTemp + "";
+
             String teleportMessage = json.get("Message");
             Date bornDate = json.getDate("BornDate");
             Date startDate = json.getDate("StartDate");

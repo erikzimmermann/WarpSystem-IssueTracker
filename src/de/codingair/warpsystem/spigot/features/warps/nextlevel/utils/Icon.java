@@ -1,13 +1,13 @@
 package de.codingair.warpsystem.spigot.features.warps.nextlevel.utils;
 
 import de.codingair.codingapi.server.Color;
+import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
-import de.codingair.codingapi.tools.JSON.JSONObject;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,7 +32,7 @@ public class Icon extends FeatureObject {
         this.page = icon.getPage();
     }
 
-    public Icon(String name, ItemStack item, Icon page, int slot, String permission, List<ActionObject> actions) {
+    public Icon(String name, ItemStack item, Icon page, int slot, String permission, List<ActionObject<?>> actions) {
         super(permission, false, actions);
         this.name = name;
         this.item = item;
@@ -40,7 +40,7 @@ public class Icon extends FeatureObject {
         this.slot = slot;
     }
 
-    public Icon(String name, ItemStack item, Icon page, int slot, String permission, ActionObject... actions) {
+    public Icon(String name, ItemStack item, Icon page, int slot, String permission, ActionObject<?>... actions) {
         super(permission, false, actions);
         this.name = name;
         this.item = item;
@@ -80,38 +80,38 @@ public class Icon extends FeatureObject {
     }
 
     @Override
-    public boolean read(JSONObject json) throws Exception {
-        super.read(json);
+    public boolean read(DataWriter d) throws Exception {
+        super.read(d);
 
-        this.name = json.get("name");
-        this.item = json.getItemStack("item");
+        this.name = d.get("name");
+        this.item = d.getItemStack("item");
 
-        this.slot = json.getInteger("slot") ;
+        this.slot = d.getInteger("slot") ;
 
-        if(json.get("isCategory") != null) {
-            this.isPage = Boolean.parseBoolean(json.get("isCategory") + "");
+        if(d.get("isCategory") != null) {
+            this.isPage = Boolean.parseBoolean(d.get("isCategory") + "");
         } else {
-            this.isPage = json.getBoolean("isPage");
+            this.isPage = d.getBoolean("isPage");
         }
 
-        if(json.get("category") != null) {
-            this.page = json.get("category") == null ? null : IconManager.getInstance().getPage(json.get("category"));
+        if(d.get("category") != null) {
+            this.page = d.get("category") == null ? null : IconManager.getInstance().getPage(d.get("category"));
         } else {
-            this.page = json.get("page") == null ? null : IconManager.getInstance().getPage(json.get("page"));
+            this.page = d.get("page") == null ? null : IconManager.getInstance().getPage(d.get("page"));
         }
 
         return true;
     }
 
     @Override
-    public void write(JSONObject json) {
-        super.write(json);
+    public void write(DataWriter d) {
+        super.write(d);
 
-        json.put("name", this.name);
-        json.put("item", this.item);
-        json.put("slot", this.slot);
-        json.put("isPage", this.isPage);
-        json.put("page", this.page == null ? null : this.page.getName());
+        d.put("name", this.name);
+        d.put("item", this.item);
+        d.put("slot", this.slot);
+        d.put("isPage", this.isPage);
+        d.put("page", this.page == null ? null : this.page.getName());
     }
 
     @Override
@@ -149,7 +149,15 @@ public class Icon extends FeatureObject {
 
     public Icon changeItem(ItemStack item) {
         ItemBuilder builder = new ItemBuilder(item);
-        this.item = new ItemBuilder(this.item).setType(item.getType()).setData(builder.getData()).getItem();
+        ItemBuilder base = new ItemBuilder(this.item);
+
+        builder.setName(base.getName());
+        builder.setLore(base.getLore());
+        builder.setHideStandardLore(true);
+        builder.setHideEnchantments(true);
+        builder.setEnchantments(base.getEnchantments());
+
+        this.item = builder.getItem();
         return this;
     }
 

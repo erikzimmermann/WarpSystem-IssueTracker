@@ -3,8 +3,8 @@ package de.codingair.warpsystem.spigot.features.nativeportals.guis.pages;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
-import de.codingair.codingapi.server.Sound;
-import de.codingair.codingapi.server.SoundData;
+import de.codingair.codingapi.server.sounds.Sound;
+import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.Value;
@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -41,7 +42,6 @@ public class PAppearance extends PageItem {
     public void initialize(Player p) {
         ItemButtonOption option = new ItemButtonOption();
         option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
-        option.setOnlyLeftClick(true);
 
         addButton(new NameButton(1, 2, false, new Value<>(nativePortal.getDisplayName())) {
             @Override
@@ -53,6 +53,11 @@ public class PAppearance extends PageItem {
             public String onChange(String old, String name) {
                 nativePortal.setDisplayName(name);
                 return name;
+            }
+
+            @Override
+            public boolean canClick(ClickType click) {
+                return click == ClickType.LEFT;
             }
         }.setOption(option));
 
@@ -104,6 +109,11 @@ public class PAppearance extends PageItem {
                         }
                     }
                 }, WarpSystem.getInstance());
+            }
+
+            @Override
+            public boolean canClick(ClickType click) {
+                return click == ClickType.LEFT;
             }
         }.setOption(option));
 

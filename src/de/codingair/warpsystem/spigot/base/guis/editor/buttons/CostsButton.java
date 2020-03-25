@@ -52,7 +52,7 @@ public class CostsButton extends SyncAnvilGUIButton {
     public void onClick(AnvilClickEvent e) {
         if(!e.getSlot().equals(AnvilSlot.OUTPUT)) return;
 
-        String input = e.getInput();
+        String input = e.getInput(false);
 
         if(input == null) {
             e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number"));

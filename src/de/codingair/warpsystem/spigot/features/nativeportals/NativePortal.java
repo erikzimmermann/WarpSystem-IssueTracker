@@ -2,7 +2,8 @@ package de.codingair.warpsystem.spigot.features.nativeportals;
 
 import de.codingair.codingapi.server.blocks.utils.Axis;
 import de.codingair.codingapi.tools.Area;
-import de.codingair.codingapi.tools.JSON.JSONObject;
+import de.codingair.codingapi.tools.io.utils.DataWriter;
+import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
@@ -19,17 +20,18 @@ import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import org.json.simple.JSONArray;
+import de.codingair.codingapi.tools.io.lib.JSONArray;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class NativePortal extends FeatureObject {
     private PortalType type;
     private boolean editMode = false;
 
-    private List<PortalBlock> blocks;
+    private List<PortalBlock> blocks = new ArrayList<>();
     private boolean visible = false;
     private List<PortalListener> listeners = new ArrayList<>();
 
@@ -73,30 +75,26 @@ public class NativePortal extends FeatureObject {
     }
 
     @Override
-    public boolean read(JSONObject json) throws Exception {
-        super.read(json);
+    public boolean read(DataWriter d) throws Exception {
+        super.read(d);
         setSkip(true);
         setPermission(null);
 
-        try {
-            if(json.get("Type") != null) {
-                this.type = PortalType.valueOf(json.get("Type"));
-            } else if(json.get("type") != null) {
-                this.type = PortalType.valueOf(json.get("type"));
-            }
-        } catch(IllegalArgumentException ex) {
-            this.type = PortalType.WATER;
+        if(d.get("Type") != null) {
+            this.type = PortalType.valueOf(d.get("Type"));
+        } else if(d.get("type") != null) {
+            this.type = PortalType.valueOf(d.get("type"));
         }
 
         Destination destination = null;
 
-        if(json.get("Destination") != null) {
+        if(d.get("Destination") != null) {
             //new pattern
-            destination = new Destination((String) json.get("Destination"));
-        } else if(json.get("Warp") != null || json.get("GlobalWarp") != null) {
+            destination = new Destination((String) d.get("Destination"));
+        } else if(d.get("Warp") != null || d.get("GlobalWarp") != null) {
             //old pattern
-            SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(json.get("Warp"));
-            String globalWarp = json.get("GlobalWarp");
+            SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(d.get("Warp"));
+            String globalWarp = d.get("GlobalWarp");
 
             if(warp != null) {
                 destination = new Destination(warp.getName(), DestinationType.SimpleWarp);
@@ -107,32 +105,45 @@ public class NativePortal extends FeatureObject {
 
         if(destination != null) addAction(new WarpAction(destination));
 
-        if(json.get("Name") != null) {
-            this.displayName = json.get("Name");
-        } else if(json.get("name") != null) {
-            this.displayName = json.get("name");
+        if(d.get("Name") != null) {
+            this.displayName = d.get("Name");
+        } else if(d.get("name") != null) {
+            this.displayName = d.get("name");
         }
 
         JSONArray jsonArray = null;
-        if(json.get("Blocks") != null) {
-            jsonArray = json.get("Blocks", new JSONArray());
-        } else if(json.get("blocks") != null) {
-            jsonArray = json.get("blocks", new JSONArray());
+        if(d.get("Blocks") != null) {
+            jsonArray = d.getList("Blocks");
+        } else if(d.get("blocks") != null) {
+            jsonArray = d.getList("blocks");
         }
 
         this.blocks = new ArrayList<>();
 
         if(jsonArray != null) {
             for(Object o : jsonArray) {
-                String data = (String) o;
-                Location loc = de.codingair.codingapi.tools.Location.getByJSONString(data);
+                if(o instanceof Map) {
+                    JSON json = new JSON((Map<?, ?>) o);
+                    de.codingair.codingapi.tools.Location loc = new de.codingair.codingapi.tools.Location();
+                    loc.read(json);
 
-                if(loc == null || loc.getWorld() == null) {
-                    destroy();
-                    return false;
+                    if(loc.getWorld() == null) {
+                        destroy();
+                        return false;
+                    }
+
+                    blocks.add(new PortalBlock(loc));
+                } else if(o instanceof String) {
+                    String data = (String) o;
+                    Location loc = de.codingair.codingapi.tools.Location.getByJSONString(data);
+
+                    if(loc == null || loc.getWorld() == null) {
+                        destroy();
+                        return false;
+                    }
+
+                    blocks.add(new PortalBlock(loc));
                 }
-
-                blocks.add(new PortalBlock(loc));
             }
 
             for(PortalBlock block : blocks) {
@@ -147,20 +158,22 @@ public class NativePortal extends FeatureObject {
     }
 
     @Override
-    public void write(JSONObject json) {
-        super.write(json);
+    public void write(DataWriter d) {
+        super.write(d);
 
-        json.remove("permission");
-        json.put("type", type == null ? null : type.name());
-        json.put("name", displayName);
+        d.remove("permission");
+        d.put("type", type == null ? null : type.name());
+        d.put("name", displayName);
 
-        JSONArray jsonArray = new JSONArray();
+        List<JSON> data = new ArrayList<>();
 
         for(PortalBlock block : this.blocks) {
-            jsonArray.add(block.getLocation().toJSONString(4));
+            JSON json = new JSON();
+            block.getLocation().write(json);
+            data.add(json);
         }
 
-        json.put("blocks", jsonArray.toJSONString());
+        d.put("blocks", data);
     }
 
     @Override
@@ -170,8 +183,8 @@ public class NativePortal extends FeatureObject {
         this.type = null;
         this.cachedEdges = null;
         this.cachedAxis = null;
-        this.blocks.clear();
-        this.listeners.clear();
+        if(this.blocks != null) this.blocks.clear();
+        if(this.listeners != null) this.listeners.clear();
     }
 
     @Override
@@ -189,6 +202,7 @@ public class NativePortal extends FeatureObject {
         this.type = nativePortal.getType();
         this.listeners.clear();
         this.listeners.addAll(nativePortal.getListeners());
+        this.displayName = nativePortal.getDisplayName();
 
         if(visible) setVisible(true);
     }

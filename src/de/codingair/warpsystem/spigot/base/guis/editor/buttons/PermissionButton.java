@@ -30,7 +30,7 @@ public class PermissionButton extends SyncAnvilGUIButton {
     public void onClick(AnvilClickEvent e) {
         if(!e.getSlot().equals(AnvilSlot.OUTPUT)) return;
 
-        String input = e.getInput();
+        String input = e.getInput(false);
 
         if(input == null) {
             e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Permission"));
@@ -77,5 +77,10 @@ public class PermissionButton extends SyncAnvilGUIButton {
             object.setPermission(null);
             update();
         }
+    }
+
+    @Override
+    public boolean canClick(ClickType click) {
+        return click == ClickType.LEFT || (click == ClickType.RIGHT && object.getPermission() != null);
     }
 }

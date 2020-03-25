@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types;
 
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject;
@@ -67,6 +68,17 @@ public class CommandAction extends ActionObject<List<String>> {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean read(DataWriter d) {
+        setValue(d.getList("commands"));
+        return true;
+    }
+
+    @Override
+    public void write(DataWriter d) {
+        d.put("commands", getValue());
     }
 
     @Override

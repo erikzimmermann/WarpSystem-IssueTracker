@@ -4,6 +4,7 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.codingapi.tools.time.TimeListener;
 import de.codingair.warpsystem.transfer.DataHandler;
+import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpUpdatePacket;
 import de.codingair.warpsystem.transfer.packets.utils.*;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
 import org.bukkit.Bukkit;
@@ -77,7 +78,7 @@ public class SpigotDataHandler implements DataHandler {
                 return;
             }
 
-            if(packet instanceof RequestPacket) {
+            if(packet instanceof RequestPacket && ((RequestPacket) packet).getCallback() != null) {
                 if(callbacks.get(((RequestPacket) packet).getUniqueId()) != null) ((RequestPacket) packet).checkUUID(this.callbacks.keySet());
                 callbacks.put(((RequestPacket) packet).getUniqueId(), ((RequestPacket) packet).getCallback());
 

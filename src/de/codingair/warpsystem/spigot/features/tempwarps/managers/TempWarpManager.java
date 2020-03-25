@@ -97,7 +97,7 @@ public class TempWarpManager implements Manager, Ticker {
     private TeleportManager teleportManager = new TeleportManager();
 
     @Override
-    public boolean load() {
+    public boolean load(boolean loader) {
         if(!MoneyAdapterType.canEnable()) {
             WarpSystem.log("  > No Money-Plugin > Ignoring TempWarps");
             return true;
@@ -427,7 +427,7 @@ public class TempWarpManager implements Manager, Ticker {
         }
 
         if(warp.isExpired()) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_is_expired"));
+            player.sendMessage(Lang.getPrefix() + Lang.get("Warp_is_expired"));
             return;
         }
 
@@ -460,7 +460,7 @@ public class TempWarpManager implements Manager, Ticker {
         }
 
         if(!warp.isExpired()) {
-            player.sendMessage(Lang.getPrefix() + Lang.get("TempWarp_is_not_expired"));
+            player.sendMessage(Lang.getPrefix() + Lang.get("Warp_is_not_epired"));
             return;
         }
 

@@ -6,13 +6,12 @@ import de.codingair.warpsystem.bungee.api.ServerSwitchAttemptEvent;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
 import de.codingair.warpsystem.transfer.packets.bungee.PrepareLoginMessagePacket;
-import de.codingair.warpsystem.transfer.packets.bungee.TeleportPacket;
 import de.codingair.warpsystem.transfer.packets.general.BooleanPacket;
 import de.codingair.warpsystem.transfer.packets.general.IntegerPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.IsOperatorPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.MessagePacket;
+import de.codingair.warpsystem.transfer.packets.general.PrepareCoordinationTeleportPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.PrepareServerSwitchPacket;
-import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestServerStatusPacket;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
@@ -157,6 +156,49 @@ public class MainListener implements Listener, PacketListener {
                     BungeeCord.getInstance().getPluginManager().callEvent(e);
                     if(!e.isWaitForCallback()) e.getTeleportFinisher().accept(null);
                     else modifiedEvent.setValue(true);
+                }
+                break;
+            }
+
+            case PrepareCoordinationTeleportPacket: {
+                PrepareCoordinationTeleportPacket p = (PrepareCoordinationTeleportPacket) packet;
+                IntegerPacket answer = new IntegerPacket();
+                p.applyAsAnswer(answer);
+
+                ProxiedPlayer pp = BungeeCord.getInstance().getPlayer(p.getPlayer());
+                ServerInfo target = BungeeCord.getInstance().getServerInfo(p.getServer());
+
+                if(WarpSystem.getInstance().getServerManager().isOnline(target)) {
+                    if(target.getPlayers().isEmpty()) {
+                        //switch and teleport
+                        pp.connect(target, (connected, throwable) -> {
+                            if(connected) {
+                                answer.setValue(0);
+                                PrepareCoordinationTeleportPacket finalCall = p.clone(null);
+                                finalCall.setServer(null);
+                                WarpSystem.getInstance().getDataHandler().send(finalCall, target);
+                            } else {
+                                answer.setValue(1);
+                            }
+
+                            WarpSystem.getInstance().getDataHandler().send(answer, server);
+                        });
+                    } else {
+                        //prepare and switch
+                        PrepareCoordinationTeleportPacket finalCall = p.clone(new Callback<Integer>() {
+                            @Override
+                            public void accept(Integer object) {
+                                answer.setValue(object);
+                                WarpSystem.getInstance().getDataHandler().send(answer, server);
+                            }
+                        });
+                        finalCall.setServer(null);
+                        WarpSystem.getInstance().getDataHandler().send(finalCall, target);
+                        pp.connect(target);
+                    }
+                } else {
+                    answer.setValue(1);
+                    WarpSystem.getInstance().getDataHandler().send(answer, server);
                 }
                 break;
             }

@@ -7,16 +7,16 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class PrepareTeleportPacket extends RequestPacket<Integer> {
+public class PrepareGlobalWarpTeleportPacket extends RequestPacket<Integer> {
     private String player;
     private String teleportName;
     private String displayName;
     private double costs;
 
-    public PrepareTeleportPacket() {
+    public PrepareGlobalWarpTeleportPacket() {
     }
 
-    public PrepareTeleportPacket(String player, String teleportName, String displayName, double costs, Callback<Integer> callback) {
+    public PrepareGlobalWarpTeleportPacket(String player, String teleportName, String displayName, double costs, Callback<Integer> callback) {
         super(callback);
         this.player = player;
         this.teleportName = teleportName;

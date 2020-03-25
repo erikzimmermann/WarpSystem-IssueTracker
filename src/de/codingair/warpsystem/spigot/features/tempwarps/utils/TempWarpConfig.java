@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.spigot.features.tempwarps.utils;
-import de.codingair.codingapi.tools.JSON.JSONObject;
-import de.codingair.codingapi.tools.JSON.JSONParser;
-import org.json.simple.parser.ParseException;
+import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.lib.ParseException;
 
 import java.util.concurrent.TimeUnit;
 
@@ -45,7 +45,7 @@ public class TempWarpConfig {
     }
 
     public String toJSONString() {
-        JSONObject json = new JSONObject();
+        JSON json = new JSON();
 
         json.put("Unit", unit.name());
         json.put("durationCosts", durationCosts);
@@ -58,7 +58,7 @@ public class TempWarpConfig {
 
     public static TempWarpConfig getByJSON(String s) {
         try {
-            JSONObject json = (JSONObject) new JSONParser().parse(s);
+            JSON json = (JSON) new JSONParser().parse(s);
 
             TimeUnit unit = TimeUnit.valueOf(json.get("Unit"));
             int durationCosts = json.getInteger("durationCosts");
