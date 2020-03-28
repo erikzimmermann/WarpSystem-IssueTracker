@@ -2,8 +2,10 @@ package de.codingair.warpsystem.spigot.features.nativeportals;
 
 import de.codingair.codingapi.server.blocks.utils.Axis;
 import de.codingair.codingapi.tools.Area;
-import de.codingair.codingapi.tools.io.utils.DataWriter;
+import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.lib.JSONArray;
+import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
@@ -15,12 +17,10 @@ import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalListene
 import de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalType;
 import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import de.codingair.codingapi.tools.io.lib.JSONArray;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,7 +31,7 @@ public class NativePortal extends FeatureObject {
     private PortalType type;
     private boolean editMode = false;
 
-    private List<PortalBlock> blocks = new ArrayList<>();
+    private List<PortalBlock> blocks;
     private boolean visible = false;
     private List<PortalListener> listeners = new ArrayList<>();
 
@@ -122,7 +122,7 @@ public class NativePortal extends FeatureObject {
             for(Object o : jsonArray) {
                 if(o instanceof Map) {
                     JSON json = new JSON((Map<?, ?>) o);
-                    de.codingair.codingapi.tools.Location loc = new de.codingair.codingapi.tools.Location();
+                    Location loc = new Location();
                     loc.read(json);
 
                     if(loc.getWorld() == null) {
@@ -133,7 +133,7 @@ public class NativePortal extends FeatureObject {
                     blocks.add(new PortalBlock(loc));
                 } else if(o instanceof String) {
                     String data = (String) o;
-                    Location loc = de.codingair.codingapi.tools.Location.getByJSONString(data);
+                    Location loc = Location.getByJSONString(data);
 
                     if(loc == null || loc.getWorld() == null) {
                         destroy();
@@ -228,7 +228,7 @@ public class NativePortal extends FeatureObject {
         return isInPortal(entity, entity.getLocation());
     }
 
-    public boolean isInPortal(LivingEntity entity, Location target) {
+    public boolean isInPortal(LivingEntity entity, org.bukkit.Location target) {
         if(entity == null || target == null) return false;
 
         Location[] edges = getCachedEdges();
@@ -243,7 +243,7 @@ public class NativePortal extends FeatureObject {
         return false;
     }
 
-    public boolean isAround(Location location, double distance, boolean isExact) {
+    public boolean isAround(org.bukkit.Location location, double distance, boolean isExact) {
         if(Area.isInArea(location, getCachedEdges()[0], getCachedEdges()[1], true, distance)) {
             for(PortalBlock block : blocks) {
                 if(isExact && block.getLocation().distance(location) == distance) return true;

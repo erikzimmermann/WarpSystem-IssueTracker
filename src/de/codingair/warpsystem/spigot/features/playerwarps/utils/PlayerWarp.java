@@ -28,6 +28,7 @@ import de.codingair.warpsystem.transfer.packets.spigot.PlayerWarpTeleportProcess
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.io.DataInputStream;
@@ -322,6 +323,13 @@ public class PlayerWarp extends FeatureObject {
         this.description = d.getList("description");
         this.teleportMessage = d.getString("tpmsg");
         this.item = d.getItemBuilder("item");
+
+        if(!XMaterial.isNewVersion() && this.item.getType() == XMaterial.PLAYER_HEAD.parseMaterial(false)) {
+            this.item.setType(XMaterial.PLAYER_HEAD.parseMaterial(true));
+            this.item.setDurability((byte) XMaterial.PLAYER_HEAD.getData());
+            this.item.setData((byte) XMaterial.PLAYER_HEAD.getData());
+        }
+
         this.isPublic = d.getBoolean("public");
         this.teleportCosts = d.getDouble("tpcosts");
         this.inactiveSales = d.getByte("sales");
@@ -415,7 +423,7 @@ public class PlayerWarp extends FeatureObject {
     }
 
     public boolean isStandardItem() {
-        return this.item != null && this.item.getType() == XMaterial.PLAYER_HEAD.parseMaterial() && Objects.equals(this.item.getSkullId(), WarpSystem.getInstance().getHeadManager().getSkinId(this.owner.id));
+        return this.item != null && this.item.getType() == XMaterial.PLAYER_HEAD.parseMaterial(true) && Objects.equals(this.item.getSkullId(), WarpSystem.getInstance().getHeadManager().getSkinId(this.owner.id));
     }
 
     public PlayerWarp clone() {

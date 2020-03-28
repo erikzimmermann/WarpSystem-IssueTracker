@@ -4,18 +4,18 @@ import de.codingair.codingapi.server.blocks.ModernBlock;
 import de.codingair.codingapi.server.blocks.data.Orientable;
 import de.codingair.codingapi.tools.Area;
 import de.codingair.warpsystem.spigot.features.nativeportals.NativePortal;
-import org.bukkit.Location;
+import de.codingair.codingapi.tools.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 
 import java.lang.reflect.InvocationTargetException;
 
 public class PortalBlock {
-    private de.codingair.codingapi.tools.Location loc;
+    private Location loc;
 
     public PortalBlock(Location loc) {
-        loc = loc.getBlock().getLocation();
-        this.loc = new de.codingair.codingapi.tools.Location(loc);
+        this.loc = loc.clone();
+        this.loc.trim(0);
     }
 
     public de.codingair.codingapi.tools.Location getLocation() {
@@ -48,7 +48,7 @@ public class PortalBlock {
         return touches(e, e.getLocation());
     }
 
-    public boolean touches(LivingEntity e, Location target) {
+    public boolean touches(LivingEntity e, org.bukkit.Location target) {
         return Area.isInBlock(e, target, loc.getBlock());
     }
 }
