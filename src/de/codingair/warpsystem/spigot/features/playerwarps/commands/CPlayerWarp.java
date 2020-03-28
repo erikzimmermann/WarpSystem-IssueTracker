@@ -42,8 +42,7 @@ public class CPlayerWarp extends WarpSystemCommandBuilder {
                 l = new ArrayList<>(PlayerWarpManager.getManager().getForeignAvailableWarps((Player) sender));
                 for(PlayerWarp warp : l) {
                     String name = warp.getName(false).replace(" ", "_");
-                    suggestions.add((suggestions.contains(name) ? warp.getOwner().getName() + "." : "") + name);
-                    if(!suggestions.contains(warp.getOwner().getName())) suggestions.add(warp.getOwner().getName());
+                    suggestions.add(warp.getOwner().getName() + "." + name);
                 }
                 l.clear();
             }

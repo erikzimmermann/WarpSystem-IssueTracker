@@ -130,7 +130,7 @@ public class TeleportPacketListener implements Listener, PacketListener {
                                     Lang.get("Teleported_To_By").replace("%gate%", gate.getName())
                             , false, null);
                 } else {
-                    TeleportListener.setSpawnPositionOrTeleport(tpPacket.getPlayer(), new de.codingair.codingapi.tools.Location(null, x, y, z, 0, 0), gate.getDisplayName(), gate == player ? Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", gate.getName()));
+                    TeleportListener.setSpawnPositionOrTeleport(tpPacket.getPlayer(), new de.codingair.codingapi.tools.Location((String) null, x, y, z, 0, 0), gate.getDisplayName(), gate == player ? Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", gate.getName()));
                 }
                 break;
             }

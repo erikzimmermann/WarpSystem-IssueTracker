@@ -113,7 +113,7 @@ public class PortalEditor implements Removable {
     }
 
     public void addPosition(Location location) {
-        this.nativePortal.addPortalBlock(new PortalBlock(location));
+        this.nativePortal.addPortalBlock(new PortalBlock(new de.codingair.codingapi.tools.Location(location)));
         update();
     }
 
