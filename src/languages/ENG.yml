@@ -159,7 +159,7 @@ Player_Is_Already_Teleporting: '&cYou are already teleporting!'
 Player_Cannot_Use_Warp: '&cYou are not allowed to use this warp!'
 Shortcut_created: '&7The shortcut "&b%SHORTCUT%&7" was &aadded&7!'
 Shortcut_already_exists: '&cThis shortcut already exists!'
-Shortcut_does_not_exist: '&cThis shortcut &cdoes not exists&7!'
+Shortcut_does_not_exist: '&cThis shortcut &cdoes not exist&7!'
 Shortcut_was_removed: '&7The shortcut "&b%SHORTCUT%&7" was &cremoved&7!'
 WarpSign_Edited: The WarpSign was edited successfully!
 Leftclick: Leftclick
@@ -179,7 +179,7 @@ Private: Private
 Teleport_Message: Teleport message
 Teleport_Costs: Teleport costs
 Message: Message
-World_Not_Exists: '&7The requested world &cdoes not exists&7.'
+World_Not_Exists: '&7The requested world &cdoes not exist&7.'
 GlobalWarp_Not_Exists: '&7The GlobalWarp "&b%GLOBAL_WARP%&7" &cdoes not exist&7.'
 Money_Paid: '&7You have paid &c%AMOUNT% coin(s) &7to teleport to "&b%warp%&7".'
 Confirm: '&cAre you sure?'
@@ -358,7 +358,7 @@ Level: 'Level'
 Potion_Effect_Time_before_Teleport: 'Effect duration before teleport'
 Potion_Effect_Time_after_Teleport: 'Effect duration after teleport'
 Animation_Editor: 'Animation editor'
-Animation_does_not_exist: '&cThis animation &cdoes not exists&7!'
+Animation_does_not_exist: '&cThis animation &cdoes not exist&7!'
 Animation_was_removed: '&7The animation "&b%ANIMATION%&7" was &cremoved&7!'
 Tick_Sound: 'Tick sound'
 Teleport_Sound: 'Teleport sound'
