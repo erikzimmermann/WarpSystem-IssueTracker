@@ -32,6 +32,7 @@ public class UUIDManager {
             WarpSystem.getInstance().getDataHandler().send(new RequestUUIDPacket(player.getName(), new Callback<UUID>() {
                 @Override
                 public void accept(UUID uniqueId) {
+                    if(!player.isOnline() || uniqueId == null) return;
                     if(!uniqueIds.containsKey(player.getName())) {
                         uniqueIds.put(player.getName(), uniqueId);
 
