@@ -31,6 +31,7 @@ public class HeadManager {
         Called in UUIDListener after getting an unique Id.
      */
     public boolean update(Player player, UUID uuid) {
+        if(uuid == null || !player.isOnline()) return false;
         checkFile();
 
         Head head = new Head(player);
