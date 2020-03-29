@@ -12,10 +12,21 @@ import java.lang.reflect.InvocationTargetException;
 
 public class PortalBlock {
     private Location loc;
+    private boolean valid = true;
 
     public PortalBlock(Location loc) {
         this.loc = loc.clone();
         this.loc.trim(0);
+
+        try {
+            this.loc.getBlock();
+        } catch(Throwable t) {
+            valid = false;
+        }
+    }
+
+    public boolean isValid() {
+        return valid;
     }
 
     public de.codingair.codingapi.tools.Location getLocation() {
@@ -23,12 +34,13 @@ public class PortalBlock {
     }
 
     public void updateBlock(NativePortal nativePortal) {
+        if(!isValid()) return;
         PortalType type = nativePortal.isEditMode() ? PortalType.EDIT : nativePortal.getType();
 
         if(nativePortal.isVisible()) {
             if(type.getBlockMaterial() == null) {
                 try {
-                    type.getBlock().getConstructor(Location.class).newInstance(this.loc).create();
+                    type.getBlock().getConstructor(org.bukkit.Location.class).newInstance(this.loc).create();
                 } catch(NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
@@ -49,6 +61,6 @@ public class PortalBlock {
     }
 
     public boolean touches(LivingEntity e, org.bukkit.Location target) {
-        return Area.isInBlock(e, target, loc.getBlock());
+        return isValid() && Area.isInBlock(e, target, loc.getBlock());
     }
 }
