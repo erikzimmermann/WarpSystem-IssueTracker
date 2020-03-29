@@ -66,7 +66,7 @@ public class CTpa extends CommandBuilder {
                 }
 
                 if(TeleportCommandManager.getInstance().deniesTpaRequests(receiver)) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_denied_sender").replace("%PLAYER%", ChatColor.stripColor(receiver.getDisplayName())));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_denied_sender").replace("%PLAYER%", ChatColor.stripColor(receiver.getName())));
                     return false;
                 }
 
@@ -79,7 +79,7 @@ public class CTpa extends CommandBuilder {
                 if(i == 0)
                     sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_already_sent"));
                 else
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_sent").replace("%PLAYER%", ChatColor.stripColor(receiver.getDisplayName())));
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_sent").replace("%PLAYER%", ChatColor.stripColor(receiver.getName())));
                 return false;
             }
         });

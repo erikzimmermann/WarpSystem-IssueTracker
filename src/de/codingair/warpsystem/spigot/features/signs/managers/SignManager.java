@@ -49,14 +49,14 @@ public class SignManager implements Manager {
                     }
                 }
 
-                if(warpSign.getLocation() != null && warpSign.getLocation().getWorld() != null && warpSign.getLocation().getBlock() != null) {
+                try {
                     if(warpSign.getLocation().getBlock().getState() instanceof Sign) {
                         this.warpSigns.add(warpSign);
                     } else {
                         WarpSystem.log("    > Loaded WarpSign at location without sign! (Skip)");
                         success = false;
                     }
-                } else {
+                } catch(Throwable t) {
                     WarpSystem.log("    > Loaded WarpSign with missing world! (Skip)");
                     success = false;
                 }
