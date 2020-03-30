@@ -158,6 +158,12 @@ public class PAppearance extends PageItem {
                     return;
                 }
 
+                String forbidden = PlayerWarpManager.getManager().checkSymbols(input, "§c", "§f");
+                if(forbidden != null) {
+                    p.sendMessage(Lang.getPrefix() + Lang.get("Forbidden_Symbols").replace("%NAME_HINT%", forbidden));
+                    return;
+                }
+
                 warp.setName(e.getInput());
                 getLast().updateShowIcon();
                 updateCosts();
