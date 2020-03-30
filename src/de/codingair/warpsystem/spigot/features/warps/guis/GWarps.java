@@ -6,12 +6,14 @@ import de.codingair.codingapi.player.gui.inventory.gui.InterfaceListener;
 import de.codingair.codingapi.player.gui.inventory.gui.Skull;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
+import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.guis.editor.StandardButtonOption;
 import de.codingair.warpsystem.spigot.base.guis.options.OptionsGUI;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
@@ -22,6 +24,8 @@ import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.base.utils.options.specific.WarpGUIOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.FeatureType;
+import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarps;
+import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.guis.editor.GEditor;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.GUIListener;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
@@ -40,6 +44,7 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -419,7 +424,7 @@ public class GWarps extends GUI {
                                                     icon.setPage(category);
 
                                                     Icon clone = icon.clone().addAction(new WarpAction(new Destination()));
-                                                    new GEditor(p, icon, clone).open();
+                                                    new GEditor(p, icon, clone).setFallbackGUI(GWarps.this).setUseFallbackGUI(true).open();
                                                 });
                                             else {
                                                 Sound.ITEM_BREAK.playSound(p);
@@ -453,6 +458,7 @@ public class GWarps extends GUI {
     }
 
     private void addToGUI(Player p, Icon icon) {
+        if(icon.isDisabled() && !editing) return;
         IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
 
         if((icon.getSlot() == 0 && showMenu) || icon.getSlot() >= getSize(getPlayer())) return;
@@ -461,59 +467,67 @@ public class GWarps extends GUI {
             if(forbidden.isInstance(icon)) return;
         }
 
-        ItemButtonOption option = new ItemButtonOption();
-        option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
-        option.setOnlyLeftClick(true);
+        ItemButtonOption option = new StandardButtonOption();
 
         if(editing || (!icon.hasPermission() || p.hasPermission(icon.getPermission()))) {
-            ItemBuilder iconBuilder = prepareIcon(icon);
+            addButton(new SyncButton(icon.getSlot()) {
+                private BukkitRunnable runnable;
 
-            if(editing) {
-                List<String> commands = icon.hasAction(Action.COMMAND) ? (List<String>) icon.getAction(Action.COMMAND).getValue() : null;
-                List<String> commandInfo = new ArrayList<>();
-
-                if(commands != null) {
-                    for(String command : commands) {
-                        commandInfo.add("§7- '" + command + "'");
-                    }
-                }
-
-                String permission = icon.getPermission() == null ? "-" : icon.getPermission();
-                String costs = (icon.getAction(Action.COSTS) == null ? "0" : icon.getAction(CostsAction.class).getValue()) + " " + Lang.get("Coins");
-
-                if(icon.isDisabled()) {
-                    iconBuilder.addText("§8------------");
-                    iconBuilder.addText(Lang.get("Icon_Is_Disabled"));
-                }
-
-                iconBuilder.addText("§8------------");
-
-                iconBuilder.addText("§7" + Lang.get("Commands") + ": " + (commandInfo.isEmpty() ? "-" : ""));
-                iconBuilder.addText(commandInfo);
-                iconBuilder.addText("§7" + Lang.get("Permission") + ": " + permission);
-                if(MoneyAdapterType.canEnable()) iconBuilder.addText("§7" + Lang.get("Costs") + ": " + costs);
-                iconBuilder.addText("§8------------");
-                iconBuilder.addText("§3" + Lang.get("Leftclick") + ": §7" + Lang.get("Edit"));
-                iconBuilder.addText("§3" + Lang.get("Shift_Leftclick") + ": §7" + Lang.get("Move"));
-                iconBuilder.addText("§3" + Lang.get("Rightclick") + ": §7" + ChatColor.stripColor(Lang.get("Change_Item")));
-                iconBuilder.addText("§3" + Lang.get("Shift_Rightclick") + ": §7" + ChatColor.stripColor(Lang.get("Delete")));
-                iconBuilder.addText("§3" + Lang.get("Pick_Block_Click") + ": §7" + ChatColor.stripColor(Lang.get("Copy")));
-
-                if(!icon.isPage()) {
-                    iconBuilder.addText("§8------------");
-
-                    List<String> list = TextAlignment.lineBreak(Lang.get("Move_Help"), 80);
-                    iconBuilder.addText(list);
-                }
-
-                commandInfo.clear();
-            } else if(icon.isDisabled()) return;
-
-            boolean removeSound = icon.getActions().isEmpty() && !icon.isPage();
-            ItemButton b;
-            addButton(b = new ItemButton(icon.getSlot(), iconBuilder.getItem()) {
                 @Override
-                public void onClick(InventoryClickEvent e) {
+                public ItemStack craftItem() {
+                    ItemBuilder iconBuilder = prepareIcon(icon);
+
+                    if(editing) {
+                        List<String> commands = icon.hasAction(Action.COMMAND) ? (List<String>) icon.getAction(Action.COMMAND).getValue() : null;
+                        List<String> commandInfo = new ArrayList<>();
+
+                        if(commands != null) {
+                            for(String command : commands) {
+                                commandInfo.add("§7- '" + command + "'");
+                            }
+                        }
+
+                        String permission = icon.getPermission() == null ? "-" : icon.getPermission();
+                        String costs = (icon.getAction(Action.COSTS) == null ? "0" : icon.getAction(CostsAction.class).getValue()) + " " + Lang.get("Coins");
+
+                        if(icon.isDisabled()) {
+                            iconBuilder.addText("§8------------");
+                            iconBuilder.addText(Lang.get("Icon_Is_Disabled"));
+                        }
+
+                        iconBuilder.addText("§8------------");
+
+                        iconBuilder.addText("§7" + Lang.get("Commands") + ": " + (commandInfo.isEmpty() ? "-" : ""));
+                        iconBuilder.addText(commandInfo);
+                        iconBuilder.addText("§7" + Lang.get("Permission") + ": " + permission);
+                        if(MoneyAdapterType.canEnable()) iconBuilder.addText("§7" + Lang.get("Costs") + ": " + costs);
+                        iconBuilder.addText("§8------------");
+                        iconBuilder.addText("§3" + Lang.get("Leftclick") + ": §7" + Lang.get("Edit"));
+                        iconBuilder.addText("§3" + Lang.get("Shift_Leftclick") + ": §7" + Lang.get("Move"));
+                        iconBuilder.addText("§3" + Lang.get("Rightclick") + ": §7" + ChatColor.stripColor(Lang.get("Change_Item")));
+                        iconBuilder.addText("§3" + Lang.get("Shift_Rightclick") + ": §7" + (runnable != null ? "§4" : "§7") + ChatColor.stripColor(Lang.get("Delete")) + (runnable != null ? " §7(§c" + ChatColor.stripColor(Lang.get("Confirm")) + "§7)" : ""));
+                        iconBuilder.addText("§3" + Lang.get("Pick_Block_Click") + ": §7" + ChatColor.stripColor(Lang.get("Copy")));
+
+                        if(!icon.isPage()) {
+                            iconBuilder.addText("§8------------");
+
+                            List<String> list = TextAlignment.lineBreak(Lang.get("Move_Help"), 80);
+                            iconBuilder.addText(list);
+                        }
+
+                        commandInfo.clear();
+                    }
+
+                    return iconBuilder.getItem();
+                }
+
+                @Override
+                public boolean canClick(ClickType click) {
+                    return editing || ((!icon.getActions().isEmpty() || icon.isPage()) && click == ClickType.LEFT);
+                }
+
+                @Override
+                public void onClick(InventoryClickEvent e, Player player) {
                     if(listener != null) {
                         Task task = listener.onClickOnIcon(icon, editing);
 
@@ -528,6 +542,13 @@ public class GWarps extends GUI {
                             //fast deleting
                             IconManager.getInstance().remove(icon);
                             reinitialize();
+
+                            List<Icon> icons = IconManager.getInstance().getIcons(page);
+                            if(icons.isEmpty()) {
+                                cloning = false;
+                                e.getView().setCursor(new ItemStack(Material.AIR));
+                            }
+                            icons.clear();
                             return;
                         }
 
@@ -587,19 +608,26 @@ public class GWarps extends GUI {
                                 }
                             } else {
                                 if(e.isShiftClick()) {
-                                    changeGUI(new IconDeleteGUI(p, new Callback<Boolean>() {
-                                        @Override
-                                        public void accept(Boolean delete) {
-                                            if(delete) {
-                                                manager.remove(icon);
-                                                p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Deleted"));
-                                            } else {
-                                                p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Not_Deleted"));
-                                            }
+                                    if(runnable != null) {
+                                        //delete
+                                        manager.remove(icon);
+                                        p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Deleted"));
 
-                                            GWarps.this.reinitialize();
-                                        }
-                                    }, null), true);
+                                        if(!runnable.isCancelled()) runnable.cancel();
+                                        runnable = null;
+                                        GWarps.this.reinitialize();
+                                    } else {
+                                        runnable = new BukkitRunnable() {
+                                            @Override
+                                            public void run() {
+                                                runnable = null;
+                                                update();
+                                            }
+                                        };
+
+                                        runnable.runTaskLater(WarpSystem.getInstance(), 20);
+                                        update();
+                                    }
                                 } else {
                                     if(p.getInventory().getItem(p.getInventory().getHeldItemSlot()) == null || p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType() == Material.AIR
                                             || icon.getItem().getType() == p.getInventory().getItem(p.getInventory().getHeldItemSlot()).getType()) {
@@ -632,8 +660,7 @@ public class GWarps extends GUI {
                         icon.perform(p);
                     }
                 }
-            }.setOption(option).setOnlyLeftClick(!editing));
-            if(removeSound && !editing) b.setClickSound2(null);
+            }.setOption(option));
         }
     }
 
