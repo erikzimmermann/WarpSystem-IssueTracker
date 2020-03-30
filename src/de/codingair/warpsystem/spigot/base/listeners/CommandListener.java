@@ -42,13 +42,6 @@ public class CommandListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onChat(AsyncPlayerChatEvent e) {
-        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            e.setMessage(PlaceholderAPI.setPlaceholders(e.getPlayer(), e.getMessage()));
-        }
-    }
-
     private FeatureType getFeatureName(PluginCommand command) {
         String name = command.getName().toLowerCase();
         if(name.startsWith("warp")) return FeatureType.WARPS;
