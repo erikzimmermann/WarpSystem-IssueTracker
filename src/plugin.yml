@@ -3,5 +3,5 @@ author: CodingAir
 version: '4.2.0'
 description: WarpSystem
 main: de.codingair.warpsystem.spigot.base.WarpSystem
-softdepend: [Multiverse-Core, Vault, Essentials, MultiWorld]
+softdepend: [Multiverse-Core, Vault, Essentials, MultiWorld, PlaceholderAPI]
 api-version: "1.13"

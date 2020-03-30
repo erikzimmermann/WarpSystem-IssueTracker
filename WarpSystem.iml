@@ -13,5 +13,6 @@
     <orderEntry type="library" name="EssentialsX-2.0.1" level="project" />
     <orderEntry type="library" name="spigot-1.14" level="project" />
     <orderEntry type="library" name="TradeSystem" level="project" />
+    <orderEntry type="library" name="PlaceholderAPI-2.10.5" level="project" />
   </component>
 </module>

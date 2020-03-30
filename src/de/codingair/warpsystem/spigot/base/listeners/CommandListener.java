@@ -4,10 +4,12 @@ import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.Plugin;
 
@@ -37,6 +39,13 @@ public class CommandListener implements Listener {
                     e.getPlayer().sendMessage(Lang.getPrefix() + "§7You have to enable '§4§l" + feature.getName() + "§7' in the Config.yml to use this command!");
                 }
             } else e.getPlayer().sendMessage(org.spigotmc.SpigotConfig.unknownCommandMessage);
+        }
+    }
+
+    @EventHandler
+    public void onChat(AsyncPlayerChatEvent e) {
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            e.setMessage(PlaceholderAPI.setPlaceholders(e.getPlayer(), e.getMessage()));
         }
     }
 
