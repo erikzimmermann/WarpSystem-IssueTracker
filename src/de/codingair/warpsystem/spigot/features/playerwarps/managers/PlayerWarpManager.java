@@ -43,24 +43,36 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
     public static boolean hasPermission(Player player) {
         if(player.isOp()) return true;
 
-        int warps = PlayerWarpManager.getManager().getOwnWarps(player).size() + 1;
+        int warps = PlayerWarpManager.getManager().getOwnWarps(player).size();
+        int maxAmount = getMaxAmount(player);
+
+        return maxAmount == -1 || warps < maxAmount;
+    }
+
+    /**
+     * @param player Player
+     * @return Max amount of PlayerWarps the player can have.
+     * Returns -1 if player can have unlimited warps.
+     */
+    public static int getMaxAmount(Player player) {
+        if(player.isOp()) return -1;
+
         for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
             String perm = effectivePermission.getPermission();
 
-            if(perm.equals("*") || perm.equalsIgnoreCase("warpsystem.*")) return true;
+            if(perm.equals("*") || perm.equalsIgnoreCase("warpsystem.*")) return -1;
             if(perm.toLowerCase().startsWith("warpsystem.playerwarps.")) {
                 String s = perm.substring(23);
-                if(s.equals("*") || s.equalsIgnoreCase("n")) return true;
+                if(s.equals("*") || s.equalsIgnoreCase("n")) return -1;
 
                 try {
-                    int amount = Integer.parseInt(s);
-                    if(amount >= warps) return true;
+                    return Integer.parseInt(s);
                 } catch(Throwable ignored) {
                 }
             }
         }
 
-        return false;
+        return 0;
     }
 
     private HashMap<UUID, List<PlayerWarp>> warps = new HashMap<>();
@@ -256,6 +268,10 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
 
         WarpSystem.getInstance().getBungeeFeatureList().add(this);
         Bukkit.getPluginManager().registerEvents(this.listener, WarpSystem.getInstance());
+
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PlayerWarpPlaceholderExpansion().register();
+        }
 
         return success;
     }
