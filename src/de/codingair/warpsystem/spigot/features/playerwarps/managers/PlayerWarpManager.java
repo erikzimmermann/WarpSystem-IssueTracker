@@ -704,14 +704,9 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
             }
         }
 
-        Pattern p = Pattern.compile("[A-Za-z0-9\\p{Blank}]*");
+        Pattern p = Pattern.compile("[A-Za-z0-9\\p{Blank}_\\-'§]*");
 
         for(char c : modifiedName.toCharArray()) {
-            if(c == '§') {
-                finalName.append(c);
-                continue;
-            }
-
             Matcher m = p.matcher(c + "");
             if(!m.matches()) {
                 finalName.append(highlighter).append(c).append(reset);
