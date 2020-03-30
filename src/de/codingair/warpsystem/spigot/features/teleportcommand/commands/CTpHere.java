@@ -7,6 +7,7 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.ad.features.utils.Feature;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class CTpHere extends CommandBuilder {
     public CTpHere(CTeleport teleportCommand) {
@@ -29,10 +30,10 @@ public class CTpHere extends CommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 Lang.PREMIUM_CHAT(sender);
-                WarpSystem.getInstance().getAdvertisementManager().sendDisableMessage(sender, Feature.TELEPORT_COMMANDS);
+                WarpSystem.getInstance().getAdvertisementManager().sendDisableMessage((Player) sender, Feature.TELEPORT_COMMANDS);
                 return false;
             }
-        }, true);
+        }.setOnlyPlayers(true), true);
 
         setHighestPriority(true);
     }

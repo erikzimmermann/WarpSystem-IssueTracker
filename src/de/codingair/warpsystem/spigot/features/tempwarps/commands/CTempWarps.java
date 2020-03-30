@@ -48,7 +48,7 @@ public class CTempWarps extends CommandBuilder {
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<" + (TempWarpManager.getManager().isKeys() && sender.hasPermission(WarpSystem.PERMISSION_MODIFY_TEMP_WARPS) ? "keys, " : "") + "create, delete, edit, list, info, renew>");
                 return false;
             }
-        }, true, "tws", "twarps");
+        }.setOnlyPlayers(true), true, "tws", "twarps");
 
         if(TempWarpManager.getManager().isKeys()) {
             getBaseComponent().addChild(new CommandComponent("keys") {
@@ -58,11 +58,11 @@ public class CTempWarps extends CommandBuilder {
                     if(sender instanceof Player) {
                         if(sender.hasPermission(WarpSystem.PERMISSION_MODIFY_TEMP_WARPS)) {
                             Lang.PREMIUM_CHAT(sender);
-                            WarpSystem.getInstance().getAdvertisementManager().sendDisableMessage(sender, Feature.TEMP_WARP_KEYS);
+                            WarpSystem.getInstance().getAdvertisementManager().sendDisableMessage((Player) sender, Feature.TEMP_WARP_KEYS);
                         } else sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     } else {
                         Lang.PREMIUM_CHAT(sender);
-                        WarpSystem.getInstance().getAdvertisementManager().sendDisableMessage(sender, Feature.TEMP_WARP_KEYS);
+                        WarpSystem.getInstance().getAdvertisementManager().sendDisableMessage((Player) sender, Feature.TEMP_WARP_KEYS);
                     }
                     return false;
                 }

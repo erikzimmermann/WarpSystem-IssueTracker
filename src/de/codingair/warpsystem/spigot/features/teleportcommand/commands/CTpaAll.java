@@ -36,7 +36,7 @@ public class CTpaAll extends CommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 Lang.PREMIUM_CHAT(sender);
-                WarpSystem.getInstance().getAdvertisementManager().sendDisableMessage(sender, Feature.TELEPORT_COMMANDS);
+                WarpSystem.getInstance().getAdvertisementManager().sendDisableMessage((Player) sender, Feature.TELEPORT_COMMANDS);
                 return false;
             }
         }.setOnlyPlayers(true), true);

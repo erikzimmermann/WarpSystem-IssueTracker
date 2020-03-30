@@ -40,8 +40,8 @@ import java.util.regex.Pattern;
 
 public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
     public static boolean hasPermission(Player player) {
-        int warps = PlayerWarpManager.getManager().getOwnWarps(player).size() + 1;
-        return warps <= 2; //premium can use more than 2 warps
+        int warps = PlayerWarpManager.getManager().getOwnWarps(player).size();
+        return warps < 1; //premium can use more than 2 warps
     }
 
     private HashMap<UUID, List<PlayerWarp>> warps = new HashMap<>();

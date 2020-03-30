@@ -75,7 +75,7 @@ public class PlayerWarpListener implements PacketListener, Listener {
                 }
 
                 if((e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS) && !PlayerWarpManager.getManager().isHideLimitInfo())) {
-                    SimpleMessage message = new SimpleMessage(Lang.getPrefix() + "§7PlayerWarps are §climited §7to §c2 warps §7per §7player. §8[", WarpSystem.getInstance());
+                    SimpleMessage message = new SimpleMessage(Lang.getPrefix() + "§7PlayerWarps are §climited §7to §c1 warp §7per §7player. §8[", WarpSystem.getInstance());
 
                     TextComponent upgrade = new TextComponent("§6§nPremium");
                     upgrade.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/premium-warps-portals-and-more-warp-teleport-system-1-8-1-14.66035/"));
@@ -93,6 +93,8 @@ public class PlayerWarpListener implements PacketListener, Listener {
                             message.destroy();
                         }
                     });
+
+                    message.setTimeOut(600);
 
                     message.add("§8]");
                     message.send(e.getPlayer());

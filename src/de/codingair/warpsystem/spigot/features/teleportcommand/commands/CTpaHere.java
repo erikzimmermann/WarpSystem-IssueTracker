@@ -42,7 +42,7 @@ public class CTpaHere extends CommandBuilder {
                 }
 
                 Lang.PREMIUM_CHAT_ONLY_OPED(sender);
-                WarpSystem.getInstance().getAdvertisementManager().sendDisableMessage(sender, Feature.TELEPORT_COMMANDS);
+                WarpSystem.getInstance().getAdvertisementManager().sendDisableMessage((Player) sender, Feature.TELEPORT_COMMANDS);
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpaHere <§eplayer§7>");
                 return false;
             }

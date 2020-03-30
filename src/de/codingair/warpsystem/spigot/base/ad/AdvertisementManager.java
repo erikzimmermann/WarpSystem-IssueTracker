@@ -48,7 +48,7 @@ public class AdvertisementManager implements PacketListener {
         return false;
     }
 
-    public void sendDisableMessage(CommandSender sender, Feature feature) {
+    public void sendDisableMessage(Player sender, Feature feature) {
         SimpleMessage m = new SimpleMessage(Lang.getPrefix() + "§7You can disable \"§6" + feature.getName() + "§7\" ", WarpSystem.getInstance());
 
         m.add(new ChatButton("§c§nhere", "§7» Click «") {
