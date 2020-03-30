@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.features.shortcuts.guis.pages;
 
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
+import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
@@ -12,9 +13,15 @@ import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CommandButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.NameButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.PermissionButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class POptions extends PageItem {
     private Shortcut shortcut;
@@ -45,17 +52,36 @@ public class POptions extends PageItem {
             }
         }.setOption(option));
 
-        addButton(new CommandButton(2, 2, shortcut) {
+        addButton(new SyncButton(2, 2) {
             @Override
-            public boolean isOkay(String command) {
-                if(ShortcutManager.getInstance().hasCommandLoop(shortcut, command)) {
-                    p.sendMessage(Lang.getPrefix() + Lang.get("Shortcut_Editor_Loop"));
-                    return false;
-                }
-
-                return true;
+            public ItemStack craftItem() {
+                return new ItemBuilder(XMaterial.REDSTONE)
+                        .setName("§6§n" + Lang.get("Command") + Lang.PREMIUM_LORE)
+                        .setLore("§3" + Lang.get("Current") + ": " + "§c" + Lang.get("Not_Set"))
+                        .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Add"))
+                        .getItem();
             }
-        }.setOption(option));
-        addButton(new PermissionButton(3, 2, shortcut).setOption(option));
+
+            @Override
+            public void onClick(InventoryClickEvent e, Player player) {
+                Lang.PREMIUM_CHAT(player);
+            }
+        });
+
+        addButton(new SyncButton(3, 2) {
+            @Override
+            public ItemStack craftItem() {
+                return new ItemBuilder(XMaterial.ENDER_EYE)
+                        .setName("§6§n" + Lang.get("Permission") + Lang.PREMIUM_LORE)
+                        .addLore("§3" + Lang.get("Current") + ": " + "§c" + Lang.get("Not_Set"))
+                        .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Set"))
+                        .getItem();
+            }
+
+            @Override
+            public void onClick(InventoryClickEvent e, Player player) {
+                Lang.PREMIUM_CHAT(player);
+            }
+        });
     }
 }
