@@ -41,16 +41,28 @@ public class PlayerWarpListener implements PacketListener, Listener {
             }
 
             //forwarding
-            PlayerWarpManager.getInstance().interactWithServers(s -> {
-                if(s.getName().equalsIgnoreCase(extra)) return;
-                WarpSystem.getInstance().getDataHandler().send(packet, s);
-            });
+            synchronized(PlayerWarpManager.getInstance()) {
+                PlayerWarpManager.getInstance().interactWithServers(s -> {
+                    if(s.getName().equalsIgnoreCase(extra)) return;
+                    WarpSystem.getInstance().getDataHandler().send(packet, s);
+                });
+            }
         } else if(packet.getType() == PacketType.RegisterServerForPlayerWarpsPacket) {
+            List<List<PlayerWarpData>> uploads = new ArrayList<>();
             List<PlayerWarpData> l = new ArrayList<>();
 
             for(List<PlayerWarpData> value : PlayerWarpManager.getInstance().getWarps().values()) {
-                l.addAll(value);
+                for(PlayerWarpData w : value) {
+                    l.add(w);
+
+                    if(l.size() == 100) {
+                        uploads.add(new ArrayList<>(l));
+                        l.clear();
+                    }
+                }
             }
+
+            if(!l.isEmpty()) uploads.add(l);
 
             ServerInfo server = BungeeCord.getInstance().getServerInfo(extra);
             PlayerWarpManager.getInstance().setActive(server, true);
@@ -59,26 +71,41 @@ public class PlayerWarpListener implements PacketListener, Listener {
             SendPlayerWarpOptionsPacket options = new SendPlayerWarpOptionsPacket(PlayerWarpManager.getInstance().getInactiveTime());
             WarpSystem.getInstance().getDataHandler().send(options, server);
 
-            SendPlayerWarpsPacket p = new SendPlayerWarpsPacket(l);
-            WarpSystem.getInstance().getDataHandler().send(p, server);
+            for(List<PlayerWarpData> upload : uploads) {
+                SendPlayerWarpsPacket p = new SendPlayerWarpsPacket(upload);
+                WarpSystem.getInstance().getDataHandler().send(p, server);
+            }
+
+            uploads.clear();
         } else if(packet.getType() == PacketType.MoveLocalPlayerWarpsPacket) {
+            List<List<PlayerWarpData>> uploads = new ArrayList<>();
             List<PlayerWarpData> l = new ArrayList<>();
 
             for(List<PlayerWarpData> value : PlayerWarpManager.getInstance().getWarps().values()) {
                 for(PlayerWarpData w : value) {
                     if(w.getServer().equalsIgnoreCase(extra)) l.add(w);
+                    if(l.size() == 100) {
+                        uploads.add(new ArrayList<>(l));
+                        l.clear();
+                    }
                 }
             }
 
-            for(Serializable w : l) {
-                PlayerWarpManager.getInstance().delete((PlayerWarpData) w, true);
-            }
+            if(!l.isEmpty()) uploads.add(l);
 
             ServerInfo server = BungeeCord.getInstance().getServerInfo(extra);
             PlayerWarpManager.getInstance().setActive(server, false);
 
-            SendPlayerWarpsPacket p = new SendPlayerWarpsPacket(l);
-            WarpSystem.getInstance().getDataHandler().send(p, server);
+            for(List<PlayerWarpData> upload : uploads) {
+                for(PlayerWarpData d : upload) {
+                    PlayerWarpManager.getInstance().delete(d, true);
+                }
+
+                SendPlayerWarpsPacket p = new SendPlayerWarpsPacket(upload);
+                WarpSystem.getInstance().getDataHandler().send(p, server);
+            }
+
+            uploads.clear();
         } else if(packet.getType() == PacketType.SendPlayerWarpUpdatesPacket) {
             PlayerWarpUpdate update = ((SendPlayerWarpUpdatePacket) packet).getUpdate();
 
