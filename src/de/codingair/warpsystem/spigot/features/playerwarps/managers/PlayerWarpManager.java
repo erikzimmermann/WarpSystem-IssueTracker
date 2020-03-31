@@ -281,8 +281,8 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
             add(playerWarp);
         }
 
-        new CPlayerWarp().register(WarpSystem.getInstance());
-        new CPlayerWarps().register(WarpSystem.getInstance());
+        new CPlayerWarp(config.getStringList("WarpSystem.PlayerWarps.General.PlayerWarp_Command_Aliases")).register(WarpSystem.getInstance());
+        new CPlayerWarps(config.getStringList("WarpSystem.PlayerWarps.General.PlayerWarps_Command_Aliases")).register(WarpSystem.getInstance());
 
         List<String> aliases = config.getStringList("WarpSystem.PlayerWarps.General.Command_References");
         if(!aliases.isEmpty()) new CPlayerWarpReference(aliases.remove(0), aliases.toArray(new String[0])).register(WarpSystem.getInstance());
