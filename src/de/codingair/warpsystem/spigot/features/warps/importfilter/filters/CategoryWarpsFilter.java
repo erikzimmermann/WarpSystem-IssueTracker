@@ -19,7 +19,7 @@ import java.util.List;
 public class CategoryWarpsFilter implements Filter {
     @Override
     public Result importData() {
-        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
+        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARP_GUI);
 
         try {
             File target = new File(WarpSystem.getInstance().getDataFolder().getParent() + "/CategoryWarps/Data.yml");

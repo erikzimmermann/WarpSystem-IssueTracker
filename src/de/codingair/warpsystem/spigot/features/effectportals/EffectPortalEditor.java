@@ -101,7 +101,7 @@ public class EffectPortalEditor implements Removable {
     }
 
     public void finish() {
-        EffectPortalManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.PORTALS);
+        EffectPortalManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.EFFECT_PORTALS);
         if(finished) return;
 
         if(effectPortal.getAnimation() == null) {

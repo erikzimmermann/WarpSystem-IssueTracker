@@ -37,7 +37,7 @@ public class CWarp extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                if(FeatureType.WARPS.isActive() && WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
+                if(FeatureType.WARP_GUI.isActive() && WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
                     if(sender.hasPermission(WarpSystem.PERMISSION_USE_WARP_GUI)) {
                         CWarps.run(sender, null);
                     } else noPermission(sender, label, this);
@@ -50,7 +50,7 @@ public class CWarp extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                if(FeatureType.WARPS.isActive() && WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
+                if(FeatureType.WARP_GUI.isActive() && WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
                     if(sender.hasPermission(WarpSystem.PERMISSION_USE_WARP_GUI)) {
                         CWarps.run(sender, null);
                     } else noPermission(sender, label, this);
@@ -64,7 +64,7 @@ public class CWarp extends CommandBuilder {
             }
         }.setOnlyPlayers(true), true);
         
-        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
+        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARP_GUI);
         CWarpHook hook = new CWarpHook();
 
         try {
@@ -76,7 +76,7 @@ public class CWarp extends CommandBuilder {
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                if(FeatureType.WARPS.isActive() && WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
+                if(FeatureType.WARP_GUI.isActive() && WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
                     if(sender.hasPermission(WarpSystem.PERMISSION_USE_WARP_GUI)) {
                         for(Icon c : manager.getPages()) {
                             if(!c.hasPermission() || sender.hasPermission(c.getPermission())) suggestions.add(c.getNameWithoutColor());
@@ -91,7 +91,7 @@ public class CWarp extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                if(FeatureType.WARPS.isActive() && WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
+                if(FeatureType.WARP_GUI.isActive() && WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
                     if(sender.hasPermission(WarpSystem.PERMISSION_USE_WARP_GUI)) {
                         Icon category = manager.getPage(argument);
 

@@ -51,7 +51,7 @@ public class ActionIconHelper {
     }
 
     public static ActionObject translate(SActionObject s) {
-        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
+        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARP_GUI);
 
         ActionObject action = new ActionObject();
 

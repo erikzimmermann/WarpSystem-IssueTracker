@@ -156,7 +156,7 @@ public class EffectPortalManager implements Manager {
     }
 
     public static EffectPortalManager getInstance() {
-        if(instance == null) instance = WarpSystem.getInstance().getDataManager().getManager(FeatureType.PORTALS);
+        if(instance == null) instance = WarpSystem.getInstance().getDataManager().getManager(FeatureType.EFFECT_PORTALS);
         if(instance == null) instance = new EffectPortalManager();
         return instance;
     }

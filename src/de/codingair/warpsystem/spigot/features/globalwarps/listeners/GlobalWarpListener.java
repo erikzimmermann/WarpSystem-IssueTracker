@@ -25,7 +25,7 @@ public class GlobalWarpListener implements Listener, PacketListener {
 
     @Override
     public void onReceive(Packet packet, String extra) {
-        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
+        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARP_GUI);
 
         switch(PacketType.getByObject(packet)) {
             case SendGlobalWarpNamesPacket:

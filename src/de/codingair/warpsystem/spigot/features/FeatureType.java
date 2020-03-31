@@ -2,6 +2,7 @@ package de.codingair.warpsystem.spigot.features;
 
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.bstats.MetricsManager;
 import de.codingair.warpsystem.spigot.features.animations.AnimationManager;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
@@ -20,10 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum FeatureType {
-    WARPS(IconManager.class, Priority.HIGHEST, "Warps"),
+    WARP_GUI(IconManager.class, Priority.HIGHEST, "WarpGUI"),
     GLOBAL_WARPS(GlobalWarpManager.class, Priority.LOW, "GlobalWarps"),
     SIGNS(SignManager.class, Priority.LOWEST, "WarpSigns"),
-    PORTALS(EffectPortalManager.class, Priority.LOW, "Portals"),
+    EFFECT_PORTALS(EffectPortalManager.class, Priority.LOW, "EffectPortals"),
     NATIVE_PORTALS(NativePortalManager.class, Priority.LOW, "NativePortals"),
     SHORTCUTS(ShortcutManager.class, Priority.LOW, "Shortcuts"),
     TEMP_WARPS(TempWarpManager.class, Priority.DISABLED, "TempWarps"),
@@ -32,6 +33,7 @@ public enum FeatureType {
     TELEPORT_COMMAND(TeleportCommandManager.class, Priority.ALWAYS_ON, "TeleportCommand"),
     ANIMATION_EDITOR(AnimationManager.class, Priority.ALWAYS_ON, "AnimationEditor"),
     PLAYER_WARS(PlayerWarpManager.class, Priority.LOW, "PlayerWarps"),
+    METRICS(MetricsManager.class, Priority.LOWEST, "bStats"),
     ;
 
     private Class<? extends Manager> managerClass;

@@ -18,6 +18,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.EmptyAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
+import de.codingair.warpsystem.spigot.bstats.Collectible;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.teleportcommand.commands.*;
 import de.codingair.warpsystem.spigot.features.teleportcommand.listeners.BackListener;
@@ -33,12 +34,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-public class TeleportCommandManager implements Manager, BungeeFeature {
+public class TeleportCommandManager implements Manager, BungeeFeature, Collectible {
     private TimeList<String> hasInvites = new TimeList<>();
     private List<String> denyTpa = new ArrayList<>();
     private List<String> denyForceTps = new ArrayList<>();
@@ -63,6 +61,21 @@ public class TeleportCommandManager implements Manager, BungeeFeature {
     private CTpaAll tpaAll;
     private CTpAll tpAll;
     private CBack back;
+
+    @Override
+    public void collectOptionStatistics(Map<String, Integer> entry) {
+        if(WarpSystem.getInstance().isPremium()) {
+            entry.put("Teleport", tp != null ? 1 : 0);
+            entry.put("TpHere", tpHere != null ? 1 : 0);
+            entry.put("TpToggle", tpToggle != null ? 1 : 0);
+            entry.put("Tpa", tpa != null ? 1 : 0);
+            entry.put("TpaHere", tpaHere != null ? 1 : 0);
+            entry.put("TpaToggle", tpaToggle != null ? 1 : 0);
+            entry.put("TpaAll", tpaAll != null ? 1 : 0);
+            entry.put("TpAll", tpAll != null ? 1 : 0);
+            entry.put("Back", back != null ? 1 : 0);
+        }
+    }
 
     @Override
     public boolean load(boolean loader) {
