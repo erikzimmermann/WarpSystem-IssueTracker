@@ -1,9 +1,19 @@
 package de.codingair.warpsystem.spigot.base.language;
 
+import de.codingair.codingapi.API;
 import de.codingair.codingapi.files.ConfigFile;
+import de.codingair.codingapi.player.MessageAPI;
+import de.codingair.codingapi.player.gui.inventory.gui.GUI;
+import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
@@ -11,6 +21,79 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Lang {
+    private static final TimeList<CommandSender> premiumMessage = new TimeList<>();
+
+    public static void PREMIUM_CHAT_ONLY_OPED(CommandSender sender) {
+        if(sender instanceof Player) {
+            Player p = (Player) sender;
+
+            if(API.getRemovable(p, GUI.class) != null) return;
+
+            MessageAPI.sendTitle(p, "§7This is a §6Premium §7feature!", "§7Only §eoped §7players can use this.", 5, 50, 5);
+        } else {
+            sender.sendMessage("\n"+getPrefix() + "§7This is a §6§lPremium§7 feature! Only §eoped §7players can use this.\n");
+        }
+    }
+
+    public static void PREMIUM_CHAT(CommandSender sender) {
+        if(sender instanceof Player) {
+            Player p = (Player) sender;
+
+            if(API.getRemovable(p, GUI.class) != null) return;
+
+            MessageAPI.sendTitle(p, "§7This is a §6Premium §7feature!", "§7Get full access with \"§6/ws upgrade§7\"", 5, 50, 5);
+        } else {
+            if(premiumMessage.contains(sender)) return;
+
+            TextComponent tc0 = new TextComponent("\n" + Lang.getPrefix() + "§7This is a ");
+            TextComponent premium = new TextComponent("§6§lPremium");
+            TextComponent tc1 = new TextComponent(" feature. Buy it now to get full access! §8[");
+            TextComponent upgrade = new TextComponent("§6§nUpgrade");
+            TextComponent tc2 = new TextComponent("§8]\n");
+
+            tc0.setColor(net.md_5.bungee.api.ChatColor.GRAY);
+            tc1.setColor(net.md_5.bungee.api.ChatColor.GRAY);
+            tc2.setColor(net.md_5.bungee.api.ChatColor.GRAY);
+
+            premium.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/premium-warps-portals-and-more-warp-teleport-system-1-8-1-14.66035/"));
+            upgrade.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/premium-warps-portals-and-more-warp-teleport-system-1-8-1-14.66035/"));
+            upgrade.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {new TextComponent("§8» §6§lClick §8«")}));
+
+            tc0.addExtra(premium);
+            tc0.addExtra(tc1);
+            tc0.addExtra(upgrade);
+            tc0.addExtra(tc2);
+
+            sender.spigot().sendMessage(tc0);
+
+            premiumMessage.add(sender, 10);
+        }
+    }
+
+    public static void PREMIUM_CHAT_UPGRADE(CommandSender sender) {
+        if(premiumMessage.contains(sender)) return;
+
+        TextComponent tc0 = new TextComponent("\n" + Lang.getPrefix() + "§7Thank you for thinking about an ");
+        TextComponent upgrade = new TextComponent("§6§nupgrade");
+        TextComponent tc2 = new TextComponent("§7!\n");
+
+        tc0.setColor(net.md_5.bungee.api.ChatColor.GRAY);
+        tc2.setColor(net.md_5.bungee.api.ChatColor.GRAY);
+
+        upgrade.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/premium-warps-portals-and-more-warp-teleport-system-1-8-1-14.66035/"));
+        upgrade.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {new TextComponent("§8» §6§lClick §8«")}));
+
+        tc0.addExtra(upgrade);
+        tc0.addExtra(tc2);
+
+        sender.spigot().sendMessage(tc0);
+
+        premiumMessage.add(sender, 10);
+    }
+
+    public static final String PREMIUM_HOTBAR = "§8» §6§lPremium feature §8«";
+    public static final String PREMIUM_LORE = "§r §8(§6Premium§8)";
+
     public static void initPreDefinedLanguages(JavaPlugin plugin) throws IOException {
         List<String> languages = new ArrayList<>();
         languages.add("ENG.yml");

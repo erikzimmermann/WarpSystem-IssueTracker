@@ -14,7 +14,6 @@ import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CommandButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.DelayButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.NameButton;
-import de.codingair.warpsystem.spigot.base.guis.editor.buttons.PermissionButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.nativeportals.NativePortal;
 import de.codingair.warpsystem.spigot.features.nativeportals.PortalEditor;
@@ -119,8 +118,38 @@ public class POptions extends PageItem {
             }
         }.setOption(option));
 
-        addButton(new CommandButton(3, 2, nativePortal).setOption(option));
-        addButton(new PermissionButton(4, 2, nativePortal).setOption(option));
+        addButton(new SyncButton(3, 2) {
+            @Override
+            public ItemStack craftItem() {
+                return new ItemBuilder(XMaterial.REDSTONE)
+                        .setName("§6§n" + Lang.get("Command") + Lang.PREMIUM_LORE)
+                        .setLore("§3" + Lang.get("Current") + ": " + "§c" + Lang.get("Not_Set"))
+                        .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Add"))
+                        .getItem();
+            }
+
+            @Override
+            public void onClick(InventoryClickEvent e, Player player) {
+                Lang.PREMIUM_CHAT(player);
+            }
+        }.setOption(option));
+
+        addButton(new SyncButton(4, 2) {
+            @Override
+            public ItemStack craftItem() {
+                return new ItemBuilder(XMaterial.ENDER_EYE)
+                        .setName("§6§n" + Lang.get("Permission") + Lang.PREMIUM_LORE)
+                        .addLore("§3" + Lang.get("Current") + ": " + "§c" + Lang.get("Not_Set"))
+                        .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Set"))
+                        .getItem();
+            }
+
+            @Override
+            public void onClick(InventoryClickEvent e, Player player) {
+                Lang.PREMIUM_CHAT(player);
+            }
+        }.setOption(option));
+
         addButton(new DelayButton(5, 2, nativePortal).setOption(option));
     }
 }
