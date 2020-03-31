@@ -62,7 +62,7 @@ public class IconManager implements Manager {
     private ItemStack background = null;
 
     public static IconManager getInstance() {
-        return ((IconManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS));
+        return ((IconManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARP_GUI));
     }
 
     public boolean load(boolean loader) {

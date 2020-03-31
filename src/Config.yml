@@ -52,9 +52,9 @@ WarpSystem:
     Teleport_Cancel_Message: true
 
   Functions:
-    Warps: true
+    WarpGUI: true
     SimpleWarps: true
-    Portals: true
+    EffectPortals: true
     NativePortals: true
     WarpSigns: true
     GlobalWarps: true

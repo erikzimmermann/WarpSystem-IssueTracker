@@ -42,7 +42,7 @@ public class CWarps extends CommandBuilder {
             }
         }.setOnlyPlayers(true), true);
 
-        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS);
+        IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARP_GUI);
 
         try {
             setHighestPriority(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Dominate_In_Commands.Highest_Priority.Warps", true));

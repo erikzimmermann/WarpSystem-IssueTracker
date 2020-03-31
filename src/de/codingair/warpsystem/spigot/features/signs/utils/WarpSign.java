@@ -58,7 +58,7 @@ public class WarpSign extends FeatureObject {
             addAction(new WarpAction(destination));
         } else if(d.get("Warp") != null) {
             //Old pattern
-            Icon warp = ((IconManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARPS)).getIcon(d.get("Warp"));
+            Icon warp = ((IconManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARP_GUI)).getIcon(d.get("Warp"));
             if(warp != null) {
                 Destination destination = new Destination(warp.getName(), DestinationType.SimpleWarp);
                 addAction(new WarpAction(destination));
