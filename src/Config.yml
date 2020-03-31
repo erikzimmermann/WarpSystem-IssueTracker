@@ -117,6 +117,12 @@ WarpSystem:
       Custom_teleport_costs: true
       #Turn this to true, if you want, that all PlayerWarps should be public when you create them. The state can always be changed.
       Public_as_create_state: false
+      PlayerWarps_Command_Aliases:
+        - 'pwarps'
+        - 'pws'
+      PlayerWarp_Command_Aliases:
+        - 'pwarp'
+        - 'pw'
       Command_References:
       - 'tempwarps'
       - 'twarps'

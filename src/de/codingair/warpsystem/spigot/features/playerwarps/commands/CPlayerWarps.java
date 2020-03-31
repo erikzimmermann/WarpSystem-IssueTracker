@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CPlayerWarps extends WarpSystemCommandBuilder {
-    public CPlayerWarps() {
+    public CPlayerWarps(List<String> aliases) {
         super("playerwarps", new WarpSystemBaseComponent(WarpSystem.PERMISSION_USE_PLAYER_WARPS) {
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
@@ -38,7 +38,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                 new PWList((Player) sender).open();
                 return false;
             }
-        }.setOnlyPlayers(true), "pwarps", "pws");
+        }.setOnlyPlayers(true), aliases.toArray(new String[0]));
 
         //list, create, edit, delete, setAsOwnRespawn
 
