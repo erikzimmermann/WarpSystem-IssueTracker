@@ -10,10 +10,13 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Ticker;
+import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
+import de.codingair.warpsystem.spigot.bstats.Collectible;
+import de.codingair.warpsystem.spigot.bstats.Metrics;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarp;
 import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarps;
@@ -35,11 +38,12 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
+public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collectible {
     public static boolean hasPermission(Player player) {
         if(player.isOp()) return true;
 
@@ -124,6 +128,30 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
     private int classesMin;
     private int classesMax;
     private boolean classes;
+
+    @Override
+    public void collectOptionStatistics(Map<String, Integer> entry) {
+        entry.put("Classes", classes ? 1 : 0);
+        entry.put("Economy", economy ? 1 : 0);
+        entry.put("BungeeCord", bungeeCord ? 1 : 0);
+        entry.put("Warps", 1);
+    }
+
+    @Override
+    public void addCustomCarts(Metrics metrics) {
+        metrics.addCustomChart(new Metrics.SingleLineChart("playerwarp_usage", () -> {
+            Value<Integer> size = new Value<>(0);
+
+            interactWithWarps(new Callback<PlayerWarp>() {
+                @Override
+                public void accept(PlayerWarp object) {
+                    size.setValue(size.getValue() + 1);
+                }
+            });
+
+            return size.getValue();
+        }));
+    }
 
     @Override
     public boolean load(boolean loader) {
@@ -359,6 +387,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature {
                     }
                 }
 
+                //TODO: MAX length: 32766 bytes
                 SendPlayerWarpsPacket p = new SendPlayerWarpsPacket(l);
                 p.setClearable(true);
                 WarpSystem.getInstance().getDataHandler().send(p);

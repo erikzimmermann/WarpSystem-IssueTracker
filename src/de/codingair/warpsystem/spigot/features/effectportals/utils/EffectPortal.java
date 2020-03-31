@@ -464,7 +464,7 @@ public class EffectPortal extends FeatureObject implements Removable {
     }
 
     public boolean isRegistered() {
-        EffectPortalManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.PORTALS);
+        EffectPortalManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.EFFECT_PORTALS);
         return manager.getEffectPortals().contains(this);
     }
 
