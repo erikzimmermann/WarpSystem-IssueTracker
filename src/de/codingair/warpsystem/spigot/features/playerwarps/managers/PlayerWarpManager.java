@@ -379,18 +379,29 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
         if(bungeeCord) {
             if(!getWarps().isEmpty()) {
-                List<PlayerWarpData> l = new ArrayList<>();
+                List<List<PlayerWarpData>> uploads = new ArrayList<>();
 
+                List<PlayerWarpData> l = new ArrayList<>();
                 for(List<PlayerWarp> value : getWarps().values()) {
                     for(PlayerWarp w : value) {
                         l.add(w.getData());
+
+                        if(l.size() == 100) {
+                            uploads.add(new ArrayList<>(l));
+                            l.clear();
+                        }
                     }
                 }
 
-                //TODO: MAX length: 32766 bytes
-                SendPlayerWarpsPacket p = new SendPlayerWarpsPacket(l);
-                p.setClearable(true);
-                WarpSystem.getInstance().getDataHandler().send(p);
+                if(!l.isEmpty()) uploads.add(l);
+
+                for(List<PlayerWarpData> upload : uploads) {
+                    SendPlayerWarpsPacket p = new SendPlayerWarpsPacket(upload);
+                    p.setClearable(true);
+                    WarpSystem.getInstance().getDataHandler().send(p);
+                }
+
+                uploads.clear();
             }
 
             WarpSystem.getInstance().getDataHandler().send(new RegisterServerForPlayerWarpsPacket(isEconomy()));
