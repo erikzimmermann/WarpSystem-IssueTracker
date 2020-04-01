@@ -16,7 +16,9 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.*;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -178,15 +180,22 @@ public class Editor<C> extends SimpleGUI {
         int slot = 1;
 
         for(PageItem page : pages) {
-            ItemBuilder item = new ItemBuilder(page.getPageItem());
             Page link = null;
 
-            if(page == getCurrent()) {
-                item.addEnchantment(Enchantment.DAMAGE_ALL, 1);
-                item.setHideEnchantments(true);
-            } else link = page;
-
             Button b = page.getPageButton().setOption(option);
+
+            if(page == getCurrent()) {
+                b.getItem().addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
+                ItemMeta m = b.getItem().getItemMeta();
+                m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                b.getItem().setItemMeta(m);
+            } else {
+                for(Enchantment enchantment : b.getItem().getEnchantments().keySet()) {
+                    b.getItem().removeEnchantment(enchantment);
+                }
+                link = page;
+            }
+
             b.setSlot(slot++);
             b.setLink(link);
             addButton(b);
