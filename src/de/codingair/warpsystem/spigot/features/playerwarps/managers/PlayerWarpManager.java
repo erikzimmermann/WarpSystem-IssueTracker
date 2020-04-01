@@ -102,9 +102,14 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
     @Override
     public void collectOptionStatistics(Map<String, Integer> entry) {
-        entry.put("Classes", classes ? 1 : 0);
-        entry.put("Economy", economy ? 1 : 0);
-        entry.put("BungeeCord", bungeeCord ? 1 : 0);
+        if(classes) entry.put("Classes", 1);
+        if(economy) entry.put("Economy", 1);
+
+        if(bungeeCord) {
+            if(WarpSystem.getInstance().isOnBungeeCord()) entry.put("BungeeCord", 1);
+            else if(Bukkit.getOnlinePlayers().isEmpty()) entry.put("BungeeCord (empty server)", 1);
+        }
+
         entry.put("Warps", 1);
     }
 
