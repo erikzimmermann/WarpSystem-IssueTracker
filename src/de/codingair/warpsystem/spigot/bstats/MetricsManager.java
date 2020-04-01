@@ -39,9 +39,11 @@ public class MetricsManager implements Manager {
             if(m instanceof Collectible) {
                 ((Collectible) m).addCustomCarts(metrics);
 
-                Map<String, Integer> entry = new HashMap<>();
-                ((Collectible) m).collectOptionStatistics(entry);
-                metrics.addCustomChart(new Metrics.AdvancedPie(type.getName().toLowerCase(), () -> entry));
+                metrics.addCustomChart(new Metrics.AdvancedPie(type.getName().toLowerCase(), () -> {
+                    Map<String, Integer> entry = new HashMap<>();
+                    ((Collectible) m).collectOptionStatistics(entry);
+                    return entry;
+                }));
             }
         }
 

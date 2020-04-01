@@ -358,8 +358,7 @@ public class PlayerWarp extends FeatureObject {
                 if(c != null) this.classes.add(c);
             }
 
-        //check "force player heads"
-        if(PlayerWarpManager.getManager().isForcePlayerHead()) resetItem();
+        resetItem();
 
         //check "custom teleport costs"
         if(!PlayerWarpManager.getManager().isCustomTeleportCosts()) this.teleportCosts = 0;

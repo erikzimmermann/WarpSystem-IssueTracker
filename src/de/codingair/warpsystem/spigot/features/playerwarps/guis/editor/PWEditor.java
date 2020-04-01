@@ -88,7 +88,7 @@ public class PWEditor extends Editor<PlayerWarp> {
                 new PAppearance(p, clone, warp, !warp.isOwner(p) || PlayerWarpManager.getManager().existsOwn(p, warp.getName())),
                 new POptions(p, clone, warp, !warp.isOwner(p) || PlayerWarpManager.getManager().existsOwn(p, warp.getName())),
                 new PTrusted(p, clone, warp),
-               (PlayerWarpManager.getManager().isClasses() ? new PClasses(p, clone, warp) : null)
+               (p.hasPermission(WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS) ? new PClasses(p, clone, warp) : null)
         );
 
         this.original = warp;
