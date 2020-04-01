@@ -22,8 +22,8 @@ import de.codingair.warpsystem.spigot.bstats.Collectible;
 import de.codingair.warpsystem.spigot.bstats.Metrics;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarp;
-import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarps;
 import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarpReference;
+import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarps;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.PWList;
 import de.codingair.warpsystem.spigot.features.playerwarps.listeners.PlayerWarpListener;
@@ -38,7 +38,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -48,38 +47,8 @@ import java.util.regex.Pattern;
 
 public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collectible {
     public static boolean hasPermission(Player player) {
-        if(player.isOp()) return true;
-
         int warps = PlayerWarpManager.getManager().getOwnWarps(player).size();
-        int maxAmount = getMaxAmount(player);
-
-        return maxAmount == -1 || warps < maxAmount;
-    }
-
-    /**
-     * @param player Player
-     * @return Max amount of PlayerWarps the player can have.
-     * Returns -1 if player can have unlimited warps.
-     */
-    public static int getMaxAmount(Player player) {
-        if(player.isOp()) return -1;
-
-        for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
-            String perm = effectivePermission.getPermission();
-
-            if(perm.equals("*") || perm.equalsIgnoreCase("warpsystem.*")) return -1;
-            if(perm.toLowerCase().startsWith("warpsystem.playerwarps.")) {
-                String s = perm.substring(23);
-                if(s.equals("*") || s.equalsIgnoreCase("n")) return -1;
-
-                try {
-                    return Integer.parseInt(s);
-                } catch(Throwable ignored) {
-                }
-            }
-        }
-
-        return 0;
+        return warps < 1; //premium can use more than 2 warps
     }
 
     private HashMap<UUID, List<PlayerWarp>> warps = new HashMap<>();
@@ -89,6 +58,8 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
     private boolean bungeeCord;
     private PlayerWarpListener listener = new PlayerWarpListener();
+
+    private boolean hideLimitInfo = false;
 
     private long minTime;
     private long maxTime;
@@ -205,6 +176,8 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
         this.inactiveTime = convertFromTimeFormat(config.getString("WarpSystem.PlayerWarps.Inactive.Time_After_Expiration", null), 2592000000L);
 
+        this.hideLimitInfo = config.getBoolean("WarpSystem.PlayerWarps.Hide_Limit_Info", false);
+
         //Costs - Generally
         this.protectedRegions = config.getBoolean("WarpSystem.PlayerWarps.General.Support.ProtectedRegions", true);
         this.nameBlacklist.addAll(config.getStringList("WarpSystem.PlayerWarps.General.Name_Blacklist"));
@@ -313,10 +286,6 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         WarpSystem.getInstance().getBungeeFeatureList().add(this);
         Bukkit.getPluginManager().registerEvents(this.listener, WarpSystem.getInstance());
 
-        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new PlayerWarpPlaceholderExpansion().register();
-        }
-
         return success;
     }
 
@@ -383,6 +352,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         ConfigFile config = WarpSystem.getInstance().getFileManager().getFile("Config");
         ConfigWriter writer = new ConfigWriter(config);
         writer.put("WarpSystem.PlayerWarps.General.Categories.Classes", array);
+        writer.put("WarpSystem.PlayerWarps.Hide_Limit_Info", hideLimitInfo);
         config.saveConfig();
 
         file.saveConfig();
@@ -1217,5 +1187,13 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
     public int getNameMaxLength() {
         return nameMaxLength;
+    }
+
+    public boolean isHideLimitInfo() {
+        return hideLimitInfo;
+    }
+
+    public void setHideLimitInfo(boolean hideLimitInfo) {
+        this.hideLimitInfo = hideLimitInfo;
     }
 }
