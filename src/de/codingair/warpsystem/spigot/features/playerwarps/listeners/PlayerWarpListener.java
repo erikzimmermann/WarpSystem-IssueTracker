@@ -9,16 +9,6 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.PWList;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
-import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarpData;
-import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarpUpdate;
-import de.codingair.warpsystem.transfer.packets.bungee.SendPlayerWarpOptionsPacket;
-import de.codingair.warpsystem.transfer.packets.general.DeletePlayerWarpPacket;
-import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpUpdatePacket;
-import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpsPacket;
-import de.codingair.warpsystem.transfer.packets.spigot.PlayerWarpTeleportProcessPacket;
-import de.codingair.warpsystem.transfer.packets.utils.Packet;
-import de.codingair.warpsystem.transfer.packets.utils.PacketType;
-import de.codingair.warpsystem.transfer.utils.PacketListener;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -31,7 +21,7 @@ import org.bukkit.event.Listener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerWarpListener implements PacketListener, Listener {
+public class PlayerWarpListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerFinalJoinEvent e) {
@@ -75,7 +65,7 @@ public class PlayerWarpListener implements PacketListener, Listener {
                 }
 
                 if((e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS) && !PlayerWarpManager.getManager().isHideLimitInfo())) {
-                    SimpleMessage message = new SimpleMessage(Lang.getPrefix() + "§7PlayerWarps are §climited §7to §c1 warp §7per §7player. §8[", WarpSystem.getInstance());
+                    SimpleMessage message = new SimpleMessage(Lang.getPrefix() + "§7PlayerWarps are §climited §7to §c3 warps §7per §7player. §8[", WarpSystem.getInstance());
 
                     TextComponent upgrade = new TextComponent("§6§nPremium");
                     upgrade.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/premium-warps-portals-and-more-warp-teleport-system-1-8-1-14.66035/"));
@@ -101,55 +91,5 @@ public class PlayerWarpListener implements PacketListener, Listener {
                 }
             }, 5 * 20L);
         }
-    }
-
-    @Override
-    public void onReceive(Packet packet, String extra) {
-        if(packet.getType() == PacketType.SendPlayerWarpsPacket) {
-            List<PlayerWarpData> l = ((SendPlayerWarpsPacket) packet).getData();
-
-            for(PlayerWarpData s : l) {
-                PlayerWarp w = new PlayerWarp();
-                w.setData(s);
-                PlayerWarpManager.getManager().updateWarp(w);
-                s.destroy();
-            }
-
-            l.clear();
-            PlayerWarpManager.getManager().updateGUIs();
-        } else if(packet.getType() == PacketType.SendPlayerWarpUpdatesPacket) {
-            PlayerWarpUpdate update = ((SendPlayerWarpUpdatePacket) packet).getUpdate();
-
-            PlayerWarp w = PlayerWarpManager.getManager().getWarp(update.getId(), update.getOriginName());
-            w.setData(update);
-            update.destroy();
-            PlayerWarpManager.getManager().updateGUIs();
-        } else if(packet.getType() == PacketType.SendPlayerWarpOptionsPacket) {
-            SendPlayerWarpOptionsPacket p = (SendPlayerWarpOptionsPacket) packet;
-            PlayerWarpManager.getManager().setInactiveTime(p.getInactiveTime());
-        } else if(packet.getType() == PacketType.DeletePlayerWarpPacket) {
-            DeletePlayerWarpPacket p = (DeletePlayerWarpPacket) packet;
-
-            PlayerWarp warp = PlayerWarpManager.getManager().getWarp(p.getId(), p.getName());
-            PlayerWarpManager.getManager().delete(warp, false);
-            if(warp != null) warp.setSource(true);
-            PlayerWarpManager.getManager().updateGUIs();
-        } else if(packet.getType() == PacketType.PlayerWarpTeleportProcessPacket) {
-            PlayerWarpTeleportProcessPacket p = (PlayerWarpTeleportProcessPacket) packet;
-
-            PlayerWarp warp = PlayerWarpManager.getManager().getWarp(p.getId(), p.getName());
-            if(warp != null) {
-                if(p.increaseSales()) warp.increaseInactiveSales();
-                if(p.resetSales()) warp.resetInactiveSales();
-                if(p.increasePerformed()) warp.increasePerformed();
-
-                PlayerWarpManager.getManager().updateGUIs();
-            }
-        }
-    }
-
-    @Override
-    public boolean onSend(Packet packet) {
-        return false;
     }
 }
