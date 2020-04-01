@@ -15,6 +15,9 @@ import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.GlobalLocationAdapter;
 import de.codingair.warpsystem.spigot.bstats.Collectible;
 import de.codingair.warpsystem.spigot.bstats.Metrics;
 import de.codingair.warpsystem.spigot.features.FeatureType;
@@ -131,15 +134,17 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
     @Override
     public void collectOptionStatistics(Map<String, Integer> entry) {
-        if(classes) entry.put("Classes", 1);
-        if(economy) entry.put("Economy", 1);
+        if(WarpSystem.getInstance().isPremium()) {
+            if(classes) entry.put("Classes", 1);
+            if(economy) entry.put("Economy", 1);
 
-        if(bungeeCord) {
-            if(WarpSystem.getInstance().isOnBungeeCord()) entry.put("BungeeCord", 1);
-            else if(Bukkit.getOnlinePlayers().isEmpty()) entry.put("BungeeCord (empty server)", 1);
+            if(bungeeCord) {
+                if(WarpSystem.getInstance().isOnBungeeCord()) entry.put("BungeeCord", 1);
+                else if(Bukkit.getOnlinePlayers().isEmpty()) entry.put("BungeeCord (empty server)", 1);
+            }
+
+            entry.put("Warps", 1);
         }
-
-        entry.put("Warps", 1);
     }
 
     @Override
@@ -149,8 +154,14 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
             interactWithWarps(new Callback<PlayerWarp>() {
                 @Override
-                public void accept(PlayerWarp object) {
-                    size.setValue(size.getValue() + 1);
+                public void accept(PlayerWarp warp) {
+                    WarpAction action = warp.getAction(Action.WARP);
+                    if(action != null) {
+                        String s = ((GlobalLocationAdapter) action.getValue().getAdapter()).getServer();
+                        if(s == null || s.equals(WarpSystem.getInstance().getCurrentServer())) {
+                            size.setValue(size.getValue() + 1);
+                        }
+                    }
                 }
             });
 

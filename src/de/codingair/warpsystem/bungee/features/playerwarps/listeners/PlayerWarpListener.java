@@ -41,12 +41,10 @@ public class PlayerWarpListener implements PacketListener, Listener {
             }
 
             //forwarding
-            synchronized(PlayerWarpManager.getInstance()) {
-                PlayerWarpManager.getInstance().interactWithServers(s -> {
-                    if(s.getName().equalsIgnoreCase(extra)) return;
-                    WarpSystem.getInstance().getDataHandler().send(packet, s);
-                });
-            }
+            PlayerWarpManager.getInstance().interactWithServers(s -> {
+                if(s.getName().equalsIgnoreCase(extra)) return;
+                WarpSystem.getInstance().getDataHandler().send(packet, s);
+            });
         } else if(packet.getType() == PacketType.RegisterServerForPlayerWarpsPacket) {
             List<List<PlayerWarpData>> uploads = new ArrayList<>();
             List<PlayerWarpData> l = new ArrayList<>();
