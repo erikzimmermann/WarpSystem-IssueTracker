@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types;
 
 import de.codingair.codingapi.tools.io.utils.DataWriter;
+import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject;
 import org.bukkit.entity.Player;
@@ -49,7 +50,8 @@ public class MessageAction extends ActionObject<List<String>> {
     @Override
     public boolean perform(Player player) {
         for(String message : getValue()) {
-            player.sendMessage(message);
+            if(message == null) player.sendMessage(message);
+            else player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
         }
 
         return true;
