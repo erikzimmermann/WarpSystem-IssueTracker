@@ -25,7 +25,11 @@ public abstract class NameButton extends SyncAnvilGUIButton {
         this.acceptNull = acceptNull;
         this.name = name;
         update(false);
-        setOnlyLeftClick(true);
+    }
+
+    @Override
+    public boolean canClick(ClickType click) {
+        return click == ClickType.LEFT || (click == ClickType.RIGHT && acceptNull);
     }
 
     @Override
