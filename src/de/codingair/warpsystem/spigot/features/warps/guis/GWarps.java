@@ -386,18 +386,6 @@ public class GWarps extends GUI {
         }
     }
 
-    private ItemBuilder prepareIcon(Icon icon) {
-        ItemBuilder builder = new ItemBuilder(icon.getItem());
-
-        List<String> loreList = new ArrayList<>();
-        if(icon.getName() != null) loreList.add("§f" + (icon.isPage() ? "§n" : "") + ChatColor.translateAlternateColorCodes('&', icon.getName()));
-        if(builder.getLore() != null) loreList.addAll(new ArrayList<>(builder.getLore()));
-        builder.setText(loreList);
-        builder.setHideName(false);
-
-        return builder;
-    }
-
     private void addToGUI(Player p, Icon icon) {
         if(icon.isDisabled() && !editing) return;
         IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARP_GUI);
@@ -416,7 +404,7 @@ public class GWarps extends GUI {
 
                 @Override
                 public ItemStack craftItem() {
-                    ItemBuilder iconBuilder = prepareIcon(icon);
+                    ItemBuilder iconBuilder = icon.getItemBuilderWithPlaceholders(getPlayer());
 
                     if(editing) {
                         List<String> commands = icon.hasAction(Action.COMMAND) ? (List<String>) icon.getAction(Action.COMMAND).getValue() : null;
