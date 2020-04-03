@@ -54,7 +54,7 @@ public class TeleportPlayerToCoordsPacket implements Packet {
 
         out.writeByte(b);
         out.writeUTF(this.gate);
-        out.writeUTF(this.player);
+        if(!gate.equalsIgnoreCase(player)) out.writeUTF(this.player);
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);

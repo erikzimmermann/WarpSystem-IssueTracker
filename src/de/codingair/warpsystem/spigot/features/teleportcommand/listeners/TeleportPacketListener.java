@@ -14,6 +14,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.EmptyAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
+import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ClearInvitesPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.PrepareTeleportRequestPacket;
@@ -112,7 +113,7 @@ public class TeleportPacketListener implements Listener, PacketListener {
                 double x = (tpPacket.isRelativeX() ? gate.getLocation().getX() : 0) + tpPacket.getX();
                 double y = (tpPacket.isRelativeY() ? gate.getLocation().getY() : 0) + tpPacket.getY();
                 double z = (tpPacket.isRelativeZ() ? gate.getLocation().getZ() : 0) + tpPacket.getZ();
-                String destination = "x=" + x + ", y=" + y + ", z=" + z;
+                String destination = "x=" + cut(x) + ", y=" + cut(y) + ", z=" + cut(z);
 
                 if(gate != null && player != null) {
                     if(gate != player) gate.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", player.getName()).replace("%warp%", destination));
@@ -135,6 +136,12 @@ public class TeleportPacketListener implements Listener, PacketListener {
                 break;
             }
         }
+    }
+
+    private Number cut(double n) {
+        double d = ((double) (int) (n * 100)) / 100;
+        if(d == (int) d) return (int) d;
+        else return d;
     }
 
     @Override
