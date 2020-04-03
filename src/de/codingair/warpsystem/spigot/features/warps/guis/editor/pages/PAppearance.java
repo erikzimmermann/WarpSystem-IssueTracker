@@ -78,6 +78,8 @@ public class PAppearance extends PageItem {
         addButton(new NameButton(2, 2, true, new Value<>(icon.getName())) {
             @Override
             public String acceptName(String name) {
+                if(name == null) return null;
+
                 name = Color.removeColor(Color.translateAlternateColorCodes('&', name));
                 if(startName != null && startName.equalsIgnoreCase(name)) return null;
 

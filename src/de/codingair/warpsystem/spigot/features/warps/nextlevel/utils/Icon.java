@@ -6,9 +6,13 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
+import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -86,7 +90,7 @@ public class Icon extends FeatureObject {
         this.name = d.getString("name");
         this.item = d.getItemStack("item");
 
-        this.slot = d.getInteger("slot") ;
+        this.slot = d.getInteger("slot");
 
         if(d.get("isCategory") != null) {
             this.isPage = Boolean.parseBoolean(d.get("isCategory") + "");
@@ -121,7 +125,7 @@ public class Icon extends FeatureObject {
         return super.equals(o) &&
                 slot == icon.slot &&
                 isPage == icon.isPage &&
-                getNameWithoutColor().equals(icon.getNameWithoutColor()) &&
+                Objects.equals(getNameWithoutColor(), icon.getNameWithoutColor()) &&
                 item.equals(icon.item) &&
                 Objects.equals(page, icon.page);
     }
@@ -139,12 +143,32 @@ public class Icon extends FeatureObject {
         return this;
     }
 
+    public ItemStack getRaw() {
+        return this.item;
+    }
+
     public ItemStack getItem() {
-        return new ItemBuilder(item).setName(this.name == null ? null : "§r" + ChatColor.translateAlternateColorCodes('&', this.name)).checkFirstLine().getItem();
+        return getItemBuilder().getItem();
     }
 
     public ItemBuilder getItemBuilder() {
-        return new ItemBuilder(item).setName(this.name == null ? null : ChatColor.translateAlternateColorCodes('&', this.name));
+        return new ItemBuilder(item).setName(this.name == null ? null : "§r" + ChatColor.translateAlternateColorCodes('&', this.name)).setHideName(name == null);
+    }
+
+    public ItemBuilder getItemBuilderWithPlaceholders(Player player) {
+        ItemBuilder builder = getItemBuilder().checkFirstLine();
+
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            if(builder.getName() != null) builder.setName(PlaceholderAPI.setPlaceholders(player, builder.getName()));
+
+            if(builder.getLore() != null) {
+                for(int i = 0; i < builder.getLore().size(); i++) {
+                    builder.getLore().add(i, PlaceholderAPI.setPlaceholders(player, builder.getLore().remove(i)));
+                }
+            }
+        }
+
+        return builder;
     }
 
     public Icon changeItem(ItemStack item) {
