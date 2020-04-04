@@ -55,7 +55,7 @@ public class PWEditor extends Editor<PlayerWarp> {
                         boolean isOwner = warp.isOwner(p);
                         boolean creating = isOwner && !PlayerWarpManager.getManager().existsOwn(p, warp.getName());
                         Number costs = calculateCosts(creating, warp, isOwner ? clone : null);
-                        MoneyAdapterType.getActive().withdraw(p, costs.doubleValue());
+                        if(MoneyAdapterType.canEnable() && PlayerWarpManager.getManager().isEconomy() && costs.doubleValue() > 0) MoneyAdapterType.getActive().withdraw(p, costs.doubleValue());
 
                         clone.setStarted(System.currentTimeMillis());
 
@@ -423,7 +423,7 @@ public class PWEditor extends Editor<PlayerWarp> {
     }
 
     private static boolean canPay(Player player, double costs) {
-        return MoneyAdapterType.getActive().getMoney(player) >= costs;
+        return !PlayerWarpManager.getManager().isEconomy() || !MoneyAdapterType.canEnable() || MoneyAdapterType.getActive().getMoney(player) >= costs;
     }
 
     @Override
