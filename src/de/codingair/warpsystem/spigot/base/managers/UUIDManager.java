@@ -110,4 +110,8 @@ public class UUIDManager {
     public void remove(Player player) {
         this.uniqueIds.remove(player.getName());
     }
+
+    public boolean isEmpty() {
+        return this.uniqueIds.isEmpty();
+    }
 }

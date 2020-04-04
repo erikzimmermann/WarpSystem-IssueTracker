@@ -263,6 +263,12 @@ public class WarpSystem extends JavaPlugin {
     private void afterOnEnable() {
         //update command dispatcher for players to synchronize CommandList
         Bukkit.getScheduler().runTask(this, this::updateCommandList);
+
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            if(this.uuidManager.isEmpty()) {
+                this.uuidManager.downloadAll();
+            }
+        }, 20);
     }
 
     private void updateCommandList() {
@@ -277,7 +283,7 @@ public class WarpSystem extends JavaPlugin {
     public void onDisable() {
         API.getInstance().onDisable(this);
         SpigotAPI.getInstance().onDisable(this);
-        
+
         if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             PlaceholderAPI.unregisterPlaceholderHook("warpsystem");
         }
