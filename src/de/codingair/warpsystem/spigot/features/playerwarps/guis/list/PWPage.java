@@ -210,8 +210,8 @@ public class PWPage extends Page {
         public ItemStack craftItem() {
             if(page == null) return null;
 
-            return new ItemBuilder(XMaterial.COMPASS).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Filter") + ":§7 " + page.filter.getFilterName())
-                    .setLore(page.getSearch() == null || !page.filter.searchable(page) ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Search_Short") + ": §7'§f" + page.getSearch() + "§7'",
+            return new ItemBuilder(XMaterial.COMPASS).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Filter") + ":§7 " + page.filter.getFilterName() + (page.filter == FilterType.CLASSES ? Lang.PREMIUM_LORE : ""))
+                    .setLore((page.filter == FilterType.CLASSES ? "§8Only admins see this page." : null), page.getSearch() == null || !page.filter.searchable(page) ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Search_Short") + ": §7'§f" + page.getSearch() + "§7'",
                             "", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7" + Lang.get("Previous_Filter"),
                             Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §7" + Lang.get("Next_Filter"),
                             page.filter.searchable(page) ? Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Shift_Rightclick") + ": §7" + (page.getSearch() == null ? Lang.get("Search_Short") : Lang.get("Reset_Search")) : null)
@@ -228,10 +228,10 @@ public class PWPage extends Page {
             if(e.isShiftClick() && e.isRightClick()) page.setSearch(null);
             else if(page.filter.deleteExtraBeforeChangeFilter() && page.extra != null) page.extra = null;
             else if(e.isLeftClick()) {
-                page.filter = page.filter.previous();
+                page.filter = page.filter.previous((Player) e.getWhoClicked());
                 page.extra = page.filter.getStandardExtra((PWList) page.getLast());
             } else if(e.isRightClick()) {
-                page.filter = page.filter.next();
+                page.filter = page.filter.next((Player) e.getWhoClicked());
                 page.extra = page.filter.getStandardExtra((PWList) page.getLast());
             }
 
