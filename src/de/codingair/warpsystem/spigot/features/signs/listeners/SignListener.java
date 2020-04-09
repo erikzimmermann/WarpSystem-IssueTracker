@@ -51,7 +51,7 @@ public class SignListener implements Listener {
                     return;
                 }
 
-                if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_USE_WARP_SIGNS)) {
+                if(!WarpSystem.hasPermission(e.getPlayer(), WarpSystem.PERMISSION_USE_WARP_SIGNS)) {
                     e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     return;
                 }
