@@ -22,8 +22,8 @@ import de.codingair.warpsystem.spigot.bstats.Collectible;
 import de.codingair.warpsystem.spigot.bstats.Metrics;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarp;
-import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarps;
 import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarpReference;
+import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarps;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.PWList;
 import de.codingair.warpsystem.spigot.features.playerwarps.listeners.PlayerWarpListener;
@@ -64,20 +64,22 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
     public static int getMaxAmount(Player player) {
         if(player.isOp()) return -1;
 
-        for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
-            String perm = effectivePermission.getPermission();
+        if(WarpSystem.PERMISSION_USE_PLAYER_WARPS != null) {
+            for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
+                String perm = effectivePermission.getPermission();
 
-            if(perm.equals("*") || perm.equalsIgnoreCase("warpsystem.*")) return -1;
-            if(perm.toLowerCase().startsWith("warpsystem.playerwarps.")) {
-                String s = perm.substring(23);
-                if(s.equals("*") || s.equalsIgnoreCase("n")) return -1;
+                if(perm.equals("*") || perm.equalsIgnoreCase("warpsystem.*")) return -1;
+                if(perm.toLowerCase().startsWith("warpsystem.playerwarps.")) {
+                    String s = perm.substring(23);
+                    if(s.equals("*") || s.equalsIgnoreCase("n")) return -1;
 
-                try {
-                    return Integer.parseInt(s);
-                } catch(Throwable ignored) {
+                    try {
+                        return Integer.parseInt(s);
+                    } catch(Throwable ignored) {
+                    }
                 }
             }
-        }
+        } else return getManager().maxAmount;
 
         return 0;
     }
@@ -89,6 +91,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
     private boolean bungeeCord;
     private PlayerWarpListener listener = new PlayerWarpListener();
+    private int maxAmount = 0;
 
     private long minTime;
     private long maxTime;
@@ -206,6 +209,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         this.inactiveTime = convertFromTimeFormat(config.getString("WarpSystem.PlayerWarps.Inactive.Time_After_Expiration", null), 2592000000L);
 
         //Costs - Generally
+        this.maxAmount = config.getInt("WarpSystem.PlayerWarps.General.Max_Warp_Amount", 5);
         this.protectedRegions = config.getBoolean("WarpSystem.PlayerWarps.General.Support.ProtectedRegions", true);
         this.nameBlacklist.addAll(config.getStringList("WarpSystem.PlayerWarps.General.Name_Blacklist"));
         this.createCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Create", 200);

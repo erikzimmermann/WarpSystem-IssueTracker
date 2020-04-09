@@ -53,7 +53,7 @@ public class PortalListener implements Listener {
                     return;
                 }
 
-                if(!player.hasPermission(WarpSystem.PERMISSION_USE_PORTALS)) {
+                if(!WarpSystem.hasPermission(player, WarpSystem.PERMISSION_USE_PORTALS)) {
                     player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     return;
                 } else effectPortal.perform(player);
