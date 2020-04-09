@@ -48,6 +48,7 @@ public enum PacketType {
 
     IsOperatorPacket(50, IsOperatorPacket.class),
     SendDisablePacket(51, SendDisablePacket.class),
+    IsOnlinePacket(52, IsOnlinePacket.class),
 
     BooleanPacket(100, BooleanPacket.class),
     IntegerPacket(101, IntegerPacket.class),

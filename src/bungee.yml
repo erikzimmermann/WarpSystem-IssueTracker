@@ -3,30 +3,3 @@ author: CodingAir
 version: '4.2.1-free'
 description: WarpSystem
 main: de.codingair.warpsystem.bungee.base.WarpSystem
-
-commands:
-  teleport:
-    usuage: /teleport <player> [player]
-    description: A Warp-System-CMD
-    aliases: [tp]
-  tptoggle:
-    usuage: /tptoggle
-    description: A Warp-System-CMD
-  tpa:
-    usuage: /tpa <player>
-    description: A Warp-System-CMD
-  tpahere:
-    usuage: /tpahere <player>
-    description: A Warp-System-CMD
-  tphere:
-    usuage: /tphere <player>
-    description: A Warp-System-CMD
-  tpatoggle:
-    usuage: /tpatoggle
-    description: A Warp-System-CMD
-  tpall:
-    usuage: /tpall
-    description: A Warp-System-CMD
-  tpaall:
-    usuage: /tpaall
-    description: A Warp-System-CMD

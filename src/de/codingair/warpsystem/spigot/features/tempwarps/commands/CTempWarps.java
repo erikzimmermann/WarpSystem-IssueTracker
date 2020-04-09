@@ -9,7 +9,6 @@ import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.ad.features.utils.Feature;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.tempwarps.guis.GTempWarpList;
 import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
@@ -49,25 +48,6 @@ public class CTempWarps extends CommandBuilder {
                 return false;
             }
         }.setOnlyPlayers(true), true, "tws", "twarps");
-
-        if(TempWarpManager.getManager().isKeys()) {
-            getBaseComponent().addChild(new CommandComponent("keys") {
-                @Override
-                public boolean runCommand(CommandSender sender, String label, String[] args) {
-
-                    if(sender instanceof Player) {
-                        if(sender.hasPermission(WarpSystem.PERMISSION_MODIFY_TEMP_WARPS)) {
-                            Lang.PREMIUM_CHAT(sender);
-                            WarpSystem.getInstance().getAdvertisementManager().sendDisableMessage((Player) sender, Feature.TEMP_WARP_KEYS);
-                        } else sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
-                    } else {
-                        Lang.PREMIUM_CHAT(sender);
-                        WarpSystem.getInstance().getAdvertisementManager().sendDisableMessage((Player) sender, Feature.TEMP_WARP_KEYS);
-                    }
-                    return false;
-                }
-            });
-        }
 
         getBaseComponent().addChild(new CommandComponent("create") {
             @Override
