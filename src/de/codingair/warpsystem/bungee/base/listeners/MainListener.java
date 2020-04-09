@@ -4,15 +4,11 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.bungee.api.ServerSwitchAttemptEvent;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
-import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
 import de.codingair.warpsystem.transfer.packets.bungee.PrepareLoginMessagePacket;
 import de.codingair.warpsystem.transfer.packets.general.BooleanPacket;
 import de.codingair.warpsystem.transfer.packets.general.IntegerPacket;
-import de.codingair.warpsystem.transfer.packets.spigot.IsOperatorPacket;
-import de.codingair.warpsystem.transfer.packets.spigot.MessagePacket;
 import de.codingair.warpsystem.transfer.packets.general.PrepareCoordinationTeleportPacket;
-import de.codingair.warpsystem.transfer.packets.spigot.PrepareServerSwitchPacket;
-import de.codingair.warpsystem.transfer.packets.spigot.RequestServerStatusPacket;
+import de.codingair.warpsystem.transfer.packets.spigot.*;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
@@ -55,7 +51,14 @@ public class MainListener implements Listener, PacketListener {
         switch(PacketType.getByObject(packet)) {
             case RequestInitialPacket: {
                 WarpSystem.getInstance().getServerManager().sendInitialPacket(server);
-                TeleportManager.getInstance().clearAll();
+                break;
+            }
+
+            case IsOnlinePacket: {
+                IsOnlinePacket p = (IsOnlinePacket) packet;
+                BooleanPacket answer = new BooleanPacket(BungeeCord.getInstance().getPlayer(p.getName()) != null);
+                p.applyAsAnswer(answer);
+                WarpSystem.getInstance().getDataHandler().send(answer, server);
                 break;
             }
 

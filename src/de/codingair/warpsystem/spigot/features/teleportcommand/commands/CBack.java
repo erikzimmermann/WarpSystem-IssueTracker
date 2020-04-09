@@ -4,7 +4,6 @@ import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.ad.features.utils.Feature;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
 import org.bukkit.command.CommandSender;
@@ -29,8 +28,7 @@ public class CBack extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                Lang.PREMIUM_CHAT(sender);
-                WarpSystem.getInstance().getAdvertisementManager().sendDisableMessage((Player) sender, Feature.TELEPORT_COMMANDS);
+                if(!TeleportCommandManager.getInstance().teleportToLastBackLocation((Player) sender)) sender.sendMessage(Lang.getPrefix() + Lang.get("No_last_position_found"));
                 return false;
             }
         }.setOnlyPlayers(true), true);

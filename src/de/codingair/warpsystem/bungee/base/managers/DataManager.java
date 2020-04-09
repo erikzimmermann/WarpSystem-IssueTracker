@@ -1,7 +1,10 @@
 package de.codingair.warpsystem.bungee.base.managers;
 
+import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.features.FeatureType;
+import de.codingair.warpsystem.bungee.features.teleport.listeners.TabCompleterListener;
 import de.codingair.warpsystem.utils.Manager;
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.CommandSender;
 
 import java.util.ArrayList;
@@ -28,6 +31,9 @@ public class DataManager {
         for(Manager manager : this.managers) {
             if(!manager.load(hidePrints)) success = false;
         }
+
+        BungeeCord.getInstance().getPluginManager().registerListener(WarpSystem.getInstance(), new TabCompleterListener());
+
         return success;
     }
 

@@ -36,7 +36,26 @@ public class Lang {
     }
 
     public static void PREMIUM_CHAT(CommandSender sender) {
-        if(sender instanceof Player) {
+        TextComponent tc0 = new TextComponent("\n" + Lang.getPrefix() + "§7This is a ");
+        TextComponent premium = new TextComponent("§6§lPremium");
+        TextComponent tc1 = new TextComponent(" feature. Buy it now to get full access!");
+
+        tc0.setColor(net.md_5.bungee.api.ChatColor.GRAY);
+        tc1.setColor(net.md_5.bungee.api.ChatColor.GRAY);
+
+        premium.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/premium-warps-portals-and-more-warp-teleport-system-1-8-1-14.66035/"));
+
+        tc0.addExtra(premium);
+        tc0.addExtra(tc1);
+        PREMIUM_CHAT(tc0, sender);
+    }
+
+    public static void PREMIUM_CHAT(TextComponent base, CommandSender sender) {
+        PREMIUM_CHAT(base, sender, false);
+    }
+
+    public static void PREMIUM_CHAT(TextComponent base, CommandSender sender, boolean chat) {
+        if(!chat && sender instanceof Player) {
             Player p = (Player) sender;
 
             if(API.getRemovable(p, GUI.class) != null) return;
@@ -45,26 +64,21 @@ public class Lang {
         } else {
             if(premiumMessage.contains(sender)) return;
 
-            TextComponent tc0 = new TextComponent("\n" + Lang.getPrefix() + "§7This is a ");
-            TextComponent premium = new TextComponent("§6§lPremium");
-            TextComponent tc1 = new TextComponent(" feature. Buy it now to get full access! §8[");
+            TextComponent tc1 = new TextComponent(" §8[");
             TextComponent upgrade = new TextComponent("§6§nUpgrade");
             TextComponent tc2 = new TextComponent("§8]\n");
 
-            tc0.setColor(net.md_5.bungee.api.ChatColor.GRAY);
             tc1.setColor(net.md_5.bungee.api.ChatColor.GRAY);
             tc2.setColor(net.md_5.bungee.api.ChatColor.GRAY);
 
-            premium.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/premium-warps-portals-and-more-warp-teleport-system-1-8-1-14.66035/"));
             upgrade.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/premium-warps-portals-and-more-warp-teleport-system-1-8-1-14.66035/"));
             upgrade.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {new TextComponent("§8» §6§lClick §8«")}));
 
-            tc0.addExtra(premium);
-            tc0.addExtra(tc1);
-            tc0.addExtra(upgrade);
-            tc0.addExtra(tc2);
+            base.addExtra(tc1);
+            base.addExtra(upgrade);
+            base.addExtra(tc2);
 
-            sender.spigot().sendMessage(tc0);
+            sender.spigot().sendMessage(base);
 
             premiumMessage.add(sender, 10);
         }
