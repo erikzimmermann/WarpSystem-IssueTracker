@@ -169,8 +169,8 @@ public class ClassesFilter implements Filter {
             Object[] extra = page.getExtra();
 
             return (extra.length == 1 ? Head.CYAN_PLUS : Head.RED_PLUS).getItemBuilder()
-                    .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Filter") + ":§7 " + FilterType.CLASSES.getFilterName())
-                    .setLore(page.getSearch() == null || !page.getFilter().searchable(page) ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Search_Short") + ": §7'§f" + page.getSearch() + "§7'",
+                    .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Filter") + ":§7 " + FilterType.CLASSES.getFilterName() + Lang.PREMIUM_LORE)
+                    .setLore("§8Only admins see this page.", page.getSearch() == null || !page.getFilter().searchable(page) ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Search_Short") + ": §7'§f" + page.getSearch() + "§7'",
                             extra.length == 1 ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Warps") + ": §f" + warps,
                             "",
                             extra.length == 1 ? Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": " + "§a" + Lang.get("Accept") : null,
