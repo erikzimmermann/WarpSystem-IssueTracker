@@ -12,7 +12,6 @@ import de.codingair.warpsystem.spigot.features.randomteleports.managers.RandomTe
 import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
 import de.codingair.warpsystem.spigot.features.signs.managers.SignManager;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
-import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.utils.Manager;
@@ -27,7 +26,6 @@ public enum FeatureType {
     EFFECT_PORTALS(EffectPortalManager.class, Priority.LOW, "EffectPortals"),
     NATIVE_PORTALS(NativePortalManager.class, Priority.LOW, "NativePortals"),
     SHORTCUTS(ShortcutManager.class, Priority.LOW, "Shortcuts"),
-    TEMP_WARPS(TempWarpManager.class, Priority.DISABLED, "TempWarps"),
     SIMPLE_WARPS(SimpleWarpManager.class, Priority.HIGH, "SimpleWarps"),
     RANDOM_TELEPORTS(RandomTeleporterManager.class, Priority.HIGH, "RandomTeleports"),
     TELEPORT_COMMAND(TeleportCommandManager.class, Priority.ALWAYS_ON, "TeleportCommand"),

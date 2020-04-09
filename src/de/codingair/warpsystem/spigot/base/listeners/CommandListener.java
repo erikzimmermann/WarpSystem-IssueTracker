@@ -46,7 +46,6 @@ public class CommandListener implements Listener {
         else if(name.startsWith("portal")) return FeatureType.EFFECT_PORTALS;
         else if(name.startsWith("globalwarp")) return FeatureType.GLOBAL_WARPS;
         else if(name.startsWith("nativeportal")) return FeatureType.NATIVE_PORTALS;
-        else if(name.startsWith("tempwarp")) return FeatureType.TEMP_WARPS;
         else if(name.startsWith("setwarp")) return FeatureType.WARP_GUI;
         else if(name.startsWith("deletewarp")) return FeatureType.WARP_GUI;
         else if(name.startsWith("editwarp")) return FeatureType.WARP_GUI;

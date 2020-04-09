@@ -1,11 +1,12 @@
-package de.codingair.warpsystem.spigot.features.playerwarps.utils;
+package de.codingair.warpsystem.spigot.features.playerwarps.utils.tempwarps;
 
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.GlobalLocationAdapter;
-import de.codingair.warpsystem.spigot.features.tempwarps.utils.TempWarp;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.tempwarps.TempWarp;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
