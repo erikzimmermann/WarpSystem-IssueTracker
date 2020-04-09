@@ -1,17 +1,15 @@
-package de.codingair.warpsystem.spigot.features.tempwarps.utils;
+package de.codingair.warpsystem.spigot.features.playerwarps.utils.tempwarps;
 
 import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.features.tempwarps.managers.TempWarpManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import de.codingair.codingapi.tools.io.lib.ParseException;
 
 import java.util.Date;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class TempWarp {
     private TempWarp backup = null;
@@ -52,28 +50,6 @@ public class TempWarp {
         this.inactiveSales = inactiveSales;
     }
 
-    private TempWarp(String lastKnownName, UUID owner, Location location, String name, String message, Date bornDate, Date startDate, Date expireDate, int duration, boolean isPublic, int teleportCosts, int paid) {
-        this.lastKnownName = lastKnownName;
-        this.owner = owner;
-        this.location = location;
-        this.name = name;
-        this.message = message;
-        this.bornDate = bornDate;
-        this.startDate = startDate;
-        this.expireDate = expireDate;
-        this.duration = duration;
-        this.isPublic = isPublic;
-        this.teleportCosts = teleportCosts;
-        this.paid = paid;
-
-        this.endDate = calculateEndDate();
-    }
-
-    public TempWarp(Player player, Location location, String name, int duration, boolean isPublic, String message, int teleportCosts) {
-        this(player.getName(), WarpSystem.getInstance().getUUIDManager().get(player), location, name, message, new Date(), new Date(), null, duration, isPublic, teleportCosts, 0);
-        saveCosts();
-    }
-
     public boolean hasAccess(Player player) {
         return isPublic || isOwner(player);
     }
@@ -85,14 +61,6 @@ public class TempWarp {
 
     public Player getOnlineOwner() {
         return WarpSystem.getInstance().getUUIDManager().getPlayerBy(getOwner());
-    }
-
-    public boolean isValid() {
-        return !isExpired() && this.location != null && this.location.getWorld() != null && isSave();
-    }
-
-    public boolean isSave() {
-        return TempWarpManager.getManager().isSave(this.location);
     }
 
     public boolean isExpired() {
@@ -110,10 +78,6 @@ public class TempWarp {
     public long getLeftTime() {
         if(getExpireDate() == null) return getEndDate().getTime() - new Date().getTime();
         return getExpireDate().getTime() - new Date().getTime();
-    }
-
-    public Date calculateEndDate() {
-        return new Date(this.startDate.getTime() + TimeUnit.MILLISECONDS.convert((int) this.duration, TempWarpManager.getManager().getConfig().getUnit()));
     }
 
     public Date getStartDate() {
@@ -169,26 +133,8 @@ public class TempWarp {
         this.name = name;
     }
 
-    public void setDuration(double duration) {
-        this.duration = duration;
-        if(this.endDate != null) this.endDate = calculateEndDate();
-    }
-
     public void setPublic(boolean aPublic) {
         isPublic = aPublic;
-    }
-
-    public int getCosts() {
-        int costs = 0;
-
-        costs += duration * TempWarpManager.getManager().getConfig().getDurationCosts();
-        if(isPublic) costs += TempWarpManager.getManager().getConfig().getPublicCosts();
-        if(message != null) costs += TempWarpManager.getManager().getConfig().getMessageCosts();
-        if(teleportCosts > 0) costs += TempWarpManager.getManager().getTeleportCosts() * this.teleportCosts;
-        if(TempWarpManager.getManager().getNameChangeCosts() > 0 && isChangingName()) costs += TempWarpManager.getManager().getNameChangeCosts();
-        if(TempWarpManager.getManager().getMessageChangeCosts() > 0 && isChangingMessage()) costs += TempWarpManager.getManager().getMessageChangeCosts();
-
-        return costs;
     }
 
     public boolean isChangingName() {
@@ -203,17 +149,6 @@ public class TempWarp {
 
     public long getRemainingTime() {
         return getEndDate().getTime() - new Date().getTime();
-    }
-
-    public int getRemainingCosts() {
-        TempWarpConfig config = TempWarpManager.getManager().getConfig();
-        int rI = (int) config.getUnit().convert(getRemainingTime(), TimeUnit.MILLISECONDS);
-        int costs = config.getDurationCosts() * rI;
-        return costs < 0 ? 0 : costs;
-    }
-
-    public void saveCosts() {
-        this.paid = getCosts();
     }
 
     public String getMessage() {
@@ -238,13 +173,6 @@ public class TempWarp {
 
     public void restore() {
         apply(this.backup);
-    }
-
-    public void renew() {
-        this.startDate = new Date();
-        this.endDate = calculateEndDate();
-        this.expireDate = null;
-        setNotify(false);
     }
 
     public boolean isAvailable() {
