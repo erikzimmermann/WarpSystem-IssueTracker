@@ -40,7 +40,7 @@ public class TeleportCommandManager implements Manager, Collectible {
     private List<String> usingBackCommand = new ArrayList<>();
 
     private int expireDelay = 30;
-    private int backHistorySize = 3;
+    private int backHistorySize = 1;
     private int tpaCosts = 0;
     private boolean tpaAllNotifySender = true;
 
@@ -137,14 +137,15 @@ public class TeleportCommandManager implements Manager, Collectible {
         List<Location> locations = this.backHistory.get(player.getName());
         if(locations == null) return false;
 
-        TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(locations.get(0))), Lang.get("Last_Position"));
+        Location l = locations.remove(0);
+
+        TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(l)), Lang.get("Last_Position"));
         options.addCallback(new Callback<TeleportResult>() {
             @Override
             public void accept(TeleportResult result) {
-                if(result == TeleportResult.TELEPORTED) {
-                    locations.remove(0);
-                    if(locations.isEmpty()) backHistory.remove(player.getName());
-                }
+                if(result != TeleportResult.TELEPORTED) {
+                    locations.add(0, l);
+                } else if(locations.isEmpty()) backHistory.remove(player.getName());
 
                 usingBackCommand.remove(player.getName());
             }
@@ -280,5 +281,9 @@ public class TeleportCommandManager implements Manager, Collectible {
 
     public int getTpaCosts() {
         return this.tpaCosts;
+    }
+
+    public int getBackHistorySize() {
+        return backHistorySize;
     }
 }
