@@ -38,11 +38,11 @@ public class CWarp extends CommandBuilder {
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
                 if(FeatureType.WARP_GUI.isActive() && WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
-                    if(sender.hasPermission(WarpSystem.PERMISSION_USE_WARP_GUI)) {
+                    if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_WARP_GUI)) {
                         CWarps.run(sender, null);
                     } else noPermission(sender, label, this);
                 } else {
-                    if(sender.hasPermission(WarpSystem.PERMISSION_USE_SIMPLE_WARPS)) {
+                    if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_SIMPLE_WARPS)) {
                         sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp>");
                     } else noPermission(sender, label, this);
                 }
@@ -51,11 +51,11 @@ public class CWarp extends CommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 if(FeatureType.WARP_GUI.isActive() && WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
-                    if(sender.hasPermission(WarpSystem.PERMISSION_USE_WARP_GUI)) {
+                    if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_WARP_GUI)) {
                         CWarps.run(sender, null);
                     } else noPermission(sender, label, this);
                 } else {
-                    if(sender.hasPermission(WarpSystem.PERMISSION_USE_SIMPLE_WARPS)) {
+                    if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_SIMPLE_WARPS)) {
                         sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp>");
                     } else noPermission(sender, label, this);
                 }
@@ -63,7 +63,7 @@ public class CWarp extends CommandBuilder {
                 return false;
             }
         }.setOnlyPlayers(true), true);
-        
+
         IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARP_GUI);
         CWarpHook hook = new CWarpHook();
 
@@ -77,13 +77,13 @@ public class CWarp extends CommandBuilder {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 if(FeatureType.WARP_GUI.isActive() && WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
-                    if(sender.hasPermission(WarpSystem.PERMISSION_USE_WARP_GUI)) {
+                    if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_WARP_GUI)) {
                         for(Icon c : manager.getPages()) {
                             if(!c.hasPermission() || sender.hasPermission(c.getPermission())) suggestions.add(c.getNameWithoutColor());
                         }
                     }
                 } else {
-                    if(sender.hasPermission(WarpSystem.PERMISSION_USE_SIMPLE_WARPS) || sender.hasPermission(WarpSystem.PERMISSION_SIMPLE_WARPS_DIRECT_TELEPORT)) {
+                    if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_SIMPLE_WARPS) || sender.hasPermission(WarpSystem.PERMISSION_SIMPLE_WARPS_DIRECT_TELEPORT)) {
                         hook.addArguments(sender, suggestions);
                     }
                 }
@@ -92,7 +92,7 @@ public class CWarp extends CommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
                 if(FeatureType.WARP_GUI.isActive() && WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false)) {
-                    if(sender.hasPermission(WarpSystem.PERMISSION_USE_WARP_GUI)) {
+                    if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_WARP_GUI)) {
                         Icon category = manager.getPage(argument);
 
                         if(category != null && category.hasPermission() && !sender.hasPermission(category.getPermission())) {
@@ -103,7 +103,7 @@ public class CWarp extends CommandBuilder {
                         CWarps.run(sender, category);
                     } else getBaseComponent().noPermission(sender, label, this);
                 } else {
-                    if(sender.hasPermission(WarpSystem.PERMISSION_USE_SIMPLE_WARPS)) {
+                    if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_SIMPLE_WARPS)) {
                         if(args.length == 0 || argument == null || argument.isEmpty()) {
                             sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp>");
                             return false;
@@ -147,7 +147,7 @@ public class CWarp extends CommandBuilder {
 
                 SimpleWarp warp = m.getWarp(args[0]);
 
-                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.DirectSimpleWarp,  new Destination(warp.getName(), DestinationType.SimpleWarp), warp.getName(), TeleportManager.NO_PERMISSION, 0, true,
+                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.DirectSimpleWarp, new Destination(warp.getName(), DestinationType.SimpleWarp), warp.getName(), TeleportManager.NO_PERMISSION, 0, true,
                         Lang.get("Teleported_To_By").replace("%gate%", sender.getName()), false, null);
                 return false;
             }

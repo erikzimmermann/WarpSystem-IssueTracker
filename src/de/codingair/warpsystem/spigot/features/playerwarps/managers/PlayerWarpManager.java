@@ -39,6 +39,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -48,7 +49,37 @@ import java.util.regex.Pattern;
 public class PlayerWarpManager implements Manager, Ticker, Collectible {
     public static boolean hasPermission(Player player) {
         int warps = PlayerWarpManager.getManager().getOwnWarps(player).size();
-        return warps < 3; //premium can use more than 3 warps
+        int maxAmount = getMaxAmount(player);
+
+        return warps < maxAmount;
+    }
+
+    /**
+     * @param player Player
+     * @return Max amount of PlayerWarps the player can have.
+     * LIMITED TO 3 (FREE VERSION)
+     */
+    public static int getMaxAmount(Player player) {
+        if(player.isOp()) return 3;
+
+        if(WarpSystem.PERMISSION_USE_PLAYER_WARPS != null) {
+            for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
+                String perm = effectivePermission.getPermission();
+
+                if(perm.equals("*") || perm.equalsIgnoreCase("warpsystem.*")) return 3;
+                if(perm.toLowerCase().startsWith("warpsystem.playerwarps.")) {
+                    String s = perm.substring(23);
+                    if(s.equals("*") || s.equalsIgnoreCase("n")) return 3;
+
+                    try {
+                        return Math.min(Integer.parseInt(s), 3);
+                    } catch(Throwable ignored) {
+                    }
+                }
+            }
+        } else return Math.min(getManager().maxAmount, 3);
+
+        return 0;
     }
 
     private HashMap<UUID, List<PlayerWarp>> warps = new HashMap<>();
@@ -58,6 +89,7 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible {
 
     private boolean bungeeCord;
     private PlayerWarpListener listener = new PlayerWarpListener();
+    private int maxAmount = 0;
 
     private boolean hideLimitInfo = false;
 
@@ -192,6 +224,7 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible {
         this.hideLimitInfo = config.getBoolean("WarpSystem.PlayerWarps.Hide_Limit_Info", false);
 
         //Costs - Generally
+        this.maxAmount = config.getInt("WarpSystem.PlayerWarps.General.Max_Warp_Amount", 5);
         this.protectedRegions = config.getBoolean("WarpSystem.PlayerWarps.General.Support.ProtectedRegions", true);
         this.createCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Create", 200);
         this.editCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Edit", 200);

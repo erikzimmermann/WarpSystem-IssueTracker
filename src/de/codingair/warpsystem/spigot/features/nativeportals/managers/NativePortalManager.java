@@ -159,7 +159,7 @@ public class NativePortalManager implements Manager {
         nativePortal.getListeners().add(new de.codingair.warpsystem.spigot.features.nativeportals.utils.PortalListener() {
             @Override
             public void onEnter(Player player) {
-                if(!player.hasPermission(WarpSystem.PERMISSION_USE_NATIVE_PORTALS)) {
+                if(!WarpSystem.hasPermission(player, WarpSystem.PERMISSION_USE_NATIVE_PORTALS)) {
                     player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     return;
                 }

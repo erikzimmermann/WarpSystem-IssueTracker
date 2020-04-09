@@ -32,6 +32,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.InvalidDescriptionException;
@@ -40,6 +41,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,41 +59,42 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_MODIFY_PORTALS = "WarpSystem.Modify.Portals";
     public static final String PERMISSION_MODIFY_NATIVE_PORTALS = "WarpSystem.Modify.NativePortals";
     public static final String PERMISSION_MODIFY_RANDOM_TELEPORTER = "WarpSystem.Modify.RandomTeleporters";
-    public static final String PERMISSION_MODIFY_TEMP_WARPS = "WarpSystem.Modify.TempWarps";
     public static final String PERMISSION_MODIFY_PLAYER_WARPS = "WarpSystem.Modify.PlayerWarps";
-    public static final String PERMISSION_USE_WARP_GUI = "WarpSystem.Use.WarpGUI";
+    public static String PERMISSION_USE_WARP_GUI = "WarpSystem.Use.WarpGUI";
     public static final String PERMISSION_WARP_GUI_OTHER = "WarpSystem.WarpGUI.Other";
     public static final String PERMISSION_HIDE_ALL_ICONS = "WarpGUI.HideAll";
-    public static final String PERMISSION_USE_WARP_SIGNS = "WarpSystem.Use.WarpSigns";
-    public static final String PERMISSION_USE_GLOBAL_WARPS = "WarpSystem.Use.GlobalWarps";
-    public static final String PERMISSION_USE_SIMPLE_WARPS = "WarpSystem.Use.SimpleWarps";
-    public static final String PERMISSION_USE_TEMP_WARPS = "WarpSystem.Use.TempWarps";
-    public static final String PERMISSION_USE_PLAYER_WARPS = "WarpSystem.Use.PlayerWarps";
-    public static final String PERMISSION_USE_PORTALS = "WarpSystem.Use.Portals";
-    public static final String PERMISSION_USE_NATIVE_PORTALS = "WarpSystem.Use.NativePortals";
-    public static final String PERMISSION_USE_RANDOM_TELEPORTER = "WarpSystem.Use.RandomTeleporters";
+    public static String PERMISSION_USE_WARP_SIGNS = "WarpSystem.Use.WarpSigns";
+    public static String PERMISSION_USE_GLOBAL_WARPS = "WarpSystem.Use.GlobalWarps";
+    public static String PERMISSION_USE_SIMPLE_WARPS = "WarpSystem.Use.SimpleWarps";
+    public static String PERMISSION_USE_PLAYER_WARPS = "WarpSystem.Use.PlayerWarps";
+    public static String PERMISSION_USE_PORTALS = "WarpSystem.Use.Portals";
+    public static String PERMISSION_USE_NATIVE_PORTALS = "WarpSystem.Use.NativePortals";
+    public static String PERMISSION_USE_RANDOM_TELEPORTER = "WarpSystem.Use.RandomTeleporters";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND = "WarpSystem.Use.TeleportCommand";
+    public static String PERMISSION_USE_TELEPORT_COMMAND_TP = PERMISSION_USE_TELEPORT_COMMAND + ".Tp";
+    public static String PERMISSION_USE_TELEPORT_COMMAND_BACK = PERMISSION_USE_TELEPORT_COMMAND + ".Back";
+    public static String PERMISSION_USE_TELEPORT_COMMAND_TP_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpToggle";
+    public static String PERMISSION_USE_TELEPORT_COMMAND_TPA = PERMISSION_USE_TELEPORT_COMMAND + ".Tpa";
+    public static String PERMISSION_USE_TELEPORT_COMMAND_TPA_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaToggle";
+    public static String PERMISSION_USE_TELEPORT_COMMAND_TPA_HERE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaHere";
+    public static String PERMISSION_USE_TELEPORT_COMMAND_TPALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpAll";
+    public static String PERMISSION_USE_TELEPORT_COMMAND_TPA_ALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpaAll";
+
     public static final String PERMISSION_ByPass_Maintenance = "WarpSystem.ByPass.Maintenance";
     public static final String PERMISSION_ByPass_Teleport_Costs = "WarpSystem.ByPass.Teleport.Costs";
     public static final String PERMISSION_ByPass_Teleport_Delay = "WarpSystem.ByPass.Teleport.Delay";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND = "WarpSystem.Use.TeleportCommand";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND_TP = PERMISSION_USE_TELEPORT_COMMAND + ".Tp";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND_BACK = PERMISSION_USE_TELEPORT_COMMAND + ".Back";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND_TP_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpToggle";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA = PERMISSION_USE_TELEPORT_COMMAND + ".Tpa";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaToggle";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA_HERE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaHere";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPHEREALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpHereAll";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpAll";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA_ALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpaAll";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND_BUNGEE_ACCESS = PERMISSION_USE_TELEPORT_COMMAND + ".BungeeAccess";
+
     public static final String PERMISSION_TELEPORT_PRELOAD_CHUNKS = "WarpSystem.Teleport.ChunkPreLoading";
     public static final String PERMISSION_SIMPLE_WARPS_DIRECT_TELEPORT = "WarpSystem.SimpleWarp.DirectTeleport";
     public static String PERMISSION_ADMIN = "WarpSystem.Admin";
 
+    public static boolean hasPermission(CommandSender sender, String permission) {
+        return permission == null || sender.hasPermission(permission);
+    }
+
     private static WarpSystem instance;
     public static boolean activated = false;
     public static boolean maintenance = false;
-    private final boolean premium = false;
     public static final int PREMIUM_THREAD_ID = 369986;
     public static final int FREE_THREAD_ID = 182037;
 
@@ -128,7 +132,6 @@ public class WarpSystem extends JavaPlugin {
 
         instance = this;
         this.updateNotifier = new UpdateNotifier();
-
         loadOptions();
 
         try {
@@ -154,6 +157,9 @@ public class WarpSystem extends JavaPlugin {
 
             this.runningFirstTime = fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "0").equals("0") ? new ArrayList<>() : null;
             if(this.runningFirstTime()) createBackup();
+
+            //check permission before loading features
+            checkPermissions();
 
             log("Loading features");
             this.fileManager.loadAll();
@@ -206,7 +212,8 @@ public class WarpSystem extends JavaPlugin {
             this.dataHandler.register(this.packetListener = new BungeeBukkitListener());
             Bukkit.getPluginManager().registerEvents(this.packetListener, this);
 
-            if(fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Functions.CommandBlocks", true))
+            ConfigFile config = fileManager.getFile("Config");
+            if(config.getConfig().getBoolean("WarpSystem.Functions.CommandBlocks", true))
                 Bukkit.getPluginManager().registerEvents(new CommandBlockListener(), this);
 
             if(runningFirstTime()) Bukkit.getScheduler().runTaskLater(this, () -> notifyPlayers(null), 100L);
@@ -258,6 +265,27 @@ public class WarpSystem extends JavaPlugin {
 
             this.ERROR = true;
             Bukkit.getPluginManager().disablePlugin(this);
+        }
+    }
+
+    private void checkPermissions() {
+        ConfigFile config = fileManager.getFile("Config");
+        if(config.getConfig().getString("Do_Not_Edit.Last_Version").equals("0")) {
+            config.getConfig().set("WarpSystem.Permissions", false);
+            config.saveConfig();
+        }
+
+        if(!config.getConfig().getBoolean("WarpSystem.Permissions", true)) {
+            for(Field f : getClass().getDeclaredFields()) {
+                if(!Modifier.isFinal(f.getModifiers()) && f.getName().startsWith("PERMISSION_USE_")) {
+                    f.setAccessible(true);
+                    try {
+                        f.set(this, null);
+                    } catch(IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
     }
 
@@ -632,7 +660,7 @@ public class WarpSystem extends JavaPlugin {
     }
 
     public final boolean isPremium() {
-        return premium;
+        return false;
     }
 
     public OptionBundle getOptions() {
