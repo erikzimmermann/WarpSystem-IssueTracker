@@ -73,7 +73,8 @@ WarpSystem:
   TeleportCommands:
     Back:
       #Amount of temp. saved locations for the /back command
-      History_Size: 3
+      #If set to '1', the plugin counts the position from which the /back command was executed
+      History_Size: 1
       Enabled: true
     Tp: true
     TpAll: true
