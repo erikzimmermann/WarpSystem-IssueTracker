@@ -176,6 +176,12 @@ public class CTeleport extends CommandBuilder {
         });
     }
 
+    private static Number cut(double n) {
+        double d = ((double) (int) (n * 100)) / 100;
+        if(d == (int) d) return (int) d;
+        else return d;
+    }
+
     private static void tp(Player gate, Player player, double x, double y, double z) {
         if(player == null) {
             gate.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
@@ -187,7 +193,7 @@ public class CTeleport extends CommandBuilder {
             return;
         }
 
-        String destination = "x=" + x + ", y=" + y + ", z=" + z;
+        String destination = "x=" + cut(x) + ", y=" + cut(y) + ", z=" + cut(z);
 
         if(gate != player) gate.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", player.getName()).replace("%warp%", destination));
 
