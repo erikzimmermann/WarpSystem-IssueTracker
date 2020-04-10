@@ -131,6 +131,9 @@ public class WarpSystem extends JavaPlugin {
         timer.start();
 
         instance = this;
+        this.dataManager = new DataManager();
+        this.dataManager.preLoad();
+
         this.updateNotifier = new UpdateNotifier();
         loadOptions();
 
@@ -163,12 +166,12 @@ public class WarpSystem extends JavaPlugin {
 
             log("Loading features");
             this.fileManager.loadAll();
+            this.dataManager.removeDisabled();
 
             CWarpSystem cWarpSystem = new CWarpSystem();
             cWarpSystem.register(this);
 
             boolean createBackup = false;
-            this.dataManager = new DataManager();
             if(!this.dataManager.load()) createBackup = true;
             log(" ");
             log("Loading TeleportManager");
