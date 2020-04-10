@@ -1,0 +1,107 @@
+~Config
+#PREMIUM marked values cannot be changed. Any changes will be ignored.
+PlayerWarps:
+  General:
+    #PREMIUM | Will only be used if permissions are disabled (see line 9)
+    Max_Warp_Amount: 5
+    Support:
+      #If enabled, the player can't create PlayerWarps in regions, where he cannot build
+      ProtectedRegions: true
+    #PREMIUM
+    BungeeCord: false
+    #PREMIUM | Disables all types of costs, active time selector, teleport costs
+    Economy: true
+    #PREMIUM | The item of PlayerWarp is automatically the head of its owner and cannot be changed
+    Force_Player_Head: true
+    #PREMIUM
+    Custom_teleport_costs: true
+    #Turn this to true, if you want, that all PlayerWarps should be public when you create them. The state can always be changed.
+    Public_as_create_state: false
+    PlayerWarps_Command_Aliases:
+      - 'pwarps'
+      - 'pws'
+    PlayerWarp_Command_Aliases:
+      - 'pwarp'
+      - 'pw'
+    Command_References:
+      - 'tempwarps'
+      - 'twarps'
+      - 'tws'
+      - 'tempwarp'
+      - 'twarp'
+      - 'tw'
+      - 'home'
+      - 'homes'
+    #PREMIUM
+    Name_Blacklist: []
+    #PREMIUM
+    Categories:
+      Enabled: false
+      Classes: []
+  #Time format: "0d, 0h, 0m, 0s" - Unnecessary values can be removed (examples: "1d, 5m", "10s", "5h")!
+  Time:
+    Min_Time: 0d, 0h, 5m
+    Max_Time: 30d, 0h, 0m
+  Inactive:
+    #Time after an expiration. After that time, the PlayerWarp will be deleted. Inactive PlayerWarps cannot be used for teleportation purposes.
+    #IMPORTANT: If BungeeCord is enabled, you have to set this value in the Config.yml in the WarpSystem folder on your BungeeCord!! (It will be ignored here.)
+    Time_After_Expiration: 1d, 0h, 0m
+    #Time to remind a player, if a PlayerWarp is going to be deleted (already inactive)
+    Reminds:
+      - 12h
+      - 6h
+      - 1h
+      - 30m
+      - 15m
+      - 5m
+      - 3m
+      - 2m
+      - 1m
+  Costs:
+    #Factor calculation: (time left / time from born to expiration) > decreases proportionally to the remaining PlayerWarp time - factor decreases with rising "from born to expiration"-time
+    Internal_Refund_Factor: false
+    Round_costs_to_natural_numbers: false
+    Create: 200
+    Edit: 0
+    PublicWarp: 100
+    Personal_Item: 200
+    #Costs per minute
+    Active_Time: 0.5
+    #Multiplicated with custom TeleportCosts - e.g. set PlayerWarp teleport fee to 100 > Costs: 100 * 25 = 2500
+    Teleport_Fee: 25
+    Trusted_Member: 50
+    Editing:
+      #Costs for editing existing values
+      Name: 400
+      Target_Position: 200
+      Personal_Item: 100
+    Text:
+      #Costs per character
+      Teleport_Message: 2
+      Warp_Description: 2
+  Name_Length:
+    Min: 3
+    Max: 20
+  Teleport_Message:
+    Length:
+      Min: 5
+      Max: 50
+  Warp_Description:
+    Max_Lines: 3
+    Line_Length:
+      Min: 5
+      Max: 35
+  Teleport_Fee:
+    #Custom PlayerWarp teleport fee
+    Max: 500
+  Refunds:
+    #Values in % (e.g. 1 = 100%, 0.25 = 25%)
+    Personal_Item: 0.5
+    Warp_Description: 0.5
+    Teleport_Message: 0.5
+    PublicWarp: 0.5
+    Teleport_Fee: 0.5
+    Active_Time: 1
+    Trusted_Member: 0.5
+  #Info that every player can only create max 3 warps
+  Hide_Limit_Info: false

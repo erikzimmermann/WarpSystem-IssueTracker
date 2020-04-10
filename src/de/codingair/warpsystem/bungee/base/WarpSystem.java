@@ -45,6 +45,7 @@ public class WarpSystem extends Plugin {
         timer.start();
 
         BungeeAPI.getInstance().onEnable(this);
+        dataManager.preLoad();
 
         log(" ");
         log("________________________________________________________");

@@ -13,6 +13,7 @@ import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.randomteleports.commands.CRandomTP;
 import de.codingair.warpsystem.spigot.features.randomteleports.listeners.InteractListener;
 import de.codingair.warpsystem.spigot.features.randomteleports.utils.RandomLocationCalculator;
+import de.codingair.warpsystem.spigot.features.randomteleports.utils.forwardcompatibility.RTPTagConverter_v4_2_2;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -39,25 +40,28 @@ public class RandomTeleporterManager implements Manager {
     private InteractListener listener = new InteractListener();
 
     @Override
+    public void preLoad() {
+        new RTPTagConverter_v4_2_2();
+    }
+
+    @Override
     public boolean load(boolean loader) {
         if(WarpSystem.getInstance().getFileManager().getFile("PlayData") == null) WarpSystem.getInstance().getFileManager().loadFile("PlayData", "/Memory/");
-        if(WarpSystem.getInstance().getFileManager().getFile("Config") == null) WarpSystem.getInstance().getFileManager().loadFile("Config", "/");
-        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
-        UTFConfig config = file.getConfig();
+        UTFConfig config = WarpSystem.getInstance().getFileManager().loadFile("RTPConfig", "/").getConfig();
 
         WarpSystem.log("  > Loading RandomTeleporters");
 
-        this.buyable = config.getBoolean("WarpSystem.RandomTeleport.Buyable.Enabled", true);
-        this.costs = config.getDouble("WarpSystem.RandomTeleport.Buyable.Costs", 500.0);
-        this.minRange = config.getDouble("WarpSystem.RandomTeleport.Range.Min", 1000);
-        this.maxRange = config.getDouble("WarpSystem.RandomTeleport.Range.Max", 10000);
+        this.buyable = config.getBoolean("RandomTeleport.Buyable.Enabled", true);
+        this.costs = config.getDouble("RandomTeleport.Buyable.Costs", 500.0);
+        this.minRange = config.getDouble("RandomTeleport.Range.Min", 1000);
+        this.maxRange = config.getDouble("RandomTeleport.Range.Max", 10000);
 
-        this.netherHeight = config.getInt("WarpSystem.RandomTeleport.Range.Highest_Y.Nether", 126);
-        this.endHeight = config.getInt("WarpSystem.RandomTeleport.Range.Highest_Y.End", 72);
+        this.netherHeight = config.getInt("RandomTeleport.Range.Highest_Y.Nether", 126);
+        this.endHeight = config.getInt("RandomTeleport.Range.Highest_Y.End", 72);
       
-        this.protectedRegions = config.getBoolean("WarpSystem.RandomTeleport.Support.ProtectedRegions", true);
-        if(config.getBoolean("WarpSystem.RandomTeleport.Support.Biome.Enabled", true)) {
-            List<String> configBiomes = config.getStringList("WarpSystem.RandomTeleport.Support.Biome.BiomeList");
+        this.protectedRegions = config.getBoolean("WaSystem.RandomTeleport.Support.ProtectedRegions", true);
+        if(config.getBoolean("RandomTeleport.Support.Biome.Enabled", true)) {
+            List<String> configBiomes = config.getStringList("RandomTeleport.Support.Biome.BiomeList");
             biomeList = new ArrayList<>();
 
             if(configBiomes == null || configBiomes.isEmpty()) {
@@ -78,7 +82,7 @@ public class RandomTeleporterManager implements Manager {
         }
 
         if(WarpSystem.getInstance().getFileManager().getFile("Teleporters") == null) WarpSystem.getInstance().getFileManager().loadFile("Teleporters", "/Memory/");
-        file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
+        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
         config = file.getConfig();
 
         List<?> l = config.getList("RandomTeleporter.InteractBlocks");

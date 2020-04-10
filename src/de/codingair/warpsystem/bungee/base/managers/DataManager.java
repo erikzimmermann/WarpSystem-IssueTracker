@@ -26,6 +26,12 @@ public class DataManager {
         }
     }
 
+    public void preLoad() {
+        for(Manager manager : this.managers) {
+            manager.preLoad();
+        }
+    }
+
     public boolean load(boolean hidePrints) {
         boolean success = true;
         for(Manager manager : this.managers) {
