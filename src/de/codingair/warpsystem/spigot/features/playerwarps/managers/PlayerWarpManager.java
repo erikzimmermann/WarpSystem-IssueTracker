@@ -29,6 +29,7 @@ import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.PWList;
 import de.codingair.warpsystem.spigot.features.playerwarps.listeners.PlayerWarpListener;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.*;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.tempwarps.TempWarpAdapter;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.forwardcompatibility.PlayerWarpTagConverter_v4_2_2;
 import de.codingair.warpsystem.transfer.packets.general.DeletePlayerWarpPacket;
 import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpUpdatePacket;
 import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpsPacket;
@@ -84,6 +85,8 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         return 0;
     }
 
+    private ConfigFile playerWarpsData = null;
+    private ConfigFile config = null;
     private HashMap<UUID, List<PlayerWarp>> warps = new HashMap<>();
     private HashMap<String, UUID> names = new HashMap<>();
     private List<Category> warpCategories = new ArrayList<>();
@@ -173,6 +176,11 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
     }
 
     @Override
+    public void preLoad() {
+        new PlayerWarpTagConverter_v4_2_2();
+    }
+
+    @Override
     public boolean load(boolean loader) {
         boolean success = true;
 
@@ -180,23 +188,21 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         this.warpCategories.clear();
         this.nameBlacklist.clear();
 
-        if(WarpSystem.getInstance().getFileManager().getFile("PlayerWarps") == null) WarpSystem.getInstance().getFileManager().loadFile("PlayerWarps", "/Memory/");
-        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("PlayerWarps");
+        this.playerWarpsData = WarpSystem.getInstance().getFileManager().loadFile("PlayerWarps", "/Memory/");
+        this.config = WarpSystem.getInstance().getFileManager().loadFile("PlayerWarpConfig", "/");
+        FileConfiguration config = this.config.getConfig();
 
         int size = 0;
 
-        ConfigFile configFile = WarpSystem.getInstance().getFileManager().getFile("Config");
-        FileConfiguration config = configFile.getConfig();
-
-        this.bungeeCord = config.getBoolean("WarpSystem.PlayerWarps.General.BungeeCord", true);
-        this.economy = config.getBoolean("WarpSystem.PlayerWarps.General.Economy", true);
+        this.bungeeCord = config.getBoolean("PlayerWarps.General.BungeeCord", true);
+        this.economy = config.getBoolean("PlayerWarps.General.Economy", true);
         WarpSystem.log("  > Loading PlayerWarps [Bungee: " + bungeeCord + "; TimeDependent: " + economy + "]");
 
         // Timings
-        this.minTime = convertFromTimeFormat(config.getString("WarpSystem.PlayerWarps.Time.Min_Time", null), 300000);
-        this.maxTime = convertFromTimeFormat(config.getString("WarpSystem.PlayerWarps.Time.Max_Time", null), 2592000000L);
+        this.minTime = convertFromTimeFormat(config.getString("PlayerWarps.Time.Min_Time", null), 300000);
+        this.maxTime = convertFromTimeFormat(config.getString("PlayerWarps.Time.Max_Time", null), 2592000000L);
 
-        List<String> reminds = config.getStringList("WarpSystem.PlayerWarps.Inactive.Reminds");
+        List<String> reminds = config.getStringList("Inactive.Reminds");
         this.inactiveReminds = new ArrayList<>();
 
         for(int i = 0; i < reminds.size(); i++) {
@@ -206,68 +212,68 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
             if(time > 0) inactiveReminds.add(time);
         }
 
-        this.inactiveTime = convertFromTimeFormat(config.getString("WarpSystem.PlayerWarps.Inactive.Time_After_Expiration", null), 2592000000L);
+        this.inactiveTime = convertFromTimeFormat(config.getString("PlayerWarps.Inactive.Time_After_Expiration", null), 2592000000L);
 
         //Costs - Generally
-        this.maxAmount = config.getInt("WarpSystem.PlayerWarps.General.Max_Warp_Amount", 5);
-        this.protectedRegions = config.getBoolean("WarpSystem.PlayerWarps.General.Support.ProtectedRegions", true);
-        this.nameBlacklist.addAll(config.getStringList("WarpSystem.PlayerWarps.General.Name_Blacklist"));
-        this.createCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Create", 200);
-        this.editCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Edit", 200);
-        this.naturalNumbers = config.getBoolean("WarpSystem.PlayerWarps.Costs.Round_costs_to_natural_numbers", false);
-        this.internalRefundFactor = config.getBoolean("WarpSystem.PlayerWarps.Costs.Internal_Refund_Factor", false);
-        this.forcePlayerHead = config.getBoolean("WarpSystem.PlayerWarps.General.Force_Player_Head", false);
-        this.customTeleportCosts = config.getBoolean("WarpSystem.PlayerWarps.General.Custom_teleport_costs", true);
+        this.maxAmount = config.getInt("PlayerWarps.General.Max_Warp_Amount", 5);
+        this.protectedRegions = config.getBoolean("PlayerWarps.General.Support.ProtectedRegions", true);
+        this.nameBlacklist.addAll(config.getStringList("PlayerWarps.General.Name_Blacklist"));
+        this.createCosts = config.getDouble("PlayerWarps.Costs.Create", 200);
+        this.editCosts = config.getDouble("PlayerWarps.Costs.Edit", 200);
+        this.naturalNumbers = config.getBoolean("PlayerWarps.Costs.Round_costs_to_natural_numbers", false);
+        this.internalRefundFactor = config.getBoolean("PlayerWarps.Costs.Internal_Refund_Factor", false);
+        this.forcePlayerHead = config.getBoolean("PlayerWarps.General.Force_Player_Head", false);
+        this.customTeleportCosts = config.getBoolean("PlayerWarps.General.Custom_teleport_costs", true);
 
         //Costs - Editing
-        this.nameChangeCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Editing.Name", 400);
-        this.positionChangeCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Editing.Target_Position", 200);
-        this.itemChangeCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Editing.Personal_Item", 100);
+        this.nameChangeCosts = config.getDouble("PlayerWarps.Costs.Editing.Name", 400);
+        this.positionChangeCosts = config.getDouble("PlayerWarps.Costs.Editing.Target_Position", 200);
+        this.itemChangeCosts = config.getDouble("PlayerWarps.Costs.Editing.Personal_Item", 100);
 
         //Costs - Fields
-        this.personalItemCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Personal_Item", 200);
-        this.messageCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Text.Teleport_Message", 2);
-        this.descriptionCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Text.Warp_Description", 2);
+        this.personalItemCosts = config.getDouble("PlayerWarps.Costs.Personal_Item", 200);
+        this.messageCosts = config.getDouble("PlayerWarps.Costs.Text.Teleport_Message", 2);
+        this.descriptionCosts = config.getDouble("PlayerWarps.Costs.Text.Warp_Description", 2);
 
-        this.publicCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.PublicWarp", 100);
-        this.activeTimeCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Active_Time", 0.5);
+        this.publicCosts = config.getDouble("PlayerWarps.Costs.PublicWarp", 100);
+        this.activeTimeCosts = config.getDouble("PlayerWarps.Costs.Active_Time", 0.5);
 
         //Teleport costs
-        this.teleportCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Teleport_Fee", 25);
-        this.maxTeleportCosts = config.getDouble("WarpSystem.PlayerWarps.Teleport_Fee.Max", 500);
+        this.teleportCosts = config.getDouble("PlayerWarps.Costs.Teleport_Fee", 25);
+        this.maxTeleportCosts = config.getDouble("PlayerWarps.Teleport_Fee.Max", 500);
 
         //Teleport message
-        this.messageMinLength = config.getInt("WarpSystem.PlayerWarps.Teleport_Message.Length.Min", 5);
-        this.messageMaxLength = config.getInt("WarpSystem.PlayerWarps.Teleport_Message.Length.Max", 50);
+        this.messageMinLength = config.getInt("PlayerWarps.Teleport_Message.Length.Min", 5);
+        this.messageMaxLength = config.getInt("PlayerWarps.Teleport_Message.Length.Max", 50);
 
         //Description
-        this.descriptionLineMinLength = config.getInt("WarpSystem.PlayerWarps.Warp_Description.Line_Length.Min", 5);
-        this.descriptionLineMaxLength = config.getInt("WarpSystem.PlayerWarps.Warp_Description.Line_Length.Max", 25);
-        this.descriptionMaxLines = config.getInt("WarpSystem.PlayerWarps.Warp_Description.Max_Lines", 3);
+        this.descriptionLineMinLength = config.getInt("PlayerWarps.Warp_Description.Line_Length.Min", 5);
+        this.descriptionLineMaxLength = config.getInt("PlayerWarps.Warp_Description.Line_Length.Max", 25);
+        this.descriptionMaxLines = config.getInt("PlayerWarps.Warp_Description.Max_Lines", 3);
 
         //Name
-        this.nameMinLength = config.getInt("WarpSystem.PlayerWarps.Name_Length.Min", 3);
-        this.nameMaxLength = config.getInt("WarpSystem.PlayerWarps.Name_Length.Max", 20);
+        this.nameMinLength = config.getInt("PlayerWarps.Name_Length.Min", 3);
+        this.nameMaxLength = config.getInt("PlayerWarps.Name_Length.Max", 20);
 
         //generally
-        this.firstPublic = config.getBoolean("WarpSystem.PlayerWarps.General.Public_as_create_state", false);
-        this.trustedMemberCosts = config.getDouble("WarpSystem.PlayerWarps.Costs.Trusted_Member", 50);
+        this.firstPublic = config.getBoolean("PlayerWarps.General.Public_as_create_state", false);
+        this.trustedMemberCosts = config.getDouble("PlayerWarps.Costs.Trusted_Member", 50);
 
         //refund
-        this.personalItemRefund = config.getDouble("WarpSystem.PlayerWarps.Refunds.Personal_Item", 0.5);
-        this.descriptionRefund = config.getDouble("WarpSystem.PlayerWarps.Refunds.Warp_Description", 0.5);
-        this.messageRefund = config.getDouble("WarpSystem.PlayerWarps.Refunds.Teleport_Message", 0.5);
-        this.publicRefund = config.getDouble("WarpSystem.PlayerWarps.Refunds.PublicWarp", 0.5);
-        this.teleportCostsRefund = config.getDouble("WarpSystem.PlayerWarps.Refunds.Teleport_Fee", 0.5);
-        this.activeTimeRefund = config.getDouble("WarpSystem.PlayerWarps.Refunds.Active_Time", 1);
-        this.trustedMemberRefund = config.getDouble("WarpSystem.PlayerWarps.Refunds.Trusted_Member", 0.5);
+        this.personalItemRefund = config.getDouble("PlayerWarps.Refunds.Personal_Item", 0.5);
+        this.descriptionRefund = config.getDouble("PlayerWarps.Refunds.Warp_Description", 0.5);
+        this.messageRefund = config.getDouble("PlayerWarps.Refunds.Teleport_Message", 0.5);
+        this.publicRefund = config.getDouble("PlayerWarps.Refunds.PublicWarp", 0.5);
+        this.teleportCostsRefund = config.getDouble("PlayerWarps.Refunds.Teleport_Fee", 0.5);
+        this.activeTimeRefund = config.getDouble("PlayerWarps.Refunds.Active_Time", 1);
+        this.trustedMemberRefund = config.getDouble("PlayerWarps.Refunds.Trusted_Member", 0.5);
 
         //Classes
-        this.classes = config.getBoolean("WarpSystem.PlayerWarps.General.Categories.Enabled", true);
-        this.classesMin = config.getInt("WarpSystem.PlayerWarps.General.Categories.Min", 1);
-        this.classesMax = config.getInt("WarpSystem.PlayerWarps.General.Categories.Max", 2);
+        this.classes = config.getBoolean("PlayerWarps.General.Categories.Enabled", true);
+        this.classesMin = config.getInt("PlayerWarps.General.Categories.Min", 1);
+        this.classesMax = config.getInt("PlayerWarps.General.Categories.Max", 2);
 
-        List<?> l = config.getList("WarpSystem.PlayerWarps.General.Categories.Classes");
+        List<?> l = config.getList("PlayerWarps.General.Categories.Classes");
         if(l != null)
             for(Object o : l) {
                 JSON json = new JSON((Map<Object, Object>) o);
@@ -281,7 +287,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
             }
 
         //loading PlayerWarps
-        List<?> data = file.getConfig().getList("PlayerWarps");
+        List<?> data = playerWarpsData.getConfig().getList("PlayerWarps");
         if(data != null)
             for(Object o : data) {
                 JSON json = new JSON((Map<?, ?>) o);
@@ -301,10 +307,10 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
             add(playerWarp);
         }
 
-        new CPlayerWarp(config.getStringList("WarpSystem.PlayerWarps.General.PlayerWarp_Command_Aliases")).register(WarpSystem.getInstance());
-        new CPlayerWarps(config.getStringList("WarpSystem.PlayerWarps.General.PlayerWarps_Command_Aliases")).register(WarpSystem.getInstance());
+        new CPlayerWarp(config.getStringList("PlayerWarps.General.PlayerWarp_Command_Aliases")).register(WarpSystem.getInstance());
+        new CPlayerWarps(config.getStringList("PlayerWarps.General.PlayerWarps_Command_Aliases")).register(WarpSystem.getInstance());
 
-        List<String> aliases = config.getStringList("WarpSystem.PlayerWarps.General.Command_References");
+        List<String> aliases = config.getStringList("PlayerWarps.General.Command_References");
         if(!aliases.isEmpty()) new CPlayerWarpReference(aliases.remove(0), aliases.toArray(new String[0])).register(WarpSystem.getInstance());
 
         WarpSystem.log("    ...got " + warpCategories.size() + " Class(es)");
@@ -327,9 +333,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
     @Override
     public void save(boolean saver) {
         if(!saver) WarpSystem.log("  > Saving PlayerWarps...");
-        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("PlayerWarps");
-
-        file.clearConfig();
+        playerWarpsData.clearConfig();
 
         JSONArray a = null;
         if(!bungeeCord || !WarpSystem.getInstance().isOnBungeeCord()) {
@@ -342,7 +346,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
                     a.add(json);
                 }
             }
-            file.getConfig().set("PlayerWarps", a);
+            playerWarpsData.getConfig().set("PlayerWarps", a);
         } else if(!saver) WarpSystem.log("    ...skipping PlayerWarp(s) > Saved on BungeeCord");
 
         if(warpCategories.isEmpty()) {
@@ -384,12 +388,11 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
             array.add(json);
         }
 
-        ConfigFile config = WarpSystem.getInstance().getFileManager().getFile("Config");
         ConfigWriter writer = new ConfigWriter(config);
-        writer.put("WarpSystem.PlayerWarps.General.Categories.Classes", array);
+        writer.put("PlayerWarps.General.Categories.Classes", array);
         config.saveConfig();
 
-        file.saveConfig();
+        playerWarpsData.saveConfig();
         if(!saver && a != null) WarpSystem.log("    ...saved " + a.size() + " PlayerWarp(s)");
     }
 

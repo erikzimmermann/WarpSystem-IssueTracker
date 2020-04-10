@@ -15,12 +15,37 @@ public class DataManager {
             if(value == FeatureType.Priority.DISABLED) continue;
 
             for(FeatureType ft : FeatureType.values(value)) {
-                if(!ft.isActive()) continue;
-
                 try {
                     this.managers.add(ft.getManagerClass().newInstance());
                 } catch(InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void preLoad() {
+        for(Manager manager : this.managers) {
+            manager.preLoad();
+        }
+    }
+
+    public void removeDisabled() {
+        for(FeatureType.Priority value : FeatureType.Priority.values()) {
+            if(value == FeatureType.Priority.DISABLED) continue;
+
+            for(FeatureType ft : FeatureType.values(value)) {
+                if(!ft.isActive()) {
+                    Manager m = null;
+
+                    for(Manager manager : this.managers) {
+                        if(manager.getClass().equals(ft.getManagerClass())) {
+                            m = manager;
+                            break;
+                        }
+                    }
+
+                    if(m != null) this.managers.remove(m);
                 }
             }
         }
