@@ -1,5 +1,7 @@
 package de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types;
 
+import de.codingair.codingapi.server.commands.builder.CommandBuilder;
+import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -7,7 +9,11 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject;
 import de.codingair.warpsystem.transfer.packets.spigot.PerformCommandOnBungeePacket;
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.SimplePluginManager;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -15,6 +21,7 @@ import org.json.simple.parser.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class CommandAction extends ActionObject<List<String>> {
     public CommandAction(String... command) {
@@ -57,14 +64,20 @@ public class CommandAction extends ActionObject<List<String>> {
 
             String tag = command.contains(" ") ? command.split(" ")[0] : command;
 
-            if(WarpSystem.getInstance().isOnBungeeCord() && Bukkit.getPluginCommand(tag) == null) {
+            Command cmd = CommandBuilder.getCommand(tag);
+
+            if(WarpSystem.getInstance().isOnBungeeCord() && cmd == null) {
                 WarpSystem.getInstance().getDataHandler().send(new PerformCommandOnBungeePacket(player.getName(), command, new Callback<Boolean>() {
                     @Override
                     public void accept(Boolean exists) {
                         if(!exists) player.sendMessage(org.spigotmc.SpigotConfig.unknownCommandMessage);
                     }
                 }));
-            } else player.performCommand(command);
+            } else {
+                if(command.contains("%player%"))
+                    Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), command.replace("%player%", player.getName()));
+                else player.performCommand(command);
+            }
         }
 
         return true;
@@ -74,6 +87,18 @@ public class CommandAction extends ActionObject<List<String>> {
     public boolean read(DataWriter d) {
         setValue(d.getList("commands"));
         return true;
+    }
+
+    @Override
+    public void setValue(List<String> value) {
+        if(value == null) super.setValue(value);
+        else {
+            super.setValue(new ArrayList<>());
+            for(String s : value) {
+                if(s.contains("%player%")) continue;
+                getValue().add(s);
+            }
+        }
     }
 
     @Override

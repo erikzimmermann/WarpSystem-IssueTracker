@@ -13,6 +13,7 @@ public enum PacketType {
     InitialPacket(3, InitialPacket.class),
     RequestInitialPacket(4, RequestInitialPacket.class),
     RequestServerStatusPacket(5, RequestServerStatusPacket.class),
+    ChatInputGUITogglePacket(6, ChatInputGUITogglePacket.class),
 
     PublishGlobalWarpPacket(10, PublishGlobalWarpPacket.class),
     PrepareTeleportPacket(11, PrepareGlobalWarpTeleportPacket.class),

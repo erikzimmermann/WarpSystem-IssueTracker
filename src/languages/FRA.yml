@@ -439,8 +439,9 @@ Warp_Edited_Refund: '&7Your warp "&b%NAME%&7" was &aedited&7. You got &a%PRICE% 
 Warp_Delete_Info: '&7Click %HERE%&7 to &cdelete&7 your warp "&b%NAME%&7".'
 Warp_Delete_Info_Here: '&e&nhere'
 Warp_Delete_Button_Info:
-  - "&7Refund: &a%REFUND% Coin(s)"
-  - "&7Click: &4Delete"
+  - '&7Warp: "&b%NAME%&7"'
+  - '&7Refund: &a%REFUND% Coin(s)'
+  - '&7Click: &4Delete'
 Warp_Deleted_Info: '&7Your warp "&b%NAME%&7" was &cdeleted&7. You got &a%PRICE% Coin(s) &7back!'
 Warp_Maximum_of_Warps: '&7You &ccannot &7create more than &b%AMOUNT% &7warp(s)!'
 Warp_Money_Available: '&7You made &a%AMOUNT% Coin(s) &7with your warps, get it %BUTTON%&7!'
@@ -485,3 +486,6 @@ Teleports: 'Teleports'
 Search_Short: 'Search'
 Reset_Search: 'Reset search'
 Name_Too_Long_Too_Short: '&7Your name must contain between &c%MIN% &7& &c%MAX%&7 characters!'
+Enter_Something_in_Chat: 'Please enter something\nin your chat'
+Move_to_cancel: '&cMove to cancel'
+Command_button_hint: '&7Hint: Commands with &e%player%\n&7are executed by console!'

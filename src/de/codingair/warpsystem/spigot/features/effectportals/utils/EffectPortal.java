@@ -380,11 +380,6 @@ public class EffectPortal extends FeatureObject implements Removable {
     }
 
     @Override
-    public Class<? extends Removable> getAbstractClass() {
-        return EffectPortal.class;
-    }
-
-    @Override
     public UUID getUniqueId() {
         return uniqueId;
     }
