@@ -160,7 +160,7 @@ public class GWarps extends GUI {
             public void onInvCloseEvent(InventoryCloseEvent e) {
                 e.getView().setCursor(new ItemStack(Material.AIR));
                 if(listener != null) HandlerList.unregisterAll(listener);
-                if(isClosingByButton()) return;
+                if(isClosingForGUI() || isClosingByButton()) return;
                 if(GWarps.this.listener != null) GWarps.this.listener.onClose();
             }
 

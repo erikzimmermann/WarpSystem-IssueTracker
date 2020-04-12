@@ -9,7 +9,6 @@ public class ChatInputEvent extends PlayerEvent {
     private String text;
     private boolean close = true;
     private String notifier;
-    private Runnable post;
 
     public ChatInputEvent(ChatInputGUI gui, String text) {
         super(gui.getPlayer());
@@ -49,13 +48,5 @@ public class ChatInputEvent extends PlayerEvent {
 
     public static HandlerList getHandlerList() {
         return handlers;
-    }
-
-    public Runnable getPost() {
-        return post;
-    }
-
-    public void setPost(Runnable post) {
-        this.post = post;
     }
 }

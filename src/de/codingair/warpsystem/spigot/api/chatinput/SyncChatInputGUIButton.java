@@ -35,21 +35,16 @@ public abstract class SyncChatInputGUIButton extends SyncTriggerButton {
         getInterface().setClosingForGUI(true);
         getInterface().close();
 
-        player.closeInventory();
         this.gui = new ChatInputGUI(player, WarpSystem.getInstance()) {
             @Override
             public void onEnter(ChatInputEvent e) {
                 SyncChatInputGUIButton.this.onEnter(e);
-
-                getInterface().reinitialize();
-                e.setPost(() -> getInterface().open());
-                getInterface().setClosingForGUI(false);
             }
 
             @Override
             public void onClose() {
+                getInterface().reinitialize();
                 getInterface().open();
-                getInterface().setClosingForGUI(false);
             }
         };
 
