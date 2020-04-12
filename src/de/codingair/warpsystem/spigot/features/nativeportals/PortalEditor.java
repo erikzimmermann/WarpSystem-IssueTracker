@@ -55,11 +55,6 @@ public class PortalEditor implements Removable {
     }
 
     @Override
-    public Class<? extends Removable> getAbstractClass() {
-        return PortalEditor.class;
-    }
-
-    @Override
     public UUID getUniqueId() {
         return this.uniqueId;
     }

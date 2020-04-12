@@ -4,6 +4,7 @@ import de.codingair.codingapi.bungeecord.BungeeAPI;
 import de.codingair.codingapi.bungeecord.files.FileManager;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
+import de.codingair.warpsystem.bungee.api.chatinput.ChatInputManager;
 import de.codingair.warpsystem.bungee.base.commands.CWarpSystem;
 import de.codingair.warpsystem.bungee.base.language.Lang;
 import de.codingair.warpsystem.bungee.base.listeners.MainListener;
@@ -68,6 +69,8 @@ public class WarpSystem extends Plugin {
         BungeeCord.getInstance().getPluginManager().registerListener(this, listener);
         this.dataHandler.register(listener);
         this.serverManager.run();
+
+        new ChatInputManager();
 
         BungeeCord.getInstance().getPluginManager().registerCommand(this, new CWarpSystem());
 

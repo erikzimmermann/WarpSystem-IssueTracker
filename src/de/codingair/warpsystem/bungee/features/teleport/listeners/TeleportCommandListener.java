@@ -18,6 +18,7 @@ public class TeleportCommandListener implements Listener {
 
     @EventHandler
     public void onPreProcess(ChatEvent e) {
+        if(e.getMessage() == null) return;
         if(!e.getMessage().startsWith("/")) return;
         String cmd = e.getMessage().substring(1);
         if(cmd.contains(" ")) cmd = cmd.split(" ")[0];

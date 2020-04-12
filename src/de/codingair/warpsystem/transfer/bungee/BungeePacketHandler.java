@@ -24,11 +24,10 @@ public class BungeePacketHandler implements PacketHandler {
     @Override
     public void handle(Packet packet, String... extra) {
         ServerInfo server = BungeeCord.getInstance().getServerInfo(extra[0]);
-        ProxiedPlayer player = extra[1] == null ? null : BungeeCord.getInstance().getPlayer(extra[1]);
 
         switch(PacketType.getByObject(packet)) {
             case ERROR:
-                System.out.println("Could handle anything!");
+                System.out.println("Could not handle anything!");
                 return;
 
             case UploadIconPacket:
@@ -47,15 +46,18 @@ public class BungeePacketHandler implements PacketHandler {
 
             case PerformCommandOnBungeePacket: {
                 PerformCommandOnBungeePacket performCommandOnBungeePacket = (PerformCommandOnBungeePacket) packet;
-
-                ProxiedPlayer p = BungeeCord.getInstance().getPlayer(performCommandOnBungeePacket.getPlayer());
-                if(p == null) return;
-
                 String cmd = performCommandOnBungeePacket.getCommand();
 
-                BooleanPacket answerPacket = new BooleanPacket(BungeeCord.getInstance().getPluginManager().dispatchCommand(p, cmd));
-                performCommandOnBungeePacket.applyAsAnswer(answerPacket);
+                boolean success = false;
+                if(cmd.contains("%player%")) {
+                    success = BungeeCord.getInstance().getPluginManager().dispatchCommand(BungeeCord.getInstance().getConsole(), cmd.replace("%player%", performCommandOnBungeePacket.getPlayer()));
+                } else {
+                    ProxiedPlayer p = BungeeCord.getInstance().getPlayer(performCommandOnBungeePacket.getPlayer());
+                    if(p != null) success = BungeeCord.getInstance().getPluginManager().dispatchCommand(p, cmd);
+                }
 
+                BooleanPacket answerPacket = new BooleanPacket(success);
+                performCommandOnBungeePacket.applyAsAnswer(answerPacket);
                 WarpSystem.getInstance().getDataHandler().send(answerPacket, server);
                 break;
             }
