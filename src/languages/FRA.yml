@@ -439,8 +439,9 @@ Warp_Edited_Refund: '&7Your warp "&b%NAME%&7" was &aedited&7. You got &a%PRICE% 
 Warp_Delete_Info: '&7Click %HERE%&7 to &cdelete&7 your warp "&b%NAME%&7".'
 Warp_Delete_Info_Here: '&e&nhere'
 Warp_Delete_Button_Info:
-  - "&7Refund: &a%REFUND% Coin(s)"
-  - "&7Click: &4Delete"
+  - '&7Warp: "&b%NAME%&7"'
+  - '&7Refund: &a%REFUND% Coin(s)'
+  - '&7Click: &4Delete'
 Warp_Deleted_Info: '&7Your warp "&b%NAME%&7" was &cdeleted&7. You got &a%PRICE% Coin(s) &7back!'
 Warp_Maximum_of_Warps: '&7You &ccannot &7create more than &b%AMOUNT% &7warp(s)!'
 Warp_Money_Available: '&7You made &a%AMOUNT% Coin(s) &7with your warps, get it %BUTTON%&7!'

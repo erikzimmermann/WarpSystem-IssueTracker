@@ -1,6 +1,5 @@
 package de.codingair.warpsystem.spigot.base.guis.editor.buttons;
 
-import de.codingair.codingapi.server.DefaultFontInfo;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.TextAlignment;
@@ -49,7 +48,7 @@ public class CommandButton extends SyncChatInputGUIButton {
 
         return new ItemBuilder(XMaterial.REDSTONE)
                 .setName("§6§n" + Lang.get("Command"))
-                .setLore(Lang.get("Command_button_hint"))
+                .setLore(Lang.get("Command_button_hint") + Lang.PREMIUM_LORE)
                 .addLore("", "§3" + Lang.get("Current") + ": " + (commands == null ? "§c" + Lang.get("Not_Set") : ""))
                 .addText(commandInfo)
                 .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Add"))
@@ -69,6 +68,12 @@ public class CommandButton extends SyncChatInputGUIButton {
         if(!input.startsWith("/")) input = "/" + input;
 
         if(!isOkay(input)) {
+            return;
+        }
+
+        if(e.getText().contains("%player%")) {
+            e.setNotifier("§7Only §6premium §7can use §e%player%\n§7Get full access with \"§6/ws upgrade§7\"");
+            e.setClose(false);
             return;
         }
 

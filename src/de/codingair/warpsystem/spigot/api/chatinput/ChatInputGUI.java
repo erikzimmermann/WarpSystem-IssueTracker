@@ -80,12 +80,10 @@ public abstract class ChatInputGUI implements Removable {
         if(e.isClose()) {
             if(this.submitFinishSound != null) this.submitFinishSound.play(player);
             close();
-            e.getPost().run();
             return;
         } else if(e.getNotifier() != null) setTitle(e.getNotifier());
 
         if(this.submitMistakeSound != null) this.submitMistakeSound.play(player);
-        e.getPost().run();
     }
 
     public abstract void onEnter(ChatInputEvent e);
