@@ -599,7 +599,7 @@ public class GWarps extends GUI {
                                         manager.remove(icon);
                                         p.sendMessage(Lang.getPrefix() + Lang.get("Icon_Deleted"));
 
-                                        if(!runnable.isCancelled()) runnable.cancel();
+                                        runnable.cancel();
                                         runnable = null;
                                         GWarps.this.reinitialize();
                                     } else {

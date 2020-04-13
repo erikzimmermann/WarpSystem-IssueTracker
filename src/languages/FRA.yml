@@ -488,3 +488,4 @@ Name_Too_Long_Too_Short: '&7Your name must contain between &c%MIN% &7& &c%MAX%&7
 Enter_Something_in_Chat: 'Please enter something\nin your chat'
 Move_to_cancel: '&cMove to cancel'
 Command_button_hint: '&7Hint: Commands with &e%player%\n&7are executed by console!'
+Doesnt_Exist: 'Doesn''t exist'

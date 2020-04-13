@@ -261,7 +261,7 @@ public class CWarpSystem extends CommandBuilder {
                 tc0.addExtra(click);
                 tc0.addExtra(tc1);
 
-                sender.spigot().sendMessage(tc0);
+                ((Player) sender).spigot().sendMessage(tc0);
                 return false;
             }
         });
@@ -296,7 +296,7 @@ public class CWarpSystem extends CommandBuilder {
                         base.addExtra(link);
                         base.addExtra(base1);
 
-                        sender.spigot().sendMessage(base);
+                        ((Player) sender).spigot().sendMessage(base);
                         break;
 
                     case "spigot-forum":
@@ -310,7 +310,7 @@ public class CWarpSystem extends CommandBuilder {
                         base.addExtra(link);
                         base.addExtra(base1);
 
-                        sender.spigot().sendMessage(base);
+                        ((Player) sender).spigot().sendMessage(base);
                         break;
 
                     case "direct":
@@ -324,7 +324,7 @@ public class CWarpSystem extends CommandBuilder {
                         base.addExtra(link);
                         base.addExtra(base1);
 
-                        sender.spigot().sendMessage(base);
+                        ((Player) sender).spigot().sendMessage(base);
                         break;
 
                     default:

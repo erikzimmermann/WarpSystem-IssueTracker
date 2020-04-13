@@ -7,6 +7,7 @@ import de.codingair.codingapi.files.FileManager;
 import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.server.fancymessages.FancyMessage;
 import de.codingair.codingapi.server.fancymessages.MessageTypes;
+import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
 import de.codingair.codingapi.utils.Value;
@@ -294,7 +295,7 @@ public class WarpSystem extends JavaPlugin {
 
     private void afterOnEnable() {
         //update command dispatcher for players to synchronize CommandList
-        Bukkit.getScheduler().runTask(this, this::updateCommandList);
+        Bukkit.getScheduler().runTask(this, WarpSystem::updateCommandList);
 
         Bukkit.getScheduler().runTaskLater(this, () -> {
             if(this.uuidManager.isEmpty()) {
@@ -303,10 +304,11 @@ public class WarpSystem extends JavaPlugin {
         }, 20);
     }
 
-    private void updateCommandList() {
+    public static void updateCommandList() {
         if(Version.getVersion().isBiggerThan(Version.v1_12)) {
             for(Player player : Bukkit.getOnlinePlayers()) {
-                player.updateCommands();
+                IReflection.MethodAccessor updateCommands = IReflection.getMethod(Player.class, "updateCommands");
+                updateCommands.invoke(player);
             }
         }
     }

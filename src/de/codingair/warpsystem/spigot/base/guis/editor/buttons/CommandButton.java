@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.base.guis.editor.buttons;
 
 import de.codingair.codingapi.server.DefaultFontInfo;
+import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.TextAlignment;
@@ -38,7 +39,9 @@ public class CommandButton extends SyncChatInputGUIButton {
 
         if(commands != null) {
             for(String command : commands) {
-                List<String> list = TextAlignment.lineBreak("§7- '§r" + command + "§7'", 200);
+                String tag = command.contains(" ") ? command.split(" ")[0] : command;
+
+                List<String> list = TextAlignment.lineBreak("§7- '§r" + command + "§7'" + (CommandBuilder.exists(tag) ? "" : " §8(§c" + Lang.get("Doesnt_Exist") + "§8)"), 200);
                 commandInfo.addAll(list);
                 list.clear();
             }

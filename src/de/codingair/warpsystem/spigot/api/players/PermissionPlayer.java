@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.api.players;
 
+import de.codingair.codingapi.server.reflections.IReflection;
 import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
@@ -860,7 +861,8 @@ public class PermissionPlayer implements Player {
     }
 
     public MainHand getMainHand() {
-        return this.player.getMainHand();
+        IReflection.MethodAccessor getMainHand = IReflection.getMethod(Player.class, "getMainHand", MainHand.class, new Class[0]);
+        return (MainHand) getMainHand.invoke(player);
     }
 
     public boolean setWindowProperty(InventoryView.Property property, int i) {
@@ -957,6 +959,18 @@ public class PermissionPlayer implements Player {
 
     public List<Block> getLastTwoTargetBlocks(Set<Material> set, int i) {
         return this.player.getLastTwoTargetBlocks(set,i);
+    }
+
+    public Egg throwEgg() {
+        return null;
+    }
+
+    public Snowball throwSnowball() {
+        return null;
+    }
+
+    public Arrow shootArrow() {
+        return null;
     }
 
     public int getRemainingAir() {
@@ -1064,7 +1078,7 @@ public class PermissionPlayer implements Player {
     }
 
     public boolean isGliding() {
-        return this.player.isGliding();
+        return false;
     }
 
     public void setGliding(boolean b) {
@@ -1076,7 +1090,7 @@ public class PermissionPlayer implements Player {
     }
 
     public boolean hasAI() {
-        return this.player.hasAI();
+        return false;
     }
 
     public void setCollidable(boolean b) {
@@ -1084,11 +1098,11 @@ public class PermissionPlayer implements Player {
     }
 
     public boolean isCollidable() {
-        return this.player.isCollidable();
+        return false;
     }
 
     public AttributeInstance getAttribute(Attribute attribute) {
-        return this.player.getAttribute(attribute);
+        return null;
     }
 
     public void damage(double v) {
@@ -1276,7 +1290,7 @@ public class PermissionPlayer implements Player {
     }
 
     public boolean isGlowing() {
-        return this.player.isGlowing();
+        return false;
     }
 
     public void setInvulnerable(boolean b) {
@@ -1284,11 +1298,11 @@ public class PermissionPlayer implements Player {
     }
 
     public boolean isInvulnerable() {
-        return this.player.isInvulnerable();
+        return false;
     }
 
     public boolean isSilent() {
-        return this.player.isSilent();
+        return false;
     }
 
     public void setSilent(boolean b) {
@@ -1296,7 +1310,7 @@ public class PermissionPlayer implements Player {
     }
 
     public boolean hasGravity() {
-        return this.player.hasGravity();
+        return true;
     }
 
     public void setGravity(boolean b) {

@@ -110,7 +110,7 @@ public class OwnWarpFilter implements Filter {
                             player.sendMessage(Lang.getPrefix() + Lang.get("Warp_Deleted_Info").replace("%NAME%", w.getName(true)).replace("%PRICE%", CPlayerWarps.cut(refund) + ""));
                         } else player.sendMessage(Lang.getPrefix() + Lang.get("Warp_was_deleted").replace("%NAME%", w.getName(true)));
 
-                        if(!runnable.isCancelled()) runnable.cancel();
+                        runnable.cancel();
                         runnable = null;
                         getInterface().reinitialize();
                     } else {
