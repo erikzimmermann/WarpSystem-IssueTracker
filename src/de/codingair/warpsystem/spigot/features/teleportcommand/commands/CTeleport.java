@@ -228,7 +228,7 @@ public class CTeleport extends CommandBuilder {
         setOwnTabCompleter((commandSender, command, s, args) -> {
             if(commandSender instanceof Player) {
                 Player p = (Player) commandSender;
-                Block b = p.getTargetBlock(null, 10);
+                Block b = p.getTargetBlock((Set<Material>) null, 10);
                 if(b.getType() == XMaterial.COMMAND_BLOCK.parseMaterial()) {
                     return new ArrayList<>();
                 }

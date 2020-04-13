@@ -5,12 +5,15 @@ import de.codingair.codingapi.particles.animations.movables.LocationMid;
 import de.codingair.codingapi.particles.animations.movables.MovableMid;
 import de.codingair.codingapi.particles.animations.movables.PlayerMid;
 import de.codingair.codingapi.player.MessageAPI;
+import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.tools.HitBox;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.Location;
+import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -68,7 +71,7 @@ public class AnimationPlayer {
     private void buildBuffBackup() {
         if(player == null) return;
         for(PotionEffect p : player.getActivePotionEffects()) {
-            buffBackup.add(new PotionEffect(p.getType(), p.getDuration(), p.getAmplifier(), p.isAmbient(), p.hasParticles(), p.hasIcon()));
+            buffBackup.add(new PotionEffect(p.getType(), p.getDuration(), p.getAmplifier(), p.isAmbient(), p.hasParticles()));
         }
     }
 
@@ -111,7 +114,7 @@ public class AnimationPlayer {
                     if(player != null) {
                         for(Buff buff : animation.getBuffList()) {
                             if(buff.getTimeBeforeTeleport() == left || (left == seconds && buff.getTimeBeforeTeleport() > left)) {
-                                player.addPotionEffect(new PotionEffect(buff.getType(), 20 * left + 20 * buff.getTimeAfterTeleport() * (buff.getTimeAfterTeleport() == 0 ? 10 : 1), buff.getLevel(), false, false, false));
+                                player.addPotionEffect(new PotionEffect(buff.getType(), 20 * left + 20 * buff.getTimeAfterTeleport() * (buff.getTimeAfterTeleport() == 0 ? 10 : 1), buff.getLevel(), false, false));
                             }
                         }
                     }
@@ -133,7 +136,7 @@ public class AnimationPlayer {
                             if(buff.getTimeAfterTeleport() == 0) {
                                 player.removePotionEffect(buff.getType());
                             } else if(buff.getTimeBeforeTeleport() == 0) {
-                                player.addPotionEffect(new PotionEffect(buff.getType(), 20 * buff.getTimeAfterTeleport(), buff.getLevel(), false, false, false));
+                                player.addPotionEffect(new PotionEffect(buff.getType(), 20 * buff.getTimeAfterTeleport(), buff.getLevel(), false, false));
                             }
                         }
                     }

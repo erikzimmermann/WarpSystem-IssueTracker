@@ -167,11 +167,7 @@ public class ShortcutManager implements Manager, BungeeFeature {
         executors.put(s, executor);
         executor.register(WarpSystem.getInstance());
 
-        if((reload || force) && Version.getVersion().isBiggerThan(Version.v1_12)) {
-            for(Player player : Bukkit.getOnlinePlayers()) {
-                player.updateCommands();
-            }
-        }
+        if(reload || force) WarpSystem.updateCommandList();
     }
 
     @Override
@@ -190,10 +186,7 @@ public class ShortcutManager implements Manager, BungeeFeature {
         ShortcutExecutor executor = executors.remove(s);
         if(executor != null) executor.unregister(WarpSystem.getInstance());
 
-        if(forceUpdate)
-            for(Player player : Bukkit.getOnlinePlayers()) {
-                player.updateCommands();
-            }
+        if(forceUpdate) WarpSystem.updateCommandList();
     }
 
     @Override

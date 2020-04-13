@@ -28,8 +28,8 @@ import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.PWList;
 import de.codingair.warpsystem.spigot.features.playerwarps.listeners.PlayerWarpListener;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.*;
-import de.codingair.warpsystem.spigot.features.playerwarps.utils.tempwarps.TempWarpAdapter;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.forwardcompatibility.PlayerWarpTagConverter_v4_2_2;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.tempwarps.TempWarpAdapter;
 import de.codingair.warpsystem.transfer.packets.general.DeletePlayerWarpPacket;
 import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpUpdatePacket;
 import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpsPacket;
@@ -40,8 +40,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -1104,7 +1106,13 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible {
     public static boolean isProtected(Player player) {
         if(!getManager().isProtectedRegions()) return false;
 
-        PermissionPlayer check = new PermissionPlayer(player);
+        PermissionPlayer check = /*new PermissionPlayer(player);*/null;
+        try {
+            check = PermissionPlayer.class.getConstructor(Player.class).newInstance(player);
+        } catch(InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+            return true;
+        }
         BlockBreakEvent event = new BlockBreakEvent(player.getLocation().getBlock(), check);
         Bukkit.getPluginManager().callEvent(event);
         return event.isCancelled();
