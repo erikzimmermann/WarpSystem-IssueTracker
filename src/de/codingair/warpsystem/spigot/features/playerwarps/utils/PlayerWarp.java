@@ -700,20 +700,19 @@ public class PlayerWarp extends FeatureObject {
         private UUID id;
 
         public User() {
+            this(null, null, null);
         }
 
         public User(Player player) {
-            this.name = player.getName();
-            this.id = WarpSystem.getInstance().getUUIDManager().get(player);
+            this(player.getName(), WarpSystem.getInstance().getUUIDManager().get(player));
         }
 
         public User(String name, UUID id) {
-            this.name = name;
-            this.id = id;
+            this(null, name, id);
         }
 
         protected User(String jsonPrefix) {
-            this.jsonPrefix = jsonPrefix;
+            this(jsonPrefix, null, null);
         }
 
         protected User(String jsonPrefix, String name, UUID id) {
@@ -762,7 +761,7 @@ public class PlayerWarp extends FeatureObject {
             if(this == o) return true;
             if(o == null || getClass() != o.getClass()) return false;
             User user = (User) o;
-            return jsonPrefix.equals(user.jsonPrefix) &&
+            return Objects.equals(jsonPrefix, user.jsonPrefix) &&
                     name.equals(user.name) &&
                     id.equals(user.id);
         }
