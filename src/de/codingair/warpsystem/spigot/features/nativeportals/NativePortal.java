@@ -81,10 +81,14 @@ public class NativePortal extends FeatureObject {
         setPermission(null);
         removeAction(Action.COMMAND);
 
-        if(d.get("Type") != null) {
-            this.type = PortalType.valueOf(d.get("Type"));
-        } else if(d.get("type") != null) {
-            this.type = PortalType.valueOf(d.get("type"));
+        try {
+            if(d.get("Type") != null) {
+                this.type = PortalType.valueOf(d.get("Type"));
+            } else if(d.get("type") != null) {
+                this.type = PortalType.valueOf(d.get("type"));
+            }
+        } catch(Throwable ex) {
+            this.type = PortalType.WATER;
         }
 
         Destination destination = null;
