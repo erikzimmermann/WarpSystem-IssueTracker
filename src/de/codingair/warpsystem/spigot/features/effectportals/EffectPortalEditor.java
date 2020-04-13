@@ -33,6 +33,7 @@ public class EffectPortalEditor implements Removable {
         if(this.effectPortal.getDestination() == null) this.effectPortal.addAction(new WarpAction(new Destination()));
         menu = new Menu(this.player, this);
     }
+
     public EffectPortalEditor(Player player, String name) {
         this.player = player;
         this.effectPortal = new EffectPortal(Location.getByLocation(player.getLocation()), new Destination(), null, name, true, null);
