@@ -5,6 +5,7 @@ import de.codingair.codingapi.player.chat.SimpleMessage;
 import de.codingair.codingapi.player.gui.anvil.*;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
+import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiTextCommandComponent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.ItemBuilder;
@@ -16,6 +17,7 @@ import de.codingair.warpsystem.spigot.base.utils.commands.WarpSystemCommandBuild
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.PWList;
+import de.codingair.warpsystem.spigot.features.playerwarps.imports.ImportType;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PWMultiCommandComponent;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
@@ -30,7 +32,10 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
         super("playerwarps", new WarpSystemBaseComponent(WarpSystem.PERMISSION_USE_PLAYER_WARPS) {
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, edit, delete, list>");
+                if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS))
+                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, edit, delete, list, import>");
+                else
+                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, edit, delete, list>");
             }
 
             @Override
@@ -218,6 +223,48 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 new PWList((Player) sender).open();
+                return false;
+            }
+        });
+
+        getBaseComponent().addChild(new CommandComponent("import", WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS) {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " import §e<essentials>");
+                return false;
+            }
+        });
+
+        getComponent("import").addChild(new MultiCommandComponent() {
+            @Override
+            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
+                suggestions.add("essentials");
+            }
+
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
+                if(argument.equalsIgnoreCase("essentials")) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Start"));
+
+                    List<PlayerWarp> data = ImportType.ESSENTIALS.getFilter().importAll();
+                    int added = 0;
+
+                    if(data != null) {
+                        for(PlayerWarp datum : data) {
+                            if(!PlayerWarpManager.getManager().existsOwn((Player) sender, datum.getName())) {
+                                PlayerWarpManager.getManager().add(datum);
+                                added++;
+                            }
+                        }
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish").replace("%AMOUNT%", added + ""));
+                    } else {
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Finish_With_Errors") + " §8[INTERNAL ERROR]");
+                    }
+
+                    return false;
+                }
+
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " import §e<essentials>");
                 return false;
             }
         });
