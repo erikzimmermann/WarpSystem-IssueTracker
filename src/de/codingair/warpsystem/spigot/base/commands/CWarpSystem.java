@@ -21,11 +21,11 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.animations.AnimationManager;
 import de.codingair.warpsystem.spigot.features.animations.guis.editor.*;
 import de.codingair.warpsystem.spigot.features.animations.utils.Animation;
+import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
+import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.ImportType;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.Result;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
-import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
-import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -518,7 +518,7 @@ public class CWarpSystem extends CommandBuilder {
                 "§7§m" + (line ? "               " : "---------------") + "§7< §6WarpSystem §7>§m" + (line ? "               " : "---------------") + "§7",
                 "",
                 "     §3Author: §bCodingAir",
-                "     §3Version: §bv" + version + " §7["+ (WarpSystem.getInstance().isPremium() ? "§6Premium" : "§bFree") + "§7]",
+                "     §3Version: §bv" + version + " §7[" + (WarpSystem.getInstance().isPremium() ? "§6Premium" : "§bFree") + "§7]",
                 "",
                 "     §eAvailable on SpigotMc!",
                 ""

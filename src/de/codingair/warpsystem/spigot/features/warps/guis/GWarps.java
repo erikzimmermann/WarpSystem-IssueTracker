@@ -63,21 +63,6 @@ public class GWarps extends GUI {
     private String world;
     private List<Class<? extends Icon>> hide;
 
-    private static String getTitle(Icon page, GUIListener listener, Player player) {
-        FileConfiguration config = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig();
-        String key = player.hasPermission(WarpSystem.PERMISSION_ADMIN) ? "Admin" : "User";
-
-        return listener == null || listener.getTitle() == null ?
-                ChatColor.translateAlternateColorCodes('&', (page == null || page.getName() == null ?
-                        config.getString("WarpSystem.GUI." + key + ".Title.Standard", "&c&nWarps&r") :
-                        config.getString("WarpSystem.GUI." + key + ".Title.In_Category", "&c&nWarps&r &c@%PAGE%").replace("%PAGE%", page.getNameWithoutColor()).replace("%CATEGORY%", page.getNameWithoutColor())))
-                : listener.getTitle();
-    }
-
-    private static int getSize(Player player) {
-        return player.hasPermission(WarpSystem.PERMISSION_ADMIN) ? WarpSystem.getOptions(WarpGUIOptions.class).getAdminSize().getValue() : WarpSystem.getOptions(WarpGUIOptions.class).getUserSize().getValue();
-    }
-
     public GWarps(Player p, Icon page, boolean editing) {
         this(p, page, editing, null);
     }
@@ -162,6 +147,21 @@ public class GWarps extends GUI {
         });
 
         initialize(p);
+    }
+
+    private static String getTitle(Icon page, GUIListener listener, Player player) {
+        FileConfiguration config = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig();
+        String key = player.hasPermission(WarpSystem.PERMISSION_ADMIN) ? "Admin" : "User";
+
+        return listener == null || listener.getTitle() == null ?
+                ChatColor.translateAlternateColorCodes('&', (page == null || page.getName() == null ?
+                        config.getString("WarpSystem.GUI." + key + ".Title.Standard", "&c&nWarps&r") :
+                        config.getString("WarpSystem.GUI." + key + ".Title.In_Category", "&c&nWarps&r &c@%PAGE%").replace("%PAGE%", page.getNameWithoutColor()).replace("%CATEGORY%", page.getNameWithoutColor())))
+                : listener.getTitle();
+    }
+
+    private static int getSize(Player player) {
+        return player.hasPermission(WarpSystem.PERMISSION_ADMIN) ? WarpSystem.getOptions(WarpGUIOptions.class).getAdminSize().getValue() : WarpSystem.getOptions(WarpGUIOptions.class).getUserSize().getValue();
     }
 
     public void initialize(Player p) {
@@ -426,16 +426,16 @@ public class GWarps extends GUI {
 
                         iconBuilder.addText("§8------------");
 
-                iconBuilder.addText("§7" + Lang.get("Commands") + ": " + (commandInfo.isEmpty() ? "-" : ""));
-                iconBuilder.addText(commandInfo);
-                iconBuilder.addText("§7" + Lang.get("Permission") + ": " + permission);
-                if(MoneyAdapterType.canEnable()) iconBuilder.addText("§7" + Lang.get("Costs") + ": " + costs);
-                iconBuilder.addText("§8------------");
-                iconBuilder.addText("§3" + Lang.get("Leftclick") + ": §7" + Lang.get("Edit"));
-                iconBuilder.addText("§3" + Lang.get("Shift_Leftclick") + ": §7" + Lang.get("Move"));
-                iconBuilder.addText("§3" + Lang.get("Rightclick") + ": §7" + ChatColor.stripColor(Lang.get("Change_Item")) + Lang.PREMIUM_LORE);
-                iconBuilder.addText("§3" + Lang.get("Shift_Rightclick") + ": §7" + (runnable != null ? "§4" : "§7") + ChatColor.stripColor(Lang.get("Delete")) + (runnable != null ? " §7(§c" + ChatColor.stripColor(Lang.get("Confirm")) + "§7)" : ""));
-                iconBuilder.addText("§3" + Lang.get("Pick_Block_Click") + ": §7" + ChatColor.stripColor(Lang.get("Copy")) + Lang.PREMIUM_LORE);
+                        iconBuilder.addText("§7" + Lang.get("Commands") + ": " + (commandInfo.isEmpty() ? "-" : ""));
+                        iconBuilder.addText(commandInfo);
+                        iconBuilder.addText("§7" + Lang.get("Permission") + ": " + permission);
+                        if(MoneyAdapterType.canEnable()) iconBuilder.addText("§7" + Lang.get("Costs") + ": " + costs);
+                        iconBuilder.addText("§8------------");
+                        iconBuilder.addText("§3" + Lang.get("Leftclick") + ": §7" + Lang.get("Edit"));
+                        iconBuilder.addText("§3" + Lang.get("Shift_Leftclick") + ": §7" + Lang.get("Move"));
+                        iconBuilder.addText("§3" + Lang.get("Rightclick") + ": §7" + ChatColor.stripColor(Lang.get("Change_Item")) + Lang.PREMIUM_LORE);
+                        iconBuilder.addText("§3" + Lang.get("Shift_Rightclick") + ": §7" + (runnable != null ? "§4" : "§7") + ChatColor.stripColor(Lang.get("Delete")) + (runnable != null ? " §7(§c" + ChatColor.stripColor(Lang.get("Confirm")) + "§7)" : ""));
+                        iconBuilder.addText("§3" + Lang.get("Pick_Block_Click") + ": §7" + ChatColor.stripColor(Lang.get("Copy")) + Lang.PREMIUM_LORE);
 
                         if(!icon.isPage()) {
                             iconBuilder.addText("§8------------");

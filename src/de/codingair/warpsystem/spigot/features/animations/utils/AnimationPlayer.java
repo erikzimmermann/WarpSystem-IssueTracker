@@ -5,15 +5,12 @@ import de.codingair.codingapi.particles.animations.movables.LocationMid;
 import de.codingair.codingapi.particles.animations.movables.MovableMid;
 import de.codingair.codingapi.particles.animations.movables.PlayerMid;
 import de.codingair.codingapi.player.MessageAPI;
-import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.tools.HitBox;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.Location;
-import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -182,8 +179,7 @@ public class AnimationPlayer {
                 setRunning(false);
                 setRunning(true);
                 setLoop(true);
-            }
-            else {
+            } else {
                 setRunning(false);
                 setRunning(true);
             }

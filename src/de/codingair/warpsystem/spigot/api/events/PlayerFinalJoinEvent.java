@@ -17,6 +17,10 @@ public class PlayerFinalJoinEvent extends PlayerEvent {
         this.uniqueId = uniqueId;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     public UUID getUniqueId() {
         return uniqueId;
     }
@@ -24,9 +28,5 @@ public class PlayerFinalJoinEvent extends PlayerEvent {
     @Override
     public HandlerList getHandlers() {
         return getHandlerList();
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 }

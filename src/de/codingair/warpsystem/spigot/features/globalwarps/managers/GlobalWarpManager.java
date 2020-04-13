@@ -29,6 +29,10 @@ public class GlobalWarpManager implements Manager, BungeeFeature {
     private GlobalWarpListener listener;
     private List<CommandBuilder> commandExecutorList = new ArrayList<>();
 
+    public static GlobalWarpManager getInstance() {
+        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS);
+    }
+
     public void create(String warpName, Location loc, Callback<Boolean> callback) {
         WarpSystem.getInstance().getDataHandler().send(new PublishGlobalWarpPacket(new SGlobalWarp(warpName, new SLocation(loc.getWorld().getName(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch())), callback));
     }
@@ -117,9 +121,5 @@ public class GlobalWarpManager implements Manager, BungeeFeature {
 
     @Override
     public void onDisconnect() {
-    }
-
-    public static GlobalWarpManager getInstance() {
-        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS);
     }
 }

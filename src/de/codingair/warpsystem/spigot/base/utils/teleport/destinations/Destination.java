@@ -7,7 +7,6 @@ import de.codingair.codingapi.utils.ImprovedDouble;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.CloneableAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.DestinationAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import org.bukkit.ChatColor;

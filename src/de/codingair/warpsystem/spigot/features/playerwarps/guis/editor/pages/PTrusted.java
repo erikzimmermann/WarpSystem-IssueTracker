@@ -2,14 +2,12 @@ package de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages;
 
 import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
-import de.codingair.codingapi.player.gui.inventory.gui.Skull;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncAnvilGUIButton;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
-import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -19,14 +17,11 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
-import de.codingair.warpsystem.transfer.packets.spigot.RequestUUIDPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.UUID;
 
 public class PTrusted extends PageItem {
     private final PlayerWarp warp, original;
@@ -37,6 +32,11 @@ public class PTrusted extends PageItem {
         this.warp = warp;
         this.original = original;
         initialize(p);
+    }
+
+    private static String getFreeMessage(PlayerWarp warp, PlayerWarp original, PageItem page) {
+        if(warp.getTrusted().size() - original.getTrusted().size() >= 0) return null;
+        return PWEditor.getFreeMessage(-(warp.getTrusted().size() - original.getTrusted().size()) + " " + Lang.get("Trusted_members"), page);
     }
 
     @Override
@@ -77,11 +77,6 @@ public class PTrusted extends PageItem {
 
     private void updateIcon() {
         getLast().updatePageItems();
-    }
-
-    private static String getFreeMessage(PlayerWarp warp, PlayerWarp original, PageItem page) {
-        if(warp.getTrusted().size() - original.getTrusted().size() >= 0) return null;
-        return PWEditor.getFreeMessage(-(warp.getTrusted().size() - original.getTrusted().size()) + " " + Lang.get("Trusted_members"), page);
     }
 
     @Override

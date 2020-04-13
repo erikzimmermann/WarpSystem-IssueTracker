@@ -29,6 +29,51 @@ public class Sounds extends HotbarGUI {
         initialize();
     }
 
+    public static Sound next(Sound sound) {
+        for(int i = 0; i < Sound.values().length; i++) {
+            if(Sound.values()[i].equals(sound)) return i + 1 == Sound.values().length ? Sound.values()[0] : Sound.values()[i + 1];
+        }
+
+        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
+    }
+
+    public static Sound shiftNext(Sound sound) {
+        int id = -1;
+        for(int i = 0; i < Sound.values().length; i++) {
+            if(Sound.values()[i].equals(sound)) {
+                id = i;
+            } else if(id >= 0 && sound.name().charAt(0) != Sound.values()[i].name().charAt(0)) {
+                return Sound.values()[i];
+            }
+        }
+
+        return Sound.values()[0];
+    }
+
+    public static Sound previous(Sound sound) {
+        for(int i = 0; i < Sound.values().length; i++) {
+            if(Sound.values()[i].equals(sound)) {
+                return i - 1 < 0 ? Sound.values()[Sound.values().length - 1] : Sound.values()[i - 1];
+            }
+        }
+
+        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
+    }
+
+    public static Sound shiftPrevious(Sound sound) {
+        int id = -1;
+
+        for(int i = 0; i < Sound.values().length; i++) {
+            if(Sound.values()[i].name().charAt(0) == sound.name().charAt(0)) {
+                return id == -1 ? Sound.values()[Sound.values().length - 1] : Sound.values()[id];
+            } else {
+                id = i;
+            }
+        }
+
+        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
+    }
+
     public void initialize() {
         setItem(0, new ItemComponent(new ItemBuilder(Skull.ArrowLeft).setName("§7» §c" + Lang.get("Back") + "§7 «").getItem()).setLink(menu), false);
         setItem(1, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
@@ -209,51 +254,6 @@ public class Sounds extends HotbarGUI {
                 MessageAPI.stopSendingActionBar(getPlayer());
             }
         }));
-    }
-
-    public static Sound next(Sound sound) {
-        for(int i = 0; i < Sound.values().length; i++) {
-            if(Sound.values()[i].equals(sound)) return i + 1 == Sound.values().length ? Sound.values()[0] : Sound.values()[i + 1];
-        }
-
-        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
-    }
-
-    public static Sound shiftNext(Sound sound) {
-        int id = -1;
-        for(int i = 0; i < Sound.values().length; i++) {
-            if(Sound.values()[i].equals(sound)) {
-                id = i;
-            } else if(id >= 0 && sound.name().charAt(0) != Sound.values()[i].name().charAt(0)) {
-                return Sound.values()[i];
-            }
-        }
-
-        return Sound.values()[0];
-    }
-
-    public static Sound previous(Sound sound) {
-        for(int i = 0; i < Sound.values().length; i++) {
-            if(Sound.values()[i].equals(sound)) {
-                return i - 1 < 0 ? Sound.values()[Sound.values().length - 1] : Sound.values()[i - 1];
-            }
-        }
-
-        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
-    }
-
-    public static Sound shiftPrevious(Sound sound) {
-        int id = -1;
-
-        for(int i = 0; i < Sound.values().length; i++) {
-            if(Sound.values()[i].name().charAt(0) == sound.name().charAt(0)) {
-                return id == -1 ? Sound.values()[Sound.values().length - 1] : Sound.values()[id];
-            } else {
-                id = i;
-            }
-        }
-
-        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
     }
 
     private float round(float d) {

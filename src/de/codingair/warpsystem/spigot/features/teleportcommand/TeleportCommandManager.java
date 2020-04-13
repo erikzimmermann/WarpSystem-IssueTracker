@@ -54,6 +54,10 @@ public class TeleportCommandManager implements Manager, Collectible {
     private CTpAll tpAll;
     private CBack back;
 
+    public static TeleportCommandManager getInstance() {
+        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.TELEPORT_COMMAND);
+    }
+
     @Override
     public void collectOptionStatistics(Map<String, Integer> entry) {
         if(tp != null) entry.put("Tp", 1);
@@ -273,10 +277,6 @@ public class TeleportCommandManager implements Manager, Collectible {
         }
 
         return success;
-    }
-
-    public static TeleportCommandManager getInstance() {
-        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.TELEPORT_COMMAND);
     }
 
     public int getTpaCosts() {

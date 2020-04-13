@@ -30,7 +30,7 @@ public class Lang {
                     .fadeOut(5)
             );
         } else {
-            sender.sendMessage("\n"+getPrefix() + "§7This is a §6§lPremium§7 feature! Only §eoped §7players can use this.\n");
+            sender.sendMessage("\n" + getPrefix() + "§7This is a §6§lPremium§7 feature! Only §eoped §7players can use this.\n");
         }
     }
 

@@ -29,42 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OwnWarpFilter implements Filter {
-    @Override
-    public Node<List<Button>, Integer> getListItems(int maxSize, int page, Player player, String search, Object... extra) {
-        List<PlayerWarp> warps = PlayerWarpManager.getManager().getOwnWarps(player);
-
-        List<Button> buttons = new ArrayList<>();
-        if(createButtonInList() && PlayerWarpManager.hasPermission(player)) maxSize--;
-
-        ItemButtonOption option = new ItemButtonOption();
-        option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
-
-        int max = (page + 1) * maxSize;
-        int i, noMatch = 0;
-        for(i = page * maxSize; i < max + noMatch; i++) {
-            if(warps.size() <= i) break;
-            PlayerWarp w = warps.get(i);
-
-            if(search != null && !w.getName(false).toLowerCase().contains(search)) {
-                noMatch++;
-                continue;
-            }
-
-            SyncButton b = getOwnWarpIcon(w, search);
-
-            b.setOption(option);
-
-            buttons.add(b);
-        }
-
-        return new Node<>(buttons, warps.size() - noMatch);
-    }
-
-    @Override
-    public boolean createButtonInList() {
-        return true;
-    }
-
     public static SyncButton getOwnWarpIcon(PlayerWarp w, String highlight) {
         return new SyncButton(0) {
             private BukkitRunnable runnable;
@@ -133,6 +97,42 @@ public class OwnWarpFilter implements Filter {
                 return click == ClickType.LEFT || click == ClickType.RIGHT || click == ClickType.SHIFT_RIGHT || (click == ClickType.SHIFT_LEFT && w.getInactiveSales() > 0);
             }
         };
+    }
+
+    @Override
+    public Node<List<Button>, Integer> getListItems(int maxSize, int page, Player player, String search, Object... extra) {
+        List<PlayerWarp> warps = PlayerWarpManager.getManager().getOwnWarps(player);
+
+        List<Button> buttons = new ArrayList<>();
+        if(createButtonInList() && PlayerWarpManager.hasPermission(player)) maxSize--;
+
+        ItemButtonOption option = new ItemButtonOption();
+        option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
+
+        int max = (page + 1) * maxSize;
+        int i, noMatch = 0;
+        for(i = page * maxSize; i < max + noMatch; i++) {
+            if(warps.size() <= i) break;
+            PlayerWarp w = warps.get(i);
+
+            if(search != null && !w.getName(false).toLowerCase().contains(search)) {
+                noMatch++;
+                continue;
+            }
+
+            SyncButton b = getOwnWarpIcon(w, search);
+
+            b.setOption(option);
+
+            buttons.add(b);
+        }
+
+        return new Node<>(buttons, warps.size() - noMatch);
+    }
+
+    @Override
+    public boolean createButtonInList() {
+        return true;
     }
 
     @Override

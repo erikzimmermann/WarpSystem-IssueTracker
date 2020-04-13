@@ -1,10 +1,6 @@
 package de.codingair.warpsystem.spigot.features.signs.guis.pages;
 
-import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
-import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
-import de.codingair.codingapi.player.gui.anvil.AnvilSlot;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
-import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncAnvilGUIButton;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncSignGUIButton;
 import de.codingair.codingapi.server.sounds.Sound;
@@ -19,12 +15,8 @@ import de.codingair.warpsystem.spigot.features.signs.guis.WarpSignGUI;
 import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class OptionPage extends PageItem {
     private WarpSign sign;

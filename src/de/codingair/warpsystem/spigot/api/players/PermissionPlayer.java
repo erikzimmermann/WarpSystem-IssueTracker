@@ -41,10 +41,6 @@ public class PermissionPlayer implements Player {
     }
 
     public void sendBlockChange(Location location, int i, byte b) {
-        
-    }
-
-    public void setBanned(boolean b) {
 
     }
 
@@ -96,12 +92,12 @@ public class PermissionPlayer implements Player {
         return null;
     }
 
-    public String getPlayerListFooter() {
-        return null;
-    }
-
     public void setPlayerListHeader(String s) {
 
+    }
+
+    public String getPlayerListFooter() {
+        return null;
     }
 
     public void setPlayerListFooter(String s) {
@@ -348,12 +344,12 @@ public class PermissionPlayer implements Player {
 
     }
 
-    public void setCompassTarget(Location location) {
-
-    }
-
     public Location getCompassTarget() {
         return this.player.getCompassTarget();
+    }
+
+    public void setCompassTarget(Location location) {
+
     }
 
     public InetSocketAddress getAddress() {
@@ -400,12 +396,12 @@ public class PermissionPlayer implements Player {
 
     }
 
-    public void setSleepingIgnored(boolean b) {
-
-    }
-
     public boolean isSleepingIgnored() {
         return this.player.isSleepingIgnored();
+    }
+
+    public void setSleepingIgnored(boolean b) {
+
     }
 
     public void playNote(Location location, byte b, byte b1) {
@@ -564,12 +560,12 @@ public class PermissionPlayer implements Player {
 
     }
 
-    public void setPlayerWeather(WeatherType weatherType) {
-
-    }
-
     public WeatherType getPlayerWeather() {
         return this.player.getPlayerWeather();
+    }
+
+    public void setPlayerWeather(WeatherType weatherType) {
+
     }
 
     public void resetPlayerWeather() {
@@ -676,20 +672,20 @@ public class PermissionPlayer implements Player {
 
     }
 
-    public void setFlySpeed(float v) throws IllegalArgumentException {
-
-    }
-
-    public void setWalkSpeed(float v) throws IllegalArgumentException {
-
-    }
-
     public float getFlySpeed() {
         return 0;
     }
 
+    public void setFlySpeed(float v) throws IllegalArgumentException {
+
+    }
+
     public float getWalkSpeed() {
         return 0;
+    }
+
+    public void setWalkSpeed(float v) throws IllegalArgumentException {
+
     }
 
     public void setTexturePack(String s) {
@@ -716,12 +712,12 @@ public class PermissionPlayer implements Player {
 
     }
 
-    public void setHealthScale(double v) throws IllegalArgumentException {
-
-    }
-
     public double getHealthScale() {
         return 0;
+    }
+
+    public void setHealthScale(double v) throws IllegalArgumentException {
+
     }
 
     public Entity getSpectatorTarget() {
@@ -798,6 +794,10 @@ public class PermissionPlayer implements Player {
 
     public boolean isBanned() {
         return this.player.isBanned();
+    }
+
+    public void setBanned(boolean b) {
+
     }
 
     public boolean isWhitelisted() {
@@ -958,7 +958,7 @@ public class PermissionPlayer implements Player {
     }
 
     public List<Block> getLastTwoTargetBlocks(Set<Material> set, int i) {
-        return this.player.getLastTwoTargetBlocks(set,i);
+        return this.player.getLastTwoTargetBlocks(set, i);
     }
 
     public Egg throwEgg() {
@@ -1057,12 +1057,12 @@ public class PermissionPlayer implements Player {
         return this.player.getEquipment();
     }
 
-    public void setCanPickupItems(boolean b) {
-
-    }
-
     public boolean getCanPickupItems() {
         return this.player.getCanPickupItems();
+    }
+
+    public void setCanPickupItems(boolean b) {
+
     }
 
     public boolean isLeashed() {
@@ -1093,12 +1093,12 @@ public class PermissionPlayer implements Player {
         return false;
     }
 
-    public void setCollidable(boolean b) {
-
-    }
-
     public boolean isCollidable() {
         return false;
+    }
+
+    public void setCollidable(boolean b) {
+
     }
 
     public AttributeInstance getAttribute(Attribute attribute) {
@@ -1141,12 +1141,12 @@ public class PermissionPlayer implements Player {
         return this.player.getCompassTarget();
     }
 
-    public void setVelocity(Vector vector) {
-
-    }
-
     public Vector getVelocity() {
         return this.player.getVelocity();
+    }
+
+    public void setVelocity(Vector vector) {
+
     }
 
     public World getWorld() {
@@ -1181,12 +1181,12 @@ public class PermissionPlayer implements Player {
         return 0;
     }
 
-    public int getMaxFireTicks() {
-        return 0;
-    }
-
     public void setFireTicks(int i) {
 
+    }
+
+    public int getMaxFireTicks() {
+        return 0;
     }
 
     public void remove() {
@@ -1229,12 +1229,12 @@ public class PermissionPlayer implements Player {
 
     }
 
-    public void setLastDamageCause(EntityDamageEvent entityDamageEvent) {
-
-    }
-
     public EntityDamageEvent getLastDamageCause() {
         return this.player.getLastDamageCause();
+    }
+
+    public void setLastDamageCause(EntityDamageEvent entityDamageEvent) {
+
     }
 
     public UUID getUniqueId() {
@@ -1269,15 +1269,11 @@ public class PermissionPlayer implements Player {
         return this.player.getVehicle();
     }
 
-    public void setCustomName(String s) {
-
-    }
-
     public String getCustomName() {
         return this.player.getCustomName();
     }
 
-    public void setCustomNameVisible(boolean b) {
+    public void setCustomName(String s) {
 
     }
 
@@ -1285,7 +1281,7 @@ public class PermissionPlayer implements Player {
         return this.player.isCustomNameVisible();
     }
 
-    public void setGlowing(boolean b) {
+    public void setCustomNameVisible(boolean b) {
 
     }
 
@@ -1293,12 +1289,16 @@ public class PermissionPlayer implements Player {
         return false;
     }
 
-    public void setInvulnerable(boolean b) {
+    public void setGlowing(boolean b) {
 
     }
 
     public boolean isInvulnerable() {
         return false;
+    }
+
+    public void setInvulnerable(boolean b) {
+
     }
 
     public boolean isSilent() {

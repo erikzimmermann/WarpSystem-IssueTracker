@@ -1,12 +1,13 @@
 package de.codingair.warpsystem.spigot.features.animations.guis.editor;
 
 import de.codingair.codingapi.particles.Particle;
+import de.codingair.codingapi.particles.animations.customanimations.AnimationType;
 import de.codingair.codingapi.particles.animations.customanimations.CustomAnimation;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
-import de.codingair.codingapi.player.gui.hotbar.components.ItemComponent;
 import de.codingair.codingapi.player.gui.hotbar.ItemListener;
+import de.codingair.codingapi.player.gui.hotbar.components.ItemComponent;
 import de.codingair.codingapi.player.gui.inventory.gui.Skull;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
@@ -14,7 +15,6 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.codingapi.particles.animations.customanimations.AnimationType;
 import de.codingair.warpsystem.spigot.features.animations.utils.ParticlePart;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

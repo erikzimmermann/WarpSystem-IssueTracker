@@ -1,13 +1,10 @@
 package de.codingair.warpsystem.spigot.base.guis.editor.pages;
 
-import de.codingair.codingapi.player.gui.anvil.*;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
-import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncAnvilGUIButton;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
-import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -19,8 +16,6 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
 import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.simplewarps.guis.GSimpleWarpList;
-import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
-import de.codingair.warpsystem.transfer.packets.spigot.RequestServerStatusPacket;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -29,7 +24,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class DestinationPage extends PageItem {
     private Destination destination;
@@ -63,9 +57,9 @@ public class DestinationPage extends PageItem {
                 builder.addLore(" ");
                 builder.addLore("§6" + Lang.get("Max_Random_Offset") + Lang.PREMIUM_LORE);
                 builder.addLore("§3" + Lang.get("Shift_Rightclick") + ": §b" + Lang.get("Edit"));
-                builder.addLore("  §8» §7X: §e" + (destination.getOffsetX() == 0 ? "0" : destination.getSignedX() == 1 ? "0 - " + destination.getOffsetX() : destination.getSignedX() == 0 ? "-" + destination.getOffsetX() + " - " + destination.getOffsetX() : "-" +  + destination.getOffsetX() + " - 0"));
-                builder.addLore("  §8» §7Y: §e" + (destination.getOffsetY() == 0 ? "0" : destination.getSignedY() == 1 ? "0 - " + destination.getOffsetY() : destination.getSignedY() == 0 ? "-" + destination.getOffsetY() + " - " + destination.getOffsetY() : "-" +  + destination.getOffsetY() + " - 0"));
-                builder.addLore("  §8» §7Z: §e" + (destination.getOffsetZ() == 0 ? "0" : destination.getSignedZ() == 1 ? "0 - " + destination.getOffsetZ() : destination.getSignedZ() == 0 ? "-" + destination.getOffsetZ() + " - " + destination.getOffsetZ() : "-" +  + destination.getOffsetZ() + " - 0"));
+                builder.addLore("  §8» §7X: §e" + (destination.getOffsetX() == 0 ? "0" : destination.getSignedX() == 1 ? "0 - " + destination.getOffsetX() : destination.getSignedX() == 0 ? "-" + destination.getOffsetX() + " - " + destination.getOffsetX() : "-" + +destination.getOffsetX() + " - 0"));
+                builder.addLore("  §8» §7Y: §e" + (destination.getOffsetY() == 0 ? "0" : destination.getSignedY() == 1 ? "0 - " + destination.getOffsetY() : destination.getSignedY() == 0 ? "-" + destination.getOffsetY() + " - " + destination.getOffsetY() : "-" + +destination.getOffsetY() + " - 0"));
+                builder.addLore("  §8» §7Z: §e" + (destination.getOffsetZ() == 0 ? "0" : destination.getSignedZ() == 1 ? "0 - " + destination.getOffsetZ() : destination.getSignedZ() == 0 ? "-" + destination.getOffsetZ() + " - " + destination.getOffsetZ() : "-" + +destination.getOffsetZ() + " - 0"));
 
                 return builder.getItem();
             }
@@ -85,28 +79,28 @@ public class DestinationPage extends PageItem {
                                 destination.setAdapter(DestinationType.SimpleWarp.getInstance());
                                 updateDestinationButtons();
 
-                                    fallBack();
-                                }
+                                fallBack();
+                            }
 
-                                @Override
-                                public void onClose() {
-                                    fallBack();
-                                }
+                            @Override
+                            public void onClose() {
+                                fallBack();
+                            }
 
-                                @Override
-                                public void buildItemDescription(List<String> lore) {
-                                    lore.add("");
-                                    lore.add("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose"));
-                                }
-                            }, true);
-                        }
-                    } else if(e.isRightClick()) {
-                        if(e.isShiftClick()) {
-                            Lang.PREMIUM_CHAT(player);
-                        } else {
-                            destination.setId(null);
-                            destination.setAdapter(null);
-                            destination.setType(null);
+                            @Override
+                            public void buildItemDescription(List<String> lore) {
+                                lore.add("");
+                                lore.add("§3" + Lang.get("Leftclick") + ": §b" + Lang.get("Choose"));
+                            }
+                        }, true);
+                    }
+                } else if(e.isRightClick()) {
+                    if(e.isShiftClick()) {
+                        Lang.PREMIUM_CHAT(player);
+                    } else {
+                        destination.setId(null);
+                        destination.setAdapter(null);
+                        destination.setType(null);
 
                         updateDestinationButtons();
                     }
@@ -200,6 +194,6 @@ public class DestinationPage extends PageItem {
     }
 
     private double trim(double d) {
-        return ((double)(int) (d * 100)) / 100;
+        return ((double) (int) (d * 100)) / 100;
     }
 }

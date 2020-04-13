@@ -65,14 +65,6 @@ public enum PacketType {
         this.packet = packet;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public Class<?> getPacket() {
-        return packet;
-    }
-
     public static PacketType getById(int id) {
         for(PacketType packetType : values()) {
             if(packetType.getId() == id) return packetType;
@@ -91,5 +83,13 @@ public enum PacketType {
         }
 
         return ERROR;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public Class<?> getPacket() {
+        return packet;
     }
 }

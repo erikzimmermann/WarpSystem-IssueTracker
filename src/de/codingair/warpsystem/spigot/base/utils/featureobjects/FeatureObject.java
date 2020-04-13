@@ -4,6 +4,9 @@ import com.google.common.base.CharMatcher;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.io.JSON.JSONParser;
+import de.codingair.codingapi.tools.io.lib.JSONArray;
 import de.codingair.codingapi.tools.io.lib.ParseException;
 import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.codingapi.tools.io.utils.Serializable;
@@ -18,24 +21,19 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
-import de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal;
-import de.codingair.warpsystem.spigot.features.nativeportals.NativePortal;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.exceptions.IconReadException;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import de.codingair.codingapi.tools.io.lib.JSONArray;
-import de.codingair.codingapi.tools.io.JSON.JSONParser;
-import de.codingair.codingapi.tools.io.JSON.JSON;
 
 import java.util.*;
 
 public class FeatureObject implements Serializable {
+    protected int performed = 0;
     private List<ActionObject<?>> actions;
     private String permission = null;
     private boolean disabled = false;
     private boolean skip = false;
-    protected int performed = 0;
 
     public FeatureObject() {
         this.actions = new ArrayList<>();
@@ -152,7 +150,8 @@ public class FeatureObject implements Serializable {
                 if(this instanceof Shortcut) {
                     switch(a) {
                         case COSTS:
-                        case COMMAND: continue;
+                        case COMMAND:
+                            continue;
                     }
                 }
 
@@ -321,13 +320,13 @@ public class FeatureObject implements Serializable {
         return permission;
     }
 
-    public boolean hasPermission() {
-        return this.permission != null;
-    }
-
     public FeatureObject setPermission(String permission) {
         this.permission = permission;
         return this;
+    }
+
+    public boolean hasPermission() {
+        return this.permission != null;
     }
 
     public boolean isDisabled() {

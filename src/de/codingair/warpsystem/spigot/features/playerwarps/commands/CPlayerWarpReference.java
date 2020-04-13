@@ -42,7 +42,7 @@ public class CPlayerWarpReference extends CommandBuilder {
         SimpleMessage msg = new SimpleMessage(Lang.getPrefix() + Lang.get("TempWarp_Reference_To_PlayerWarps"), WarpSystem.getInstance());
 
         TextComponent tc = new TextComponent("§e§n/playerwarps§7");
-        tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[]{new TextComponent(Lang.get("Click_Hover"))}));
+        tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent(Lang.get("Click_Hover"))}));
         tc.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/playerwarps "));
 
         msg.replace("/playerwarps", tc);

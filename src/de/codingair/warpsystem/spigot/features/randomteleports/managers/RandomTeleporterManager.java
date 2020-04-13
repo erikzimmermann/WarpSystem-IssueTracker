@@ -16,7 +16,6 @@ import de.codingair.warpsystem.spigot.features.randomteleports.utils.RandomLocat
 import de.codingair.warpsystem.spigot.features.randomteleports.utils.forwardcompatibility.RTPTagConverter_v4_2_2;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -39,6 +38,10 @@ public class RandomTeleporterManager implements Manager {
     private List<Location> interactBlocks = new ArrayList<>();
     private InteractListener listener = new InteractListener();
 
+    public static RandomTeleporterManager getInstance() {
+        return ((RandomTeleporterManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.RANDOM_TELEPORTS));
+    }
+
     @Override
     public void preLoad() {
         new RTPTagConverter_v4_2_2();
@@ -58,7 +61,7 @@ public class RandomTeleporterManager implements Manager {
 
         this.netherHeight = config.getInt("RandomTeleport.Range.Highest_Y.Nether", 126);
         this.endHeight = config.getInt("RandomTeleport.Range.Highest_Y.End", 72);
-      
+
         this.protectedRegions = config.getBoolean("WaSystem.RandomTeleport.Support.ProtectedRegions", true);
         if(config.getBoolean("RandomTeleport.Support.Biome.Enabled", true)) {
             List<String> configBiomes = config.getStringList("RandomTeleport.Support.Biome.BiomeList");
@@ -319,10 +322,6 @@ public class RandomTeleporterManager implements Manager {
 
     public InteractListener getListener() {
         return listener;
-    }
-
-    public static RandomTeleporterManager getInstance() {
-        return ((RandomTeleporterManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.RANDOM_TELEPORTS));
     }
 
     public boolean isBuyable() {

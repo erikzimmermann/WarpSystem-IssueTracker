@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Lang {
+    public static final String PREMIUM_HOTBAR = "§8» §6§lPremium feature §8«";
+    public static final String PREMIUM_LORE = "§r §8(§6Premium§8)";
     private static final TimeList<CommandSender> premiumMessage = new TimeList<>();
 
     public static void PREMIUM_CHAT_ONLY_OPED(CommandSender sender) {
@@ -32,7 +34,7 @@ public class Lang {
 
             MessageAPI.sendTitle(p, "§7This is a §6Premium §7feature!", "§7Only §eoped §7players can use this.", 5, 50, 5);
         } else {
-            sender.sendMessage("\n"+getPrefix() + "§7This is a §6§lPremium§7 feature! Only §eoped §7players can use this.\n");
+            sender.sendMessage("\n" + getPrefix() + "§7This is a §6§lPremium§7 feature! Only §eoped §7players can use this.\n");
         }
     }
 
@@ -109,9 +111,6 @@ public class Lang {
 
         premiumMessage.add(sender, 10);
     }
-
-    public static final String PREMIUM_HOTBAR = "§8» §6§lPremium feature §8«";
-    public static final String PREMIUM_LORE = "§r §8(§6Premium§8)";
 
     public static void initPreDefinedLanguages(JavaPlugin plugin) throws IOException {
         List<String> languages = new ArrayList<>();

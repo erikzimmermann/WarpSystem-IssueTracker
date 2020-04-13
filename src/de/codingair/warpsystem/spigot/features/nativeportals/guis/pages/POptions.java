@@ -11,7 +11,6 @@ import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
-import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CommandButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.DelayButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.NameButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;

@@ -1,12 +1,12 @@
 package de.codingair.warpsystem.spigot.features.playerwarps.utils.tempwarps;
 
+import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.JSON.JSONParser;
-import de.codingair.codingapi.tools.Location;
+import de.codingair.codingapi.tools.io.lib.ParseException;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import de.codingair.codingapi.tools.io.lib.ParseException;
 
 import java.util.Date;
 import java.util.UUID;
@@ -48,6 +48,39 @@ public class TempWarp {
         this.teleportCosts = teleportCosts;
         this.paid = paid;
         this.inactiveSales = inactiveSales;
+    }
+
+    public static TempWarp getByJSONString(String s) {
+        try {
+            JSON json = (JSON) new JSONParser().parse(s);
+
+            UUID owner = UUID.fromString(json.get("Owner"));
+            String lastKnownName = json.get("LastKnownName");
+            Location location = json.getLocation("Location");
+            Object nameTemp = json.get("Name");
+            String name = nameTemp + "";
+
+            String teleportMessage = json.get("Message");
+            Date bornDate = json.getDate("BornDate");
+            Date startDate = json.getDate("StartDate");
+            Date endDate = json.getDate("EndDate");
+            Date expireDate = json.getDate("ExpireDate");
+            int timeIntervals = json.getInteger("Duration");
+            boolean isPublic = json.getBoolean("isPublic");
+            int teleportCosts = json.getInteger("TeleportCosts");
+            int paid = json.getInteger("Paid");
+            int inactiveSales = json.getInteger("InactiveSales");
+            String creatorKey = json.get("Key");
+            boolean notify = json.getBoolean("Notify");
+
+            TempWarp warp = new TempWarp(lastKnownName, owner, location, name, teleportMessage, bornDate, startDate, endDate, expireDate, timeIntervals, isPublic, teleportCosts, paid, inactiveSales);
+            warp.setCreatorKey(creatorKey);
+            warp.setNotify(notify);
+            return warp;
+        } catch(ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public boolean hasAccess(Player player) {
@@ -104,6 +137,10 @@ public class TempWarp {
         return isPublic;
     }
 
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
+    }
+
     public UUID getOwner() {
         return owner;
     }
@@ -114,6 +151,10 @@ public class TempWarp {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getIdentifier() {
@@ -127,14 +168,6 @@ public class TempWarp {
 
     public void setLastKnownName(String lastKnownName) {
         this.lastKnownName = lastKnownName;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setPublic(boolean aPublic) {
-        isPublic = aPublic;
     }
 
     public boolean isChangingName() {
@@ -232,39 +265,6 @@ public class TempWarp {
         json.put("Notify", this.notify);
 
         return json.toJSONString();
-    }
-
-    public static TempWarp getByJSONString(String s) {
-        try {
-            JSON json = (JSON) new JSONParser().parse(s);
-
-            UUID owner = UUID.fromString(json.get("Owner"));
-            String lastKnownName = json.get("LastKnownName");
-            Location location = json.getLocation("Location");
-            Object nameTemp = json.get("Name");
-            String name = nameTemp + "";
-
-            String teleportMessage = json.get("Message");
-            Date bornDate = json.getDate("BornDate");
-            Date startDate = json.getDate("StartDate");
-            Date endDate = json.getDate("EndDate");
-            Date expireDate = json.getDate("ExpireDate");
-            int timeIntervals = json.getInteger("Duration");
-            boolean isPublic = json.getBoolean("isPublic");
-            int teleportCosts = json.getInteger("TeleportCosts");
-            int paid = json.getInteger("Paid");
-            int inactiveSales = json.getInteger("InactiveSales");
-            String creatorKey = json.get("Key");
-            boolean notify = json.getBoolean("Notify");
-
-            TempWarp warp = new TempWarp(lastKnownName, owner, location, name, teleportMessage, bornDate, startDate, endDate, expireDate, timeIntervals, isPublic, teleportCosts, paid, inactiveSales);
-            warp.setCreatorKey(creatorKey);
-            warp.setNotify(notify);
-            return warp;
-        } catch(ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     public int getTeleportCosts() {

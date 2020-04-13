@@ -101,12 +101,12 @@ public class TeleportOptions {
         return costs;
     }
 
-    public Number getFinalCosts(Player player) {
-        return new ImprovedDouble(costs > 0 && MoneyAdapterType.getActive() != null && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs) ? costs : 0).get();
-    }
-
     public void setCosts(double costs) {
         this.costs = costs;
+    }
+
+    public Number getFinalCosts(Player player) {
+        return new ImprovedDouble(costs > 0 && MoneyAdapterType.getActive() != null && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs) ? costs : 0).get();
     }
 
     public boolean isSkip() {
@@ -212,7 +212,7 @@ public class TeleportOptions {
     public void setPaymentDeniedMessage(String paymentDeniedMessage) {
         this.paymentDeniedMessage = paymentDeniedMessage;
     }
-      
+
     public boolean isNoDelayByPass() {
         return noDelayByPass;
     }

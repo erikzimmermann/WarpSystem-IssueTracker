@@ -23,14 +23,6 @@ public enum DestinationType {
         this.adapter = adapter;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public Class<? extends DestinationAdapter> getAdapter() {
-        return adapter;
-    }
-
     public static DestinationType getByAdapter(DestinationAdapter adapter) {
         if(adapter == null) return UNKNOWN;
 
@@ -47,6 +39,14 @@ public enum DestinationType {
         }
 
         return UNKNOWN;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public Class<? extends DestinationAdapter> getAdapter() {
+        return adapter;
     }
 
     public DestinationAdapter getInstance() {

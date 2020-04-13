@@ -74,7 +74,7 @@ public class ActionIconHelper {
 
         return action;
     }
-    
+
     public static SActionObject translate(ActionObject actionObject) {
         SActionObject s = new SActionObject();
 

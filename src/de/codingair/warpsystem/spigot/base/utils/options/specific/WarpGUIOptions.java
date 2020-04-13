@@ -4,8 +4,6 @@ import de.codingair.warpsystem.spigot.base.utils.options.Option;
 import de.codingair.warpsystem.spigot.base.utils.options.Options;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 
-import java.util.function.Predicate;
-
 public class WarpGUIOptions extends FeatureOptions {
     private Option<Boolean> enabled = new Option<>("WarpSystem.Functions.Warps", true);
     private Option<Integer> userSize = new Option<>("WarpSystem.GUI.User.Size", 54, size -> 9 <= size && size <= 54 && size % 9 == 0);

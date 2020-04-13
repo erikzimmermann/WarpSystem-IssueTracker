@@ -28,7 +28,6 @@ import de.codingair.warpsystem.transfer.packets.spigot.PlayerWarpTeleportProcess
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.io.DataInputStream;
@@ -469,6 +468,11 @@ public class PlayerWarp extends FeatureObject {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+        this.item.setName("§f" + getName(true));
+    }
+
     public String getName(boolean color) {
         if(name == null) return null;
         String s = ChatColor.translateAlternateColorCodes('&', name);
@@ -478,11 +482,6 @@ public class PlayerWarp extends FeatureObject {
     public boolean equalsName(String name) {
         if(name == null) return false;
         return getName(false).replace(" ", "_").equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name.replace(" ", "_"))));
-    }
-
-    public void setName(String name) {
-        this.name = name;
-        this.item.setName("§f" + getName(true));
     }
 
     public String getTeleportMessage() {
@@ -495,6 +494,11 @@ public class PlayerWarp extends FeatureObject {
 
     public ItemBuilder getItem() {
         return getItem(null);
+    }
+
+    public PlayerWarp setItem(ItemBuilder item) {
+        this.item = item;
+        return this;
     }
 
     public ItemBuilder getItem(String highlight) {
@@ -512,11 +516,6 @@ public class PlayerWarp extends FeatureObject {
         return b;
     }
 
-    public PlayerWarp setItem(ItemBuilder item) {
-        this.item = item;
-        return this;
-    }
-
     public boolean isPublic() {
         return isPublic;
     }
@@ -530,14 +529,14 @@ public class PlayerWarp extends FeatureObject {
         return teleportCosts;
     }
 
+    public void setTeleportCosts(double teleportCosts) {
+        this.teleportCosts = teleportCosts;
+    }
+
     public Number getCutTeleportCosts() {
         Number n = teleportCosts;
         if(n.intValue() == teleportCosts) return n.intValue();
         return teleportCosts;
-    }
-
-    public void setTeleportCosts(double teleportCosts) {
-        this.teleportCosts = teleportCosts;
     }
 
     public void born() {
@@ -569,6 +568,11 @@ public class PlayerWarp extends FeatureObject {
         return time;
     }
 
+    public PlayerWarp setTime(long time) {
+        this.time = time;
+        return this;
+    }
+
     public long getLeftTime() {
         if(this.started == 0) return this.time;
         else return Math.max(started + time - System.currentTimeMillis(), 0);
@@ -577,11 +581,6 @@ public class PlayerWarp extends FeatureObject {
     public long getPassedTime() {
         if(this.started == 0) return 0;
         else return Math.min(System.currentTimeMillis() - started, time);
-    }
-
-    public PlayerWarp setTime(long time) {
-        this.time = time;
-        return this;
     }
 
     public String getCreatorKey() {
@@ -597,12 +596,12 @@ public class PlayerWarp extends FeatureObject {
         return API.getRemovable(owner.getPlayer(), PWEditor.class) != null;
     }
 
-    public void setNotify(boolean notify) {
-        this.notify = notify;
-    }
-
     public boolean isNotify() {
         return notify;
+    }
+
+    public void setNotify(boolean notify) {
+        this.notify = notify;
     }
 
     public long getExpireDate() {
@@ -628,12 +627,12 @@ public class PlayerWarp extends FeatureObject {
         return description;
     }
 
-    public void addDescription(String line) {
-        this.description.add(line);
-    }
-
     public void setDescription(List<String> description) {
         this.description = description;
+    }
+
+    public void addDescription(String line) {
+        this.description.add(line);
     }
 
     private List<String> getPreparedDescription() {
@@ -664,12 +663,12 @@ public class PlayerWarp extends FeatureObject {
         return ((int) inactiveSales) & 0xFF;
     }
 
-    public void resetInactiveSales() {
-        inactiveSales = 0;
-    }
-
     public void setInactiveSales(int inactiveSales) {
         this.inactiveSales = (byte) Math.min(inactiveSales, 256);
+    }
+
+    public void resetInactiveSales() {
+        inactiveSales = 0;
     }
 
     public void increaseInactiveSales() {
@@ -700,20 +699,19 @@ public class PlayerWarp extends FeatureObject {
         private UUID id;
 
         public User() {
+            this(null, null, null);
         }
 
         public User(Player player) {
-            this.name = player.getName();
-            this.id = WarpSystem.getInstance().getUUIDManager().get(player);
+            this(player.getName(), WarpSystem.getInstance().getUUIDManager().get(player));
         }
 
         public User(String name, UUID id) {
-            this.name = name;
-            this.id = id;
+            this(null, name, id);
         }
 
         protected User(String jsonPrefix) {
-            this.jsonPrefix = jsonPrefix;
+            this(jsonPrefix, null, null);
         }
 
         protected User(String jsonPrefix, String name, UUID id) {
@@ -762,7 +760,7 @@ public class PlayerWarp extends FeatureObject {
             if(this == o) return true;
             if(o == null || getClass() != o.getClass()) return false;
             User user = (User) o;
-            return jsonPrefix.equals(user.jsonPrefix) &&
+            return Objects.equals(jsonPrefix, user.jsonPrefix) &&
                     name.equals(user.name) &&
                     id.equals(user.id);
         }

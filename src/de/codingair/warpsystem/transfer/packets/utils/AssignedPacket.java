@@ -10,7 +10,7 @@ public abstract class AssignedPacket implements Packet {
     private UUID uniqueId;
 
     public AssignedPacket() {
-         this.uniqueId = UUID.randomUUID();
+        this.uniqueId = UUID.randomUUID();
     }
 
     public AssignedPacket(UUID uniqueId) {

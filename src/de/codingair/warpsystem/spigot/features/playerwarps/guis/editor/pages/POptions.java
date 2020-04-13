@@ -299,7 +299,8 @@ public class POptions extends PageItem {
 
                                 if(warp.getTime() == max) warp.setTime(PlayerWarpManager.getManager().getMinTime());
                                 else if(warp.getTime() < max && warp.getTime() + time > max) warp.setTime(max);
-                                else if(ms > 500 && warp.getTime() + (60000L - ms) <= max) warp.setTime(warp.getTime() + ((unit == TimeUnit.MINUTES ? 60000 : 0) - ms) + (unit != TimeUnit.MINUTES ? time : 0));
+                                else if(ms > 500 && warp.getTime() + (60000L - ms) <= max)
+                                    warp.setTime(warp.getTime() + ((unit == TimeUnit.MINUTES ? 60000 : 0) - ms) + (unit != TimeUnit.MINUTES ? time : 0));
                                 else warp.setTime(warp.getTime() + time);
                             }
                         } else warp.setTime(Math.max(original.getLeftTime(), PlayerWarpManager.getManager().getMinTime()));

@@ -3,7 +3,7 @@ package de.codingair.warpsystem.spigot.features.warps.guis.utils;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
 
 /**
- Doesn't support listening while player is editing
+ * Doesn't support listening while player is editing
  */
 
 public interface GUIListener {

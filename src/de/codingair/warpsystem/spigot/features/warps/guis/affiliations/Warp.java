@@ -1,13 +1,10 @@
 package de.codingair.warpsystem.spigot.features.warps.guis.affiliations;
 
 import de.codingair.codingapi.serializable.SerializableLocation;
-import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionIcon;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionObject;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.IconType;
-import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.transfer.serializeable.icons.SIcon;
 import de.codingair.warpsystem.transfer.serializeable.icons.SWarp;
 import org.bukkit.Location;
@@ -55,12 +52,12 @@ public class Warp extends ActionIcon implements Serializable {
         return category != null;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
     public Category getCategory() {
         return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public Location getLocation() {

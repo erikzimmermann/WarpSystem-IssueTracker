@@ -6,7 +6,6 @@ import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.DestinationAdapter;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;

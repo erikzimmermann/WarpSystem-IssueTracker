@@ -1,9 +1,9 @@
 package de.codingair.warpsystem.spigot.features.simplewarps;
 
-import de.codingair.codingapi.tools.io.utils.DataWriter;
+import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.JSON.JSONParser;
-import de.codingair.codingapi.tools.Location;
+import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.codingapi.tools.io.utils.Serializable;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
 import org.bukkit.ChatColor;
@@ -98,16 +98,16 @@ public class SimpleWarp implements Serializable {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getFormattedName() {
         return ChatColor.translateAlternateColorCodes('&', name.replace("_", " "));
     }
 
     public String getName(boolean stripColors) {
         return stripColors ? ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name)) : name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getPermission() {

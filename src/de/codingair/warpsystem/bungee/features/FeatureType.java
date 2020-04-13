@@ -18,10 +18,6 @@ public enum FeatureType {
         this.priority = priority;
     }
 
-    public Class<? extends Manager> getManagerClass() {
-        return managerClass;
-    }
-
     public static FeatureType[] values(Priority priority) {
         List<FeatureType> featureTypes = new ArrayList<>();
 
@@ -30,6 +26,10 @@ public enum FeatureType {
         }
 
         return featureTypes.toArray(new FeatureType[0]);
+    }
+
+    public Class<? extends Manager> getManagerClass() {
+        return managerClass;
     }
 
     public Priority getPriority() {

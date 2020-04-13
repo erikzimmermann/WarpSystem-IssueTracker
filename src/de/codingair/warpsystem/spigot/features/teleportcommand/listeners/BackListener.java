@@ -2,14 +2,11 @@ package de.codingair.warpsystem.spigot.features.teleportcommand.listeners;
 
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.plugin.RegisteredListener;
 
 public class BackListener implements Listener {
 

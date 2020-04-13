@@ -9,19 +9,12 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
-import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CommandButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.NameButton;
-import de.codingair.warpsystem.spigot.base.guis.editor.buttons.PermissionButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class POptions extends PageItem {
     private Shortcut shortcut;

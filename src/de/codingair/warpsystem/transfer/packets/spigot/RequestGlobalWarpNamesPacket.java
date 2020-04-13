@@ -8,8 +8,10 @@ import java.io.IOException;
 
 public class RequestGlobalWarpNamesPacket implements Packet {
     @Override
-    public void write(DataOutputStream out) throws IOException { }
+    public void write(DataOutputStream out) throws IOException {
+    }
 
     @Override
-    public void read(DataInputStream in) throws IOException { }
+    public void read(DataInputStream in) throws IOException {
+    }
 }

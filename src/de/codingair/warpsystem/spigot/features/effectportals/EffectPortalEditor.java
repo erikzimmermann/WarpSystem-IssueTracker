@@ -8,8 +8,8 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.effectportals.managers.EffectPortalManager;
 import de.codingair.warpsystem.spigot.features.effectportals.guis.editor.Menu;
+import de.codingair.warpsystem.spigot.features.effectportals.managers.EffectPortalManager;
 import de.codingair.warpsystem.spigot.features.effectportals.utils.EffectPortal;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -18,6 +18,28 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.UUID;
 
 public class EffectPortalEditor implements Removable {
+    private final UUID uniqueId = UUID.randomUUID();
+    private Player player;
+    private EffectPortal effectPortal;
+    private EffectPortal backupEffectPortal;
+    private boolean finished = false;
+    private Menu menu;
+
+    public EffectPortalEditor(Player player, EffectPortal effectPortal) {
+        this.player = player;
+        this.backupEffectPortal = effectPortal;
+        this.effectPortal = new EffectPortal(this.backupEffectPortal);
+        if(this.effectPortal.getLink() != null) this.effectPortal.setLink(new EffectPortal(this.effectPortal.getLink()));
+        if(this.effectPortal.getDestination() == null) this.effectPortal.addAction(new WarpAction(new Destination()));
+        menu = new Menu(this.player, this);
+    }
+
+    public EffectPortalEditor(Player player, String name) {
+        this.player = player;
+        this.effectPortal = new EffectPortal(Location.getByLocation(player.getLocation()), new Destination(), null, name, true, null);
+        menu = new Menu(this.player, this);
+    }
+
     public static String MINUS_PLUS(String s) {
         return ACTION_BAR(s, "-", "+");
     }
@@ -40,28 +62,6 @@ public class EffectPortalEditor implements Removable {
 
     public static String ACTION_BAR(String s, String left, String right) {
         return ChatColor.YELLOW.toString() + left + ChatColor.GRAY + " " + Lang.get("Leftclick") + " | " + ChatColor.RED + s + ChatColor.GRAY + " | " + ChatColor.GRAY + Lang.get("Rightclick") + " " + ChatColor.YELLOW + right;
-    }
-
-    private final UUID uniqueId = UUID.randomUUID();
-    private Player player;
-    private EffectPortal effectPortal;
-    private EffectPortal backupEffectPortal;
-    private boolean finished = false;
-    private Menu menu;
-
-    public EffectPortalEditor(Player player, EffectPortal effectPortal) {
-        this.player = player;
-        this.backupEffectPortal = effectPortal;
-        this.effectPortal = new EffectPortal(this.backupEffectPortal);
-        if(this.effectPortal.getLink() != null) this.effectPortal.setLink(new EffectPortal(this.effectPortal.getLink()));
-        if(this.effectPortal.getDestination() == null) this.effectPortal.addAction(new WarpAction(new Destination()));
-        menu = new Menu(this.player, this);
-    }
-
-    public EffectPortalEditor(Player player, String name) {
-        this.player = player;
-        this.effectPortal = new EffectPortal(Location.getByLocation(player.getLocation()), new Destination(), null, name, true, null);
-        menu = new Menu(this.player, this);
     }
 
     @Override

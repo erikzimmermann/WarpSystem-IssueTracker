@@ -5,7 +5,6 @@ import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilSlot;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncAnvilGUIButton;
-import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
@@ -132,7 +131,7 @@ public class PAppearance extends PageItem {
             public ItemStack craftAnvilItem(ClickType trigger) {
                 return new ItemBuilder(Material.PAPER).setName(Lang.get("Line") + "...").getItem();
             }
-            
+
             @Override
             public boolean canClick(ClickType click) {
                 if(click == ClickType.LEFT) {

@@ -44,7 +44,6 @@ public class ServerManager implements Listener {
     public void setStatus(ServerInfo info, boolean online) {
         if(!online) {
             this.onlineServer.remove(info);
-        }
-        else if(!this.onlineServer.contains(info)) this.onlineServer.add(info);
+        } else if(!this.onlineServer.contains(info)) this.onlineServer.add(info);
     }
 }

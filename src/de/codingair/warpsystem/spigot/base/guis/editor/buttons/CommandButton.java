@@ -1,6 +1,5 @@
 package de.codingair.warpsystem.spigot.base.guis.editor.buttons;
 
-import de.codingair.codingapi.server.DefaultFontInfo;
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;

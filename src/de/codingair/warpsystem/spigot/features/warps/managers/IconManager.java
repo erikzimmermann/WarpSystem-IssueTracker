@@ -53,13 +53,12 @@ import java.util.Map;
 import java.util.Objects;
 
 public class IconManager implements Manager {
+    private List<Icon> icons = new ArrayList<>();
+    private ItemStack background = null;
+
     private static ItemBuilder STANDARD_ITEM() {
         return new ItemBuilder(Material.GRASS);
     }
-
-    private List<Icon> icons = new ArrayList<>();
-
-    private ItemStack background = null;
 
     public static IconManager getInstance() {
         return ((IconManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARP_GUI));
