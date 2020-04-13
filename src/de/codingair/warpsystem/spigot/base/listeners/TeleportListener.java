@@ -26,6 +26,29 @@ public class TeleportListener implements Listener {
     public static final HashMap<Player, org.bukkit.Location> TELEPORTS = new HashMap<>();
     private static final TimeMap<String, Object[]> teleport = new TimeMap<>();
 
+    public static void setSpawnPositionOrTeleport(String name, Location location, String displayName) {
+        setSpawnPositionOrTeleport(name, location, displayName, null);
+    }
+
+    public static void setSpawnPositionOrTeleport(String name, Location location, String displayName, String message) {
+        if(message != null) message = Lang.getPrefix() + message.replace("%warp%", displayName);
+
+        Player player = Bukkit.getPlayer(name);
+
+        if(player == null) {
+            //save
+            teleport.put(name, new Object[] {location, displayName, message});
+        } else {
+            //teleport
+            if(location.getWorld() == null) {
+                player.sendMessage(new String[] {" ", Lang.getPrefix() + "§4World '" + location.getWorld() + "' is missing. Please contact an admin!", " "});
+                return;
+            }
+
+            Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.GlobalWarp, new Destination(new LocationAdapter(location)), displayName, 0, true, true, true, true, null), 2L);
+        }
+    }
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTeleport(PlayerTeleportEvent e) {
         org.bukkit.Location loc = TELEPORTS.remove(e.getPlayer());
@@ -70,7 +93,7 @@ public class TeleportListener implements Listener {
 
         Block exact = p.getLocation().getBlock();
         Block below = p.getLocation().subtract(0, 0.5, 0).getBlock();
-        
+
         if(exact.getType().name().contains("WATER") || below.getType().name().contains("WATER")
                 || exact.getType().name().contains("LAVA") || below.getType().name().contains("LAVA")
                 || exact.getType().name().contains("KELP") || below.getType().name().contains("KELP")
@@ -81,28 +104,5 @@ public class TeleportListener implements Listener {
         }
 
         WarpSystem.getInstance().getTeleportManager().cancelTeleport(p);
-    }
-
-    public static void setSpawnPositionOrTeleport(String name, Location location, String displayName) {
-        setSpawnPositionOrTeleport(name, location, displayName, null);
-    }
-
-    public static void setSpawnPositionOrTeleport(String name, Location location, String displayName, String message) {
-        if(message != null) message = Lang.getPrefix() + message.replace("%warp%", displayName);
-
-        Player player = Bukkit.getPlayer(name);
-
-        if(player == null) {
-            //save
-            teleport.put(name, new Object[] {location, displayName, message});
-        } else {
-            //teleport
-            if(location.getWorld() == null) {
-                player.sendMessage(new String[] {" ", Lang.getPrefix() + "§4World '" + location.getWorld() + "' is missing. Please contact an admin!", " "});
-                return;
-            }
-
-            Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.GlobalWarp, new Destination(new LocationAdapter(location)), displayName, 0, true, true, true, true, null), 2L);
-        }
     }
 }

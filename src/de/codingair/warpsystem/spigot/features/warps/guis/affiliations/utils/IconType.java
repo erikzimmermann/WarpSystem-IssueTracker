@@ -1,8 +1,8 @@
 package de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils;
 
+import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
-import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
 
 public enum IconType {

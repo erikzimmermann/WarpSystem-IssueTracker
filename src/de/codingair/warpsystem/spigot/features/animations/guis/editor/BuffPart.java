@@ -3,8 +3,8 @@ package de.codingair.warpsystem.spigot.features.animations.guis.editor;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
-import de.codingair.codingapi.player.gui.hotbar.components.ItemComponent;
 import de.codingair.codingapi.player.gui.hotbar.ItemListener;
+import de.codingair.codingapi.player.gui.hotbar.components.ItemComponent;
 import de.codingair.codingapi.player.gui.inventory.gui.Skull;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
@@ -29,6 +29,24 @@ public class BuffPart extends HotbarGUI {
 
         this.menu = menu;
         this.slot = slot;
+    }
+
+    public static PotionEffectType next(PotionEffectType type) {
+        for(int i = 0; i < PotionEffectType.values().length; i++) {
+            if(PotionEffectType.values()[i].equals(type)) return i + 1 == PotionEffectType.values().length ? PotionEffectType.values()[0] : PotionEffectType.values()[i + 1];
+        }
+
+        throw new IllegalArgumentException("Couldn't found PotionEffectType with type=" + type.getName());
+    }
+
+    public static PotionEffectType previous(PotionEffectType type) {
+        for(int i = 0; i < PotionEffectType.values().length; i++) {
+            if(PotionEffectType.values()[i].equals(type)) {
+                return i - 1 < 0 ? PotionEffectType.values()[PotionEffectType.values().length - 1] : PotionEffectType.values()[i - 1];
+            }
+        }
+
+        throw new IllegalArgumentException("Couldn't found PotionEffectType with type=" + type.getName());
     }
 
     public void initialize() {
@@ -148,24 +166,6 @@ public class BuffPart extends HotbarGUI {
         if(s == null) return null;
 
         return s.substring(0, 1).toUpperCase() + s.substring(1);
-    }
-
-    public static PotionEffectType next(PotionEffectType type) {
-        for(int i = 0; i < PotionEffectType.values().length; i++) {
-            if(PotionEffectType.values()[i].equals(type)) return i + 1 == PotionEffectType.values().length ? PotionEffectType.values()[0] : PotionEffectType.values()[i + 1];
-        }
-
-        throw new IllegalArgumentException("Couldn't found PotionEffectType with type=" + type.getName());
-    }
-
-    public static PotionEffectType previous(PotionEffectType type) {
-        for(int i = 0; i < PotionEffectType.values().length; i++) {
-            if(PotionEffectType.values()[i].equals(type)) {
-                return i - 1 < 0 ? PotionEffectType.values()[PotionEffectType.values().length - 1] : PotionEffectType.values()[i - 1];
-            }
-        }
-
-        throw new IllegalArgumentException("Couldn't found PotionEffectType with type=" + type.getName());
     }
 
     private Buff getBuff() {

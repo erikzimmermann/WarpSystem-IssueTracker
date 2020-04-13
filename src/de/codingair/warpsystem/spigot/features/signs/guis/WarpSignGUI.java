@@ -44,6 +44,10 @@ public class WarpSignGUI extends Editor<WarpSign> {
 
     }
 
+    public static String getMainTitle() {
+        return Editor.TITLE_COLOR + Lang.get("WarpSigns");
+    }
+
     public static class ShowIcon implements de.codingair.warpsystem.spigot.base.guis.editor.ShowIcon {
         private String[] lines;
 
@@ -65,9 +69,5 @@ public class WarpSignGUI extends Editor<WarpSign> {
 
             return builder.getItem();
         }
-    }
-
-    public static String getMainTitle() {
-        return Editor.TITLE_COLOR + Lang.get("WarpSigns");
     }
 }

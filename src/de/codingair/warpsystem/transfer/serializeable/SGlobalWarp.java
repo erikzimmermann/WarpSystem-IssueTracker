@@ -61,6 +61,10 @@ public class SGlobalWarp implements Serializable {
         return loc;
     }
 
+    public void setLoc(SLocation loc) {
+        this.loc = loc;
+    }
+
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
@@ -69,9 +73,5 @@ public class SGlobalWarp implements Serializable {
         return Objects.equals(name, that.name) &&
                 Objects.equals(server, that.server) &&
                 Objects.equals(loc, that.loc);
-    }
-
-    public void setLoc(SLocation loc) {
-        this.loc = loc;
     }
 }

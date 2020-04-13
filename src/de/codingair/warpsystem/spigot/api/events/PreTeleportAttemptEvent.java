@@ -19,6 +19,10 @@ public class PreTeleportAttemptEvent extends PlayerEvent {
         this.destination = destination;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     public Destination getDestination() {
         return destination;
     }
@@ -26,10 +30,6 @@ public class PreTeleportAttemptEvent extends PlayerEvent {
     @Override
     public HandlerList getHandlers() {
         return getHandlerList();
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     public String getHotbarMessage() {

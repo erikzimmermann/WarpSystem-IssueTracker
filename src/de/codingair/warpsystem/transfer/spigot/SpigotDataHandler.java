@@ -4,7 +4,6 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.codingapi.tools.time.TimeListener;
 import de.codingair.warpsystem.transfer.DataHandler;
-import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpUpdatePacket;
 import de.codingair.warpsystem.transfer.packets.utils.*;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
 import org.bukkit.Bukkit;
@@ -20,12 +19,11 @@ import java.util.List;
 import java.util.UUID;
 
 public class SpigotDataHandler implements DataHandler {
+    private final List<PacketListener> listeners = new ArrayList<>();
     private JavaPlugin plugin;
     private ChannelListener listener = new ChannelListener(this);
     private SpigotPacketHandler packetHandler = new SpigotPacketHandler(this);
     private HashMap<UUID, Callback> callbacks = new HashMap<>();
-    private final List<PacketListener> listeners = new ArrayList<>();
-
     private TimeList<UUID> timeOut = new TimeList<>();
     private TimeListener<UUID> timeOutListener;
 

@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface Filter {
     Result importData();
+
     List<String> loadWarpNames();
+
     SimpleWarp loadWarp(String link);
 }

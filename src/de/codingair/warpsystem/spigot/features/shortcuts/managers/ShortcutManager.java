@@ -1,7 +1,6 @@
 package de.codingair.warpsystem.spigot.features.shortcuts.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
-import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -19,7 +18,6 @@ import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +28,10 @@ public class ShortcutManager implements Manager, BungeeFeature {
     private List<Shortcut> shortcuts = new ArrayList<>();
     private HashMap<Shortcut, ShortcutExecutor> executors = new HashMap<>();
     private ShortcutPacketListener listener;
+
+    public static ShortcutManager getInstance() {
+        return ((ShortcutManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.SHORTCUTS));
+    }
 
     @Override
     public boolean load(boolean loader) {
@@ -214,9 +216,5 @@ public class ShortcutManager implements Manager, BungeeFeature {
 
     public List<Shortcut> getShortcuts() {
         return shortcuts;
-    }
-
-    public static ShortcutManager getInstance() {
-        return ((ShortcutManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.SHORTCUTS));
     }
 }

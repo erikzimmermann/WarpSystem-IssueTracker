@@ -8,13 +8,12 @@ import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
-import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
@@ -216,7 +215,7 @@ public class CGlobalWarps extends CommandBuilder implements BungeeFeature {
         getBaseComponent().addChild(new CommandComponent("list") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                new GGlobalWarpList((Player) sender){
+                new GGlobalWarpList((Player) sender) {
                     @Override
                     public void onClick(String warp, ClickType clickType) {
                         WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, Origin.GlobalWarp, new Destination(warp, DestinationType.GlobalWarp), warp, 0, true, true,

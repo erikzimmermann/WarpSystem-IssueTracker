@@ -7,7 +7,7 @@ import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 
 public class ImportHelper {
-    public static Location stringToLoc(String s){
+    public static Location stringToLoc(String s) {
         if(s == null) return null;
 
         s = s.replaceAll(",", ".");

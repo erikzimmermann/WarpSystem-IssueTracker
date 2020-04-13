@@ -22,6 +22,12 @@ public class EffectPortalManager implements Manager {
     private List<EffectPortal> effectPortals = new ArrayList<>();
     private double maxParticleDistance = 70D;
 
+    public static EffectPortalManager getInstance() {
+        if(instance == null) instance = WarpSystem.getInstance().getDataManager().getManager(FeatureType.EFFECT_PORTALS);
+        if(instance == null) instance = new EffectPortalManager();
+        return instance;
+    }
+
     @Override
     public boolean load(boolean loader) {
         if(WarpSystem.getInstance().getFileManager().getFile("Teleporters") == null) WarpSystem.getInstance().getFileManager().loadFile("Teleporters", "/Memory/");
@@ -153,11 +159,5 @@ public class EffectPortalManager implements Manager {
 
     public double getMaxParticleDistance() {
         return maxParticleDistance;
-    }
-
-    public static EffectPortalManager getInstance() {
-        if(instance == null) instance = WarpSystem.getInstance().getDataManager().getManager(FeatureType.EFFECT_PORTALS);
-        if(instance == null) instance = new EffectPortalManager();
-        return instance;
     }
 }

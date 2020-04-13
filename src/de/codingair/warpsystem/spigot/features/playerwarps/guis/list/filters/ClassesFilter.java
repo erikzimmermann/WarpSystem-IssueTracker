@@ -182,7 +182,7 @@ public class ClassesFilter implements Filter {
         @Override
         public void onOtherClick(InventoryClickEvent e) {
             if(e.isShiftClick() && e.isRightClick()) page.setSearch(null);
-            else if(e.isLeftClick()){
+            else if(e.isLeftClick()) {
                 Object[] extra = page.getExtra();
                 if(extra.length == 1) page.setExtra(true, null, extra[0]);
                 else page.setExtra(true, extra[1]);

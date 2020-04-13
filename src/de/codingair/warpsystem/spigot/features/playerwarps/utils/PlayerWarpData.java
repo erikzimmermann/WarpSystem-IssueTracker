@@ -508,12 +508,12 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         return ((int) inactiveSales) & 0xFF;
     }
 
-    public void increaseInactiveSales() {
-        inactiveSales = (byte) (getInactiveSales() + 1);
-    }
-
     public void setInactiveSales(Byte inactiveSales) {
         this.inactiveSales = inactiveSales;
+    }
+
+    public void increaseInactiveSales() {
+        inactiveSales = (byte) (getInactiveSales() + 1);
     }
 
     public List<Byte> getClasses() {

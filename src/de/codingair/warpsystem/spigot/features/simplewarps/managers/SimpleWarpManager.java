@@ -23,6 +23,12 @@ public class SimpleWarpManager implements Manager {
     private List<String> reservedNames = new ArrayList<>();
     private ConfigFile file;
 
+    public static SimpleWarpManager getInstance() {
+        if(instance == null) instance = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
+        if(instance == null) instance = new SimpleWarpManager();
+        return instance;
+    }
+
     @Override
     public boolean load(boolean loader) {
         if(WarpSystem.getInstance().getFileManager().getFile("SimpleWarps") == null) WarpSystem.getInstance().getFileManager().loadFile("SimpleWarps", "/Memory/");
@@ -145,11 +151,5 @@ public class SimpleWarpManager implements Manager {
         }
 
         return true;
-    }
-
-    public static SimpleWarpManager getInstance() {
-        if(instance == null) instance = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
-        if(instance == null) instance = new SimpleWarpManager();
-        return instance;
     }
 }

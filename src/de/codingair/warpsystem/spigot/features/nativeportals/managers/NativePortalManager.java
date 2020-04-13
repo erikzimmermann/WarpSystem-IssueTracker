@@ -35,6 +35,10 @@ public class NativePortalManager implements Manager {
 
     private boolean sendMessage;
 
+    public static NativePortalManager getInstance() {
+        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.NATIVE_PORTALS);
+    }
+
     @Override
     public boolean load(boolean loader) {
         ConfigFile config = WarpSystem.getInstance().getFileManager().getFile("Config");
@@ -233,10 +237,6 @@ public class NativePortalManager implements Manager {
 
     public List<NativePortal> getNativePortals() {
         return nativePortals;
-    }
-
-    public static NativePortalManager getInstance() {
-        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.NATIVE_PORTALS);
     }
 
     public TimeList<String> getGoingToDelete() {

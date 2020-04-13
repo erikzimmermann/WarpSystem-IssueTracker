@@ -27,7 +27,7 @@ public class CostsButton extends SyncAnvilGUIButton {
         this.object = object;
         update(false);
     }
-    
+
     @Override
     public ItemStack craftItem() {
         if(object == null) return new ItemStack(Material.AIR);

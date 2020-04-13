@@ -9,8 +9,8 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
-import de.codingair.warpsystem.spigot.base.utils.options.specific.GeneralOptions;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.options.specific.GeneralOptions;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -109,8 +109,7 @@ public class PGeneral extends PageItem {
                         .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Walking_During_Teleports"))
                         .setLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": §7'" + (options.isAllowMove() ? "§a" + Lang.get("Enabled") : "§c" + Lang.get("Disabled")) + "§7'")
                         .addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7" + Lang.get("Toggle"))
-                        .setHideStandardLore(true)
-                        ;
+                        .setHideStandardLore(true);
 
                 return builder.getItem();
             }

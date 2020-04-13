@@ -19,6 +19,10 @@ import java.util.Map;
 public class SignManager implements Manager {
     private List<WarpSign> warpSigns = new ArrayList<>();
 
+    public static SignManager getInstance() {
+        return ((SignManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIGNS));
+    }
+
     @Override
     public boolean load(boolean loader) {
         boolean success = true;
@@ -104,9 +108,5 @@ public class SignManager implements Manager {
 
     public List<WarpSign> getWarpSigns() {
         return warpSigns;
-    }
-
-    public static SignManager getInstance() {
-        return ((SignManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIGNS));
     }
 }

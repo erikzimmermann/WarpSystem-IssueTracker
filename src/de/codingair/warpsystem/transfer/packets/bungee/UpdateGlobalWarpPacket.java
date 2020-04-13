@@ -57,16 +57,16 @@ public class UpdateGlobalWarpPacket implements Packet {
             this.id = id;
         }
 
-        public int getId() {
-            return id;
-        }
-
         public static Action getById(int id) {
             for(Action a : values()) {
                 if(a.getId() == id) return a;
             }
 
             return null;
+        }
+
+        public int getId() {
+            return id;
         }
     }
 }

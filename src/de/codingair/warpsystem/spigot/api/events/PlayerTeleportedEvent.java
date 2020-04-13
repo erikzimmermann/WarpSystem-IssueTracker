@@ -5,7 +5,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.util.Vector;
 
 public class PlayerTeleportedEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
@@ -20,13 +19,13 @@ public class PlayerTeleportedEvent extends PlayerEvent {
         this.runAfterEffects = runAfterEffects;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     @Override
     public HandlerList getHandlers() {
         return getHandlerList();
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     public Location getFrom() {

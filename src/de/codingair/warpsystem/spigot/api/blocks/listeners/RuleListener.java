@@ -1,11 +1,8 @@
 package de.codingair.warpsystem.spigot.api.blocks.listeners;
 
-import com.earth2me.essentials.Warps;
 import de.codingair.codingapi.API;
 import de.codingair.warpsystem.spigot.api.blocks.StaticLavaBlock;
 import de.codingair.warpsystem.spigot.api.blocks.utils.StaticBlock;
-import de.codingair.warpsystem.spigot.base.WarpSystem;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;

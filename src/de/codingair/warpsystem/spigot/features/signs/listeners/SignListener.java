@@ -2,12 +2,9 @@ package de.codingair.warpsystem.spigot.features.signs.listeners;
 
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.tools.Location;
-import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
-import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.signs.guis.WarpSignGUI;
 import de.codingair.warpsystem.spigot.features.signs.managers.SignManager;

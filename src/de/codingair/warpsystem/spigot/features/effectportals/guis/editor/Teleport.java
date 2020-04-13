@@ -40,6 +40,51 @@ public class Teleport extends HotbarGUI {
         setClickSound(new SoundData(Sound.CLICK, 0.5F, 1F));
     }
 
+    public static Sound next(Sound sound) {
+        for(int i = 0; i < Sound.values().length; i++) {
+            if(Sound.values()[i].equals(sound)) return i + 1 == Sound.values().length ? Sound.values()[0] : Sound.values()[i + 1];
+        }
+
+        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
+    }
+
+    public static Sound shiftNext(Sound sound) {
+        int id = -1;
+        for(int i = 0; i < Sound.values().length; i++) {
+            if(Sound.values()[i].equals(sound)) {
+                id = i;
+            } else if(id >= 0 && sound.name().charAt(0) != Sound.values()[i].name().charAt(0)) {
+                return Sound.values()[i];
+            }
+        }
+
+        return Sound.values()[0];
+    }
+
+    public static Sound previous(Sound sound) {
+        for(int i = 0; i < Sound.values().length; i++) {
+            if(Sound.values()[i].equals(sound)) {
+                return i - 1 < 0 ? Sound.values()[Sound.values().length - 1] : Sound.values()[i - 1];
+            }
+        }
+
+        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
+    }
+
+    public static Sound shiftPrevious(Sound sound) {
+        int id = -1;
+
+        for(int i = 0; i < Sound.values().length; i++) {
+            if(Sound.values()[i].name().charAt(0) == sound.name().charAt(0)) {
+                return id == -1 ? Sound.values()[Sound.values().length - 1] : Sound.values()[id];
+            } else {
+                id = i;
+            }
+        }
+
+        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
+    }
+
     public void initialize() {
         setItem(0, new ItemComponent(new ItemBuilder(Skull.ArrowLeft).setName("§7» §c" + Lang.get("Back") + "§7 «").getItem()).setLink(this.menu));
         setItem(1, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
@@ -267,7 +312,7 @@ public class Teleport extends HotbarGUI {
         });
 
         setItem(5, new ItemComponent(new ItemBuilder(XMaterial.REDSTONE)
-                .setName("§7" + Lang.get("Permission") + ": "+(getPortal().getPermission() == null ? "§c-" : "'§e" + getPortal().getPermission() + "§7'"))
+                .setName("§7" + Lang.get("Permission") + ": " + (getPortal().getPermission() == null ? "§c-" : "'§e" + getPortal().getPermission() + "§7'"))
                 .getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
@@ -283,7 +328,7 @@ public class Teleport extends HotbarGUI {
                                 }
 
                                 getPortal().setPermission(e.getInput());
-                                updateDisplayName(ic, "§7" + Lang.get("Permission") + ": "+(getPortal().getPermission() == null ? "§c-" : "'§e" + getPortal().getPermission() + "§7'"));
+                                updateDisplayName(ic, "§7" + Lang.get("Permission") + ": " + (getPortal().getPermission() == null ? "§c-" : "'§e" + getPortal().getPermission() + "§7'"));
                                 e.setClose(true);
                             }
                         }
@@ -294,7 +339,7 @@ public class Teleport extends HotbarGUI {
                     }, new ItemBuilder(XMaterial.PAPER).setName(getPortal().getPermission() != null ? getPortal().getPermission() : Lang.get("Permission") + "...").getItem());
                 } else if(clickType == ClickType.RIGHT_CLICK) {
                     getPortal().setPermission(null);
-                    updateDisplayName(ic, "§7" + Lang.get("Permission") + ": "+(getPortal().getPermission() == null ? "§c-" : "'§e" + getPortal().getPermission() + "§7'"));
+                    updateDisplayName(ic, "§7" + Lang.get("Permission") + ": " + (getPortal().getPermission() == null ? "§c-" : "'§e" + getPortal().getPermission() + "§7'"));
                 }
             }
 
@@ -378,51 +423,6 @@ public class Teleport extends HotbarGUI {
 
     private float round(float d) {
         return ((float) Math.round(d * 10)) / 10;
-    }
-
-    public static Sound next(Sound sound) {
-        for(int i = 0; i < Sound.values().length; i++) {
-            if(Sound.values()[i].equals(sound)) return i + 1 == Sound.values().length ? Sound.values()[0] : Sound.values()[i + 1];
-        }
-
-        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
-    }
-
-    public static Sound shiftNext(Sound sound) {
-        int id = -1;
-        for(int i = 0; i < Sound.values().length; i++) {
-            if(Sound.values()[i].equals(sound)) {
-                id = i;
-            } else if(id >= 0 && sound.name().charAt(0) != Sound.values()[i].name().charAt(0)) {
-                return Sound.values()[i];
-            }
-        }
-
-        return Sound.values()[0];
-    }
-
-    public static Sound previous(Sound sound) {
-        for(int i = 0; i < Sound.values().length; i++) {
-            if(Sound.values()[i].equals(sound)) {
-                return i - 1 < 0 ? Sound.values()[Sound.values().length - 1] : Sound.values()[i - 1];
-            }
-        }
-
-        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
-    }
-
-    public static Sound shiftPrevious(Sound sound) {
-        int id = -1;
-
-        for(int i = 0; i < Sound.values().length; i++) {
-            if(Sound.values()[i].name().charAt(0) == sound.name().charAt(0)) {
-                return id == -1 ? Sound.values()[Sound.values().length - 1] : Sound.values()[id];
-            } else {
-                id = i;
-            }
-        }
-
-        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
     }
 
     private SoundData getTeleportSound() {

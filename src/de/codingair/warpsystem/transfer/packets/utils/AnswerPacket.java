@@ -10,11 +10,11 @@ public class AnswerPacket<E> extends AssignedPacket {
         this.value = value;
     }
 
-    public void setValue(E value) {
-        this.value = value;
-    }
-
     public E getValue() {
         return value;
+    }
+
+    public void setValue(E value) {
+        this.value = value;
     }
 }

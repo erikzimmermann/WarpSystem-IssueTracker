@@ -23,6 +23,12 @@ public class AnimationManager implements Manager {
     private List<Animation> animationList = new ArrayList<>();
     private Animation active = null;
 
+    public static AnimationManager getInstance() {
+        if(instance == null) instance = WarpSystem.getInstance().getDataManager().getManager(FeatureType.ANIMATION_EDITOR);
+        if(instance == null) instance = new AnimationManager();
+        return instance;
+    }
+
     @Override
     public boolean load(boolean loader) {
         if(WarpSystem.getInstance().getFileManager().getFile("Animations") == null) WarpSystem.getInstance().getFileManager().loadFile("Animations", "/Memory/");
@@ -134,11 +140,5 @@ public class AnimationManager implements Manager {
 
     public void setActive(Animation active) {
         this.active = active;
-    }
-
-    public static AnimationManager getInstance() {
-        if(instance == null) instance = WarpSystem.getInstance().getDataManager().getManager(FeatureType.ANIMATION_EDITOR);
-        if(instance == null) instance = new AnimationManager();
-        return instance;
     }
 }

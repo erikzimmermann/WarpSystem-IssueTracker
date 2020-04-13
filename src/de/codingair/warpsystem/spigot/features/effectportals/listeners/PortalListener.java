@@ -5,7 +5,6 @@ import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.effectportals.EffectPortalEditor;
 import de.codingair.warpsystem.spigot.features.effectportals.commands.CPortal;
 import de.codingair.warpsystem.spigot.features.effectportals.guis.PortalDeleteGUI;

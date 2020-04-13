@@ -9,10 +9,10 @@ import org.bukkit.entity.Player;
 public class DeleteGUI extends ConfirmGUI {
     public DeleteGUI(Player p, Callback<Boolean> callback, Runnable close) {
         super(p, Lang.get("Delete"), Lang.get("Apply_Delete_No"), Lang.get("NativePortal_Confirm_Delete"), Lang.get("Apply_Delete_Yes"), WarpSystem.getInstance(), new Callback<Boolean>() {
-                    @Override
-                    public void accept(Boolean answer) {
-                        callback.accept(!answer);
-                    }
-                }, close);
+            @Override
+            public void accept(Boolean answer) {
+                callback.accept(!answer);
+            }
+        }, close);
     }
 }
