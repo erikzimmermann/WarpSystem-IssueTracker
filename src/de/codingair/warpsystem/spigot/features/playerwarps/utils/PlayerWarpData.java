@@ -726,5 +726,9 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         public UUID getId() {
             return id;
         }
+
+        public void setId(UUID id) {
+            this.id = id;
+        }
     }
 }
