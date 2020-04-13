@@ -219,6 +219,7 @@ public class EffectPortal extends FeatureObject implements Removable {
 
                 EffectPortal link = new EffectPortal();
                 link.apply(this);
+                link.setUseLink(true);
                 link.setLocation(Location.getByLocation(getDestination().buildLocation()));
 
                 Destination dest = new Destination();

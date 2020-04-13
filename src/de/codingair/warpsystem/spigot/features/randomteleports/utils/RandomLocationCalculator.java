@@ -51,12 +51,7 @@ public class RandomLocationCalculator implements Runnable {
 
     private Location calculate(Player player) throws InterruptedException {
         start = System.currentTimeMillis();
-        Location location;
-
-        List<World> availableWorlds = RandomTeleporterManager.getInstance().getWorldList();
-        if(!availableWorlds.isEmpty()) location = Location.getByLocation(availableWorlds.get((int) (Math.random() * availableWorlds.size())).getSpawnLocation());
-        else location = new Location(player.getLocation());
-
+        Location location = new Location(player.getLocation());
         double x = player.getLocation().getX();
         double z = player.getLocation().getZ();
 
@@ -147,7 +142,6 @@ public class RandomLocationCalculator implements Runnable {
     private boolean correct(Location location, boolean safety) throws InterruptedException {
         if(RandomTeleporterManager.getInstance().getBiomeList() != null && !RandomTeleporterManager.getInstance().getBiomeList().contains(location.getBlock().getBiome())) return false;
         if(RandomTeleporterManager.getInstance().isProtectedRegions() && isProtected(location)) return false;
-        if(RandomTeleporterManager.getInstance().isWorldBorder() && !isInsideOfWorldBorder(location)) return false;
 
         if(safety) {
             Location above = location.clone();
@@ -174,11 +168,6 @@ public class RandomLocationCalculator implements Runnable {
         }
 
         return true;
-    }
-
-    private boolean isInsideOfWorldBorder(Location location) {
-        WorldBorder border = location.getWorld().getWorldBorder();
-        return border == null || Area.isInArea(location, border.getCenter(), border.getSize() / 2, false, 0);
     }
 
     private boolean isProtected(Location location) throws InterruptedException {

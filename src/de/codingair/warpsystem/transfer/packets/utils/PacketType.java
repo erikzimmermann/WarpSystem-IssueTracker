@@ -47,6 +47,10 @@ public enum PacketType {
     DeletePlayerWarpPacket(46, DeletePlayerWarpPacket.class),
     PlayerWarpTeleportProcessPacket(47, PlayerWarpTeleportProcessPacket.class),
 
+    IsOperatorPacket(50, IsOperatorPacket.class),
+    SendDisablePacket(51, SendDisablePacket.class),
+    IsOnlinePacket(52, IsOnlinePacket.class),
+
     BooleanPacket(100, BooleanPacket.class),
     IntegerPacket(101, IntegerPacket.class),
 
