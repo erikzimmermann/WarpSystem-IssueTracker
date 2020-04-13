@@ -22,6 +22,14 @@ public enum Action {
         this.priority = priority;
     }
 
+    public static Action getById(int id) {
+        for(Action action : values()) {
+            if(action.getId() == id) return action;
+        }
+
+        return null;
+    }
+
     public Class<?> getClazz() {
         return clazz;
     }
@@ -34,14 +42,6 @@ public enum Action {
         return priority;
     }
 
-    public static Action getById(int id) {
-        for(Action action : values()) {
-            if(action.getId() == id) return action;
-        }
-
-        return null;
-    }
-    
     public enum Priority {
         HIGHEST, HIGH, LOW, LOWEST
     }

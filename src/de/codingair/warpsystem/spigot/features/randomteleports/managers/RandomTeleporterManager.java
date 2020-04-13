@@ -41,6 +41,10 @@ public class RandomTeleporterManager implements Manager {
     private List<Location> interactBlocks = new ArrayList<>();
     private InteractListener listener = new InteractListener();
 
+    public static RandomTeleporterManager getInstance() {
+        return ((RandomTeleporterManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.RANDOM_TELEPORTS));
+    }
+
     @Override
     public void preLoad() {
         new RTPTagConverter_v4_2_2();
@@ -329,10 +333,6 @@ public class RandomTeleporterManager implements Manager {
 
     public InteractListener getListener() {
         return listener;
-    }
-
-    public static RandomTeleporterManager getInstance() {
-        return ((RandomTeleporterManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.RANDOM_TELEPORTS));
     }
 
     public boolean isBuyable() {

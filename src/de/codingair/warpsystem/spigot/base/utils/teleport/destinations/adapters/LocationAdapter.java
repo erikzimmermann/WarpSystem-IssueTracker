@@ -75,11 +75,11 @@ public class LocationAdapter implements DestinationAdapter, CloneableAdapter {
         return this.location == null ? id == null ? null : de.codingair.codingapi.tools.Location.getByJSONString(id) : this.location;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
     public Location getLocation() {
         return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }

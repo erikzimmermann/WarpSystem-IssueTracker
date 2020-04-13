@@ -88,7 +88,7 @@ public class PWEditor extends Editor<PlayerWarp> {
                 new PAppearance(p, clone, warp, !warp.isOwner(p) || PlayerWarpManager.getManager().existsOwn(p, warp.getName())),
                 new POptions(p, clone, warp, !warp.isOwner(p) || PlayerWarpManager.getManager().existsOwn(p, warp.getName())),
                 new PTrusted(p, clone, warp),
-               (PlayerWarpManager.getManager().isClasses() ? new PClasses(p, clone, warp) : null)
+                (PlayerWarpManager.getManager().isClasses() ? new PClasses(p, clone, warp) : null)
         );
 
         this.original = warp;
@@ -109,69 +109,6 @@ public class PWEditor extends Editor<PlayerWarp> {
         initControllButtons();
     }
 
-    @Override
-    public void initControllButtons() {
-        super.initControllButtons();
-
-        if(warp != null && !warp.isOwner(getPlayer())) {
-            ItemButtonOption option = new ItemButtonOption();
-            option.setOnlyLeftClick(true);
-
-            addButton(new SyncButton(8, 2) {
-                private BukkitRunnable runnable;
-
-                @Override
-                public ItemStack craftItem() {
-                    boolean finish = canFinish();
-                    return new ItemBuilder(finish ? XMaterial.LIME_TERRACOTTA : XMaterial.LIGHT_GRAY_TERRACOTTA).setName((finish ? "§a" : "§7") + Lang.get("Finish") + finishButtonNameAddition()).addLore((runnable != null ? "§7» §c" + ChatColor.stripColor(Lang.get("Confirm")) : null)).addLore(finishButtonLoreAddition()).getItem();
-                }
-
-                @Override
-                public void onClick(InventoryClickEvent e, Player player) {
-                    if(runnable != null) {
-                        //save
-                        close();
-                        getBackup().applyTo(getClone());
-
-                        SoundData sound = getSuccessSound();
-                        if(sound != null) sound.play(player);
-
-                        String msg = getSuccessMessage();
-                        if(msg != null) getPlayer().sendMessage(msg);
-                    } else {
-                        runnable = new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                runnable = null;
-                                update();
-                            }
-                        };
-                        runnable.runTaskLater(WarpSystem.getInstance(), 20);
-
-                        update();
-                    }
-                }
-
-                @Override
-                public boolean canClick(ClickType click) {
-                    return canFinish();
-                }
-            }.setOption(option));
-        }
-    }
-
-    public void updateTime() {
-        if(getCurrent().getClass() == POptions.class) {
-            ((SyncButton) getCurrent().getButton(4, 2)).update();
-        }
-
-        updateCosts();
-    }
-
-    public void updateCosts() {
-        ((SyncButton) getButtonAt(8, 2)).update();
-    }
-
     public static String getCostsMessage(double costs, PageItem page) {
         if(costs == 0 || !PlayerWarpManager.getManager().isEconomy() || (page.getLast() != null && !((PWEditor) page.getLast()).getClone().isOwner(page.getLast().getPlayer()))) return null;
         Number n = cut(costs);
@@ -190,10 +127,6 @@ public class PWEditor extends Editor<PlayerWarp> {
 
         if(d == (int) d) return (int) d;
         else return d;
-    }
-
-    private Number calculateCosts() {
-        return paid = calculateCosts(creating, original, warp != null && warp.isOwner(getPlayer()) ? warp : null);
     }
 
     private static Number calculateCosts(boolean creating, PlayerWarp original, PlayerWarp warp) {
@@ -287,6 +220,81 @@ public class PWEditor extends Editor<PlayerWarp> {
         }
 
         return costs;
+    }
+
+    private static boolean canPay(Player player, double costs) {
+        return !PlayerWarpManager.getManager().isEconomy() || !MoneyAdapterType.canEnable() || MoneyAdapterType.getActive().getMoney(player) >= costs;
+    }
+
+    public static String getMainTitle() {
+        return Editor.TITLE_COLOR + Lang.get("Player_Warp_Editor");
+    }
+
+    @Override
+    public void initControllButtons() {
+        super.initControllButtons();
+
+        if(warp != null && !warp.isOwner(getPlayer())) {
+            ItemButtonOption option = new ItemButtonOption();
+            option.setOnlyLeftClick(true);
+
+            addButton(new SyncButton(8, 2) {
+                private BukkitRunnable runnable;
+
+                @Override
+                public ItemStack craftItem() {
+                    boolean finish = canFinish();
+                    return new ItemBuilder(finish ? XMaterial.LIME_TERRACOTTA : XMaterial.LIGHT_GRAY_TERRACOTTA).setName((finish ? "§a" : "§7") + Lang.get("Finish") + finishButtonNameAddition()).addLore((runnable != null ? "§7» §c" + ChatColor.stripColor(Lang.get("Confirm")) : null)).addLore(finishButtonLoreAddition()).getItem();
+                }
+
+                @Override
+                public void onClick(InventoryClickEvent e, Player player) {
+                    if(runnable != null) {
+                        //save
+                        close();
+                        getBackup().applyTo(getClone());
+
+                        SoundData sound = getSuccessSound();
+                        if(sound != null) sound.play(player);
+
+                        String msg = getSuccessMessage();
+                        if(msg != null) getPlayer().sendMessage(msg);
+                    } else {
+                        runnable = new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                runnable = null;
+                                update();
+                            }
+                        };
+                        runnable.runTaskLater(WarpSystem.getInstance(), 20);
+
+                        update();
+                    }
+                }
+
+                @Override
+                public boolean canClick(ClickType click) {
+                    return canFinish();
+                }
+            }.setOption(option));
+        }
+    }
+
+    public void updateTime() {
+        if(getCurrent().getClass() == POptions.class) {
+            ((SyncButton) getCurrent().getButton(4, 2)).update();
+        }
+
+        updateCosts();
+    }
+
+    public void updateCosts() {
+        ((SyncButton) getButtonAt(8, 2)).update();
+    }
+
+    private Number calculateCosts() {
+        return paid = calculateCosts(creating, original, warp != null && warp.isOwner(getPlayer()) ? warp : null);
     }
 
     @Override
@@ -422,10 +430,6 @@ public class PWEditor extends Editor<PlayerWarp> {
         return lore;
     }
 
-    private static boolean canPay(Player player, double costs) {
-        return !PlayerWarpManager.getManager().isEconomy() || !MoneyAdapterType.canEnable() || MoneyAdapterType.getActive().getMoney(player) >= costs;
-    }
-
     @Override
     public String getSuccessMessage() {
         if(creating) {
@@ -438,9 +442,5 @@ public class PWEditor extends Editor<PlayerWarp> {
 
     public PlayerWarp getClone() {
         return warp;
-    }
-
-    public static String getMainTitle() {
-        return Editor.TITLE_COLOR + Lang.get("Player_Warp_Editor");
     }
 }

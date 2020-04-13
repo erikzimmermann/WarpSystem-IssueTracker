@@ -2,7 +2,6 @@ package de.codingair.warpsystem.spigot.features.teleportcommand;
 
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.player.chat.ChatButton;
-import de.codingair.codingapi.player.chat.ChatButtonListener;
 import de.codingair.codingapi.player.chat.ChatButtonManager;
 import de.codingair.codingapi.player.chat.SimpleMessage;
 import de.codingair.codingapi.tools.Callback;
@@ -34,7 +33,10 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TeleportCommandManager implements Manager, BungeeFeature, Collectible {
     private TimeList<String> hasInvites = new TimeList<>();
@@ -61,6 +63,10 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
     private CTpaAll tpaAll;
     private CTpAll tpAll;
     private CBack back;
+
+    public static TeleportCommandManager getInstance() {
+        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.TELEPORT_COMMAND);
+    }
 
     @Override
     public void collectOptionStatistics(Map<String, Integer> entry) {
@@ -350,10 +356,6 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
         }
 
         return success;
-    }
-
-    public static TeleportCommandManager getInstance() {
-        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.TELEPORT_COMMAND);
     }
 
     public int getTpaCosts() {

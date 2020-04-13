@@ -16,10 +16,6 @@ public class PrepareCoordinationTeleportPacket extends RequestPacket<Integer> {
     public PrepareCoordinationTeleportPacket() {
     }
 
-    public PrepareCoordinationTeleportPacket clone(Callback<Integer> callback) {
-        return new PrepareCoordinationTeleportPacket(player, server, world, destinationName, message, x, y, z, yaw, pitch, costs, callback);
-    }
-
     public PrepareCoordinationTeleportPacket(String player, String server, String world, String destinationName, String message, double x, double y, double z, float yaw, float pitch, double costs, Callback<Integer> callback) {
         super(callback);
         this.player = player;
@@ -33,6 +29,10 @@ public class PrepareCoordinationTeleportPacket extends RequestPacket<Integer> {
         this.yaw = yaw;
         this.pitch = pitch;
         this.costs = costs;
+    }
+
+    public PrepareCoordinationTeleportPacket clone(Callback<Integer> callback) {
+        return new PrepareCoordinationTeleportPacket(player, server, world, destinationName, message, x, y, z, yaw, pitch, costs, callback);
     }
 
     @Override
@@ -84,6 +84,10 @@ public class PrepareCoordinationTeleportPacket extends RequestPacket<Integer> {
         return server;
     }
 
+    public void setServer(String server) {
+        this.server = server;
+    }
+
     public String getWorld() {
         return world;
     }
@@ -114,10 +118,6 @@ public class PrepareCoordinationTeleportPacket extends RequestPacket<Integer> {
 
     public String getDestinationName() {
         return destinationName;
-    }
-
-    public void setServer(String server) {
-        this.server = server;
     }
 
     public String getMessage() {

@@ -6,7 +6,6 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.Wa
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.GlobalLocationAdapter;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
-import de.codingair.warpsystem.spigot.features.playerwarps.utils.tempwarps.TempWarp;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;

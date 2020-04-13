@@ -19,9 +19,8 @@ import java.util.UUID;
 
 public class PortalEditor implements Removable {
     public static final ItemBuilder PORTAL_ITEM = new ItemBuilder(XMaterial.END_STONE).setName(Lang.get("NativePortalEditor_Place_Blocks"));
-
-    private boolean ended = false;
     private final UUID uniqueId = UUID.randomUUID();
+    private boolean ended = false;
     private Player player;
     private NativePortal backup;
     private NativePortal nativePortal;

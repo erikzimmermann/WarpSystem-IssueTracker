@@ -17,6 +17,10 @@ public class ChatInputEvent extends PlayerEvent {
         this.notifier = gui.getTitle();
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     public ChatInputGUI getGui() {
         return gui;
     }
@@ -44,9 +48,5 @@ public class ChatInputEvent extends PlayerEvent {
     @Override
     public HandlerList getHandlers() {
         return getHandlerList();
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 }

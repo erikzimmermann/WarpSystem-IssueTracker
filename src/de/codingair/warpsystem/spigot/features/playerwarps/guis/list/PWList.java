@@ -80,6 +80,11 @@ public class PWList extends SimpleGUI {
         super.initialize(p);
     }
 
+    @Override
+    public PWPage getMain() {
+        return (PWPage) super.getMain();
+    }
+
     private static class PWLayout extends Layout {
         public PWLayout(int size) {
             super(size);
@@ -89,10 +94,5 @@ public class PWList extends SimpleGUI {
         public void initialize() {
             addLine(7, 0, 7, getSize() / 9 - 1, new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem(), true);
         }
-    }
-
-    @Override
-    public PWPage getMain() {
-        return (PWPage) super.getMain();
     }
 }

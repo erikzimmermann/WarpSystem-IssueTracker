@@ -9,8 +9,8 @@ import de.codingair.codingapi.player.gui.anvil.AnvilGUI;
 import de.codingair.codingapi.player.gui.anvil.AnvilListener;
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
-import de.codingair.codingapi.player.gui.hotbar.components.ItemComponent;
 import de.codingair.codingapi.player.gui.hotbar.ItemListener;
+import de.codingair.codingapi.player.gui.hotbar.components.ItemComponent;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
@@ -40,45 +40,6 @@ public class Menu extends HotbarGUI {
     private Buffs buffs;
     private Sounds sounds;
     private HotbarGUI link;
-
-    public static String MINUS_PLUS(String s) {
-        return ACTION_BAR(s, "-", "+");
-    }
-
-    public static String MINUS_PLUS_SHIFT(String s) {
-        return ACTION_BAR(s, "§7(§e" + Lang.get("Shift") + "§7) §e-", "+ §7(§e" + Lang.get("Shift") + "§7)");
-    }
-
-    public static String PREVIOUS_NEXT(String s) {
-        return ACTION_BAR(s, "«", "»");
-    }
-
-    public static String PREVIOUS_NEXT_SHIFT(String s) {
-        return ACTION_BAR(s, "§7(§e" + Lang.get("Shift") + "§7) §e«", "» §7(§e" + Lang.get("Shift") + "§7)");
-    }
-
-    public static String ACTION_BAR(String s, String left, String right) {
-        return ChatColor.YELLOW.toString() + left + ChatColor.GRAY + " " + Lang.get("Leftclick") + " | " + ChatColor.RED + s + ChatColor.GRAY + " | " + ChatColor.GRAY + Lang.get("Rightclick") + " " + ChatColor.YELLOW + right;
-    }
-
-    public enum MenuParts {
-        PARTICLES(Particles.class, new ItemBuilder(XMaterial.BEACON).setName("§7» §e" + Lang.get("Particle_Effects") + "§7 «").getItem()),
-        BUFFS(Buffs.class, new ItemBuilder(XMaterial.SPLASH_POTION).setName("§7» §e" + Lang.get("Potion_Effects") + "§7 «").getItem()),
-        SOUNDS(Sounds.class, new ItemBuilder(XMaterial.NOTE_BLOCK).setName("§7» §e" + Lang.get("Sounds") + "§7 «").getItem()),
-        ;
-
-        private Class<?> clazz;
-        private ItemStack item;
-
-        MenuParts(Class<?> clazz, ItemStack item) {
-            this.clazz = clazz;
-            this.item = item;
-        }
-
-        public ItemStack getItem() {
-            return item.clone();
-        }
-    }
 
     public Menu(Player player, String name) {
         this(player, new Animation(name));
@@ -148,6 +109,26 @@ public class Menu extends HotbarGUI {
         this.animPlayer.setRunning(true);
 
         initialize();
+    }
+
+    public static String MINUS_PLUS(String s) {
+        return ACTION_BAR(s, "-", "+");
+    }
+
+    public static String MINUS_PLUS_SHIFT(String s) {
+        return ACTION_BAR(s, "§7(§e" + Lang.get("Shift") + "§7) §e-", "+ §7(§e" + Lang.get("Shift") + "§7)");
+    }
+
+    public static String PREVIOUS_NEXT(String s) {
+        return ACTION_BAR(s, "«", "»");
+    }
+
+    public static String PREVIOUS_NEXT_SHIFT(String s) {
+        return ACTION_BAR(s, "§7(§e" + Lang.get("Shift") + "§7) §e«", "» §7(§e" + Lang.get("Shift") + "§7)");
+    }
+
+    public static String ACTION_BAR(String s, String left, String right) {
+        return ChatColor.YELLOW.toString() + left + ChatColor.GRAY + " " + Lang.get("Leftclick") + " | " + ChatColor.RED + s + ChatColor.GRAY + " | " + ChatColor.GRAY + Lang.get("Rightclick") + " " + ChatColor.YELLOW + right;
     }
 
     public void initialize() {
@@ -292,5 +273,24 @@ public class Menu extends HotbarGUI {
     public void open(boolean sound) {
         super.open(sound);
         setStartSlot(-1);
+    }
+
+    public enum MenuParts {
+        PARTICLES(Particles.class, new ItemBuilder(XMaterial.BEACON).setName("§7» §e" + Lang.get("Particle_Effects") + "§7 «").getItem()),
+        BUFFS(Buffs.class, new ItemBuilder(XMaterial.SPLASH_POTION).setName("§7» §e" + Lang.get("Potion_Effects") + "§7 «").getItem()),
+        SOUNDS(Sounds.class, new ItemBuilder(XMaterial.NOTE_BLOCK).setName("§7» §e" + Lang.get("Sounds") + "§7 «").getItem()),
+        ;
+
+        private Class<?> clazz;
+        private ItemStack item;
+
+        MenuParts(Class<?> clazz, ItemStack item) {
+            this.clazz = clazz;
+            this.item = item;
+        }
+
+        public ItemStack getItem() {
+            return item.clone();
+        }
     }
 }

@@ -36,6 +36,7 @@ public abstract class ActionObject<T> implements Serializable {
     }
 
     public abstract void read(String data);
+
     public abstract String write();
 
     public void destroy() {

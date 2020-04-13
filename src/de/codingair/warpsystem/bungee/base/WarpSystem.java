@@ -40,6 +40,14 @@ public class WarpSystem extends Plugin {
     private DataManager dataManager = new DataManager();
     private Timer timer = new Timer();
 
+    public static WarpSystem getInstance() {
+        return instance;
+    }
+
+    public static void log(String message) {
+        System.out.println(message);
+    }
+
     @Override
     public void onEnable() {
         instance = this;
@@ -197,10 +205,6 @@ public class WarpSystem extends Plugin {
         }
     }
 
-    public static WarpSystem getInstance() {
-        return instance;
-    }
-
     public BungeeDataHandler getDataHandler() {
         return dataHandler;
     }
@@ -211,10 +215,6 @@ public class WarpSystem extends Plugin {
 
     public ServerManager getServerManager() {
         return serverManager;
-    }
-
-    public static void log(String message) {
-        System.out.println(message);
     }
 
     public DataManager getDataManager() {

@@ -6,7 +6,6 @@ import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 public class SendPlayerWarpUpdatePacket implements Packet {
     private PlayerWarpUpdate update;

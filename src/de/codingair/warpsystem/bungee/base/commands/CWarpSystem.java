@@ -19,7 +19,7 @@ public class CWarpSystem extends Command {
                 sender.sendMessage(new TextComponent(Lang.getPrefix() + "§7System is §creloading§7..."));
                 WarpSystem.getInstance().getFileManager().reloadAll();
                 WarpSystem.getInstance().getDataManager().reload();
-                sender.sendMessage(new TextComponent(Lang.getPrefix() + "§7...§adone§7! ("+(System.currentTimeMillis() - time)+"ms)"));
+                sender.sendMessage(new TextComponent(Lang.getPrefix() + "§7...§adone§7! (" + (System.currentTimeMillis() - time) + "ms)"));
                 return;
             }
         }

@@ -42,6 +42,11 @@ public class WarpSign extends FeatureObject {
         return hasAction(Action.WARP) ? ((WarpAction) getAction(Action.WARP)).getValue() : null;
     }
 
+    public void setDestination(Destination destination) {
+        if(destination == null) removeAction(Action.WARP);
+        else addAction(new WarpAction(destination));
+    }
+
     @Override
     public boolean read(DataWriter d) throws Exception {
         super.read(d);
@@ -99,11 +104,6 @@ public class WarpSign extends FeatureObject {
         return super.equals(o) &&
                 o instanceof WarpSign &&
                 Objects.equals(this.location, ((WarpSign) o).location);
-    }
-
-    public void setDestination(Destination destination) {
-        if(destination == null) removeAction(Action.WARP);
-        else addAction(new WarpAction(destination));
     }
 
     public WarpSign clone() {

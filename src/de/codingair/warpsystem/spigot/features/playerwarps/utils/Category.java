@@ -56,12 +56,12 @@ public class Category implements Serializable {
         return this.builder.getName();
     }
 
-    public int getId() {
-        return id;
-    }
-
     public void setName(String name) {
         this.builder.setName(name);
+    }
+
+    public int getId() {
+        return id;
     }
 
     public List<String> getDescription() {

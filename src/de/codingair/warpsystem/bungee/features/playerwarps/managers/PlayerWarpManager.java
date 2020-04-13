@@ -7,8 +7,8 @@ import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.features.FeatureType;
 import de.codingair.warpsystem.bungee.features.playerwarps.listeners.PlayerWarpListener;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarpData;
-import de.codingair.warpsystem.transfer.packets.general.DeletePlayerWarpPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.SendPlayerWarpOptionsPacket;
+import de.codingair.warpsystem.transfer.packets.general.DeletePlayerWarpPacket;
 import de.codingair.warpsystem.utils.Manager;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
@@ -29,6 +29,10 @@ public class PlayerWarpManager implements Manager {
     private long inactiveTime;
 
     public PlayerWarpManager() {
+    }
+
+    public static PlayerWarpManager getInstance() {
+        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.PLAYER_WARPS);
     }
 
     @Override
@@ -223,10 +227,6 @@ public class PlayerWarpManager implements Manager {
         return result;
     }
 
-    public interface ServerInteraction {
-        void interact(ServerInfo server);
-    }
-
     public List<PlayerWarpData> getWarps(UUID id) {
         List<PlayerWarpData> l = warps.get(id);
         return l == null ? new ArrayList<>() : l;
@@ -251,10 +251,6 @@ public class PlayerWarpManager implements Manager {
 
         if(w == null) add(warp);
         else w.apply(warp);
-    }
-
-    public static PlayerWarpManager getInstance() {
-        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.PLAYER_WARPS);
     }
 
     public boolean isActive(ServerInfo info) {
@@ -284,5 +280,9 @@ public class PlayerWarpManager implements Manager {
 
     public long getInactiveTime() {
         return inactiveTime;
+    }
+
+    public interface ServerInteraction {
+        void interact(ServerInfo server);
     }
 }

@@ -109,10 +109,6 @@ public abstract class Icon implements Serializable {
         return s;
     }
 
-    public void setItem(ItemStack item) {
-        this.item = new SerializableItemStack(item);
-    }
-
     public abstract IconType getType();
 
     public String getName() {
@@ -133,6 +129,10 @@ public abstract class Icon implements Serializable {
 
     public ItemStack getItem() {
         return new ItemBuilder(item.getItem()).setHideStandardLore(true).getItem();
+    }
+
+    public void setItem(ItemStack item) {
+        this.item = new SerializableItemStack(item);
     }
 
     public String getNameWithoutColor() {

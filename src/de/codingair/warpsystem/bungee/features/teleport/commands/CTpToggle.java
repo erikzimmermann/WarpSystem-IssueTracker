@@ -3,8 +3,6 @@ package de.codingair.warpsystem.bungee.features.teleport.commands;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.base.language.Lang;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
-import net.md_5.bungee.BungeeCord;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

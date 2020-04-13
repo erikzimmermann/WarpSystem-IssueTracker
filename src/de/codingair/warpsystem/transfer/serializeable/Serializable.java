@@ -6,5 +6,6 @@ import java.io.IOException;
 
 public interface Serializable {
     void write(DataOutputStream out) throws IOException;
+
     void read(DataInputStream in) throws IOException;
 }

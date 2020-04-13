@@ -2,9 +2,6 @@ package de.codingair.warpsystem.bungee.features.teleport.commands;
 
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.base.language.Lang;
-import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
-import de.codingair.warpsystem.transfer.packets.bungee.TeleportPlayerToCoordsPacket;
-import de.codingair.warpsystem.transfer.packets.bungee.TeleportPlayerToPlayerPacket;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;

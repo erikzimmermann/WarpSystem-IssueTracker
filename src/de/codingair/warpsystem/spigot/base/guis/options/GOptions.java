@@ -47,12 +47,6 @@ public class GOptions extends Editor<OptionBundle> {
         update = clone;
     }
 
-    @Override
-    public String finishButtonNameAddition() {
-        if(old == null || update == null) return "";
-        return reloadRequired(old, update) ? " §8(§7Reload§8)" : "";
-    }
-
     private static boolean reloadRequired(OptionBundle old, OptionBundle update) {
         if(old.getOptions(WarpGUIOptions.class).getEnabled().getValue() != update.getOptions(WarpGUIOptions.class).getEnabled().getValue()) return true;
         if(old.getOptions(WarpSignOptions.class).getEnabled().getValue() != update.getOptions(WarpSignOptions.class).getEnabled().getValue()) return true;
@@ -60,5 +54,11 @@ public class GOptions extends Editor<OptionBundle> {
         if(old.getOptions(NativePortalsOptions.class).getEnabled().getValue() != update.getOptions(NativePortalsOptions.class).getEnabled().getValue()) return true;
 
         return false;
+    }
+
+    @Override
+    public String finishButtonNameAddition() {
+        if(old == null || update == null) return "";
+        return reloadRequired(old, update) ? " §8(§7Reload§8)" : "";
     }
 }

@@ -34,6 +34,11 @@ public class PClasses extends PageItem {
         initialize(p);
     }
 
+    private static String getFreeMessage(PlayerWarp warp, PlayerWarp original, PageItem page) {
+        if(warp.getTrusted().size() - original.getTrusted().size() >= 0) return null;
+        return PWEditor.getFreeMessage(-(warp.getTrusted().size() - original.getTrusted().size()) + " " + Lang.get("Trusted_members"), page);
+    }
+
     @Override
     public ItemStack getPageItem() {
         List<String> l = Lang.getStringList("PlayerWarp_Classes");
@@ -79,11 +84,6 @@ public class PClasses extends PageItem {
 
     private void updateIcon() {
         getLast().updatePageItems();
-    }
-
-    private static String getFreeMessage(PlayerWarp warp, PlayerWarp original, PageItem page) {
-        if(warp.getTrusted().size() - original.getTrusted().size() >= 0) return null;
-        return PWEditor.getFreeMessage(-(warp.getTrusted().size() - original.getTrusted().size()) + " " + Lang.get("Trusted_members"), page);
     }
 
     @Override

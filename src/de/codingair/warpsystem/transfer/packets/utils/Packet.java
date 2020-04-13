@@ -6,6 +6,7 @@ import java.io.IOException;
 
 public interface Packet {
     void write(DataOutputStream out) throws IOException;
+
     void read(DataInputStream in) throws IOException;
 
     default PacketType getType() {

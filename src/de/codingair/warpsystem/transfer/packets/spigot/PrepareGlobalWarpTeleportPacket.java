@@ -71,16 +71,16 @@ public class PrepareGlobalWarpTeleportPacket extends RequestPacket<Integer> {
             this.id = id;
         }
 
-        public int getId() {
-            return id;
-        }
-
         public static Result getById(int id) {
             for(Result value : values()) {
                 if(value.getId() == id) return value;
             }
 
             return null;
+        }
+
+        public int getId() {
+            return id;
         }
     }
 }

@@ -430,6 +430,6 @@ public class DestinationPage extends PageItem {
     }
 
     private double trim(double d) {
-        return ((double)(int) (d * 100)) / 100;
+        return ((double) (int) (d * 100)) / 100;
     }
 }

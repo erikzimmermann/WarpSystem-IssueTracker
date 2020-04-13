@@ -3,10 +3,10 @@ package de.codingair.warpsystem.spigot.features.animations.utils;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.Location;
-import de.codingair.codingapi.tools.io.utils.DataWriter;
-import de.codingair.codingapi.tools.io.utils.Serializable;
 import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.lib.JSONArray;
+import de.codingair.codingapi.tools.io.utils.DataWriter;
+import de.codingair.codingapi.tools.io.utils.Serializable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,6 +134,10 @@ public class Animation implements Serializable {
         return teleportLoc;
     }
 
+    public void setTeleportLoc(Location teleportLoc) {
+        this.teleportLoc = teleportLoc;
+    }
+
     public List<Buff> getBuffList() {
         return buffList;
     }
@@ -156,9 +160,5 @@ public class Animation implements Serializable {
 
     public void setTeleportSound(SoundData teleportSound) {
         this.teleportSound = teleportSound;
-    }
-
-    public void setTeleportLoc(Location teleportLoc) {
-        this.teleportLoc = teleportLoc;
     }
 }

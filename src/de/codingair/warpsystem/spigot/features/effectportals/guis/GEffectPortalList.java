@@ -70,7 +70,8 @@ public abstract class GEffectPortalList extends GUIList<EffectPortal> {
                 }
 
                 @Override
-                public boolean isSearched(String searching) {String destType = null;
+                public boolean isSearched(String searching) {
+                    String destType = null;
                     String dest = null;
 
                     if(value.getDestination() != null) {

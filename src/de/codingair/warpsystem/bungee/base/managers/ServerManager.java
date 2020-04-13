@@ -46,7 +46,6 @@ public class ServerManager implements Listener {
         if(!online) {
             this.onlineServer.remove(info);
             TeleportManager.getInstance().removeOptions(info);
-        }
-        else if(!this.onlineServer.contains(info)) this.onlineServer.add(info);
+        } else if(!this.onlineServer.contains(info)) this.onlineServer.add(info);
     }
 }

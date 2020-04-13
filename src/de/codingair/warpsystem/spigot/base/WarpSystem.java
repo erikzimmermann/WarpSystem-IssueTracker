@@ -61,9 +61,17 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_MODIFY_NATIVE_PORTALS = "WarpSystem.Modify.NativePortals";
     public static final String PERMISSION_MODIFY_RANDOM_TELEPORTER = "WarpSystem.Modify.RandomTeleporters";
     public static final String PERMISSION_MODIFY_PLAYER_WARPS = "WarpSystem.Modify.PlayerWarps";
-    public static String PERMISSION_USE_WARP_GUI = "WarpSystem.Use.WarpGUI";
     public static final String PERMISSION_WARP_GUI_OTHER = "WarpSystem.WarpGUI.Other";
     public static final String PERMISSION_HIDE_ALL_ICONS = "WarpGUI.HideAll";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND = "WarpSystem.Use.TeleportCommand";
+    public static final String PERMISSION_ByPass_Maintenance = "WarpSystem.ByPass.Maintenance";
+    public static final String PERMISSION_ByPass_Teleport_Costs = "WarpSystem.ByPass.Teleport.Costs";
+    public static final String PERMISSION_ByPass_Teleport_Delay = "WarpSystem.ByPass.Teleport.Delay";
+    public static final String PERMISSION_TELEPORT_PRELOAD_CHUNKS = "WarpSystem.Teleport.ChunkPreLoading";
+    public static final String PERMISSION_SIMPLE_WARPS_DIRECT_TELEPORT = "WarpSystem.SimpleWarp.DirectTeleport";
+    public static final int PREMIUM_THREAD_ID = 369986;
+    public static final int FREE_THREAD_ID = 182037;
+    public static String PERMISSION_USE_WARP_GUI = "WarpSystem.Use.WarpGUI";
     public static String PERMISSION_USE_WARP_SIGNS = "WarpSystem.Use.WarpSigns";
     public static String PERMISSION_USE_GLOBAL_WARPS = "WarpSystem.Use.GlobalWarps";
     public static String PERMISSION_USE_SIMPLE_WARPS = "WarpSystem.Use.SimpleWarps";
@@ -71,7 +79,6 @@ public class WarpSystem extends JavaPlugin {
     public static String PERMISSION_USE_PORTALS = "WarpSystem.Use.Portals";
     public static String PERMISSION_USE_NATIVE_PORTALS = "WarpSystem.Use.NativePortals";
     public static String PERMISSION_USE_RANDOM_TELEPORTER = "WarpSystem.Use.RandomTeleporters";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND = "WarpSystem.Use.TeleportCommand";
     public static String PERMISSION_USE_TELEPORT_COMMAND_TP = PERMISSION_USE_TELEPORT_COMMAND + ".Tp";
     public static String PERMISSION_USE_TELEPORT_COMMAND_BACK = PERMISSION_USE_TELEPORT_COMMAND + ".Back";
     public static String PERMISSION_USE_TELEPORT_COMMAND_BACK_DETECT_DEATHS = PERMISSION_USE_TELEPORT_COMMAND_BACK + ".Deaths";
@@ -81,25 +88,11 @@ public class WarpSystem extends JavaPlugin {
     public static String PERMISSION_USE_TELEPORT_COMMAND_TPA_HERE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaHere";
     public static String PERMISSION_USE_TELEPORT_COMMAND_TPALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpAll";
     public static String PERMISSION_USE_TELEPORT_COMMAND_TPA_ALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpaAll";
-
-    public static final String PERMISSION_ByPass_Maintenance = "WarpSystem.ByPass.Maintenance";
-    public static final String PERMISSION_ByPass_Teleport_Costs = "WarpSystem.ByPass.Teleport.Costs";
-    public static final String PERMISSION_ByPass_Teleport_Delay = "WarpSystem.ByPass.Teleport.Delay";
-
-    public static final String PERMISSION_TELEPORT_PRELOAD_CHUNKS = "WarpSystem.Teleport.ChunkPreLoading";
-    public static final String PERMISSION_SIMPLE_WARPS_DIRECT_TELEPORT = "WarpSystem.SimpleWarp.DirectTeleport";
     public static String PERMISSION_ADMIN = "WarpSystem.Admin";
-
-    public static boolean hasPermission(CommandSender sender, String permission) {
-        return permission == null || sender.hasPermission(permission);
-    }
-
-    private static WarpSystem instance;
     public static boolean activated = false;
     public static boolean maintenance = false;
-    public static final int PREMIUM_THREAD_ID = 369986;
-    public static final int FREE_THREAD_ID = 182037;
-
+    private static WarpSystem instance;
+    private static boolean updateAvailable = false;
     private OptionBundle options;
 
     private boolean onBungeeCord = false;
@@ -117,15 +110,42 @@ public class WarpSystem extends JavaPlugin {
     private List<String> runningFirstTime = null;
 
     private Timer timer = new Timer();
-
-    private static boolean updateAvailable = false;
     private boolean old = false;
     private boolean ERROR = true;
-
     private boolean shouldSave = true;
-
     private SpigotDataHandler dataHandler = new SpigotDataHandler(this);
     private UUIDManager uuidManager = new UUIDManager();
+
+    public static boolean hasPermission(CommandSender sender, String permission) {
+        return permission == null || sender.hasPermission(permission);
+    }
+
+    public static void updateCommandList() {
+        if(Version.getVersion().isBiggerThan(Version.v1_12)) {
+            for(Player player : Bukkit.getOnlinePlayers()) {
+                IReflection.MethodAccessor updateCommands = IReflection.getMethod(Player.class, "updateCommands");
+                updateCommands.invoke(player);
+            }
+        }
+    }
+
+    public static WarpSystem getInstance() {
+        return instance;
+    }
+
+    public static void log(String message) {
+        System.out.println(message);
+    }
+
+    public static <E extends Options> E getOptions(Class<? extends E> clazz) {
+        if(instance == null) return null;
+
+        for(Options option : getInstance().getOptions().getOptions()) {
+            if(option.getClass().equals(clazz)) return (E) option;
+        }
+
+        return null;
+    }
 
     @Override
     public void onEnable() {
@@ -302,15 +322,6 @@ public class WarpSystem extends JavaPlugin {
                 this.uuidManager.downloadAll();
             }
         }, 20);
-    }
-
-    public static void updateCommandList() {
-        if(Version.getVersion().isBiggerThan(Version.v1_12)) {
-            for(Player player : Bukkit.getOnlinePlayers()) {
-                IReflection.MethodAccessor updateCommands = IReflection.getMethod(Player.class, "updateCommands");
-                updateCommands.invoke(player);
-            }
-        }
     }
 
     @Override
@@ -591,10 +602,6 @@ public class WarpSystem extends JavaPlugin {
         }
     }
 
-    public static WarpSystem getInstance() {
-        return instance;
-    }
-
     public FileManager getFileManager() {
         return fileManager;
     }
@@ -615,10 +622,6 @@ public class WarpSystem extends JavaPlugin {
 
     public TeleportManager getTeleportManager() {
         return teleportManager;
-    }
-
-    public static void log(String message) {
-        System.out.println(message);
     }
 
     public boolean isOld() {
@@ -671,16 +674,6 @@ public class WarpSystem extends JavaPlugin {
 
     public OptionBundle getOptions() {
         return options;
-    }
-
-    public static <E extends Options> E getOptions(Class<? extends E> clazz) {
-        if(instance == null) return null;
-
-        for(Options option : getInstance().getOptions().getOptions()) {
-            if(option.getClass().equals(clazz)) return (E) option;
-        }
-
-        return null;
     }
 
     private boolean runningFirstTime() {

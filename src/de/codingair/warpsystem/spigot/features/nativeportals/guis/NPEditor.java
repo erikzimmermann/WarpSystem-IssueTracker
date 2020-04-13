@@ -7,8 +7,8 @@ import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.pages.DestinationPage;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.nativeportals.NativePortal;
-import de.codingair.warpsystem.spigot.features.nativeportals.guis.pages.POptions;
 import de.codingair.warpsystem.spigot.features.nativeportals.guis.pages.PMaterial;
+import de.codingair.warpsystem.spigot.features.nativeportals.guis.pages.POptions;
 import de.codingair.warpsystem.spigot.features.nativeportals.managers.NativePortalManager;
 import org.bukkit.entity.Player;
 
@@ -42,6 +42,10 @@ public class NPEditor extends Editor<NativePortal> {
         initControllButtons();
     }
 
+    public static String getMainTitle() {
+        return Editor.TITLE_COLOR + Lang.get("Native_Portals");
+    }
+
     @Override
     public boolean canFinish() {
         if(this.clone == null) return false;
@@ -55,9 +59,5 @@ public class NPEditor extends Editor<NativePortal> {
 
     public NativePortal getClone() {
         return clone;
-    }
-
-    public static String getMainTitle() {
-        return Editor.TITLE_COLOR + Lang.get("Native_Portals");
     }
 }

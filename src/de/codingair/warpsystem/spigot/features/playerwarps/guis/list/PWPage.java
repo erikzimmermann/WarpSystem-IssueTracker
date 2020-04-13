@@ -15,7 +15,6 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarps;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.guis.utils.Head;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -24,14 +23,10 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class PWPage extends Page {
-    private int size, maxPage = 0, page = 0;
     protected FilterType filter;
     protected Object[] extra;
     protected String search;
-
-    public String getTitle() {
-        return "§c" + Lang.get("Player_Warps") + " §8(" + filter.getFilterName() + " " + (page + 1) + "/" + (maxPage + 1) + ")";
-    }
+    private int size, maxPage = 0, page = 0;
 
     public PWPage(Player p, int size) {
         super(p, "§c" + Lang.get("Player_Warps"), false);
@@ -43,6 +38,10 @@ public class PWPage extends Page {
         updateTitle();
 
         initialize(p);
+    }
+
+    public String getTitle() {
+        return "§c" + Lang.get("Player_Warps") + " §8(" + filter.getFilterName() + " " + (page + 1) + "/" + (maxPage + 1) + ")";
     }
 
     public void updateTitle() {

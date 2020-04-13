@@ -19,20 +19,20 @@ public enum Action {
         this.clazz = clazz;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public Class<? extends ActionObject> getClazz() {
-        return clazz;
-    }
-
     public static Action getById(int id) {
         for(Action value : values()) {
             if(value.id == id) return value;
         }
 
         return null;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public Class<? extends ActionObject> getClazz() {
+        return clazz;
     }
 
     public Serializable getNewInstance() {

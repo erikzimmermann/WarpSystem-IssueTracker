@@ -23,6 +23,10 @@ public class TeleportManager implements Manager {
     private List<String> denyTpa = new ArrayList<>();
     private List<String> denyForceTps = new ArrayList<>();
 
+    public static TeleportManager getInstance() {
+        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.TELEPORT);
+    }
+
     @Override
     public boolean load(boolean loader) {
         if(!loader) WarpSystem.log("  > Initializing TeleportManager");
@@ -123,9 +127,5 @@ public class TeleportManager implements Manager {
         for(ProxiedPlayer player : receiver) {
             WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportRequestPacket(sender.getName(), sender.getDisplayName(), player.getName(), tpToSender, notifySender), player.getServer().getInfo());
         }
-    }
-
-    public static TeleportManager getInstance() {
-        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.TELEPORT);
     }
 }

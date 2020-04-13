@@ -2,7 +2,6 @@ package de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages;
 
 import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
-import de.codingair.codingapi.player.gui.inventory.gui.Skull;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncAnvilGUIButton;
@@ -37,6 +36,11 @@ public class PTrusted extends PageItem {
         this.warp = warp;
         this.original = original;
         initialize(p);
+    }
+
+    private static String getFreeMessage(PlayerWarp warp, PlayerWarp original, PageItem page) {
+        if(warp.getTrusted().size() - original.getTrusted().size() >= 0) return null;
+        return PWEditor.getFreeMessage(-(warp.getTrusted().size() - original.getTrusted().size()) + " " + Lang.get("Trusted_members"), page);
     }
 
     @Override
@@ -77,11 +81,6 @@ public class PTrusted extends PageItem {
 
     private void updateIcon() {
         getLast().updatePageItems();
-    }
-
-    private static String getFreeMessage(PlayerWarp warp, PlayerWarp original, PageItem page) {
-        if(warp.getTrusted().size() - original.getTrusted().size() >= 0) return null;
-        return PWEditor.getFreeMessage(-(warp.getTrusted().size() - original.getTrusted().size()) + " " + Lang.get("Trusted_members"), page);
     }
 
     @Override

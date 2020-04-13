@@ -12,7 +12,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -134,13 +133,13 @@ public class Icon extends FeatureObject {
         return name;
     }
 
-    public String getNameWithoutColor() {
-        return name == null ? null : Color.removeColor(Color.translateAlternateColorCodes('&', name));
-    }
-
     public Icon setName(String name) {
         this.name = name;
         return this;
+    }
+
+    public String getNameWithoutColor() {
+        return name == null ? null : Color.removeColor(Color.translateAlternateColorCodes('&', name));
     }
 
     public ItemStack getRaw() {
@@ -149,6 +148,11 @@ public class Icon extends FeatureObject {
 
     public ItemStack getItem() {
         return getItemBuilder().getItem();
+    }
+
+    public Icon setItem(ItemStack item) {
+        this.item = item;
+        return this;
     }
 
     public ItemBuilder getItemBuilder() {
@@ -185,11 +189,6 @@ public class Icon extends FeatureObject {
         return this;
     }
 
-    public Icon setItem(ItemStack item) {
-        this.item = item;
-        return this;
-    }
-
     public int getSlot() {
         return slot;
     }
@@ -203,17 +202,17 @@ public class Icon extends FeatureObject {
         return page;
     }
 
-    public Icon setPage(Icon page) {
-        this.page = page;
-        return this;
-    }
-
     public Icon addAction(ActionObject action) {
         return (Icon) super.addAction(action);
     }
 
     public boolean isPage() {
         return isPage;
+    }
+
+    public Icon setPage(Icon page) {
+        this.page = page;
+        return this;
     }
 
     public void setPage(boolean category) {

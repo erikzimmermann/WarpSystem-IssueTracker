@@ -18,10 +18,6 @@ public enum MoneyAdapterType {
         this.adapter = adapter;
     }
 
-    public Adapter getAdapter() {
-        return adapter;
-    }
-
     public static Adapter getActive() {
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
         List<String> priority = file.getConfig().getStringList("WarpSystem.Economy.priority");
@@ -46,5 +42,9 @@ public enum MoneyAdapterType {
 
     public static boolean canEnable() {
         return getActive() != null;
+    }
+
+    public Adapter getAdapter() {
+        return adapter;
     }
 }

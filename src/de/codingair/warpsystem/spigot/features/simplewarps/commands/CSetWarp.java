@@ -94,7 +94,7 @@ public class CSetWarp extends CommandBuilder {
 
                 TextComponent tc = new TextComponent(Lang.get("SimpleWarp_Created_Edit_Info_EDIT"));
                 tc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/editwarp " + argument));
-                tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[]{new TextComponent(Lang.get("Click_Hover"))}));
+                tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent(Lang.get("Click_Hover"))}));
 
                 message.replace("%EDIT%", tc);
 

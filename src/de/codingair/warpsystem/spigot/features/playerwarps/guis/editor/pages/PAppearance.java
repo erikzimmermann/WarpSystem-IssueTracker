@@ -190,7 +190,7 @@ public class PAppearance extends PageItem {
             public ItemStack craftAnvilItem(ClickType trigger) {
                 return new ItemBuilder(Material.PAPER).setName(Lang.get("Line") + "...").getItem();
             }
-            
+
             @Override
             public boolean canClick(ClickType click) {
                 if(click == ClickType.LEFT) {

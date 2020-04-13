@@ -53,8 +53,11 @@ public abstract class Options {
     }
 
     public abstract Options clone();
+
     public abstract void write();
+
     public abstract void read();
+
     public abstract void apply(Options options);
 
     @Override
@@ -74,6 +77,7 @@ public abstract class Options {
             }
 
             return true;
-        } return false;
+        }
+        return false;
     }
 }

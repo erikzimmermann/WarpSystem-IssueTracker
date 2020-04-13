@@ -9,10 +9,10 @@ import org.bukkit.entity.Player;
 public class PortalDeleteGUI extends ConfirmGUI {
     public PortalDeleteGUI(Player p, Callback<Boolean> callback) {
         super(p, "Portal", Lang.get("Apply_Delete_No"), Lang.get("Question_Delete_Portal"), Lang.get("Apply_Delete_Yes"), WarpSystem.getInstance(), new Callback<Boolean>() {
-                    @Override
-                    public void accept(Boolean answer) {
-                        callback.accept(!answer);
-                    }
-                });
+            @Override
+            public void accept(Boolean answer) {
+                callback.accept(!answer);
+            }
+        });
     }
 }

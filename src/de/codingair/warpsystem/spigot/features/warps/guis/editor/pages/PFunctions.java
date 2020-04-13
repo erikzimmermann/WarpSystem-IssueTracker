@@ -26,7 +26,7 @@ public class PFunctions extends PageItem {
     public void initialize(Player p) {
         ItemButtonOption option = new ItemButtonOption();
         option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
-        
+
         addButton(new StatusButton(1, 2, icon).setOption(option));
         addButton(new CommandButton(2, 2, icon).setOption(option));
         addButton(new PermissionButton(3, 2, icon).setOption(option));

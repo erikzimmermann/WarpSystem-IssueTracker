@@ -5,7 +5,6 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.randomteleports.managers.RandomTeleporterManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -15,7 +14,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -90,9 +88,12 @@ public class RandomLocationCalculator implements Runnable {
 
     private int getHighestY(World w) {
         switch(w.getEnvironment()) {
-            case NETHER: return RandomTeleporterManager.getInstance().getNetherHeight();
-            case THE_END: return RandomTeleporterManager.getInstance().getEndHeight();
-            default: return 72;
+            case NETHER:
+                return RandomTeleporterManager.getInstance().getNetherHeight();
+            case THE_END:
+                return RandomTeleporterManager.getInstance().getEndHeight();
+            default:
+                return 72;
         }
     }
 
