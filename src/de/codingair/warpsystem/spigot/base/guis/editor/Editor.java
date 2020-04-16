@@ -136,13 +136,14 @@ public class Editor<C> extends SimpleGUI {
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
                 backup.cancel(clone);
+                getCancelSound().play(player);
             }
 
             @Override
             public boolean canClick(ClickType click) {
                 return canCancel();
             }
-        }.setOption(option).setClickSound2(getCancelSound()).setCloseOnClick(true));
+        }.setOption(option).setCloseOnClick(true));
 
         addButton(new SyncButton(8, 2) {
             @Override

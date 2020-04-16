@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.base.guis.editor.pages;
 import de.codingair.codingapi.player.gui.anvil.*;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
+import de.codingair.codingapi.player.gui.inventory.gui.simple.SimpleGUI;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncAnvilGUIButton;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.sounds.Sound;
@@ -13,6 +14,7 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
+import de.codingair.warpsystem.spigot.base.guis.editor.StandardButtonOption;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
@@ -36,19 +38,37 @@ public class DestinationPage extends PageItem {
     private boolean online = false;
     private boolean pinging = false;
     private Destination destination;
+    private Button[] extra;
 
-    public DestinationPage(Player player, String title, Destination destination) {
+    public DestinationPage(Player player, String title, Destination destination, Button... extra) {
         super(player, title, new ItemBuilder(XMaterial.ENDER_PEARL).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Destination")).getItem(), false);
         this.destination = destination;
+        this.extra = extra;
         initialize(player);
     }
 
     @Override
-    public void initialize(Player p) {
-        ItemButtonOption option = new ItemButtonOption();
-        option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
+    public boolean initialize(SimpleGUI gui) {
+        boolean result = super.initialize(gui);
+        updateDestinationButtons();
+        return result;
+    }
 
-        addButton(new SyncButton(1, 2) {
+    @Override
+    public void initialize(Player p) {
+        ItemButtonOption option = new StandardButtonOption();
+
+        int slot = 1;
+        if(extra != null && extra.length > 0) {
+            for(Button button : extra) {
+                if(slot == 7) break;
+                button.setSlot(slot++ + 18);
+                button.setOption(option);
+                addButton(button);
+            }
+        }
+
+        addButton(new SyncButton(slot++, 2) {
             private int editingOffset = 0;
 
             @Override
@@ -261,7 +281,7 @@ public class DestinationPage extends PageItem {
         }.setOption(option));
 
         if(WarpSystem.getInstance().isOnBungeeCord()) {
-            addButton(new SyncButton(2, 2) {
+            addButton(new SyncButton(slot++, 2) {
                 @Override
                 public ItemStack craftItem() {
                     String name = null;
@@ -313,7 +333,7 @@ public class DestinationPage extends PageItem {
                 }
             }.setOption(option));
 
-            addButton(new SyncAnvilGUIButton(3, 2, ClickType.LEFT) {
+            addButton(new SyncAnvilGUIButton(slot++, 2, ClickType.LEFT) {
                 @Override
                 public ItemStack craftItem() {
                     String name = null;

@@ -16,6 +16,7 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObjectReadException;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.TeleportSoundAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
@@ -77,7 +78,9 @@ public class FeatureObject implements Serializable {
 
         if(options.getDestination() == null) options.setDestination(hasAction(Action.WARP) ? getAction(WarpAction.class).getValue() : null);
         if(options.getDisplayName() == null) options.setDisplayName(hasAction(Action.WARP) ? getAction(WarpAction.class).getValue().getId() : null);
-        if(options.getTeleportSound() == null) options.setTeleportSound(new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F));
+        if(options.getTeleportSound() == null) {
+            if(hasAction(Action.TELEPORT_SOUND)) options.setTeleportSound(getAction(TeleportSoundAction.class).getValue());
+        }
         options.setSkip(isSkip());
 
         if(getAction(Action.WARP) != null) {
@@ -93,7 +96,7 @@ public class FeatureObject implements Serializable {
                 public void accept(TeleportResult result) {
                     if(result == TeleportResult.TELEPORTED) {
                         for(ActionObject<?> action : actions) {
-                            if(action.getType() == Action.WARP || action.getType() == Action.COSTS) continue;
+                            if(action.getType() == Action.WARP || action.getType() == Action.COSTS || action.getType() == Action.TELEPORT_SOUND || !action.usable()) continue;
                             action.perform(player);
                         }
                     }
@@ -202,19 +205,6 @@ public class FeatureObject implements Serializable {
         }
     }
 
-    public void commitClonedActions() {
-        List<ActionObject<?>> a = getActions();
-        List<ActionObject<?>> cloned = new ArrayList<>();
-
-        for(ActionObject<?> ao : a) {
-            cloned.add(ao.clone());
-        }
-
-        a.clear();
-        a.addAll(cloned);
-        cloned.clear();
-    }
-
     public void apply(FeatureObject object) {
         this.destroy();
 
@@ -268,11 +258,10 @@ public class FeatureObject implements Serializable {
         return getAction(action) != null;
     }
 
-    public boolean removeAction(Action action) {
+    public void removeAction(Action action) {
         ActionObject<?> ao = getAction(action);
-        if(ao == null) return false;
+        if(ao == null) return;
         this.actions.remove(ao);
-        return true;
     }
 
     public FeatureObject addAction(ActionObject<?> action) {
