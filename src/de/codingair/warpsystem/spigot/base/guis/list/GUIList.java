@@ -13,7 +13,7 @@ import java.util.List;
 public abstract class GUIList<E> extends SimpleGUI {
 
     public GUIList(Player p, String title, boolean searchable) {
-        super(p, null, new PList(p, searchable, title), WarpSystem.getInstance(), false);
+        super(p, null, new PList<E>(p, searchable, title), WarpSystem.getInstance(), false);
 
         List<ListItem<E>> itemList = new ArrayList<>();
         addListItems(itemList);

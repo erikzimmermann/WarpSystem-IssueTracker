@@ -56,7 +56,7 @@ public class TeleportOptions {
         this.payMessage = Lang.getPrefix() + (displayName == null ? Lang.get("Money_Paid") : Lang.get("Money_Paid").replace("%warp%", displayName));
         this.paymentDeniedMessage = Lang.getPrefix() + Lang.get("Payment_denied");
         this.silent = false;
-        this.teleportSound = new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F);
+        this.teleportSound = null;
         this.afterEffects = true;
     }
 

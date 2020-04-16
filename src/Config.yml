@@ -47,7 +47,6 @@ WarpSystem:
       WarpGUI: true
       SimpleWarps: true
       GlobalWarps: true
-      NativePortals: true
       Portals: true
       WarpSigns: true
       CommandBlocks: true
@@ -57,8 +56,7 @@ WarpSystem:
   Functions:
     WarpGUI: true
     SimpleWarps: true
-    EffectPortals: true
-    NativePortals: true
+    Portals: true
     WarpSigns: true
     GlobalWarps: true
     Shortcuts: true
@@ -94,9 +92,12 @@ WarpSystem:
       #true: The teleport request SENDER will be notified about every accepted or denied teleport request. |false: The teleport request SENDER won't get any accept or deny messages
       Notify_TpaAll_Sender: true
 
-  EffectPortals:
+  Portals:
     #Max distance between particle and player - Don't use distances higher than 200! It will cause lags.
     ParticleDistance: 70.0
+    #Holograms support PlaceholderAPI | Time format: "0d, 0h, 0m, 0s" - Unnecessary values can be removed (examples: "1d, 5m", "10s", "5h")!
+    #A value of 0 disables hologram updates
+    HologramUpdateInterval: 0h, 1m, 0s
 
   SimpleWarps:
     #Adds on every created warp the standard permission: 'WarpSystem.Warps.<WarpName>'
