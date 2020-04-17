@@ -1,4 +1,3 @@
-~Config
 PlayerWarps:
   General:
     #Will only be used if permissions are disabled (see line 9)
