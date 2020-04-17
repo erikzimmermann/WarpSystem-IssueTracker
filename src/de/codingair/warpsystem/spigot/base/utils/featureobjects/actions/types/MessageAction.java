@@ -70,7 +70,7 @@ public class MessageAction extends ActionObject<List<String>> {
 
     @Override
     public boolean usable() {
-        return getValue() != null;
+        return false;
     }
 
     @Override
