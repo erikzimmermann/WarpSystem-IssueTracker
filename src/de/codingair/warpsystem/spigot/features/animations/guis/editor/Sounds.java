@@ -83,6 +83,8 @@ public class Sounds extends HotbarGUI {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 //Sound
+                if(getTickSound() != null) getTickSound().stop(player);
+
                 if(clickType.equals(ClickType.LEFT_CLICK)) {
                     getTickSound().setSound(previous(getTickSound().getSound()));
                 } else if(clickType.equals(ClickType.SHIFT_LEFT_CLICK)) {
@@ -113,6 +115,8 @@ public class Sounds extends HotbarGUI {
                 .getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
+                if(getTickSound() != null) getTickSound().stop(player);
+
                 //Volume
                 if(clickType.equals(ClickType.LEFT_CLICK)) {
                     getTickSound().setVolume(round(getTickSound().getVolume() - 0.1F));
@@ -142,6 +146,8 @@ public class Sounds extends HotbarGUI {
                 .getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
+                if(getTickSound() != null) getTickSound().stop(player);
+
                 //Pitch
                 if(clickType.equals(ClickType.LEFT_CLICK)) {
                     getTickSound().setPitch(round(getTickSound().getPitch() - 0.1F));
@@ -171,6 +177,8 @@ public class Sounds extends HotbarGUI {
                 .getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
+                if(getTeleportSound() != null) getTeleportSound().stop(player);
+
                 //Sound
                 if(clickType.equals(ClickType.LEFT_CLICK)) {
                     getTeleportSound().setSound(previous(getTeleportSound().getSound()));
@@ -202,6 +210,8 @@ public class Sounds extends HotbarGUI {
                 .getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
+                if(getTeleportSound() != null) getTeleportSound().stop(player);
+
                 //Volume
                 if(clickType.equals(ClickType.LEFT_CLICK)) {
                     getTeleportSound().setVolume(round(getTeleportSound().getVolume() - 0.1F));
@@ -231,6 +241,8 @@ public class Sounds extends HotbarGUI {
                 .getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
+                if(getTeleportSound() != null) getTeleportSound().stop(player);
+
                 //Pitch
                 if(clickType.equals(ClickType.LEFT_CLICK)) {
                     getTeleportSound().setPitch(round(getTeleportSound().getPitch() - 0.1F));
