@@ -53,17 +53,19 @@ public class Lang {
         PREMIUM_CHAT(tc0, sender);
     }
 
+    public static void PREMIUM_TITLE(Player player, String title) {
+        if(API.getRemovable(player, GUI.class) != null) return;
+
+        MessageAPI.sendTitle(player, title, "§7Get full access with \"§6/ws upgrade§7\"", 5, 50, 5);
+    }
+
     public static void PREMIUM_CHAT(TextComponent base, CommandSender sender) {
         PREMIUM_CHAT(base, sender, false);
     }
 
     public static void PREMIUM_CHAT(TextComponent base, CommandSender sender, boolean chat) {
         if(!chat && sender instanceof Player) {
-            Player p = (Player) sender;
-
-            if(API.getRemovable(p, GUI.class) != null) return;
-
-            MessageAPI.sendTitle(p, "§7This is a §6Premium §7feature!", "§7Get full access with \"§6/ws upgrade§7\"", 5, 50, 5);
+            PREMIUM_TITLE((Player) sender, "§7This is a §6Premium §7feature!");
         } else {
             if(premiumMessage.contains(sender)) return;
 
