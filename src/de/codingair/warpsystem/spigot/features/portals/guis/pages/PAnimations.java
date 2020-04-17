@@ -56,9 +56,9 @@ public class PAnimations extends PageItem {
                 @Override
                 public ItemStack craftItem() {
                     return new ItemBuilder(XMaterial.NETHER_STAR)
-                            .setName(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Animation") + ": §7" + animation.getEffect().getAnimation().getDisplayName())
+                            .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Animation") + ":§7 " + animation.getEffect().getAnimation().getDisplayName())
                             .addText(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Particle_Effect") + ": §7" + animation.getEffect().getParticle().name())
-                            .addText("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7" + Lang.get("Edit"))
+                            .addText("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Edit"))
                             .addText(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §7" + (runnable != null ? "§4" : "§7") + ChatColor.stripColor(Lang.get("Delete")) + (runnable != null ? " §7(§c" + ChatColor.stripColor(Lang.get("Confirm")) + "§7)" : ""))
                             .getItem();
                 }

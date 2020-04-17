@@ -5,6 +5,8 @@ import de.codingair.codingapi.files.loader.UTFConfig;
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.particles.animations.customanimations.AnimationType;
 import de.codingair.codingapi.particles.animations.customanimations.CustomAnimation;
+import de.codingair.codingapi.server.sounds.Sound;
+import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -74,7 +76,11 @@ public class AnimationManager implements Manager {
     }
 
     private Animation createStandard() {
-        return new Animation("§Standard§", new ParticlePart(AnimationType.CIRCLE, Particle.FLAME, 1, 1, CustomAnimation.MAX_SPEED));
+        Animation anim = new Animation("§Standard§", new ParticlePart(AnimationType.CIRCLE, Particle.FIREWORKS_SPARK, 1, 1, CustomAnimation.MAX_SPEED));
+
+        anim.setTickSound(new SoundData(Sound.NOTE_PLING, 0.8F, 1F));
+
+        return anim;
     }
 
     @Override
