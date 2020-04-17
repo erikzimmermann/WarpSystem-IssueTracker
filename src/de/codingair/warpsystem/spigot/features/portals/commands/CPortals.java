@@ -73,10 +73,6 @@ public class CPortals extends CommandBuilder {
                             String name = e.getSubmittedText();
 
                             Portal portal = new Portal(new Destination(), name, new ArrayList<>(), new ArrayList<>());
-                            Portal clone = portal.clone();
-
-                            clone.setEditMode(true);
-
                             e.setPost(() -> new PortalEditor((Player) sender, portal).open());
                         }
                     }

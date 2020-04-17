@@ -24,6 +24,7 @@ import java.util.*;
 
 public class Portal extends FeatureObject {
     private boolean editMode = false;
+    private Portal editing = null;
 
     private byte trigger;
     private Location spawn;
@@ -158,7 +159,7 @@ public class Portal extends FeatureObject {
     @Override
     public void destroy() {
         super.destroy();
-        setVisible(false);
+        setVisible(false, true);
         this.cachedEdges = null;
         this.cachedAxis = null;
         if(this.blocks != null) this.blocks.clear();
@@ -292,6 +293,12 @@ public class Portal extends FeatureObject {
             if(!animationTest0 && animationTest1) animationResult = 1;
             else if(animationTest0 && !animationTest1) animationResult = -1;
             else if(animationTest0 && animationTest1) inAnimation = true;
+            else if(!animationTest0 && !animationTest1) {
+
+                move = new HitBox(to, 0.1, height);
+                move.addProperty(new HitBox(from, 0.1, height));
+                if(touchesAnimation(entity.getWorld(), move)) return 2;
+            }
         }
 
         if(inBlock || inAnimation) return 0;
@@ -302,7 +309,7 @@ public class Portal extends FeatureObject {
         if(Area.isInArea(location, getCachedEdges()[0], getCachedEdges()[1], true, distance)) {
             for(PortalBlock block : blocks) {
                 if(isExact && block.getLocation().distance(location) == distance) return true;
-                else if(block.getLocation().distance(location) <= distance) return true;
+                else if(!isExact && block.getLocation().distance(location) <= distance) return true;
             }
         }
 
@@ -396,7 +403,11 @@ public class Portal extends FeatureObject {
     }
 
     public void setVisible(boolean visible) {
-        if(visible != this.visible) {
+        setVisible(visible, false);
+    }
+
+    public void setVisible(boolean visible, boolean force) {
+        if(visible != this.visible || force) {
             this.visible = visible;
             update();
         }
@@ -479,6 +490,7 @@ public class Portal extends FeatureObject {
 
     public Portal setEditMode(boolean editMode) {
         this.editMode = editMode;
+        if(!editMode) this.editing = null;
         update();
         return this;
     }
@@ -511,5 +523,13 @@ public class Portal extends FeatureObject {
             this.spawn.destroy();
             this.spawn = null;
         }
+    }
+
+    public Portal getEditing() {
+        return editing;
+    }
+
+    public void setEditing(Portal editing) {
+        this.editing = editing;
     }
 }

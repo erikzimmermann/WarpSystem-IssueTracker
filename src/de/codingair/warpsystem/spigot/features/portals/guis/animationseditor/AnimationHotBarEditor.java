@@ -40,6 +40,7 @@ public class AnimationHotBarEditor extends HotbarGUI {
 
     private BukkitRunnable alignRunnable;
     private List<Location> alignTo = new ArrayList<>();
+    private boolean show = true;
 
     public AnimationHotBarEditor(Player player, PortalEditor fallBack, Animation animation) {
         super(player, WarpSystem.getInstance(), 2);
@@ -56,6 +57,7 @@ public class AnimationHotBarEditor extends HotbarGUI {
         this.alignRunnable = new BukkitRunnable() {
             @Override
             public void run() {
+                if(!show) return;
                 for(Location location : alignTo) {
                     Particle.VILLAGER_HAPPY.send(location, player);
                 }
@@ -123,6 +125,7 @@ public class AnimationHotBarEditor extends HotbarGUI {
     }
 
     private void setAlignBlocks(boolean show) {
+        this.show = show;
         List<Location> alignTo = new ArrayList<>(this.alignTo);
 
         Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
