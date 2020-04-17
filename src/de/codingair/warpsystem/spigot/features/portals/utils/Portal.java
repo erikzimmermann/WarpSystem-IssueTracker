@@ -229,6 +229,7 @@ public class Portal extends FeatureObject {
     public FeatureObject perform(Player player) {
         TeleportOptions options = new TeleportOptions();
 
+        if(!this.animations.isEmpty()) options.setTeleportAnimation(false);
         options.setCanMove(true);
 
         return perform(player, options);

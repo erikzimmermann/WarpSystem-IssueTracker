@@ -60,11 +60,12 @@ public class Teleport {
     private Origin origin;
     private boolean silent;
     private boolean afterEffects;
+    private boolean teleportAnimation;
     private Callback<TeleportResult> callback;
     private List<Chunk> preLoadedChunks = null;
     private Vector velocity = null;
 
-    public Teleport(Player player, Destination destination, Origin origin, String displayName, String permission, int seconds, double costs, String message, boolean canMove, boolean silent, SoundData teleportSound, boolean afterEffects, Callback<TeleportResult> callback) {
+    public Teleport(Player player, Destination destination, Origin origin, String displayName, String permission, int seconds, double costs, String message, boolean canMove, boolean silent, SoundData teleportSound, boolean afterEffects, boolean teleportAnimation, Callback<TeleportResult> callback) {
         this.player = player;
         this.destination = destination;
         this.origin = origin;
@@ -76,6 +77,7 @@ public class Teleport {
         if(this.teleportSound == null) this.teleportSound = AnimationManager.getInstance().getActive().getTeleportSound();
         if(this.teleportSound == null) this.teleportSound = TeleportSoundPage.createStandard();
         this.afterEffects = afterEffects;
+        this.teleportAnimation = teleportAnimation;
         this.message = message;
         this.canMove = canMove;
         this.silent = silent;
@@ -83,12 +85,14 @@ public class Teleport {
 
         if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) this.costs = 0;
 
-        this.animation = new AnimationPlayer(player, AnimationManager.getInstance().getActive(), seconds, destination.buildLocation());
-        this.animation.setTeleportSound(false);
+        if(this.teleportAnimation) {
+            this.animation = new AnimationPlayer(player, AnimationManager.getInstance().getActive(), seconds, destination.buildLocation());
+            this.animation.setTeleportSound(false);
+        }
     }
 
     public void start() {
-        if(!animation.isRunning()) {
+        if(startTime == 0) {
             //Starting timer and call PreTeleportAttemptEvent
             PreTeleportAttemptEvent e = new PreTeleportAttemptEvent(this.player, new Callback() {
                 private boolean used = false;
@@ -105,7 +109,7 @@ public class Teleport {
             Bukkit.getPluginManager().callEvent(e);
 
             this.startTime = System.currentTimeMillis();
-            this.animation.setRunning(true);
+            if(teleportAnimation) this.animation.setRunning(true);
             this.runnable = new BukkitRunnable() {
                 private int left = seconds;
                 private String msg = Lang.get("Teleporting_Info");
@@ -121,6 +125,7 @@ public class Teleport {
                         return;
                     }
 
+                    if(!teleportAnimation && AnimationManager.getInstance().getActive().getTickSound() != null) AnimationManager.getInstance().getActive().getTickSound().play(player);
                     MessageAPI.sendActionBar(player, msg.replace("%seconds%", left + ""));
                     left--;
                 }
@@ -183,7 +188,6 @@ public class Teleport {
 
     public void cancel(boolean sound, boolean finished) {
         if(runnable != null) {
-            this.startTime = 0;
             this.runnable.cancel();
             this.runnable = null;
             MessageAPI.sendActionBar(player, null);
@@ -191,10 +195,12 @@ public class Teleport {
         if(sound && cancelSound != null) cancelSound.playSound(player);
 
         if(!finished) {
-            this.animation.setRunning(false);
+            if(teleportAnimation) this.animation.setRunning(false);
             payBack();
             if(callback != null) callback.accept(TeleportResult.CANCELLED);
         }
+
+        this.startTime = 0;
     }
 
     public void teleport() {
@@ -298,28 +304,8 @@ public class Teleport {
         return destination;
     }
 
-    public AnimationPlayer getAnimation() {
-        return animation;
-    }
-
     public BukkitRunnable getRunnable() {
         return runnable;
-    }
-
-    public SoundData getTeleportSound() {
-        return teleportSound;
-    }
-
-    public void setTeleportSound(SoundData teleportSound) {
-        this.teleportSound = teleportSound;
-    }
-
-    public Sound getCancelSound() {
-        return cancelSound;
-    }
-
-    public void setCancelSound(Sound cancelSound) {
-        this.cancelSound = cancelSound;
     }
 
     public long getStartTime() {
@@ -328,10 +314,6 @@ public class Teleport {
 
     public boolean isCanMove() {
         return canMove;
-    }
-
-    public void setCanMove(boolean canMove) {
-        this.canMove = canMove;
     }
 
     public int getSeconds() {
@@ -344,10 +326,6 @@ public class Teleport {
 
     public void setPermission(String permission) {
         this.permission = permission;
-    }
-
-    public Vector getVelocity() {
-        return velocity;
     }
 
     public Teleport setVelocity(Vector velocity) {

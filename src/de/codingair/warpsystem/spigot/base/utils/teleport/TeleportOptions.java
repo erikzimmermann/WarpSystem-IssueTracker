@@ -1,6 +1,5 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport;
 
-import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.utils.ImprovedDouble;
@@ -33,6 +32,7 @@ public class TeleportOptions {
     private boolean silent;
     private SoundData teleportSound;
     private boolean afterEffects;
+    private boolean teleportAnimation = true;
     private List<Callback<TeleportResult>> callback = new ArrayList<>();
     private Vector velocity = null;
 
@@ -213,6 +213,14 @@ public class TeleportOptions {
         this.paymentDeniedMessage = paymentDeniedMessage;
     }
 
+    public boolean isTeleportAnimation() {
+        return teleportAnimation;
+    }
+
+    public void setTeleportAnimation(boolean teleportAnimation) {
+        this.teleportAnimation = teleportAnimation;
+    }
+      
     public boolean isNoDelayByPass() {
         return noDelayByPass;
     }

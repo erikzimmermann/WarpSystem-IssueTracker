@@ -260,10 +260,10 @@ public class TeleportManager {
         final int finalSeconds = seconds;
         Callback<TeleportResult> finalResultCallback = resultCallback;
         String finalMessage = message;
-        Callback waiting = new Callback() {
+        Callback<?> waiting = new Callback() {
             @Override
             public void accept(Object object) {
-                Teleport teleport = new Teleport(player, options.getDestination(), options.getOrigin(), options.getDisplayName(), options.getPermission(), finalSeconds, options.getCosts(), finalMessage, options.isCanMove(), options.isSilent(), options.getTeleportSound(), options.isAfterEffects(), new Callback<TeleportResult>() {
+                Teleport teleport = new Teleport(player, options.getDestination(), options.getOrigin(), options.getDisplayName(), options.getPermission(), finalSeconds, options.getCosts(), finalMessage, options.isCanMove(), options.isSilent(), options.getTeleportSound(), options.isAfterEffects(), options.isTeleportAnimation(), new Callback<TeleportResult>() {
                     @Override
                     public void accept(TeleportResult object) {
                         options.runCallbacks(object);
