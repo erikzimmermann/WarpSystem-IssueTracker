@@ -27,14 +27,16 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class PortalEditor extends Editor<Portal> {
+    public static final HashMap<String, PortalEditor> EDITORS = new HashMap<>();
     private boolean opened = false;
     private Portal clone;
 
     public PortalEditor(Player p, Portal portal) {
-        this(p, portal, portal.clone().setEditMode(true).createDestinationIfAbsent().createTeleportSoundIfAbsent());
+        this(p, portal.setEditMode(false), portal.clone().setEditMode(true).createDestinationIfAbsent().createTeleportSoundIfAbsent());
     }
 
     public PortalEditor(Player p, Portal portal, Portal clone) {
@@ -44,14 +46,18 @@ public class PortalEditor extends Editor<Portal> {
                 if(clone.getDestination() != null && clone.getDestination().getId() == null) clone.setDestination(null);
                 if(clone.hasAction(Action.TELEPORT_SOUND) && TeleportSoundPage.isStandardSound(clone.getAction(TeleportSoundAction.class).getValue())) clone.removeAction(Action.TELEPORT_SOUND);
 
-                String oldName = ChatColor.stripColor(portal.getDisplayName());
-                String newName = ChatColor.stripColor(clone.getDisplayName());
+                if(!PortalManager.getInstance().getPortals().contains(portal)) {
+                    PortalManager.getInstance().addPortal(portal);
+                } else {
+                    String oldName = ChatColor.stripColor(portal.getDisplayName());
+                    String newName = ChatColor.stripColor(clone.getDisplayName());
 
-                if(!oldName.equals(newName)) {
-                    for(Portal p : PortalManager.getInstance().getPortals()) {
-                        if(p.getDestination().getType() == DestinationType.Portal) {
-                            if(p.getDestination().getId().equals(oldName)) {
-                                p.getDestination().setId(newName);
+                    if(!oldName.equals(newName)) {
+                        for(Portal p : PortalManager.getInstance().getPortals()) {
+                            if(p.getDestination().getType() == DestinationType.Portal) {
+                                if(p.getDestination().getId().equals(oldName)) {
+                                    p.getDestination().setId(newName);
+                                }
                             }
                         }
                     }
@@ -59,19 +65,19 @@ public class PortalEditor extends Editor<Portal> {
 
                 portal.apply(clone);
 
-                clone.setVisible(false);
                 clone.destroy();
+                portal.setEditMode(false);
                 portal.setVisible(true);
-
-                if(!PortalManager.getInstance().getPortals().contains(portal))
-                    PortalManager.getInstance().addPortal(portal);
             }
 
             @Override
             public void cancel(Portal value) {
-                clone.setVisible(false);
                 clone.destroy();
-                portal.setVisible(true);
+                if(PortalManager.getInstance().getPortals().contains(portal)) {
+                    portal.setEditMode(false);
+                    portal.setVisible(true);
+                }
+                else portal.destroy();
             }
         }, () -> new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setHideName(true).getItem(), new PAppearance(p, clone), new POptions(p, clone), new PAnimations(p, clone), new DestinationPage(p, getMainTitle(), clone.getDestination(), new SyncButton(0) {
             @Override
@@ -124,6 +130,7 @@ public class PortalEditor extends Editor<Portal> {
             }
         }), new TeleportSoundPage(p, getMainTitle(), clone.getAction(TeleportSoundAction.class).getValue()));
 
+        portal.setEditing(clone);
         this.clone = clone;
         updateControllButtons();
 
@@ -140,9 +147,16 @@ public class PortalEditor extends Editor<Portal> {
         super.open(player);
 
         if(!opened) {
+            EDITORS.put(player.getName(), this);
             new SoundData(Sound.LEVEL_UP, 0.7F, 1.5F).play(player);
             opened = true;
         }
+    }
+
+    @Override
+    public void destroy() {
+        if(!isClosingForGUI()) EDITORS.remove(getPlayer().getName());
+        super.destroy();
     }
 
     public static String getMainTitle() {

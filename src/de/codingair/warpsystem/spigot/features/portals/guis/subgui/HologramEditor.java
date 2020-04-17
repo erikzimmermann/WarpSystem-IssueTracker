@@ -6,6 +6,7 @@ import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
 import de.codingair.codingapi.player.gui.hotbar.ItemListener;
 import de.codingair.codingapi.player.gui.hotbar.components.ItemComponent;
+import de.codingair.codingapi.player.gui.hotbar.components.SyncItemComponent;
 import de.codingair.codingapi.player.gui.inventory.gui.Skull;
 import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.server.reflections.IReflection;
@@ -29,9 +30,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import javax.xml.soap.Text;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -190,8 +191,10 @@ public class HologramEditor extends HotbarGUI {
                     alignTo.clear();
 
                     hologram.setLocation(new Location(player.getEyeLocation()));
-                    if(!hologram.setVisible(true)) hologram.update();
-                    else setStatusItem();
+                    hologram.setVisible(true);
+                    hologram.update();
+
+                    updateSingle(5);
 
                     String pos = "x=" + cut(hologram.getLocation().getX()) + ", y=" + cut(hologram.getLocation().getY()) + "z=" + cut(hologram.getLocation().getZ());
                     updateDisplayName(getItem(2), "§7" + Lang.get("Position") + ": §e" + pos);
@@ -210,8 +213,10 @@ public class HologramEditor extends HotbarGUI {
                             Location newL = calculateMid();
                             if(newL != null) {
                                 hologram.setLocation(newL);
-                                if(!hologram.setVisible(true)) hologram.update();
-                                else setStatusItem();
+                                hologram.setVisible(true);
+                                hologram.update();
+
+                                updateSingle(5);
 
                                 String pos = "x=" + cut(hologram.getLocation().getX()) + ", y=" + cut(hologram.getLocation().getY()) + "z=" + cut(hologram.getLocation().getZ());
                                 updateDisplayName(getItem(2), "§7" + Lang.get("Position") + ": §e" + pos);
@@ -245,7 +250,7 @@ public class HologramEditor extends HotbarGUI {
                 MessageAPI.stopSendingActionBar(getPlayer());
                 TextComponent tc = new TextComponent(Lang.getPrefix() + "§7" + Lang.get("Hologram_Text") + ": ");
                 TextComponent click = new TextComponent("§e" + ChatColor.stripColor(Lang.get("Click_Hover")));
-                click.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[]{new TextComponent(Lang.get("Click_Hover"))}));
+                click.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {new TextComponent(Lang.get("Click_Hover"))}));
                 click.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, hologram.getText()));
 
                 tc.addExtra(click);
@@ -308,16 +313,7 @@ public class HologramEditor extends HotbarGUI {
             }
         }));
 
-        setStatusItem();
-    }
-
-    private void setStatusItem() {
-        ItemBuilder builder = new ItemBuilder(hologram.isVisible() ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA);
-        builder.setName(ChatColor.GRAY + Lang.get("Status") + ": " +
-                (hologram.isVisible() ? ChatColor.GREEN + Lang.get("Enabled") :
-                        ChatColor.RED + Lang.get("Disabled")));
-
-        setItem(5, new ItemComponent(builder.getItem(), new ItemListener() {
+        setItem(5, new SyncItemComponent(new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 if(clickType != ClickType.LEFT_CLICK) return;
@@ -342,6 +338,14 @@ public class HologramEditor extends HotbarGUI {
             public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
                 MessageAPI.stopSendingActionBar(getPlayer());
             }
-        }));
+        }) {
+            @Override
+            public ItemStack craftItem() {
+                return new ItemBuilder(hologram.isVisible() ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA)
+                        .setName(ChatColor.GRAY + Lang.get("Status") + ": " +
+                                (hologram.isVisible() ? ChatColor.GREEN + Lang.get("Enabled") :
+                                        ChatColor.RED + Lang.get("Disabled"))).getItem();
+            }
+        });
     }
 }
