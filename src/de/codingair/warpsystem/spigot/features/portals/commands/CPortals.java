@@ -109,8 +109,7 @@ public class CPortals extends CommandBuilder {
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 PortalManager.getInstance().setGoingToEdit((Player) sender, 0);
                 PortalManager.getInstance().setGoingToDelete((Player) sender, 30);
-                //todo
-                sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_GO_TO_PORTAL"));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Go_To_Portal"));
                 return false;
             }
         });
@@ -120,8 +119,7 @@ public class CPortals extends CommandBuilder {
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 PortalManager.getInstance().setGoingToDelete((Player) sender, 0);
                 PortalManager.getInstance().setGoingToEdit((Player) sender, 30);
-                //todo
-                sender.sendMessage(Lang.getPrefix() + Lang.get("PORTAL_GO_TO_PORTAL"));
+                sender.sendMessage(Lang.getPrefix() + Lang.get("Go_To_Portal"));
                 return false;
             }
         });

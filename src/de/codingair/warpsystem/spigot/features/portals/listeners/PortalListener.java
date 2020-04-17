@@ -24,7 +24,7 @@ import java.util.List;
 
 public class PortalListener implements Listener {
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onJoin(PlayerJoinEvent e) {
         List<Portal> portals = new ArrayList<>(PortalManager.getInstance().getPortals());
         for(Portal portal : portals) {
@@ -33,7 +33,7 @@ public class PortalListener implements Listener {
         portals.clear();
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onWalk(PlayerWalkEvent e) {
         for(Portal portal : PortalManager.getInstance().getPortals()) {
             if(!portal.isVisible()) continue;
@@ -54,7 +54,7 @@ public class PortalListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPortal(PlayerPortalEvent e) {
         Player player = e.getPlayer();
         if(PortalManager.getInstance().getNoTeleport().contains(player)
@@ -72,7 +72,7 @@ public class PortalListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPortal(EntityPortalEvent e) {
         if(e.getEntity() instanceof LivingEntity) {
             LivingEntity le = (LivingEntity) e.getEntity();
@@ -119,7 +119,6 @@ public class PortalListener implements Listener {
                 e.setCancelled(true);
             else if(portal.isAround(e.getBlock().getLocation(), 1, true))
                 Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), portal::update, 1);
-
         }
     }
 
