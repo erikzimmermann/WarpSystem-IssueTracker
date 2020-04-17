@@ -17,7 +17,7 @@ public abstract class ActionObject<T> implements Serializable {
 
     public abstract boolean perform(Player player);
 
-    public abstract ActionObject clone();
+    public abstract ActionObject<T> clone();
 
     public Action getType() {
         return type;
@@ -35,9 +35,13 @@ public abstract class ActionObject<T> implements Serializable {
         this.value = value;
     }
 
-    public abstract void read(String data);
+    public void read(String data) {
+        throw new IllegalStateException("Not supported anymore!");
+    }
 
-    public abstract String write();
+    public String write() {
+        throw new IllegalStateException("Not supported anymore!");
+    }
 
     public void destroy() {
         if(this.value instanceof Serializable) {

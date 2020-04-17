@@ -23,7 +23,9 @@ import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.UpdateNotifier;
 import de.codingair.warpsystem.spigot.base.utils.options.OptionBundle;
 import de.codingair.warpsystem.spigot.base.utils.options.Options;
-import de.codingair.warpsystem.spigot.base.utils.options.specific.*;
+import de.codingair.warpsystem.spigot.base.utils.options.specific.GeneralOptions;
+import de.codingair.warpsystem.spigot.base.utils.options.specific.WarpGUIOptions;
+import de.codingair.warpsystem.spigot.base.utils.options.specific.WarpSignOptions;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestInitialPacket;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
 import de.codingair.warpsystem.utils.Manager;
@@ -58,7 +60,6 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_MODIFY_GLOBAL_WARPS = "WarpSystem.Modify.GlobalWarps";
     public static final String PERMISSION_MODIFY_SIMPLE_WARPS = "WarpSystem.Modify.SimpleWarps";
     public static final String PERMISSION_MODIFY_PORTALS = "WarpSystem.Modify.Portals";
-    public static final String PERMISSION_MODIFY_NATIVE_PORTALS = "WarpSystem.Modify.NativePortals";
     public static final String PERMISSION_MODIFY_RANDOM_TELEPORTER = "WarpSystem.Modify.RandomTeleporters";
     public static final String PERMISSION_MODIFY_PLAYER_WARPS = "WarpSystem.Modify.PlayerWarps";
     public static final String PERMISSION_WARP_GUI_OTHER = "WarpSystem.WarpGUI.Other";
@@ -77,7 +78,6 @@ public class WarpSystem extends JavaPlugin {
     public static String PERMISSION_USE_SIMPLE_WARPS = "WarpSystem.Use.SimpleWarps";
     public static String PERMISSION_USE_PLAYER_WARPS = "WarpSystem.Use.PlayerWarps";
     public static String PERMISSION_USE_PORTALS = "WarpSystem.Use.Portals";
-    public static String PERMISSION_USE_NATIVE_PORTALS = "WarpSystem.Use.NativePortals";
     public static String PERMISSION_USE_RANDOM_TELEPORTER = "WarpSystem.Use.RandomTeleporters";
     public static String PERMISSION_USE_TELEPORT_COMMAND_TP = PERMISSION_USE_TELEPORT_COMMAND + ".Tp";
     public static String PERMISSION_USE_TELEPORT_COMMAND_BACK = PERMISSION_USE_TELEPORT_COMMAND + ".Back";
@@ -363,7 +363,7 @@ public class WarpSystem extends JavaPlugin {
     }
 
     private void loadOptions() {
-        if(this.options == null) this.options = new OptionBundle(new GeneralOptions(), new WarpGUIOptions(), new WarpSignOptions(), new NativePortalsOptions(), new EffectPortalsOptions());
+        if(this.options == null) this.options = new OptionBundle(new GeneralOptions(), new WarpGUIOptions(), new WarpSignOptions());
         this.options.read();
         for(Options option : this.options.getOptions()) {
             option.write();
@@ -424,25 +424,25 @@ public class WarpSystem extends JavaPlugin {
     private void save(boolean saver) {
         if(!this.shouldSave) return;
         try {
-            if(!saver) {
-                timer.start();
-
-                log(" ");
-                log("__________________________________________________________");
-                log(" ");
-                log("                       WarpSystem [" + getDescription().getVersion() + "]");
-                if(updateAvailable) {
-                    log(" ");
-                    log("New update available [" + updateNotifier.getVersion() + " - " + WarpSystem.this.updateNotifier.getUpdateInfo() + "]. Download it on \n\n" + updateNotifier.getDownload() + "\n");
-                }
-                log(" ");
-                log("Status:");
-                log(" ");
-                log("MC-Version: " + Version.getVersion().name());
-                log(" ");
-            }
-
             if(!this.ERROR) {
+                if(!saver) {
+                    timer.start();
+
+                    log(" ");
+                    log("__________________________________________________________");
+                    log(" ");
+                    log("                       WarpSystem [" + getDescription().getVersion() + "]");
+                    if(updateAvailable) {
+                        log(" ");
+                        log("New update available [" + updateNotifier.getVersion() + " - " + WarpSystem.this.updateNotifier.getUpdateInfo() + "]. Download it on \n\n" + updateNotifier.getDownload() + "\n");
+                    }
+                    log(" ");
+                    log("Status:");
+                    log(" ");
+                    log("MC-Version: " + Version.getVersion().name());
+                    log(" ");
+                }
+
                 if(!saver) log("Saving options");
                 fileManager.getFile("Config").loadConfig();
                 fileManager.getFile("Config").getConfig().set("WarpSystem.Maintenance", maintenance);
@@ -452,20 +452,16 @@ public class WarpSystem extends JavaPlugin {
                 this.dataManager.save(saver);
                 this.teleportManager.save(saver);
                 fileManager.getFile("Config");
-            } else {
-                log("Does not save data, because of errors at enabling this plugin.");
-                log(" ");
-                log("Please submit the ErrorReport.txt file to CodingAir.");
-            }
 
-            if(!saver) {
-                timer.stop();
+                if(!saver) {
+                    timer.stop();
 
-                log(" ");
-                log("Done (" + timer.getLastStoppedTime() + "s)");
-                log(" ");
-                log("__________________________________________________________");
-                log(" ");
+                    log(" ");
+                    log("Done (" + timer.getLastStoppedTime() + "s)");
+                    log(" ");
+                    log("__________________________________________________________");
+                    log(" ");
+                }
             }
         } catch(Exception ex) {
             getLogger().log(Level.SEVERE, "Error at saving data! Exception: \n\n");

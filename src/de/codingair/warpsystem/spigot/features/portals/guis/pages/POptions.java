@@ -1,0 +1,81 @@
+package de.codingair.warpsystem.spigot.features.portals.guis.pages;
+
+import de.codingair.codingapi.player.gui.inventory.gui.simple.SimpleGUI;
+import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
+import de.codingair.codingapi.tools.items.ItemBuilder;
+import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
+import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
+import de.codingair.warpsystem.spigot.base.guis.editor.StandardButtonOption;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CommandButton;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CostsButton;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.DelayButton;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.PermissionButton;
+import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.features.portals.guis.PortalEditor;
+import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
+
+public class POptions extends PageItem {
+    private Portal clone;
+
+    public POptions(Player p, Portal clone) {
+        super(p, PortalEditor.getMainTitle(), new ItemBuilder(XMaterial.COMMAND_BLOCK).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Options")).getItem(), false);
+
+        this.clone = clone;
+        initialize(p);
+    }
+
+    @Override
+    public boolean initialize(SimpleGUI gui) {
+        boolean result = super.initialize(gui);
+        updatePage();
+        return result;
+    }
+
+    @Override
+    public void initialize(Player p) {
+        StandardButtonOption option = new StandardButtonOption();
+
+        addButton(new PermissionButton(1, 2, clone).setOption(option));
+        addButton(new CommandButton(2, 2, clone).setOption(option));
+        addButton(new DelayButton(3, 2, clone).setOption(option));
+        addButton(new CostsButton(4, 2, clone).setOption(option));
+
+        addButton(new SyncButton(5, 2) {
+            @Override
+            public ItemStack craftItem() {
+                ItemBuilder b = new ItemBuilder().setName(Editor.ITEM_TITLE_COLOR + Lang.get("Teleport_Trigger"));
+                String loreStart = Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": ";
+
+                if(!clone.getBlocks().isEmpty() && !clone.getAnimations().isEmpty() && clone.getTrigger() == 0)
+                    b.setType(XMaterial.LIME_TERRACOTTA).setLore(loreStart + "§a" + Lang.get("Portal_Blocks") + " §7+ §a" + Lang.get("Particle_Effects"));
+                else if(!clone.getBlocks().isEmpty() && (clone.getAnimations().isEmpty() || clone.getTrigger() == 1))
+                    b.setType(XMaterial.YELLOW_TERRACOTTA).setLore(loreStart + "§e" + Lang.get("Portal_Blocks"));
+                else if(!clone.getAnimations().isEmpty() && (clone.getBlocks().isEmpty() || clone.getTrigger() == 2))
+                    b.setType(XMaterial.LIGHT_BLUE_TERRACOTTA).setLore(loreStart + "§b" + Lang.get("Particle_Effects"));
+                else b.setType(XMaterial.RED_TERRACOTTA).setLore(loreStart + "§c-");
+
+                if(!clone.getBlocks().isEmpty() && !clone.getAnimations().isEmpty()) {
+                    b.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7" + Lang.get("Toggle"));
+                }
+
+                return b.getItem();
+            }
+
+            @Override
+            public void onClick(InventoryClickEvent e, Player player) {
+                clone.setTrigger(clone.getTrigger() + 1);
+                update();
+            }
+
+            @Override
+            public boolean canClick(ClickType click) {
+                return click == ClickType.LEFT && !clone.getBlocks().isEmpty() && !clone.getAnimations().isEmpty();
+            }
+        }.setOption(option));
+    }
+}

@@ -179,6 +179,7 @@ public class Destination implements Serializable {
     public void destroy() {
         this.type = null;
         this.id = null;
+        this.adapter = null;
         this.offsetX = 0;
         this.offsetY = 0;
         this.offsetZ = 0;
