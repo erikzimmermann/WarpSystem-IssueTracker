@@ -1,4 +1,3 @@
-~Config
 #The standard and max amount of random teleports will be configured with permissions:
 #"warpsystem.randomteleporters.free.1" » This permissions means, that the player with that permission has a standard amount of 1 free random teleports
 #"warpsystem.randomteleporters.max.2" » This permissions means, that the player with that permission has a max amount of 2 random teleports, so he could buy one, if it's enabled
