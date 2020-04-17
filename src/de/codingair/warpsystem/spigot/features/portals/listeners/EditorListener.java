@@ -48,7 +48,7 @@ public class EditorListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlace(BlockPlaceEvent e) {
         if(PortalManager.getInstance().isEditing(e.getPlayer())) {
             BlockType type = BlockType.getByEditMaterial(e.getBlockPlaced().getType());
@@ -60,15 +60,14 @@ public class EditorListener implements Listener {
         } else if(API.getRemovable(e.getPlayer(), HotbarGUI.class) != null) e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onInteract(PlayerInteractEvent e) {
         PortalBlockEditor editor = PortalManager.getInstance().getEditor(e.getPlayer());
         if(editor != null) {
             if(!e.getAction().equals(Action.LEFT_CLICK_BLOCK)) return;
 
-            e.getClickedBlock().setType(Material.AIR);
             editor.removePosition(e.getClickedBlock().getLocation());
-            e.setCancelled(true);
+            e.setCancelled(false);
         }
     }
 

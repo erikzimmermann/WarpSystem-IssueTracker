@@ -155,59 +155,65 @@ public class PortalManager implements Manager {
         portal.getListeners().add(new PortalListener() {
             @Override
             public void onEnter(Player player) {
+                if(WarpSystem.hasPermission(player, WarpSystem.PERMISSION_MODIFY_PORTALS)) {
+                    if(PortalManager.getInstance().isEditing(player) || API.getRemovable(player, PortalEditor.class) != null) {
+                        player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.8));
+                        return;
+                    } else if(API.getRemovable(player, GUI.class) != null) return;
+                    else if(WarpSystem.getInstance().getTeleportManager().isTeleporting(player)) return;
+
+                    if(goingToDelete.contains(player.getName())) {
+                        setGoingToDelete(player, 0);
+                        noTeleport.add(player);
+
+                        player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.5));
+
+                        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
+                            portal.setEditMode(true);
+
+                            new DeleteGUI(player, new Callback<Boolean>() {
+                                @Override
+                                public void accept(Boolean delete) {
+                                    if(delete) {
+                                        portal.destroy();
+                                        PortalManager.getInstance().getPortals().remove(portal);
+                                        player.sendMessage(Lang.getPrefix() + Lang.get("Portal_Deleted"));
+                                    } else {
+                                        portal.setEditMode(false);
+                                        player.sendMessage(Lang.getPrefix() + Lang.get("Portal_Not_Deleted"));
+                                    }
+                                }
+                            }, null).open();
+                            noTeleport.remove(player);
+                        }, 4L);
+                        return;
+                    } else if(goingToEdit.contains(player.getName())) {
+                        setGoingToEdit(player, 0);
+                        noTeleport.add(player);
+
+                        player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.5));
+
+                        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
+                            portal.setVisible(false);
+                            Portal clone = portal.clone();
+                            clone.createDestinationIfAbsent().createTeleportSoundIfAbsent();
+                            portal.setEditMode(true);
+                            clone.setEditMode(true);
+                            clone.setVisible(true);
+
+                            new PortalEditor(player, portal, clone).open();
+                            noTeleport.remove(player);
+                        }, 4L);
+                        return;
+                    }
+                }
+
                 if(!WarpSystem.hasPermission(player, WarpSystem.PERMISSION_USE_PORTALS)) {
                     player.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
                     return;
                 }
 
-                if(PortalManager.getInstance().isEditing(player) || API.getRemovable(player, PortalEditor.class) != null) {
-                    player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.8));
-                    return;
-                } else if(API.getRemovable(player, GUI.class) != null) return;
-                else if(WarpSystem.getInstance().getTeleportManager().isTeleporting(player)) return;
-
-                if(goingToDelete.contains(player.getName())) {
-                    setGoingToDelete(player, 0);
-                    noTeleport.add(player);
-
-                    player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.5));
-
-                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                        portal.setEditMode(true);
-
-                        new DeleteGUI(player, new Callback<Boolean>() {
-                            @Override
-                            public void accept(Boolean delete) {
-                                if(delete) {
-                                    portal.destroy();
-                                    PortalManager.getInstance().getPortals().remove(portal);
-                                    player.sendMessage(Lang.getPrefix() + Lang.get("Portal_Deleted"));
-                                } else {
-                                    portal.setEditMode(false);
-                                    player.sendMessage(Lang.getPrefix() + Lang.get("Portal_Not_Deleted"));
-                                }
-                            }
-                        }, null).open();
-                        noTeleport.remove(player);
-                    }, 4L);
-
-                } else if(goingToEdit.contains(player.getName())) {
-                    setGoingToEdit(player, 0);
-                    noTeleport.add(player);
-
-                    player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.5));
-
-                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                        portal.setVisible(false);
-                        Portal clone = portal.clone();
-                        clone.createDestinationIfAbsent().createTeleportSoundIfAbsent();
-                        clone.setEditMode(true);
-                        clone.setVisible(true);
-
-                        new PortalEditor(player, portal, clone).open();
-                        noTeleport.remove(player);
-                    }, 4L);
-                } else if(!noTeleport.contains(player)) {
+                if(!noTeleport.contains(player)) {
                     portal.perform(player);
                 }
             }
