@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.features.portals.listeners;
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.player.gui.PlayerItem;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
+import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.features.portals.guis.subgui.PortalBlockEditor;
@@ -19,6 +20,8 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import java.util.Set;
+
 public class EditorListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -27,10 +30,14 @@ public class EditorListener implements Listener {
         if(editor != null) {
             PlayerItem item = PlayerItem.getPlayerItems(e.getPlayer()).remove(0);
 
-            Block b = e.getPlayer().getTargetBlock(null, 10);
+            Block b = e.getPlayer().getTargetBlock((Set<Material>) null, 10);
             if(b != null && b.getType() != XMaterial.AIR.parseMaterial() && b.getType() != XMaterial.VOID_AIR.parseMaterial() && b.getType() != XMaterial.CAVE_AIR.parseMaterial() && b.getType() != XMaterial.CHEST.parseMaterial() && b.getType() != XMaterial.TRAPPED_CHEST.parseMaterial()) {
                 Material m = b.getType();
-                if(!m.isOccluding() && (m.isFuel() || !m.isSolid())) {
+
+                IReflection.MethodAccessor isFuel = IReflection.getSaveMethod(Material.class, "isFuel", boolean.class);
+                boolean fuel = isFuel != null && (boolean) isFuel.invoke(m);
+
+                if(!m.isOccluding() && (fuel || !m.isSolid())) {
                     String name = "§7" + ChatColor.stripColor(BlockType.CUSTOM.getName()) + ": §e" + m.name();
                     if(!name.equals(item.getDisplayName())) {
                         item.setDisplayName(name);
