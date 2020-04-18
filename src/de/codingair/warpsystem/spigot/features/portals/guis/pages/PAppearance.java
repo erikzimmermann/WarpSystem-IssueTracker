@@ -1,7 +1,11 @@
 package de.codingair.warpsystem.spigot.features.portals.guis.pages;
 
 import de.codingair.codingapi.player.MessageAPI;
+import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
+import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
+import de.codingair.codingapi.player.gui.anvil.AnvilSlot;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SimpleGUI;
+import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncAnvilGUIButton;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
@@ -13,7 +17,6 @@ import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.guis.editor.StandardButtonOption;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.NameButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.portals.guis.PortalEditor;
 import de.codingair.warpsystem.spigot.features.portals.guis.subgui.HologramEditor;
@@ -22,6 +25,7 @@ import de.codingair.warpsystem.spigot.features.portals.guis.subgui.SpawnEditor;
 import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
 import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -151,7 +155,7 @@ public class PAppearance extends PageItem {
 
                 b.addLore("§7" + Lang.get("Line_break") + ": '§e\\n§7' §8- §7PlaceholderAPI support" + Lang.PREMIUM_LORE, "");
                 b.addText(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + (clone.getHologram().getText() == null ? "§c-" : "§7'§r" + ChatColor.translateAlternateColorCodes('&', clone.getHologram().getText()) + "§7'"), 100);
-                b.addText(b.getLore().size() > 3 ? "": null, Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Status") + ": §7" + (clone.getHologram().isVisible() ? "§a" + Lang.get("Enabled") : "§c" + Lang.get("Disabled")));
+                b.addText(b.getLore().size() > 3 ? "" : null, Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Status") + ": §7" + (clone.getHologram().isVisible() ? "§a" + Lang.get("Enabled") : "§c" + Lang.get("Disabled")));
 
                 b.addText("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7" + Lang.get("Change"));
                 if(clone.getHologram().getLocation() != null) b.addText(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §7" + Lang.get("Toggle"));
@@ -160,7 +164,57 @@ public class PAppearance extends PageItem {
             }
         }.setOption(option));
 
-        addButton(new SyncButton(4, 2) {
+        addButton(new SyncAnvilGUIButton(4, 2, ClickType.LEFT) {
+            @Override
+            public void onClose(AnvilCloseEvent e) {
+            }
+
+            @Override
+            public boolean canClick(ClickType click) {
+                return click == ClickType.LEFT || click == ClickType.RIGHT;
+            }
+
+            @Override
+            public ItemStack craftItem() {
+                return new ItemBuilder(XMaterial.PAPER)
+                        .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Teleport_Name"))
+                        .setLore("§3" + Lang.get("Current") + ": " + (clone.getTeleportName() == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + org.bukkit.ChatColor.translateAlternateColorCodes('&', clone.getTeleportName()) + "§7'"),
+                                "", (clone.getTeleportName() == null ? "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Set_Name") : "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Name")),
+                (clone.getTeleportName() == null ? null : "§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove")))
+                        .getItem();
+            }
+
+            @Override
+            public ItemStack craftAnvilItem(ClickType trigger) {
+                return new ItemBuilder(Material.PAPER).setName(clone.getTeleportName() == null ? Lang.get("Name") + "..." : clone.getTeleportName().replace("§", "&")).getItem();
+            }
+
+            @Override
+            public void onOtherClick(InventoryClickEvent e) {
+                if(e.getClick() == ClickType.RIGHT) {
+                    clone.setTeleportName(null);
+                    update();
+                }
+            }
+
+            @Override
+            public void onClick(AnvilClickEvent e) {
+                if(!e.getSlot().equals(AnvilSlot.OUTPUT)) return;
+
+                String input = e.getInput();
+
+                if(input == null) {
+                    e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
+                    return;
+                }
+
+                e.setClose(true);
+                clone.setTeleportName(input);
+                update();
+            }
+        }.setOption(option));
+
+        addButton(new SyncButton(5, 2) {
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
                 if(e.isLeftClick()) {

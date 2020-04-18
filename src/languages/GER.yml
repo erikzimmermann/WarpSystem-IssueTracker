@@ -159,6 +159,7 @@ Player_Is_Already_Teleporting: '&cDu wirst bereits teleportiert!'
 Player_Cannot_Use_Warp: '&cSie dürfen diesen Warp nicht benutzen!'
 Shortcut_created: '&7Der Shortcut "&b%SHORTCUT%&7" wurde &ahinzugefügt&7!'
 Shortcut_already_exists: '&cDieser Shortcut existiert bereits!'
+Shortcut_does_not_exist: '&cDieser Shortcut &cexistiert nicht&7!'
 Shortcut_was_removed: '&7Der Shortcut "&b%SHORTCUT%&7" wurde &cgelöscht&7!'
 WarpSign_Edited: Das Warp-Schild wurde erfolgreich bearbeitet!
 Leftclick: Linksklick
@@ -495,3 +496,4 @@ Teleport_Trigger: 'Teleport-Auslöser'
 Spawn_Position: 'Spawn position'
 Spawn_Position_Info: '&7Die Spawn Position wird genutzt, um sich &3zu diesem Portal &7teleportieren zu können.'
 Line_break: 'Zeilenumbruch'
+Teleport_Name: 'Teleport Name'

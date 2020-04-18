@@ -46,12 +46,18 @@ public class PortalEditor extends Editor<Portal> {
                 if(clone.getDestination() != null && clone.getDestination().getId() == null) clone.setDestination(null);
                 if(clone.hasAction(Action.TELEPORT_SOUND) && TeleportSoundPage.isStandardSound(clone.getAction(TeleportSoundAction.class).getValue())) clone.removeAction(Action.TELEPORT_SOUND);
 
+                String oldName = ChatColor.stripColor(portal.getDisplayName());
+                String newName = ChatColor.stripColor(clone.getDisplayName());
+
+                portal.apply(clone);
+                clone.destroy();
+
+                portal.setEditMode(false);
+                portal.setVisible(true);
+
                 if(!PortalManager.getInstance().getPortals().contains(portal)) {
                     PortalManager.getInstance().addPortal(portal);
                 } else {
-                    String oldName = ChatColor.stripColor(portal.getDisplayName());
-                    String newName = ChatColor.stripColor(clone.getDisplayName());
-
                     if(!oldName.equals(newName)) {
                         for(Portal p : PortalManager.getInstance().getPortals()) {
                             if(p.getDestination().getType() == DestinationType.Portal) {
@@ -62,12 +68,6 @@ public class PortalEditor extends Editor<Portal> {
                         }
                     }
                 }
-
-                portal.apply(clone);
-
-                clone.destroy();
-                portal.setEditMode(false);
-                portal.setVisible(true);
             }
 
             @Override

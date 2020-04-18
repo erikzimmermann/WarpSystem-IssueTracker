@@ -30,7 +30,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class AnimationHotBarEditor extends HotbarGUI {
     private PortalEditor fallBack;
@@ -67,6 +66,12 @@ public class AnimationHotBarEditor extends HotbarGUI {
         this.alignRunnable.runTaskTimer(WarpSystem.getInstance(), 5, 5);
 
         initialize();
+    }
+
+    @Override
+    public void open(boolean sound) {
+        super.open(sound);
+        setStartSlot(2);
     }
 
     public static String MINUS_PLUS(String s) {
