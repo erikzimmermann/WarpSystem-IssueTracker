@@ -58,7 +58,7 @@ public class EditorListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlace(BlockPlaceEvent e) {
         if(PortalManager.getInstance().isEditing(e.getPlayer())) {
-            BlockType type = BlockType.getByEditMaterial(e.getBlockPlaced().getType());
+            BlockType type = BlockType.getByEditMaterial(e.getItemInHand());
 
             if(type == null) return;
 
