@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.features.portals.utils;
 
+import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.api.blocks.StaticLavaBlock;
@@ -44,7 +45,10 @@ public enum BlockType {
         ItemBuilder builder = new ItemBuilder(item);
 
         for(BlockType value : values()) {
-            if(builder.equalsSimply(value.editMaterial)) return value;
+            if(Version.getVersion().isBiggerThan(Version.v1_12)) {
+                if(!value.hasEditMaterial()) continue;
+                if(builder.getType() == value.getExactEditMaterial()) return value;
+            } else if(builder.equalsSimply(value.editMaterial)) return value;
         }
 
         return null;
