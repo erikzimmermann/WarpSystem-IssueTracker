@@ -131,56 +131,34 @@ public class ParticleOptions extends HotbarGUI {
         setItem(5, new ItemComponent(new ItemBuilder(XMaterial.SUGAR).setName("§7" + Lang.get("Animation_Speed") + ": §e" + getSpeed()).getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-                if(clickType == ClickType.LEFT_CLICK) {
-                    getPart().setSpeed(getPart().getSpeed() - 1);
-                } else if(clickType == ClickType.RIGHT_CLICK) {
-                    getPart().setSpeed(getPart().getSpeed() + 1);
-                } else return;
-
-                main.getAnimation().update();
-                updateDisplayName(ic, "§7" + Lang.get("Animation_Speed") + ": §e" + getSpeed());
+                Lang.PREMIUM_CHAT(player);
             }
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), AnimationHotBarEditor.MINUS_PLUS(Lang.get("Animation_Speed")), WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(player, Lang.PREMIUM_HOTBAR, WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
             public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
-                MessageAPI.stopSendingActionBar(getPlayer());
+                MessageAPI.stopSendingActionBar(player);
             }
         }));
 
         setItem(6, new ItemComponent(new ItemBuilder(XMaterial.CYAN_DYE).setName("§7" + Lang.get("Color") + ": §e" + (getColor() == null || !getPart().getParticle().isColorable() ? "§c-" : getColorName())).getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-                if(!getPart().getParticle().isColorable()) return;
-
-                if(clickType == ClickType.LEFT_CLICK) {
-                    if(getPart().getColor() == null) getPart().setColor(Color.RED);
-                    else getPart().setColor(getColor().previous());
-                } else if(clickType == ClickType.RIGHT_CLICK) {
-                    if(getPart().getColor() == null) getPart().setColor(Color.RED);
-                    else getPart().setColor(getColor().next());
-                }
-
-                main.getAnimation().update();
-                updateDisplayName(ic, "§7" + Lang.get("Color") + ": §e" + (getColor() == null || !getPart().getParticle().isColorable() ? "§c-" : getColorName()));
+                Lang.PREMIUM_CHAT(player);
             }
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                if(getPart().getParticle().isColorable()) {
-                    MessageAPI.sendActionBar(getPlayer(), AnimationHotBarEditor.PREVIOUS_NEXT(Lang.get("Particle_Effect")), WarpSystem.getInstance(), Integer.MAX_VALUE);
-                } else {
-                    MessageAPI.sendActionBar(getPlayer(), "§c" + Lang.get("ParticleType_Doesnt_Support_Colors"), WarpSystem.getInstance(), Integer.MAX_VALUE);
-                }
+                MessageAPI.sendActionBar(player, Lang.PREMIUM_HOTBAR, WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
             public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
-                MessageAPI.stopSendingActionBar(getPlayer());
+                MessageAPI.stopSendingActionBar(player);
             }
         }));
     }
