@@ -1,12 +1,15 @@
 package de.codingair.warpsystem.spigot.features.portals.utils;
 
+import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.server.blocks.ModernBlock;
 import de.codingair.codingapi.server.blocks.data.Orientable;
 import de.codingair.codingapi.tools.Area;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.codingapi.tools.io.utils.Serializable;
+import de.codingair.codingapi.tools.items.ItemBuilder;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 
 import java.lang.reflect.InvocationTargetException;
@@ -15,6 +18,7 @@ public class PortalBlock implements Serializable {
     private Location location;
     private BlockType type;
     private boolean valid = true;
+    private de.codingair.warpsystem.spigot.api.blocks.utils.Block instance = null;
 
     public PortalBlock() {
     }
@@ -64,30 +68,46 @@ public class PortalBlock implements Serializable {
     }
 
     public void updateBlock(Portal portal) {
+        if(instance != null) {
+            instance.destroy();
+            instance = null;
+        }
+
         if(!isValid()) return;
         if(portal.isVisible()) {
             if(portal.isEditMode()) {
-                if(type.getEditMaterial() != null) this.location.getBlock().setType(type.getEditMaterial(), false);
+                if(type.hasEditMaterial()) setEditData(location.getBlock());
             } else {
-                if(type.getBlockMaterial() == null) {
+                if(!type.hasBlockMaterial()) {
                     if(type.getBlock() != null) {
                         try {
-                            type.getBlock().getConstructor(org.bukkit.Location.class).newInstance(this.location).create();
+                            instance = type.getBlock().getConstructor(org.bukkit.Location.class).newInstance(this.location);
+                            instance.create();
                         } catch(NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
                             e.printStackTrace();
                         }
                     }
                 } else {
                     if(type == BlockType.NETHER) {
-                        new ModernBlock(this.location.getBlock()).setTypeAndData(type.getBlockMaterial(), new Orientable(portal.getCachedAxis()));
+                        new ModernBlock(this.location.getBlock()).setTypeAndData(type.getExactBlockMaterial(), new Orientable(portal.getCachedAxis()));
                     } else if(type == BlockType.END) {
                         if(portal.isVertically() && type.getVerticalBlockMaterial() != null) {
-                            this.location.getBlock().setType(type.getVerticalBlockMaterial(), true);
-                        } else this.location.getBlock().setType(type.getBlockMaterial(), false);
-                    } else this.location.getBlock().setType(type.getBlockMaterial(), false);
+                            this.location.getBlock().setType(type.getExactVerticalBlockMaterial(), true);
+                        } else this.location.getBlock().setType(type.getExactBlockMaterial(), false);
+                    } else this.location.getBlock().setType(type.getExactBlockMaterial(), false);
                 }
             }
         } else if(type.getEditMaterial() != null || type.getBlock() != null || type.getBlockMaterial() != null) this.location.getBlock().setType(Material.AIR, true);
+    }
+
+    private void setEditData(Block b) {
+        if(Version.getVersion().isBiggerThan(Version.v1_12)) {
+            b.setType(type.getExactEditMaterial(), false);
+        } else {
+            ItemBuilder builder = type.getEditMaterial();
+            b.setType(builder.getType(), false);
+            b.setData(builder.getData(), false);
+        }
     }
 
     public boolean touches(LivingEntity e) {

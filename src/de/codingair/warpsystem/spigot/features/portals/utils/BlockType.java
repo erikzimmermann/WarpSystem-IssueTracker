@@ -1,27 +1,28 @@
 package de.codingair.warpsystem.spigot.features.portals.utils;
 
+import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.api.blocks.StaticLavaBlock;
 import de.codingair.warpsystem.spigot.api.blocks.StaticWaterBlock;
 import de.codingair.warpsystem.spigot.api.blocks.utils.Block;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 public enum BlockType {
-    WATER(Lang.get("Water_Portal"), null, XMaterial.BLUE_TERRACOTTA.parseMaterial(), StaticWaterBlock.class),
-    LAVA(Lang.get("Lava_Portal"), null, XMaterial.RED_TERRACOTTA.parseMaterial(), StaticLavaBlock.class),
-    NETHER(Lang.get("Nether_Portal"), XMaterial.NETHER_PORTAL.parseMaterial(), XMaterial.PURPLE_TERRACOTTA.parseMaterial(), null),
-    END(Lang.get("End_Portal"), XMaterial.END_PORTAL.parseMaterial(), XMaterial.END_GATEWAY.parseMaterialSafely(), XMaterial.BLACK_TERRACOTTA.parseMaterial(), null),
-    AIR(Lang.get("Air_Portal"), XMaterial.AIR.parseMaterial(), XMaterial.WHITE_STAINED_GLASS.parseMaterial(), null),
+    WATER(Lang.get("Water_Portal"), null, new ItemBuilder(XMaterial.BLUE_TERRACOTTA), StaticWaterBlock.class),
+    LAVA(Lang.get("Lava_Portal"), null, new ItemBuilder(XMaterial.RED_TERRACOTTA), StaticLavaBlock.class),
+    NETHER(Lang.get("Nether_Portal"), new ItemBuilder(XMaterial.NETHER_PORTAL), new ItemBuilder(XMaterial.PURPLE_TERRACOTTA), null),
+    END(Lang.get("End_Portal"), new ItemBuilder(XMaterial.END_PORTAL), new ItemBuilder(XMaterial.END_GATEWAY), new ItemBuilder(XMaterial.BLACK_TERRACOTTA), null),
+    AIR(Lang.get("Air_Portal"), new ItemBuilder(XMaterial.AIR), new ItemBuilder(XMaterial.WHITE_STAINED_GLASS), null),
     CUSTOM(Lang.get("Custom_Portal"), null, null, null);
 
     private String name;
-    private Material blockMaterial;
-    private Material verticalBlockMaterial;
-    private Material editMaterial;
+    private ItemBuilder blockMaterial;    private ItemBuilder verticalBlockMaterial;
+    private ItemBuilder editMaterial;
     private Class<? extends Block> block;
 
-    BlockType(String name, Material blockMaterial, Material editMaterial, Class<? extends Block> block) {
+    BlockType(String name, ItemBuilder blockMaterial, ItemBuilder editMaterial, Class<? extends Block> block) {
         this.name = name;
         this.blockMaterial = blockMaterial;
         this.editMaterial = editMaterial;
@@ -29,7 +30,7 @@ public enum BlockType {
         this.block = block;
     }
 
-    BlockType(String name, Material blockMaterial, Material verticalBlockMaterial, Material editMaterial, Class<? extends Block> block) {
+    BlockType(String name, ItemBuilder blockMaterial, ItemBuilder verticalBlockMaterial, ItemBuilder editMaterial, Class<? extends Block> block) {
         this.name = name;
         this.blockMaterial = blockMaterial;
         this.verticalBlockMaterial = verticalBlockMaterial;
@@ -37,9 +38,13 @@ public enum BlockType {
         this.block = block;
     }
 
-    public static BlockType getByEditMaterial(Material editMaterial) {
+    public static BlockType getByEditMaterial(ItemStack item) {
+        if(item == null) return null;
+
+        ItemBuilder builder = new ItemBuilder(item);
+
         for(BlockType value : values()) {
-            if(value.getEditMaterial() == editMaterial) return value;
+            if(builder.equalsSimply(value.editMaterial)) return value;
         }
 
         return null;
@@ -49,16 +54,40 @@ public enum BlockType {
         return name;
     }
 
-    public Material getEditMaterial() {
-        return editMaterial;
+    public boolean hasEditMaterial() {
+        return editMaterial != null && editMaterial.getType() != null;
     }
 
-    public Material getVerticalBlockMaterial() {
-        return verticalBlockMaterial;
+    public ItemBuilder getEditMaterial() {
+        return editMaterial == null ? null : editMaterial.getType() == null ? null : editMaterial.clone();
     }
 
-    public Material getBlockMaterial() {
-        return blockMaterial;
+    public Material getExactEditMaterial() {
+        return editMaterial == null ? null : editMaterial.getType();
+    }
+
+    public boolean hasVerticalBlockMaterial() {
+        return verticalBlockMaterial != null && verticalBlockMaterial.getType() != null;
+    }
+
+    public ItemBuilder getVerticalBlockMaterial() {
+        return verticalBlockMaterial == null ? null : verticalBlockMaterial.getType() == null ? null : verticalBlockMaterial.clone();
+    }
+
+    public Material getExactVerticalBlockMaterial() {
+        return verticalBlockMaterial == null ? null : verticalBlockMaterial.getType();
+    }
+
+    public boolean hasBlockMaterial() {
+        return blockMaterial != null && blockMaterial.getType() != null;
+    }
+
+    public ItemBuilder getBlockMaterial() {
+        return blockMaterial == null ? null : blockMaterial.getType() == null ? null : blockMaterial.clone();
+    }
+
+    public Material getExactBlockMaterial() {
+        return blockMaterial == null ? null : blockMaterial.getType();
     }
 
     public Class<? extends Block> getBlock() {

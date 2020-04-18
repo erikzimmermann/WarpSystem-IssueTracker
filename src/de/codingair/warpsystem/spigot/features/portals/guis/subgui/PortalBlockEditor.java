@@ -85,7 +85,7 @@ public class PortalBlockEditor implements Removable {
         int slot = 1;
         for(BlockType value : BlockType.values()) {
             if(value == BlockType.CUSTOM) continue;
-            this.player.getInventory().setItem(slot++, new ItemBuilder(value.getEditMaterial()).setName(value.getName()).getItem());
+            this.player.getInventory().setItem(slot++, value.getEditMaterial().setName(value.getName()).getItem());
         }
 
         for(PortalBlock block : portal.getBlocks()) {
@@ -168,7 +168,7 @@ public class PortalBlockEditor implements Removable {
         int slot = 1;
         for(BlockType value : BlockType.values()) {
             if(value == BlockType.CUSTOM) continue;
-            this.player.getInventory().setItem(slot++, new ItemBuilder(value.getEditMaterial()).setName(value.getName()).getItem());
+            this.player.getInventory().setItem(slot++, value.getEditMaterial().setName(value.getName()).getItem());
         }
     }
 

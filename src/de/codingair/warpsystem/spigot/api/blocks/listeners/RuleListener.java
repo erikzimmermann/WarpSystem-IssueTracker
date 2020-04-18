@@ -71,77 +71,64 @@ public class RuleListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onHit(EntityDamageEvent e) {
-        if((e instanceof EntityDamageByBlockEvent && e.getCause().equals(EntityDamageByBlockEvent.DamageCause.LAVA)) || e.getCause() == EntityDamageEvent.DamageCause.FIRE || e.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK) {
-            if(!touchesOnlyKnownLava(e.getEntity())) return;
+        if((e instanceof EntityDamageByBlockEvent && e.getCause().equals(EntityDamageByBlockEvent.DamageCause.LAVA)) || e.getCause() == EntityDamageEvent.DamageCause.FIRE || e.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || e.getCause() == EntityDamageEvent.DamageCause.DROWNING) {
+            if(!touchesKnownStaticBlocks(e.getEntity())) return;
 
             e.setCancelled(true);
             e.setDamage(0);
             e.getEntity().setFireTicks(0);
         }
     }
+    
+    private void addTo(List<Location> list, Location origin, Location toAdd) {
+        if(!origin.getBlock().getLocation().equals(toAdd.getBlock().getLocation())) list.add(toAdd);
+    }
 
     private List<Location> getBlocksAround(Entity e) {
         List<Location> locs = new ArrayList<>();
-        double diff = 0.3;
+        double diff = 0.5;
 
-        locs.add(e.getLocation().clone());
-        locs.add(e.getLocation().clone().add(new Vector(diff, 0, 0)));
-        locs.add(e.getLocation().clone().add(new Vector(-diff, 0, 0)));
-        locs.add(e.getLocation().clone().add(new Vector(0, 0, diff)));
-        locs.add(e.getLocation().clone().add(new Vector(0, 0, -diff)));
+        Location origin;
 
-        List<Block> finalLocs = new ArrayList<>();
-
-        for(Location loc : locs) {
-            if(!finalLocs.contains(loc.getBlock())) finalLocs.add(loc.getBlock());
+        for(double i = -diff; i <= diff; i += diff) {
+            locs.add(origin = e.getLocation().add(0, i + 0.1, 0));
+            addTo(locs, origin, origin.clone().add(new Vector(diff, 0, 0)));
+            addTo(locs, origin, origin.clone().add(new Vector(-diff, 0, 0)));
+            addTo(locs, origin, origin.clone().add(new Vector(0, 0, diff)));
+            addTo(locs, origin, origin.clone().add(new Vector(0, 0, -diff)));
+            addTo(locs, origin, origin.clone().add(new Vector(diff, 0, diff)));
+            addTo(locs, origin, origin.clone().add(new Vector(-diff, 0, diff)));
+            addTo(locs, origin, origin.clone().add(new Vector(diff, 0, -diff)));
+            addTo(locs, origin, origin.clone().add(new Vector(-diff, 0, -diff)));
         }
-
-        locs.clear();
-
-        for(Block finalLoc : finalLocs) {
-            locs.add(finalLoc.getLocation());
-        }
-
-        finalLocs.clear();
 
         return locs;
     }
 
-    private boolean isLava(Block block) {
-        return block.getType().name().contains("LAVA");
-    }
-
-    private boolean touchesOnlyKnownLava(Entity e) {
+    private boolean touchesKnownStaticBlocks(Entity e) {
         List<Location> locs = getBlocksAround(e);
 
-        List<Block> isLava = new ArrayList<>();
+        if(locs.isEmpty()) return false;
 
-        for(Location loc : locs) {
-            if(isLava.contains(loc.getBlock())) continue;
-            if(isLava(loc.getBlock())) isLava.add(loc.getBlock());
-        }
+        List<StaticBlock> l = API.getRemovables(StaticBlock.class);
 
-        locs.clear();
-        if(isLava.isEmpty()) return false;
+        boolean result = false;
+        for(StaticBlock staticBlock : l) {
+            if(result) break;
 
-        List<StaticLavaBlock> l = API.getRemovables(StaticLavaBlock.class);
+            for(Location loc : locs) {
+                org.bukkit.block.Block b = staticBlock.getLocation().getBlock();
 
-        int i = 0;
-        for(StaticLavaBlock lava : l) {
-            for(Block loc : isLava) {
-                org.bukkit.block.Block b = lava.getLocation().getBlock();
-
-                if(b.getWorld().getName().equals(loc.getWorld().getName()) && b.getLocation().getBlockX() == loc.getLocation().getBlockX() && b.getLocation().getBlockY() == loc.getLocation().getBlockY() && b.getLocation().getBlockZ() == loc.getLocation().getBlockZ()) {
-                    i++;
+                if(b.getWorld().getName().equals(loc.getWorld().getName()) && b.getLocation().getBlockX() == loc.getBlockX() && b.getLocation().getBlockY() == loc.getBlockY() && b.getLocation().getBlockZ() == loc.getBlockZ()) {
+                    result = true;
+                    break;
                 }
             }
         }
 
-        boolean isOnlyKnownLava = i == isLava.size();
-
         l.clear();
-        isLava.clear();
+        locs.clear();
 
-        return isOnlyKnownLava;
+        return result;
     }
 }
