@@ -1,4 +1,4 @@
-package de.codingair.warpsystem.spigot.features.portals.guis.animationseditor;
+package de.codingair.warpsystem.spigot.features.portals.guis.subgui.animationseditor;
 
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
