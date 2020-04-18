@@ -4,7 +4,6 @@ import de.codingair.codingapi.API;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
-import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -83,9 +82,7 @@ public class Lang {
             base.addExtra(upgrade);
             base.addExtra(tc2);
 
-            if(Version.getVersion().isBiggerThan(Version.v1_11)) {
-                sender.spigot().sendMessage(base);
-            } else sender.sendMessage(base.getText());
+            sender.sendMessage(base.getText());
 
             premiumMessage.add(sender, 10);
         }
@@ -107,8 +104,8 @@ public class Lang {
         tc0.addExtra(upgrade);
         tc0.addExtra(tc2);
 
-        if(Version.getVersion().isBiggerThan(Version.v1_11)) {
-            sender.spigot().sendMessage(tc0);
+        if(sender instanceof Player) {
+            ((Player) sender).spigot().sendMessage(tc0);
         } else sender.sendMessage(tc0.getText());
 
         premiumMessage.add(sender, 10);
