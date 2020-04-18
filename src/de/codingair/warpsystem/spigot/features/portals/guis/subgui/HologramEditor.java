@@ -35,6 +35,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class HologramEditor extends HotbarGUI {
     private PortalEditor fallBack;
@@ -199,8 +200,8 @@ public class HologramEditor extends HotbarGUI {
                     String pos = "x=" + cut(hologram.getLocation().getX()) + ", y=" + cut(hologram.getLocation().getY()) + "z=" + cut(hologram.getLocation().getZ());
                     updateDisplayName(getItem(2), "§7" + Lang.get("Position") + ": §e" + pos);
                 } else if(clickType == ClickType.RIGHT_CLICK || clickType == ClickType.SHIFT_RIGHT_CLICK) {
-                    Block b = player.getTargetBlock(null, 10);
-                    if(b != null && b.getType() != Material.AIR && b.getType() != Material.VOID_AIR && b.getType() != Material.CAVE_AIR) {
+                    Block b = player.getTargetBlock((Set<Material>) null, 10);
+                    if(b != null && b.getType() != XMaterial.AIR.parseMaterial() && b.getType() != XMaterial.VOID_AIR.parseMaterial() && b.getType() != XMaterial.CAVE_AIR.parseMaterial()) {
                         Location l = new Location(b.getLocation()).add(0.5, 0.5, 0.5);
                         boolean removed = alignTo.remove(l);
 
