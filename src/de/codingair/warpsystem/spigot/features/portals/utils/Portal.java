@@ -1,7 +1,6 @@
 package de.codingair.warpsystem.spigot.features.portals.utils;
 
 import de.codingair.codingapi.server.blocks.utils.Axis;
-import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.Area;
 import de.codingair.codingapi.tools.HitBox;
 import de.codingair.codingapi.tools.Location;
@@ -15,6 +14,7 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.Te
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -39,6 +39,7 @@ public class Portal extends FeatureObject {
     private Axis cachedAxis = null;
 
     private String displayName;
+    private String teleportName;
 
     public Portal() {
         this.blocks = new ArrayList<>();
@@ -72,6 +73,7 @@ public class Portal extends FeatureObject {
         super.read(d);
 
         this.displayName = d.getString("name");
+        this.teleportName = d.getString("displayname");
 
         this.blocks = new ArrayList<>();
         JSONArray jsonArray = d.getList("blocks");
@@ -131,6 +133,7 @@ public class Portal extends FeatureObject {
         super.write(d);
 
         d.put("name", displayName);
+        d.put("displayname", teleportName);
 
         List<JSON> data = new ArrayList<>();
 
@@ -198,6 +201,7 @@ public class Portal extends FeatureObject {
         this.listeners.clear();
         this.listeners.addAll(portal.getListeners());
         this.displayName = portal.getDisplayName();
+        this.teleportName = portal.getTeleportName();
 
         this.hologram.destroy();
         this.hologram.apply(((Portal) object).hologram);
@@ -223,6 +227,8 @@ public class Portal extends FeatureObject {
                 blocks.equals(portal.blocks) &&
                 animations.equals(portal.animations) &&
                 Objects.equals(this.spawn, portal.spawn) &&
+                Objects.equals(this.displayName, portal.displayName) &&
+                Objects.equals(this.teleportName, portal.teleportName) &&
                 listeners.equals(portal.listeners);
     }
 
@@ -232,6 +238,7 @@ public class Portal extends FeatureObject {
 
         if(!this.animations.isEmpty()) options.setTeleportAnimation(false);
         options.setCanMove(true);
+        if(this.teleportName != null) options.setDisplayName(ChatColor.translateAlternateColorCodes('&', this.teleportName));
 
         return perform(player, options);
     }
@@ -531,5 +538,16 @@ public class Portal extends FeatureObject {
 
     public void setEditing(Portal editing) {
         this.editing = editing;
+    }
+
+    public String getTeleportName() {
+        return teleportName;
+    }
+
+    public void setTeleportName(String teleportName) {
+        this.teleportName = teleportName;
+        if(this.displayName.equals(this.teleportName)) {
+            this.teleportName = null;
+        }
     }
 }
