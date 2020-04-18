@@ -15,7 +15,6 @@ import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.portals.guis.PortalEditor;
-import de.codingair.warpsystem.spigot.features.portals.guis.animationseditor.AnimationHotBarEditor;
 import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

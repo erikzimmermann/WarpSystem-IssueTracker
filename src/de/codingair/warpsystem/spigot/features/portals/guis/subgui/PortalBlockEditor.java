@@ -239,7 +239,7 @@ public class PortalBlockEditor implements Removable {
         } else {
             //loc, mat, byte
             IReflection.MethodAccessor sendBlockChange = IReflection.getMethod(Player.class, "sendBlockChange", null, new Class[] {org.bukkit.Location.class, Material.class, byte.class});
-            sendBlockChange.invoke(player, loc, XMaterial.GLASS.parseMaterial(), 1);
+            sendBlockChange.invoke(player, loc, XMaterial.GLASS.parseMaterial(), (byte) 1);
         }
     }
 
