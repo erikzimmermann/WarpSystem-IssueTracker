@@ -1,14 +1,17 @@
 package de.codingair.warpsystem.spigot.features.portals.listeners;
 
 import de.codingair.codingapi.API;
+import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.PlayerItem;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
 import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.portals.guis.subgui.PortalBlockEditor;
 import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
 import de.codingair.warpsystem.spigot.features.portals.utils.BlockType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -61,8 +64,14 @@ public class EditorListener implements Listener {
             BlockType type = BlockType.getByEditMaterial(e.getBlockPlaced().getType());
 
             if(type == null) return;
+            PortalBlockEditor editor = PortalManager.getInstance().getEditor(e.getPlayer());
+            if(!editor.getPortal().getBlocks().isEmpty() && editor.getPortal().getBlocks().get(0).getType() != type) {
+                Lang.PREMIUM_TITLE(e.getPlayer(), "§7You cannot use §edifferent types§7");
+                e.setCancelled(true);
+                return;
+            }
 
-            PortalManager.getInstance().getEditor(e.getPlayer()).addPosition(e.getBlock().getLocation(), type);
+            editor.addPosition(e.getBlock().getLocation(), type);
             e.setCancelled(false);
         } else if(API.getRemovable(e.getPlayer(), HotbarGUI.class) != null) e.setCancelled(true);
     }

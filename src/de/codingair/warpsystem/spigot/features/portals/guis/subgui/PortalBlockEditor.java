@@ -10,6 +10,7 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Removable;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.portals.utils.BlockType;
 import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
 import de.codingair.warpsystem.spigot.features.portals.utils.PortalBlock;
@@ -112,36 +113,7 @@ public class PortalBlockEditor implements Removable {
                     boolean fuel = isFuel != null && (boolean) isFuel.invoke(m);
 
                     if(!m.isOccluding() && (fuel || !m.isSolid())) {
-                        List<Location> locations = new ArrayList<>();
-                        Location l = b.getLocation();
-                        locations.add(l);
-
-                        if(m.name().toLowerCase().contains("door")) {
-                            Location other = l.clone().add(0, 1, 0);
-                            if(!other.getBlock().getType().name().toLowerCase().contains("door")) other = null;
-
-                            if(other == null) {
-                                other = l.clone().subtract(0, 1, 0);
-                                if(!other.getBlock().getType().name().toLowerCase().contains("door")) other = null;
-                            }
-
-                            if(other != null) locations.add(other.getBlock().getLocation());
-                        }
-
-                        for(Location location : locations) {
-                            Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                                if(!alignTo.remove(location.getBlock())) {
-                                    alignTo.add(location.getBlock());
-
-                                    portal.addPortalBlock(new PortalBlock(new de.codingair.codingapi.tools.Location(location), BlockType.CUSTOM));
-
-                                    changeToAlignmentBlock(player, location);
-                                } else {
-                                    sendBlockChange(player, location.getBlock());
-                                    portal.removePortalBlock(location);
-                                }
-                            }, 1);
-                        }
+                        Lang.PREMIUM_CHAT(player);
                     }
                 }
             }
