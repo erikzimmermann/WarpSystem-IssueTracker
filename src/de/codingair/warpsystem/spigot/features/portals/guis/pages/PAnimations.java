@@ -15,7 +15,7 @@ import de.codingair.warpsystem.spigot.base.guis.editor.StandardButtonOption;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.animations.utils.ParticlePart;
 import de.codingair.warpsystem.spigot.features.portals.guis.PortalEditor;
-import de.codingair.warpsystem.spigot.features.portals.guis.animationseditor.AnimationHotBarEditor;
+import de.codingair.warpsystem.spigot.features.portals.guis.subgui.animationseditor.AnimationHotBarEditor;
 import de.codingair.warpsystem.spigot.features.portals.utils.Animation;
 import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
 import org.bukkit.ChatColor;
@@ -127,6 +127,7 @@ public class PAnimations extends PageItem {
                     Animation anim = new Animation(new ParticlePart(AnimationType.CIRCLE, Particle.FLAME, 1, 1, CustomAnimation.MAX_SPEED), new Location(player.getLocation()));
 
                     clone.getAnimations().add(anim);
+                    getLast().updateControllButtons();
                     new AnimationHotBarEditor(player, (PortalEditor) getLast(), anim).open(false);
                 }
 
