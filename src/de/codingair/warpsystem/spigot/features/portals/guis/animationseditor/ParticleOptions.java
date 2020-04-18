@@ -34,10 +34,26 @@ public class ParticleOptions extends HotbarGUI {
     public void open(boolean sound) {
         updateDisplayName(getItem(3), "§7" + Lang.get("Animation_Height") + ": §e" + getHeight());
         super.open(sound);
+        setStartSlot(2);
     }
 
     public void initialize() {
-        setItem(0, new ItemComponent(new ItemBuilder(Skull.ArrowLeft).setName("§7» §c" + Lang.get("Back") + "§7 «").getItem()).setLink(this.main), false);
+        setItem(0, new ItemComponent(new ItemBuilder(Skull.ArrowLeft).setName("§7» §c" + Lang.get("Back") + "§7 «").getItem(), new ItemListener() {
+            @Override
+            public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
+                ic.getLink().setStartSlot(-1);
+            }
+
+            @Override
+            public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
+
+            }
+
+            @Override
+            public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
+
+            }
+        }).setLink(this.main), false);
         setItem(1, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
 
         setItem(2, new ItemComponent(new ItemBuilder(XMaterial.BEACON).setName("§7" + Lang.get("Animation_Type") + ": '§e" + getAnimationName() + "§7'").getItem(), new ItemListener() {
