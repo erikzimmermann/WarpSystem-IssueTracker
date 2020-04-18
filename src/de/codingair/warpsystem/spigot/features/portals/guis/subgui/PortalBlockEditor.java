@@ -105,10 +105,14 @@ public class PortalBlockEditor implements Removable {
                 else last = System.currentTimeMillis();
 
                 e.setCancelled(true);
-                Block b = player.getTargetBlock(null, 10);
+                Block b = player.getTargetBlock((Set<Material>) null, 10);
                 if(b != null && b.getType() != XMaterial.AIR.parseMaterial() && b.getType() != XMaterial.VOID_AIR.parseMaterial() && b.getType() != XMaterial.CAVE_AIR.parseMaterial() && b.getType() != XMaterial.CHEST.parseMaterial() && b.getType() != XMaterial.TRAPPED_CHEST.parseMaterial()) {
                     Material m = b.getType();
-                    if(!m.isOccluding() && (m.isFuel() || !m.isSolid())) {
+
+                    IReflection.MethodAccessor isFuel = IReflection.getSaveMethod(Material.class, "isFuel", boolean.class);
+                    boolean fuel = isFuel != null && (boolean) isFuel.invoke(m);
+
+                    if(!m.isOccluding() && (fuel || !m.isSolid())) {
                         Lang.PREMIUM_CHAT(player);
                     }
                 }
