@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.features.teleportcommand.commands;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -10,6 +11,9 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
+import de.codingair.warpsystem.transfer.packets.spigot.IsOnlinePacket;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -54,11 +58,75 @@ public class CTeleport extends CommandBuilder {
                         if(args.length == 1) {
                             //Teleport sender to 0
                             Player target = Bukkit.getPlayer(args[0]);
+
+                            if(target == null && WarpSystem.getInstance().isOnBungeeCord()) {
+                                WarpSystem.getInstance().getDataHandler().send(new IsOnlinePacket(new Callback<Boolean>() {
+                                    @Override
+                                    public void accept(Boolean isOnline) {
+                                        if(isOnline) {
+                                            TextComponent tc = new TextComponent(Lang.getPrefix() + "§7Teleporting on your entire BungeeCord is a §6premium feature§7!");
+                                            tc.setColor(ChatColor.GRAY);
+                                            Lang.PREMIUM_CHAT(tc, sender, true);
+                                        } else {
+                                            tp(p, p, target);
+                                        }
+                                    }
+                                }, args[0]));
+
+                                return false;
+                            }
+
                             tp(p, p, target);
                         } else {
                             //Teleport 0 to 1
                             Player player = Bukkit.getPlayer(args[0]);
                             Player target = Bukkit.getPlayer(args[1]);
+
+                            if(WarpSystem.getInstance().isOnBungeeCord() && (player == null || target == null)) {
+                                if(player == null) {
+                                    WarpSystem.getInstance().getDataHandler().send(new IsOnlinePacket(new Callback<Boolean>() {
+                                        @Override
+                                        public void accept(Boolean isOnline) {
+                                            if(isOnline) {
+                                                TextComponent tc = new TextComponent(Lang.getPrefix() + "§7Teleporting on your entire BungeeCord is a §6premium feature§7!");
+                                                tc.setColor(ChatColor.GRAY);
+                                                Lang.PREMIUM_CHAT(tc, sender, true);
+                                            } else {
+                                                WarpSystem.getInstance().getDataHandler().send(new IsOnlinePacket(new Callback<Boolean>() {
+                                                    @Override
+                                                    public void accept(Boolean isOnline) {
+                                                        if(isOnline) {
+                                                            TextComponent tc = new TextComponent(Lang.getPrefix() + "§7Teleporting on your entire BungeeCord is a §6premium feature§7!");
+                                                            tc.setColor(ChatColor.GRAY);
+                                                            Lang.PREMIUM_CHAT(tc, sender, true);
+                                                        } else {
+                                                            tp(p, p, target);
+                                                        }
+                                                    }
+                                                }, args[1]));
+                                            }
+                                        }
+                                    }, args[1]));
+
+                                    return false;
+                                } else if(target == null) {
+                                    WarpSystem.getInstance().getDataHandler().send(new IsOnlinePacket(new Callback<Boolean>() {
+                                        @Override
+                                        public void accept(Boolean isOnline) {
+                                            if(isOnline) {
+                                                TextComponent tc = new TextComponent(Lang.getPrefix() + "§7Teleporting on your entire BungeeCord is a §6premium feature§7!");
+                                                tc.setColor(ChatColor.GRAY);
+                                                Lang.PREMIUM_CHAT(tc, sender, true);
+                                            } else {
+                                                tp(p, p, target);
+                                            }
+                                        }
+                                    }, args[1]));
+
+                                    return false;
+                                }
+                            }
+
                             tp(p, player, target);
                         }
                     } else if((args.length == 3 && !args[2].isEmpty()) || (args.length == 4 && !args[3].isEmpty())) {
@@ -97,6 +165,23 @@ public class CTeleport extends CommandBuilder {
                         } else {
                             //Teleport 0 to coords
                             Player player = Bukkit.getPlayer(args[0]);
+
+                            if(player == null) {
+                                WarpSystem.getInstance().getDataHandler().send(new IsOnlinePacket(new Callback<Boolean>() {
+                                    @Override
+                                    public void accept(Boolean isOnline) {
+                                        if(isOnline) {
+                                            TextComponent tc = new TextComponent(Lang.getPrefix() + "§7Teleporting on your entire BungeeCord is a §6premium feature§7!");
+                                            tc.setColor(ChatColor.GRAY);
+                                            Lang.PREMIUM_CHAT(tc, sender, true);
+                                        } else {
+                                            tp(p, p, player);
+                                        }
+                                    }
+                                }, args[0]));
+
+                                return false;
+                            }
 
                             double x = 0;
                             double y = 0;
