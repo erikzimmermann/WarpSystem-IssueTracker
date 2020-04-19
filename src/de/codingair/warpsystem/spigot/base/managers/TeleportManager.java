@@ -263,7 +263,7 @@ public class TeleportManager {
         Callback<?> waiting = new Callback() {
             @Override
             public void accept(Object object) {
-                Teleport teleport = new Teleport(player, options.getDestination(), options.getOrigin(), options.getDisplayName(), options.getPermission(), finalSeconds, options.getCosts(), finalMessage, options.isCanMove(), options.isSilent(), options.getTeleportSound(), options.isAfterEffects(), options.isTeleportAnimation(), new Callback<TeleportResult>() {
+                Teleport teleport = new Teleport(player, finalSeconds, options, new Callback<TeleportResult>() {
                     @Override
                     public void accept(TeleportResult object) {
                         options.runCallbacks(object);

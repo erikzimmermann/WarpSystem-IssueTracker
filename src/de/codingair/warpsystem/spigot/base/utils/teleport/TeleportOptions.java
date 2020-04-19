@@ -28,6 +28,7 @@ public class TeleportOptions {
     private String payMessage;
     private String paymentDeniedMessage;
     private String message;
+    private String serverNotOnline;
     private boolean silent;
     private SoundData teleportSound;
     private boolean afterEffects;
@@ -52,9 +53,10 @@ public class TeleportOptions {
         this.skip = false;
         this.canMove = WarpSystem.getInstance().getTeleportManager().getOptions().isAllowMove();
         this.waitForTeleport = false;
-        this.message = Lang.getPrefix() + (displayName == null ? Lang.get("Teleported_To") : Lang.get("Teleported_To").replace("%warp%", displayName));
         this.payMessage = Lang.getPrefix() + (displayName == null ? Lang.get("Money_Paid") : Lang.get("Money_Paid").replace("%warp%", displayName));
         this.paymentDeniedMessage = Lang.getPrefix() + Lang.get("Payment_denied");
+        this.message = Lang.getPrefix() + (displayName == null ? Lang.get("Teleported_To") : Lang.get("Teleported_To").replace("%warp%", displayName));
+        this.serverNotOnline = Lang.getPrefix() + Lang.get("Server_Is_Not_Online");
         this.silent = false;
         this.teleportSound = null;
         this.afterEffects = true;
@@ -218,5 +220,13 @@ public class TeleportOptions {
 
     public void setTeleportAnimation(boolean teleportAnimation) {
         this.teleportAnimation = teleportAnimation;
+    }
+
+    public String getServerNotOnline() {
+        return serverNotOnline;
+    }
+
+    public void setServerNotOnline(String serverNotOnline) {
+        this.serverNotOnline = serverNotOnline;
     }
 }
