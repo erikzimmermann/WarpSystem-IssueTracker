@@ -39,7 +39,7 @@ WarpSystem:
     Animation_After_Teleport:
       Enabled: true
     Delay: 3
-    Allow_Move: true
+    Allow_Move: false
 
   Send:
     Teleport_Message:

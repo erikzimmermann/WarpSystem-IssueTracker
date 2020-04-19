@@ -43,50 +43,40 @@ public class Teleport {
     private Player player;
     private AnimationPlayer animation;
     private BukkitRunnable runnable;
+    
+    private TeleportOptions options;
+    private String displayName;
+    private int seconds;
+    private double costs;
+    private SoundData teleportSound;
 
     private Sound cancelSound = Sound.ITEM_BREAK;
 
     private long startTime = 0;
 
-    private Destination destination;
-
-    private String permission;
-    private String displayName;
-    private int seconds;
-    private SoundData teleportSound;
-    private double costs;
-    private boolean canMove;
-    private String message;
-    private Origin origin;
-    private boolean silent;
-    private boolean afterEffects;
-    private boolean teleportAnimation;
     private Callback<TeleportResult> callback;
     private List<Chunk> preLoadedChunks = null;
     private Vector velocity = null;
+    private Listener teleportListener;
 
-    public Teleport(Player player, Destination destination, Origin origin, String displayName, String permission, int seconds, double costs, String message, boolean canMove, boolean silent, SoundData teleportSound, boolean afterEffects, boolean teleportAnimation, Callback<TeleportResult> callback) {
+    public Teleport(Player player, int seconds, TeleportOptions options, Callback<TeleportResult> callback) {
         this.player = player;
-        this.destination = destination;
-        this.origin = origin;
-        this.displayName = displayName == null ? null : displayName.replace("_", " ");
-        this.permission = permission;
         this.seconds = seconds;
-        this.costs = costs;
-        this.teleportSound = teleportSound;
+        this.options = options;
+
+        this.displayName = options.getDisplayName() == null ? null : options.getDisplayName().replace("_", " ");
+        this.costs = options.getCosts();
+        
+        this.teleportSound = options.getTeleportSound();
         if(this.teleportSound == null) this.teleportSound = AnimationManager.getInstance().getActive().getTeleportSound();
         if(this.teleportSound == null) this.teleportSound = TeleportSoundPage.createStandard();
-        this.afterEffects = afterEffects;
-        this.teleportAnimation = teleportAnimation;
-        this.message = message;
-        this.canMove = canMove;
-        this.silent = silent;
+        
         this.callback = callback;
 
         if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) this.costs = 0;
 
-        if(this.teleportAnimation) {
-            this.animation = new AnimationPlayer(player, AnimationManager.getInstance().getActive(), seconds, destination.buildLocation());
+        if(options.isTeleportAnimation()) {
+            this.animation = new AnimationPlayer(player, AnimationManager.getInstance().getActive(), seconds, this.options.getDestination().buildLocation());
             this.animation.setTeleportSound(false);
         }
     }
@@ -105,11 +95,11 @@ public class Teleport {
                     MessageAPI.sendActionBar(player, null);
                     teleport();
                 }
-            }, new UnmodifiableDestination(this.destination));
+            }, new UnmodifiableDestination(options.getDestination()));
             Bukkit.getPluginManager().callEvent(e);
 
             this.startTime = System.currentTimeMillis();
-            if(teleportAnimation) this.animation.setRunning(true);
+            if(options.isTeleportAnimation()) this.animation.setRunning(true);
             this.runnable = new BukkitRunnable() {
                 private int left = seconds;
                 private String msg = Lang.get("Teleporting_Info");
@@ -125,7 +115,7 @@ public class Teleport {
                         return;
                     }
 
-                    if(!teleportAnimation && AnimationManager.getInstance().getActive().getTickSound() != null) AnimationManager.getInstance().getActive().getTickSound().play(player);
+                    if(!options.isTeleportAnimation() && AnimationManager.getInstance().getActive().getTickSound() != null) AnimationManager.getInstance().getActive().getTickSound().play(player);
                     MessageAPI.sendActionBar(player, msg.replace("%seconds%", left + ""));
                     left--;
                 }
@@ -138,9 +128,9 @@ public class Teleport {
     private void preLoadChunks(int radius) {
         GeneralOptions options = WarpSystem.getOptions(GeneralOptions.class);
 
-        if((!options.isChunkPreLoadingLimitedByPerm() || getPlayer().hasPermission(WarpSystem.PERMISSION_TELEPORT_PRELOAD_CHUNKS)) && options.isChunkPreLoadEnabled() && this.destination != null) {
+        if((!options.isChunkPreLoadingLimitedByPerm() || getPlayer().hasPermission(WarpSystem.PERMISSION_TELEPORT_PRELOAD_CHUNKS)) && options.isChunkPreLoadEnabled() && this.options.getDestination() != null) {
             radius = radius == -1 ? options.getChunkPreLoadRadius() : radius;
-            Location l = this.destination.buildLocation();
+            Location l = this.options.getDestination().buildLocation();
 
             if(l == null) return;
 
@@ -195,7 +185,7 @@ public class Teleport {
         if(sound && cancelSound != null) cancelSound.playSound(player);
 
         if(!finished) {
-            if(teleportAnimation) this.animation.setRunning(false);
+            if(options.isTeleportAnimation()) this.animation.setRunning(false);
             payBack();
             if(callback != null) callback.accept(TeleportResult.CANCELLED);
         }
@@ -216,8 +206,9 @@ public class Teleport {
 
                 MessageAPI.stopSendingActionBar(player);
                 cancel(false, true);
-                if(destination == null) return;
+                if(options.getDestination() == null) return;
 
+                String message = options.getFinalMessage(player);
                 if(message != null) {
                     message = (message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", new ImprovedDouble(costs) + "").replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName));
                 }
@@ -225,12 +216,14 @@ public class Teleport {
                 if(seconds == 0) preLoadChunks(1);
 
                 Location from = player.getLocation();
-                Bukkit.getPluginManager().registerEvents(new Listener() {
-                    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+                String finalMessage = message;
+                Bukkit.getPluginManager().registerEvents(teleportListener = new Listener() {
+                    @EventHandler(priority = EventPriority.MONITOR)
                     public void onTeleport(PlayerTeleportEvent e) {
                         if(player.equals(e.getPlayer()) && e.isCancelled()) {
-                            player.sendMessage(Lang.getPrefix() + Lang.get("Teleport_Cancelled"));
+                            MessageAPI.sendActionBar(player, Lang.get("Teleport_Cancelled"));
                             HandlerList.unregisterAll(this);
+                            cancel(true, false);
                         }
                     }
 
@@ -240,10 +233,10 @@ public class Teleport {
                             if(player.isOnline()) {
                                 sendLoadedChunks();
 
-                                PlayerTeleportedEvent event = new PlayerTeleportedEvent(player, from, origin, afterEffects);
+                                PlayerTeleportedEvent event = new PlayerTeleportedEvent(player, from, options.getOrigin(), options.isAfterEffects());
                                 Bukkit.getPluginManager().callEvent(event);
 
-                                destination.sendMessage(player, message, displayName, costs);
+                                 options.getDestination().sendMessage(player, finalMessage, displayName, costs);
                                 if(event.isRunAfterEffects()) playAfterEffects(player);
                                 if(teleportSound != null) teleportSound.play(player);
                                 if(velocity != null) player.setVelocity(velocity);
@@ -259,13 +252,26 @@ public class Teleport {
                     }
                 }, WarpSystem.getInstance());
 
-                if(!destination.teleport(player, message, displayName, permission == null, silent, costs, callback)) return;
+                if(!options.getDestination().teleport(player, message, displayName, options.getPermission() == null, options.isSilent(), costs, new Callback<TeleportResult>() {
+                    @Override
+                    public void accept(TeleportResult res) {
+                        if(res == TeleportResult.SERVER_NOT_AVAILABLE) player.sendMessage(options.getServerNotOnline());
+                        if(callback != null) callback.accept(res);
+
+                        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
+                            if(teleportListener != null) {
+                                HandlerList.unregisterAll(teleportListener);
+                                teleportListener = null;
+                            }
+                        }, 5);
+                    }
+                })) return;
             }
         };
 
         if(this.runnable == null) {
             //no timer set, call PreTeleportAttemptEvent
-            PreTeleportAttemptEvent e = new PreTeleportAttemptEvent(this.player, teleport, new UnmodifiableDestination(this.destination));
+            PreTeleportAttemptEvent e = new PreTeleportAttemptEvent(this.player, teleport, new UnmodifiableDestination(options.getDestination()));
             Bukkit.getPluginManager().callEvent(e);
 
             if(e.isWaitForCallback()) {
@@ -290,10 +296,10 @@ public class Teleport {
     }
 
     public SimulatedTeleportResult simulate(Player player) {
-        if(this.destination == null) throw new IllegalArgumentException("Destination cannot be null!");
-        if(this.permission != null && !this.permission.equals(TeleportManager.NO_PERMISSION) && !player.hasPermission(this.permission))
+        if(options.getDestination() == null) throw new IllegalArgumentException("Destination cannot be null!");
+        if(options.getPermission() != null && !options.getPermission().equals(TeleportManager.NO_PERMISSION) && !player.hasPermission(options.getPermission()))
             return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"), TeleportResult.NO_PERMISSION);
-        return this.destination.simulate(player, this.permission == null);
+        return this.options.getDestination().simulate(player, options.getPermission() == null);
     }
 
     public Player getPlayer() {
@@ -301,7 +307,7 @@ public class Teleport {
     }
 
     public Destination getDestination() {
-        return destination;
+        return  this.options.getDestination();
     }
 
     public BukkitRunnable getRunnable() {
@@ -313,7 +319,7 @@ public class Teleport {
     }
 
     public boolean isCanMove() {
-        return canMove;
+        return options.isCanMove();
     }
 
     public int getSeconds() {
@@ -321,11 +327,11 @@ public class Teleport {
     }
 
     public String getPermission() {
-        return permission;
+        return options.getPermission();
     }
 
     public void setPermission(String permission) {
-        this.permission = permission;
+        options.setPermission(permission);
     }
 
     public Teleport setVelocity(Vector velocity) {
