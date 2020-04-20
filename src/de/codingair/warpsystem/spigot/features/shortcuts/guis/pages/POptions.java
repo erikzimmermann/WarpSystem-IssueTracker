@@ -61,7 +61,7 @@ public class POptions extends PageItem {
             public void onClick(InventoryClickEvent e, Player player) {
                 Lang.PREMIUM_CHAT(player);
             }
-        });
+        }.setOption(option).setOnlyLeftClick(true));
 
         addButton(new SyncButton(3, 2) {
             @Override
@@ -77,6 +77,22 @@ public class POptions extends PageItem {
             public void onClick(InventoryClickEvent e, Player player) {
                 Lang.PREMIUM_CHAT(player);
             }
-        });
+        }.setOption(option).setOnlyLeftClick(true));
+
+        addButton(new SyncButton(4, 2) {
+            @Override
+            public ItemStack craftItem() {
+                return new ItemBuilder(XMaterial.GOLD_NUGGET)
+                        .setName("§6§n" + Lang.get("Costs") + Lang.PREMIUM_LORE)
+                        .addLore("§3" + Lang.get("Current") + ": " + "§c" + Lang.get("Not_Set"))
+                        .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Set"))
+                        .getItem();
+            }
+
+            @Override
+            public void onClick(InventoryClickEvent e, Player player) {
+                Lang.PREMIUM_CHAT(player);
+            }
+        }.setOption(option).setOnlyLeftClick(true));
     }
 }

@@ -136,7 +136,7 @@ public class Editor<C> extends SimpleGUI {
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
                 backup.cancel(clone);
-                getCancelSound().play(player);
+                if(getCancelSound() != null) getCancelSound().play(player);
             }
 
             @Override
