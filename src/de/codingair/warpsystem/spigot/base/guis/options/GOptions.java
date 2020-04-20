@@ -7,11 +7,13 @@ import de.codingair.warpsystem.spigot.base.guis.editor.Backup;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.ShowIcon;
 import de.codingair.warpsystem.spigot.base.guis.options.pages.PGeneral;
+import de.codingair.warpsystem.spigot.base.guis.options.pages.PPortals;
 import de.codingair.warpsystem.spigot.base.guis.options.pages.PWarpGUI;
 import de.codingair.warpsystem.spigot.base.guis.options.pages.PWarpSigns;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.options.OptionBundle;
 import de.codingair.warpsystem.spigot.base.utils.options.specific.GeneralOptions;
+import de.codingair.warpsystem.spigot.base.utils.options.specific.PortalOptions;
 import de.codingair.warpsystem.spigot.base.utils.options.specific.WarpGUIOptions;
 import de.codingair.warpsystem.spigot.base.utils.options.specific.WarpSignOptions;
 import org.bukkit.entity.Player;
@@ -45,7 +47,7 @@ public class GOptions extends Editor<OptionBundle> {
             public ItemStack buildIcon() {
                 return new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setHideName(true).getItem();
             }
-        }, new PGeneral(p, clone.getOptions(GeneralOptions.class)), new PWarpGUI(p, clone.getOptions(WarpGUIOptions.class)), new PWarpSigns(p, clone.getOptions(WarpSignOptions.class)));
+        }, new PGeneral(p, clone.getOptions(GeneralOptions.class)), new PWarpGUI(p, clone.getOptions(WarpGUIOptions.class)), new PWarpSigns(p, clone.getOptions(WarpSignOptions.class)), new PPortals(p, clone.getOptions(PortalOptions.class)));
 
         old = bundle;
         update = clone;
@@ -54,6 +56,7 @@ public class GOptions extends Editor<OptionBundle> {
     private static boolean reloadRequired(OptionBundle old, OptionBundle update) {
         if(old.getOptions(WarpGUIOptions.class).getEnabled().getValue() != update.getOptions(WarpGUIOptions.class).getEnabled().getValue()) return true;
         if(old.getOptions(WarpSignOptions.class).getEnabled().getValue() != update.getOptions(WarpSignOptions.class).getEnabled().getValue()) return true;
+        if(old.getOptions(PortalOptions.class).getEnabled().getValue() != update.getOptions(PortalOptions.class).getEnabled().getValue()) return true;
 
         return false;
     }

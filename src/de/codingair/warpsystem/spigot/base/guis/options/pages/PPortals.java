@@ -9,16 +9,16 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.options.specific.WarpSignOptions;
+import de.codingair.warpsystem.spigot.base.utils.options.specific.PortalOptions;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class PWarpSigns extends PageItem {
-    private WarpSignOptions options;
+public class PPortals extends PageItem {
+    private PortalOptions options;
 
-    public PWarpSigns(Player p, WarpSignOptions options) {
-        super(p, Editor.TITLE_COLOR + "WarpSystem§r §7- §6" + Lang.get("Config"), new ItemBuilder(XMaterial.OAK_SIGN).setName(Editor.ITEM_TITLE_COLOR + Lang.get("WarpSigns")).getItem(), false);
+    public PPortals(Player p, PortalOptions options) {
+        super(p, Editor.TITLE_COLOR + "WarpSystem§r §7- §6" + Lang.get("Config"), new ItemBuilder(XMaterial.BLAZE_POWDER).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Portals")).getItem(), false);
 
         this.options = options;
 
