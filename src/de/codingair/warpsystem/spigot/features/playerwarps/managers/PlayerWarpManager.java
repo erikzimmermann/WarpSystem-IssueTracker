@@ -837,8 +837,9 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible {
     public boolean add(PlayerWarp warp) {
         List<PlayerWarp> warps = getOwnWarps(warp.getOwner().getId());
         if(getWarp(warp.getOwner().getId(), warp.getName()) != null || warps.size() == 3) return false;
-	warp.setName(getCopiedName(warps, warp.getName()));        
-	warps.add(warp);
+
+        warp.setName(getCopiedName(warps, warp.getName()));
+        warps.add(warp);
 
         if(warp.getStarted() == 0) {
             warp.setStarted(System.currentTimeMillis());
