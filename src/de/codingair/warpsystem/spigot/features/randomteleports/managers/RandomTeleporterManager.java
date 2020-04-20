@@ -16,7 +16,6 @@ import de.codingair.warpsystem.spigot.features.randomteleports.utils.RandomLocat
 import de.codingair.warpsystem.spigot.features.randomteleports.utils.forwardcompatibility.RTPTagConverter_v4_2_2;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -30,9 +29,7 @@ public class RandomTeleporterManager implements Manager {
     private double minRange;
     private double maxRange;
     private boolean protectedRegions;
-    private boolean worldBorder;
     private List<Biome> biomeList;
-    private List<World> worldList = new ArrayList<>();
     private HashMap<Player, RandomLocationCalculator> searching = new HashMap<>();
 
     private int netherHeight;
@@ -65,15 +62,7 @@ public class RandomTeleporterManager implements Manager {
         this.netherHeight = config.getInt("RandomTeleport.Range.Highest_Y.Nether", 126);
         this.endHeight = config.getInt("RandomTeleport.Range.Highest_Y.End", 72);
 
-        if(config.getBoolean("RandomTeleport.Worlds.Enabled", false)) {
-            for(String name : config.getStringList("RandomTeleport.Worlds.List")) {
-                World w = Bukkit.getWorld(name);
-                if(w != null) this.worldList.add(w);
-            }
-        }
-
-        this.protectedRegions = config.getBoolean("RandomTeleport.Support.ProtectedRegions", true);
-        this.worldBorder = config.getBoolean("RandomTeleport.Support.WorldBorder", true);
+        this.protectedRegions = config.getBoolean("WaSystem.RandomTeleport.Support.ProtectedRegions", true);
         if(config.getBoolean("RandomTeleport.Support.Biome.Enabled", true)) {
             List<String> configBiomes = config.getStringList("RandomTeleport.Support.Biome.BiomeList");
             biomeList = new ArrayList<>();
@@ -337,14 +326,6 @@ public class RandomTeleporterManager implements Manager {
 
     public boolean isBuyable() {
         return buyable && MoneyAdapterType.canEnable();
-    }
-
-    public boolean isWorldBorder() {
-        return worldBorder;
-    }
-
-    public List<World> getWorldList() {
-        return worldList;
     }
 
     public int getNetherHeight() {
