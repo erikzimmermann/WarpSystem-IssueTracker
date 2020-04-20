@@ -14,11 +14,13 @@ public abstract class PWMultiCommandComponent extends MultiCommandComponent {
     @Override
     public boolean matchTabComplete(CommandSender sender, String suggestion, String argument) {
         String[] a = argument.split("\\.", -1);
+        String player = a[0].toLowerCase();
         argument = a[a.length - 1].toLowerCase();
 
         a = suggestion.split("\\.", -1);
+        String suggestedPlayer = a[0].toLowerCase();
         suggestion = a[a.length - 1].toLowerCase();
 
-        return suggestion.startsWith(argument);
+        return suggestedPlayer.startsWith(player) || suggestion.startsWith(argument);
     }
 }

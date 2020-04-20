@@ -63,7 +63,6 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                         @Override
                         public void accept(PlayerWarp warp) {
                             suggestions.add(warp.getOwner().getName() + "." + warp.getName(false).replace(" ", "_"));
-                            if(!suggestions.contains(warp.getOwner().getName())) suggestions.add(warp.getOwner().getName());
                         }
                     });
                 } else {
@@ -140,7 +139,6 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                         @Override
                         public void accept(PlayerWarp warp) {
                             suggestions.add(warp.getOwner().getName() + "." + warp.getName(false).replace(" ", "_"));
-                            if(!suggestions.contains(warp.getOwner().getName())) suggestions.add(warp.getOwner().getName());
                         }
                     });
                 } else {
@@ -297,6 +295,8 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                     return;
                 }
 
+                input = input.replace(" ", "_");
+
                 String forbidden = PlayerWarpManager.getManager().checkSymbols(input, "§c", "§f");
                 if(forbidden != null) {
                     p.sendMessage(Lang.getPrefix() + Lang.get("Forbidden_Symbols").replace("%NAME_HINT%", forbidden));
@@ -308,6 +308,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                     return;
                 }
 
+                e.setSubmitted(input);
                 e.setClose(true);
             }
 
