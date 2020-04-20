@@ -53,21 +53,14 @@ public class GOptions extends Editor<OptionBundle> {
             }
         }.setOption(option));
 
-        addButton(new ItemButton(3, new ItemBuilder(XMaterial.END_PORTAL_FRAME).setName(Editor.ITEM_TITLE_COLOR + Lang.get("NativePortals") + Lang.PREMIUM_LORE).getItem()) {
+        addButton(new ItemButton(3, new ItemBuilder(XMaterial.OAK_SIGN).setName(Editor.ITEM_TITLE_COLOR + Lang.get("WarpSigns") + Lang.PREMIUM_LORE).getItem()) {
             @Override
             public void onClick(InventoryClickEvent e) {
                 Lang.PREMIUM_CHAT(e.getWhoClicked());
             }
         }.setOption(option));
 
-        addButton(new ItemButton(4, new ItemBuilder(XMaterial.BLAZE_ROD).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Effect_Portals") + Lang.PREMIUM_LORE).getItem()) {
-            @Override
-            public void onClick(InventoryClickEvent e) {
-                Lang.PREMIUM_CHAT(e.getWhoClicked());
-            }
-        }.setOption(option));
-
-        addButton(new ItemButton(5, new ItemBuilder(XMaterial.OAK_SIGN).setName(Editor.ITEM_TITLE_COLOR + Lang.get("WarpSigns") + Lang.PREMIUM_LORE).getItem()) {
+        addButton(new ItemButton(4, new ItemBuilder(XMaterial.BLAZE_ROD).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Portals") + Lang.PREMIUM_LORE).getItem()) {
             @Override
             public void onClick(InventoryClickEvent e) {
                 Lang.PREMIUM_CHAT(e.getWhoClicked());
