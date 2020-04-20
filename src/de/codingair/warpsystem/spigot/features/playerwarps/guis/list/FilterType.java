@@ -2,9 +2,9 @@ package de.codingair.warpsystem.spigot.features.playerwarps.guis.list;
 
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
 import de.codingair.codingapi.utils.Node;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.filters.*;
-import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -34,15 +34,15 @@ public enum FilterType {
         return instance.getListItems(maxSize, page, player, search, extra);
     }
 
-    public FilterType next() {
+    public FilterType next(Player player) {
         int next = id + 1;
-        if(next >= values().length - (PlayerWarpManager.getManager().isClasses() ? 0 : 1)) next = 0;
+        if(next >= values().length - (player.hasPermission(WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS) ? 0 : 1)) next = 0;
         return values()[next];
     }
 
-    public FilterType previous() {
+    public FilterType previous(Player player) {
         int previous = id - 1;
-        if(previous < 0) previous = values().length - 1 - (PlayerWarpManager.getManager().isClasses() ? 0 : 1);
+        if(previous < 0) previous = values().length - 1 - (player.hasPermission(WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS) ? 0 : 1);
         return values()[previous];
     }
 
