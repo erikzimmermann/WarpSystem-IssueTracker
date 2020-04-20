@@ -500,7 +500,8 @@ public class PlayerWarp extends FeatureObject {
 
     public boolean equalsName(String name) {
         if(name == null) return false;
-        return getName(false).replace(" ", "_").equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name.replace(" ", "_"))));
+        name = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name.replace(" ", "_")));
+        return getName(false).equalsIgnoreCase(name);
     }
 
     public String getTeleportMessage() {
@@ -522,7 +523,7 @@ public class PlayerWarp extends FeatureObject {
 
     public ItemBuilder getItem(String highlight) {
         ItemBuilder b = item.clone()
-                .setName(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Name") + ": §f" + (highlight == null ? name : ChatColor.highlight(name, highlight, "§e§n", "§f", true)))
+                .setName(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Name") + ": §f" + (highlight == null ? name : ChatColor.highlight(name, highlight, "§e§n", "§f", true)).replace("_", " "))
                 .setLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Description") + ":" + (description.isEmpty() ? " §c-" : ""))
                 .addLore(getPreparedDescription());
 

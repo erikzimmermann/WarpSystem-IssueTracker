@@ -946,6 +946,8 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
     public void add(PlayerWarp warp) {
         List<PlayerWarp> warps = getOwnWarps(warp.getOwner().getId());
         if(getWarp(warp.getOwner().getId(), warp.getName()) != null) return;
+
+        warp.setName(getCopiedName(warps, warp.getName()));
         warps.add(warp);
 
         if(warp.getStarted() == 0) {
@@ -955,6 +957,33 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
         names.putIfAbsent(warp.getOwner().getName(), warp.getOwner().getId());
         this.warps.putIfAbsent(warp.getOwner().getId(), warps);
+    }
+
+    private String getCopiedName(List<PlayerWarp> list, String name) {
+        int num = 0;
+        boolean found;
+
+        name = name.replace(" ", "_");
+
+        do {
+            found = false;
+            if(num == 0) num++;
+            else {
+                name = name.replaceAll("_\\([0-9]{1,5}?\\)\\z", "");
+                name += "_(" + num++ + ")";
+            }
+
+            for(PlayerWarp d : list) {
+                String nameWithoutColor = net.md_5.bungee.api.ChatColor.stripColor(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', name));
+                String dName = net.md_5.bungee.api.ChatColor.stripColor(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', d.getName())).replace(" ", "_");
+                if(dName.equalsIgnoreCase(nameWithoutColor)) {
+                    found = true;
+                    break;
+                }
+            }
+        } while(found);
+
+        return name;
     }
 
     public double delete(PlayerWarp warp, boolean informBungee) {

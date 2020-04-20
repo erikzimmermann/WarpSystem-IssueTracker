@@ -84,7 +84,7 @@ public class WarpSystem extends Plugin {
 
         log("Loading features");
         boolean createBackup = false;
-        if(!this.dataManager.load(true)) createBackup = true;
+        if(!this.dataManager.load(false)) createBackup = true;
 
         if(createBackup) {
             log("Loading with errors > Create backup...");

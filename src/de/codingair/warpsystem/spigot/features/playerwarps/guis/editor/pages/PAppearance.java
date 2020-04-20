@@ -30,7 +30,6 @@ import java.util.Objects;
 
 public class PAppearance extends PageItem {
     private final PlayerWarp warp, original;
-    private final String startName;
     private final boolean editing;
 
     public PAppearance(Player p, PlayerWarp warp, PlayerWarp original, boolean editing) {
@@ -39,7 +38,6 @@ public class PAppearance extends PageItem {
         this.warp = warp;
         this.original = original;
         this.editing = editing;
-        this.startName = this.warp.getName();
         initialize(p);
     }
 
@@ -117,7 +115,7 @@ public class PAppearance extends PageItem {
                         .setLore(PWEditor.getCostsMessage(editing && !original.getName().equals(warp.getName()) ? PlayerWarpManager.getManager().getNameChangeCosts() : 0, PAppearance.this))
                         .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + "§7'§r" + org.bukkit.ChatColor.translateAlternateColorCodes('&', warp.getName()) + "§7'")
                         .addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Name"),
-                                (warp.getName().equals(startName) ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §c" + Lang.get("Reset")))
+                                (warp.getName().equals(original.getName()) ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §c" + Lang.get("Reset")))
                         .getItem();
             }
 
@@ -130,7 +128,7 @@ public class PAppearance extends PageItem {
             @Override
             public void onOtherClick(InventoryClickEvent e) {
                 if(e.getClick() == ClickType.RIGHT) {
-                    warp.setName(startName);
+                    warp.setName(original.getName());
                     getLast().updateShowIcon();
                     update();
                     updateCosts();
@@ -148,12 +146,14 @@ public class PAppearance extends PageItem {
                     return;
                 }
 
+                input = input.replace(" ", "_");
+
                 if(input.length() < PlayerWarpManager.getManager().getNameMinLength() || input.length() > PlayerWarpManager.getManager().getNameMaxLength()) {
                     p.sendMessage(Lang.getPrefix() + Lang.get("Name_Too_Long_Too_Short").replace("%MIN%", PlayerWarpManager.getManager().getNameMinLength() + "").replace("%MAX%", PlayerWarpManager.getManager().getNameMaxLength() + ""));
                     return;
                 }
 
-                if(!startName.equalsIgnoreCase(warp.getName()) && !warp.getName(false).equalsIgnoreCase(warp.getName()) && PlayerWarpManager.getManager().existsOwn(p, warp.getName())) {
+                if(!original.getName(false).equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', input))) && PlayerWarpManager.getManager().existsOwn(p, input)) {
                     e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
                     return;
                 }
@@ -164,7 +164,7 @@ public class PAppearance extends PageItem {
                     return;
                 }
 
-                warp.setName(e.getInput());
+                warp.setName(input);
                 getLast().updateShowIcon();
                 updateCosts();
                 update();
@@ -173,7 +173,7 @@ public class PAppearance extends PageItem {
 
             @Override
             public boolean canClick(ClickType click) {
-                return click == ClickType.LEFT || (click == ClickType.RIGHT && !warp.getName().equals(startName));
+                return click == ClickType.LEFT || (click == ClickType.RIGHT && !warp.getName().equals(original.getName()));
             }
 
             @Override
