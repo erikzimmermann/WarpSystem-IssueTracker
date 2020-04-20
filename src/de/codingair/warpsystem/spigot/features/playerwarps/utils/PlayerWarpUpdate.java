@@ -35,7 +35,7 @@ public class PlayerWarpUpdate extends PlayerWarpData implements Serializable {
         b |= (trusted != null ? 1 : 0) << 1;
         b |= (type != null ? 1 : 0) << 2;
         b |= (skullId != null ? 1 : 0) << 3;
-        b |= (red != null && green != null && blue != null ? 1 : 0) << 4;
+        b |= (rgb != null ? 1 : 0) << 4;
         b |= (data != null ? 1 : 0) << 5;
         b |= (isPublic != null && isPublic ? 1 : 0) << 6;
         b |= (teleportMessage != null ? 1 : 0) << 7;
@@ -92,11 +92,7 @@ public class PlayerWarpUpdate extends PlayerWarpData implements Serializable {
 
         if(type != null) o.writeUTF(type);
         if(skullId != null) o.writeUTF(skullId);
-        if(red != null && green != null && blue != null) {
-            o.writeByte(red);
-            o.writeByte(green);
-            o.writeByte(blue);
-        }
+        if(rgb != null) o.writeInt(rgb);
         if(data != null) o.writeByte(data);
 
         if(teleportMessage != null) o.writeUTF(teleportMessage);
@@ -160,11 +156,7 @@ public class PlayerWarpUpdate extends PlayerWarpData implements Serializable {
         }
         if((options & (1 << 2)) != 0) type = i.readUTF();
         if((options & (1 << 3)) != 0) skullId = i.readUTF();
-        if((options & (1 << 4)) != 0) {
-            red = i.readByte();
-            green = i.readByte();
-            blue = i.readByte();
-        }
+        if((options & (1 << 4)) != 0) rgb = i.readInt();
         if((options & (1 << 5)) != 0) data = i.readByte();
         isPublic = (options & (1 << 6)) != 0;
         if((options & (1 << 7)) != 0) teleportMessage = i.readUTF();

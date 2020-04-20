@@ -17,7 +17,8 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
     protected List<User> trusted;
 
     protected String type, skullId;
-    protected Byte red, green, blue, data;
+    protected Byte data;
+    protected Integer rgb;
 
     protected Boolean isPublic;
     protected String teleportMessage;
@@ -74,9 +75,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
 
         if(w.type != null) this.type = w.type;
         if(w.skullId != null) this.skullId = w.skullId;
-        if(w.red != null) this.red = w.red;
-        if(w.green != null) this.green = w.green;
-        if(w.blue != null) this.blue = w.blue;
+        if(w.rgb != null) this.rgb = w.rgb;
         if(w.data != null) this.data = w.data;
 
         if(w.isPublic != null) this.isPublic = w.isPublic;
@@ -107,11 +106,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         if(Objects.equals(teleportMessage, oldData.teleportMessage)) u.teleportMessage = null;
         if(Objects.equals(type, oldData.type)) u.type = null;
         if(Objects.equals(skullId, oldData.skullId)) u.skullId = null;
-        if(Objects.equals(red, oldData.red) && Objects.equals(green, oldData.green) && Objects.equals(blue, oldData.blue)) {
-            u.red = null;
-            u.green = null;
-            u.blue = null;
-        }
+        if(Objects.equals(rgb, oldData.rgb)) u.rgb = null;
         if(Objects.equals(data, oldData.data)) u.data = null;
         if(Objects.equals(teleportCosts, oldData.teleportCosts)) u.teleportCosts = null;
         if(Objects.equals(inactiveSales, oldData.inactiveSales)) u.inactiveSales = null;
@@ -139,7 +134,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         //byte mask: PUBLIC | ITEM_SKULL | ITEM_COLOR | ITEM_DATA | TELEPORT_MESSAGE | BORN == START | CREATOR_KEY | NOTIFY
         byte b = (byte) (isPublic ? 1 : 0);
         b |= (skullId != null ? 1 : 0) << 1;
-        b |= (red != null && green != null && blue != null ? 1 : 0) << 2;
+        b |= (rgb != null ? 1 : 0) << 2;
         b |= (data != null ? 1 : 0) << 3;
         b |= (teleportMessage != null ? 1 : 0) << 4;
         b |= (!born.equals(started) ? 1 : 0) << 5;
@@ -158,11 +153,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
 
         o.writeUTF(type);                              //item
         if(data != null) o.writeByte(data);
-        if(red != null && green != null && blue != null) {
-            o.writeByte(red);
-            o.writeByte(green);
-            o.writeByte(blue);
-        }
+        if(rgb != null) o.writeInt(rgb);
         if(skullId != null) o.writeUTF(skullId);
 
         if(teleportCosts != null) o.writeDouble(teleportCosts);         //teleport costs
@@ -226,11 +217,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
 
         this.type = i.readUTF();                                        //item
         if(data) this.data = i.readByte();
-        if(color) {
-            this.red = i.readByte();
-            this.green = i.readByte();
-            this.blue = i.readByte();
-        }
+        if(color) this.rgb = i.readInt();
         if(skull) this.skullId = i.readUTF();
 
         if(teleportCosts) this.teleportCosts = i.readDouble();          //teleport costs
@@ -283,9 +270,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         d.put("type", type);
         d.put("data", data);
         d.put("skull", skullId);
-        d.put("red", red);
-        d.put("green", green);
-        d.put("blue", blue);
+        d.put("rgb", rgb);
 
         d.put("public", isPublic);
         d.put("tpcosts", teleportCosts);
@@ -324,9 +309,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         this.type = d.getString("type");
         this.data = d.getInteger("data").byteValue();
         this.skullId = d.getString("skull");
-        this.red = d.getInteger("red").byteValue();
-        this.green = d.getInteger("green").byteValue();
-        this.blue = d.getInteger("blue").byteValue();
+        this.rgb = d.getInteger("rgb");
 
         this.isPublic = d.getBoolean("public");
         this.teleportCosts = d.getDouble("tpcosts");
@@ -377,9 +360,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         trusted = null;
         type = null;
         skullId = null;
-        red = null;
-        green = null;
-        blue = null;
+        rgb = null;
         data = null;
         isPublic = null;
         teleportMessage = null;
@@ -447,28 +428,12 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         this.skullId = skullId;
     }
 
-    public Byte getRed() {
-        return red;
+    public Integer getRGB() {
+        return rgb;
     }
 
-    public void setRed(Byte red) {
-        this.red = red;
-    }
-
-    public Byte getGreen() {
-        return green;
-    }
-
-    public void setGreen(Byte green) {
-        this.green = green;
-    }
-
-    public Byte getBlue() {
-        return blue;
-    }
-
-    public void setBlue(Byte blue) {
-        this.blue = blue;
+    public void setRGB(Integer rgb) {
+        this.rgb = rgb;
     }
 
     public Byte getData() {

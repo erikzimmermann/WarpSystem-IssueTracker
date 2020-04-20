@@ -171,11 +171,7 @@ public class PlayerWarp extends FeatureObject {
 
         data.setType(this.item.getType().name());
         data.setSkullId(this.item.getSkullId());
-        if(this.item.getColor() != null) {
-            data.setRed((byte) this.item.getColor().getColor().getRed());
-            data.setGreen((byte) this.item.getColor().getColor().getGreen());
-            data.setBlue((byte) this.item.getColor().getColor().getBlue());
-        }
+        if(this.item.getColor() != null) data.setRGB(this.item.getColor().getColor().asRGB());
         data.setData(this.item.getData());
 
         data.setPublic(this.isPublic);
@@ -248,7 +244,7 @@ public class PlayerWarp extends FeatureObject {
         }
 
         if(d.skullId != null) this.item.setSkullId(d.skullId);
-        if(d.red != null && d.green != null && d.blue != null) this.item.setColor(DyeColor.getByColor(Color.fromBGR(d.red, d.green, d.blue)));
+        if(d.rgb != null && d.rgb > 0) this.item.setColor(DyeColor.getByColor(Color.fromRGB(d.rgb)));
 
         if(d.isPublic != null) this.isPublic = d.isPublic;
         if(d.teleportMessage != null) this.teleportMessage = d.teleportMessage;
@@ -400,7 +396,6 @@ public class PlayerWarp extends FeatureObject {
                 .setData(item.getData())
                 .setDurability(item.getDurability())
                 .setAmount(item.getAmount())
-                .setEnchantments(item.getEnchantments())
                 .setSkullId(item.getSkullId())
                 .setColor(item.getColor())
                 .setCustomModel(item.getCustomModel())
@@ -518,6 +513,7 @@ public class PlayerWarp extends FeatureObject {
 
     public PlayerWarp setItem(ItemBuilder item) {
         this.item = item;
+        this.item.removeEnchantments();
         return this;
     }
 
@@ -529,6 +525,9 @@ public class PlayerWarp extends FeatureObject {
 
         b.addLore("");
         b.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Owner") + ": §7" + owner.getName());
+
+        b.setHideStandardLore(true);
+        b.setHideEnchantments(true);
 
         if(teleportCosts > 0) b.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Costs") + ": §7" + getCutTeleportCosts() + " " + Lang.get("Coins"));
         if(isPublic) b.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Teleports") + ": §7" + getPerformed());
