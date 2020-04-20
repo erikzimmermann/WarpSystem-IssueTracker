@@ -53,8 +53,6 @@ public class SignListener implements Listener {
                     return;
                 }
 
-                if(sign.getDestination() == null || sign.getDestination().getId() == null) return;
-
                 sign.perform(e.getPlayer());
             }
         }

@@ -6,6 +6,7 @@ import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.utils.ImprovedDouble;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.api.events.PlayerGlobalWarpEvent;
 import de.codingair.warpsystem.spigot.api.events.PlayerWarpEvent;
@@ -259,7 +260,6 @@ public class TeleportManager {
 
         final int finalSeconds = seconds;
         Callback<TeleportResult> finalResultCallback = resultCallback;
-        String finalMessage = message;
         Callback<?> waiting = new Callback() {
             @Override
             public void accept(Object object) {
@@ -301,64 +301,20 @@ public class TeleportManager {
 
                     if(options.isConfirmPayment()) {
                         //true = accept; false = timeOut/deny
-
-                        Value<Listener> listenerValue = new Value<>(null);
-
-                        Callback<Boolean> confirmation = new Callback<Boolean>() {
+                        confirmPayment(player, options.getFinalCosts(player).doubleValue(), new Callback<Boolean>() {
                             @Override
                             public void accept(Boolean confirm) {
-                                MessageAPI.sendTitle(player, "§e" + Lang.get("Sneak_to_confirm"), "§6" + Lang.get("Teleport_Costs") + ": §7" + options.getFinalCosts(player) + " " + Lang.get("Coins"), 0, 0, 5);
-                                HandlerList.unregisterAll(listenerValue.getValue());
-
                                 if(confirm) {
                                     //pay
                                     teleports.add(teleport);
-                                    MoneyAdapterType.getActive().withdraw(player, options.getFinalCosts(player).doubleValue());
                                     if(finalSeconds == 0 || options.isSkip()) teleport.teleport();
                                     else teleport.start();
                                 } else {
-
-                                    Sound.ITEM_BREAK.playSound(player, 0.7F, 0.9F);
                                     options.runCallbacks(TeleportResult.DENIED_PAYMENT);
                                     if(options.getPaymentDeniedMessage(player) != null) player.sendMessage(options.getPaymentDeniedMessage(player));
                                 }
                             }
-                        };
-
-                        int timeOut = 10 * 20;
-                        BukkitRunnable runnable = new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                confirmation.accept(false);
-                            }
-                        };
-
-                        listenerValue.setValue(new Listener() {
-                            @EventHandler
-                            public void onWalk(PlayerWalkEvent e) {
-                                if(e.getPlayer().equals(player)) {
-                                    //deny!
-                                    runnable.cancel();
-                                    confirmation.accept(false);
-                                    HandlerList.unregisterAll(this);
-                                }
-                            }
-
-                            @EventHandler
-                            public void onToggleSneak(PlayerToggleSneakEvent e) {
-                                if(e.getPlayer().equals(player) && e.isSneaking()) {
-                                    //confirm!
-                                    runnable.cancel();
-                                    confirmation.accept(true);
-                                    HandlerList.unregisterAll(this);
-                                }
-                            }
                         });
-                        Bukkit.getPluginManager().registerEvents(listenerValue.getValue(), WarpSystem.getInstance());
-
-                        runnable.runTaskLater(WarpSystem.getInstance(), timeOut + 5); //title fadeIn = 5
-                        Sound.NOTE_PIANO.playSound(player, 0.7F, 1.1F);
-                        MessageAPI.sendTitle(player, "§e" + Lang.get("Sneak_to_confirm"), "§6" + Lang.get("Teleport_Costs") + ": §7" + options.getFinalCosts(player) + " " + Lang.get("Coins"), 5, timeOut, 5);
                         return;
                     }
 
@@ -376,7 +332,64 @@ public class TeleportManager {
         } else waiting.accept(null);
     }
 
-    public void waitWhileWalking(Player player, Callback callback) {
+    public static void confirmPayment(Player player, double costs, Callback<Boolean> callback) {
+        Value<Listener> listenerValue = new Value<>(null);
+
+        Callback<Boolean> confirmation = new Callback<Boolean>() {
+            @Override
+            public void accept(Boolean confirm) {
+                MessageAPI.sendTitle(player, "§e" + Lang.get("Sneak_to_confirm"), "§6" + Lang.get("Costs") + ": §7" + new ImprovedDouble(costs) + " " + Lang.get("Coins"), 0, 0, 5);
+                HandlerList.unregisterAll(listenerValue.getValue());
+
+                if(confirm) {
+                    //pay
+                    MoneyAdapterType.getActive().withdraw(player, costs);
+                } else {
+                    //deny
+                    Sound.ITEM_BREAK.playSound(player, 0.7F, 0.9F);
+                }
+
+                if(callback != null) callback.accept(confirm);
+            }
+        };
+
+        int timeOut = 10 * 20;
+        BukkitRunnable runnable = new BukkitRunnable() {
+            @Override
+            public void run() {
+                confirmation.accept(false);
+            }
+        };
+
+        listenerValue.setValue(new Listener() {
+            @EventHandler
+            public void onWalk(PlayerWalkEvent e) {
+                if(e.getPlayer().equals(player)) {
+                    //deny!
+                    runnable.cancel();
+                    confirmation.accept(false);
+                    HandlerList.unregisterAll(this);
+                }
+            }
+
+            @EventHandler
+            public void onToggleSneak(PlayerToggleSneakEvent e) {
+                if(e.getPlayer().equals(player) && e.isSneaking()) {
+                    //confirm!
+                    runnable.cancel();
+                    confirmation.accept(true);
+                    HandlerList.unregisterAll(this);
+                }
+            }
+        });
+        Bukkit.getPluginManager().registerEvents(listenerValue.getValue(), WarpSystem.getInstance());
+
+        runnable.runTaskLater(WarpSystem.getInstance(), timeOut + 5); //title fadeIn = 5
+        Sound.NOTE_PIANO.playSound(player, 0.7F, 1.1F);
+        MessageAPI.sendTitle(player, "§e" + Lang.get("Sneak_to_confirm"), "§6" + Lang.get("Costs") + ": §7" + new ImprovedDouble(costs) + " " + Lang.get("Coins"), 5, timeOut, 5);
+    }
+
+    public static void waitWhileWalking(Player player, Callback callback) {
         BukkitRunnable runnable = new BukkitRunnable() {
             int notMoving = 0;
             int shakeTicks = 0;
