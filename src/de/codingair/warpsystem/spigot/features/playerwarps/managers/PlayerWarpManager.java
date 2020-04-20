@@ -321,7 +321,7 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible {
 
         this.inactiveTime = convertFromTimeFormat(config.getString("PlayerWarps.Inactive.Time_After_Expiration", null), 2592000000L);
 
-        this.hideLimitInfo = config.getBoolean("WarpSystem.PlayerWarps.Hide_Limit_Info", false);
+        this.hideLimitInfo = config.getBoolean("PlayerWarps.Hide_Limit_Info", false);
 
         //Costs - Generally
         this.maxAmount = config.getInt("PlayerWarps.General.Max_Warp_Amount", 5);
@@ -466,7 +466,7 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible {
         } else if(!saver) WarpSystem.log("    ...skipping PlayerWarp(s) > Saved on BungeeCord");
 
         ConfigWriter writer = new ConfigWriter(config);
-        writer.put("WarpSystem.PlayerWarps.Hide_Limit_Info", hideLimitInfo);
+        writer.put("PlayerWarps.Hide_Limit_Info", hideLimitInfo);
         config.saveConfig();
 
         playerWarpsData.saveConfig();

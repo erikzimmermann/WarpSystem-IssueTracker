@@ -9,6 +9,8 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CommandButton;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CostsButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.NameButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
@@ -59,7 +61,7 @@ public class POptions extends PageItem {
             public void onClick(InventoryClickEvent e, Player player) {
                 Lang.PREMIUM_CHAT(player);
             }
-        });
+        }.setOption(option).setOnlyLeftClick(true));
 
         addButton(new SyncButton(3, 2) {
             @Override
@@ -75,6 +77,22 @@ public class POptions extends PageItem {
             public void onClick(InventoryClickEvent e, Player player) {
                 Lang.PREMIUM_CHAT(player);
             }
-        });
+        }.setOption(option).setOnlyLeftClick(true));
+
+        addButton(new SyncButton(4, 2) {
+            @Override
+            public ItemStack craftItem() {
+                return new ItemBuilder(XMaterial.GOLD_NUGGET)
+                        .setName("§6§n" + Lang.get("Costs") + Lang.PREMIUM_LORE)
+                        .addLore("§3" + Lang.get("Current") + ": " + "§c" + Lang.get("Not_Set"))
+                        .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Set"))
+                        .getItem();
+            }
+
+            @Override
+            public void onClick(InventoryClickEvent e, Player player) {
+                Lang.PREMIUM_CHAT(player);
+            }
+        }.setOption(option).setOnlyLeftClick(true));
     }
 }

@@ -181,7 +181,8 @@ Teleport_Costs: Teleport costs
 Message: Message
 World_Not_Exists: '&7The requested world &cdoes not exist&7.'
 GlobalWarp_Not_Exists: '&7The GlobalWarp "&b%GLOBAL_WARP%&7" &cdoes not exist&7.'
-Money_Paid: '&7You have paid &c%AMOUNT% coin(s) &7to teleport to "&b%warp%&7".'
+Money_Paid: '&7You paid &c%AMOUNT% coin(s) &7to teleport to "&b%warp%&7".'
+Money_Paid_Use: '&7You paid &c%AMOUNT% coin(s) &7to use this.'
 Confirm: '&cAre you sure?'
 Delete_confirmation_globalwarp: '&7Do you really want to &cdelete &7the global warp &7"&c%GLOBAL_WARP%&7"&7? You could &cdelete shortcuts&7 linked to that as well.'
 Rightclick_To_Reset: Rightclick to reset
