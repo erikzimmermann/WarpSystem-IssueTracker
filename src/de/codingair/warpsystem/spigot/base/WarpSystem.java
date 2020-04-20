@@ -304,6 +304,8 @@ public class WarpSystem extends JavaPlugin {
         if(!config.getConfig().getBoolean("WarpSystem.Permissions", true)) {
             for(Field f : getClass().getDeclaredFields()) {
                 if(!Modifier.isFinal(f.getModifiers()) && f.getName().startsWith("PERMISSION_USE_")) {
+                    if(f.getName().equals("PERMISSION_USE_TELEPORT_COMMAND_TP")) continue;
+
                     f.setAccessible(true);
                     try {
                         f.set(this, null);
