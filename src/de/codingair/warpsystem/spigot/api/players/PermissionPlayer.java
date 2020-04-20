@@ -13,6 +13,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.entity.*;
+import org.bukkit.entity.memory.MemoryKey;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.*;
@@ -157,6 +158,10 @@ public class PermissionPlayer implements Player {
     }
 
     public void updateCommands() {
+
+    }
+
+    public void openBook(ItemStack itemStack) {
 
     }
 
@@ -448,6 +453,10 @@ public class PermissionPlayer implements Player {
 
     }
 
+    public void sendSignChange(Location location, String[] strings, DyeColor dyeColor) throws IllegalArgumentException {
+
+    }
+
     public void sendMap(MapView mapView) {
 
     }
@@ -465,7 +474,7 @@ public class PermissionPlayer implements Player {
     }
 
     public boolean hasAchievement(Achievement achievement) {
-        return this.player.hasAchievement(achievement);
+        return false;
     }
 
     public void incrementStatistic(Statistic statistic) throws IllegalArgumentException {
@@ -601,6 +610,14 @@ public class PermissionPlayer implements Player {
     }
 
     public void setTotalExperience(int i) {
+
+    }
+
+    public void sendExperienceChange(float v) {
+
+    }
+
+    public void sendExperienceChange(float v, int i) {
 
     }
 
@@ -1093,8 +1110,28 @@ public class PermissionPlayer implements Player {
         return false;
     }
 
+    public void attack(Entity entity) {
+
+    }
+
+    public void swingMainHand() {
+
+    }
+
+    public void swingOffHand() {
+
+    }
+
     public boolean isCollidable() {
         return false;
+    }
+
+    public <T> T getMemory(MemoryKey<T> memoryKey) {
+        return null;
+    }
+
+    public <T> void setMemory(MemoryKey<T> memoryKey, T t) {
+
     }
 
     public void setCollidable(boolean b) {
@@ -1118,6 +1155,14 @@ public class PermissionPlayer implements Player {
     }
 
     public void setHealth(double v) {
+
+    }
+
+    public double getAbsorptionAmount() {
+        return 0;
+    }
+
+    public void setAbsorptionAmount(double v) {
 
     }
 

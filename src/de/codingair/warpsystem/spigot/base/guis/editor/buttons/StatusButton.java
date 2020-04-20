@@ -24,7 +24,7 @@ public class StatusButton extends SyncButton {
     public ItemStack craftItem() {
         if(object == null) return new ItemStack(Material.AIR);
 
-        return new ItemBuilder(object.isDisabled() ? XMaterial.ROSE_RED : XMaterial.LIME_DYE)
+        return new ItemBuilder(object.isDisabled() ? XMaterial.RED_DYE : XMaterial.LIME_DYE)
                 .setName("§6§n" + Lang.get("Status"))
                 .setLore("§3" + Lang.get("Current") + ": " + (object.isDisabled() ?
                                 "§c" + Lang.get("Disabled") :

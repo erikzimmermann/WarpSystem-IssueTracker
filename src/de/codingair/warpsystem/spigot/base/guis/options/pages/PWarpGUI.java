@@ -39,7 +39,7 @@ public class PWarpGUI extends PageItem {
         addButton(new SyncButton(1, 2) {
             @Override
             public ItemStack craftItem() {
-                return new ItemBuilder(!options.getEnabled().getValue() ? XMaterial.ROSE_RED : XMaterial.LIME_DYE)
+                return new ItemBuilder(!options.getEnabled().getValue() ? XMaterial.RED_DYE : XMaterial.LIME_DYE)
                         .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Status"))
                         .setLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + (!options.getEnabled().getValue() ?
                                         "§c" + Lang.get("Disabled") :
