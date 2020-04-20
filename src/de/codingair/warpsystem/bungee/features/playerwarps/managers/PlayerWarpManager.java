@@ -185,6 +185,8 @@ public class PlayerWarpManager implements Manager {
 
     public void add(PlayerWarpData warp) {
         List<PlayerWarpData> warps = getWarps(warp.getOwner().getId());
+
+        warp.setName(getCopiedName(warps, warp.getName()));
         warps.add(warp);
 
         if(warp.getStarted() == null || warp.getStarted() == 0) {
@@ -193,6 +195,33 @@ public class PlayerWarpManager implements Manager {
         }
 
         this.warps.putIfAbsent(warp.getOwner().getId(), warps);
+    }
+
+    private String getCopiedName(List<PlayerWarpData> list, String name) {
+        int num = 0;
+        boolean found;
+
+        name = name.replace(" ", "_");
+
+        do {
+            found = false;
+            if(num == 0) num++;
+            else {
+                name = name.replaceAll("_\\([0-9]{1,5}?\\)\\z", "");
+                name += "_(" + num++ + ")";
+            }
+
+            for(PlayerWarpData d : list) {
+                String nameWithoutColor = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name));
+                String dName = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', d.getName())).replace(" ", "_");
+                if(dName.equalsIgnoreCase(nameWithoutColor)) {
+                    found = true;
+                    break;
+                }
+            }
+        } while(found);
+
+        return name;
     }
 
     public void interactWithServers(ServerInteraction runnable) {
