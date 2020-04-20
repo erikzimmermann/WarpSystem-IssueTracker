@@ -33,25 +33,25 @@ public class CShortcuts extends CommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<add, edit, remove, list>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, edit, delete, list>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<add, edit, remove, list>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create edit, delete, list>");
                 return false;
             }
         }.setOnlyPlayers(true), true, "shortcut");
 
-        getBaseComponent().addChild(new CommandComponent("add") {
+        getBaseComponent().addChild(new CommandComponent("create") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut add §e<name>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " create §e<name>");
                 return false;
             }
         }.setOnlyPlayers(true));
 
-        getComponent("add").addChild(new MultiCommandComponent() {
+        getComponent("create").addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
             }
@@ -70,7 +70,7 @@ public class CShortcuts extends CommandBuilder {
         getBaseComponent().addChild(new CommandComponent("edit") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut edit §e<name>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " edit §e<name>");
                 return false;
             }
         }.setOnlyPlayers(true));
@@ -100,15 +100,15 @@ public class CShortcuts extends CommandBuilder {
             }
         }.setOnlyPlayers(true));
 
-        getBaseComponent().addChild(new CommandComponent("remove") {
+        getBaseComponent().addChild(new CommandComponent("delete") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " shortcut remove §e<name>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " delete §e<name>");
                 return false;
             }
         }.setOnlyPlayers(true));
 
-        getComponent("remove").addChild(new MultiCommandComponent() {
+        getComponent("delete").addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 for(Shortcut shortcut : ShortcutManager.getInstance().getShortcuts()) {

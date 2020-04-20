@@ -182,6 +182,7 @@ Message: Nachricht
 World_Not_Exists: '&7Die angeforderte Welt &cexistiert nicht&7.'
 GlobalWarp_Not_Exists: '&7Der GlobalWarp "&b%GLOBAL_WARP%&7" &cexistiert nicht&7.'
 Money_Paid: '&7Du hast &c%AMOUNT% Coin(s) &7bezahlt, um dich nach "&b%warp%&7" zu teleportieren!'
+Money_Paid_Use: '&7Du hast &c%AMOUNT% Coin(s) &7bezahlt, um dies zu benutzen.'
 GlobalWarp_Delete_Help: '&7Benutze: &e/GlobalWarp delete <Name>'
 Confirm: '&cBist du sicher?'
 Delete_confirmation_globalwarp: '&7Möchtest du den globalen Warp "&c%GLOBAL_WARP%&7" wirklich &clöschen&7? Du könntest automatisch &cShortcuts löschen&7, die damit verbunden sind.'
@@ -440,6 +441,7 @@ Warp_was_deleted: '&7Dein Warp "&c%NAME%&7" wurde &cpermanent gelöscht&7.'
 Warp_Delete_Info: '&7Klicke %HERE%&7 um deinen Warp "&b%NAME%&7" zu &clöschen&7.'
 Warp_Delete_Info_Here: '&e&nhier'
 Warp_Delete_Button_Info:
+  - '&7Warp: "&b%NAME%&7"'
   - "&7Erstattung: &a%REFUND% Coin(s)"
   - "&7Klick: &4Löschen"
 Warp_Deleted_Info: '&7Dein Warp "&b%NAME%&7" wurde &cgelöscht&7. Du bekamst &a%PRICE% Coin(s) &7zurück!'

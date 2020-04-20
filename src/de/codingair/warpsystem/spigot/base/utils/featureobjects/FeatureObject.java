@@ -10,7 +10,9 @@ import de.codingair.codingapi.tools.io.lib.JSONArray;
 import de.codingair.codingapi.tools.io.lib.ParseException;
 import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.codingapi.tools.io.utils.Serializable;
+import de.codingair.codingapi.utils.ImprovedDouble;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject;
@@ -83,11 +85,11 @@ public class FeatureObject implements Serializable {
         }
         options.setSkip(isSkip());
 
-        if(getAction(Action.WARP) != null) {
-            Origin origin = Origin.getByClass(this);
+        Origin origin = Origin.getByClass(this);
+        options.setOrigin(origin);
+        if(getAction(CostsAction.class) != null) options.setCosts(getAction(CostsAction.class).getValue());
 
-            if(getAction(CostsAction.class) != null) options.setCosts(getAction(CostsAction.class).getValue());
-            options.setOrigin(origin);
+        if(hasAction(Action.WARP)) {
             options.setPermission(this.permission == null ? TeleportManager.NO_PERMISSION : permission);
             if(!origin.sendTeleportMessage()) options.setMessage(null);
 
@@ -104,7 +106,23 @@ public class FeatureObject implements Serializable {
             });
 
             WarpSystem.getInstance().getTeleportManager().teleport(player, options);
-        } else if(getAction(Action.COSTS) == null || getAction(Action.COSTS).perform(player)) {
+        } else if(hasAction(Action.COSTS)) {
+            TeleportManager.confirmPayment(player, getAction(CostsAction.class).getValue(), new Callback<Boolean>() {
+                @Override
+                public void accept(Boolean confirm) {
+                    if(confirm) {
+                        for(ActionObject<?> action : actions) {
+                            if(action.getType() == Action.WARP || action.getType() == Action.COSTS) continue;
+                            action.perform(player);
+                        }
+
+                        player.sendMessage(Lang.getPrefix() + Lang.get("Money_Paid_Use").replace("%AMOUNT%", new ImprovedDouble(getAction(CostsAction.class).getValue()).toString()));
+                    } else {
+                        if(options.getPaymentDeniedMessage(player) != null) player.sendMessage(options.getPaymentDeniedMessage(player));
+                    }
+                }
+            });
+        } else {
             for(ActionObject<?> action : this.actions) {
                 if(action.getType() == Action.WARP || action.getType() == Action.COSTS) continue;
                 action.perform(player);
