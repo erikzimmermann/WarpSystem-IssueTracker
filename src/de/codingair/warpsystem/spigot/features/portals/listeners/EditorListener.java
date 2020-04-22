@@ -41,7 +41,7 @@ public class EditorListener implements Listener {
                 boolean fuel = isFuel != null && (boolean) isFuel.invoke(m);
 
                 if(!m.isOccluding() && (fuel || !m.isSolid())) {
-                    String name = "§7" + ChatColor.stripColor(BlockType.CUSTOM.getName()) + ": §e" + m.name();
+                    String name = "§7" + ChatColor.stripColor(BlockType.CUSTOM.getName()) + ": §e" + m.name() + Lang.PREMIUM_LORE;
                     if(!name.equals(item.getDisplayName())) {
                         item.setDisplayName(name);
                         e.getPlayer().getInventory().setItem(7, item);
@@ -50,7 +50,7 @@ public class EditorListener implements Listener {
                 }
             }
 
-            String name = "§7" + ChatColor.stripColor(BlockType.CUSTOM.getName()) + ": §c-";
+            String name = "§7" + ChatColor.stripColor(BlockType.CUSTOM.getName()) + ": §c-" + Lang.PREMIUM_LORE;
             if(!name.equals(item.getDisplayName())) {
                 item.setDisplayName(name);
                 e.getPlayer().getInventory().setItem(7, item);

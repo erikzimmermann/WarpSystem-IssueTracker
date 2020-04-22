@@ -96,7 +96,7 @@ public class PortalBlockEditor implements Removable {
         }
 
         PlayerItem item;
-        this.player.getInventory().setItem(++slot, item = new PlayerItem(WarpSystem.getInstance(), player, new ItemBuilder(XMaterial.GHAST_TEAR).setName("§7" + ChatColor.stripColor(BlockType.CUSTOM.getName()) + ": §c-").getItem()) {
+        this.player.getInventory().setItem(++slot, item = new PlayerItem(WarpSystem.getInstance(), player, new ItemBuilder(XMaterial.GHAST_TEAR).setName("§7" + ChatColor.stripColor(BlockType.CUSTOM.getName()) + ": §c-" + Lang.PREMIUM_LORE).getItem()) {
             private long last = 0;
 
             @Override
