@@ -41,7 +41,7 @@ public class PFunctions extends PageItem {
         addButton(new SyncButton(5, 2) {
             @Override
             public ItemStack craftItem() {
-                return new ItemBuilder(XMaterial.ENDER_EYE)
+                return new ItemBuilder(XMaterial.BOOK)
                         .setName("§6§n" + Lang.get("Message") + Lang.PREMIUM_LORE)
                         .addLore("§3" + Lang.get("Current") + ": " + "§c" + Lang.get("Not_Set"))
                         .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Set"))
