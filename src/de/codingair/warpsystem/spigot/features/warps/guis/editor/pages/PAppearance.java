@@ -48,7 +48,7 @@ public class PAppearance extends PageItem {
 
                 String info = item == null || item.getType() == Material.AIR ?
                         "§c" + Lang.get("No_Item_In_Hand") :
-                        icon.getItemBuilder().equals(inHand) ?
+                        icon.getItemBuilder().equalsSimply(inHand) ?
                                 "§c" + Lang.get("Cant_Change_Item")
                                 : "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Item");
 
