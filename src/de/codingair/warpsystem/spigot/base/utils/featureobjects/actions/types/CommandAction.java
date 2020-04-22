@@ -85,6 +85,18 @@ public class CommandAction extends ActionObject<List<String>> {
     }
 
     @Override
+    public void setValue(List<String> value) {
+        if(value == null) super.setValue(value);
+        else {
+            super.setValue(new ArrayList<>());
+            for(String s : value) {
+                if(s.contains("%player%")) continue;
+                getValue().add(s);
+            }
+        }
+    }
+
+    @Override
     public void write(DataWriter d) {
         d.put("commands", getValue());
     }
