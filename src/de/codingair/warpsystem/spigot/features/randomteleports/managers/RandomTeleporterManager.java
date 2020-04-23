@@ -84,8 +84,7 @@ public class RandomTeleporterManager implements Manager {
             }
         }
 
-        if(WarpSystem.getInstance().getFileManager().getFile("Teleporters") == null) WarpSystem.getInstance().getFileManager().loadFile("Teleporters", "/Memory/");
-        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
+        ConfigFile file = WarpSystem.getInstance().getFileManager().loadFile("Teleporters", "/Memory/");
         config = file.getConfig();
 
         List<?> l = config.getList("RandomTeleporter.InteractBlocks");
