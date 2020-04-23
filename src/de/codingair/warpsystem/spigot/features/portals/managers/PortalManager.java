@@ -62,8 +62,8 @@ public class PortalManager implements Manager {
         });
         this.portals.clear();
 
+        file = WarpSystem.getInstance().getFileManager().loadFile("Teleporters", "/Memory/");
         boolean success = importOld();
-        file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
 
         int fails = 0;
         List<?> l = file.getConfig().getList("PortalsV2");
