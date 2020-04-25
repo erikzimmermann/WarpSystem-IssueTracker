@@ -40,10 +40,70 @@ public class POptions extends PageItem {
     public void initialize(Player p) {
         StandardButtonOption option = new StandardButtonOption();
 
-        addButton(new PermissionButton(1, 2, clone).setOption(option));
-        addButton(new CommandButton(2, 2, clone).setOption(option));
+        addButton(new SyncButton(1, 2) {
+            @Override
+            public ItemStack craftItem() {
+                return new ItemBuilder(XMaterial.ENDER_EYE)
+                        .setName("§6§n" + Lang.get("Permission") + Lang.PREMIUM_LORE)
+                        .addLore("§3" + Lang.get("Current") + ": " + "§c" + Lang.get("Not_Set"))
+                        .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Set"))
+                        .getItem();
+            }
+
+            @Override
+            public void onClick(InventoryClickEvent e, Player player) {
+                Lang.PREMIUM_CHAT(player);
+            }
+
+            @Override
+            public boolean canClick(ClickType click) {
+                return click == ClickType.LEFT;
+            }
+        }.setOption(option));
+
+        addButton(new SyncButton(2, 2) {
+            @Override
+            public ItemStack craftItem() {
+                return new ItemBuilder(XMaterial.REDSTONE)
+                        .setName("§6§n" + Lang.get("Command") + Lang.PREMIUM_LORE)
+                        .setLore("§3" + Lang.get("Current") + ": " + "§c" + Lang.get("Not_Set"))
+                        .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Add"))
+                        .getItem();
+            }
+
+            @Override
+            public void onClick(InventoryClickEvent e, Player player) {
+                Lang.PREMIUM_CHAT(player);
+            }
+
+            @Override
+            public boolean canClick(ClickType click) {
+                return click == ClickType.LEFT;
+            }
+        }.setOption(option));
+
         addButton(new DelayButton(3, 2, clone).setOption(option));
-        addButton(new CostsButton(4, 2, clone).setOption(option));
+
+        addButton(new SyncButton(4, 2) {
+            @Override
+            public ItemStack craftItem() {
+                return new ItemBuilder(XMaterial.GOLD_NUGGET)
+                        .setName("§6§n" + Lang.get("Costs") + Lang.PREMIUM_LORE)
+                        .setLore("§3" + Lang.get("Current") + ": " + "§c" + Lang.get("Not_Set"))
+                        .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Add"))
+                        .getItem();
+            }
+
+            @Override
+            public void onClick(InventoryClickEvent e, Player player) {
+                Lang.PREMIUM_CHAT(player);
+            }
+
+            @Override
+            public boolean canClick(ClickType click) {
+                return click == ClickType.LEFT;
+            }
+        }.setOption(option));
 
         addButton(new SyncButton(5, 2) {
             @Override

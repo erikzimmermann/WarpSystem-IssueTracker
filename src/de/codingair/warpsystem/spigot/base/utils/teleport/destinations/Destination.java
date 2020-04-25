@@ -7,7 +7,6 @@ import de.codingair.codingapi.utils.ImprovedDouble;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.CloneableAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.DestinationAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import org.bukkit.ChatColor;
@@ -53,14 +52,6 @@ public class Destination implements Serializable {
             this.type = json.get(0) == null ? null : DestinationType.valueOf((String) json.get(0));
             this.id = json.get(1) == null ? null : (String) json.get(1);
             this.adapter = type == null ? null : type.getInstance();
-            if(json.size() > 2) {
-                offsetX = Double.parseDouble(json.get(2) + "");
-                offsetY = Double.parseDouble(json.get(3) + "");
-                offsetZ = Double.parseDouble(json.get(4) + "");
-                signedX = Integer.parseInt(json.get(5) + "");
-                signedY = Integer.parseInt(json.get(6) + "");
-                signedZ = Integer.parseInt(json.get(7) + "");
-            }
         } catch(Exception ex) {
             throw new IllegalArgumentException("Wrong serialized data!", ex);
         }
@@ -71,24 +62,12 @@ public class Destination implements Serializable {
             this.id = null;
             this.adapter = null;
             this.type = null;
-            this.offsetX = 0;
-            this.offsetY = 0;
-            this.offsetZ = 0;
-            this.signedX = 0;
-            this.signedY = 0;
-            this.signedZ = 0;
             return this;
         }
 
         this.id = destination.id;
         this.adapter = destination.adapter;
         this.type = destination.type;
-        this.offsetX = destination.offsetX;
-        this.offsetY = destination.offsetY;
-        this.offsetZ = destination.offsetZ;
-        this.signedX = destination.signedX;
-        this.signedY = destination.signedY;
-        this.signedZ = destination.signedZ;
         return this;
     }
 
@@ -177,13 +156,6 @@ public class Destination implements Serializable {
             d.getSerializable("id", loc);
             ((LocationAdapter) this.adapter).setLocation(loc);
         } else id = d.getRaw("id");
-
-        this.offsetX = d.getDouble("oX");
-        this.offsetY = d.getDouble("oY");
-        this.offsetZ = d.getDouble("oZ");
-        this.signedX = d.getInteger("sX");
-        this.signedY = d.getInteger("sY");
-        this.signedZ = d.getInteger("sZ");
         return true;
     }
 
@@ -201,12 +173,6 @@ public class Destination implements Serializable {
 
             d.put("id", id);
         }
-        d.put("oX", offsetX);
-        d.put("oY", offsetY);
-        d.put("oZ", offsetZ);
-        d.put("sX", signedX);
-        d.put("sY", signedY);
-        d.put("sZ", signedZ);
     }
 
     @Override
@@ -228,14 +194,6 @@ public class Destination implements Serializable {
         JSONArray json = new JSONArray();
         json.add(type == null ? null : type.name());
         json.add(id);
-        if(offsetX != 0 || offsetY != 0 || offsetZ != 0) {
-            json.add(offsetX);
-            json.add(offsetY);
-            json.add(offsetZ);
-            json.add(signedX);
-            json.add(signedY);
-            json.add(signedZ);
-        }
 
         return json;
     }
@@ -264,7 +222,7 @@ public class Destination implements Serializable {
         Destination destination = new Destination();
         destination.id = getId();
         destination.type = type;
-        destination.adapter = adapter instanceof CloneableAdapter ? ((CloneableAdapter) adapter).clone() : adapter == null ? null : type.getInstance();
+        destination.adapter = adapter;
         destination.offsetX = offsetX;
         destination.offsetY = offsetY;
         destination.offsetZ = offsetZ;
