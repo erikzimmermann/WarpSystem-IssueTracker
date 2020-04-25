@@ -99,6 +99,10 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
     private int classesMin;
     private int classesMax;
     private boolean classes;
+    private long timeStandardValue;
+    private boolean forceCreateGUI;
+    private boolean allowPublicWarps;
+    private boolean allowTrustedMembers;
 
     public static boolean hasPermission(Player player) {
         if(player.isOp()) return true;
@@ -322,6 +326,10 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         this.internalRefundFactor = config.getBoolean("PlayerWarps.Costs.Internal_Refund_Factor", false);
         this.forcePlayerHead = config.getBoolean("PlayerWarps.General.Force_Player_Head", false);
         this.customTeleportCosts = config.getBoolean("PlayerWarps.General.Custom_teleport_costs", true);
+        this.timeStandardValue = convertFromTimeFormat(config.getString("PlayerWarps.Time.Standard_Value", "1h"));
+        this.forceCreateGUI = config.getBoolean("PlayerWarps.General.Force_Create_GUI", false);
+        this.allowPublicWarps = config.getBoolean("PlayerWarps.General.Allow_Public_Warps", true);
+        this.allowTrustedMembers = config.getBoolean("PlayerWarps.General.Allow_Trusted_Members", true);
 
         //Costs - Editing
         this.nameChangeCosts = config.getDouble("PlayerWarps.Costs.Editing.Name", 400);
@@ -486,6 +494,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
             array.add(json);
         }
 
+        config.loadConfig();
         ConfigWriter writer = new ConfigWriter(config);
         writer.put("PlayerWarps.General.Categories.Classes", array);
         config.saveConfig();
@@ -841,7 +850,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         for(List<PlayerWarp> ws : this.warps.values()) {
             for(PlayerWarp warp : ws) {
                 if(player.equals(warp.getOwner().getPlayer())) continue;
-                if(warp.canTeleport(player)) warps.add(warp);
+                if((allowPublicWarps && warp.isPublic()) || (allowTrustedMembers && warp.isTrusted(player))) warps.add(warp);
             }
         }
 
@@ -1258,5 +1267,21 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
     public int getNameMaxLength() {
         return nameMaxLength;
+    }
+
+    public long getTimeStandardValue() {
+        return timeStandardValue;
+    }
+
+    public boolean isForceCreateGUI() {
+        return forceCreateGUI;
+    }
+
+    public boolean isAllowPublicWarps() {
+        return allowPublicWarps;
+    }
+
+    public boolean isAllowTrustedMembers() {
+        return allowTrustedMembers;
     }
 }

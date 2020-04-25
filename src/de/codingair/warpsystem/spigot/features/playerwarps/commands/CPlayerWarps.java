@@ -10,6 +10,7 @@ import de.codingair.codingapi.server.commands.builder.MultiTextCommandComponent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.codingapi.utils.ImprovedDouble;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.commands.WarpSystemBaseComponent;
@@ -21,6 +22,8 @@ import de.codingair.warpsystem.spigot.features.playerwarps.imports.ImportType;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PWMultiCommandComponent;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarpData;
+import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpsPacket;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -212,7 +215,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                     return false;
                 }
 
-                new PWEditor((Player) sender, argument).open();
+                createPlayerWarp((Player) sender, argument, null);
                 return false;
             }
         });
@@ -315,15 +318,50 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
             @Override
             public void onClose(AnvilCloseEvent e) {
                 if(e.isSubmitted()) {
-                    e.setPost(() -> {
-                        if(fallBack != null) {
-                            GUI g = new PWEditor(e.getPlayer(), e.getSubmittedText());
-                            g.setFallbackGUI(fallBack);
-                            fallBack.changeGUI(g, true);
-                        } else new PWEditor(e.getPlayer(), e.getSubmittedText()).open();
-                    });
+                    e.setPost(() -> createPlayerWarp(e.getPlayer(), e.getSubmittedText(), fallBack));
                 } else if(fallBack != null) fallBack.open();
             }
         }, new ItemBuilder(XMaterial.NAME_TAG).setName(Lang.get("Name") + "...").getItem());
+    }
+
+    private static void createPlayerWarp(Player player, String name, GUI fallBack) {
+        if(PlayerWarpManager.getManager().isForceCreateGUI()) {
+            if(fallBack != null) {
+                GUI g = new PWEditor(player, name);
+                g.setFallbackGUI(fallBack);
+                fallBack.changeGUI(g, true);
+            } else new PWEditor(player, name).open();
+        } else {
+            PlayerWarp w = new PlayerWarp(player, name).setPublic(PlayerWarpManager.getManager().isFirstPublic()).setTime(PlayerWarpManager.getManager().getTimeStandardValue());
+
+            Number paid = PWEditor.calculateCosts(true, w, w);
+
+            if(!PWEditor.canPay(player, paid.doubleValue())) {
+                player.sendMessage(Lang.getPrefix() + Lang.get("Not_enough_Money").replace("%AMOUNT%", new ImprovedDouble(paid.doubleValue()).toString()));
+                return;
+            }
+
+            PlayerWarpManager.getManager().add(w);
+
+            if(PlayerWarpManager.getManager().checkBungeeCord()) {
+                PlayerWarpData data = w.getData();
+                SendPlayerWarpsPacket packet = new SendPlayerWarpsPacket(new ArrayList<PlayerWarpData>() {{
+                    this.add(data);
+                }});
+                packet.setClearable(true);
+
+                WarpSystem.getInstance().getDataHandler().send(packet);
+            }
+
+            String s;
+            if(paid.doubleValue() > 0) s = Lang.getPrefix() + Lang.get("Warp_Created").replace("%NAME%", w.getName()).replace("%PRICE%", paid + "");
+            else s = Lang.getPrefix() + Lang.get("Warp_Created_Free").replace("%NAME%", w.getName());
+            player.sendMessage(s);
+
+            if(fallBack != null) {
+                fallBack.reinitialize();
+                fallBack.open();
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.features.playerwarps.guis.editor;
 
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
+import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.sounds.MusicData;
 import de.codingair.codingapi.server.sounds.Sound;
@@ -19,6 +20,7 @@ import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.PAp
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.PClasses;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.POptions;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.PTrusted;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.buttons.ActiveTimeButton;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarpData;
@@ -40,11 +42,11 @@ public class PWEditor extends Editor<PlayerWarp> {
     private Number paid = 0;
 
     public PWEditor(Player p, String name) {
-        this(p, new PlayerWarp(p, name).setPublic(PlayerWarpManager.getManager().isFirstPublic()).setTime(PlayerWarpManager.getManager().getMinTime()));
+        this(p, new PlayerWarp(p, name).setPublic(PlayerWarpManager.getManager().isAllowPublicWarps() && PlayerWarpManager.getManager().isFirstPublic()).setTime(PlayerWarpManager.getManager().getTimeStandardValue()));
     }
 
     public PWEditor(Player p, PlayerWarp warp) {
-        this(p, warp, warp.clone().setTime(warp.getLeftTime()));
+        this(p, warp, warp.clone().setTime(warp.getLeftTime()).setStarted(0));
     }
 
     private PWEditor(Player p, PlayerWarp warp, PlayerWarp clone) {
@@ -86,8 +88,8 @@ public class PWEditor extends Editor<PlayerWarp> {
                     }
                 }, () -> clone.getItem().getItem(),
                 new PAppearance(p, clone, warp, !warp.isOwner(p) || PlayerWarpManager.getManager().existsOwn(p, warp.getName())),
-                new POptions(p, clone, warp, !warp.isOwner(p) || PlayerWarpManager.getManager().existsOwn(p, warp.getName())),
-                new PTrusted(p, clone, warp),
+                (PlayerWarpManager.getManager().isAllowPublicWarps() ? new POptions(p, clone, warp, !warp.isOwner(p) || PlayerWarpManager.getManager().existsOwn(p, warp.getName())) : null),
+                (PlayerWarpManager.getManager().isAllowTrustedMembers() ? new PTrusted(p, clone, warp) : null),
                 (PlayerWarpManager.getManager().isClasses() ? new PClasses(p, clone, warp) : null)
         );
 
@@ -129,7 +131,7 @@ public class PWEditor extends Editor<PlayerWarp> {
         else return d;
     }
 
-    private static Number calculateCosts(boolean creating, PlayerWarp original, PlayerWarp warp) {
+    public static Number calculateCosts(boolean creating, PlayerWarp original, PlayerWarp warp) {
         if(warp == null) return 0;
         double[] costs = calculate(creating, original, warp);
         double c = 0;
@@ -222,7 +224,7 @@ public class PWEditor extends Editor<PlayerWarp> {
         return costs;
     }
 
-    private static boolean canPay(Player player, double costs) {
+    public static boolean canPay(Player player, double costs) {
         return !PlayerWarpManager.getManager().isEconomy() || !MoneyAdapterType.canEnable() || MoneyAdapterType.getActive().getMoney(player) >= costs;
     }
 
@@ -282,8 +284,10 @@ public class PWEditor extends Editor<PlayerWarp> {
     }
 
     public void updateTime() {
-        if(getCurrent().getClass() == POptions.class) {
-            ((SyncButton) getCurrent().getButton(4, 2)).update();
+        for(Button button : getCurrent().getButtons()) {
+            if(button instanceof ActiveTimeButton) {
+                ((SyncButton) button).update();
+            }
         }
 
         updateCosts();

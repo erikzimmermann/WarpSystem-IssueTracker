@@ -5,21 +5,23 @@ import de.codingair.codingapi.utils.Node;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.filters.*;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
 public enum FilterType {
-    OWN_WARPS(OwnWarpFilter.class, Lang.get("Filter_Own_Warps"), 0),
-    ALL_WARPS(AllWarps.class, Lang.get("Filter_All_Warps"), 1),
-    ALL_PLAYERS(AllPlayers.class, Lang.get("Filter_All_Players"), 2),
-    CLASSES(ClassesFilter.class, Lang.get("Filter_Classes"), 3);
+    OWN_WARPS(OwnWarpFilter.class, Lang.get("Filter_Own_Warps"), 0, true),
+    ALL_WARPS(AllWarps.class, Lang.get("Filter_All_Warps"), 1, PlayerWarpManager.getManager().isAllowPublicWarps()),
+    ALL_PLAYERS(AllPlayers.class, Lang.get("Filter_All_Players"), 2, PlayerWarpManager.getManager().isAllowPublicWarps()),
+    CLASSES(ClassesFilter.class, Lang.get("Filter_Classes"), 3, PlayerWarpManager.getManager().isClasses());
 
     private Filter instance;
     private String filterName;
     private int id;
+    private boolean enabled;
 
-    FilterType(Class<? extends Filter> clazz, String filterName, int id) {
+    FilterType(Class<? extends Filter> clazz, String filterName, int id, boolean enabled) {
         try {
             this.instance = clazz.newInstance();
         } catch(InstantiationException | IllegalAccessException e) {
@@ -28,6 +30,15 @@ public enum FilterType {
 
         this.filterName = filterName;
         this.id = id;
+        this.enabled = enabled;
+    }
+
+    public static int active() {
+        int i = 0;
+        for(FilterType value : values()) {
+            if(value.isEnabled()) i++;
+        }
+        return i;
     }
 
     public Node<List<Button>, Integer> getListItems(int maxSize, int page, Player player, String search, Object... extra) {
@@ -36,13 +47,25 @@ public enum FilterType {
 
     public FilterType next() {
         int next = id + 1;
-        if(next >= values().length - (PlayerWarpManager.getManager().isClasses() ? 0 : 1)) next = 0;
+        if(next >= values().length) next = 0;
+
+        while(!values()[next].isEnabled()) {
+            next++;
+            if(next >= values().length) next = 0;
+        }
+
         return values()[next];
     }
 
     public FilterType previous() {
         int previous = id - 1;
-        if(previous < 0) previous = values().length - 1 - (PlayerWarpManager.getManager().isClasses() ? 0 : 1);
+        if(previous < 0) previous = values().length - 1;
+
+        while(!values()[previous].isEnabled()) {
+            previous--;
+            if(previous < 0) previous = values().length - 1;
+        }
+
         return values()[previous];
     }
 
@@ -68,5 +91,9 @@ public enum FilterType {
 
     public boolean searchable(PWPage page) {
         return instance.searchable(page);
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 }
