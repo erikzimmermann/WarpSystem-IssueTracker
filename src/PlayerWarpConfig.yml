@@ -14,8 +14,12 @@ PlayerWarps:
     Force_Player_Head: true
     #PREMIUM
     Custom_teleport_costs: true
+    #If disabled, the player can create playerwarps just with "/pwarps create <name>" without any create GUI
+    Force_Create_GUI: false
     #Turn this to true, if you want, that all PlayerWarps should be public when you create them. The state can always be changed.
     Public_as_create_state: false
+    Allow_Public_Warps: true
+    Allow_Trusted_Members: true
     PlayerWarps_Command_Aliases:
       - 'pwarps'
       - 'pws'
@@ -39,6 +43,7 @@ PlayerWarps:
       Classes: []
   #Time format: "0d, 0h, 0m, 0s" - Unnecessary values can be removed (examples: "1d, 5m", "10s", "5h")!
   Time:
+    Standard_Value: 1h
     Min_Time: 0d, 0h, 5m
     Max_Time: 30d, 0h, 0m
   Inactive:

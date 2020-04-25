@@ -574,8 +574,9 @@ public class PlayerWarp extends FeatureObject {
         return started;
     }
 
-    public void setStarted(long started) {
+    public PlayerWarp setStarted(long started) {
         this.started = started;
+        return this;
     }
 
     public boolean isExpired() {

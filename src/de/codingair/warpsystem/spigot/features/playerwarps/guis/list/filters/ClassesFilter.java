@@ -142,10 +142,10 @@ public class ClassesFilter implements Filter {
     }
 
     @Override
-    public PWPage.FilterButton getControllButton(PWPage page, int warps) {
+    public PWPage.FilterButton getControllButton(PWPage page, int warps, Player player) {
         if(page.getExtra() == null) return null;
 
-        return new ExtendedFilterButton(page, warps);
+        return new ExtendedFilterButton(page, warps, player);
     }
 
     @Override
@@ -156,8 +156,8 @@ public class ClassesFilter implements Filter {
     public static class ExtendedFilterButton extends PWPage.FilterButton {
         private int warps = -1;
 
-        public ExtendedFilterButton(PWPage page, int warps) {
-            super(page);
+        public ExtendedFilterButton(PWPage page, int warps, Player player) {
+            super(page, player);
             this.warps = warps;
             update(false);
         }
