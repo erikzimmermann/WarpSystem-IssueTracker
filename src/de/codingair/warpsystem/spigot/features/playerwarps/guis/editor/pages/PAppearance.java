@@ -16,6 +16,8 @@ import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.buttons.ActiveTimeButton;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.buttons.TargetPositionButton;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
 import org.bukkit.Material;
@@ -33,7 +35,7 @@ public class PAppearance extends PageItem {
     private final boolean editing;
 
     public PAppearance(Player p, PlayerWarp warp, PlayerWarp original, boolean editing) {
-        super(p, PWEditor.getMainTitle(), new ItemBuilder(XMaterial.PAINTING).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Appearance")).getItem(), false);
+        super(p, PWEditor.getMainTitle(), new ItemBuilder(PlayerWarpManager.getManager().isAllowPublicWarps() ? XMaterial.PAINTING : XMaterial.COMMAND_BLOCK).setName(Editor.ITEM_TITLE_COLOR + (PlayerWarpManager.getManager().isAllowPublicWarps() ? Lang.get("Appearance") : Lang.get("Options"))).getItem(), false);
 
         this.warp = warp;
         this.original = original;
@@ -180,6 +182,13 @@ public class PAppearance extends PageItem {
             public void onClose(AnvilCloseEvent e) {
             }
         }.setOption(option));
+
+        if(!PlayerWarpManager.getManager().isAllowPublicWarps()) {
+            if(PlayerWarpManager.getManager().isEconomy())
+                addButton(new ActiveTimeButton(slot++, warp, original, editing, this, p).setOption(option));
+
+            addButton(new TargetPositionButton(slot++, warp, original, editing, this, p).setOption(option));
+        }
 
         addButton(new SyncAnvilGUIButton(slot++, 2, ClickType.LEFT) {
             @Override

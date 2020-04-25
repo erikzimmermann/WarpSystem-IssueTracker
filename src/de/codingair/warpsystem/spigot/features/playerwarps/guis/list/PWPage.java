@@ -187,7 +187,7 @@ public class PWPage extends Page {
         protected PWPage page;
 
         public FilterButton(PWPage page) {
-            super(8, 1, ClickType.SHIFT_RIGHT);
+            super(8, 1, FilterType.active() > 1 ? ClickType.SHIFT_RIGHT : ClickType.RIGHT);
             this.page = page;
             update(false);
 
@@ -212,9 +212,9 @@ public class PWPage extends Page {
 
             return new ItemBuilder(XMaterial.COMPASS).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Filter") + ":§7 " + page.filter.getFilterName())
                     .setLore(page.getSearch() == null || !page.filter.searchable(page) ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Search_Short") + ": §7'§f" + page.getSearch() + "§7'",
-                            "", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7" + Lang.get("Previous_Filter"),
-                            Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §7" + Lang.get("Next_Filter"),
-                            page.filter.searchable(page) ? Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Shift_Rightclick") + ": §7" + (page.getSearch() == null ? Lang.get("Search_Short") : Lang.get("Reset_Search")) : null)
+                            "", FilterType.active() > 1 ? Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7" + Lang.get("Previous_Filter") : null,
+                            FilterType.active() > 1 ? Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §7" + Lang.get("Next_Filter") : null,
+                            page.filter.searchable(page) ? page.filter.searchable(page) ? Editor.ITEM_SUB_TITLE_COLOR + Lang.get(FilterType.active() > 1 ? "Shift_Rightclick" : "Rightclick") + ": §7" + (page.getSearch() == null ? Lang.get("Search_Short") : Lang.get("Reset_Search")) : null : null)
                     .getItem();
         }
 
@@ -225,14 +225,18 @@ public class PWPage extends Page {
 
         @Override
         public void onOtherClick(InventoryClickEvent e) {
-            if(e.isShiftClick() && e.isRightClick()) page.setSearch(null);
-            else if(page.filter.deleteExtraBeforeChangeFilter() && page.extra != null) page.extra = null;
-            else if(e.isLeftClick()) {
-                page.filter = page.filter.previous();
-                page.extra = page.filter.getStandardExtra((PWList) page.getLast());
-            } else if(e.isRightClick()) {
-                page.filter = page.filter.next();
-                page.extra = page.filter.getStandardExtra((PWList) page.getLast());
+            if(FilterType.active() > 1) {
+                if(e.isShiftClick() && e.isRightClick()) page.setSearch(null);
+                else if(page.filter.deleteExtraBeforeChangeFilter() && page.extra != null) page.extra = null;
+                else if(e.isLeftClick()) {
+                    page.filter = page.filter.previous();
+                    page.extra = page.filter.getStandardExtra((PWList) page.getLast());
+                } else if(e.isRightClick()) {
+                    page.filter = page.filter.next();
+                    page.extra = page.filter.getStandardExtra((PWList) page.getLast());
+                }
+            } else {
+                if(e.isRightClick()) page.setSearch(null);
             }
 
             page.resetPage();
@@ -246,7 +250,7 @@ public class PWPage extends Page {
 
         @Override
         public boolean canClick(ClickType click) {
-            return click == ClickType.LEFT || click == ClickType.RIGHT || (page.filter.searchable(page) && click == ClickType.SHIFT_RIGHT);
+            return FilterType.active() > 1 ? (click == ClickType.LEFT || click == ClickType.RIGHT || (page.filter.searchable(page) && click == ClickType.SHIFT_RIGHT)) : page.filter.searchable(page) && click == ClickType.RIGHT;
         }
     }
 }
