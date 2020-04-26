@@ -122,7 +122,9 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         if(player.isOp()) return -1;
 
         if(WarpSystem.PERMISSION_USE_PLAYER_WARPS != null) {
+            int amount = 0;
             for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
+                if(!effectivePermission.getValue()) continue;
                 String perm = effectivePermission.getPermission();
 
                 if(perm.equals("*") || perm.equalsIgnoreCase("warpsystem.*")) return -1;
@@ -131,14 +133,14 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
                     if(s.equals("*") || s.equalsIgnoreCase("n")) return -1;
 
                     try {
-                        return Integer.parseInt(s);
+                        int i = Integer.parseInt(s);
+                        if(i > amount) amount = i;
                     } catch(Throwable ignored) {
                     }
                 }
             }
+            return amount;
         } else return getManager().maxAmount;
-
-        return 0;
     }
 
     public static String convertInTimeFormat(long time) {
