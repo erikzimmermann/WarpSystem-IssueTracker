@@ -118,7 +118,9 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible {
         if(player.isOp()) return 3;
 
         if(WarpSystem.PERMISSION_USE_PLAYER_WARPS != null) {
+            int amount = 0;
             for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
+                if(!effectivePermission.getValue()) continue;
                 String perm = effectivePermission.getPermission();
 
                 if(perm.equals("*") || perm.equalsIgnoreCase("warpsystem.*")) return 3;
@@ -127,14 +129,14 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible {
                     if(s.equals("*") || s.equalsIgnoreCase("n")) return 3;
 
                     try {
-                        return Math.min(Integer.parseInt(s), 3);
+                        int i = Math.min(Integer.parseInt(s), 3);
+                        if(i > amount) amount = i;
                     } catch(Throwable ignored) {
                     }
                 }
             }
+            return amount;
         } else return Math.min(getManager().maxAmount, 3);
-
-        return 0;
     }
 
     public static String convertInTimeFormat(long time) {

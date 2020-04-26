@@ -164,7 +164,9 @@ public class RandomTeleporterManager implements Manager {
     public int getMaxTeleportAmount(Player player) {
         if(player.isOp()) return -1;
 
+        int amount = 0;
         for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
+            if(!effectivePermission.getValue()) continue;
             String perm = effectivePermission.getPermission();
 
             if(perm.equals("*") || perm.toLowerCase().startsWith("warpsystem.*")
@@ -175,20 +177,23 @@ public class RandomTeleporterManager implements Manager {
                 if(s.equals("*") || s.equalsIgnoreCase("n")) return -1;
 
                 try {
-                    return Integer.parseInt(s);
+                    int i = Integer.parseInt(s);
+                    if(i > amount) amount = i;
                 } catch(Throwable ignored) {
                 }
             }
 
         }
 
-        return 0;
+        return amount;
     }
 
     public int getFreeTeleportAmount(Player player) {
         if(player.isOp()) return -1;
 
+        int amount = 0;
         for(PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
+            if(!effectivePermission.getValue()) continue;
             String perm = effectivePermission.getPermission();
 
             if(perm.equals("*") || perm.toLowerCase().startsWith("warpsystem.*")
@@ -199,13 +204,14 @@ public class RandomTeleporterManager implements Manager {
                 if(s.equals("*") || s.equalsIgnoreCase("n")) return -1;
 
                 try {
-                    return Integer.parseInt(s);
+                    int i = Integer.parseInt(s);
+                    if(i > amount) amount = i;
                 } catch(Throwable ignored) {
                 }
             }
         }
 
-        return 0;
+        return amount;
     }
 
     public void tryToTeleport(Player player) {
