@@ -16,8 +16,8 @@ public enum PacketType {
     ChatInputGUITogglePacket(6, ChatInputGUITogglePacket.class),
 
     PublishGlobalWarpPacket(10, PublishGlobalWarpPacket.class),
-    PrepareTeleportPacket(11, PrepareGlobalWarpTeleportPacket.class),
-    TeleportPacket(12, TeleportPacket.class),
+    GlobalWarpTeleportPacket(11, GlobalWarpTeleportPacket.class),
+    TeleportPacket(12, GlobalWarpTeleportPacket.class),
     DeleteGlobalWarpPacket(13, DeleteGlobalWarpPacket.class),
     RequestGlobalWarpNamesPacket(14, RequestGlobalWarpNamesPacket.class),
     SendGlobalWarpNamesPacket(15, SendGlobalWarpNamesPacket.class),

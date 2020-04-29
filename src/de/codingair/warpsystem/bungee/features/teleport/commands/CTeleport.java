@@ -140,7 +140,9 @@ public class CTeleport extends Command {
         }
 
         TeleportPlayerToCoordsPacket packet = new TeleportPlayerToCoordsPacket(gate.getName(), player.getName(), x, y, z, relativeX, relativeY, relativeZ);
-        WarpSystem.getInstance().getDataHandler().send(packet, player.getServer().getInfo());
+        WarpSystem.getInstance().getDataHandler().send(packet, gate.getServer().getInfo());
+
+        if(!gate.getServer().getInfo().equals(player.getServer().getInfo())) player.connect(gate.getServer().getInfo());
     }
 
     void tp(ProxiedPlayer gate, ProxiedPlayer player, ProxiedPlayer target) {
@@ -162,5 +164,11 @@ public class CTeleport extends Command {
             });
         } else
             WarpSystem.getInstance().getDataHandler().send(packet, target.getServer().getInfo());
+    }
+
+    private Number cut(double n) {
+        double d = ((double) (int) (n * 100)) / 100;
+        if(d == (int) d) return (int) d;
+        else return d;
     }
 }

@@ -4,6 +4,7 @@ import de.codingair.warpsystem.spigot.base.guis.editor.Backup;
 import de.codingair.warpsystem.spigot.base.guis.editor.pages.DestinationPage;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.features.warps.guis.editor.pages.PAppearance;
 import de.codingair.warpsystem.spigot.features.warps.guis.editor.pages.PFunctions;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
@@ -27,6 +28,6 @@ public class GEditor extends de.codingair.warpsystem.spigot.base.guis.editor.Edi
             @Override
             public void cancel(Icon value) {
             }
-        }, clone::getItem, new PAppearance(p, clone), new PFunctions(p, clone), icon.isPage() ? null : new DestinationPage(p, "§c§n" + Lang.get("Item_Editing"), clone.getAction(WarpAction.class).getValue()));
+        }, clone::getItem, new PAppearance(p, clone), new PFunctions(p, clone), icon.isPage() ? null : new DestinationPage(p, "§c§n" + Lang.get("Item_Editing"), clone.getAction(WarpAction.class).getValue(), Origin.WarpIcon));
     }
 }
