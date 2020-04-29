@@ -5,6 +5,7 @@ import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
+import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -42,7 +43,7 @@ public class CPortals extends CommandBuilder {
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, edit, delete>");
                 return false;
             }
-        }, true, "portal");
+        }.setOnlyPlayers(true), true, "portal");
 
         getBaseComponent().addChild(new CommandComponent("create") {
             @Override
@@ -73,6 +74,7 @@ public class CPortals extends CommandBuilder {
                             String name = e.getSubmittedText();
 
                             Portal portal = new Portal(new Destination(), name, new ArrayList<>(), new ArrayList<>());
+                            portal.setSpawn(new Location(((Player) sender).getLocation()));
                             e.setPost(() -> new PortalEditor((Player) sender, portal).open());
                         }
                     }
@@ -95,6 +97,7 @@ public class CPortals extends CommandBuilder {
                 }
 
                 Portal portal = new Portal(new Destination(), argument, new ArrayList<>(), new ArrayList<>());
+                portal.setSpawn(new Location(((Player) sender).getLocation()));
                 new PortalEditor((Player) sender, portal).open();
                 return false;
             }
