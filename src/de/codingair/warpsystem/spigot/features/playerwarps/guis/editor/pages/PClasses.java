@@ -49,8 +49,8 @@ public class PClasses extends PageItem {
         l.clear();
 
         ItemBuilder builder = new ItemBuilder(XMaterial.WRITABLE_BOOK).setHideStandardLore(true)
-                .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Classes"))
-                .setLore(getFreeMessage(warp, original, this))
+                .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Classes") + Lang.PREMIUM_LORE)
+                .setLore("§8Only admins see this page.", getFreeMessage(warp, original, this))
                 .addLore(PWEditor.getCostsMessage(Math.max(warp.getTrusted().size() - original.getTrusted().size(), 0) * PlayerWarpManager.getManager().getTrustedMemberCosts(), PClasses.this))
                 .addLore(modified);
 
