@@ -25,11 +25,6 @@ public class CostsAction extends ActionObject<Double> {
     }
 
     @Override
-    public String write() {
-        return getValue() + "";
-    }
-
-    @Override
     public boolean perform(Player player) {
         if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) return true;
         if(MoneyAdapterType.getActive() == null) return true;

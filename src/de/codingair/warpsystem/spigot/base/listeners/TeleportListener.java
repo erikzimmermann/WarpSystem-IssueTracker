@@ -5,11 +5,7 @@ import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.time.TimeMap;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.EmptyAdapter;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -24,28 +20,22 @@ import java.util.HashMap;
 
 public class TeleportListener implements Listener {
     public static final HashMap<Player, org.bukkit.Location> TELEPORTS = new HashMap<>();
-    private static final TimeMap<String, Object[]> teleport = new TimeMap<>();
+    private static final TimeMap<String, TeleportOptions> teleport = new TimeMap<>();
 
-    public static void setSpawnPositionOrTeleport(String name, Location location, String displayName) {
-        setSpawnPositionOrTeleport(name, location, displayName, null);
-    }
-
-    public static void setSpawnPositionOrTeleport(String name, Location location, String displayName, String message) {
-        if(message != null) message = Lang.getPrefix() + message.replace("%warp%", displayName);
+    public static void setSpawnPositionOrTeleport(String name, TeleportOptions options) {
+        if(options == null) {
+            teleport.remove(name);
+            return;
+        }
 
         Player player = Bukkit.getPlayer(name);
 
         if(player == null) {
             //save
-            teleport.put(name, new Object[] {location, displayName, message});
+            teleport.put(name, options);
         } else {
             //teleport
-            if(location.getWorld() == null) {
-                player.sendMessage(new String[] {" ", Lang.getPrefix() + "§4World '" + location.getWorld() + "' is missing. Please contact an admin!", " "});
-                return;
-            }
-
-            Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.GlobalWarp, new Destination(new LocationAdapter(location)), displayName, 0, true, true, true, true, null), 2L);
+            Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(player, options), 2L);
         }
     }
 
@@ -61,24 +51,20 @@ public class TeleportListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onSpawn(PlayerSpawnLocationEvent e) {
-        Object[] n = teleport.remove(e.getPlayer().getName());
+        TeleportOptions options = teleport.remove(e.getPlayer().getName());
 
-        if(n != null) {
-            if(((Location) n[0]).getWorldName() == null) ((Location) n[0]).setWorld(e.getPlayer().getLocation().getWorld());
-
-            if(((Location) n[0]).getWorld() == null) {
-                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> e.getPlayer().sendMessage(new String[] {" ", Lang.getPrefix() + "§4World '" + ((Location) n[0]).getWorldName() + "' is missing. Please contact an admin!", " "}), 2L);
+        if(options != null) {
+            org.bukkit.Location l = options.buildLocation();
+            if(l == null || l.getWorld() == null) {
+                String world = l instanceof Location ? ((Location) l).getWorldName() : null;
+                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> e.getPlayer().sendMessage(new String[] {" ", Lang.getPrefix() + "§4World " + (world == null ? "" : "'" + world + "' ") + "is missing. Please contact an admin!", " "}), 2L);
                 return;
             }
 
-            e.setSpawnLocation((Location) n[0]);
+            e.setSpawnLocation(l);
 
-            TeleportOptions options = new TeleportOptions(new Destination(new EmptyAdapter()), (String) n[1]);
-            if(n[2] != null) options.setMessage((String) n[2]);
-            options.setOrigin(Origin.GlobalWarp);
             options.setCanMove(true);
             options.setSilent(true);
-            options.setSkip(true);
             options.setSkip(true);
 
             Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(e.getPlayer(), options), 2L);

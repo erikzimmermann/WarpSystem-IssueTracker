@@ -15,6 +15,7 @@ import de.codingair.warpsystem.spigot.base.guis.editor.pages.TeleportSoundPage;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.TeleportSoundAction;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.portals.guis.pages.PAnimations;
 import de.codingair.warpsystem.spigot.features.portals.guis.pages.PAppearance;
@@ -32,7 +33,6 @@ import java.util.List;
 
 public class PortalEditor extends Editor<Portal> {
     public static final HashMap<String, PortalEditor> EDITORS = new HashMap<>();
-    private boolean opened = false;
     private Portal clone;
 
     public PortalEditor(Player p, Portal portal) {
@@ -79,7 +79,7 @@ public class PortalEditor extends Editor<Portal> {
                 }
                 else portal.destroy();
             }
-        }, () -> new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setHideName(true).getItem(), new PAppearance(p, clone), new POptions(p, clone), new PAnimations(p, clone), new DestinationPage(p, getMainTitle(), clone.getDestination(), new SyncButton(0) {
+        }, () -> new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setHideName(true).getItem(), new PAppearance(p, clone), new POptions(p, clone), new PAnimations(p, clone), new DestinationPage(p, getMainTitle(), clone.getDestination(), Origin.Portal,  new SyncButton(0) {
             @Override
             public ItemStack craftItem() {
                 Portal target = clone.getDestination().getType() != DestinationType.Portal ? null : PortalManager.getInstance().getPortal(clone.getDestination().getId());
@@ -135,6 +135,7 @@ public class PortalEditor extends Editor<Portal> {
         updateControllButtons();
 
         setCancelSound(new SoundData(Sound.ITEM_BREAK, 0.7F, 1F));
+        setOpenSound(new SoundData(Sound.LEVEL_UP, 0.7F, 1.5F));
 
         MusicData music0 = new MusicData(Sound.LEVEL_UP, 0.7F, 0.9F, 0);
         MusicData music1 = new MusicData(Sound.LEVEL_UP, 0.7F, 1.2F, 1);
@@ -144,13 +145,9 @@ public class PortalEditor extends Editor<Portal> {
 
     @Override
     public void open(Player player) {
-        super.open(player);
+        if(!openForFirstTime) EDITORS.put(player.getName(), this);
 
-        if(!opened) {
-            EDITORS.put(player.getName(), this);
-            new SoundData(Sound.LEVEL_UP, 0.7F, 1.5F).play(player);
-            opened = true;
-        }
+        super.open(player);
     }
 
     @Override

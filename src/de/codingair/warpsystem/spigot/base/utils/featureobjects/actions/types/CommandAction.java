@@ -44,15 +44,6 @@ public class CommandAction extends ActionObject<List<String>> {
     }
 
     @Override
-    public String write() {
-        if(getValue().size() == 1) return getValue().get(0);
-
-        JSONArray json = new JSONArray();
-        json.addAll(getValue());
-        return json.toJSONString();
-    }
-
-    @Override
     public boolean perform(Player player) {
         for(String command : getValue()) {
             if(command.startsWith("/")) command = command.substring(1);

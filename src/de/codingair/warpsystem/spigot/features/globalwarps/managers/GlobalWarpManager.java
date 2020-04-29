@@ -9,7 +9,7 @@ import de.codingair.warpsystem.spigot.features.globalwarps.commands.CGlobalWarp;
 import de.codingair.warpsystem.spigot.features.globalwarps.commands.CGlobalWarps;
 import de.codingair.warpsystem.spigot.features.globalwarps.listeners.GlobalWarpListener;
 import de.codingair.warpsystem.transfer.packets.spigot.DeleteGlobalWarpPacket;
-import de.codingair.warpsystem.transfer.packets.spigot.PrepareGlobalWarpTeleportPacket;
+import de.codingair.warpsystem.transfer.packets.spigot.GlobalWarpTeleportPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.PublishGlobalWarpPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestGlobalWarpNamesPacket;
 import de.codingair.warpsystem.transfer.serializeable.SGlobalWarp;
@@ -18,6 +18,7 @@ import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,26 +66,29 @@ public class GlobalWarpManager implements Manager, BungeeFeature {
         return false;
     }
 
-    public void teleport(Player player, String display, String name, Callback<PrepareGlobalWarpTeleportPacket.Result> callback) {
-        teleport(player, display, name, 0, callback);
-    }
-
-    public void teleport(Player player, String display, String name, double costs, Callback<PrepareGlobalWarpTeleportPacket.Result> callback) {
-        if(name == null) {
-            callback.accept(PrepareGlobalWarpTeleportPacket.Result.WARP_NOT_EXISTS);
+    public void teleport(Player player, String id, Vector randomOffset, String displayName, String message, double costs, Callback<GlobalWarpTeleportPacket.Result> callback) {
+        if(id == null) {
+            callback.accept(GlobalWarpTeleportPacket.Result.WARP_NOT_EXISTS);
             return;
         }
 
-        name = getCaseCorrectlyName(name);
-        if(!this.globalWarps.containsKey(name)) {
-            callback.accept(PrepareGlobalWarpTeleportPacket.Result.WARP_NOT_EXISTS);
+        id = getCaseCorrectlyName(id);
+        if(!this.globalWarps.containsKey(id)) {
+            callback.accept(GlobalWarpTeleportPacket.Result.WARP_NOT_EXISTS);
             return;
         }
 
-        WarpSystem.getInstance().getDataHandler().send(new PrepareGlobalWarpTeleportPacket(player.getName(), name, display, costs, new Callback<Integer>() {
+        double x = 0, y = 0, z = 0;
+        if(randomOffset != null) {
+            x = randomOffset.getX();
+            y = randomOffset.getY();
+            z = randomOffset.getZ();
+        }
+
+        WarpSystem.getInstance().getDataHandler().send(new GlobalWarpTeleportPacket(player.getName(), id, x, y, z, displayName, message, costs, new Callback<Integer>() {
             @Override
             public void accept(Integer object) {
-                callback.accept(PrepareGlobalWarpTeleportPacket.Result.getById(object));
+                callback.accept(GlobalWarpTeleportPacket.Result.getById(object));
             }
         }));
     }

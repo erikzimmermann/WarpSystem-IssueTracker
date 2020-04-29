@@ -7,6 +7,7 @@ import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.ShowIcon;
 import de.codingair.warpsystem.spigot.base.guis.editor.pages.DestinationPage;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.features.shortcuts.guis.pages.POptions;
 import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
@@ -37,6 +38,6 @@ public class GEditor extends Editor<Shortcut> {
             public ItemStack buildIcon() {
                 return new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setHideName(true).getItem();
             }
-        }, new POptions(p, clone), new DestinationPage(p, Editor.TITLE_COLOR + Lang.get("Shortcuts"), clone.getDestination()));
+        }, new POptions(p, clone), new DestinationPage(p, Editor.TITLE_COLOR + Lang.get("Shortcuts"), clone.getDestination(), Origin.ShortCut));
     }
 }

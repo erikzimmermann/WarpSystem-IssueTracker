@@ -8,6 +8,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class PrepareCoordinationTeleportPacket extends RequestPacket<Integer> {
+    public static final String NO_MESSAGE = "EMPTY";
     private String player, server, world, destinationName, message;
     private double x, y, z;
     private float yaw, pitch;

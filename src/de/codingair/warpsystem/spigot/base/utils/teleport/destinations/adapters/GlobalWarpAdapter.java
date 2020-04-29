@@ -7,16 +7,16 @@ import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
-import de.codingair.warpsystem.transfer.packets.spigot.PrepareGlobalWarpTeleportPacket;
+import de.codingair.warpsystem.transfer.packets.spigot.GlobalWarpTeleportPacket;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public class GlobalWarpAdapter implements DestinationAdapter {
     @Override
     public boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
-        GlobalWarpManager.getInstance().teleport(player, displayName, id, costs, new Callback<PrepareGlobalWarpTeleportPacket.Result>() {
+        GlobalWarpManager.getInstance().teleport(player, id, randomOffset, displayName, message, costs, new Callback<GlobalWarpTeleportPacket.Result>() {
             @Override
-            public void accept(PrepareGlobalWarpTeleportPacket.Result result) {
+            public void accept(GlobalWarpTeleportPacket.Result result) {
                 switch(result) {
                     case TELEPORTED:
                         if(callback != null) callback.accept(TeleportResult.TELEPORTED);
