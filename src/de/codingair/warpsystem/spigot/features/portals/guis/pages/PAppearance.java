@@ -34,6 +34,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class PAppearance extends PageItem {
@@ -220,6 +221,7 @@ public class PAppearance extends PageItem {
                 if(e.isLeftClick()) {
                     getLast().setClosingForGUI(true);
                     close();
+                    if(clone.getSpawn() != null) player.teleport(clone.getSpawn(), PlayerTeleportEvent.TeleportCause.UNKNOWN);
                     new SpawnEditor(p, (PortalEditor) getLast(), clone).open(false);
                 } else {
                     clone.setSpawn(null);
