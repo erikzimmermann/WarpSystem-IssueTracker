@@ -500,3 +500,4 @@ Spawn_Position_Info: '&7La position du frai est utilisée pour se téléporter v
 Line_break: 'Saut de ligne'
 Teleport_Name: 'Nom du téléport'
 Not_enough_Money: '&7Vous &cn''avez pas &cassez d''argent&7! Vous avez besoin d''au moins &c%AMOUNT% coin(s)&7.'
+Disabled_By_Config: 'Désactivé par la configuration'

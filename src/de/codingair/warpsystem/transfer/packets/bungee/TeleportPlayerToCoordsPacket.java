@@ -7,7 +7,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class TeleportPlayerToCoordsPacket implements Packet {
-    private String gate, player, destinationName = null;
+    private String gate, player, destinationName = null, world = null;
     private double x, y, z, costs = 0;
     private float yaw = 0, pitch = 0;
     private boolean relativeX, relativeY, relativeZ;
@@ -49,8 +49,8 @@ public class TeleportPlayerToCoordsPacket implements Packet {
         b |= (relativeZ ? 1 : 0) << 3;
         b |= (costs != 0 ? 1 : 0) << 4;
         b |= (destinationName != null ? 1 : 0) << 5;
-        b |= (yaw != 0 ? 1 : 0) << 6;
-        b |= (pitch != 0 ? 1 : 0) << 7;
+        b |= (yaw != 0 || pitch != 0 ? 1 : 0) << 6;
+        b |= (world != null ? 1 : 0) << 7;
 
         out.writeByte(b);
         out.writeUTF(this.gate);
@@ -62,6 +62,7 @@ public class TeleportPlayerToCoordsPacket implements Packet {
         if(destinationName != null) out.writeUTF(destinationName);
         if(yaw != 0) out.writeFloat(yaw);
         if(pitch != 0) out.writeFloat(pitch);
+        if(world != null) out.writeUTF(world);
     }
 
     @Override
@@ -80,8 +81,15 @@ public class TeleportPlayerToCoordsPacket implements Packet {
         this.relativeZ = (b & (1 << 3)) != 0;
         if((b & (1 << 4)) != 0) this.costs = in.readDouble();
         if((b & (1 << 5)) != 0) this.destinationName = in.readUTF();
-        if((b & (1 << 6)) != 0) this.yaw = in.readFloat();
-        if((b & (1 << 7)) != 0) this.pitch = in.readFloat();
+        if((b & (1 << 6)) != 0) {
+            this.yaw = in.readFloat();
+            this.pitch = in.readFloat();
+        }
+        if((b & (1 << 7)) != 0) this.world = in.readUTF();
+    }
+
+    public String getWorld() {
+        return world;
     }
 
     public String getGate() {

@@ -4,6 +4,7 @@ import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOpti
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SimpleGUI;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -11,6 +12,7 @@ import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.guis.editor.StandardButtonOption;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.globalwarps.guis.GGlobalWarpList;
@@ -27,13 +29,41 @@ import java.util.List;
 
 public class DestinationPage extends PageItem {
     private Destination destination;
+    private Origin origin;
     private Button[] extra;
 
-    public DestinationPage(Player player, String title, Destination destination, Button... extra) {
-        super(player, title, new ItemBuilder(XMaterial.ENDER_PEARL).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Destination")).getItem(), false);
+    public DestinationPage(Player player, String title, Destination destination, Origin origin, Button... extra) {
+        super(player, title, null, false);
         this.destination = destination;
+        this.origin = origin;
         this.extra = extra;
         initialize(player);
+    }
+
+    @Override
+    public Button getPageButton() {
+        return new SyncButton(0) {
+            @Override
+            public ItemStack craftItem() {
+                ItemBuilder builder = new ItemBuilder(XMaterial.ENDER_PEARL).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Destination"));
+
+                builder.setLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Teleport_Message") + ": " + (destination.isMessage() && origin.sendTeleportMessage() ? "§a" + Lang.get("Enabled") : "§c" + Lang.get("Disabled")));
+
+                if(origin.sendTeleportMessage()) builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §7" + Lang.get("Toggle") + Lang.PREMIUM_LORE);
+                else builder.addLore("§8» " + Lang.get("Disabled_By_Config"));
+
+                return builder.getItem();
+            }
+
+            @Override
+            public void onClick(InventoryClickEvent e, Player player) {
+            }
+
+            @Override
+            public boolean canClick(ClickType click) {
+                return click == ClickType.LEFT;
+            }
+        }.setLinkTrigger(ClickType.LEFT);
     }
 
     @Override

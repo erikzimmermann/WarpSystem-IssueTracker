@@ -1,8 +1,6 @@
 package de.codingair.warpsystem.spigot.features.globalwarps.listeners;
 
-import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
@@ -11,14 +9,10 @@ import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpMa
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
 import de.codingair.warpsystem.transfer.packets.bungee.SendGlobalWarpNamesPacket;
-import de.codingair.warpsystem.transfer.packets.bungee.TeleportPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.UpdateGlobalWarpPacket;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
-import de.codingair.warpsystem.transfer.serializeable.SGlobalWarp;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 public class GlobalWarpListener implements Listener, PacketListener {
@@ -58,16 +52,6 @@ public class GlobalWarpListener implements Listener, PacketListener {
                         }
                         break;
                 }
-                break;
-
-            case TeleportPacket:
-                Player player = Bukkit.getPlayer(((TeleportPacket) packet).getPlayer());
-
-                SGlobalWarp warp = ((TeleportPacket) packet).getWarp();
-                Location location = new Location(warp.getLoc().getWorld(), warp.getLoc().getX(), warp.getLoc().getY(), warp.getLoc().getZ(), warp.getLoc().getYaw(), warp.getLoc().getPitch());
-                String warpDisplayName = ((TeleportPacket) packet).getTeleportDisplayName();
-
-                TeleportListener.setSpawnPositionOrTeleport(((TeleportPacket) packet).getPlayer(), location, warpDisplayName);
                 break;
         }
     }

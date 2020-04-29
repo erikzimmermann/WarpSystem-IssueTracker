@@ -63,6 +63,10 @@ public class TeleportOptions {
         this.afterEffects = true;
     }
 
+    public Location buildLocation() {
+        return destination == null ? null : destination.buildLocation();
+    }
+
     public void destroy() {
         callback.clear();
     }

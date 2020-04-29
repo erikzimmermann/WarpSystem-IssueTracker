@@ -7,6 +7,7 @@ import de.codingair.codingapi.utils.ImprovedDouble;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.CloneableAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.DestinationAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import org.bukkit.ChatColor;
@@ -21,6 +22,7 @@ public class Destination implements Serializable {
     private DestinationAdapter adapter;
     private double offsetX, offsetY, offsetZ;
     private int signedX, signedY = 1, signedZ;
+    private boolean message = true;
 
     public Destination() {
         id = null;
@@ -45,6 +47,7 @@ public class Destination implements Serializable {
         this.adapter = adapter;
     }
 
+    @Deprecated
     public Destination(String data) {
         try {
             JSONArray json = (JSONArray) new JSONParser().parse(data);
@@ -62,23 +65,38 @@ public class Destination implements Serializable {
             this.id = null;
             this.adapter = null;
             this.type = null;
+            this.offsetX = 0;
+            this.offsetY = 0;
+            this.offsetZ = 0;
+            this.signedX = 0;
+            this.signedY = 0;
+            this.signedZ = 0;
+            this.message = true;
             return this;
         }
 
         this.id = destination.id;
-        this.adapter = destination.adapter;
+        this.adapter = destination.adapter instanceof CloneableAdapter ? ((CloneableAdapter) destination.adapter).clone() : destination.adapter == null ? null : destination.type.getInstance();
         this.type = destination.type;
+        this.offsetX = destination.offsetX;
+        this.offsetY = destination.offsetY;
+        this.offsetZ = destination.offsetZ;
+        this.signedX = destination.signedX;
+        this.signedY = destination.signedY;
+        this.signedZ = destination.signedZ;
+        this.message = destination.message;
         return this;
     }
 
     public boolean teleport(Player player, String message, String displayName, boolean checkPermission, boolean silent, double costs, Callback<TeleportResult> callback) {
         if(adapter == null) return false;
         player.setFallDistance(0F);
+        if(!isMessage()) message = null;
         return adapter.teleport(player, id, buildRandomOffset(), displayName, checkPermission, message, silent, costs, callback);
     }
 
     public void sendMessage(Player player, String message, String displayName, double costs) {
-        if(adapter == null || message == null) return;
+        if(adapter == null || message == null || !this.message || type == DestinationType.GlobalWarp) return;
         player.sendMessage(getMessage(player, message, displayName, costs));
     }
 
@@ -156,6 +174,13 @@ public class Destination implements Serializable {
             d.getSerializable("id", loc);
             ((LocationAdapter) this.adapter).setLocation(loc);
         } else id = d.getRaw("id");
+
+        this.offsetX = d.getDouble("oX");
+        this.offsetY = d.getDouble("oY");
+        this.offsetZ = d.getDouble("oZ");
+        this.signedX = d.getInteger("sX");
+        this.signedY = d.getInteger("sY");
+        this.signedZ = d.getInteger("sZ");
         return true;
     }
 
@@ -173,6 +198,12 @@ public class Destination implements Serializable {
 
             d.put("id", id);
         }
+        d.put("oX", offsetX);
+        d.put("oY", offsetY);
+        d.put("oZ", offsetZ);
+        d.put("sX", signedX);
+        d.put("sY", signedY);
+        d.put("sZ", signedZ);
     }
 
     @Override
@@ -186,20 +217,7 @@ public class Destination implements Serializable {
         this.signedX = 0;
         this.signedY = 0;
         this.signedZ = 0;
-    }
-
-    public JSONArray toJSONArray() {
-        if(this.type == DestinationType.UNKNOWN) throw new IllegalArgumentException("Cannot serialize unknown destination!");
-
-        JSONArray json = new JSONArray();
-        json.add(type == null ? null : type.name());
-        json.add(id);
-
-        return json;
-    }
-
-    public String toJSONString() {
-        return toJSONArray().toJSONString();
+        this.message = true;
     }
 
     @Override
@@ -215,20 +233,13 @@ public class Destination implements Serializable {
                 && offsetZ == that.offsetZ
                 && signedX == that.signedX
                 && signedY == that.signedY
-                && signedZ == that.signedZ;
+                && signedZ == that.signedZ
+                && message == that.message;
     }
 
     public Destination clone() {
         Destination destination = new Destination();
-        destination.id = getId();
-        destination.type = type;
-        destination.adapter = adapter;
-        destination.offsetX = offsetX;
-        destination.offsetY = offsetY;
-        destination.offsetZ = offsetZ;
-        destination.signedX = signedX;
-        destination.signedY = signedY;
-        destination.signedZ = signedZ;
+        destination.apply(this);
         return destination;
     }
 
@@ -283,5 +294,13 @@ public class Destination implements Serializable {
 
     public void setSignedZ(int signedZ) {
         this.signedZ = signedZ;
+    }
+
+    public boolean isMessage() {
+        return message;
+    }
+
+    public void setMessage(boolean message) {
+        this.message = message;
     }
 }

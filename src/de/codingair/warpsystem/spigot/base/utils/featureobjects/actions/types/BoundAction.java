@@ -20,11 +20,6 @@ public class BoundAction extends ActionObject<String> {
     }
 
     @Override
-    public String write() {
-        return getValue();
-    }
-
-    @Override
     public boolean perform(Player player) {
         return true;
     }

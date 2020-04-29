@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.base.listeners;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.time.TimeMap;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.transfer.packets.bungee.InitialPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.PrepareLoginMessagePacket;
 import de.codingair.warpsystem.transfer.packets.general.PrepareCoordinationTeleportPacket;
@@ -115,7 +116,14 @@ public class BungeeBukkitListener implements PacketListener, Listener {
 
             case PrepareCoordinationTeleportPacket: {
                 PrepareCoordinationTeleportPacket p = (PrepareCoordinationTeleportPacket) packet;
-                TeleportListener.setSpawnPositionOrTeleport(p.getPlayer(), new Location(p.getWorld(), p.getX(), p.getY(), p.getZ(), p.getYaw(), p.getPitch()), p.getDestinationName(), p.getMessage());
+
+                TeleportOptions options = new TeleportOptions(new Location(p.getWorld(), p.getX(), p.getY(), p.getZ(), p.getYaw(), p.getPitch()), p.getDestinationName());
+                if(p.getMessage() != null) {
+                    if(p.getMessage().equals(PrepareCoordinationTeleportPacket.NO_MESSAGE)) options.setMessage(null);
+                    else options.setMessage(p.getMessage().replace("%warp%", p.getDestinationName()));
+                }
+
+                TeleportListener.setSpawnPositionOrTeleport(p.getPlayer(), options);
                 break;
             }
         }

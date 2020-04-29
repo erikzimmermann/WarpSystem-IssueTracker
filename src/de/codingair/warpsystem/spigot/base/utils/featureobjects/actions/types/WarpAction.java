@@ -36,11 +36,6 @@ public class WarpAction extends ActionObject<Destination> {
     }
 
     @Override
-    public String write() {
-        return getValue() == null || getValue().getType() == DestinationType.UNKNOWN ? null : getValue().toJSONString();
-    }
-
-    @Override
     public boolean perform(Player player) {
         return true;
     }
