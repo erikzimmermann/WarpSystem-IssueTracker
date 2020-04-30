@@ -10,7 +10,6 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Ticker;
-import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -49,6 +48,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collectible {
+    private int lastCountedPlayerWarpSize = 0;
+
     private ConfigFile playerWarpsData = null;
     private ConfigFile config = null;
     private HashMap<UUID, List<PlayerWarp>> warps = new HashMap<>();
@@ -260,22 +261,24 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
     @Override
     public void addCustomCarts(Metrics metrics) {
         metrics.addCustomChart(new Metrics.SingleLineChart("playerwarp_usage", () -> {
-            Value<Integer> size = new Value<>(0);
+            if(!bungeeCord || WarpSystem.getInstance().isOnBungeeCord()) {
+                lastCountedPlayerWarpSize = 0;
 
-            interactWithWarps(new Callback<PlayerWarp>() {
-                @Override
-                public void accept(PlayerWarp warp) {
-                    WarpAction action = warp.getAction(Action.WARP);
-                    if(action != null) {
-                        String s = ((GlobalLocationAdapter) action.getValue().getAdapter()).getServer();
-                        if(s == null || s.equals(WarpSystem.getInstance().getCurrentServer())) {
-                            size.setValue(size.getValue() + 1);
+                interactWithWarps(new Callback<PlayerWarp>() {
+                    @Override
+                    public void accept(PlayerWarp warp) {
+                        WarpAction action = warp.getAction(Action.WARP);
+                        if(action != null) {
+                            String s = ((GlobalLocationAdapter) action.getValue().getAdapter()).getServer();
+                            if(s == null || s.equals(WarpSystem.getInstance().getCurrentServer())) {
+                                lastCountedPlayerWarpSize++;
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
 
-            return size.getValue();
+            return lastCountedPlayerWarpSize;
         }));
     }
 
