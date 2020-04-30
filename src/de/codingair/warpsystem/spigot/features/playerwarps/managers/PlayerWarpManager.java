@@ -10,6 +10,7 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Ticker;
+import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -44,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PlayerWarpManager implements Manager, Ticker, Collectible 
+public class PlayerWarpManager implements Manager, Ticker, Collectible {
     private ConfigFile playerWarpsData = null;
     private ConfigFile config = null;
     private HashMap<UUID, List<PlayerWarp>> warps = new HashMap<>();
@@ -255,24 +256,22 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible
     @Override
     public void addCustomCarts(Metrics metrics) {
         metrics.addCustomChart(new Metrics.SingleLineChart("playerwarp_usage", () -> {
-            if(!bungeeCord || WarpSystem.getInstance().isOnBungeeCord()) {
-                lastCountedPlayerWarpSize = 0;
+            Value<Integer> size = new Value<>(0);
 
-                interactWithWarps(new Callback<PlayerWarp>() {
-                    @Override
-                    public void accept(PlayerWarp warp) {
-                        WarpAction action = warp.getAction(Action.WARP);
-                        if(action != null) {
-                            String s = ((GlobalLocationAdapter) action.getValue().getAdapter()).getServer();
-                            if(s == null || s.equals(WarpSystem.getInstance().getCurrentServer())) {
-                                lastCountedPlayerWarpSize++;
-                            }
+            interactWithWarps(new Callback<PlayerWarp>() {
+                @Override
+                public void accept(PlayerWarp warp) {
+                    WarpAction action = warp.getAction(Action.WARP);
+                    if(action != null) {
+                        String s = ((GlobalLocationAdapter) action.getValue().getAdapter()).getServer();
+                        if(s == null || s.equals(WarpSystem.getInstance().getCurrentServer())) {
+                            size.setValue(size.getValue() + 1);
                         }
                     }
-                });
-            }
+                }
+            });
 
-            return lastCountedPlayerWarpSize;
+            return size.getValue();
         }));
     }
 
@@ -477,7 +476,7 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible
         } else if(!saver) WarpSystem.log("    ...skipping PlayerWarp(s) > Saved on BungeeCord");
 
         config.loadConfig();
-	ConfigWriter writer = new ConfigWriter(config);
+        ConfigWriter writer = new ConfigWriter(config);
         writer.put("PlayerWarps.Hide_Limit_Info", hideLimitInfo);
         config.saveConfig();
 
