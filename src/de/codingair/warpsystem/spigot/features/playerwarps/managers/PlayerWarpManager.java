@@ -13,7 +13,6 @@ import de.codingair.codingapi.utils.Ticker;
 import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.GlobalLocationAdapter;
@@ -26,14 +25,12 @@ import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarps
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.PWList;
 import de.codingair.warpsystem.spigot.features.playerwarps.listeners.PlayerWarpListener;
-import de.codingair.warpsystem.spigot.features.playerwarps.utils.*;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.Category;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarpData;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.forwardcompatibility.PlayerWarpTagConverter_v4_2_2;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.tempwarps.TempWarpAdapter;
 import de.codingair.warpsystem.transfer.packets.general.DeletePlayerWarpPacket;
-import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpUpdatePacket;
-import de.codingair.warpsystem.transfer.packets.general.SendPlayerWarpsPacket;
-import de.codingair.warpsystem.transfer.packets.spigot.MoveLocalPlayerWarpsPacket;
-import de.codingair.warpsystem.transfer.packets.spigot.RegisterServerForPlayerWarpsPacket;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -47,9 +44,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collectible {
-    private int lastCountedPlayerWarpSize = 0;
-
+public class PlayerWarpManager implements Manager, Ticker, Collectible 
     private ConfigFile playerWarpsData = null;
     private ConfigFile config = null;
     private HashMap<UUID, List<PlayerWarp>> warps = new HashMap<>();
@@ -100,27 +95,26 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
     private int classesMin;
     private int classesMax;
     private boolean classes;
+    private boolean hideLimitInfo;
     private long timeStandardValue;
     private boolean forceCreateGUI;
     private boolean allowPublicWarps;
     private boolean allowTrustedMembers;
 
     public static boolean hasPermission(Player player) {
-        if(player.isOp()) return true;
-
         int warps = PlayerWarpManager.getManager().getOwnWarps(player).size();
         int maxAmount = getMaxAmount(player);
 
-        return maxAmount == -1 || warps < maxAmount;
+        return warps < maxAmount;
     }
 
     /**
      * @param player Player
      * @return Max amount of PlayerWarps the player can have.
-     * Returns -1 if player can have unlimited warps.
+     * LIMITED TO 3 (FREE VERSION)
      */
     public static int getMaxAmount(Player player) {
-        if(player.isOp()) return -1;
+        if(player.isOp()) return 3;
 
         if(WarpSystem.PERMISSION_USE_PLAYER_WARPS != null) {
             int amount = 0;
@@ -128,20 +122,20 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
                 if(!effectivePermission.getValue()) continue;
                 String perm = effectivePermission.getPermission();
 
-                if(perm.equals("*") || perm.equalsIgnoreCase("warpsystem.*")) return -1;
+                if(perm.equals("*") || perm.equalsIgnoreCase("warpsystem.*")) return 3;
                 if(perm.toLowerCase().startsWith("warpsystem.playerwarps.")) {
                     String s = perm.substring(23);
-                    if(s.equals("*") || s.equalsIgnoreCase("n")) return -1;
+                    if(s.equals("*") || s.equalsIgnoreCase("n")) return 3;
 
                     try {
-                        int i = Integer.parseInt(s);
+                        int i = Math.min(Integer.parseInt(s), 3);
                         if(i > amount) amount = i;
                     } catch(Throwable ignored) {
                     }
                 }
             }
             return amount;
-        } else return getManager().maxAmount;
+        } else return Math.min(getManager().maxAmount, 3);
     }
 
     public static String convertInTimeFormat(long time) {
@@ -301,8 +295,21 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
         int size = 0;
 
-        this.bungeeCord = config.getBoolean("PlayerWarps.General.BungeeCord", true);
-        this.economy = config.getBoolean("PlayerWarps.General.Economy", true);
+        this.bungeeCord = false;
+        this.economy = true;
+        this.forcePlayerHead = true;
+        this.customTeleportCosts = true;
+        this.classes = false;
+
+        config.set("PlayerWarps.General.BungeeCord", false);
+        config.set("PlayerWarps.General.Economy", true);
+        config.set("PlayerWarps.General.Name_Blacklist", new ArrayList<>());
+        config.set("PlayerWarps.General.Force_Player_Head", true);
+        config.set("PlayerWarps.General.Custom_teleport_costs", true);
+        config.set("PlayerWarps.General.Categories.Enabled", false);
+        config.set("PlayerWarps.General.Categories.Classes", new ArrayList<>());
+        this.config.saveConfig();
+
         WarpSystem.log("  > Loading PlayerWarps [Bungee: " + bungeeCord + "; TimeDependent: " + economy + "]");
 
         // Timings
@@ -320,6 +327,8 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         }
 
         this.inactiveTime = convertFromTimeFormat(config.getString("PlayerWarps.Inactive.Time_After_Expiration", null), 2592000000L);
+
+        this.hideLimitInfo = config.getBoolean("PlayerWarps.Hide_Limit_Info", false);
 
         //Costs - Generally
         this.maxAmount = config.getInt("PlayerWarps.General.Max_Warp_Amount", 5);
@@ -380,22 +389,35 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         this.trustedMemberRefund = config.getDouble("PlayerWarps.Refunds.Trusted_Member", 0.5);
 
         //Classes
-        this.classes = config.getBoolean("PlayerWarps.General.Categories.Enabled", true);
-        this.classesMin = config.getInt("PlayerWarps.General.Categories.Min", 1);
-        this.classesMax = config.getInt("PlayerWarps.General.Categories.Max", 2);
+        this.warpCategories.add(new Category(new ItemBuilder(XMaterial.EMERALD), "§a§lShop", 1, new ArrayList<String>() {{
+            add("§7This class marks a warp");
+            add("§7as a §aShop§7!");
+        }}));
 
-        List<?> l = config.getList("PlayerWarps.General.Categories.Classes");
-        if(l != null)
-            for(Object o : l) {
-                JSON json = new JSON((Map<Object, Object>) o);
-                Category c = new Category();
-                try {
-                    c.read(json);
-                    this.warpCategories.add(c);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
-            }
+        this.warpCategories.add(new Category(new ItemBuilder(XMaterial.OAK_DOOR), "§c§lHome", 2, new ArrayList<String>() {{
+            add("§7This class marks a warp");
+            add("§7as a §cHome§7!");
+        }}));
+
+        this.warpCategories.add(new Category(new ItemBuilder(XMaterial.FARMLAND), "§9§lFarm", 3, new ArrayList<String>() {{
+            add("§7This class marks a warp");
+            add("§7as a §9Farm§7!");
+        }}));
+
+        this.warpCategories.add(new Category(new ItemBuilder(XMaterial.IRON_SWORD), "§e§lPvP-Zone", 4, new ArrayList<String>() {{
+            add("§7This class marks a warp");
+            add("§7as a §ePvP-Zone§7!");
+        }}));
+
+        this.warpCategories.add(new Category(new ItemBuilder(XMaterial.BOW), "§b§lHunting-Area", 5, new ArrayList<String>() {{
+            add("§7This class marks a warp");
+            add("§7as a §bHunting-Area§7!");
+        }}));
+
+        this.warpCategories.add(new Category(new ItemBuilder(XMaterial.ENDER_EYE), "§3§lMiscellaneous", 6, new ArrayList<String>() {{
+            add("§7This class marks a warp");
+            add("§7as a §3miscellaneous §7warp!");
+        }}));
 
         //loading PlayerWarps
         List<?> data = playerWarpsData.getConfig().getList("PlayerWarps");
@@ -406,8 +428,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
                 try {
                     p.read(json);
-                    add(p);
-                    size++;
+                    if(add(p)) size++;
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
@@ -431,12 +452,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         if(!bungeeCord) WarpSystem.log("    ...got " + size + " PlayerWarp(s)");
         if(isEconomy()) API.addTicker(this);
 
-        WarpSystem.getInstance().getBungeeFeatureList().add(this);
         Bukkit.getPluginManager().registerEvents(this.listener, WarpSystem.getInstance());
-
-        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new PlayerWarpPlaceholderExpansion().register();
-        }
 
         return success;
     }
@@ -460,125 +476,21 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
             playerWarpsData.getConfig().set("PlayerWarps", a);
         } else if(!saver) WarpSystem.log("    ...skipping PlayerWarp(s) > Saved on BungeeCord");
 
-        if(warpCategories.isEmpty()) {
-            this.warpCategories.add(new Category(new ItemBuilder(XMaterial.EMERALD), "&a&lShop", 1, new ArrayList<String>() {{
-                add("&7This class marks a warp");
-                add("&7as a &aShop&7!");
-            }}));
-
-            this.warpCategories.add(new Category(new ItemBuilder(XMaterial.OAK_DOOR), "&c&lHome", 2, new ArrayList<String>() {{
-                add("&7This class marks a warp");
-                add("&7as a &cHome&7!");
-            }}));
-
-            this.warpCategories.add(new Category(new ItemBuilder(XMaterial.FARMLAND), "&9&lFarm", 3, new ArrayList<String>() {{
-                add("&7This class marks a warp");
-                add("&7as a &9Farm&7!");
-            }}));
-
-            this.warpCategories.add(new Category(new ItemBuilder(XMaterial.IRON_SWORD), "&e&lPvP-Zone", 4, new ArrayList<String>() {{
-                add("&7This class marks a warp");
-                add("&7as a &ePvP-Zone&7!");
-            }}));
-
-            this.warpCategories.add(new Category(new ItemBuilder(XMaterial.BOW), "&b&lHunting-Area", 5, new ArrayList<String>() {{
-                add("&7This class marks a warp");
-                add("&7as a &bHunting-Area&7!");
-            }}));
-
-            this.warpCategories.add(new Category(new ItemBuilder(XMaterial.ENDER_EYE), "&3&lMiscellaneous", 6, new ArrayList<String>() {{
-                add("&7This class marks a warp");
-                add("&7as a &3miscellaneous &7warp!");
-            }}));
-        }
-
-        JSONArray array = new JSONArray();
-        for(Category c : this.warpCategories) {
-            JSON json = new JSON();
-            c.write(json);
-            array.add(json);
-        }
-
         config.loadConfig();
-        ConfigWriter writer = new ConfigWriter(config);
-        writer.put("PlayerWarps.General.Categories.Classes", array);
+	ConfigWriter writer = new ConfigWriter(config);
+        writer.put("PlayerWarps.Hide_Limit_Info", hideLimitInfo);
         config.saveConfig();
 
         playerWarpsData.saveConfig();
         if(!saver && a != null) WarpSystem.log("    ...saved " + a.size() + " PlayerWarp(s)");
     }
 
-    @Override
-    public void onConnect() {
-        WarpSystem.getInstance().getDataHandler().register(listener);
-
-        if(bungeeCord) {
-            if(!getWarps().isEmpty()) {
-                List<List<PlayerWarpData>> uploads = new ArrayList<>();
-
-                List<PlayerWarpData> l = new ArrayList<>();
-                for(List<PlayerWarp> value : getWarps().values()) {
-                    for(PlayerWarp w : value) {
-                        l.add(w.getData());
-
-                        if(l.size() == 100) {
-                            uploads.add(new ArrayList<>(l));
-                            l.clear();
-                        }
-                    }
-                }
-
-                if(!l.isEmpty()) uploads.add(l);
-
-                for(List<PlayerWarpData> upload : uploads) {
-                    SendPlayerWarpsPacket p = new SendPlayerWarpsPacket(upload);
-                    p.setClearable(true);
-                    WarpSystem.getInstance().getDataHandler().send(p);
-                }
-
-                uploads.clear();
-            }
-
-            WarpSystem.getInstance().getDataHandler().send(new RegisterServerForPlayerWarpsPacket(isEconomy()));
-        } else WarpSystem.getInstance().getDataHandler().send(new MoveLocalPlayerWarpsPacket());
-    }
-
-    @Override
-    public void onDisconnect() {
-        if(bungeeCord) {
-            for(List<PlayerWarp> value : this.warps.values()) {
-                value.clear();
-            }
-            this.warps.clear();
-        }
-
-        WarpSystem.getInstance().getDataHandler().unregister(listener);
-    }
-
     public boolean sync(PlayerWarp old, PlayerWarp warp) {
-        if(!bungeeCord || !WarpSystem.getInstance().isOnBungeeCord()) return false;
-
-        if(warp.isSource()) {
-            warp.setSource(false);
-            SendPlayerWarpsPacket packet = new SendPlayerWarpsPacket(new ArrayList<PlayerWarpData>() {{
-                add(warp.getData());
-            }});
-            packet.setClearable(true);
-            WarpSystem.getInstance().getDataHandler().send(packet);
-            return true;
-        } else return sync(old.getData(), warp.getData());
+        return false;
     }
 
     public boolean sync(PlayerWarpData old, PlayerWarpData warp) {
-        if(!bungeeCord || !WarpSystem.getInstance().isOnBungeeCord()) return false;
-        PlayerWarpUpdate update = warp.diff(old);
-
-        if(update.isEmpty()) return false;
-
-        WarpSystem.getInstance().getDataHandler().send(new SendPlayerWarpUpdatePacket(update));
-        old.destroy();
-        warp.destroy();
-        return true;
+        return false;
     }
 
     @Override
@@ -776,32 +688,9 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
     public String checkSymbols(String name, String highlighter, String reset) {
         StringBuilder finalName = new StringBuilder();
-        String modifiedName = name;
-        String lowerName = modifiedName.toLowerCase();
-
-        for(String s : this.nameBlacklist) {
-            s = s.toLowerCase();
-
-            int first, last = 0, matches = 0;
-            while((first = lowerName.indexOf(s, last)) > -1) {
-                last = first + 1;
-
-                StringBuilder builder = new StringBuilder();
-                int modFirst = first + matches * (highlighter.length() + reset.length());
-                for(int i = 0; i < modifiedName.toCharArray().length; i++) {
-                    if(i == modFirst) builder.append(highlighter);
-                    builder.append(modifiedName.charAt(i));
-                    if(i == modFirst + s.length() - 1) builder.append(reset);
-                }
-
-                modifiedName = builder.toString();
-                matches++;
-            }
-        }
-
         Pattern p = Pattern.compile("[A-Za-z0-9\\p{Blank}_\\-'§]*");
 
-        for(char c : modifiedName.toCharArray()) {
+        for(char c : name.toCharArray()) {
             Matcher m = p.matcher(c + "");
             if(!m.matches()) {
                 finalName.append(highlighter).append(c).append(reset);
@@ -957,9 +846,9 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         return existsOwn(player, name, null);
     }
 
-    public void add(PlayerWarp warp) {
+    public boolean add(PlayerWarp warp) {
         List<PlayerWarp> warps = getOwnWarps(warp.getOwner().getId());
-        if(getWarp(warp.getOwner().getId(), warp.getName()) != null) return;
+        if(getWarp(warp.getOwner().getId(), warp.getName()) != null || warps.size() == 3) return false;
 
         warp.setName(getCopiedName(warps, warp.getName()));
         warps.add(warp);
@@ -971,6 +860,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
         names.putIfAbsent(warp.getOwner().getName(), warp.getOwner().getId());
         this.warps.putIfAbsent(warp.getOwner().getId(), warps);
+        return true;
     }
 
     private String getCopiedName(List<PlayerWarp> list, String name) {
@@ -1199,11 +1089,11 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
     }
 
     public boolean isEconomy() {
-        return economy;
+        return true;
     }
 
     public boolean isForcePlayerHead() {
-        return forcePlayerHead;
+        return true;
     }
 
     public List<Category> getWarpClasses() {
@@ -1227,7 +1117,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
     }
 
     public boolean isCustomTeleportCosts() {
-        return customTeleportCosts;
+        return true;
     }
 
     public int getClassesMin() {
@@ -1243,7 +1133,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
     }
 
     public boolean isBungeeCord() {
-        return bungeeCord;
+        return false;
     }
 
     public boolean checkBungeeCord() {
@@ -1272,6 +1162,14 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
     public int getNameMaxLength() {
         return nameMaxLength;
+    }
+
+    public boolean isHideLimitInfo() {
+        return hideLimitInfo;
+    }
+
+    public void setHideLimitInfo(boolean hideLimitInfo) {
+        this.hideLimitInfo = hideLimitInfo;
     }
 
     public long getTimeStandardValue() {
