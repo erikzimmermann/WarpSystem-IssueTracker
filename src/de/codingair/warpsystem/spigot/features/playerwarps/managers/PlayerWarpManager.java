@@ -476,7 +476,7 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible {
         } else if(!saver) WarpSystem.log("    ...skipping PlayerWarp(s) > Saved on BungeeCord");
 
         config.loadConfig();
-	ConfigWriter writer = new ConfigWriter(config);
+        ConfigWriter writer = new ConfigWriter(config);
         writer.put("PlayerWarps.Hide_Limit_Info", hideLimitInfo);
         config.saveConfig();
 
