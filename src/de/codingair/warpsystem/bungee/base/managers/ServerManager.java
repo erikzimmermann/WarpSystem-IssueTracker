@@ -2,6 +2,7 @@ package de.codingair.warpsystem.bungee.base.managers;
 
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
+import de.codingair.warpsystem.bungee.base.utils.ServerInitializeEvent;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
 import de.codingair.warpsystem.transfer.packets.bungee.InitialPacket;
 import net.md_5.bungee.BungeeCord;
@@ -40,6 +41,7 @@ public class ServerManager implements Listener {
 
     public void sendInitialPacket(ServerInfo server) {
         WarpSystem.getInstance().getDataHandler().send(new InitialPacket(WarpSystem.getInstance().getDescription().getVersion(), server.getName()), server);
+        BungeeCord.getInstance().getPluginManager().callEvent(new ServerInitializeEvent(server));
     }
 
     public void setStatus(ServerInfo info, boolean online) {

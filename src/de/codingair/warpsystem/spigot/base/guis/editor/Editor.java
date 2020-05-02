@@ -27,6 +27,7 @@ public class Editor<C> extends SimpleGUI {
     public static final String ITEM_TITLE_COLOR = "§6§n";
     public static final String ITEM_SUB_TITLE_COLOR = "§3";
     public static final String TITLE_COLOR = "§c§n";
+    public static final String ITEM_SUB_TITLE_WARNING = "§c";
 
     private SoundData successSound = null;
     private PageItem[] pages;

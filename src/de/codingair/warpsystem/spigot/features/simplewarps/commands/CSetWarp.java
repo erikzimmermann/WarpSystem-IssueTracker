@@ -90,9 +90,9 @@ public class CSetWarp extends CommandBuilder {
 
                 sender.sendMessage(Lang.getPrefix() + Lang.get("SimpleWarp_Created").replace("%WARP%", ChatColor.translateAlternateColorCodes('&', argument)));
 
-                SimpleMessage message = new SimpleMessage(Lang.getPrefix() + Lang.get("SimpleWarp_Created_Edit_Info"), WarpSystem.getInstance());
+                SimpleMessage message = new SimpleMessage(Lang.getPrefix() + Lang.get("Advanced_Options_Info"), WarpSystem.getInstance());
 
-                TextComponent tc = new TextComponent(Lang.get("SimpleWarp_Created_Edit_Info_EDIT"));
+                TextComponent tc = new TextComponent(Lang.get("Advanced_Options_Info_Edit"));
                 tc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/editwarp " + argument));
                 tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent(Lang.get("Click_Hover"))}));
 
