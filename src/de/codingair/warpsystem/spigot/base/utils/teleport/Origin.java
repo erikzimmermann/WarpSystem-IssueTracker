@@ -4,8 +4,11 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.options.Options;
 import de.codingair.warpsystem.spigot.base.utils.options.specific.FeatureOptions;
+import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
+import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
+import de.codingair.warpsystem.spigot.features.spawn.utils.Spawn;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
 
 public enum Origin {
@@ -22,8 +25,9 @@ public enum Origin {
     TeleportCommand,
     Custom,
     CustomTeleportCommands,
-    PlayerWarp(de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp.class, "PlayerWarps"),
-    Portal(de.codingair.warpsystem.spigot.features.portals.utils.Portal.class, "Portals"),
+    PlayerWarp(PlayerWarp.class, "PlayerWarps"),
+    Portal(Portal.class, "Portals"),
+    Spawn(Spawn.class, "Spawn"),
     UNKNOWN;
 
     private Class<? extends FeatureObject> clazz = null;

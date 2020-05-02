@@ -50,6 +50,7 @@ WarpSystem:
       WarpSigns: true
       CommandBlocks: true
       PlayerWarps: true
+      Spawn: true
     Teleport_Cancel_Message: true
 
   Functions:
@@ -65,6 +66,7 @@ WarpSystem:
     RandomTeleports: true
     TeleportCommand: true
     PlayerWarps: true
+    Spawn: true
 
   #'TeleportCommand' in 'Functions' (above) have to be toggled to true as well, if you want to use this feature.
   TeleportCommands:
@@ -90,6 +92,11 @@ WarpSystem:
       ExpireDelay: 30
       #true: The teleport request SENDER will be notified about every accepted or denied teleport request. |false: The teleport request SENDER won't get any accept or deny messages
       Notify_TpaAll_Sender: true
+
+  Spawn:
+    #Reload/restart to apply command changes correctly
+    Commands:
+    - "spawn"
 
   Portals:
     #Max distance between particle and player - Don't use distances higher than 200! It will cause lags.

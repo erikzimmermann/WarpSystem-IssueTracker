@@ -53,9 +53,9 @@ public class TeleportOptions {
         this.skip = false;
         this.canMove = WarpSystem.getInstance().getTeleportManager().getOptions().isAllowMove();
         this.waitForTeleport = false;
-        this.payMessage = Lang.getPrefix() + (displayName == null ? Lang.get("Money_Paid") : Lang.get("Money_Paid").replace("%warp%", displayName));
+        this.payMessage = Lang.getPrefix() + (displayName == null ? Lang.get("Money_Paid") : Lang.get("Money_Paid"));
         this.paymentDeniedMessage = Lang.getPrefix() + Lang.get("Payment_denied");
-        this.message = Lang.getPrefix() + (displayName == null ? Lang.get("Teleported_To") : Lang.get("Teleported_To").replace("%warp%", displayName));
+        this.message = Lang.getPrefix() + (displayName == null ? Lang.get("Teleported_To") : Lang.get("Teleported_To"));
         this.serverNotOnline = Lang.getPrefix() + Lang.get("Server_Is_Not_Online");
         this.silent = false;
         this.teleportSound = null;
@@ -139,7 +139,7 @@ public class TeleportOptions {
     }
 
     public String getMessage() {
-        return message;
+        return message == null ? null : message.replace("%warp%", displayName);
     }
 
     public void setMessage(String message) {
@@ -182,7 +182,7 @@ public class TeleportOptions {
     }
 
     public String getPayMessage() {
-        return payMessage;
+        return payMessage == null ? null : payMessage.replace("%warp%", displayName);
     }
 
     public void setPayMessage(String payMessage) {

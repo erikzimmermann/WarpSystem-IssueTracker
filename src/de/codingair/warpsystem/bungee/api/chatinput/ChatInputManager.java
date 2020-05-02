@@ -26,7 +26,7 @@ public class ChatInputManager implements Listener, PacketListener {
         BungeeCord.getInstance().getPluginManager().registerListener(WarpSystem.getInstance(), this);
     }
 
-    @EventHandler(priority = -64)
+    @EventHandler(priority = -100)
     public void onChatSave(ChatEvent e) {
         if(!(e.getSender() instanceof ProxiedPlayer)) return;
         String name = ((ProxiedPlayer) e.getSender()).getName();
@@ -39,7 +39,7 @@ public class ChatInputManager implements Listener, PacketListener {
         }
     }
 
-    @EventHandler(priority = 64)
+    @EventHandler(priority = 100)
     public void onChatCache(ChatEvent e) {
         if(!(e.getSender() instanceof ProxiedPlayer)) return;
         String name = ((ProxiedPlayer) e.getSender()).getName();

@@ -25,6 +25,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.exceptions.IconReadException;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -75,9 +76,7 @@ public class FeatureObject implements Serializable {
         return perform(player, options);
     }
 
-    public FeatureObject perform(Player player, TeleportOptions options) {
-        if(this.actions == null) return this;
-
+    public void prepareTeleportOptions(String player, TeleportOptions options) {
         if(options.getDestination() == null) options.setDestination(hasAction(Action.WARP) ? getAction(WarpAction.class).getValue() : null);
         if(options.getDisplayName() == null) options.setDisplayName(hasAction(Action.WARP) ? getAction(WarpAction.class).getValue().getId() : null);
         if(options.getTeleportSound() == null) {
@@ -97,16 +96,26 @@ public class FeatureObject implements Serializable {
                 @Override
                 public void accept(TeleportResult result) {
                     if(result == TeleportResult.TELEPORTED) {
+                        Player p = Bukkit.getPlayer(player);
+                        if(p == null) return;
+
                         for(ActionObject<?> action : actions) {
                             if(action.getType() == Action.WARP || action.getType() == Action.COSTS || action.getType() == Action.TELEPORT_SOUND || !action.usable()) continue;
-                            action.perform(player);
+                            action.perform(p);
                         }
                     }
                 }
             });
+        }
+    }
 
-            WarpSystem.getInstance().getTeleportManager().teleport(player, options);
-        } else if(hasAction(Action.COSTS)) {
+    public FeatureObject perform(Player player, TeleportOptions options) {
+        if(this.actions == null) return this;
+
+        prepareTeleportOptions(player.getName(), options);
+
+        if(hasAction(Action.WARP)) WarpSystem.getInstance().getTeleportManager().teleport(player, options);
+        else if(hasAction(Action.COSTS)) {
             TeleportManager.confirmPayment(player, getAction(CostsAction.class).getValue(), new Callback<Boolean>() {
                 @Override
                 public void accept(Boolean confirm) {
