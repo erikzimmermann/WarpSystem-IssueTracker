@@ -53,8 +53,12 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class WarpSystem extends JavaPlugin {
+    public static final int PREMIUM_THREAD_ID = 369986;
+    public static final int FREE_THREAD_ID = 182037;
+
     public static final String PERMISSION_NOTIFY = "WarpSystem.Notify";
     public static final String PERMISSION_MODIFY = "WarpSystem.Modify";
+
     public static final String PERMISSION_MODIFY_WARP_GUI = "WarpSystem.Modify.WarpGUI";
     public static final String PERMISSION_MODIFY_SHORTCUTS = "WarpSystem.Modify.Shortcuts";
     public static final String PERMISSION_MODIFY_WARP_SIGNS = "WarpSystem.Modify.WarpSigns";
@@ -63,16 +67,8 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_MODIFY_PORTALS = "WarpSystem.Modify.Portals";
     public static final String PERMISSION_MODIFY_RANDOM_TELEPORTER = "WarpSystem.Modify.RandomTeleporters";
     public static final String PERMISSION_MODIFY_PLAYER_WARPS = "WarpSystem.Modify.PlayerWarps";
-    public static final String PERMISSION_WARP_GUI_OTHER = "WarpSystem.WarpGUI.Other";
-    public static final String PERMISSION_HIDE_ALL_ICONS = "WarpGUI.HideAll";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND = "WarpSystem.Use.TeleportCommand";
-    public static final String PERMISSION_ByPass_Maintenance = "WarpSystem.ByPass.Maintenance";
-    public static final String PERMISSION_ByPass_Teleport_Costs = "WarpSystem.ByPass.Teleport.Costs";
-    public static final String PERMISSION_ByPass_Teleport_Delay = "WarpSystem.ByPass.Teleport.Delay";
-    public static final String PERMISSION_TELEPORT_PRELOAD_CHUNKS = "WarpSystem.Teleport.ChunkPreLoading";
-    public static final String PERMISSION_SIMPLE_WARPS_DIRECT_TELEPORT = "WarpSystem.SimpleWarp.DirectTeleport";
-    public static final int PREMIUM_THREAD_ID = 369986;
-    public static final int FREE_THREAD_ID = 182037;
+    public static final String PERMISSION_MODIFY_SPAWN = "WarpSystem.Modify.Spawn";
+
     public static String PERMISSION_USE_WARP_GUI = "WarpSystem.Use.WarpGUI";
     public static String PERMISSION_USE_WARP_SIGNS = "WarpSystem.Use.WarpSigns";
     public static String PERMISSION_USE_GLOBAL_WARPS = "WarpSystem.Use.GlobalWarps";
@@ -80,6 +76,9 @@ public class WarpSystem extends JavaPlugin {
     public static String PERMISSION_USE_PLAYER_WARPS = "WarpSystem.Use.PlayerWarps";
     public static String PERMISSION_USE_PORTALS = "WarpSystem.Use.Portals";
     public static String PERMISSION_USE_RANDOM_TELEPORTER = "WarpSystem.Use.RandomTeleporters";
+    public static String PERMISSION_USE_SPAWN = "WarpSystem.Use.Spawn";
+
+    public static final String PERMISSION_USE_TELEPORT_COMMAND = "WarpSystem.Use.TeleportCommand";
     public static String PERMISSION_USE_TELEPORT_COMMAND_TP = PERMISSION_USE_TELEPORT_COMMAND + ".Tp";
     public static String PERMISSION_USE_TELEPORT_COMMAND_BACK = PERMISSION_USE_TELEPORT_COMMAND + ".Back";
     public static String PERMISSION_USE_TELEPORT_COMMAND_BACK_DETECT_DEATHS = PERMISSION_USE_TELEPORT_COMMAND_BACK + ".Deaths";
@@ -90,6 +89,16 @@ public class WarpSystem extends JavaPlugin {
     public static String PERMISSION_USE_TELEPORT_COMMAND_TPALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpAll";
     public static String PERMISSION_USE_TELEPORT_COMMAND_TPA_ALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpaAll";
     public static String PERMISSION_ADMIN = "WarpSystem.Admin";
+
+    public static final String PERMISSION_WARP_GUI_OTHER = "WarpSystem.WarpGUI.Other";
+    public static final String PERMISSION_HIDE_ALL_ICONS = "WarpGUI.HideAll";
+    public static final String PERMISSION_TELEPORT_PRELOAD_CHUNKS = "WarpSystem.Teleport.ChunkPreLoading";
+    public static final String PERMISSION_SIMPLE_WARPS_DIRECT_TELEPORT = "WarpSystem.SimpleWarp.DirectTeleport";
+
+    public static final String PERMISSION_ByPass_Maintenance = "WarpSystem.ByPass.Maintenance";
+    public static final String PERMISSION_ByPass_Teleport_Costs = "WarpSystem.ByPass.Teleport.Costs";
+    public static final String PERMISSION_ByPass_Teleport_Delay = "WarpSystem.ByPass.Teleport.Delay";
+
     public static boolean activated = false;
     public static boolean maintenance = false;
     private static WarpSystem instance;
@@ -318,10 +327,10 @@ public class WarpSystem extends JavaPlugin {
     }
 
     private void afterOnEnable() {
-        //update command dispatcher for players to synchronize CommandList
-        Bukkit.getScheduler().runTask(this, WarpSystem::updateCommandList);
-
         Bukkit.getScheduler().runTaskLater(this, () -> {
+            //update command dispatcher for players to synchronize CommandList
+            Bukkit.getScheduler().runTask(this, WarpSystem::updateCommandList);
+
             if(this.uuidManager.isEmpty()) {
                 this.uuidManager.downloadAll();
             }

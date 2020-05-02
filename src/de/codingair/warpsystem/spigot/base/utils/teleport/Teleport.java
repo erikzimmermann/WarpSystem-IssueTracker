@@ -43,7 +43,7 @@ public class Teleport {
     private Player player;
     private AnimationPlayer animation;
     private BukkitRunnable runnable;
-    
+
     private TeleportOptions options;
     private String displayName;
     private int seconds;
@@ -66,11 +66,11 @@ public class Teleport {
 
         this.displayName = options.getDisplayName() == null ? null : options.getDisplayName().replace("_", " ");
         this.costs = options.getCosts();
-        
+
         this.teleportSound = options.getTeleportSound();
         if(this.teleportSound == null) this.teleportSound = AnimationManager.getInstance().getActive().getTeleportSound();
         if(this.teleportSound == null) this.teleportSound = TeleportSoundPage.createStandard();
-        
+
         this.callback = callback;
 
         if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) this.costs = 0;
@@ -218,13 +218,6 @@ public class Teleport {
                 Location from = player.getLocation();
                 String finalMessage = message;
 
-                BukkitRunnable timeOut = new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        Bukkit.getPluginManager().callEvent(new PlayerTeleportAcceptEvent(player));
-                    }
-                };
-
                 Bukkit.getPluginManager().registerEvents(teleportListener = new Listener() {
                     @EventHandler(priority = EventPriority.MONITOR)
                     public void onTeleport(PlayerTeleportEvent e) {
@@ -233,14 +226,24 @@ public class Teleport {
                                 MessageAPI.sendActionBar(player, Lang.get("Teleport_Cancelled"));
                                 HandlerList.unregisterAll(this);
                                 cancel(true, false);
-                            } else if(Version.getVersion() == Version.v1_8) Bukkit.getPluginManager().callEvent(new PlayerTeleportAcceptEvent(e.getPlayer())); //1.8 doesn't contain PlayerTeleportAcceptEvent
-                            else timeOut.runTaskLater(WarpSystem.getInstance(), 5); //safety timeout (PlayerTeleportAcceptEvent doesn't get triggered while spawning)
+                            } else if(Version.getVersion() == Version.v1_8)
+                                Bukkit.getPluginManager().callEvent(new PlayerTeleportAcceptEvent(e.getPlayer())); //1.8 doesn't contain PlayerTeleportAcceptEvent
+                            else {
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        Bukkit.getPluginManager().callEvent(new PlayerTeleportAcceptEvent(player));
+                                    }
+                                }.runTaskLater(WarpSystem.getInstance(), 5); //safety timeout (PlayerTeleportAcceptEvent doesn't get triggered while spawning)
+                            }
                         }
                     }
 
                     @EventHandler
                     public void onTeleported(PlayerTeleportAcceptEvent e) {
                         if(player.equals(e.getPlayer())) {
+                            HandlerList.unregisterAll(this);
+
                             if(player.isOnline()) {
                                 sendLoadedChunks();
 
@@ -251,8 +254,6 @@ public class Teleport {
                                 if(event.isRunAfterEffects()) playAfterEffects(player);
                                 if(teleportSound != null) teleportSound.play(player);
                                 if(velocity != null) player.setVelocity(velocity);
-
-                                HandlerList.unregisterAll(this);
                             }
                         }
                     }
@@ -318,7 +319,7 @@ public class Teleport {
     }
 
     public Destination getDestination() {
-        return  this.options.getDestination();
+        return this.options.getDestination();
     }
 
     public BukkitRunnable getRunnable() {

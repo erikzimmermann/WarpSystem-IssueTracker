@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.api.chatinput;
 
+import com.google.common.base.CharMatcher;
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.server.sounds.SoundData;
@@ -74,6 +75,8 @@ public abstract class ChatInputGUI implements Removable {
     }
 
     void onInput(String message) {
+        if(message != null) message = CharMatcher.WHITESPACE.trimFrom(message);
+
         ChatInputEvent e = new ChatInputEvent(this, message);
         onEnter(e);
 

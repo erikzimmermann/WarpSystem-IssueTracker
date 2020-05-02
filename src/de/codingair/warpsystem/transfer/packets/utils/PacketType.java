@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.transfer.packets.utils;
 
+import de.codingair.warpsystem.transfer.packets.general.SendGlobalSpawnOptionsPacket;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ClearInvitesPacket;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.TeleportCommandOptionsPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.*;
@@ -14,6 +15,8 @@ public enum PacketType {
     RequestInitialPacket(4, RequestInitialPacket.class),
     RequestServerStatusPacket(5, RequestServerStatusPacket.class),
     ChatInputGUITogglePacket(6, ChatInputGUITogglePacket.class),
+    SendGlobalSpawnOptionsPacket(7, SendGlobalSpawnOptionsPacket.class),
+    TeleportSpawnPacket(8, TeleportSpawnPacket.class),
 
     PublishGlobalWarpPacket(10, PublishGlobalWarpPacket.class),
     GlobalWarpTeleportPacket(11, GlobalWarpTeleportPacket.class),
