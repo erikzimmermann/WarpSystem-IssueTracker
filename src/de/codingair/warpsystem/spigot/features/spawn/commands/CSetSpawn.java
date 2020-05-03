@@ -6,6 +6,10 @@ import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.commands.WarpSystemBaseComponent;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.spawn.guis.SpawnEditor;
 import de.codingair.warpsystem.spigot.features.spawn.managers.SpawnManager;
 import de.codingair.warpsystem.spigot.features.spawn.utils.Spawn;
@@ -50,9 +54,8 @@ public class CSetSpawn extends CommandBuilder {
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 Spawn spawn = SpawnManager.getInstance().getSpawn();
 
-                if(spawn == null) {
-                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /§e" + label);
-                    return false;
+                if(!spawn.hasAction(Action.WARP)) {
+                    spawn.addAction(new WarpAction(new Destination(new LocationAdapter(((Player) sender).getLocation()))));
                 }
 
                 new SpawnEditor((Player) sender, spawn).open();
