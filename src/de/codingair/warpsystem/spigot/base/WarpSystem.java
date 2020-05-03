@@ -79,15 +79,15 @@ public class WarpSystem extends JavaPlugin {
     public static String PERMISSION_USE_SPAWN = "WarpSystem.Use.Spawn";
 
     public static final String PERMISSION_USE_TELEPORT_COMMAND = "WarpSystem.Use.TeleportCommand";
-    public static String PERMISSION_USE_TELEPORT_COMMAND_TP = PERMISSION_USE_TELEPORT_COMMAND + ".Tp";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TP = PERMISSION_USE_TELEPORT_COMMAND + ".Tp";
     public static String PERMISSION_USE_TELEPORT_COMMAND_BACK = PERMISSION_USE_TELEPORT_COMMAND + ".Back";
     public static String PERMISSION_USE_TELEPORT_COMMAND_BACK_DETECT_DEATHS = PERMISSION_USE_TELEPORT_COMMAND_BACK + ".Deaths";
-    public static String PERMISSION_USE_TELEPORT_COMMAND_TP_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpToggle";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TP_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpToggle";
     public static String PERMISSION_USE_TELEPORT_COMMAND_TPA = PERMISSION_USE_TELEPORT_COMMAND + ".Tpa";
     public static String PERMISSION_USE_TELEPORT_COMMAND_TPA_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaToggle";
     public static String PERMISSION_USE_TELEPORT_COMMAND_TPA_HERE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaHere";
-    public static String PERMISSION_USE_TELEPORT_COMMAND_TPALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpAll";
-    public static String PERMISSION_USE_TELEPORT_COMMAND_TPA_ALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpaAll";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpAll";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA_ALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpaAll";
     public static String PERMISSION_ADMIN = "WarpSystem.Admin";
 
     public static final String PERMISSION_WARP_GUI_OTHER = "WarpSystem.WarpGUI.Other";
@@ -313,8 +313,6 @@ public class WarpSystem extends JavaPlugin {
         if(!config.getConfig().getBoolean("WarpSystem.Permissions", true)) {
             for(Field f : getClass().getDeclaredFields()) {
                 if(!Modifier.isFinal(f.getModifiers()) && f.getName().startsWith("PERMISSION_USE_")) {
-                    if(f.getName().equals("PERMISSION_USE_TELEPORT_COMMAND_TP")) continue;
-
                     f.setAccessible(true);
                     try {
                         f.set(this, null);
