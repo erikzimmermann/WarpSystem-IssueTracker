@@ -36,6 +36,7 @@ public class Spawn extends FeatureObject {
         broadCastMessages = new ArrayList<>();
         randomFireWorks = false;
         respawnUsage = RespawnUsage.DISABLED;
+        displayName = "Spawn";
     }
 
     public boolean isValid() {

@@ -27,7 +27,6 @@ public class SpawnManager implements Manager {
     public boolean load(boolean loader) {
         ConfigFile file = WarpSystem.getInstance().getFileManager().loadFile("Teleporters", "/Memory/");
 
-
         spawn = new Spawn();
         if(file.getConfig().contains("Spawn")) {
             ConfigWriter reader = new ConfigWriter(file);
