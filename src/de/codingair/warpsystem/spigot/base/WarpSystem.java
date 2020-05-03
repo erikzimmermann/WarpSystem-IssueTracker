@@ -118,6 +118,7 @@ public class WarpSystem extends JavaPlugin {
 
     private UpdateNotifier updateNotifier;
     private List<String> runningFirstTime = null;
+    private List<String> newUpdate = new ArrayList<>();
 
     private Timer timer = new Timer();
     private boolean old = false;
@@ -365,6 +366,7 @@ public class WarpSystem extends JavaPlugin {
         this.dataHandler.onDisable();
         if(this.packetListener != null) this.dataHandler.unregister(this.packetListener);
         if(this.runningFirstTime != null) this.runningFirstTime.clear();
+        this.newUpdate.clear();
 
         destroy();
         this.uuidManager.removeAll();
@@ -389,23 +391,20 @@ public class WarpSystem extends JavaPlugin {
 
     private void startUpdateNotifier() {
         Value<BukkitTask> task = new Value<>(null);
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                updateAvailable = WarpSystem.this.updateNotifier.read();
+        Runnable runnable = () -> {
+            updateAvailable = WarpSystem.this.updateNotifier.read();
 
-                if(updateAvailable) {
-                    String v = updateNotifier.getVersion();
-                    if(!v.startsWith("v")) v = "v" + v;
+            if(updateAvailable) {
+                String v = updateNotifier.getVersion();
+                if(!v.startsWith("v")) v = "v" + v;
 
-                    log("-----< WarpSystem >-----");
-                    log("New update available [" + v + " - " + WarpSystem.this.updateNotifier.getUpdateInfo() + "].");
-                    log("Download it on\n\n" + updateNotifier.getDownload() + "\n");
-                    log("------------------------");
+                log("-----< WarpSystem >-----");
+                log("New update available [" + v + " - " + WarpSystem.this.updateNotifier.getUpdateInfo() + "].");
+                log("Download it on\n\n" + updateNotifier.getDownload() + "\n");
+                log("------------------------");
 
-                    WarpSystem.getInstance().notifyPlayers(null);
-                    task.getValue().cancel();
-                }
+                WarpSystem.getInstance().notifyPlayers(null);
+                task.getValue().cancel();
             }
         };
 
@@ -428,7 +427,7 @@ public class WarpSystem extends JavaPlugin {
     }
 
     private void destroy() {
-        this.dataManager.getManagers().forEach(Manager::destroy);
+        if(dataManager != null) this.dataManager.getManagers().forEach(Manager::destroy);
         this.bungeeFeatureList.clear();
     }
 
@@ -561,7 +560,8 @@ public class WarpSystem extends JavaPlugin {
                 notifyPlayers(p);
             }
         } else {
-            if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && WarpSystem.updateAvailable) {
+            if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && WarpSystem.updateAvailable && !newUpdate.contains(player.getName())) {
+                newUpdate.add(player.getName());
                 String v = updateNotifier.getVersion();
                 if(!v.startsWith("v")) v = "v" + v;
 
@@ -675,7 +675,7 @@ public class WarpSystem extends JavaPlugin {
     }
 
     public final boolean isPremium() {
-        return true;
+        return false;
     }
 
     public OptionBundle getOptions() {
