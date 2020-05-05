@@ -2,8 +2,11 @@ package de.codingair.warpsystem.bungee.features.teleport.listeners;
 
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
+import de.codingair.warpsystem.spigot.api.players.BungeePlayer;
+import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ClearInvitesPacket;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.TeleportCommandOptionsPacket;
+import de.codingair.warpsystem.transfer.packets.bungee.PrepareTeleportRequestPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.TeleportPlayerToPlayerPacket;
 import de.codingair.warpsystem.transfer.packets.general.IntegerPacket;
 import de.codingair.warpsystem.transfer.packets.general.StartTeleportToPlayerPacket;
@@ -14,6 +17,7 @@ import de.codingair.warpsystem.transfer.utils.PacketListener;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import org.bukkit.Bukkit;
 
 public class TeleportPacketListener implements PacketListener {
     @Override
@@ -53,6 +57,9 @@ public class TeleportPacketListener implements PacketListener {
         } else if(PacketType.getByObject(packet) == PacketType.StartTeleportToPlayerPacket) {
             ProxiedPlayer player = BungeeCord.getInstance().getPlayer(((StartTeleportToPlayerPacket) packet).getPlayer());
             if(player != null) WarpSystem.getInstance().getDataHandler().send(packet, player.getServer().getInfo());
+        } else if(PacketType.getByObject(packet) == PacketType.PrepareTeleportRequestPacket) {
+            PrepareTeleportRequestPacket tpPacket = (PrepareTeleportRequestPacket) packet;
+            TeleportCommandManager.getInstance().sendTeleportRequest(new BungeePlayer(tpPacket.getSender(), tpPacket.getSenderDisplayName()), tpPacket.isTpToSender(), tpPacket.isNotifySender(), Bukkit.getPlayer(tpPacket.getReceiver()));
         }
     }
 

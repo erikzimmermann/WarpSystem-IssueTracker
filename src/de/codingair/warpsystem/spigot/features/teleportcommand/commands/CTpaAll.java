@@ -3,6 +3,8 @@ package de.codingair.warpsystem.spigot.features.teleportcommand.commands;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
+import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.api.players.BungeePlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -33,19 +35,20 @@ public class CTpaAll extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                List<Player> players = new ArrayList<>();
+                List<String> players = new ArrayList<>();
                 for(Player player : Bukkit.getOnlinePlayers()) {
                     if(player.getName().equals(sender.getName())) continue;
-                    players.add(player);
+                    players.add(player.getName());
                 }
 
-                if(TeleportCommandManager.getInstance().hasOpenInvites((Player) sender)) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Open_Requests"));
-                    return false;
-                }
+                //todo invite ALL players on proxy as well
 
-                int i = TeleportCommandManager.getInstance().sendTeleportRequest(new BungeePlayer((Player) sender), true, false, players.toArray(new Player[0]));
-                sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_All").replace("%RECEIVED%", i + "").replace("%MAX%", (Bukkit.getOnlinePlayers().size() - 1) + ""));
+                TeleportCommandManager.getInstance().invite(sender.getName(), false, new Callback<Integer>() {
+                    @Override
+                    public void accept(Integer sent) {
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_All").replace("%RECEIVED%", sent + "").replace("%MAX%", (Bukkit.getOnlinePlayers().size() - 1) + ""));
+                    }
+                }, players.toArray(new String[0]));
                 return false;
             }
         }.setOnlyPlayers(true), true);

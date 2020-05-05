@@ -5,7 +5,6 @@ import de.codingair.codingapi.player.chat.ChatButton;
 import de.codingair.codingapi.player.chat.ChatButtonManager;
 import de.codingair.codingapi.player.chat.SimpleMessage;
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.codingapi.tools.TimeList;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.api.players.BungeePlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -25,7 +24,6 @@ import de.codingair.warpsystem.spigot.features.teleportcommand.listeners.Telepor
 import de.codingair.warpsystem.spigot.features.teleportcommand.listeners.TeleportPacketListener;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ClearInvitesPacket;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.TeleportCommandOptionsPacket;
-import de.codingair.warpsystem.spigot.features.teleportcommand.utils.Invitation;
 import de.codingair.warpsystem.transfer.packets.general.StartTeleportToPlayerPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPlayerToPlayerPacket;
 import de.codingair.warpsystem.utils.Manager;
@@ -37,8 +35,7 @@ import org.bukkit.event.HandlerList;
 import java.util.*;
 
 public class TeleportCommandManager implements Manager, BungeeFeature, Collectible {
-    private HashMap<Player, TimeList<Integer>> invites = new HashMap<>();
-    private HashMap<UUID, Invitation> invitations = new HashMap<>();
+    private HashMap<String, List<Invitation>> invites = new HashMap<>();
 
     private List<String> denyTpa = new ArrayList<>();
     private List<String> denyForceTps = new ArrayList<>();
@@ -58,6 +55,8 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
     private CTpHere tpHere;
     private CTpToggle tpToggle;
     private CTpa tpa;
+    private CTpAccept tpAccept;
+    private CTpDeny tpDeny;
     private CTpaHere tpaHere;
     private CTpaToggle tpaToggle;
     private CTpaAll tpaAll;
@@ -103,8 +102,16 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
             }
 
             if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpToggle", true)) (tpToggle = new CTpToggle()).register(WarpSystem.getInstance());
-            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Tpa", true)) (tpa = new CTpa()).register(WarpSystem.getInstance());
-            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaHere", true)) (tpaHere = new CTpaHere()).register(WarpSystem.getInstance());
+            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Tpa", true)) {
+                (tpa = new CTpa()).register(WarpSystem.getInstance());
+                (tpAccept = new CTpAccept()).register(WarpSystem.getInstance());
+                (tpDeny = new CTpDeny()).register(WarpSystem.getInstance());
+            }
+            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaHere", true)) {
+                (tpaHere = new CTpaHere()).register(WarpSystem.getInstance());
+                if(tpAccept == null) (tpAccept = new CTpAccept()).register(WarpSystem.getInstance());
+                if(tpDeny == null) (tpDeny = new CTpDeny()).register(WarpSystem.getInstance());
+            }
             if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaToggle", true)) (tpaToggle = new CTpaToggle()).register(WarpSystem.getInstance());
             if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaAll", true)) (tpaAll = new CTpaAll()).register(WarpSystem.getInstance());
             if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpAll", true)) (tpAll = new CTpAll()).register(WarpSystem.getInstance());
@@ -191,8 +198,8 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
         return true;
     }
 
-    public boolean deniesTpaRequests(Player player) {
-        return this.denyTpa.contains(player.getName());
+    public boolean deniesTpaRequests(String player) {
+        return this.denyTpa.contains(player);
     }
 
     public boolean toggleDenyTpaRequest(Player player) {
@@ -220,15 +227,96 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
     }
 
     public boolean hasOpenInvites(Player player) {
-        return this.invites.containsKey(player);
+        return this.invites.containsKey(player.getName());
     }
 
-    public boolean addInvitation(Player player, String from) {
+    public boolean isInvitedBy(String sender, String recipient) {
+        return getInvitation(sender, recipient) != null;
+    }
 
+    public List<Invitation> getReceivedInvites(String player) {
+        List<Invitation> invites = new ArrayList<>();
+
+        List<List<Invitation>> data = new ArrayList<>(this.invites.values());
+        for(List<Invitation> value : data) {
+            for(Invitation i : value) {
+                if(i.isRecipient(player)) invites.add(i);
+            }
+        }
+        data.clear();
+
+        return invites;
+    }
+
+    public void checkDestructionOf(Invitation inv) {
+        if(inv.canBeDestroyed()) {
+            List<Invitation> l = this.invites.get(inv.getSender());
+
+            if(l != null) l.remove(inv);
+            inv.destroy();
+        }
+    }
+
+    public Invitation getInvitation(String sender, String recipient) {
+        List<Invitation> l = this.invites.get(sender);
+        if(l == null) return null;
+
+        for(Invitation invitation : l) {
+            if(invitation.isRecipient(recipient)) return invitation;
+        }
+
+        return null;
+    }
+
+    public void invite(String sender, boolean tpToSender, Callback<Integer> callback, String... receiver) {
+        List<String> recipients = new ArrayList<>(Arrays.asList(receiver));
+
+        if(recipients.isEmpty()) {
+            if(callback != null) callback.accept(0);
+            return;
+        }
+
+        List<Invitation> l = this.invites.get(sender);
+
+        if(l == null) {
+            l = new ArrayList<>();
+            this.invites.put(sender, l);
+        } else {
+            for(Invitation invitation : l) {
+                List<String> temp = new ArrayList<>(recipients);
+
+                for(String s : temp) {
+                    if(invitation.isRecipient(s)) recipients.remove(s);
+                }
+
+                temp.clear();
+            }
+        }
+
+        if(recipients.isEmpty()) {
+            if(callback != null) callback.accept(0);
+            return;
+        }
+
+        Invitation inv;
+        if(recipients.size() == 1) {
+            inv = new Invitation(sender, tpToSender, recipients.remove(0));
+        } else {
+            inv = new Invitation(sender, recipients.toArray(new String[0]));
+            recipients.clear();
+        }
+
+        l.add(inv);
+        
+        inv.send(callback);
     }
 
     public void clear(Player player) {
         this.invites.remove(player);
+    }
+
+    public int getExpireDelay() {
+        return expireDelay;
     }
 
     /**
@@ -246,7 +334,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
             @Override
             public void onTimeOut() {
                 if(sender.onSpigot()) {
-                    if(receiver.length == 1) hasInvites.remove(sender.getName());
+//                    if(receiver.length == 1) hasInvites.remove(sender.getName());
                 }
 
                 if(WarpSystem.getInstance().isOnBungeeCord()) WarpSystem.getInstance().getDataHandler().send(new ClearInvitesPacket(sender.getName()));
@@ -268,7 +356,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
                             options.addCallback(new Callback<TeleportResult>() {
                                 @Override
                                 public void accept(TeleportResult object) {
-                                    if(receiver.length == 1) hasInvites.remove(sender.getName());
+//                                    if(receiver.length == 1) hasInvites.remove(sender.getName());
                                     if(WarpSystem.getInstance().isOnBungeeCord()) WarpSystem.getInstance().getDataHandler().send(new ClearInvitesPacket(sender.getName()));
                                 }
                             });
@@ -337,7 +425,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
                 if(finalNotifySender) sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_denied_sender").replace("%PLAYER%", ChatColor.stripColor(player.getName())));
                 player.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_denied_other").replace("%PLAYER%", ChatColor.stripColor(sender.getName())));
 
-                if(sender.onSpigot() && receiver.length == 1) hasInvites.remove(sender.getName());
+//                if(sender.onSpigot() && receiver.length == 1) hasInvites.remove(sender.getName());
                 WarpSystem.getInstance().getDataHandler().send(new ClearInvitesPacket(sender.getName()));
 
                 m.destroy();
@@ -348,15 +436,15 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
 
         int success = 0;
         for(Player p : receiver) {
-            if(!deniesTpaRequests(p)) {
+            if(!deniesTpaRequests(p.getName())) {
                 m.send(p);
                 success++;
             }
         }
 
         if(sender.onSpigot()) {
-            if(receiver.length == 1) hasInvites.add(sender.getName());
-            else hasInvites.add(sender.getName(), expireDelay);
+//            if(receiver.length == 1) hasInvites.add(sender.getName());
+//            else hasInvites.add(sender.getName(), expireDelay);
         }
 
         return success;
@@ -368,13 +456,5 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
 
     public int getBackHistorySize() {
         return backHistorySize;
-    }
-
-    public HashMap<Player, TimeList<String>> getInvites() {
-        return invites;
-    }
-
-    public HashMap<Integer, Invitation> getInvitations() {
-        return invitations;
     }
 }

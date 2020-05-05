@@ -2,7 +2,6 @@ package de.codingair.warpsystem.bungee.features.teleport.managers;
 
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.features.FeatureType;
-import de.codingair.warpsystem.bungee.features.teleport.commands.*;
 import de.codingair.warpsystem.bungee.features.teleport.listeners.TabCompleterListener;
 import de.codingair.warpsystem.bungee.features.teleport.listeners.TeleportCommandListener;
 import de.codingair.warpsystem.bungee.features.teleport.listeners.TeleportPacketListener;
@@ -31,15 +30,15 @@ public class TeleportManager implements Manager {
     public boolean load(boolean loader) {
         if(!loader) WarpSystem.log("  > Initializing TeleportManager");
 
-        CTeleport teleport;
-        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), teleport = new CTeleport());
-        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpHere(teleport));
-        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpAll());
-        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpaAll());
-        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpa());
-        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpaHere());
-        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpToggle());
-        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpaToggle());
+//        CTeleport teleport;
+//        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), teleport = new CTeleport());
+//        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpHere(teleport));
+//        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpAll());
+//        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpaAll());
+//        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpa());
+//        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpaHere());
+//        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpToggle());
+//        BungeeCord.getInstance().getPluginManager().registerCommand(WarpSystem.getInstance(), new CTpaToggle());
         BungeeCord.getInstance().getPluginManager().registerListener(WarpSystem.getInstance(), new TabCompleterListener());
         BungeeCord.getInstance().getPluginManager().registerListener(WarpSystem.getInstance(), new TeleportCommandListener());
 

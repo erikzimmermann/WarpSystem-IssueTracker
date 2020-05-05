@@ -22,6 +22,10 @@ public class BungeePlayer {
         this.displayName = displayName;
     }
 
+    public BungeePlayer(String name) {
+        this(name, name);
+    }
+
     public void sendMessage(String msg) {
         if(player == null) WarpSystem.getInstance().getDataHandler().send(new MessagePacket(name, msg));
         else player.sendMessage(msg);
