@@ -65,6 +65,11 @@ public class CTpa extends CommandBuilder {
                     return false;
                 }
 
+                //todo
+                //check whether on bungee or on spigot
+                //bungee: Packet
+                //spigot direct
+
                 if(TeleportCommandManager.getInstance().deniesTpaRequests(receiver)) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_denied_sender").replace("%PLAYER%", ChatColor.stripColor(receiver.getName())));
                     return false;

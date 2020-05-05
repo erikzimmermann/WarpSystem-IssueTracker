@@ -25,6 +25,7 @@ import de.codingair.warpsystem.spigot.features.teleportcommand.listeners.Telepor
 import de.codingair.warpsystem.spigot.features.teleportcommand.listeners.TeleportPacketListener;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ClearInvitesPacket;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.TeleportCommandOptionsPacket;
+import de.codingair.warpsystem.spigot.features.teleportcommand.utils.Invitation;
 import de.codingair.warpsystem.transfer.packets.general.StartTeleportToPlayerPacket;
 import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPlayerToPlayerPacket;
 import de.codingair.warpsystem.utils.Manager;
@@ -33,13 +34,12 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TeleportCommandManager implements Manager, BungeeFeature, Collectible {
-    private TimeList<String> hasInvites = new TimeList<>();
+    private HashMap<Player, TimeList<Integer>> invites = new HashMap<>();
+    private HashMap<UUID, Invitation> invitations = new HashMap<>();
+
     private List<String> denyTpa = new ArrayList<>();
     private List<String> denyForceTps = new ArrayList<>();
 
@@ -220,11 +220,15 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
     }
 
     public boolean hasOpenInvites(Player player) {
-        return this.hasInvites.contains(player.getName());
+        return this.invites.containsKey(player);
+    }
+
+    public boolean addInvitation(Player player, String from) {
+
     }
 
     public void clear(Player player) {
-        this.hasInvites.remove(player.getName());
+        this.invites.remove(player);
     }
 
     /**
@@ -364,5 +368,13 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
 
     public int getBackHistorySize() {
         return backHistorySize;
+    }
+
+    public HashMap<Player, TimeList<String>> getInvites() {
+        return invites;
+    }
+
+    public HashMap<Integer, Invitation> getInvitations() {
+        return invitations;
     }
 }
