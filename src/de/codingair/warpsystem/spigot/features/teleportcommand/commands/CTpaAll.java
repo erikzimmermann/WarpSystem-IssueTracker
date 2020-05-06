@@ -35,20 +35,14 @@ public class CTpaAll extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                List<String> players = new ArrayList<>();
-                for(Player player : Bukkit.getOnlinePlayers()) {
-                    if(player.getName().equals(sender.getName())) continue;
-                    players.add(player.getName());
-                }
-
-                //todo invite ALL players on proxy as well
-
-                TeleportCommandManager.getInstance().invite(sender.getName(), false, new Callback<Integer>() {
+                TeleportCommandManager.getInstance().invite(sender.getName(), true, new Callback<Long>() {
                     @Override
-                    public void accept(Integer sent) {
-                        sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_All").replace("%RECEIVED%", sent + "").replace("%MAX%", (Bukkit.getOnlinePlayers().size() - 1) + ""));
+                    public void accept(Long result) {
+                        int handled = (int) (result >> 32);
+                        int sent = result.intValue();
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_All").replace("%RECEIVED%", sent + "").replace("%MAX%", handled + ""));
                     }
-                }, players.toArray(new String[0]));
+                }, null);
                 return false;
             }
         }.setOnlyPlayers(true), true);

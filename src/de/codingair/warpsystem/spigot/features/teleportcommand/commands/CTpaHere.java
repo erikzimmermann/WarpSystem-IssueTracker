@@ -44,10 +44,32 @@ public class CTpaHere extends CommandBuilder {
 
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
+            public boolean matchTabComplete(CommandSender sender, String suggestion, String argument) {
+                return WarpSystem.getInstance().isOnBungeeCord() || super.matchTabComplete(sender, suggestion, argument);
+            }
+
+            @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                for(Player player : Bukkit.getOnlinePlayers()) {
-                    if(player.getName().equals(sender.getName()) || TeleportCommandManager.getInstance().deniesTpaRequests(player.getName())) continue;
-                    suggestions.add(ChatColor.stripColor(player.getName()));
+                Player p = (Player) sender;
+                if(WarpSystem.getInstance().isOnBungeeCord()) {
+                    suggestions.add("!WARPSYSTEM"); //key for bungeecord
+
+                    StringBuilder builder = new StringBuilder("tpahere");
+                    for(String arg : args) {
+                        builder.append(" ").append(arg);
+                    }
+                    suggestions.add(builder.toString());
+
+                    for(Player player : Bukkit.getOnlinePlayers()) {
+                        if(!p.canSee(player)) {
+                            suggestions.add("-" + player.getName());
+                        }
+                    }
+                } else {
+                    for(Player player : Bukkit.getOnlinePlayers()) {
+                        if(player.getName().equals(sender.getName()) || !p.canSee(player)) continue;
+                        suggestions.add(ChatColor.stripColor(player.getName()));
+                    }
                 }
             }
 
@@ -63,18 +85,16 @@ public class CTpaHere extends CommandBuilder {
                     return false;
                 }
 
-                if(TeleportCommandManager.getInstance().deniesTpaRequests(argument)) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_denied_sender").replace("%PLAYER%", ChatColor.stripColor(argument)));
-                    return false;
-                }
-
-                TeleportCommandManager.getInstance().invite(sender.getName(), true, new Callback<Integer>() {
+                TeleportCommandManager.getInstance().invite(sender.getName(), true, new Callback<Long>() {
                     @Override
-                    public void accept(Integer sent) {
-                        if(sent == 0)
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_already_sent"));
-                        else
-                            sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_sent").replace("%PLAYER%", ChatColor.stripColor(argument)));
+                    public void accept(Long result) {
+                        int handled = (int) (result >> 32);
+                        int sent = result.intValue();
+
+                        if(handled == 0) sender.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
+                        else if(handled == -1) sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_denied_sender").replace("%PLAYER%", ChatColor.stripColor(argument)));
+                        else if(sent == 0) sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_already_sent"));
+                        else sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_sent").replace("%PLAYER%", ChatColor.stripColor(argument)));
                     }
                 }, argument);
                 return false;

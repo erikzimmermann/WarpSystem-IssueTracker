@@ -1,8 +1,7 @@
 package de.codingair.warpsystem.transfer.packets.utils;
 
+import de.codingair.warpsystem.spigot.features.teleportcommand.packets.*;
 import de.codingair.warpsystem.transfer.packets.general.SendGlobalSpawnOptionsPacket;
-import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ClearInvitesPacket;
-import de.codingair.warpsystem.spigot.features.teleportcommand.packets.TeleportCommandOptionsPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.*;
 import de.codingair.warpsystem.transfer.packets.general.*;
 import de.codingair.warpsystem.transfer.packets.spigot.*;
@@ -36,10 +35,12 @@ public enum PacketType {
     MessagePacket(25, MessagePacket.class),
 
     TeleportCommandOptions(30, TeleportCommandOptionsPacket.class),
-    ClearInvitesPacket(31, ClearInvitesPacket.class),
+    TeleportRequestHandledPacket(31, TeleportRequestHandledPacket.class),
     PrepareTeleportPlayerToPlayerPacket(32, PrepareTeleportPlayerToPlayerPacket.class),
     PrepareTeleportRequestPacket(33, PrepareTeleportRequestPacket.class),
-    StartTeleportToPlayerPacket(34, de.codingair.warpsystem.transfer.packets.general.StartTeleportToPlayerPacket.class),
+    StartTeleportToPlayerPacket(34, StartTeleportToPlayerPacket.class),
+    ToggleForceTeleportsPacket(35, ToggleForceTeleportsPacket.class),
+    PrepareTeleportPacket(36, PrepareTeleportPacket.class),
 
     SendPlayerWarpsPacket(40, SendPlayerWarpsPacket.class),
     RegisterServerForPlayerWarpsPacket(41, RegisterServerForPlayerWarpsPacket.class),
@@ -52,6 +53,7 @@ public enum PacketType {
 
     BooleanPacket(100, BooleanPacket.class),
     IntegerPacket(101, IntegerPacket.class),
+    LongPacket(102, LongPacket.class),
 
     AnswerPacket(200, AnswerPacket.class),
     ;

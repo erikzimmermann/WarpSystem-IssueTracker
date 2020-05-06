@@ -12,16 +12,15 @@ public class TeleportCommandOptionsPacket implements Packet {
     public TeleportCommandOptionsPacket() {
     }
 
-    public TeleportCommandOptionsPacket(boolean bungeeCord, boolean back, boolean tp, boolean tpAll, boolean tpToggle, boolean tpa, boolean tpaHere, boolean tpaAll, boolean tpaToggle) {
-        if(bungeeCord) options = options | 1;
-        if(back) options = options | (1 << 1);
-        if(tp) options = options | (1 << 2);
-        if(tpAll) options = options | (1 << 3);
-        if(tpToggle) options = options | (1 << 4);
-        if(tpa) options = options | (1 << 5);
-        if(tpaHere) options = options | (1 << 6);
-        if(tpaAll) options = options | (1 << 7);
-        if(tpaToggle) options = options | (1 << 8);
+    public TeleportCommandOptionsPacket(boolean back, boolean tp, boolean tpAll, boolean tpToggle, boolean tpa, boolean tpaHere, boolean tpaAll, boolean tpaToggle) {
+        if(back) options |= 1;
+        if(tp) options |= (1 << 1);
+        if(tpAll) options |= (1 << 2);
+        if(tpToggle) options |= (1 << 3);
+        if(tpa) options |= (1 << 4);
+        if(tpaHere) options |= (1 << 5);
+        if(tpaAll) options |= (1 << 6);
+        if(tpaToggle) options |= (1 << 7);
     }
 
     @Override

@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.features.teleportcommand.commands;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -10,6 +11,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
+import de.codingair.warpsystem.spigot.features.teleportcommand.packets.PrepareTeleportPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -53,13 +55,10 @@ public class CTeleport extends CommandBuilder {
                         //player [to player]
                         if(args.length == 1) {
                             //Teleport sender to 0
-                            Player target = Bukkit.getPlayer(args[0]);
-                            tp(p, p, target);
+                            tp(p.getName(), p.getName(), args[0]);
                         } else {
                             //Teleport 0 to 1
-                            Player player = Bukkit.getPlayer(args[0]);
-                            Player target = Bukkit.getPlayer(args[1]);
-                            tp(p, player, target);
+                            tp(p.getName(), args[0], args[1]);
                         }
                     } else if((args.length == 3 && !args[2].isEmpty()) || (args.length == 4 && !args[3].isEmpty())) {
                         //player to coords
@@ -93,11 +92,9 @@ public class CTeleport extends CommandBuilder {
                             if(!args[1].isEmpty()) y += args[1].contains(".") ? Double.parseDouble(args[1]) : Integer.parseInt(args[1]);
                             if(!args[2].isEmpty()) z += args[2].contains(".") ? Double.parseDouble(args[2]) : Integer.parseInt(args[2]);
 
-                            tp(p, p, x, y, z);
+                            tp(p.getName(), p.getName(), x, y, z);
                         } else {
                             //Teleport 0 to coords
-                            Player player = Bukkit.getPlayer(args[0]);
-
                             double x = 0;
                             double y = 0;
                             double z = 0;
@@ -125,7 +122,7 @@ public class CTeleport extends CommandBuilder {
                             if(!args[2].isEmpty()) y += args[2].contains(".") ? Double.parseDouble(args[2]) : Integer.parseInt(args[2]);
                             if(!args[3].isEmpty()) z += args[3].contains(".") ? Double.parseDouble(args[3]) : Integer.parseInt(args[3]);
 
-                            tp(p, player, x, y, z);
+                            tp(p.getName(), args[0], x, y, z);
                         }
                     } else {
                         //HELP
@@ -143,6 +140,10 @@ public class CTeleport extends CommandBuilder {
         setHighestPriority(true);
 
         setOwnTabCompleter((commandSender, command, s, args) -> {
+            if(!WarpSystem.hasPermission(commandSender, WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) {
+                return new ArrayList<>();
+            }
+
             if(commandSender instanceof Player) {
                 Player p = (Player) commandSender;
                 Block b = p.getTargetBlock((Set<Material>) null, 10);
@@ -152,22 +153,33 @@ public class CTeleport extends CommandBuilder {
             }
 
             List<String> suggestions = new ArrayList<>();
-            int deep = args.length - 1;
 
-            if(args[deep].isEmpty()) {
-                if(deep == 1 && Character.isDigit(args[0].charAt(0)) && Bukkit.getPlayer(args[0]) == null) return suggestions;
-                if(deep == 0 || deep == 1) {
-                    for(Player player : Bukkit.getOnlinePlayers()) {
-                        suggestions.add(player.getName());
-                    }
+            if(WarpSystem.getInstance().isOnBungeeCord()) {
+                suggestions.add("!WARPSYSTEM");
+
+                StringBuilder builder = new StringBuilder(s);
+                for(String arg : args) {
+                    builder.append(" ").append(arg);
                 }
+                suggestions.add(builder.toString());
             } else {
-                if(deep == 0 || deep == 1) {
-                    String last = args[deep];
+                int deep = args.length - 1;
 
-                    for(Player player : Bukkit.getOnlinePlayers()) {
-                        if(!player.getName().toLowerCase().startsWith(last.toLowerCase())) continue;
-                        suggestions.add(player.getName());
+                if(args[deep].isEmpty()) {
+                    if(deep == 1 && Character.isDigit(args[0].charAt(0)) && Bukkit.getPlayerExact(args[0]) == null) return suggestions;
+                    if(deep == 0 || deep == 1) {
+                        for(Player player : Bukkit.getOnlinePlayers()) {
+                            suggestions.add(player.getName());
+                        }
+                    }
+                } else {
+                    if(deep == 0 || deep == 1) {
+                        String last = args[deep];
+
+                        for(Player player : Bukkit.getOnlinePlayers()) {
+                            if(!player.getName().toLowerCase().startsWith(last.toLowerCase())) continue;
+                            suggestions.add(player.getName());
+                        }
                     }
                 }
             }
@@ -182,52 +194,83 @@ public class CTeleport extends CommandBuilder {
         else return d;
     }
 
-    private static void tp(Player gate, Player player, double x, double y, double z) {
-        if(player == null) {
-            gate.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
-            return;
-        }
-
-        if(gate != player && TeleportCommandManager.getInstance().deniesForceTps(player)) {
-            gate.sendMessage(Lang.getPrefix() + Lang.get("Teleport_denied").replace("%PLAYER%", player.getName()));
-            return;
-        }
+    private static void tp(String gate, String player, double x, double y, double z) {
+        Player gateP = Bukkit.getPlayerExact(gate);
+        Player playerP = Bukkit.getPlayerExact(player);
 
         String destination = "x=" + cut(x) + ", y=" + cut(y) + ", z=" + cut(z);
 
-        if(gate != player) gate.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", player.getName()).replace("%warp%", destination));
+        if(playerP == null) {
+            //try on proxy
+            if(WarpSystem.getInstance().isOnBungeeCord() && TeleportCommandManager.getInstance().isBungeeCord()) {
+                WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportPacket(new Callback<Long>() {
+                    @Override
+                    public void accept(Long result) {
+                        int handled = (int) (result >> 32);
+                        int sent = result.intValue();
 
-        Location location = player.getLocation();
+                        if(handled == 0) gateP.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
+                        else if(sent == 0) gateP.sendMessage(Lang.getPrefix() + Lang.get("Teleport_denied").replace("%PLAYER%", player));
+                    }
+                }, gate, player, x, y, z));
+            } else gateP.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
+            return;
+        }
+
+        if(gateP != playerP && TeleportCommandManager.getInstance().deniesForceTps(playerP)) {
+            gateP.sendMessage(Lang.getPrefix() + Lang.get("Teleport_denied").replace("%PLAYER%", playerP.getName()));
+            return;
+        }
+
+        if(gateP != playerP) gateP.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", playerP.getName()).replace("%warp%", destination));
+
+        Location location = playerP.getLocation();
         location.setX(x);
         location.setY(y);
         location.setZ(z);
         location.setYaw(0);
         location.setPitch(0);
 
-        de.codingair.warpsystem.spigot.base.WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TeleportCommand, new Destination(new LocationAdapter(location)),
+        de.codingair.warpsystem.spigot.base.WarpSystem.getInstance().getTeleportManager().teleport(playerP, Origin.TeleportCommand, new Destination(new LocationAdapter(location)),
                 destination, 0, true,
-                gate == player ? Lang.get("Teleported_To") :
-                        Lang.get("Teleported_To_By").replace("%gate%", gate.getName())
+                gateP == playerP ? Lang.get("Teleported_To") :
+                        Lang.get("Teleported_To_By").replace("%gate%", gateP.getName())
                 , false, null);
     }
 
-    private static void tp(Player gate, Player player, Player target) {
-        if(player == null || target == null) {
-            gate.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
+    private static void tp(String gate, String player, String target) {
+        Player gateP = Bukkit.getPlayerExact(gate);
+        Player playerP = Bukkit.getPlayerExact(player);
+        Player targetP = Bukkit.getPlayerExact(target);
+
+        if(playerP == null || targetP == null) {
+            //try on proxy
+            if(WarpSystem.getInstance().isOnBungeeCord() && TeleportCommandManager.getInstance().isBungeeCord()) {
+                WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportPacket(new Callback<Long>() {
+                    @Override
+                    public void accept(Long result) {
+                        int handled = (int) (result >> 32);
+                        int sent = result.intValue();
+
+                        if(handled == 0) gateP.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
+                        else if(sent == 0) gateP.sendMessage(Lang.getPrefix() + Lang.get("Teleport_denied").replace("%PLAYER%", player));
+                    }
+                }, gate, player, target));
+            } else gateP.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
             return;
         }
 
-        if(gate != player && TeleportCommandManager.getInstance().deniesForceTps(player)) {
-            gate.sendMessage(Lang.getPrefix() + Lang.get("Teleport_denied").replace("%PLAYER%", player.getName()));
+        if(gateP != playerP && TeleportCommandManager.getInstance().deniesForceTps(playerP)) {
+            gateP.sendMessage(Lang.getPrefix() + Lang.get("Teleport_denied").replace("%PLAYER%", playerP.getName()));
             return;
         }
 
-        if(gate != player) gate.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", player.getName()).replace("%warp%", target.getName()));
+        if(gateP != playerP) gateP.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", playerP.getName()).replace("%warp%", targetP.getName()));
 
-        WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.TeleportCommand, new Destination(new LocationAdapter(target.getLocation())),
-                target.getName(), 0, true,
-                gate == player ? Lang.get("Teleported_To") :
-                        Lang.get("Teleported_To_By").replace("%gate%", gate.getName())
+        WarpSystem.getInstance().getTeleportManager().teleport(playerP, Origin.TeleportCommand, new Destination(new LocationAdapter(targetP.getLocation())),
+                targetP.getName(), 0, true,
+                gateP == playerP ? Lang.get("Teleported_To") :
+                        Lang.get("Teleported_To_By").replace("%gate%", gateP.getName())
                 , false, null);
     }
 }

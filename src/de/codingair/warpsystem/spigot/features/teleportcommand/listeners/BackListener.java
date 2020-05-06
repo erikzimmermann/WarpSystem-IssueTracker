@@ -6,15 +6,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class BackListener implements Listener {
-
-    @EventHandler
-    public void onQuit(PlayerQuitEvent e) {
-        TeleportCommandManager.getInstance().clearBackHistory(e.getPlayer());
-    }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
