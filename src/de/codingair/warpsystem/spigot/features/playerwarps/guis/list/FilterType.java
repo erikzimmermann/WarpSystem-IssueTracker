@@ -12,8 +12,8 @@ import java.util.List;
 
 public enum FilterType {
     OWN_WARPS(OwnWarpFilter.class, Lang.get("Filter_Own_Warps"), 0, true),
-    ALL_WARPS(AllWarps.class, Lang.get("Filter_All_Warps"), 1, PlayerWarpManager.getManager().isAllowPublicWarps()),
-    ALL_PLAYERS(AllPlayers.class, Lang.get("Filter_All_Players"), 2, PlayerWarpManager.getManager().isAllowPublicWarps()),
+    ALL_WARPS(AllWarps.class, Lang.get("Filter_All_Warps"), 1, PlayerWarpManager.getManager().isAllowPublicWarps() || PlayerWarpManager.getManager().isAllowTrustedMembers()),
+    ALL_PLAYERS(AllPlayers.class, Lang.get("Filter_All_Players"), 2, PlayerWarpManager.getManager().isAllowPublicWarps() || PlayerWarpManager.getManager().isAllowTrustedMembers()),
     CLASSES(ClassesFilter.class, Lang.get("Filter_Classes"), 3, PlayerWarpManager.getManager().isClasses());
 
     private Filter instance;
