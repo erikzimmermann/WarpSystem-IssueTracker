@@ -4,7 +4,6 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.bungee.api.ServerSwitchAttemptEvent;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
-import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
 import de.codingair.warpsystem.transfer.packets.bungee.PrepareLoginMessagePacket;
 import de.codingair.warpsystem.transfer.packets.general.BooleanPacket;
 import de.codingair.warpsystem.transfer.packets.general.IntegerPacket;
@@ -16,6 +15,7 @@ import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
 import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -42,7 +42,6 @@ public class MainListener implements Listener, PacketListener {
         switch(PacketType.getByObject(packet)) {
             case RequestInitialPacket: {
                 WarpSystem.getInstance().getServerManager().sendInitialPacket(server);
-                TeleportManager.getInstance().clearAll();
                 break;
             }
 
@@ -50,7 +49,11 @@ public class MainListener implements Listener, PacketListener {
                 MessagePacket p = (MessagePacket) packet;
                 ProxiedPlayer player = BungeeCord.getInstance().getPlayer(p.getPlayer());
 
-                if(player != null) player.sendMessage(new TextComponent(p.getMessage()));
+                if(player != null) {
+                    TextComponent tc = new TextComponent(p.getMessage());
+                    tc.setColor(ChatColor.GRAY);
+                    player.sendMessage(tc);
+                }
                 break;
             }
 

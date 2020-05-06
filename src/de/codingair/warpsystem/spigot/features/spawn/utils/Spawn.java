@@ -32,7 +32,7 @@ public class Spawn extends FeatureObject {
     private String displayName;
 
     public Spawn() {
-        usage = Usage.FIRST_JOIN;
+        usage = Usage.LOCAL;
         broadCastMessages = new ArrayList<>();
         randomFireWorks = false;
         respawnUsage = RespawnUsage.DISABLED;

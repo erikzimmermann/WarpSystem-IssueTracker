@@ -1,13 +1,17 @@
 package de.codingair.warpsystem.bungee.features.teleport.listeners;
 
 import de.codingair.warpsystem.bungee.base.WarpSystem;
+import de.codingair.warpsystem.bungee.base.utils.ServerInitializeEvent;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
 import de.codingair.warpsystem.bungee.features.teleport.utils.TeleportCommandOptions;
+import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ToggleForceTeleportsPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.PerformCommandOnSpigotPacket;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -15,6 +19,24 @@ import net.md_5.bungee.event.EventHandler;
 import java.util.Map;
 
 public class TeleportCommandListener implements Listener {
+
+    @EventHandler
+    public void onQuit(PlayerDisconnectEvent e) {
+        TeleportManager.getInstance().setDenyForceTps(e.getPlayer(), false);
+        TeleportManager.getInstance().setDenyForceTpRequests(e.getPlayer(), false);
+    }
+
+    @EventHandler
+    public void onSwitch(ServerSwitchEvent e) {
+        boolean tp, tpa;
+        if((tp = TeleportManager.getInstance().deniesForceTps(e.getPlayer())) | (tpa = TeleportManager.getInstance().deniesForceTpRequests(e.getPlayer())))
+            WarpSystem.getInstance().getDataHandler().send(new ToggleForceTeleportsPacket(e.getPlayer().getName(), tp, tpa), e.getPlayer().getServer().getInfo());
+    }
+
+    @EventHandler
+    public void onSwitch(ServerInitializeEvent e) {
+        TeleportManager.getInstance().removeOptions(e.getInfo());
+    }
 
     @EventHandler
     public void onPreProcess(ChatEvent e) {
