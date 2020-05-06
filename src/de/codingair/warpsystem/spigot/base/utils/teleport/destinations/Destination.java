@@ -55,14 +55,6 @@ public class Destination implements Serializable {
             this.type = json.get(0) == null ? null : DestinationType.valueOf((String) json.get(0));
             this.id = json.get(1) == null ? null : (String) json.get(1);
             this.adapter = type == null ? null : type.getInstance();
-            if(json.size() > 2) {
-                offsetX = Double.parseDouble(json.get(2) + "");
-                offsetY = Double.parseDouble(json.get(3) + "");
-                offsetZ = Double.parseDouble(json.get(4) + "");
-                signedX = Integer.parseInt(json.get(5) + "");
-                signedY = Integer.parseInt(json.get(6) + "");
-                signedZ = Integer.parseInt(json.get(7) + "");
-            }
         } catch(Exception ex) {
             throw new IllegalArgumentException("Wrong serialized data!", ex);
         }
@@ -189,7 +181,6 @@ public class Destination implements Serializable {
         this.signedX = d.getInteger("sX");
         this.signedY = d.getInteger("sY");
         this.signedZ = d.getInteger("sZ");
-        this.message = !d.getBoolean("message", false);
         return true;
     }
 
@@ -213,7 +204,6 @@ public class Destination implements Serializable {
         d.put("sX", signedX);
         d.put("sY", signedY);
         d.put("sZ", signedZ);
-        d.put("message", !message);
     }
 
     @Override

@@ -9,6 +9,8 @@ import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
+import de.codingair.warpsystem.transfer.packets.spigot.IsOnlinePacket;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -53,6 +55,7 @@ public class CTpa extends CommandBuilder {
                 Player p = (Player) sender;
                 if(WarpSystem.getInstance().isOnBungeeCord()) {
                     suggestions.add("§WARPSYSTEM");
+                    if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) suggestions.add("§ACCESS");
 
                     StringBuilder builder = new StringBuilder("tpa");
                     for(String arg : args) {
@@ -82,6 +85,22 @@ public class CTpa extends CommandBuilder {
 
                 if(argument.equalsIgnoreCase(sender.getName())) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Cant_Teleport_Yourself"));
+                    return false;
+                }
+
+                Player other = Bukkit.getPlayerExact(argument);
+
+                if(other == null && WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) {
+                    WarpSystem.getInstance().getDataHandler().send(new IsOnlinePacket(new Callback<Boolean>() {
+                        @Override
+                        public void accept(Boolean online) {
+                            if(online) {
+                                TextComponent tc = new TextComponent(Lang.getPrefix() + "§7Teleporting on your entire BungeeCord is a §6premium feature§7!");
+                                tc.setColor(net.md_5.bungee.api.ChatColor.GRAY);
+                                Lang.PREMIUM_CHAT(tc, sender, true);
+                            } else sender.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
+                        }
+                    }, argument));
                     return false;
                 }
 
