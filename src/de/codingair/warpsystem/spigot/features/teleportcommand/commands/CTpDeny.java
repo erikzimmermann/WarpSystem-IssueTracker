@@ -2,6 +2,7 @@ package de.codingair.warpsystem.spigot.features.teleportcommand.commands;
 
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
+import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.commands.WarpSystemBaseComponent;
@@ -12,9 +13,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class CTpDeny extends CommandBuilder {
+public class CTpDeny extends WSCommandBuilder {
     public CTpDeny() {
-        super("tpdeny", "A WarpSystem-Command", new WarpSystemBaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP_DENY) {
+        super("TpDeny", new WarpSystemBaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP_DENY) {
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpdeny <§eplayer§7>");
@@ -25,7 +26,7 @@ public class CTpDeny extends CommandBuilder {
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpdeny <§eplayer§7>");
                 return false;
             }
-        }, true);
+        }.setOnlyPlayers(true));
 
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override

@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.spigot.features.teleportcommand.commands;
 
-import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
+import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.commands.WarpSystemBaseComponent;
@@ -12,9 +12,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class CTpAccept extends CommandBuilder {
+public class CTpAccept extends WSCommandBuilder {
     public CTpAccept() {
-        super("tpaccept", "A WarpSystem-Command", new WarpSystemBaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP_ACCEPT) {
+        super("TpAccept", new WarpSystemBaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP_ACCEPT) {
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpaccept <§eplayer§7>");
@@ -25,7 +25,7 @@ public class CTpAccept extends CommandBuilder {
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpaccept <§eplayer§7>");
                 return false;
             }
-        }, true);
+        }.setOnlyPlayers(true));
 
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override

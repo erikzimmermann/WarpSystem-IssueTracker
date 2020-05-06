@@ -1,0 +1,86 @@
+#Reload/restart to apply command changes correctly
+WarpSystem:
+  Name: warpsystem
+  Aliases:
+    - ws
+GlobalWarps:
+  Name: globalwarps
+  Aliases:
+    - gwarps
+GlobalWarp:
+  Name: globalwarp
+  Aliases:
+    - gwarp
+PlayerWarps:
+  Name: playerwarps
+  Aliases:
+    - pwarps
+PlayerWarp:
+  Name: playerwarp
+  Aliases:
+    - pwarp
+Portals:
+  Name: portals
+  Aliases:
+    - portals
+RandomTp:
+  Name: randomtp
+  Aliases:
+    - rtp
+Shortcuts:
+  Name: shortcuts
+  Aliases:
+    - shortcut
+DeleteWarps:
+  Name: deletewarps
+  Aliases:
+    - delwarps
+EditWarp:
+  Name: editwarp
+  Aliases: []
+SetWarp:
+  Name: setwarp
+  Aliases: []
+Warps:
+  Name: warps
+  Aliases: []
+Warp:
+  Name: warp
+  Aliases: []
+SetSpawn:
+  Name: setspawn
+  Aliases: []
+Back:
+  Name: back
+  Aliases: []
+Teleport:
+  Name: teleport
+  Aliases:
+    - tp
+Tpa:
+  Name: tpa
+  Aliases: []
+TpaAll:
+  Name: tpaall
+  Aliases: []
+TpAccept:
+  Name: tpaccept
+  Aliases: []
+TpaHere:
+  Name: tpahere
+  Aliases: []
+TpAll:
+  Name: tpall
+  Aliases: []
+TpaToggle:
+  Name: tpatoggle
+  Aliases: []
+TpDeny:
+  Name: tpdeny
+  Aliases: []
+TpHere:
+  Name: tphere
+  Aliases: []
+TpToggle:
+  Name: tptoggle
+  Aliases: []

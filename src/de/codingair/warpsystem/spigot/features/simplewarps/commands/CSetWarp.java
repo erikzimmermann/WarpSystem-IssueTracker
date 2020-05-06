@@ -3,10 +3,10 @@ package de.codingair.warpsystem.spigot.features.simplewarps.commands;
 import de.codingair.codingapi.player.chat.ChatButton;
 import de.codingair.codingapi.player.chat.SimpleMessage;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
-import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.Location;
+import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
@@ -21,9 +21,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class CSetWarp extends CommandBuilder {
+public class CSetWarp extends WSCommandBuilder {
     public CSetWarp() {
-        super("setwarp", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_SIMPLE_WARPS) {
+        super("SetWarp", new BaseComponent(WarpSystem.PERMISSION_MODIFY_SIMPLE_WARPS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -44,7 +44,7 @@ public class CSetWarp extends CommandBuilder {
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp> ['true' for overwriting]");
                 return false;
             }
-        }, true);
+        });
 
         setHighestPriority(true);
 

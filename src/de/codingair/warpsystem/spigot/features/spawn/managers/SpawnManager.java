@@ -16,7 +16,6 @@ import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-import java.util.List;
 import java.util.Objects;
 
 public class SpawnManager implements Manager {
@@ -37,12 +36,8 @@ public class SpawnManager implements Manager {
         Bukkit.getPluginManager().registerEvents(listener, WarpSystem.getInstance());
         WarpSystem.getInstance().getDataHandler().register(listener);
 
-        file = WarpSystem.getInstance().getFileManager().getFile("Config");
-        List<String> commands = file.getConfig().getStringList("WarpSystem.Spawn.Commands");
-        if(commands.isEmpty()) commands.add("spawn");
-
         new CSetSpawn().register(WarpSystem.getInstance());
-        new CSpawn(commands).register(WarpSystem.getInstance());
+        new CSpawn().register(WarpSystem.getInstance());
         return true;
     }
 

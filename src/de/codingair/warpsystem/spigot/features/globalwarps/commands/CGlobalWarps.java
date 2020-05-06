@@ -4,10 +4,10 @@ import de.codingair.codingapi.player.chat.ChatButton;
 import de.codingair.codingapi.player.chat.SimpleMessage;
 import de.codingair.codingapi.player.gui.inventory.guis.ConfirmGUI;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
-import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
@@ -23,9 +23,9 @@ import org.bukkit.event.inventory.ClickType;
 
 import java.util.List;
 
-public class CGlobalWarps extends CommandBuilder implements BungeeFeature {
+public class CGlobalWarps extends WSCommandBuilder implements BungeeFeature {
     public CGlobalWarps() {
-        super("globalwarps", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_GLOBAL_WARPS) {
+        super("GlobalWarps", new BaseComponent(WarpSystem.PERMISSION_MODIFY_GLOBAL_WARPS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -47,7 +47,7 @@ public class CGlobalWarps extends CommandBuilder implements BungeeFeature {
                 else sender.sendMessage(Lang.getPrefix() + Lang.get("Connect_BungeeCord"));
                 return false;
             }
-        }, true, "gws", "gwarps");
+        });
 
         WarpSystem.getInstance().getBungeeFeatureList().add(this);
     }

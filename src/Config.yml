@@ -91,11 +91,6 @@ WarpSystem:
       #In seconds
       ExpireDelay: 30
 
-  Spawn:
-    #Reload/restart to apply command changes correctly
-    Commands:
-    - "spawn"
-
   Portals:
     #Max distance between particle and player - Don't use distances higher than 200! It will cause lags.
     ParticleDistance: 64
