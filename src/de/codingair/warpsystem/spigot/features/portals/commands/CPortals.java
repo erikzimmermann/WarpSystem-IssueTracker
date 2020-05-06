@@ -2,11 +2,11 @@ package de.codingair.warpsystem.spigot.features.portals.commands;
 
 import de.codingair.codingapi.player.gui.anvil.*;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
-import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.items.ItemBuilder;
+import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
@@ -20,9 +20,9 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CPortals extends CommandBuilder {
+public class CPortals extends WSCommandBuilder {
     public CPortals() {
-        super("portals", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_PORTALS) {
+        super("Portals", new BaseComponent(WarpSystem.PERMISSION_MODIFY_PORTALS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -43,7 +43,7 @@ public class CPortals extends CommandBuilder {
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, edit, delete>");
                 return false;
             }
-        }.setOnlyPlayers(true), true, "portal");
+        }.setOnlyPlayers(true));
 
         getBaseComponent().addChild(new CommandComponent("create") {
             @Override

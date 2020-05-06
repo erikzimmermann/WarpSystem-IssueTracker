@@ -1,8 +1,8 @@
 package de.codingair.warpsystem.spigot.features.spawn.commands;
 
 import de.codingair.codingapi.player.chat.SimpleMessage;
-import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
+import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.commands.WarpSystemBaseComponent;
@@ -19,9 +19,9 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CSetSpawn extends CommandBuilder {
+public class CSetSpawn extends WSCommandBuilder {
     public CSetSpawn() {
-        super("setspawn", "A WarpSystem-Command", new WarpSystemBaseComponent(WarpSystem.PERMISSION_MODIFY_SPAWN) {
+        super("SetSpawn", new WarpSystemBaseComponent(WarpSystem.PERMISSION_MODIFY_SPAWN) {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
@@ -45,7 +45,7 @@ public class CSetSpawn extends CommandBuilder {
 
                 return false;
             }
-        }.setOnlyPlayers(true), true);
+        }.setOnlyPlayers(true));
 
         setHighestPriority(true);
 

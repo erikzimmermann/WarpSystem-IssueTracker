@@ -5,6 +5,7 @@ import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.utils.ChatColor;
+import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
@@ -14,9 +15,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class CTpHere extends CommandBuilder {
+public class CTpHere extends WSCommandBuilder {
     public CTpHere(CTeleport teleportCommand) {
-        super("tphere", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP) {
+        super("TpHere", new BaseComponent(WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -37,7 +38,7 @@ public class CTpHere extends CommandBuilder {
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tpHere <§eplayer§7>");
                 return false;
             }
-        }, true);
+        }.setOnlyPlayers(true));
 
         setHighestPriority(true);
 
