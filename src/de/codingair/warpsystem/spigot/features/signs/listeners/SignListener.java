@@ -32,7 +32,7 @@ public class SignListener implements Listener {
             SignManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIGNS);
             WarpSign sign = manager.getByLocation(s.getLocation());
             if(sign != null) {
-                if(e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_WARP_SIGNS) && e.getPlayer().getGameMode().equals(GameMode.CREATIVE) && e.getPlayer().getItemInHand().getType().name().toLowerCase().contains("sign")) {
+                if(e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_WARP_SIGNS) && e.getPlayer().getItemInHand().getType().name().toLowerCase().contains("sign")) {
                     String[] lines = s.getLines();
                     for(int i = 0; i < 4; i++) {
                         lines[i] = lines[i].replace("§", "&");
@@ -68,8 +68,11 @@ public class SignListener implements Listener {
             WarpSign sign = manager.getByLocation(s.getLocation());
             if(sign == null) return;
 
-            if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_WARP_SIGNS) || !e.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
+            if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_WARP_SIGNS)) {
                 e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
+                e.setCancelled(true);
+            } else if(!e.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
+                e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Creative_Mode_Needed"));
                 e.setCancelled(true);
             } else {
                 for(WarpSignGUI gui : API.getRemovables(WarpSignGUI.class)) {
@@ -86,7 +89,7 @@ public class SignListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlace(SignChangeEvent e) {
-        if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_WARP_SIGNS) || !e.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
+        if(!e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_WARP_SIGNS)) return;
 
         if(e.getLine(0).equalsIgnoreCase("[warps]")) {
             WarpSign sign = new WarpSign(Location.getByLocation(e.getBlock().getLocation()), new Destination());
