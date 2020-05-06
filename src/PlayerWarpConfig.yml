@@ -21,21 +21,14 @@ PlayerWarps:
     Allow_Public_Warps: true
     Allow_Trusted_Members: true
     PlayerWarps_Command_Aliases:
-      - 'pwarps'
-      - 'pws'
+    - pwarps
     PlayerWarp_Command_Aliases:
-      - 'pwarp'
-      - 'pw'
+    - pwarp
     Command_References:
-      - 'tempwarps'
-      - 'twarps'
-      - 'tws'
-      - 'tempwarp'
-      - 'twarp'
-      - 'tw'
-      - 'home'
-      - 'homes'
-    #PREMIUM
+    - tempwarps
+    - twarps
+    - tempwarp
+    - twarp
     Name_Blacklist: []
     #PREMIUM
     Categories:

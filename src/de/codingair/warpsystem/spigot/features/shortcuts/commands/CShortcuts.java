@@ -1,9 +1,9 @@
 package de.codingair.warpsystem.spigot.features.shortcuts.commands;
 
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
-import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
+import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CShortcuts extends CommandBuilder {
+public class CShortcuts extends WSCommandBuilder {
     public CShortcuts() {
-        super("shortcuts", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY_SHORTCUTS) {
+        super("Shortcuts", new BaseComponent(WarpSystem.PERMISSION_MODIFY_SHORTCUTS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -41,7 +41,7 @@ public class CShortcuts extends CommandBuilder {
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create edit, delete, list>");
                 return false;
             }
-        }.setOnlyPlayers(true), true, "shortcut");
+        }.setOnlyPlayers(true));
 
         getBaseComponent().addChild(new CommandComponent("create") {
             @Override

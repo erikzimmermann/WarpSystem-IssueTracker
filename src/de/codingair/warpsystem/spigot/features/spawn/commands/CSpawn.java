@@ -1,6 +1,6 @@
 package de.codingair.warpsystem.spigot.features.spawn.commands;
 
-import de.codingair.codingapi.server.commands.builder.CommandBuilder;
+import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.commands.WarpSystemBaseComponent;
@@ -10,11 +10,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.spigotmc.SpigotConfig;
 
-import java.util.List;
-
-public class CSpawn extends CommandBuilder {
-    public CSpawn(List<String> commands) {
-        super(commands.remove(0), "A WarpSystem-Command", new WarpSystemBaseComponent(WarpSystem.PERMISSION_USE_SPAWN) {
+public class CSpawn extends WSCommandBuilder {
+    public CSpawn() {
+        super("Spawn", new WarpSystemBaseComponent(WarpSystem.PERMISSION_USE_SPAWN) {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
@@ -32,7 +30,7 @@ public class CSpawn extends CommandBuilder {
 
                 return false;
             }
-        }.setOnlyPlayers(true), true, commands.toArray(new String[0]));
+        }.setOnlyPlayers(true));
 
         setHighestPriority(true);
     }

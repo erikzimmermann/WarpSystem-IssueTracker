@@ -9,12 +9,12 @@ import de.codingair.codingapi.player.gui.anvil.AnvilGUI;
 import de.codingair.codingapi.player.gui.anvil.AnvilListener;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
-import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.tools.time.TimeList;
+import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.options.OptionsGUI;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -34,9 +34,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class CWarpSystem extends CommandBuilder {
+public class CWarpSystem extends WSCommandBuilder {
     public CWarpSystem() {
-        super("WarpSystem", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_MODIFY) {
+        super("WarpSystem", new BaseComponent(WarpSystem.PERMISSION_MODIFY) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 Player p = (Player) sender;
@@ -60,7 +60,7 @@ public class CWarpSystem extends CommandBuilder {
                 sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, upgrade, reload, import, news, report, options, animations>");
                 return false;
             }
-        }, true, "ws");
+        });
 
         getBaseComponent().addChild(new CommandComponent("upgrade") {
             @Override

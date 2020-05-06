@@ -1,9 +1,9 @@
 package de.codingair.warpsystem.spigot.features.simplewarps.commands;
 
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
-import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
+import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
@@ -22,9 +22,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class CWarp extends CommandBuilder {
+public class CWarp extends WSCommandBuilder {
     public CWarp() {
-        super("warp", "A WarpSystem-Command", new BaseComponent() {
+        super("Warp", new BaseComponent() {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -62,7 +62,7 @@ public class CWarp extends CommandBuilder {
 
                 return false;
             }
-        }.setOnlyPlayers(true), true);
+        }.setOnlyPlayers(true));
 
         IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARP_GUI);
         CWarpHook hook = new CWarpHook();

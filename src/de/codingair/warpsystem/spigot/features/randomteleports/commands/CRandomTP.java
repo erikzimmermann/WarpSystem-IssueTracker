@@ -3,8 +3,8 @@ package de.codingair.warpsystem.spigot.features.randomteleports.commands;
 import de.codingair.codingapi.player.chat.ChatButton;
 import de.codingair.codingapi.player.chat.SimpleMessage;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
-import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
+import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
@@ -14,9 +14,9 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-public class CRandomTP extends CommandBuilder {
+public class CRandomTP extends WSCommandBuilder {
     public CRandomTP() {
-        super("randomtp", "WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_RANDOM_TELEPORTER) {
+        super("RandomTP", new BaseComponent(WarpSystem.PERMISSION_USE_RANDOM_TELEPORTER) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -48,7 +48,7 @@ public class CRandomTP extends CommandBuilder {
                 }
                 return false;
             }
-        }.setOnlyPlayers(true), true, "rtp");
+        }.setOnlyPlayers(true));
 
         if(RandomTeleporterManager.getInstance().isBuyable()) {
             getBaseComponent().addChild(new CommandComponent("buy") {

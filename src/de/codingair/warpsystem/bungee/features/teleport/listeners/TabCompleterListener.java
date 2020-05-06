@@ -16,6 +16,7 @@ public class TabCompleterListener implements Listener {
         if(e.getSuggestions().isEmpty()) return;
 
         if(e.getSuggestions().remove("§WARPSYSTEM")) {
+            boolean hasAccess = e.getSuggestions().remove("§ACCESS");
             String cursor = e.getSuggestions().remove(0);
 
             String cmd = cursor.split(" ")[0];

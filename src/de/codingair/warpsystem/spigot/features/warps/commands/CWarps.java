@@ -1,10 +1,10 @@
 package de.codingair.warpsystem.spigot.features.warps.commands;
 
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
-import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
 import de.codingair.codingapi.server.sounds.Sound;
+import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.FeatureType;
@@ -17,9 +17,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class CWarps extends CommandBuilder {
+public class CWarps extends WSCommandBuilder {
     public CWarps() {
-        super("warps", "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_WARP_GUI) {
+        super("Warps", new BaseComponent(WarpSystem.PERMISSION_USE_WARP_GUI) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -40,15 +40,9 @@ public class CWarps extends CommandBuilder {
                 run(sender, null);
                 return false;
             }
-        }.setOnlyPlayers(true), true);
+        }.setOnlyPlayers(true));
 
         IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARP_GUI);
-
-        try {
-            setHighestPriority(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Dominate_In_Commands.Highest_Priority.Warps", true));
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
 
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
