@@ -37,9 +37,6 @@ public class DataManager {
         for(Manager manager : this.managers) {
             if(!manager.load(hidePrints)) success = false;
         }
-
-        BungeeCord.getInstance().getPluginManager().registerListener(WarpSystem.getInstance(), new TabCompleterListener());
-
         return success;
     }
 

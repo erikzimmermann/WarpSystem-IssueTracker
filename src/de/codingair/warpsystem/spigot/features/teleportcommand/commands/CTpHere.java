@@ -4,6 +4,7 @@ import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
+import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
@@ -42,11 +43,33 @@ public class CTpHere extends CommandBuilder {
 
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
+            public boolean matchTabComplete(CommandSender sender, String suggestion, String argument) {
+                return WarpSystem.getInstance().isOnBungeeCord() || super.matchTabComplete(sender, suggestion, argument);
+            }
+
+            @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                for(Player player : Bukkit.getOnlinePlayers()) {
-                    if(player.getName().equals(sender.getName())) continue;
-                    if(TeleportCommandManager.getInstance().deniesForceTps(player)) continue;
-                    suggestions.add(player.getName());
+                Player p = (Player) sender;
+                if(WarpSystem.getInstance().isOnBungeeCord()) {
+                    suggestions.add("!WARPSYSTEM");
+                    suggestions.add("§ACCESS");
+
+                    StringBuilder builder = new StringBuilder("tpa");
+                    for(String arg : args) {
+                        builder.append(" ").append(arg);
+                    }
+                    suggestions.add(builder.toString());
+
+                    for(Player player : Bukkit.getOnlinePlayers()) {
+                        if(!p.canSee(player)) {
+                            suggestions.add("-" + player.getName());
+                        }
+                    }
+                } else {
+                    for(Player player : Bukkit.getOnlinePlayers()) {
+                        if(player.getName().equals(sender.getName())) continue;
+                        suggestions.add(ChatColor.stripColor(player.getName()));
+                    }
                 }
             }
 

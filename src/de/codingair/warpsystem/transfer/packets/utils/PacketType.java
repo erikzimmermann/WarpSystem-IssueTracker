@@ -1,8 +1,7 @@
 package de.codingair.warpsystem.transfer.packets.utils;
 
+import de.codingair.warpsystem.spigot.features.teleportcommand.packets.*;
 import de.codingair.warpsystem.transfer.packets.general.SendGlobalSpawnOptionsPacket;
-import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ClearInvitesPacket;
-import de.codingair.warpsystem.spigot.features.teleportcommand.packets.TeleportCommandOptionsPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.*;
 import de.codingair.warpsystem.transfer.packets.general.*;
 import de.codingair.warpsystem.transfer.packets.spigot.*;
@@ -30,16 +29,11 @@ public enum PacketType {
     RequestUUIDPacket(19, RequestUUIDPacket.class),
     SendUUIDPacket(20, SendUUIDPacket.class),
     TeleportPlayerToPlayerPacket(21, TeleportPlayerToPlayerPacket.class),
-    TeleportPlayerToCoordsPacket(22, TeleportPlayerToCoordsPacket.class),
     PrepareServerSwitchPacket(23, PrepareServerSwitchPacket.class),
     PrepareLoginMessagePacket(24, PrepareLoginMessagePacket.class),
     MessagePacket(25, MessagePacket.class),
 
-    TeleportCommandOptions(30, TeleportCommandOptionsPacket.class),
-    ClearInvitesPacket(31, ClearInvitesPacket.class),
-    PrepareTeleportPlayerToPlayerPacket(32, PrepareTeleportPlayerToPlayerPacket.class),
-    PrepareTeleportRequestPacket(33, PrepareTeleportRequestPacket.class),
-    StartTeleportToPlayerPacket(34, de.codingair.warpsystem.transfer.packets.general.StartTeleportToPlayerPacket.class),
+    ToggleForceTeleportsPacket(35, ToggleForceTeleportsPacket.class),
 
     SendPlayerWarpsPacket(40, SendPlayerWarpsPacket.class),
     RegisterServerForPlayerWarpsPacket(41, RegisterServerForPlayerWarpsPacket.class),
@@ -53,9 +47,11 @@ public enum PacketType {
     IsOperatorPacket(50, IsOperatorPacket.class),
     SendDisablePacket(51, SendDisablePacket.class),
     IsOnlinePacket(52, IsOnlinePacket.class),
+    GetOnlineCountPacket(53, GetOnlineCountPacket.class),
 
     BooleanPacket(100, BooleanPacket.class),
     IntegerPacket(101, IntegerPacket.class),
+    LongPacket(102, LongPacket.class),
 
     AnswerPacket(200, AnswerPacket.class),
     ;

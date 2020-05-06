@@ -3,16 +3,13 @@ package de.codingair.warpsystem.spigot.features.teleportcommand.commands;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
-import de.codingair.warpsystem.spigot.api.players.BungeePlayer;
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
-import org.bukkit.Bukkit;
+import de.codingair.warpsystem.transfer.packets.spigot.GetOnlineCountPacket;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CTpaAll extends CommandBuilder {
     public CTpaAll() {
@@ -33,19 +30,28 @@ public class CTpaAll extends CommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                List<Player> players = new ArrayList<>();
-                for(Player player : Bukkit.getOnlinePlayers()) {
-                    if(player.getName().equals(sender.getName())) continue;
-                    players.add(player);
-                }
+                TeleportCommandManager.getInstance().invite(sender.getName(), true, new Callback<Long>() {
+                    @Override
+                    public void accept(Long result) {
+                        int handled = (int) (result >> 32);
 
-                if(TeleportCommandManager.getInstance().hasOpenInvites((Player) sender)) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Open_Requests"));
-                    return false;
-                }
-
-                int i = TeleportCommandManager.getInstance().sendTeleportRequest(new BungeePlayer((Player) sender), true, false, players.toArray(new Player[0]));
-                sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_All").replace("%RECEIVED%", i + "").replace("%MAX%", (Bukkit.getOnlinePlayers().size() - 1) + ""));
+                        if(WarpSystem.getInstance().isOnBungeeCord()) {
+                            WarpSystem.getInstance().getDataHandler().send(new GetOnlineCountPacket(new Callback<Integer>() {
+                                @Override
+                                public void accept(Integer count) {
+                                    int sent = result.intValue();
+                                    sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_All").replace("%RECEIVED%", sent + "").replace("%MAX%", (count - 1) + ""));
+                                    TextComponent tc = new TextComponent(Lang.getPrefix() + "§6" + (count - 1 - handled) + "§7 player(s) on §6different servers§7!");
+                                    tc.setColor(net.md_5.bungee.api.ChatColor.GRAY);
+                                    Lang.PREMIUM_CHAT(tc, sender, true);
+                                }
+                            }));
+                        } else {
+                            int sent = result.intValue();
+                            sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_All").replace("%RECEIVED%", sent + "").replace("%MAX%", handled + ""));
+                        }
+                    }
+                }, null);
                 return false;
             }
         }.setOnlyPlayers(true), true);

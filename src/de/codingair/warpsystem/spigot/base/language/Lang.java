@@ -70,7 +70,7 @@ public class Lang {
 
             TextComponent tc1 = new TextComponent(" §8[");
             TextComponent upgrade = new TextComponent("§6§nUpgrade");
-            TextComponent tc2 = new TextComponent("§8]\n");
+            TextComponent tc2 = new TextComponent("§8]");
 
             tc1.setColor(net.md_5.bungee.api.ChatColor.GRAY);
             tc2.setColor(net.md_5.bungee.api.ChatColor.GRAY);
@@ -82,9 +82,11 @@ public class Lang {
             base.addExtra(upgrade);
             base.addExtra(tc2);
 
-            sender.sendMessage(base.getText());
+            if(sender instanceof Player) {
+                ((Player) sender).spigot().sendMessage(base);
+            } else sender.sendMessage(base.getText());
 
-            premiumMessage.add(sender, 10);
+            premiumMessage.add(sender, 2);
         }
     }
 

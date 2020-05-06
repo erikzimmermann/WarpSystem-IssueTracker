@@ -4,11 +4,13 @@ import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.utils.ChatColor;
-import de.codingair.warpsystem.spigot.api.players.BungeePlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
+import de.codingair.warpsystem.transfer.packets.spigot.IsOnlinePacket;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -44,42 +46,76 @@ public class CTpa extends CommandBuilder {
 
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
+            public boolean matchTabComplete(CommandSender sender, String suggestion, String argument) {
+                return WarpSystem.getInstance().isOnBungeeCord() || super.matchTabComplete(sender, suggestion, argument);
+            }
+
+            @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                for(Player player : Bukkit.getOnlinePlayers()) {
-                    if(player.getName().equals(sender.getName()) || TeleportCommandManager.getInstance().deniesTpaRequests(player)) continue;
-                    suggestions.add(ChatColor.stripColor(player.getName()));
+                Player p = (Player) sender;
+                if(WarpSystem.getInstance().isOnBungeeCord()) {
+                    suggestions.add("!WARPSYSTEM");
+                    if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) suggestions.add("§ACCESS");
+
+                    StringBuilder builder = new StringBuilder("tpa");
+                    for(String arg : args) {
+                        builder.append(" ").append(arg);
+                    }
+                    suggestions.add(builder.toString());
+
+                    for(Player player : Bukkit.getOnlinePlayers()) {
+                        if(!p.canSee(player)) {
+                            suggestions.add("-" + player.getName());
+                        }
+                    }
+                } else {
+                    for(Player player : Bukkit.getOnlinePlayers()) {
+                        if(player.getName().equals(sender.getName()) || !p.canSee(player)) continue;
+                        suggestions.add(ChatColor.stripColor(player.getName()));
+                    }
                 }
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                Player receiver = Bukkit.getPlayer(argument);
-
-                if(receiver == null) {
+                if(argument == null) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
                     return false;
                 }
 
-                if(receiver.getName().equalsIgnoreCase(sender.getName())) {
+                if(argument.equalsIgnoreCase(sender.getName())) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Cant_Teleport_Yourself"));
                     return false;
                 }
 
-                if(TeleportCommandManager.getInstance().deniesTpaRequests(receiver)) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_denied_sender").replace("%PLAYER%", ChatColor.stripColor(receiver.getName())));
+                Player other = Bukkit.getPlayerExact(argument);
+
+                if(other == null && WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) {
+                    WarpSystem.getInstance().getDataHandler().send(new IsOnlinePacket(new Callback<Boolean>() {
+                        @Override
+                        public void accept(Boolean online) {
+                            if(online) {
+                                TextComponent tc = new TextComponent(Lang.getPrefix() + "§7Teleporting on your entire BungeeCord is a §6premium feature§7!");
+                                tc.setColor(net.md_5.bungee.api.ChatColor.GRAY);
+                                Lang.PREMIUM_CHAT(tc, sender, true);
+                            } else sender.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
+                        }
+                    }, argument));
                     return false;
                 }
 
-                if(TeleportCommandManager.getInstance().hasOpenInvites((Player) sender)) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Open_Requests"));
-                    return false;
-                }
+                TeleportCommandManager.getInstance().invite(sender.getName(), false, new Callback<Long>() {
+                    @Override
+                    public void accept(Long result) {
+                        int handled = (int) (result >> 32);
+                        int sent = result.intValue();
 
-                int i = TeleportCommandManager.getInstance().sendTeleportRequest(new BungeePlayer((Player) sender), false, true, receiver);
-                if(i == 0)
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_already_sent"));
-                else
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_sent").replace("%PLAYER%", ChatColor.stripColor(receiver.getName())));
+                        if(handled == 0) sender.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
+                        else if(handled == -1) sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_denied_sender").replace("%PLAYER%", ChatColor.stripColor(argument)));
+                        else if(sent == 0) sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_already_sent"));
+                        else sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_sent").replace("%PLAYER%", ChatColor.stripColor(argument)));
+                    }
+                }, argument);
                 return false;
             }
         });
