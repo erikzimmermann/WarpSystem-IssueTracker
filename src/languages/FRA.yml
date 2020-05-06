@@ -97,6 +97,7 @@ WarpSign_Choose_Warp_GUI: '&4&lChoisissez un warp!'
 WarpSign_Finish: 'La WarpSign a bien été positionné!'
 Teleport_Cancelled: '&cLa téléportation a été annulée.'
 WarpSign_Removed: '&7La WarpSign a été &csupprimé&7!'
+Creative_Mode_Needed: '&7Il faut être en &cmode créatif&7 !'
 Search: Recherche...
 Previous_Page: 'Page précédente'
 Next_Page: 'Page suivante'

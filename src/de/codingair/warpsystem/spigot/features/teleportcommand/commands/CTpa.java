@@ -54,7 +54,7 @@ public class CTpa extends CommandBuilder {
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 Player p = (Player) sender;
                 if(WarpSystem.getInstance().isOnBungeeCord()) {
-                    suggestions.add("!WARPSYSTEM");
+                    suggestions.add("§WARPSYSTEM");
                     if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) suggestions.add("§ACCESS");
 
                     StringBuilder builder = new StringBuilder("tpa");

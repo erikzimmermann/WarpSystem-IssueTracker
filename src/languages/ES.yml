@@ -96,6 +96,7 @@ WarpSign_Choose_Warp: ¡Escoge un warp para el carte!
 WarpSign_Finish: ¡El CartelWarp ha sido establecido correctamente!
 Teleport_Cancelled: '&cEl Teleport fue cancelado.'
 WarpSign_Removed: '&7El CartelWarp fue &celiminado&7!'
+Creative_Mode_Needed: '&7¡Tienes que estar en &cmodo creativo&7!'
 Search: Buscar...
 Previous_Page: Pagina Anterior
 Next_Page: Siguiente Pagina

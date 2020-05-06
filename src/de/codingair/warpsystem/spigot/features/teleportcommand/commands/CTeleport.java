@@ -157,7 +157,7 @@ public class CTeleport extends CommandBuilder {
             List<String> suggestions = new ArrayList<>();
 
             if(WarpSystem.getInstance().isOnBungeeCord()) {
-                suggestions.add("!WARPSYSTEM");
+                suggestions.add("§WARPSYSTEM");
                 suggestions.add("§ACCESS");
 
                 StringBuilder builder = new StringBuilder(s);

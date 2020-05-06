@@ -54,7 +54,7 @@ public class CTpaHere extends CommandBuilder {
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 Player p = (Player) sender;
                 if(WarpSystem.getInstance().isOnBungeeCord()) {
-                    suggestions.add("!WARPSYSTEM"); //key for bungeecord
+                    suggestions.add("§WARPSYSTEM"); //key for bungeecord
                     if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) suggestions.add("§ACCESS");
 
                     StringBuilder builder = new StringBuilder("tpahere");
