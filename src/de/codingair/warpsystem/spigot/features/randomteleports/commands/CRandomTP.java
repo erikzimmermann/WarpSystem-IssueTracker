@@ -41,9 +41,9 @@ public class CRandomTP extends WSCommandBuilder {
                         sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<blocks, info, go>");
                 } else {
                     if(RandomTeleporterManager.getInstance().isBuyable())
-                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<buy, info, go>");
+                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<buy, info>");
                     else {
-                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, go>");
+                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info>");
                     }
                 }
                 return false;
@@ -163,7 +163,13 @@ public class CRandomTP extends WSCommandBuilder {
         getBaseComponent().addChild(new CommandComponent("go") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                RandomTeleporterManager.getInstance().tryToTeleport((Player) sender);
+                if(sender.hasPermission(WarpSystem.PERMISSION_MODIFY_RANDOM_TELEPORTER)) Lang.PREMIUM_CHAT(sender);
+
+                if(RandomTeleporterManager.getInstance().isBuyable())
+                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<buy, info>");
+                else {
+                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info>");
+                }
                 return false;
             }
         });
