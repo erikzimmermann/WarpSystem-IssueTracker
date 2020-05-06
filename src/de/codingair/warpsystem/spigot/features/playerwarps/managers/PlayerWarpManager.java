@@ -820,7 +820,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         List<PlayerWarp> warps = new ArrayList<>();
 
         for(PlayerWarp warp : getOwnWarps(id)) {
-            if(warp.canTeleport(toTeleport)) warps.add(warp);
+            if(warp.isOwner(toTeleport) || (allowPublicWarps && warp.isPublic()) || (allowTrustedMembers && warp.isTrusted(toTeleport))) warps.add(warp);
         }
 
         return warps;
@@ -830,7 +830,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         int i = 0;
 
         for(PlayerWarp warp : getOwnWarps(id)) {
-            if(warp.canTeleport(trustedPlayer)) i++;
+            if(warp.isOwner(trustedPlayer) || (allowPublicWarps && warp.isPublic()) || (allowTrustedMembers && warp.isTrusted(trustedPlayer))) i++;
         }
 
         return i;
@@ -842,7 +842,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
         for(List<PlayerWarp> ws : this.warps.values()) {
             for(PlayerWarp warp : ws) {
-                if(warp.canTeleport(player)) warps.add(warp);
+                if(warp.isOwner(player) || (allowPublicWarps && warp.isPublic()) || (allowTrustedMembers && warp.isTrusted(player))) warps.add(warp);
             }
         }
 
@@ -854,8 +854,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
         for(List<PlayerWarp> ws : this.warps.values()) {
             for(PlayerWarp warp : ws) {
-                if(player.equals(warp.getOwner().getPlayer())) continue;
-                if((allowPublicWarps && warp.isPublic()) || (allowTrustedMembers && warp.isTrusted(player))) warps.add(warp);
+                if(warp.isOwner(player) || (allowPublicWarps && warp.isPublic()) || (allowTrustedMembers && warp.isTrusted(player))) warps.add(warp);
             }
         }
 
