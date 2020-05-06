@@ -11,7 +11,9 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
-import de.codingair.warpsystem.spigot.features.teleportcommand.packets.PrepareTeleportPacket;
+import de.codingair.warpsystem.transfer.packets.spigot.IsOnlinePacket;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -156,6 +158,7 @@ public class CTeleport extends CommandBuilder {
 
             if(WarpSystem.getInstance().isOnBungeeCord()) {
                 suggestions.add("!WARPSYSTEM");
+                suggestions.add("§ACCESS");
 
                 StringBuilder builder = new StringBuilder(s);
                 for(String arg : args) {
@@ -202,17 +205,17 @@ public class CTeleport extends CommandBuilder {
 
         if(playerP == null) {
             //try on proxy
-            if(WarpSystem.getInstance().isOnBungeeCord() && TeleportCommandManager.getInstance().isBungeeCord()) {
-                WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportPacket(new Callback<Long>() {
+            if(WarpSystem.getInstance().isOnBungeeCord()) {
+                WarpSystem.getInstance().getDataHandler().send(new IsOnlinePacket(new Callback<Boolean>() {
                     @Override
-                    public void accept(Long result) {
-                        int handled = (int) (result >> 32);
-                        int sent = result.intValue();
-
-                        if(handled == 0) gateP.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
-                        else if(sent == 0) gateP.sendMessage(Lang.getPrefix() + Lang.get("Teleport_denied").replace("%PLAYER%", player));
+                    public void accept(Boolean online) {
+                        if(online) {
+                            TextComponent tc = new TextComponent(Lang.getPrefix() + "§7Teleporting on your entire BungeeCord is a §6premium feature§7!");
+                            tc.setColor(ChatColor.GRAY);
+                            Lang.PREMIUM_CHAT(tc, gateP, true);
+                        } else gateP.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
                     }
-                }, gate, player, x, y, z));
+                }, player));
             } else gateP.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
             return;
         }
@@ -245,17 +248,28 @@ public class CTeleport extends CommandBuilder {
 
         if(playerP == null || targetP == null) {
             //try on proxy
-            if(WarpSystem.getInstance().isOnBungeeCord() && TeleportCommandManager.getInstance().isBungeeCord()) {
-                WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportPacket(new Callback<Long>() {
+            if(WarpSystem.getInstance().isOnBungeeCord()) {
+                WarpSystem.getInstance().getDataHandler().send(new IsOnlinePacket(new Callback<Boolean>() {
                     @Override
-                    public void accept(Long result) {
-                        int handled = (int) (result >> 32);
-                        int sent = result.intValue();
-
-                        if(handled == 0) gateP.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
-                        else if(sent == 0) gateP.sendMessage(Lang.getPrefix() + Lang.get("Teleport_denied").replace("%PLAYER%", player));
+                    public void accept(Boolean online) {
+                        if(online) {
+                            TextComponent tc = new TextComponent(Lang.getPrefix() + "§7Teleporting on your entire BungeeCord is a §6premium feature§7!");
+                            tc.setColor(ChatColor.GRAY);
+                            Lang.PREMIUM_CHAT(tc, gateP, true);
+                        } else {
+                            WarpSystem.getInstance().getDataHandler().send(new IsOnlinePacket(new Callback<Boolean>() {
+                                @Override
+                                public void accept(Boolean online) {
+                                    if(online) {
+                                        TextComponent tc = new TextComponent(Lang.getPrefix() + "§7Teleporting on your entire BungeeCord is a §6premium feature§7!");
+                                        tc.setColor(ChatColor.GRAY);
+                                        Lang.PREMIUM_CHAT(tc, gateP, true);
+                                    } else gateP.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
+                                }
+                            }, target));
+                        }
                     }
-                }, gate, player, target));
+                }, player));
             } else gateP.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
             return;
         }

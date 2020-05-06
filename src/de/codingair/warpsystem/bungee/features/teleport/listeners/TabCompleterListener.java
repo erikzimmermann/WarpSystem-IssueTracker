@@ -19,6 +19,7 @@ public class TabCompleterListener implements Listener {
 
         if(main.equals("!WARPSYSTEM")) {
             e.getSuggestions().remove(0);
+            boolean hasAccess = e.getSuggestions().remove("§ACCESS");
             String cursor = e.getSuggestions().remove(0);
 
             String cmd = cursor.split(" ")[0];
@@ -30,7 +31,7 @@ public class TabCompleterListener implements Listener {
 
             if(cmd.equalsIgnoreCase("teleport") || cmd.equalsIgnoreCase("tp")) {
                 e.getSuggestions().clear();
-                if(options == null || !options.isTp()) {
+                if(!hasAccess) {
                     for(ProxiedPlayer player : info.getPlayers()) {
                         e.getSuggestions().add(player.getName());
                     }
@@ -43,11 +44,8 @@ public class TabCompleterListener implements Listener {
                     if(deep == 1 && Character.isDigit(args[1].charAt(0)) && BungeeCord.getInstance().getPlayer(args[1]) == null) return;
                     if(deep == 0 || deep == 1) {
                         for(ServerInfo server : BungeeCord.getInstance().getServers().values()) {
-                            TeleportCommandOptions access = TeleportManager.getInstance().getOptions(server);
-                            if(access != null && access.isTp()) {
-                                for(ProxiedPlayer player : server.getPlayers()) {
-                                    e.getSuggestions().add(player.getName());
-                                }
+                            for(ProxiedPlayer player : server.getPlayers()) {
+                                e.getSuggestions().add(player.getName());
                             }
                         }
                     }
@@ -56,19 +54,16 @@ public class TabCompleterListener implements Listener {
                         String last = args[deep];
 
                         for(ServerInfo server : BungeeCord.getInstance().getServers().values()) {
-                            TeleportCommandOptions access = TeleportManager.getInstance().getOptions(server);
-                            if(access != null && access.isTp()) {
-                                for(ProxiedPlayer player : server.getPlayers()) {
-                                    if(!player.getName().toLowerCase().startsWith(last.toLowerCase())) continue;
-                                    e.getSuggestions().add(player.getName());
-                                }
+                            for(ProxiedPlayer player : server.getPlayers()) {
+                                if(!player.getName().toLowerCase().startsWith(last.toLowerCase())) continue;
+                                e.getSuggestions().add(player.getName());
                             }
                         }
                     }
                 }
             } else if(cmd.equalsIgnoreCase("tpa")) {
                 e.getSuggestions().clear();
-                if(options == null || !options.isTpa()) {
+                if(!hasAccess) {
                     for(ProxiedPlayer player : info.getPlayers()) {
                         if(player.getName().equals(receiver.getName())) continue;
                         if(!e.getSuggestions().remove("-" + player.getName())) e.getSuggestions().add(player.getName()); //check removed player names
@@ -79,21 +74,18 @@ public class TabCompleterListener implements Listener {
                 String last = args[args.length - 1];
 
                 for(ServerInfo server : BungeeCord.getInstance().getServers().values()) {
-                    TeleportCommandOptions access = TeleportManager.getInstance().getOptions(server);
-                    if(access != null && access.isTpa()) {
-                        for(ProxiedPlayer player : server.getPlayers()) {
-                            if(player.getName().equals(receiver.getName())) continue;
-                            if(!cursor.endsWith(" ") && !player.getName().toLowerCase().startsWith(last.toLowerCase())) continue;
+                    for(ProxiedPlayer player : server.getPlayers()) {
+                        if(player.getName().equals(receiver.getName())) continue;
+                        if(!cursor.endsWith(" ") && !player.getName().toLowerCase().startsWith(last.toLowerCase())) continue;
 
-                            if(!e.getSuggestions().remove("-" + player.getName())) {
-                                e.getSuggestions().add(player.getName()); //check removed player names
-                            }
+                        if(!e.getSuggestions().remove("-" + player.getName())) {
+                            e.getSuggestions().add(player.getName()); //check removed player names
                         }
                     }
                 }
             } else if(cmd.equalsIgnoreCase("tpahere")) {
                 e.getSuggestions().clear();
-                if(options == null || !options.isTpaHere()) {
+                if(!hasAccess) {
                     for(ProxiedPlayer player : info.getPlayers()) {
                         if(player.getName().equals(receiver.getName())) continue;
                         if(!e.getSuggestions().remove("-" + player.getName())) e.getSuggestions().add(player.getName()); //check removed player names
@@ -103,21 +95,18 @@ public class TabCompleterListener implements Listener {
                 String last = args[args.length - 1];
 
                 for(ServerInfo server : BungeeCord.getInstance().getServers().values()) {
-                    TeleportCommandOptions access = TeleportManager.getInstance().getOptions(server);
-                    if(access != null && access.isTpaHere()) {
-                        for(ProxiedPlayer player : server.getPlayers()) {
-                            if(player.getName().equals(receiver.getName())) continue;
-                            if(!cursor.endsWith(" ") && !player.getName().toLowerCase().startsWith(last.toLowerCase())) continue;
+                    for(ProxiedPlayer player : server.getPlayers()) {
+                        if(player.getName().equals(receiver.getName())) continue;
+                        if(!cursor.endsWith(" ") && !player.getName().toLowerCase().startsWith(last.toLowerCase())) continue;
 
-                            if(!e.getSuggestions().remove("-" + player.getName())) {
-                                e.getSuggestions().add(player.getName()); //check removed player names
-                            }
+                        if(!e.getSuggestions().remove("-" + player.getName())) {
+                            e.getSuggestions().add(player.getName()); //check removed player names
                         }
                     }
                 }
             } else if(cmd.equalsIgnoreCase("tphere")) {
                 e.getSuggestions().clear();
-                if(options == null || !options.isTp()) {
+                if(!hasAccess) {
                     for(ProxiedPlayer player : info.getPlayers()) {
                         e.getSuggestions().add(player.getName());
                     }
@@ -127,13 +116,10 @@ public class TabCompleterListener implements Listener {
                 String last = args[args.length - 1];
 
                 for(ServerInfo server : BungeeCord.getInstance().getServers().values()) {
-                    TeleportCommandOptions access = TeleportManager.getInstance().getOptions(server);
-                    if(access != null && access.isTp()) {
-                        for(ProxiedPlayer player : server.getPlayers()) {
-                            if(!cursor.endsWith(" ") && !player.getName().toLowerCase().startsWith(last.toLowerCase())) continue;
+                    for(ProxiedPlayer player : server.getPlayers()) {
+                        if(!cursor.endsWith(" ") && !player.getName().toLowerCase().startsWith(last.toLowerCase())) continue;
 
-                            e.getSuggestions().add(player.getName());
-                        }
+                        e.getSuggestions().add(player.getName());
                     }
                 }
             }
