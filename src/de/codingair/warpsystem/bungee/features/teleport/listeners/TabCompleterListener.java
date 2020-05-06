@@ -15,10 +15,7 @@ public class TabCompleterListener implements Listener {
     public void onResponse(TabCompleteResponseEvent e) {
         if(e.getSuggestions().isEmpty()) return;
 
-        String main = e.getSuggestions().get(0);
-
-        if(main.equals("!WARPSYSTEM")) {
-            e.getSuggestions().remove(0);
+        if(e.getSuggestions().remove("§WARPSYSTEM")) {
             String cursor = e.getSuggestions().remove(0);
 
             String cmd = cursor.split(" ")[0];

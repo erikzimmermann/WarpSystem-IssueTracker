@@ -51,7 +51,7 @@ public class CTpHere extends CommandBuilder {
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 Player p = (Player) sender;
                 if(WarpSystem.getInstance().isOnBungeeCord()) {
-                    suggestions.add("!WARPSYSTEM");
+                    suggestions.add("§WARPSYSTEM");
 
                     StringBuilder builder = new StringBuilder("tpa");
                     for(String arg : args) {

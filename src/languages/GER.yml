@@ -97,6 +97,7 @@ WarpSign_Choose_Warp: 'Wähle ein Warp für das Warp-Schild aus!'
 WarpSign_Finish: Das Warp-Schild wurde erfolgreich gesetzt!
 Teleport_Cancelled: '&cDer Teleport wurde abgebrochen.'
 WarpSign_Removed: '&7Das Warp-Schild wurde &centfernt&7!'
+Creative_Mode_Needed: '&7Du musst im &cKreativ-Modus &7sein!'
 Search: Suche...
 Previous_Page: Vorherige Seite
 Next_Page: 'Nächste Seite'
