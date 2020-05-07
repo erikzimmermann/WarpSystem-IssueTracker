@@ -12,6 +12,7 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
@@ -218,8 +219,11 @@ public class CGlobalWarps extends WSCommandBuilder implements BungeeFeature {
                 new GGlobalWarpList((Player) sender) {
                     @Override
                     public void onClick(String warp, ClickType clickType) {
-                        WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, Origin.GlobalWarp, new Destination(warp, DestinationType.GlobalWarp), warp, 0, true, true,
-                                WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.GlobalWarps", true), false, null);
+                        TeleportOptions options = new TeleportOptions(new Destination(warp, DestinationType.GlobalWarp), warp);
+                        options.setOrigin(Origin.GlobalWarp);
+                        options.setSkip(true);
+
+                        WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, options);
                     }
 
                     @Override

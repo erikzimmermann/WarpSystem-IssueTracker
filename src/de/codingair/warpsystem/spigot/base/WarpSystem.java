@@ -96,6 +96,7 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_HIDE_ALL_ICONS = "WarpGUI.HideAll";
     public static final String PERMISSION_TELEPORT_PRELOAD_CHUNKS = "WarpSystem.Teleport.ChunkPreLoading";
     public static final String PERMISSION_SIMPLE_WARPS_DIRECT_TELEPORT = "WarpSystem.SimpleWarp.DirectTeleport";
+    public static final String PERMISSION_GLOBAL_WARPS_DIRECT_TELEPORT = "WarpSystem.GlobalWarp.DirectTeleport";
 
     public static final String PERMISSION_ByPass_Maintenance = "WarpSystem.ByPass.Maintenance";
     public static final String PERMISSION_ByPass_Teleport_Costs = "WarpSystem.ByPass.Teleport.Costs";
@@ -463,8 +464,7 @@ public class WarpSystem extends JavaPlugin {
 
                 if(!saver) log("Saving features");
                 this.dataManager.save(saver);
-                this.teleportManager.save(saver);
-                fileManager.getFile("Config");
+                this.teleportManager.save();
 
                 if(!saver) {
                     timer.stop();

@@ -1,6 +1,5 @@
 package de.codingair.warpsystem.spigot.base.managers;
 
-import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.codingapi.server.sounds.Sound;
@@ -19,7 +18,6 @@ import de.codingair.warpsystem.spigot.base.utils.options.specific.GeneralOptions
 import de.codingair.warpsystem.spigot.base.utils.teleport.*;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -35,36 +33,8 @@ import java.util.List;
 
 public class TeleportManager {
     public static final String NO_PERMISSION = "%NO_PERMISSION%";
-    private List<Particle> particles = new ArrayList<>();
     private List<Teleport> teleports = new ArrayList<>();
-
     private GeneralOptions options;
-
-    public TeleportManager() {
-        particles.add(Particle.FIREWORKS_SPARK);
-        particles.add(Particle.SUSPENDED_DEPTH);
-        particles.add(Particle.CRIT);
-        particles.add(Particle.CRIT_MAGIC);
-        particles.add(Particle.SMOKE_NORMAL);
-        particles.add(Particle.SMOKE_LARGE);
-        particles.add(Particle.SPELL);
-        particles.add(Particle.SPELL_INSTANT);
-        particles.add(Particle.SPELL_MOB);
-        particles.add(Particle.SPELL_WITCH);
-        particles.add(Particle.DRIP_WATER);
-        particles.add(Particle.DRIP_LAVA);
-        particles.add(Particle.VILLAGER_ANGRY);
-        particles.add(Particle.VILLAGER_HAPPY);
-        particles.add(Particle.TOWN_AURA);
-        particles.add(Particle.NOTE);
-        particles.add(Particle.ENCHANTMENT_TABLE);
-        particles.add(Particle.FLAME);
-        particles.add(Particle.CLOUD);
-        particles.add(Particle.REDSTONE);
-        particles.add(Particle.SNOW_SHOVEL);
-        particles.add(Particle.HEART);
-        particles.add(Particle.PORTAL);
-    }
 
     /**
      * Have to be launched after the IconManager (see WarpSign.class - fromJSONString method - need warps and categories)
@@ -76,118 +46,19 @@ public class TeleportManager {
         return success;
     }
 
-    public void save(boolean saver) {
+    public void save() {
         WarpSystem.getInstance().getFileManager().getFile("Config").saveConfig();
     }
 
-    public void teleport(Player player, Location location, String displayName, boolean afterEffects) {
-        teleport(player, Origin.Custom, location, displayName, afterEffects);
-    }
-
-    public void teleport(Player player, Origin origin, Location location, String displayName, boolean afterEffects) {
-        teleport(player, origin, location, displayName, afterEffects, true);
-    }
-
-    public void teleport(Player player, Origin origin, Location location, String displayName, boolean afterEffects, boolean skip) {
-        teleport(player, origin, new Destination(new LocationAdapter(location)), displayName, null, 0, skip, skip, true, false, afterEffects, null);
-    }
-
-    public void teleport(Player player, Origin origin, Location location, String displayName, boolean afterEffects, boolean skip, Callback<TeleportResult> callBack) {
-        teleport(player, origin, new Destination(new LocationAdapter(location)), displayName, null, 0, skip, skip, true, false, afterEffects, callBack);
-    }
-
+    @Deprecated
     public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs) {
-        teleport(player, origin, destination, displayName, costs, null);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean message) {
-        teleport(player, origin, destination, displayName, costs, false, this.options.isAllowMove(), message, false, null);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean message) {
-        teleport(player, origin, destination, displayName, permission, costs, false, this.options.isAllowMove(), message, false, null);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean message, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, costs, false, this.options.isAllowMove(), message, false, callback);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean message, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, permission, costs, false, this.options.isAllowMove(), message, false, callback);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, costs, false, this.options.isAllowMove(), true, false, callback);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean message, boolean silent, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, costs, skip, this.options.isAllowMove(), message, silent, callback);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, boolean message, boolean silent, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, null, costs, skip, canMove, message, silent, callback);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, boolean message, boolean silent, boolean afterEffects, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message, silent, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), afterEffects, callback);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, boolean message, boolean silent, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message, silent, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), callback);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, boolean message, boolean silent, SoundData soundData, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message, silent, soundData, true, callback);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, boolean message, boolean silent, SoundData soundData, boolean afterEffects, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message ?
-                costs > 0 && MoneyAdapterType.getActive() != null && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs) ?
-                        Lang.getPrefix() + Lang.get("Money_Paid")
-                        : Lang.getPrefix() + Lang.get("Teleported_To")
-                : null, silent, soundData, afterEffects, callback);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, String message, boolean silent, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, costs, skip, this.options.isAllowMove(), message, silent, callback);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, String message, boolean silent, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, costs, skip, canMove, message, silent, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), callback);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, String message, boolean silent, SoundData teleportSound, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, costs, skip, canMove, message, silent, teleportSound, true, callback);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, double costs, boolean skip, boolean canMove, String message, boolean silent, SoundData teleportSound, boolean afterEffects, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, null, costs, skip, canMove, message, silent, teleportSound, true, callback);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, String message, boolean silent, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, permission, costs, skip, this.options.isAllowMove(), message, silent, callback);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, String message, boolean silent, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message, silent, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), callback);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, String message, boolean silent, SoundData teleportSound, Callback<TeleportResult> callback) {
-        teleport(player, origin, destination, displayName, permission, costs, skip, canMove, message, silent, teleportSound, true, callback);
-    }
-
-    public void teleport(Player player, Origin origin, Destination destination, String displayName, String permission, double costs, boolean skip, boolean canMove, String message, boolean silent, SoundData teleportSound, boolean afterEffects, Callback<TeleportResult> callback) {
         TeleportOptions options = new TeleportOptions(destination, displayName);
         options.setOrigin(origin);
-        options.setPermission(permission);
         options.setCosts(costs);
-        options.setSkip(skip);
-        options.setCanMove(canMove);
-        options.setMessage(message);
-        options.setSilent(silent);
-        options.setTeleportSound(teleportSound);
-        options.setAfterEffects(afterEffects);
-        options.addCallback(callback);
+        options.setCanMove(this.options.isAllowMove());
+        options.setMessage(costs > 0 && MoneyAdapterType.getActive() != null && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs) ?
+                Lang.getPrefix() + Lang.get("Money_Paid")
+                : Lang.getPrefix() + Lang.get("Teleported_To"));
 
         teleport(player, options);
     }
@@ -451,10 +322,6 @@ public class TeleportManager {
 
     public boolean isTeleporting(Player p) {
         return getTeleport(p) != null;
-    }
-
-    public List<Particle> getParticles() {
-        return particles;
     }
 
     public List<Teleport> getTeleports() {
