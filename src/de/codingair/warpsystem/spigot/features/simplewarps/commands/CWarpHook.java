@@ -2,6 +2,7 @@ package de.codingair.warpsystem.spigot.features.simplewarps.commands;
 
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
@@ -22,8 +23,12 @@ public class CWarpHook {
         SimpleWarpManager m = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
         if(m.existsWarp(argument)) {
             SimpleWarp warp = m.getWarp(argument);
-            WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, Origin.SimpleWarp, new Destination(warp.getName(), DestinationType.SimpleWarp), warp.getName(), warp.getCosts(),
-                    WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Message.SimpleWarps", true));
+
+            TeleportOptions options = new TeleportOptions(new Destination(warp.getName(), DestinationType.SimpleWarp), warp.getName());
+            options.setCosts(warp.getCosts());
+            options.setOrigin(Origin.SimpleWarp);
+
+            WarpSystem.getInstance().getTeleportManager().teleport((Player) sender, options);
 
             return true;
         }

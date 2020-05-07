@@ -7,6 +7,9 @@ import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
 import de.codingair.warpsystem.transfer.packets.spigot.GetOnlineCountPacket;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -41,7 +44,11 @@ public class CTpAll extends WSCommandBuilder {
                     iHandled++;
                     if(TeleportCommandManager.getInstance().deniesForceTps(player)) continue;
 
-                    WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.CustomTeleportCommands, ((Player) sender).getLocation(), sender.getName(), true);
+                    TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(((Player) sender).getLocation())), sender.getName());
+                    options.setOrigin(Origin.CustomTeleportCommands);
+                    options.setSkip(true);
+
+                    WarpSystem.getInstance().getTeleportManager().teleport(player, options);
                     iSent++;
                 }
 

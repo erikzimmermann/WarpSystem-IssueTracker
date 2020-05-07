@@ -8,6 +8,7 @@ import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
@@ -234,11 +235,12 @@ public class CTeleport extends WSCommandBuilder {
         location.setYaw(0);
         location.setPitch(0);
 
-        de.codingair.warpsystem.spigot.base.WarpSystem.getInstance().getTeleportManager().teleport(playerP, Origin.TeleportCommand, new Destination(new LocationAdapter(location)),
-                destination, 0, true,
-                gateP == playerP ? Lang.get("Teleported_To") :
-                        Lang.get("Teleported_To_By").replace("%gate%", gateP.getName())
-                , false, null);
+        TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(location)), destination);
+        options.setOrigin(Origin.TeleportCommand);
+        options.setSkip(true);
+        options.setMessage(gateP == playerP ? Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", gateP.getName()));
+
+        WarpSystem.getInstance().getTeleportManager().teleport(playerP, options);
     }
 
     private static void tp(String gate, String player, String target) {
@@ -281,10 +283,11 @@ public class CTeleport extends WSCommandBuilder {
 
         if(gateP != playerP) gateP.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", playerP.getName()).replace("%warp%", targetP.getName()));
 
-        WarpSystem.getInstance().getTeleportManager().teleport(playerP, Origin.TeleportCommand, new Destination(new LocationAdapter(targetP.getLocation())),
-                targetP.getName(), 0, true,
-                gateP == playerP ? Lang.get("Teleported_To") :
-                        Lang.get("Teleported_To_By").replace("%gate%", gateP.getName())
-                , false, null);
+        TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(targetP.getLocation())), targetP.getName());
+        options.setOrigin(Origin.TeleportCommand);
+        options.setSkip(true);
+        options.setMessage(gateP == playerP ? Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", gateP.getName()));
+
+        WarpSystem.getInstance().getTeleportManager().teleport(playerP, options);
     }
 }
