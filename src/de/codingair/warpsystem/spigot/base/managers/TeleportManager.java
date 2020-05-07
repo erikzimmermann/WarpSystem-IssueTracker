@@ -80,10 +80,6 @@ public class TeleportManager {
         WarpSystem.getInstance().getFileManager().getFile("Config").saveConfig();
     }
 
-    public void teleport(Player player, Location location, String displayName, boolean afterEffects) {
-        teleport(player, Origin.Custom, location, displayName, afterEffects);
-    }
-
     public void teleport(Player player, Origin origin, Location location, String displayName, boolean afterEffects) {
         teleport(player, origin, location, displayName, afterEffects, true);
     }

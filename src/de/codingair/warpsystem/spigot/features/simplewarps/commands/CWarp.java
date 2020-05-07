@@ -8,6 +8,7 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
@@ -147,10 +148,14 @@ public class CWarp extends WSCommandBuilder {
 
                 SimpleWarp warp = m.getWarp(args[0]);
 
-                WarpSystem.getInstance().getTeleportManager().teleport(player, Origin.DirectSimpleWarp, new Destination(warp.getName(), DestinationType.SimpleWarp), warp.getName(), TeleportManager.NO_PERMISSION, 0, true,
-                        Lang.get("Teleported_To_By").replace("%gate%", sender.getName()), false, null);
+                TeleportOptions options = new TeleportOptions(new Destination(warp.getName(), DestinationType.SimpleWarp), warp.getName());
+                options.setOrigin(Origin.SimpleWarp);
+                options.setMessage(Lang.get("Teleported_To_By").replace("%gate%", sender.getName()));
+                options.setPermission(TeleportManager.NO_PERMISSION);
+
+                WarpSystem.getInstance().getTeleportManager().teleport(player, options);
                 return false;
             }
-        });
+        }.setOnlyPlayers(false));
     }
 }
