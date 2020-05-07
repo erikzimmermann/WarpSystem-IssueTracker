@@ -153,6 +153,11 @@ public class CWarp extends WSCommandBuilder {
                 options.setMessage(Lang.get("Teleported_To_By").replace("%gate%", sender.getName()));
                 options.setPermission(TeleportManager.NO_PERMISSION);
 
+                if(!player.getName().equals(sender.getName())) {
+                    sender.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", player.getName()).replace("%warp%", warp.getName()));
+                    options.setSkip(true);
+                }
+
                 WarpSystem.getInstance().getTeleportManager().teleport(player, options);
                 return false;
             }

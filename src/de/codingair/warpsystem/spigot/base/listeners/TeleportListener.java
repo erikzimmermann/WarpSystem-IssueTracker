@@ -28,6 +28,7 @@ public class TeleportListener implements Listener {
             return;
         }
 
+        options.setSkip(true);
         Player player = Bukkit.getPlayer(name);
 
         if(player == null) {

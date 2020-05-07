@@ -464,8 +464,7 @@ public class WarpSystem extends JavaPlugin {
 
                 if(!saver) log("Saving features");
                 this.dataManager.save(saver);
-                this.teleportManager.save(saver);
-                fileManager.getFile("Config");
+                this.teleportManager.save();
 
                 if(!saver) {
                     timer.stop();

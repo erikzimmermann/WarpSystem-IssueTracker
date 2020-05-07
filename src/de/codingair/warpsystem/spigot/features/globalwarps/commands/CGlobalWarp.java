@@ -88,10 +88,16 @@ public class CGlobalWarp extends WSCommandBuilder implements BungeeFeature {
                 }
 
                 if(GlobalWarpManager.getInstance().exists(args[0])) {
-                    TeleportOptions options = new TeleportOptions(new Destination(args[0], DestinationType.GlobalWarp), GlobalWarpManager.getInstance().getCaseCorrectlyName(args[0]));
+                    String dest = GlobalWarpManager.getInstance().getCaseCorrectlyName(args[0]);
+                    TeleportOptions options = new TeleportOptions(new Destination(args[0], DestinationType.GlobalWarp), dest);
                     options.setOrigin(Origin.GlobalWarp);
                     options.setMessage(Lang.get("Teleported_To_By").replace("%gate%", sender.getName()));
                     options.setPermission(TeleportManager.NO_PERMISSION);
+
+                    if(!player.getName().equals(sender.getName())) {
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", player.getName()).replace("%warp%", dest));
+                        options.setSkip(true);
+                    }
 
                     WarpSystem.getInstance().getTeleportManager().teleport(player, options);
                 } else {
