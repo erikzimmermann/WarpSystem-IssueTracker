@@ -102,6 +102,9 @@ WarpSystem:
   SimpleWarps:
     #Adds on every created warp the standard permission: 'WarpSystem.Warps.<WarpName>'
     Add_Permission_On_Creation: false
+    #If toggled to true, every SimpleWarp get the permission "WarpSystem.SimpleWarp.<warp>" regardless whether a warp already has a permission or not
+    #Names containing spaces (" ") will be modified with underlines ("_"). So the permission of the warp "Test test" will be "test_test".
+    Overwrite_Permissions: false
 
   Commands:
     Warp:
