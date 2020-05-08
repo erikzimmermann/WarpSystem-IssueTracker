@@ -5,6 +5,7 @@ import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.codingapi.tools.io.utils.Serializable;
+import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -111,6 +112,7 @@ public class SimpleWarp implements Serializable {
     }
 
     public String getPermission() {
+        if(this.name != null && SimpleWarpManager.getInstance().isOverwritePermissions()) return SimpleWarpManager.PERMISSION.replace("%WARP%", ChatColor.stripColor(this.name).replace(" ", "_"));
         return permission;
     }
 
@@ -186,6 +188,6 @@ public class SimpleWarp implements Serializable {
     }
 
     public boolean hasPermission() {
-        return this.permission != null;
+        return getPermission() != null;
     }
 }
