@@ -1,6 +1,5 @@
 package de.codingair.warpsystem.spigot.features.randomteleports.utils;
 
-import de.codingair.codingapi.tools.Area;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
@@ -9,7 +8,6 @@ import de.codingair.warpsystem.spigot.features.randomteleports.managers.RandomTe
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -49,12 +47,7 @@ public class RandomLocationCalculator implements Runnable {
 
     private Location calculate(Player player) throws InterruptedException {
         start = System.currentTimeMillis();
-        Location location;
-
-        List<World> availableWorlds = RandomTeleporterManager.getInstance().getWorldList();
-        if(!availableWorlds.isEmpty()) location = Location.getByLocation(availableWorlds.get((int) (Math.random() * availableWorlds.size())).getSpawnLocation());
-        else location = new Location(player.getLocation());
-
+        Location location = new Location(player.getLocation());
         double x = player.getLocation().getX();
         double z = player.getLocation().getZ();
 
@@ -148,7 +141,6 @@ public class RandomLocationCalculator implements Runnable {
     private boolean correct(Location location, boolean safety) throws InterruptedException {
         if(RandomTeleporterManager.getInstance().getBiomeList() != null && !RandomTeleporterManager.getInstance().getBiomeList().contains(location.getBlock().getBiome())) return false;
         if(RandomTeleporterManager.getInstance().isProtectedRegions() && isProtected(location)) return false;
-        if(RandomTeleporterManager.getInstance().isWorldBorder() && !isInsideOfWorldBorder(location)) return false;
 
         if(safety) {
             Location above = location.clone();
@@ -175,11 +167,6 @@ public class RandomLocationCalculator implements Runnable {
         }
 
         return true;
-    }
-
-    private boolean isInsideOfWorldBorder(Location location) {
-        WorldBorder border = location.getWorld().getWorldBorder();
-        return border == null || Area.isInArea(location, border.getCenter(), border.getSize() / 2, false, 0);
     }
 
     private boolean isProtected(Location location) throws InterruptedException {
