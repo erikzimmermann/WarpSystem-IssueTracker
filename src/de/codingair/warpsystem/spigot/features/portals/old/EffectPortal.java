@@ -18,7 +18,6 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.features.animations.AnimationManager;
 import de.codingair.warpsystem.spigot.features.animations.utils.Animation;
 import de.codingair.warpsystem.spigot.features.animations.utils.ParticlePart;
-import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
 import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -195,7 +194,7 @@ public class EffectPortal extends FeatureObject implements Removable {
                 useLink = true;
             } else {
                 this.animation = AnimationManager.getInstance().getAnimation(d.getString("ep.anim.name"));
-                this.teleportSound = d.get("ep.sound.type") == null ? new SoundData(Sound.ENDERMAN_TELEPORT, 0.7F, 1F) : new SoundData(d.get("ep.sound.type", Sound.class), d.getFloat("ep.sound.volume"), d.getFloat("ep.sound.pitch"));
+                this.teleportSound = d.get("ep.sound.type") == null ? new SoundData(Sound.ENTITY_ENDERMAN_TELEPORT, 0.7F, 1F) : new SoundData(d.get("ep.sound.type", Sound.class), d.getFloat("ep.sound.volume"), d.getFloat("ep.sound.pitch"));
                 linkHelper = d.getLocation("ep.link");
             }
 
@@ -209,7 +208,7 @@ public class EffectPortal extends FeatureObject implements Removable {
         this.holoPos.setYaw(0);
         this.holoPos.setPitch(0);
 
-        if(!useLink() && this.teleportSound != null && this.teleportSound.getSound() == null) this.teleportSound.setSound(Sound.ENDERMAN_TELEPORT);
+        if(!useLink() && this.teleportSound != null && this.teleportSound.getSound() == null) this.teleportSound.setSound(Sound.ENTITY_ENDERMAN_TELEPORT);
         return true;
     }
 

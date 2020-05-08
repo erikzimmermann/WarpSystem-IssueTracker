@@ -169,7 +169,7 @@ public class TeleportSoundPage extends PageItem {
     }
 
     public static SoundData createStandard() {
-        return new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F);
+        return new SoundData(Sound.ENTITY_ENDERMAN_TELEPORT, 1F, 1F);
     }
 
     public static boolean isStandardSound(SoundData data) {

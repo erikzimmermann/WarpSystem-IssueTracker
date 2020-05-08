@@ -111,7 +111,7 @@ public class GWarps extends GUI {
                 if(cursorIcon != null && cursorIcon.getPage() == GWarps.this.page && cursorIcon.getSlot() == e.getSlot()) {
                     e.getView().setCursor(new ItemStack(Material.AIR));
                     setMoving(false, e.getSlot());
-                    Sound.CLICK.playSound(getPlayer(), 0.7F, 1F);
+                    Sound.UI_BUTTON_CLICK.playSound(getPlayer(), 0.7F, 1F);
                     e.setCancelled(true);
                 }
             }
@@ -168,7 +168,7 @@ public class GWarps extends GUI {
         IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARP_GUI);
 
         ItemButtonOption option = new ItemButtonOption();
-        option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
+        option.setClickSound(new SoundData(Sound.UI_BUTTON_CLICK, 0.7F, 1F));
         option.setOnlyLeftClick(true);
 
         ItemBuilder noneBuilder;
@@ -368,7 +368,7 @@ public class GWarps extends GUI {
                                                     new GEditor(p, icon, clone).setFallbackGUI(GWarps.this).setUseFallbackGUI(true).open();
                                                 });
                                             else {
-                                                Sound.ITEM_BREAK.playSound(p);
+                                                Sound.ENTITY_ITEM_BREAK.playSound(p);
                                                 e.setPost(() -> new GWarps(p, GWarps.this.page, editing).open());
                                             }
                                         }

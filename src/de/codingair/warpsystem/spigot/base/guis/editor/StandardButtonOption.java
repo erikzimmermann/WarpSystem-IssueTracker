@@ -6,6 +6,6 @@ import de.codingair.codingapi.server.sounds.SoundData;
 
 public class StandardButtonOption extends ItemButtonOption {
     public StandardButtonOption() {
-        setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
+        setClickSound(new SoundData(Sound.UI_BUTTON_CLICK, 0.7F, 1F));
     }
 }

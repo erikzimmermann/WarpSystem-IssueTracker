@@ -64,7 +64,7 @@ public class FeatureObject implements Serializable {
     }
 
     public FeatureObject perform(Player player) {
-        return perform(player, hasAction(Action.WARP) ? getAction(WarpAction.class).getValue().getId() : null, hasAction(Action.WARP) ? getAction(WarpAction.class).getValue() : null, new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F), skip, true);
+        return perform(player, hasAction(Action.WARP) ? getAction(WarpAction.class).getValue().getId() : null, hasAction(Action.WARP) ? getAction(WarpAction.class).getValue() : null, new SoundData(Sound.ENTITY_ENDERMAN_TELEPORT, 1F, 1F), skip, true);
     }
 
     public FeatureObject perform(Player player, String destName, Destination dest, SoundData sound, boolean skip, boolean afterEffects) {

@@ -68,7 +68,7 @@ public class AnimationManager implements Manager {
             }
 
         active = new Animation("§Standard§", new ParticlePart(AnimationType.CIRCLE, Particle.FIREWORKS_SPARK, 1, 1, CustomAnimation.MAX_SPEED));
-        active.setTickSound(new SoundData(Sound.NOTE_PLING, 0.8F, 1F));
+        active.setTickSound(new SoundData(Sound.BLOCK_NOTE_BLOCK_PLING, 0.8F, 1F));
 
         WarpSystem.log("    ...got " + animationList.size() + " animation(s)");
 

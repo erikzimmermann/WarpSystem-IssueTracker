@@ -243,7 +243,7 @@ public class RandomTeleporterManager implements Manager {
 
                     Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> {
                         player.teleport(loc);
-                        Sound.ENDERMAN_TELEPORT.playSound(player);
+                        Sound.ENTITY_ENDERMAN_TELEPORT.playSound(player);
                         player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Teleported"));
                     });
                 }

@@ -44,7 +44,7 @@ public class GOptions extends Editor<OptionBundle> {
         super.updatePageItems();
 
         ItemButtonOption option = new ItemButtonOption();
-        option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
+        option.setClickSound(new SoundData(Sound.UI_BUTTON_CLICK, 0.7F, 1F));
 
         addButton(new ItemButton(2, new ItemBuilder(XMaterial.ENDER_PEARL).setName(Editor.ITEM_TITLE_COLOR + Lang.get("WarpGUI") + Lang.PREMIUM_LORE).getItem()) {
             @Override
