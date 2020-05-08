@@ -18,10 +18,13 @@ import java.util.List;
 import java.util.Map;
 
 public class SimpleWarpManager implements Manager {
+    public static final String PERMISSION = "WarpSystem.SimpleWarp.%WARP%";
     private static SimpleWarpManager instance = null;
     private HashMap<String, SimpleWarp> warps = new HashMap<>();
     private List<String> reservedNames = new ArrayList<>();
     private ConfigFile file;
+
+    private boolean overwritePermissions = false;
 
     public static SimpleWarpManager getInstance() {
         if(instance == null) instance = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
@@ -65,6 +68,9 @@ public class SimpleWarpManager implements Manager {
 
         WarpSystem.log("    ...got " + warps.size() + " SimpleWarp(s)");
 
+        ConfigFile configFile = WarpSystem.getInstance().getFileManager().getFile("Config");
+        this.overwritePermissions = configFile.getConfig().getBoolean("WarpSystem.SimpleWarps.Overwrite_Permissions", false);
+
         new CWarp().register(WarpSystem.getInstance());
         new CSetWarp().register(WarpSystem.getInstance());
         new CEditWarp().register(WarpSystem.getInstance());
@@ -98,7 +104,7 @@ public class SimpleWarpManager implements Manager {
     public void addWarp(SimpleWarp warp) {
         if(existsWarp(warp.getName())) return;
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.SimpleWarps.Add_Permission_On_Creation", true) && warp.getPermission() == null)
-            warp.setPermission("WarpSystem.Warps." + ChatColor.stripColor(warp.getName()));
+            warp.setPermission(PERMISSION.replace("%WARP%", ChatColor.stripColor(warp.getName()).replace(" ", "_")));
         this.warps.put(warp.getName(true).toLowerCase(), warp);
     }
 
@@ -151,5 +157,9 @@ public class SimpleWarpManager implements Manager {
         }
 
         return true;
+    }
+
+    public boolean isOverwritePermissions() {
+        return overwritePermissions;
     }
 }

@@ -2,21 +2,29 @@ package de.codingair.warpsystem.spigot.features.simplewarps.guis;
 
 import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
 import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
+import de.codingair.codingapi.player.gui.anvil.AnvilSlot;
 import de.codingair.codingapi.player.gui.inventory.gui.GUIListener;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.*;
-import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.guis.editor.StandardButtonOption;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CostsButton;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.NameButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
 import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -70,70 +78,41 @@ public class GEditWarp extends SimpleGUI {
 
         @Override
         public void initialize(Player p) {
-            ItemButtonOption option = new ItemButtonOption();
-            option.setClickSound(Sound.CLICK.bukkitSound());
+            ItemButtonOption option = new StandardButtonOption();
 
-            addButton(new SyncAnvilGUIButton(2) {
+            addButton(new NameButton(2, 0, false, new Value<>(clone.getName())) {
                 @Override
-                public void onClick(AnvilClickEvent e) {
-                    e.setCancelled(true);
-                    e.setClose(false);
-                    String s = e.getInput();
-                    if(s != null && (s.isEmpty() || s.equalsIgnoreCase("none") || s.equalsIgnoreCase("-") || s.equalsIgnoreCase("null"))) s = null;
-
-                    if(s == null) {
-                        p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Name"));
-                        return;
+                public String acceptName(String name) {
+                    if(!name.equalsIgnoreCase(warp.getName()) && !SimpleWarpManager.getInstance().reserveName(name)) {
+                        return Lang.getPrefix() + Lang.get("Name_Already_Exists");
                     }
+                    return null;
+                }
 
-                    s = s.replace(" ", "_");
-
-                    if(!s.equalsIgnoreCase(warp.getName()) && !SimpleWarpManager.getInstance().reserveName(s)) {
-                        p.sendMessage(Lang.getPrefix() + Lang.get("Name_Already_Exists"));
-                        return;
-                    }
-
-                    clone.setName(s);
+                @Override
+                public String onChange(String old, String name) {
+                    clone.setName(name);
                     clone.setLastChange(new Date());
                     clone.setLastChanger(p.getName());
-                    update();
-                    e.setClose(true);
-                }
-
-                @Override
-                public void onClose(AnvilCloseEvent e) {
-                    getInterface().reinitialize(Lang.get("SimpleWarp_Edit_Title").replace("%WARP%", ChatColor.translateAlternateColorCodes('&', clone.getName())));
-                    e.setPost(() -> getInterface().open());
-                    getInterface().setClosingForGUI(false);
-                }
-
-                @Override
-                public ItemStack craftItem() {
-                    ItemBuilder changeName = new ItemBuilder(XMaterial.NAME_TAG);
-                    changeName.setName("§7" + Lang.get("Name") + ": §7\"§b" + ChatColor.translateAlternateColorCodes('&', clone.getName()) + "§7\"");
-                    changeName.addLore("", Lang.get("SimpleWarp_Change_Name"));
-                    return changeName.getItem();
-                }
-
-                @Override
-                public ItemStack craftAnvilItem(ClickType trigger) {
-                    ItemBuilder anvilItem = new ItemBuilder(XMaterial.PAPER);
-                    anvilItem.setName(clone.getName());
-                    return anvilItem.getItem();
+                    return name;
                 }
             }.setOption(option));
 
-            addButton(new SyncAnvilGUIButton(4) {
+            addButton(new SyncAnvilGUIButton(4, 0, ClickType.LEFT) {
                 @Override
                 public void onClick(AnvilClickEvent e) {
-                    e.setCancelled(true);
-                    e.setClose(false);
-                    String s = e.getInput();
-                    if(s != null && (s.isEmpty() || s.equalsIgnoreCase("none") || s.equalsIgnoreCase("-") || s.equalsIgnoreCase("null"))) s = null;
+                    if(!e.getSlot().equals(AnvilSlot.OUTPUT)) return;
 
-                    clone.setPermission(s);
-                    update();
+                    String input = e.getInput(false);
+
+                    if(input == null) {
+                        e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Permission"));
+                        return;
+                    }
+
                     e.setClose(true);
+                    clone.setPermission(e.getInput());
+                    update();
                 }
 
                 @Override
@@ -142,65 +121,113 @@ public class GEditWarp extends SimpleGUI {
 
                 @Override
                 public ItemStack craftItem() {
-                    ItemBuilder permission = new ItemBuilder(XMaterial.REDSTONE);
-                    permission.setName("§7" + Lang.get("Permission") + ": " + (clone.getPermission() == null ? "§c§m-" : "§7\"§b" + clone.getPermission() + "§7\""));
-                    if(clone.getPermission() != null) permission.addLore(Lang.get("SimpleWarp_Edit_Permission_Hint"));
-                    permission.addLore("", Lang.get("SimpleWarp_Change_Permission"));
-                    return permission.getItem();
+                    String permission = clone.getPermission();
+
+                    boolean perm = SimpleWarpManager.getInstance().isOverwritePermissions();
+
+                    List<String> lore = new ArrayList<>();
+                    if(permission != null && !perm) lore.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));
+
+                    return new ItemBuilder(XMaterial.ENDER_EYE)
+                            .setName("§6§n" + Lang.get("Permission"))
+                            .setLore(perm ? null : "§8» " + Lang.get("Permission_Notice"))
+                            .addLore(perm ? "§7" + Lang.get("Permission_overwritten_by_config") : null)
+                            .addLore("§3" + Lang.get("Current") + ": " + (permission == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + permission + "§7'"))
+                            .addLore(perm ? null : "", perm ? null : "§3" + Lang.get("Leftclick") + ": §a" + (permission == null ? Lang.get("Set") : Lang.get("Change")))
+                            .addLore(lore)
+                            .getItem();
                 }
 
                 @Override
                 public ItemStack craftAnvilItem(ClickType trigger) {
-                    ItemBuilder anvilItem = new ItemBuilder(XMaterial.PAPER);
-                    anvilItem.setName(clone.getPermission() == null ? Lang.get("Permission") + "..." : clone.getPermission());
-                    return anvilItem.getItem();
+                    return new ItemBuilder(XMaterial.PAPER).setName(clone.getPermission() == null ? Lang.get("Permission") + "..." : clone.getPermission()).getItem();
+                }
+
+                @Override
+                public void onOtherClick(InventoryClickEvent e) {
+                    if(e.getClick() == ClickType.RIGHT) {
+                        clone.setPermission(null);
+                        update();
+                    }
+                }
+
+                @Override
+                public boolean canClick(ClickType click) {
+                    return !SimpleWarpManager.getInstance().isOverwritePermissions() && (click == ClickType.LEFT || (click == ClickType.RIGHT && clone.getPermission() != null));
                 }
             }.setOption(option));
 
-            addButton(new SyncAnvilGUIButton(6) {
+            addButton(new SyncAnvilGUIButton(6, ClickType.LEFT) {
+                @Override
+                public ItemStack craftItem() {
+                    double costs = clone.getCosts();
+                    String costsPrint = costs + "";
+                    if(costsPrint.endsWith(".0")) costsPrint = costsPrint.substring(0, costsPrint.length() - 2);
+
+                    List<String> lore = new ArrayList<>();
+                    if(costs != 0) lore.add("§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));
+
+                    return new ItemBuilder(XMaterial.GOLD_NUGGET)
+                            .setName("§6§n" + Lang.get("Costs"))
+                            .setLore("§3" + Lang.get("Current") + ": " + (costs == 0 ? "§c" + Lang.get("Not_Set") : "§7" + costsPrint + " " + Lang.get("Coins")))
+                            .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + (costs == 0 ? Lang.get("Set") : Lang.get("Change")))
+                            .addLore(lore)
+                            .getItem();
+                }
+
                 @Override
                 public void onClick(AnvilClickEvent e) {
-                    e.setCancelled(true);
-                    e.setClose(false);
-                    String s = e.getInput();
-                    if(s != null && s.isEmpty()) s = null;
+                    if(!e.getSlot().equals(AnvilSlot.OUTPUT)) return;
 
-                    double price;
+                    String input = e.getInput(false);
+
+                    if(input == null) {
+                        e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number"));
+                        return;
+                    }
+
+                    double costs;
                     try {
-                        s = s.replace(",", ".");
-                        price = Double.parseDouble(s);
-                    } catch(Exception ex) {
-                        p.sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number"));
+                        costs = Double.parseDouble(input);
+                    } catch(NumberFormatException ex) {
+                        e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number"));
                         return;
                     }
 
-                    if(price < 0) {
-                        p.sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number"));
+                    if(costs < 0) {
+                        e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_A_Positive_Number"));
                         return;
                     }
 
-                    clone.setCosts(price);
-                    update();
                     e.setClose(true);
+                    clone.setCosts(costs);
+
+                    update();
                 }
 
                 @Override
                 public void onClose(AnvilCloseEvent e) {
-                }
 
-                @Override
-                public ItemStack craftItem() {
-                    ItemBuilder price = new ItemBuilder(XMaterial.GOLD_NUGGET);
-                    price.setName("§7" + Lang.get("Costs") + "§7: §b" + clone.getCosts() + " " + Lang.get("Coins"));
-                    price.addLore("", Lang.get("SimpleWarp_Change_Price"));
-                    return price.getItem();
                 }
 
                 @Override
                 public ItemStack craftAnvilItem(ClickType trigger) {
-                    ItemBuilder anvilItem = new ItemBuilder(XMaterial.PAPER);
-                    anvilItem.setName(clone.getCosts() + "");
-                    return anvilItem.getItem();
+                    double costs = clone.getCosts();
+                    String costsPrint = costs + "";
+                    return new ItemBuilder(XMaterial.PAPER).setName(costsPrint).getItem();
+                }
+
+                @Override
+                public void onOtherClick(InventoryClickEvent e) {
+                    if(e.getClick() == ClickType.RIGHT) {
+                        clone.setCosts(0);
+                        update();
+                    }
+                }
+
+                @Override
+                public boolean canClick(ClickType click) {
+                    return click == ClickType.LEFT || (click == ClickType.RIGHT && clone.getCosts() > 0);
                 }
             }.setOption(option));
 
