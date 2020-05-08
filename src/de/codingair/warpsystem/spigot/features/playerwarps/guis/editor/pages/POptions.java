@@ -1,9 +1,6 @@
 package de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages;
 
-import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
-import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
-import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncAnvilGUIButton;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
@@ -18,7 +15,6 @@ import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.but
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.buttons.TeleportCostsButton;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -40,7 +36,7 @@ public class POptions extends PageItem {
     @Override
     public void initialize(Player p) {
         ItemButtonOption option = new ItemButtonOption();
-        option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
+        option.setClickSound(new SoundData(Sound.UI_BUTTON_CLICK, 0.7F, 1F));
         int slot = 1;
 
         if(PlayerWarpManager.getManager().isAllowPublicWarps()) {

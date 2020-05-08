@@ -205,7 +205,7 @@ public class PortalBlockEditor implements Removable {
         update();
     }
 
-    public void removePosition(Location location) {
+    public boolean removePosition(Location location) {
         PortalBlock block = null;
 
         for(PortalBlock b : this.portal.getBlocks()) {
@@ -218,7 +218,10 @@ public class PortalBlockEditor implements Removable {
         if(block != null) {
             portal.removePortalBlock(block);
             update();
+            return true;
         }
+
+        return false;
     }
 
     public void setAlignBlocks(boolean show) {

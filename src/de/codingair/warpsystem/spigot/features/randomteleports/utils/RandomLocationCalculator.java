@@ -184,7 +184,7 @@ public class RandomLocationCalculator implements Runnable {
 
     private boolean isProtected(Location location) throws InterruptedException {
         synchronized(this) {
-            BlockBreakEvent event = new BlockBreakEvent(location.getBlock(), this.check);
+            BlockBreakEvent event = new BlockBreakEvent(location.getBlock(), this.check); //check is a bukkit/Player instance
 
             Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> {
                 Bukkit.getPluginManager().callEvent(event);

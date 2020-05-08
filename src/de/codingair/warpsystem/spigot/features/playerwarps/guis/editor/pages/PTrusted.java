@@ -86,7 +86,7 @@ public class PTrusted extends PageItem {
     @Override
     public void initialize(Player p) {
         ItemButtonOption option = new ItemButtonOption();
-        option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
+        option.setClickSound(new SoundData(Sound.UI_BUTTON_CLICK, 0.7F, 1F));
 
         int[] slots = new int[] {19, 20, 21, 22, 23, 24, 15, 14, 13, 12, 11, 10};
 

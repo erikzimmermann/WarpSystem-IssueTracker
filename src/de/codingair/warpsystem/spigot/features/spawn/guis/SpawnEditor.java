@@ -48,11 +48,11 @@ public class SpawnEditor extends Editor<Spawn> {
             }
         }, () -> new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setHideName(true).getItem(), new POptions(p, clone));
 
-        setCancelSound(new SoundData(Sound.ITEM_BREAK, 0.7F, 1F));
-        setOpenSound(new SoundData(Sound.LEVEL_UP, 0.7F, 1.5F));
+        setCancelSound(new SoundData(Sound.ENTITY_ITEM_BREAK, 0.7F, 1F));
+        setOpenSound(new SoundData(Sound.ENTITY_PLAYER_LEVELUP, 0.7F, 1.5F));
 
-        MusicData music0 = new MusicData(Sound.LEVEL_UP, 0.7F, 0.9F, 0);
-        MusicData music1 = new MusicData(Sound.LEVEL_UP, 0.7F, 1.2F, 1);
+        MusicData music0 = new MusicData(Sound.ENTITY_PLAYER_LEVELUP, 0.7F, 0.9F, 0);
+        MusicData music1 = new MusicData(Sound.ENTITY_PLAYER_LEVELUP, 0.7F, 1.2F, 1);
         music0.setFollower(music1);
         setSuccessSound(music0);
     }

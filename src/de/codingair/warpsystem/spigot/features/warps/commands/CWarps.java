@@ -115,6 +115,6 @@ public class CWarps extends WSCommandBuilder {
         }
 
         new GWarps(p, category, false).open();
-        Sound.LEVEL_UP.playSound(p);
+        Sound.ENTITY_PLAYER_LEVELUP.playSound(p);
     }
 }

@@ -46,7 +46,7 @@ public class PAppearance extends PageItem {
     @Override
     public void initialize(Player p) {
         ItemButtonOption option = new ItemButtonOption();
-        option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
+        option.setClickSound(new SoundData(Sound.UI_BUTTON_CLICK, 0.7F, 1F));
         int slot = 1;
 
         if(!PlayerWarpManager.getManager().isForcePlayerHead())

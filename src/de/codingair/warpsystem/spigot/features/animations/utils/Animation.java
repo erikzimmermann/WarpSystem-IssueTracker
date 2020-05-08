@@ -17,8 +17,8 @@ public class Animation implements Serializable {
     private Location teleportLoc = null;
     private List<Buff> buffList = new ArrayList<>();
     private List<ParticlePart> particleParts = new ArrayList<>();
-    private SoundData tickSound = new SoundData(Sound.NOTE_PIANO, 1F, 0.5F);
-    private SoundData teleportSound = new SoundData(Sound.ENDERMAN_TELEPORT, 1F, 1F);
+    private SoundData tickSound = new SoundData(Sound.BLOCK_NOTE_BLOCK_HARP, 1F, 0.5F);
+    private SoundData teleportSound = new SoundData(Sound.ENTITY_ENDERMAN_TELEPORT, 1F, 1F);
 
     public Animation() {
     }

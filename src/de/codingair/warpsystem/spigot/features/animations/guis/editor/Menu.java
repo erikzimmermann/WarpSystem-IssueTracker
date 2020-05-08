@@ -78,9 +78,9 @@ public class Menu extends HotbarGUI {
     public Menu(Player player, MovableMid mid, Animation animation, Animation clone, HotbarGUI link, MenuHook hook, MenuParts... menuParts) {
         super(player, WarpSystem.getInstance(), 1);
 
-        setOpenSound(new SoundData(Sound.LEVEL_UP, 0.5F, 1F));
-        setCloseSound(new SoundData(Sound.LEVEL_UP, 0.5F, 0.5F));
-        setClickSound(new SoundData(Sound.CLICK, 0.5F, 1F));
+        setOpenSound(new SoundData(Sound.ENTITY_PLAYER_LEVELUP, 0.5F, 1F));
+        setCloseSound(new SoundData(Sound.ENTITY_PLAYER_LEVELUP, 0.5F, 0.5F));
+        setClickSound(new SoundData(Sound.UI_BUTTON_CLICK, 0.5F, 1F));
 
         this.hook = hook;
         this.menuParts = menuParts;
