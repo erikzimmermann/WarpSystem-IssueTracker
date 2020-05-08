@@ -177,7 +177,7 @@ public class Editor<C> extends SimpleGUI {
 
     public void updatePageItems() {
         ItemButtonOption option = new ItemButtonOption();
-        option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1));
+        option.setClickSound(new SoundData(Sound.UI_BUTTON_CLICK, 0.7F, 1));
 
         int slot = 1;
 

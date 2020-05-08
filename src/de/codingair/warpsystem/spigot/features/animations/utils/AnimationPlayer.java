@@ -138,7 +138,7 @@ public class AnimationPlayer {
                         }
                     }
 
-                    if(teleportSound && animation.getTeleportSound() != null && player != null) animation.getTeleportSound().play(player, destination);
+                    if(teleportSound && animation.getTeleportSound() != null && player != null) animation.getTeleportSound().play(player);
 
                     if(player == null || player.getActivePotionEffects().isEmpty()) setRunning(false);
                 } else {

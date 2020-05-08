@@ -78,7 +78,7 @@ public class AnimationManager implements Manager {
     private Animation createStandard() {
         Animation anim = new Animation("§Standard§", new ParticlePart(AnimationType.CIRCLE, Particle.FIREWORKS_SPARK, 1, 1, CustomAnimation.MAX_SPEED));
 
-        anim.setTickSound(new SoundData(Sound.NOTE_PLING, 0.8F, 1F));
+        anim.setTickSound(new SoundData(Sound.BLOCK_NOTE_BLOCK_PLING, 0.8F, 1F));
 
         return anim;
     }

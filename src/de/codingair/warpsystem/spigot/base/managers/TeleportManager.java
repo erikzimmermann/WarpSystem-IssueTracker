@@ -222,7 +222,7 @@ public class TeleportManager {
                     MoneyAdapterType.getActive().withdraw(player, costs);
                 } else {
                     //deny
-                    Sound.ITEM_BREAK.playSound(player, 0.7F, 0.9F);
+                    Sound.ENTITY_ITEM_BREAK.playSound(player, 0.7F, 0.9F);
                 }
 
                 if(callback != null) callback.accept(confirm);
@@ -261,7 +261,7 @@ public class TeleportManager {
         Bukkit.getPluginManager().registerEvents(listenerValue.getValue(), WarpSystem.getInstance());
 
         runnable.runTaskLater(WarpSystem.getInstance(), timeOut + 5); //title fadeIn = 5
-        Sound.NOTE_PIANO.playSound(player, 0.7F, 1.1F);
+        Sound.BLOCK_NOTE_BLOCK_HARP.playSound(player, 0.7F, 1.1F);
         MessageAPI.sendTitle(player, "§e" + Lang.get("Sneak_to_confirm"), "§6" + Lang.get("Costs") + ": §7" + new ImprovedDouble(costs) + " " + Lang.get("Coins"), 5, timeOut, 5);
     }
 

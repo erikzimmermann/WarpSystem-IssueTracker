@@ -50,7 +50,7 @@ public class Teleport {
     private double costs;
     private SoundData teleportSound;
 
-    private Sound cancelSound = Sound.ITEM_BREAK;
+    private Sound cancelSound = Sound.ENTITY_ITEM_BREAK;
 
     private long startTime = 0;
 

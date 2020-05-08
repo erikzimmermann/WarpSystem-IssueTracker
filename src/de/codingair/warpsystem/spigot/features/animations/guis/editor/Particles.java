@@ -30,9 +30,9 @@ public class Particles extends HotbarGUI {
     public Particles(Player player, Menu menu) {
         super(player, WarpSystem.getInstance(), 2);
 
-        setOpenSound(new SoundData(Sound.LEVEL_UP, 0.5F, 1F));
-        setCloseSound(new SoundData(Sound.LEVEL_UP, 0.5F, 0.5F));
-        setClickSound(new SoundData(Sound.CLICK, 0.5F, 1F));
+        setOpenSound(new SoundData(Sound.ENTITY_PLAYER_LEVELUP, 0.5F, 1F));
+        setCloseSound(new SoundData(Sound.ENTITY_PLAYER_LEVELUP, 0.5F, 0.5F));
+        setClickSound(new SoundData(Sound.UI_BUTTON_CLICK, 0.5F, 1F));
 
         this.menu = menu;
         this.parts = menu.getClone().getParticleParts();

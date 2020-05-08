@@ -42,7 +42,7 @@ public class GChooseIconType extends GUI {
             @Override
             public void onInvCloseEvent(InventoryCloseEvent e) {
                 if(!set) {
-                    Sound.ITEM_BREAK.playSound(p);
+                    Sound.ENTITY_ITEM_BREAK.playSound(p);
                     callback.accept(null);
                 }
             }
@@ -69,7 +69,7 @@ public class GChooseIconType extends GUI {
     @Override
     public void initialize(Player p) {
         ItemButtonOption option = new ItemButtonOption();
-        option.setClickSound(Sound.CLICK.bukkitSound());
+        option.setClickSound(Sound.UI_BUTTON_CLICK.parseSound());
         option.setOnlyLeftClick(true);
 
         addButton(new ItemButton(2, new ItemBuilder(Material.ENDER_PEARL).setName("§c" + Lang.get("Icon")).getItem()) {

@@ -107,7 +107,7 @@ public class OwnWarpFilter implements Filter {
         if(createButtonInList() && PlayerWarpManager.hasPermission(player)) maxSize--;
 
         ItemButtonOption option = new ItemButtonOption();
-        option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1F));
+        option.setClickSound(new SoundData(Sound.UI_BUTTON_CLICK, 0.7F, 1F));
 
         int max = (page + 1) * maxSize;
         int i, noMatch = 0;

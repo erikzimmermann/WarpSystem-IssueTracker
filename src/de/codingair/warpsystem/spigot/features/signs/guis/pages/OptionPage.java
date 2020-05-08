@@ -35,7 +35,7 @@ public class OptionPage extends PageItem {
     @Override
     public void initialize(Player p) {
         ItemButtonOption option = new ItemButtonOption();
-        option.setClickSound(new SoundData(Sound.CLICK, 0.7F, 1));
+        option.setClickSound(new SoundData(Sound.UI_BUTTON_CLICK, 0.7F, 1));
 
         addButton(new SyncSignGUIButton(1, 2, sign.getLocation(), true) {
             private String[] lines = s.getLines();

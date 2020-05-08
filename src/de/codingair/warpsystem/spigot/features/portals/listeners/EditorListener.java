@@ -1,21 +1,24 @@
 package de.codingair.warpsystem.spigot.features.portals.listeners;
 
 import de.codingair.codingapi.API;
+import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.gui.PlayerItem;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
+import de.codingair.codingapi.server.Environment;
 import de.codingair.codingapi.server.reflections.IReflection;
+import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.features.portals.guis.subgui.PortalBlockEditor;
 import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
 import de.codingair.warpsystem.spigot.features.portals.utils.BlockType;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -23,7 +26,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import java.util.Set;
 
 public class EditorListener implements Listener {
-
     @EventHandler(priority = EventPriority.LOWEST)
     public void onMove(PlayerMoveEvent e) {
         PortalBlockEditor editor = PortalManager.getInstance().getEditor(e.getPlayer());
@@ -73,8 +75,17 @@ public class EditorListener implements Listener {
         if(editor != null) {
             if(!e.getAction().equals(Action.LEFT_CLICK_BLOCK)) return;
 
-            editor.removePosition(e.getClickedBlock().getLocation());
-            e.setCancelled(false);
+            if(editor.removePosition(e.getClickedBlock().getLocation())) {
+                e.setCancelled(false);
+
+                if(e.getPlayer().getGameMode() != GameMode.CREATIVE) {
+                    Sound s = Environment.getBreakSoundOf(e.getClickedBlock());
+                    if(s != null) s.playSound(e.getPlayer());
+                    Particle.BLOCK_DUST.send(e.getClickedBlock().getLocation().add(0.5, 0.5, 0.5));
+                }
+
+                e.getClickedBlock().setType(Material.AIR);
+            }
         }
     }
 

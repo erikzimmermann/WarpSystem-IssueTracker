@@ -25,7 +25,7 @@ public class PWList extends SimpleGUI {
                 , new PWPage(p, 27)
                 , WarpSystem.getInstance(), false);
 
-        setOpenSound(new SoundData(Sound.LEVEL_UP, 0.7F, 1.5F));
+        setOpenSound(new SoundData(Sound.ENTITY_PLAYER_LEVELUP, 0.7F, 1.5F));
 
         addListener(new GUIListener() {
             @Override
