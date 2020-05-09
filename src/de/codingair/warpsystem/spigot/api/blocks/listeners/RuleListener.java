@@ -23,8 +23,7 @@ public class RuleListener implements Listener {
 
     @EventHandler
     public void onChange(BlockPhysicsEvent e) {
-        List<StaticBlock> l = API.getRemovables(StaticBlock.class);
-
+        List<StaticBlock> l = API.getRemovables(null, StaticBlock.class);
         for(StaticBlock loc : l) {
             if(!(loc instanceof StaticLavaBlock)) continue;
 
@@ -34,29 +33,25 @@ public class RuleListener implements Listener {
                 e.setCancelled(true);
             }
         }
-
         l.clear();
     }
 
     @EventHandler
     public void onFlow(BlockFromToEvent e) {
-        List<StaticBlock> l = API.getRemovables(StaticBlock.class);
-
+        List<StaticBlock> l = API.getRemovables(null, StaticBlock.class);
         for(StaticBlock loc : l) {
             org.bukkit.block.Block b = loc.getLocation().getBlock();
             if(b.getWorld().getName().equals(e.getBlock().getLocation().getWorld().getName()) && b.getLocation().getBlockX() == e.getBlock().getLocation().getBlockX() && b.getLocation().getBlockY() == e.getBlock().getLocation().getBlockY() && b.getLocation().getBlockZ() == e.getBlock().getLocation().getBlockZ()) {
                 e.setCancelled(true);
             }
         }
-
         l.clear();
     }
 
     @EventHandler
     public void onBurn(BlockIgniteEvent e) {
         if(e.getIgnitingBlock() == null) return;
-        List<StaticLavaBlock> l = API.getRemovables(StaticLavaBlock.class);
-
+        List<StaticLavaBlock> l = API.getRemovables(null, StaticLavaBlock.class);
         for(StaticLavaBlock lava : l) {
             if(lava.isSpreadFire()) continue;
 
@@ -65,7 +60,6 @@ public class RuleListener implements Listener {
                 e.setCancelled(true);
             }
         }
-
         l.clear();
     }
 
@@ -110,9 +104,8 @@ public class RuleListener implements Listener {
 
         if(locs.isEmpty()) return false;
 
-        List<StaticBlock> l = API.getRemovables(StaticBlock.class);
-
         boolean result = false;
+        List<StaticBlock> l = API.getRemovables(null, StaticBlock.class);
         for(StaticBlock staticBlock : l) {
             if(result) break;
 
@@ -125,8 +118,8 @@ public class RuleListener implements Listener {
                 }
             }
         }
-
         l.clear();
+
         locs.clear();
 
         return result;

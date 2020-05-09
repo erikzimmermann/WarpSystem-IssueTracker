@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 
 public class Sounds extends HotbarGUI {
     private Menu menu;
+    private Sound[] sounds = Sound.values();
 
     public Sounds(Player player, Menu menu) {
         super(player, WarpSystem.getInstance(), 2);
@@ -29,49 +30,38 @@ public class Sounds extends HotbarGUI {
         initialize();
     }
 
-    public static Sound next(Sound sound) {
-        for(int i = 0; i < Sound.values().length; i++) {
-            if(Sound.values()[i].equals(sound)) return i + 1 == Sound.values().length ? Sound.values()[0] : Sound.values()[i + 1];
-        }
-
-        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
+    public void next(SoundData soundData) {
+        int id = soundData.getSound().ordinal() + 1;
+        if(id == sounds.length) id = 0;
+        soundData.setSound(sounds[id]);
     }
 
-    public static Sound shiftNext(Sound sound) {
-        int id = -1;
-        for(int i = 0; i < Sound.values().length; i++) {
-            if(Sound.values()[i].equals(sound)) {
-                id = i;
-            } else if(id >= 0 && sound.name().charAt(0) != Sound.values()[i].name().charAt(0)) {
-                return Sound.values()[i];
+    public void shiftNext(SoundData soundData) {
+        Sound sound = soundData.getSound();
+        for(int i = sound.ordinal(); true; i++) {
+            if(i == sounds.length) i = 0;
+            if(sound.name().charAt(0) != sounds[i].name().charAt(0)) {
+                soundData.setSound(sounds[i]);
+                break;
             }
         }
-
-        return Sound.values()[0];
     }
 
-    public static Sound previous(Sound sound) {
-        for(int i = 0; i < Sound.values().length; i++) {
-            if(Sound.values()[i].equals(sound)) {
-                return i - 1 < 0 ? Sound.values()[Sound.values().length - 1] : Sound.values()[i - 1];
-            }
-        }
-
-        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
+    public void previous(SoundData soundData) {
+        int id = soundData.getSound().ordinal() - 1;
+        if(id < 0) id = sounds.length;
+        soundData.setSound(sounds[id]);
     }
 
-    public static Sound shiftPrevious(Sound sound) {
-        int id = -1;
-
-        for(int i = 0; i < Sound.values().length; i++) {
-            if(Sound.values()[i].name().charAt(0) == sound.name().charAt(0)) {
-                return id == -1 ? Sound.values()[Sound.values().length - 1] : Sound.values()[id];
-            } else {
-                id = i;
+    public void shiftPrevious(SoundData soundData) {
+        Sound sound = soundData.getSound();
+        for(int i = sound.ordinal(); true; i--) {
+            if(sound.name().charAt(0) != sounds[i].name().charAt(0)) {
+                soundData.setSound(sounds[i]);
+                break;
             }
+            if(i == 0) i = sounds.length;
         }
-
-        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
     }
 
     public void initialize() {
@@ -86,13 +76,13 @@ public class Sounds extends HotbarGUI {
                 if(getTickSound() != null) getTickSound().stop(player);
 
                 if(clickType.equals(ClickType.LEFT_CLICK)) {
-                    getTickSound().setSound(previous(getTickSound().getSound()));
+                    previous(getTickSound());
                 } else if(clickType.equals(ClickType.SHIFT_LEFT_CLICK)) {
-                    getTickSound().setSound(shiftPrevious(getTickSound().getSound()));
+                    shiftPrevious(getTickSound());
                 } else if(clickType.equals(ClickType.RIGHT_CLICK)) {
-                    getTickSound().setSound(next(getTickSound().getSound()));
+                    next(getTickSound());
                 } else if(clickType.equals(ClickType.SHIFT_RIGHT_CLICK)) {
-                    getTickSound().setSound(shiftNext(getTickSound().getSound()));
+                    shiftNext(getTickSound());
                 }
 
                 menu.getAnimPlayer().update();
@@ -181,13 +171,13 @@ public class Sounds extends HotbarGUI {
 
                 //Sound
                 if(clickType.equals(ClickType.LEFT_CLICK)) {
-                    getTeleportSound().setSound(previous(getTeleportSound().getSound()));
+                    previous(getTeleportSound());
                 } else if(clickType.equals(ClickType.SHIFT_LEFT_CLICK)) {
-                    getTeleportSound().setSound(shiftPrevious(getTeleportSound().getSound()));
+                    shiftPrevious(getTeleportSound());
                 } else if(clickType.equals(ClickType.RIGHT_CLICK)) {
-                    getTeleportSound().setSound(next(getTeleportSound().getSound()));
+                    next(getTeleportSound());
                 } else if(clickType.equals(ClickType.SHIFT_RIGHT_CLICK)) {
-                    getTeleportSound().setSound(shiftNext(getTeleportSound().getSound()));
+                    shiftNext(getTeleportSound());
                 }
 
                 menu.getAnimPlayer().update();

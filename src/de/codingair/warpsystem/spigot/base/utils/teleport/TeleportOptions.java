@@ -21,7 +21,7 @@ public class TeleportOptions {
     private String displayName;
     private String permission;
     private double costs;
-    private boolean skip;
+    private Boolean skip;
     private boolean canMove;
     private boolean waitForTeleport; //Waiting for walking teleports
     private boolean confirmPayment = true;
@@ -50,7 +50,6 @@ public class TeleportOptions {
         this.displayName = displayName;
         this.permission = null;
         this.costs = 0;
-        this.skip = false;
         this.canMove = WarpSystem.getInstance().getTeleportManager().getOptions().isAllowMove();
         this.waitForTeleport = false;
         this.payMessage = Lang.getPrefix() + (displayName == null ? Lang.get("Money_Paid") : Lang.get("Money_Paid"));
@@ -115,6 +114,11 @@ public class TeleportOptions {
     }
 
     public boolean isSkip() {
+        if(skip == null) return false;
+        return skip;
+    }
+
+    public Boolean getSkip() {
         return skip;
     }
 

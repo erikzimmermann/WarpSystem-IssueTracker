@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.features.spawn.listeners;
 
+import de.codingair.warpsystem.spigot.api.events.PlayerFinalJoinEvent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
@@ -18,10 +19,21 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SpawnListener implements Listener, PacketListener {
+    private List<Player> handle = new ArrayList<>();
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
+        handle.add(e.getPlayer());
+    }
+
+    @EventHandler
+    public void onJoin(PlayerFinalJoinEvent e) {
+        if(!handle.remove(e.getPlayer()) || e.alreadyTeleported()) return;
+
         Spawn spawn = SpawnManager.getInstance().getSpawn();
         if(spawn != null) {
             Player player = e.getPlayer();
@@ -30,6 +42,8 @@ public class SpawnListener implements Listener, PacketListener {
                 if(!player.hasPlayedBefore()) {
                     spawn.firstJoin(e);
                 } else {
+                    if(WarpSystem.getInstance().getTeleportManager().isTeleporting(e.getPlayer()) || spawn.switchServer()) return;
+
                     TeleportOptions options = new TeleportOptions();
                     options.setMessage(null);
                     options.setAfterEffects(false);
@@ -74,7 +88,6 @@ public class SpawnListener implements Listener, PacketListener {
             if(spawn != null) {
                 TeleportOptions options = new TeleportOptions();
                 spawn.prepareTeleportOptions(p.getPlayer(), options);
-                options.setSkip(true);
                 if(p.isRespawn()) options.setMessage(null);
 
                 TeleportListener.setSpawnPositionOrTeleport(p.getPlayer(), options);
