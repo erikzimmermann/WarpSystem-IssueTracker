@@ -156,7 +156,7 @@ public class PortalBlockEditor implements Removable {
             alignTo.clear();
         }
 
-        List<PlayerItem> items = PlayerItem.getPlayerItems(player);
+        List<PlayerItem> items = API.getRemovables(getPlayer(), PlayerItem.class);
         for(PlayerItem item : items) {
             item.destroy();
         }

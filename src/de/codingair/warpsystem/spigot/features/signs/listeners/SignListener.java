@@ -20,6 +20,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.util.List;
+
 public class SignListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
@@ -75,10 +77,12 @@ public class SignListener implements Listener {
                 e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Creative_Mode_Needed"));
                 e.setCancelled(true);
             } else {
-                for(WarpSignGUI gui : API.getRemovables(WarpSignGUI.class)) {
+                List<WarpSignGUI> l = API.getRemovables(WarpSignGUI.class);
+                for(WarpSignGUI gui : l) {
                     gui.close();
                     gui.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("WarpSign_Removed"));
                 }
+                l.clear();
 
                 manager.getWarpSigns().remove(sign);
                 e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("WarpSign_Removed"));

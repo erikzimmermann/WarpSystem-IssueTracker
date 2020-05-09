@@ -73,13 +73,11 @@ public class GlobalPacketReaderManager {
     }
 
     public void uninject(Player player, GlobalPacketReader reader) {
-        List<PacketReader> readerList = API.getRemovables(player, PacketReader.class);
-
-        for(PacketReader r : readerList) {
+        List<PacketReader> l = API.getRemovables(player, PacketReader.class);
+        for(PacketReader r : l) {
             if(r.getName() != null && r.getName().equals(reader.getName())) r.unInject();
         }
-
-        readerList.clear();
+        l.clear();
     }
 
 }

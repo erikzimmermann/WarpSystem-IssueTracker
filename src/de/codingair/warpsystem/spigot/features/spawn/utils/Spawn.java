@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.features.spawn.utils;
 import de.codingair.codingapi.server.Environment;
 import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.warpsystem.spigot.api.PAPI;
+import de.codingair.warpsystem.spigot.api.events.PlayerFinalJoinEvent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
@@ -49,7 +50,7 @@ public class Spawn extends FeatureObject {
         return getAction(WarpAction.class).getValue().buildLocation();
     }
 
-    private boolean switchServer() {
+    public boolean switchServer() {
         return SpawnManager.getInstance().getSpawnServer() != null && !SpawnManager.getInstance().getSpawnServer().equals(WarpSystem.getInstance().getCurrentServer());
     }
 
@@ -80,7 +81,7 @@ public class Spawn extends FeatureObject {
         options.setDisplayName(displayName);
     }
 
-    public void firstJoin(PlayerJoinEvent e) {
+    public void firstJoin(PlayerFinalJoinEvent e) {
         TeleportOptions options = new TeleportOptions();
         options.setMessage(null);
         options.setAfterEffects(false);

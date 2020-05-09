@@ -1,7 +1,6 @@
 package de.codingair.warpsystem.transfer.packets.utils;
 
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.*;
-import de.codingair.warpsystem.transfer.packets.general.SendGlobalSpawnOptionsPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.*;
 import de.codingair.warpsystem.transfer.packets.general.*;
 import de.codingair.warpsystem.transfer.packets.spigot.*;

@@ -33,7 +33,7 @@ public class EditorListener implements Listener {
     public void onMove(PlayerMoveEvent e) {
         PortalBlockEditor editor = PortalManager.getInstance().getEditor(e.getPlayer());
         if(editor != null) {
-            PlayerItem item = PlayerItem.getPlayerItems(e.getPlayer()).remove(0);
+            PlayerItem item = API.getRemovable(e.getPlayer(), PlayerItem.class);
 
             Block b = e.getPlayer().getTargetBlock((Set<Material>) null, 10);
             if(b != null && b.getType() != XMaterial.AIR.parseMaterial() && b.getType() != XMaterial.VOID_AIR.parseMaterial() && b.getType() != XMaterial.CAVE_AIR.parseMaterial() && b.getType() != XMaterial.CHEST.parseMaterial() && b.getType() != XMaterial.TRAPPED_CHEST.parseMaterial()) {
