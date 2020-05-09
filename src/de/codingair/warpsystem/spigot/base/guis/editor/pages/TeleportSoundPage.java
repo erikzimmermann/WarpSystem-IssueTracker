@@ -1,11 +1,16 @@
 package de.codingair.warpsystem.spigot.base.guis.editor.pages;
 
+import de.codingair.codingapi.player.gui.anvil.AnvilClickEvent;
+import de.codingair.codingapi.player.gui.anvil.AnvilCloseEvent;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
+import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncAnvilGUIButton;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
+import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.guis.editor.StandardButtonOption;
@@ -14,6 +19,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TeleportSoundPage extends PageItem {
     private SoundData soundData;
@@ -29,39 +37,139 @@ public class TeleportSoundPage extends PageItem {
     public void initialize(Player p) {
         ItemButtonOption option = new StandardButtonOption();
 
-        addButton(new SyncButton(1, 2) {
+        addButton(new SyncAnvilGUIButton(1, 2, ClickType.SHIFT_LEFT) {
+            private List<Sound> searched = new ArrayList<>();
+            private String searchingFor = null;
+            private int id = 0;
+
             @Override
-            public ItemStack craftItem() {
-                return new ItemBuilder(XMaterial.MUSIC_DISC_CAT)
-                        .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Teleport_Sound"))
-                        .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": §7'§r" + soundData.getSound().name() + "§7'")
-                        .addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7« (" + Lang.get("Shift") + ")")
-                        .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §7» (" + Lang.get("Shift") + ")")
-                        .setHideStandardLore(true)
-                        .getItem();
+            public void onClick(AnvilClickEvent e) {
+                String input = e.getInput();
+
+                if(input == null) {
+                    p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Something"));
+                    return;
+                }
+
+                input = input.toUpperCase().replace(" ", "_");
+                Integer id = null;
+
+                try {
+                    id = Integer.parseInt(input);
+                } catch(NumberFormatException ignored) {
+                }
+
+                if(id != null) {
+                    if(id >= 0 && id < sounds.length) soundData.setSound(sounds[id]);
+                    else {
+                        p.sendMessage(Lang.getPrefix() + Lang.get("Enter_Amount_between").replace("%X%", "0").replace("%Y%", (sounds.length - 1) + ""));
+                        return;
+                    }
+                } else {
+                    searchingFor = input;
+                    searched.clear();
+                    id = 0;
+                    for(Sound sound : sounds) {
+                        if(sound.name().contains(searchingFor)) searched.add(sound);
+                    }
+
+                    if(!searched.isEmpty()) soundData.setSound(searched.get(0));
+                }
+
+                e.setClose(true);
             }
 
             @Override
-            public void onClick(InventoryClickEvent e, Player player) {
-                soundData.stop(player);
+            public boolean canTrigger(InventoryClickEvent e, ClickType trigger, Player player) {
+                if(trigger == ClickType.SHIFT_LEFT) {
+                    option.getClickSound2().play(p);
 
-                if(e.isLeftClick()) {
-                    if(e.isShiftClick()) soundData.setSound(shiftPrevious());
-                    else soundData.setSound(previous());
-                } else {
-                    if(e.isShiftClick()) soundData.setSound(shiftNext());
-                    else soundData.setSound(next());
+                    if(searchingFor != null) {
+                        searchingFor = null;
+                        searched.clear();
+                        id = 0;
+                        update();
+                        return false;
+                    } else soundData.stop(p);
                 }
 
-                soundData.play(player);
+                return true;
+            }
+
+            @Override
+            public void onClose(AnvilCloseEvent e) {
+                soundData.play(p);
+                update();
+            }
+
+            @Override
+            public void onOtherClick(InventoryClickEvent e) {
+                if(e.isLeftClick()) {
+                    if(e.isShiftClick()) {
+                        searchingFor = null;
+                        id = 0;
+                        searched.clear();
+                    } else {
+                        soundData.stop(p);
+
+                        if(searchingFor == null) soundData.setSound(previous());
+                        else {
+                            id--;
+                            if(id == -1) id = searched.size() - 1;
+                            soundData.setSound(searched.get(id));
+                        }
+
+                        soundData.play(p);
+                    }
+                } else if(e.isRightClick()) {
+                    if(e.isShiftClick()) {
+                        soundData.stop(p);
+                        soundData.play(p);
+                        return;
+                    } else {
+                        soundData.stop(p);
+
+                        if(searchingFor == null) soundData.setSound(next());
+                        else {
+                            id++;
+                            if(id == searched.size()) id = 0;
+                            soundData.setSound(searched.get(id));
+                        }
+
+                        soundData.play(p);
+                    }
+                }
+
                 update();
             }
 
             @Override
             public boolean canClick(ClickType click) {
-                return click == ClickType.LEFT || click == ClickType.SHIFT_LEFT || click == ClickType.RIGHT || click == ClickType.SHIFT_RIGHT;
+                if(searchingFor == null || !searched.isEmpty()) return click == ClickType.LEFT || click == ClickType.SHIFT_LEFT || click == ClickType.RIGHT || click == ClickType.SHIFT_RIGHT;
+                else return click == ClickType.SHIFT_LEFT || click == ClickType.SHIFT_RIGHT;
             }
-        }.setOption(option));
+
+            @Override
+            public ItemStack craftItem() {
+                return new ItemBuilder(XMaterial.MUSIC_DISC_CAT)
+                        .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Teleport_Sound") + "§8 (§7" + (sounds.length - 1) + "§8)")
+                        .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": §7'" + (searchingFor == null ? soundData.getSound().name() : ChatColor.highlight(soundData.getSound().name(), searchingFor, "§e", "§7")) + "§7' §8(§7id: " + soundData.getSound().ordinal() + "§8)")
+                        .addLore(soundData.getSound().isSupported() ? null : "§8» §7" + Lang.get("Not_Available_in_Version").replace("%VERSION%", Version.getVersion().getShortVersionName()))
+                        .addLore(soundData.getSound().isSupported() ? null : "")
+                        .addLore(searchingFor == null ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Search_Short") + ": §7'" + searchingFor + "' §8(§7" + searched.size() + "§8)")
+                        .addLore("", searchingFor == null || !searched.isEmpty() ? Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7«" : null)
+                        .addLore(searchingFor == null || !searched.isEmpty() ? Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §7»" : null)
+                        .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Shift_Leftclick") + ": " + (searchingFor == null ? "§e" + Lang.get("Search_Short") : "§c" + Lang.get("Reset_Search")))
+                        .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Shift_Rightclick") + ": §7" + Lang.get("Play"))
+                        .setHideStandardLore(true)
+                        .getItem();
+            }
+
+            @Override
+            public ItemStack craftAnvilItem(ClickType trigger) {
+                return new ItemBuilder(XMaterial.PAPER).setName(soundData.getSound().name()).getItem();
+            }
+        }.setOption(option).setClickSound2(null));
 
         addButton(new SyncButton(2, 2) {
             @Override
@@ -89,7 +197,7 @@ public class TeleportSoundPage extends PageItem {
             public boolean canClick(ClickType click) {
                 return click == ClickType.LEFT || click == ClickType.RIGHT;
             }
-        }.setOption(option));
+        }.setOption(option).setClickSound2(null));
 
         addButton(new SyncButton(3, 2) {
             @Override
@@ -107,7 +215,7 @@ public class TeleportSoundPage extends PageItem {
                 soundData.stop(player);
 
                 if(e.isLeftClick()) soundData.setPitch(Math.max(round(soundData.getPitch() - 0.1F), 0F));
-                else soundData.setPitch(Math.min(round(soundData.getPitch() + 0.1F), 1F));
+                else soundData.setPitch(Math.min(round(soundData.getPitch() + 0.1F), 2F));
 
                 soundData.play(player);
                 update();
@@ -117,7 +225,7 @@ public class TeleportSoundPage extends PageItem {
             public boolean canClick(ClickType click) {
                 return click == ClickType.LEFT || click == ClickType.RIGHT;
             }
-        }.setOption(option));
+        }.setOption(option).setClickSound2(null));
     }
 
     private float round(float d) {
@@ -130,30 +238,10 @@ public class TeleportSoundPage extends PageItem {
         return sounds[id];
     }
 
-    public Sound shiftNext() {
-        Sound sound = soundData.getSound();
-        for(int i = sound.ordinal(); true; i++) {
-            if(i == sounds.length) i = 0;
-            if(sound.name().charAt(0) != sounds[i].name().charAt(0)) {
-                return sounds[i];
-            }
-        }
-    }
-
     public Sound previous() {
         int id = soundData.getSound().ordinal() - 1;
-        if(id < 0) id = sounds.length;
+        if(id < 0) id = sounds.length - 1;
         return sounds[id];
-    }
-
-    public Sound shiftPrevious() {
-        Sound sound = soundData.getSound();
-        for(int i = sound.ordinal(); true; i--) {
-            if(sound.name().charAt(0) != sounds[i].name().charAt(0)) {
-                return sounds[i];
-            }
-            if(i == 0) i = sounds.length;
-        }
     }
 
     public static SoundData createStandard() {
