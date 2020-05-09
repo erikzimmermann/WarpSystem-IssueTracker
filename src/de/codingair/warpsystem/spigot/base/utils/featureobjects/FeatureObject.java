@@ -82,7 +82,8 @@ public class FeatureObject implements Serializable {
         if(options.getTeleportSound() == null) {
             if(hasAction(Action.TELEPORT_SOUND)) options.setTeleportSound(getAction(TeleportSoundAction.class).getValue());
         }
-        options.setSkip(isSkip());
+
+        if(options.getSkip() == null) options.setSkip(isSkip());
 
         Origin origin = Origin.getByClass(this);
         options.setOrigin(origin);

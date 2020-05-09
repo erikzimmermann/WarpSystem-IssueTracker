@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class TeleportSoundPage extends PageItem {
     private SoundData soundData;
+    private Sound[] sounds = Sound.values();
 
     public TeleportSoundPage(Player player, String title, SoundData soundData) {
         super(player, title, new ItemBuilder(XMaterial.NOTE_BLOCK).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Teleport_Sound")).getItem(), false);
@@ -31,7 +32,7 @@ public class TeleportSoundPage extends PageItem {
         addButton(new SyncButton(1, 2) {
             @Override
             public ItemStack craftItem() {
-                return new ItemBuilder(XMaterial.MUSIC_DISC_WAIT)
+                return new ItemBuilder(XMaterial.MUSIC_DISC_CAT)
                         .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Teleport_Sound"))
                         .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": §7'§r" + soundData.getSound().name() + "§7'")
                         .addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7« (" + Lang.get("Shift") + ")")
@@ -45,11 +46,11 @@ public class TeleportSoundPage extends PageItem {
                 soundData.stop(player);
 
                 if(e.isLeftClick()) {
-                    if(e.isShiftClick()) soundData.setSound(shiftPrevious(soundData.getSound()));
-                    else soundData.setSound(previous(soundData.getSound()));
+                    if(e.isShiftClick()) soundData.setSound(shiftPrevious());
+                    else soundData.setSound(previous());
                 } else {
-                    if(e.isShiftClick()) soundData.setSound(shiftNext(soundData.getSound()));
-                    else soundData.setSound(next(soundData.getSound()));
+                    if(e.isShiftClick()) soundData.setSound(shiftNext());
+                    else soundData.setSound(next());
                 }
 
                 soundData.play(player);
@@ -123,49 +124,36 @@ public class TeleportSoundPage extends PageItem {
         return ((float) Math.round(d * 10)) / 10;
     }
 
-    public static Sound next(Sound sound) {
-        for(int i = 0; i < Sound.values().length; i++) {
-            if(Sound.values()[i].equals(sound)) return i + 1 == Sound.values().length ? Sound.values()[0] : Sound.values()[i + 1];
-        }
-
-        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
+    public Sound next() {
+        int id = soundData.getSound().ordinal() + 1;
+        if(id == sounds.length) id = 0;
+        return sounds[id];
     }
 
-    public static Sound shiftNext(Sound sound) {
-        int id = -1;
-        for(int i = 0; i < Sound.values().length; i++) {
-            if(Sound.values()[i].equals(sound)) {
-                id = i;
-            } else if(id >= 0 && sound.name().charAt(0) != Sound.values()[i].name().charAt(0)) {
-                return Sound.values()[i];
+    public Sound shiftNext() {
+        Sound sound = soundData.getSound();
+        for(int i = sound.ordinal(); true; i++) {
+            if(i == sounds.length) i = 0;
+            if(sound.name().charAt(0) != sounds[i].name().charAt(0)) {
+                return sounds[i];
             }
         }
-
-        return Sound.values()[0];
     }
 
-    public static Sound previous(Sound sound) {
-        for(int i = 0; i < Sound.values().length; i++) {
-            if(Sound.values()[i].equals(sound)) {
-                return i - 1 < 0 ? Sound.values()[Sound.values().length - 1] : Sound.values()[i - 1];
-            }
-        }
-
-        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
+    public Sound previous() {
+        int id = soundData.getSound().ordinal() - 1;
+        if(id < 0) id = sounds.length;
+        return sounds[id];
     }
 
-    public static Sound shiftPrevious(Sound sound) {
-        int id = -1;
-
-        for(int i = 0; i < Sound.values().length; i++) {
-            if(Sound.values()[i].name().charAt(0) == sound.name().charAt(0)) {
-                return id == -1 ? Sound.values()[Sound.values().length - 1] : Sound.values()[id];
-            } else {
-                id = i;
+    public Sound shiftPrevious() {
+        Sound sound = soundData.getSound();
+        for(int i = sound.ordinal(); true; i--) {
+            if(sound.name().charAt(0) != sounds[i].name().charAt(0)) {
+                return sounds[i];
             }
+            if(i == 0) i = sounds.length;
         }
-
-        throw new IllegalArgumentException("Couldn't found Sound with nanme=" + sound.name());
     }
 
     public static SoundData createStandard() {

@@ -1,5 +1,7 @@
 package de.codingair.warpsystem.spigot.base.listeners;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.time.TimeMap;
@@ -17,24 +19,20 @@ import org.bukkit.util.Vector;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class TeleportListener implements Listener {
     public static final HashMap<Player, org.bukkit.Location> TELEPORTS = new HashMap<>();
-    private static final TimeMap<String, TeleportOptions> teleport = new TimeMap<>();
+    public static final Cache<String, TeleportOptions> teleport = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.SECONDS).softValues().build();
 
     public static void setSpawnPositionOrTeleport(String name, TeleportOptions options) {
-        if(options == null) {
-            teleport.remove(name);
-            return;
-        }
-
+        if(options == null) return;
         options.setSkip(true);
         Player player = Bukkit.getPlayer(name);
 
-        if(player == null) {
-            //save
-            teleport.put(name, options);
-        } else {
+        //save for PlayerFinalJoinEvent (detect teleports for Spawn feature)
+        teleport.put(name, options);
+        if(player != null) {
             //teleport
             Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(player, options), 2L);
         }
@@ -52,7 +50,7 @@ public class TeleportListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onSpawn(PlayerSpawnLocationEvent e) {
-        TeleportOptions options = teleport.remove(e.getPlayer().getName());
+        TeleportOptions options = teleport.getIfPresent(e.getPlayer().getName());
 
         if(options != null) {
             org.bukkit.Location l = options.buildLocation();

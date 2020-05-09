@@ -31,8 +31,6 @@ public class ServerAdapter implements DestinationAdapter {
 
                 if(result == 2)
                     player.sendMessage(Lang.getPrefix() + Lang.get("Player_Is_Already_On_Target_Server"));
-                else if(result == 1 || result == 3)
-                    player.sendMessage(Lang.getPrefix() + Lang.get("Server_Is_Not_Online"));
             }
         }));
 

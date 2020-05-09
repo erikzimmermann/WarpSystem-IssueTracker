@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class UUIDManager {
     private HashMap<String, UUID> uniqueIds = new HashMap<>();
-    private TimeMap<String, UUID> tempIds = new TimeMap();
+    private TimeMap<String, UUID> tempIds = new TimeMap<>();
 
     public void downloadAll() {
         for(Player player : Bukkit.getOnlinePlayers()) {
