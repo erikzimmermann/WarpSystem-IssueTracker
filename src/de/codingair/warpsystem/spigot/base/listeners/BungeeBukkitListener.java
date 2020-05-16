@@ -34,7 +34,7 @@ public class BungeeBukkitListener implements PacketListener, Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        if(Bukkit.getOnlinePlayers().size() <= 1) {
+        if(Bukkit.getOnlinePlayers().size() <= 1 && WarpSystem.getInstance().isOnBungeeCord()) {
             WarpSystem.getInstance().setOnBungeeCord(false);
         }
     }
