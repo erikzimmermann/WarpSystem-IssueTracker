@@ -3,7 +3,7 @@ package de.codingair.warpsystem.spigot.features.portals.commands;
 import de.codingair.codingapi.player.gui.anvil.*;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
-import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
+import de.codingair.codingapi.server.commands.builder.special.MultiCommandComponent;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.warpsystem.spigot.api.WSCommandBuilder;

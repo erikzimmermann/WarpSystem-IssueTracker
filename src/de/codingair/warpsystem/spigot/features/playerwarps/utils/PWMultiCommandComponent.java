@@ -1,6 +1,6 @@
 package de.codingair.warpsystem.spigot.features.playerwarps.utils;
 
-import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
+import de.codingair.codingapi.server.commands.builder.special.MultiCommandComponent;
 import org.bukkit.command.CommandSender;
 
 public abstract class PWMultiCommandComponent extends MultiCommandComponent {

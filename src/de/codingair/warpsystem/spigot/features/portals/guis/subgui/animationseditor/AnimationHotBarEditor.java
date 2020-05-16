@@ -18,7 +18,6 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.animations.utils.ParticlePart;
-import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.portals.guis.PortalEditor;
 import de.codingair.warpsystem.spigot.features.portals.utils.Animation;
 import org.bukkit.Bukkit;
@@ -67,12 +66,6 @@ public class AnimationHotBarEditor extends HotbarGUI {
         initialize();
     }
 
-    @Override
-    public void open(boolean sound) {
-        super.open(sound);
-        setStartSlot(2);
-    }
-
     public static String MINUS_PLUS(String s) {
         return ACTION_BAR(s, "-", "+");
     }
@@ -95,11 +88,14 @@ public class AnimationHotBarEditor extends HotbarGUI {
 
     public static Number cut(double n) {
         double d = ((double) (int) (n * 100)) / 100;
-
-        if(PlayerWarpManager.getManager().isNaturalNumbers()) d = Math.ceil(d);
-
         if(d == (int) d) return (int) d;
         else return d;
+    }
+
+    @Override
+    public void open(boolean sound) {
+        super.open(sound);
+        setStartSlot(2);
     }
 
     private Location calculateMid() {

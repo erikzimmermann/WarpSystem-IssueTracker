@@ -1,8 +1,8 @@
 #PREMIUM marked values cannot be changed. Any changes will be ignored.
 PlayerWarps:
   General:
-    #PREMIUM | Will only be used if permissions are disabled (see line 9)
-    Max_Warp_Amount: 5
+    #PREMIUM | Will only be used if permissions are disabled (see Config.yml line 8)
+    Max_Warp_Amount: 3
     Support:
       #If enabled, the player can't create PlayerWarps in regions, where he cannot build
       ProtectedRegions: true

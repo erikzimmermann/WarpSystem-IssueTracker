@@ -7,7 +7,6 @@ import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.list.GUIList;
 import de.codingair.warpsystem.spigot.base.guis.list.ListItem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
 import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
 import org.bukkit.entity.Player;
@@ -19,6 +18,12 @@ import java.util.List;
 public abstract class PortalList extends GUIList<Portal> {
     public PortalList(Player p) {
         super(p, Editor.TITLE_COLOR + Lang.get("Portals"), true);
+    }
+
+    public static Number cut(double n) {
+        double d = ((double) (int) (n * 100)) / 100;
+        if(d == (int) d) return (int) d;
+        else return d;
     }
 
     @Override
@@ -52,14 +57,5 @@ public abstract class PortalList extends GUIList<Portal> {
                 }
             });
         }
-    }
-
-    public static Number cut(double n) {
-        double d = ((double) (int) (n * 100)) / 100;
-
-        if(PlayerWarpManager.getManager().isNaturalNumbers()) d = Math.ceil(d);
-
-        if(d == (int) d) return (int) d;
-        else return d;
     }
 }

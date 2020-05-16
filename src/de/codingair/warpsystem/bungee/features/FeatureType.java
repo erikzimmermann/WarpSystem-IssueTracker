@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.bungee.features;
 
 import de.codingair.warpsystem.bungee.features.globalwarps.managers.GlobalWarpManager;
+import de.codingair.warpsystem.bungee.features.randomtp.RandomTPManager;
 import de.codingair.warpsystem.bungee.features.spawn.managers.SpawnManager;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
 import de.codingair.warpsystem.utils.Manager;
@@ -10,8 +11,9 @@ import java.util.List;
 
 public enum FeatureType {
     GLOBAL_WARPS(GlobalWarpManager.class, Priority.LOW),
+    TELEPORT(TeleportManager.class, Priority.LOW),
     SPAWN(SpawnManager.class, Priority.LOW),
-    TELEPORT(TeleportManager.class, Priority.HIGH),
+    RANDOM_TP(RandomTPManager.class, Priority.LOW),
     ;
 
     private Class<? extends Manager> managerClass;

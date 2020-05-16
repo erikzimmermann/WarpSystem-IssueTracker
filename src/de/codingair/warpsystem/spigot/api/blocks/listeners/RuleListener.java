@@ -4,7 +4,6 @@ import de.codingair.codingapi.API;
 import de.codingair.warpsystem.spigot.api.blocks.StaticLavaBlock;
 import de.codingair.warpsystem.spigot.api.blocks.utils.StaticBlock;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -73,7 +72,7 @@ public class RuleListener implements Listener {
             e.getEntity().setFireTicks(0);
         }
     }
-    
+
     private void addTo(List<Location> list, Location origin, Location toAdd) {
         if(!origin.getBlock().getLocation().equals(toAdd.getBlock().getLocation())) list.add(toAdd);
     }

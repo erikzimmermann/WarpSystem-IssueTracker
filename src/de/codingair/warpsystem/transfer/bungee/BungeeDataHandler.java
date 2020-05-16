@@ -39,6 +39,7 @@ public class BungeeDataHandler implements DataHandler {
     public void onDisable() {
         BungeeCord.getInstance().getPluginManager().unregisterListener(this.listener);
         BungeeCord.getInstance().unregisterChannel(GET_CHANNEL);
+        this.listeners.clear();
     }
 
     public void send(Packet packet, ServerInfo server) {

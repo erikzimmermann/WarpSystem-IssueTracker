@@ -1,11 +1,13 @@
 package de.codingair.warpsystem.bungee.base.managers;
 
+import com.google.common.base.Preconditions;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.base.utils.ServerInitializeEvent;
 import de.codingair.warpsystem.transfer.packets.bungee.InitialPacket;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Listener;
 
 import java.util.ArrayList;
@@ -14,6 +16,24 @@ import java.util.concurrent.TimeUnit;
 
 public class ServerManager implements Listener {
     private List<ServerInfo> onlineServer = new ArrayList<>();
+
+    public static void sendPlayerTo(ServerInfo server, ProxiedPlayer player, Callback<ServerInfo> c) {
+        Preconditions.checkNotNull(server);
+        Preconditions.checkNotNull(player);
+
+        if(player.getServer().getInfo().equals(server)) {
+            c.accept(server);
+        } else {
+            if(server.getPlayers().isEmpty()) {
+                player.connect(server, (connected, throwable) -> {
+                    if(connected) c.accept(server);
+                });
+            } else {
+                c.accept(server);
+                player.connect(server);
+            }
+        }
+    }
 
     public List<ServerInfo> getOnlineServer() {
         return onlineServer;

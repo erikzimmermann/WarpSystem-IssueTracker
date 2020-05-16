@@ -1,5 +1,7 @@
 package de.codingair.warpsystem.spigot.features.spawn.listeners;
 
+import de.codingair.codingapi.server.sounds.Sound;
+import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.warpsystem.spigot.api.events.PlayerFinalJoinEvent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
@@ -12,6 +14,7 @@ import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -46,6 +49,7 @@ public class SpawnListener implements Listener, PacketListener {
 
                     TeleportOptions options = new TeleportOptions();
                     options.setMessage(null);
+                    options.setTeleportSound(new SoundData(Sound.AMBIENT_CAVE, 0, 0));
                     options.setAfterEffects(false);
                     options.setSkip(true);
                     spawn.perform(e.getPlayer(), options);
@@ -70,7 +74,8 @@ public class SpawnListener implements Listener, PacketListener {
 
         Spawn spawn = SpawnManager.getInstance().getSpawn();
         if(spawn != null && spawn.isValid() && spawn.getRespawnUsage() != Spawn.RespawnUsage.DISABLED) {
-            e.setRespawnLocation(spawn.getLocation());
+            Location l = spawn.getLocation();
+            if(l != null && l.getWorld() != null) e.setRespawnLocation(spawn.getLocation());
         }
     }
 

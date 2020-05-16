@@ -8,6 +8,7 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.SmartTeleport;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.transfer.packets.general.PrepareCoordinationTeleportPacket;
 import org.bukkit.entity.Player;
@@ -63,9 +64,12 @@ public class GlobalLocationAdapter extends LocationAdapter implements Serializab
             } else {
                 Location finalLoc = location.clone().add(randomOffset);
                 if(silent) TeleportListener.TELEPORTS.put(player, finalLoc);
-                player.teleport(finalLoc);
-
-                if(callback != null) callback.accept(TeleportResult.TELEPORTED);
+                new SmartTeleport(player, finalLoc, new Callback<Boolean>() {
+                    @Override
+                    public void accept(Boolean object) {
+                        if(callback != null) callback.accept(TeleportResult.TELEPORTED);
+                    }
+                }).start();
                 return true;
             }
         } else {

@@ -4,7 +4,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.codingapi.tools.Location;
-import de.codingair.codingapi.tools.time.TimeMap;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
@@ -34,7 +33,10 @@ public class TeleportListener implements Listener {
         teleport.put(name, options);
         if(player != null) {
             //teleport
-            Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(player, options), 2L);
+            Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
+                teleport.invalidate(name);
+                WarpSystem.getInstance().getTeleportManager().teleport(player, options);
+            }, 2L);
         }
     }
 

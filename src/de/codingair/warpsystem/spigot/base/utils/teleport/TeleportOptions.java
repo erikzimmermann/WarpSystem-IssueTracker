@@ -21,7 +21,7 @@ public class TeleportOptions {
     private String displayName;
     private String permission;
     private double costs;
-    private boolean skip;
+    private Boolean skip;
     private boolean noDelayByPass = false;
     private boolean canMove;
     private boolean waitForTeleport; //Waiting for walking teleports

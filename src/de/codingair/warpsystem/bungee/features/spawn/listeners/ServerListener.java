@@ -1,6 +1,8 @@
 package de.codingair.warpsystem.bungee.features.spawn.listeners;
 
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
+import de.codingair.warpsystem.bungee.base.managers.ServerManager;
 import de.codingair.warpsystem.bungee.base.utils.ServerInitializeEvent;
 import de.codingair.warpsystem.bungee.features.spawn.managers.SpawnManager;
 import de.codingair.warpsystem.transfer.packets.general.SendGlobalSpawnOptionsPacket;
@@ -33,20 +35,12 @@ public class ServerListener implements Listener, PacketListener {
             ServerInfo server = BungeeCord.getInstance().getServerInfo(p.isRespawn() ? SpawnManager.getInstance().getRespawn() : SpawnManager.getInstance().getSpawn());
 
             if(player != null && server != null) {
-                if(player.getServer().getInfo().equals(server)) {
-                    WarpSystem.getInstance().getDataHandler().send(p, server);
-                } else {
-                    if(server.getPlayers().isEmpty()) {
-                        player.connect(server, (connected, throwable) -> {
-                            if(connected)
-                                WarpSystem.getInstance().getDataHandler().send(p, server);
-                        });
-                    } else {
+                ServerManager.sendPlayerTo(server, player, new Callback<ServerInfo>() {
+                    @Override
+                    public void accept(ServerInfo server) {
                         WarpSystem.getInstance().getDataHandler().send(p, server);
-                        player.connect(server);
                     }
-                }
-
+                });
             }
         }
     }

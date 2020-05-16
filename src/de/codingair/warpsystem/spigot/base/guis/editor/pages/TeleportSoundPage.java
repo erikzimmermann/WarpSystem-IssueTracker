@@ -33,6 +33,14 @@ public class TeleportSoundPage extends PageItem {
         initialize(player);
     }
 
+    public static SoundData createStandard() {
+        return new SoundData(Sound.ENTITY_ENDERMAN_TELEPORT, 1F, 1F);
+    }
+
+    public static boolean isStandardSound(SoundData data) {
+        return createStandard().equals(data);
+    }
+
     @Override
     public void initialize(Player p) {
         ItemButtonOption option = new StandardButtonOption();
@@ -242,13 +250,5 @@ public class TeleportSoundPage extends PageItem {
         int id = soundData.getSound().ordinal() - 1;
         if(id < 0) id = sounds.length - 1;
         return sounds[id];
-    }
-
-    public static SoundData createStandard() {
-        return new SoundData(Sound.ENTITY_ENDERMAN_TELEPORT, 1F, 1F);
-    }
-
-    public static boolean isStandardSound(SoundData data) {
-        return createStandard().equals(data);
     }
 }

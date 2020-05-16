@@ -76,10 +76,9 @@ public class PortalEditor extends Editor<Portal> {
                 if(PortalManager.getInstance().getPortals().contains(portal)) {
                     portal.setEditMode(false);
                     portal.setVisible(true);
-                }
-                else portal.destroy();
+                } else portal.destroy();
             }
-        }, () -> new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setHideName(true).getItem(), new PAppearance(p, clone), new POptions(p, clone), new PAnimations(p, clone), new DestinationPage(p, getMainTitle(), clone.getDestination(), Origin.Portal,  new SyncButton(0) {
+        }, () -> new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setHideName(true).getItem(), new PAppearance(p, clone), new POptions(p, clone), new PAnimations(p, clone), new DestinationPage(p, getMainTitle(), clone.getDestination(), Origin.Portal, new SyncButton(0) {
             @Override
             public ItemStack craftItem() {
                 Portal target = clone.getDestination().getType() != DestinationType.Portal ? null : PortalManager.getInstance().getPortal(clone.getDestination().getId());
@@ -143,6 +142,10 @@ public class PortalEditor extends Editor<Portal> {
         setSuccessSound(music0);
     }
 
+    public static String getMainTitle() {
+        return Editor.TITLE_COLOR + Lang.get("Portals_Editor");
+    }
+
     @Override
     public void open(Player player) {
         if(!openForFirstTime) EDITORS.put(player.getName(), this);
@@ -154,10 +157,6 @@ public class PortalEditor extends Editor<Portal> {
     public void destroy() {
         if(!isClosingForGUI()) EDITORS.remove(getPlayer().getName());
         super.destroy();
-    }
-
-    public static String getMainTitle() {
-        return Editor.TITLE_COLOR + Lang.get("Portals_Editor");
     }
 
     @Override

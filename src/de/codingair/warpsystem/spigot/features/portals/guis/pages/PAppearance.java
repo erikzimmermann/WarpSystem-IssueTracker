@@ -17,7 +17,6 @@ import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.guis.editor.StandardButtonOption;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.NameButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.portals.guis.PortalEditor;
 import de.codingair.warpsystem.spigot.features.portals.guis.subgui.HologramEditor;
 import de.codingair.warpsystem.spigot.features.portals.guis.subgui.PortalBlockEditor;
@@ -45,6 +44,12 @@ public class PAppearance extends PageItem {
 
         this.clone = clone;
         initialize(p);
+    }
+
+    public static Number cut(double n) {
+        double d = ((double) (int) (n * 100)) / 100;
+        if(d == (int) d) return (int) d;
+        else return d;
     }
 
     @Override
@@ -181,7 +186,7 @@ public class PAppearance extends PageItem {
                         .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Teleport_Name"))
                         .setLore("§3" + Lang.get("Current") + ": " + (clone.getTeleportName() == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + org.bukkit.ChatColor.translateAlternateColorCodes('&', clone.getTeleportName()) + "§7'"),
                                 "", (clone.getTeleportName() == null ? "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Set_Name") : "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Name")),
-                (clone.getTeleportName() == null ? null : "§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove")))
+                                (clone.getTeleportName() == null ? null : "§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove")))
                         .getItem();
             }
 
@@ -249,15 +254,6 @@ public class PAppearance extends PageItem {
                 return b.getItem();
             }
         }.setOption(option));
-    }
-
-    public static Number cut(double n) {
-        double d = ((double) (int) (n * 100)) / 100;
-
-        if(PlayerWarpManager.getManager().isNaturalNumbers()) d = Math.ceil(d);
-
-        if(d == (int) d) return (int) d;
-        else return d;
     }
 
     public boolean canFinish() {

@@ -1,21 +1,31 @@
 package de.codingair.warpsystem.spigot.features.randomteleports.managers;
 
+import com.google.common.base.Preconditions;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.files.loader.UTFConfig;
-import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.randomteleports.commands.CRandomTP;
+import de.codingair.warpsystem.spigot.features.randomteleports.commands.CRandomTp;
 import de.codingair.warpsystem.spigot.features.randomteleports.listeners.InteractListener;
+import de.codingair.warpsystem.spigot.features.randomteleports.packets.RandomTPWorldsPacket;
 import de.codingair.warpsystem.spigot.features.randomteleports.utils.RandomLocationCalculator;
+import de.codingair.warpsystem.spigot.features.randomteleports.utils.WorldOption;
 import de.codingair.warpsystem.spigot.features.randomteleports.utils.forwardcompatibility.RTPTagConverter_v4_2_2;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -23,13 +33,15 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.*;
 
-public class RandomTeleporterManager implements Manager {
+public class RandomTeleporterManager implements Manager, BungeeFeature {
     private boolean buyable;
     private double costs;
     private double minRange;
     private double maxRange;
     private boolean protectedRegions;
     private List<Biome> biomeList;
+    private List<Material> materialBlackList = new ArrayList<>();
+    private List<WorldOption> worldOptions = new ArrayList<>();
     private HashMap<Player, RandomLocationCalculator> searching = new HashMap<>();
 
     private int netherHeight;
@@ -62,7 +74,19 @@ public class RandomTeleporterManager implements Manager {
         this.netherHeight = config.getInt("RandomTeleport.Range.Highest_Y.Nether", 126);
         this.endHeight = config.getInt("RandomTeleport.Range.Highest_Y.End", 72);
 
-        this.protectedRegions = config.getBoolean("WaSystem.RandomTeleport.Support.ProtectedRegions", true);
+        this.materialBlackList.clear();
+        if(config.getBoolean("RandomTeleport.Block_Blacklist.Enabled", false)) {
+            for(String material : config.getStringList("RandomTeleport.Block_Blacklist.List")) {
+                Optional<XMaterial> parsed = XMaterial.matchXMaterial(material.toUpperCase().replace(" ", "_"));
+                parsed.ifPresent(xMaterial -> {
+                    Material m = xMaterial.parseMaterial();
+
+                    if(!materialBlackList.contains(m)) materialBlackList.add(m);
+                });
+            }
+        }
+
+        this.protectedRegions = config.getBoolean("RandomTeleport.Support.ProtectedRegions", true);
         if(config.getBoolean("RandomTeleport.Support.Biome.Enabled", true)) {
             List<String> configBiomes = config.getStringList("RandomTeleport.Support.Biome.BiomeList");
             biomeList = new ArrayList<>();
@@ -84,10 +108,30 @@ public class RandomTeleporterManager implements Manager {
             }
         }
 
+        boolean success = true;
+        worldOptions.clear();
+        List<?> l = config.getList("RandomTeleport.Worlds.Options");
+        if(l != null)
+            for(Object data : l) {
+                try {
+                    JSON json = new JSON((Map<?, ?>) data);
+                    for(Object o : json.keySet(false)) {
+                        String key = o + "";
+                        WorldOption option = new WorldOption(key);
+                        json.getSerializable(key, option);
+                        worldOptions.add(option);
+                    }
+                } catch(Exception e) {
+                    success = false;
+                    e.printStackTrace();
+                }
+            }
+
+        WarpSystem.log("    ...got " + this.worldOptions.size() + " WorldOption(s)");
         ConfigFile file = WarpSystem.getInstance().getFileManager().loadFile("Teleporters", "/Memory/");
         config = file.getConfig();
 
-        List<?> l = config.getList("RandomTeleporter.InteractBlocks");
+        l = config.getList("RandomTeleporter.InteractBlocks");
         if(l != null)
             for(Object s : l) {
                 if(s instanceof Map) {
@@ -96,6 +140,7 @@ public class RandomTeleporterManager implements Manager {
                     try {
                         loc.read(json);
                     } catch(Exception e) {
+                        success = false;
                         e.printStackTrace();
                         continue;
                     }
@@ -107,10 +152,12 @@ public class RandomTeleporterManager implements Manager {
             }
 
         Bukkit.getPluginManager().registerEvents(this.listener, WarpSystem.getInstance());
-        new CRandomTP().register(WarpSystem.getInstance());
+        new CRandomTp().register(WarpSystem.getInstance());
 
         WarpSystem.log("    ...got " + this.interactBlocks.size() + " InteractBlock(s)");
-        return true;
+        WarpSystem.getInstance().getBungeeFeatureList().add(this);
+
+        return success;
     }
 
     @Override
@@ -134,9 +181,24 @@ public class RandomTeleporterManager implements Manager {
     }
 
     @Override
+    public void onConnect() {
+        List<String> worlds = new ArrayList<>();
+        for(World world : Bukkit.getWorlds()) {
+            if(!worlds.contains(world.getName())) worlds.add(world.getName());
+        }
+
+        WarpSystem.getInstance().getDataHandler().send(new RandomTPWorldsPacket(worlds));
+    }
+
+    @Override
+    public void onDisconnect() {
+    }
+
+    @Override
     public void destroy() {
         this.interactBlocks.clear();
         if(this.biomeList != null) this.biomeList.clear();
+        this.materialBlackList.clear();
         HandlerList.unregisterAll(this.listener);
     }
 
@@ -214,7 +276,67 @@ public class RandomTeleporterManager implements Manager {
         return amount;
     }
 
+    private WorldOption getOption(World world) {
+        for(WorldOption worldOption : this.worldOptions) {
+            if(worldOption.getWorldName().equalsIgnoreCase(world.getName())) return worldOption;
+        }
+
+        return null;
+    }
+
     public void tryToTeleport(Player player) {
+        tryToTeleport(player.getName(), player.getWorld(), false, new Callback<Integer>() {
+            @Override
+            public void accept(Integer object) {
+            }
+        });
+    }
+
+    public void search(Player player, World target, Callback<Location> callback) {
+        Preconditions.checkNotNull(target);
+        org.bukkit.Location start;
+        double minRange;
+        double maxRange;
+
+        WorldOption option = getOption(target);
+        start = target.getSpawnLocation();
+
+        if(option != null) {
+            start.setX(option.getStartX());
+            start.setY(option.getStartY());
+            start.setZ(option.getStartZ());
+            minRange = option.getMin();
+            maxRange = option.getMax();
+        } else {
+            minRange = getMinRange();
+            maxRange = getMaxRange();
+        }
+
+        RandomLocationCalculator t = new RandomLocationCalculator(player, start, minRange, maxRange, new Callback<Location>() {
+            @Override
+            public void accept(Location loc) {
+                searching.remove(player);
+
+                if(loc != null) {
+                    loc.setYaw(player.getLocation().getYaw());
+                    loc.setPitch(player.getLocation().getPitch());
+                }
+
+                callback.accept(loc);
+            }
+        });
+        searching.put(player, t);
+        Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), t);
+    }
+
+    public void tryToTeleport(String targetPlayer, World target, boolean force, Callback<Integer> callback) {
+        Player player = Bukkit.getPlayerExact(targetPlayer);
+
+        if(player == null) {
+            callback.accept(1);
+            return;
+        }
+
         RandomLocationCalculator c;
         if((c = searching.get(player)) != null) {
             if(System.currentTimeMillis() - c.getLastReaction() > 5000) {
@@ -222,49 +344,53 @@ public class RandomTeleporterManager implements Manager {
                 player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_No_Location_Found"));
             } else player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Already_Searching"));
 
+            callback.accept(-1);
             return;
         }
 
-        if(!canTeleport(player)) {
+        if(!canTeleport(player) && !force) {
             player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_No_Teleports_Left"));
+            callback.accept(4);
             return;
         }
 
-        RandomLocationCalculator t = new RandomLocationCalculator(player, new Callback<Location>() {
+        search(player, target, new Callback<Location>() {
             @Override
             public void accept(Location loc) {
                 if(loc == null) {
                     //no location found, try again
                     player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_No_Location_Found"));
+                    callback.accept(2);
                 } else {
                     //teleported
                     UUID uuid = WarpSystem.getInstance().getUUIDManager().get(player);
-                    if(!player.isOp()) setTeleports(uuid, getTeleports(uuid) + 1);
+                    if(!player.isOp()) increaseTeleports(uuid);
 
                     Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> {
-                        player.teleport(loc);
-                        Sound.ENTITY_ENDERMAN_TELEPORT.playSound(player);
-                        player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Teleported"));
+                        TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(loc)), "");
+                        options.setMessage(Lang.get("RandomTP_Teleported"));
+                        options.setSkip(true);
+                        options.addCallback(new Callback<TeleportResult>() {
+                            @Override
+                            public void accept(TeleportResult object) {
+                                callback.accept(0);
+                            }
+                        });
+
+                        WarpSystem.getInstance().getTeleportManager().teleport(player, options);
                     });
                 }
-
-                searching.remove(player);
             }
         });
 
         player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Searching"));
-        searching.put(player, t);
-        Bukkit.getScheduler().runTaskAsynchronously(WarpSystem.getInstance(), t);
     }
 
-    public void setTeleports(Player player, int teleports) {
-        setTeleports(WarpSystem.getInstance().getUUIDManager().get(player), teleports);
-    }
-
-    public void setTeleports(UUID uuid, int teleports) {
+    public void increaseTeleports(UUID uuid) {
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("PlayData");
         UTFConfig config = file.getConfig();
-        config.set("RandomTeleporter." + uuid.toString() + ".Teleports", teleports);
+        int i = config.getInt("RandomTeleporter." + uuid.toString() + ".Teleports", 0) + 1;
+        config.set("RandomTeleporter." + uuid.toString() + ".Teleports", i);
         file.saveConfig();
     }
 
@@ -277,10 +403,6 @@ public class RandomTeleporterManager implements Manager {
         UTFConfig config = file.getConfig();
 
         return config.getInt("RandomTeleporter." + uuid.toString() + ".Teleports", 0);
-    }
-
-    public void setBoughtTeleports(Player player, int teleports) {
-        setBoughtTeleports(WarpSystem.getInstance().getUUIDManager().get(player), teleports);
     }
 
     public void setBoughtTeleports(UUID uuid, int teleports) {
@@ -339,5 +461,9 @@ public class RandomTeleporterManager implements Manager {
 
     public int getEndHeight() {
         return endHeight;
+    }
+
+    public List<Material> getMaterialBlackList() {
+        return materialBlackList;
     }
 }

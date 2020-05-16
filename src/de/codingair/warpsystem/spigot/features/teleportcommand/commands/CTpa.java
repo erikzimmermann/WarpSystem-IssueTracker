@@ -2,9 +2,10 @@ package de.codingair.warpsystem.spigot.features.teleportcommand.commands;
 
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
-import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
+import de.codingair.codingapi.server.commands.builder.special.MultiCommandComponent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.utils.ChatColor;
+import de.codingair.warpsystem.bungee.features.teleport.listeners.TabCompleterListener;
 import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -54,8 +55,8 @@ public class CTpa extends WSCommandBuilder {
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 Player p = (Player) sender;
                 if(WarpSystem.getInstance().isOnBungeeCord()) {
-                    suggestions.add("§WARPSYSTEM");
-                    if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) suggestions.add("§ACCESS");
+                    suggestions.add(TabCompleterListener.ID);
+                    if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) suggestions.add(TabCompleterListener.ACCESS);
 
                     StringBuilder builder = new StringBuilder("tpa");
                     for(String arg : args) {

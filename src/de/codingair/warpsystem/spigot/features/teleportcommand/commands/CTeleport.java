@@ -4,6 +4,7 @@ import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.warpsystem.bungee.features.teleport.listeners.TabCompleterListener;
 import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -158,8 +159,8 @@ public class CTeleport extends WSCommandBuilder {
             List<String> suggestions = new ArrayList<>();
 
             if(WarpSystem.getInstance().isOnBungeeCord()) {
-                suggestions.add("§WARPSYSTEM");
-                suggestions.add("§ACCESS");
+                suggestions.add(TabCompleterListener.ID);
+                suggestions.add(TabCompleterListener.ACCESS);
 
                 StringBuilder builder = new StringBuilder(s);
                 for(String arg : args) {
