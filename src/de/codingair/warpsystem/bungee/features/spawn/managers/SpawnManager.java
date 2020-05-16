@@ -14,6 +14,10 @@ import java.util.Objects;
 public class SpawnManager implements Manager {
     private String spawn, respawn;
 
+    public static SpawnManager getInstance() {
+        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.SPAWN);
+    }
+
     @Override
     public boolean load(boolean loader) {
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
@@ -54,10 +58,6 @@ public class SpawnManager implements Manager {
             if(serverInfo.equals(except)) continue;
             WarpSystem.getInstance().getDataHandler().send(getInfoPacket(), serverInfo);
         }
-    }
-
-    public static SpawnManager getInstance() {
-        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.SPAWN);
     }
 
     public SendGlobalSpawnOptionsPacket getInfoPacket() {

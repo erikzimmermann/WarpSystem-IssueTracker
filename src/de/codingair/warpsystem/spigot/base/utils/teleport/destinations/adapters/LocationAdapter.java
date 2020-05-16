@@ -5,6 +5,7 @@ import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.SmartTeleport;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -45,9 +46,12 @@ public class LocationAdapter implements DestinationAdapter, CloneableAdapter {
         } else {
             Location finalLoc = location.clone().add(randomOffset);
             if(silent) TeleportListener.TELEPORTS.put(player, finalLoc);
-            player.teleport(finalLoc);
-
-            if(callback != null) callback.accept(TeleportResult.TELEPORTED);
+            new SmartTeleport(player, finalLoc, new Callback<Boolean>() {
+                @Override
+                public void accept(Boolean object) {
+                    if(callback != null) callback.accept(TeleportResult.TELEPORTED);
+                }
+            }).start();
             return true;
         }
     }

@@ -1,14 +1,13 @@
 package de.codingair.warpsystem.spigot.features.teleportcommand.commands;
 
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
-import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
-import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
+import de.codingair.codingapi.server.commands.builder.special.MultiCommandComponent;
 import de.codingair.codingapi.utils.ChatColor;
+import de.codingair.warpsystem.bungee.features.teleport.listeners.TabCompleterListener;
 import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -52,7 +51,7 @@ public class CTpHere extends WSCommandBuilder {
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 Player p = (Player) sender;
                 if(WarpSystem.getInstance().isOnBungeeCord()) {
-                    suggestions.add("§WARPSYSTEM");
+                    suggestions.add(TabCompleterListener.ID);
 
                     StringBuilder builder = new StringBuilder("tpa");
                     for(String arg : args) {

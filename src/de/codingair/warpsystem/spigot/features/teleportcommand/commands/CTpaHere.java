@@ -2,9 +2,10 @@ package de.codingair.warpsystem.spigot.features.teleportcommand.commands;
 
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
-import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
+import de.codingair.codingapi.server.commands.builder.special.MultiCommandComponent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.utils.ChatColor;
+import de.codingair.warpsystem.bungee.features.teleport.listeners.TabCompleterListener;
 import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -52,7 +53,7 @@ public class CTpaHere extends WSCommandBuilder {
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 Player p = (Player) sender;
                 if(WarpSystem.getInstance().isOnBungeeCord()) {
-                    suggestions.add("§WARPSYSTEM"); //key for bungeecord
+                    suggestions.add(TabCompleterListener.ID); //key for bungeecord
 
                     StringBuilder builder = new StringBuilder("tpahere");
                     for(String arg : args) {

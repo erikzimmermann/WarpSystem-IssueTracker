@@ -24,7 +24,7 @@ public class CSpawn extends WSCommandBuilder {
                 Spawn spawn = SpawnManager.getInstance().getSpawn();
 
                 if(spawn == null || !spawn.isValid()) sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
-                else if(spawn.getUsage() == Spawn.Usage.FIRST_JOIN || spawn.getUsage() == Spawn.Usage.EVERY_JOIN || spawn.getUsage() == Spawn.Usage.DISABLED) {
+                else if(!spawn.switchServer() && (spawn.getUsage() == Spawn.Usage.FIRST_JOIN || spawn.getUsage() == Spawn.Usage.EVERY_JOIN || spawn.getUsage() == Spawn.Usage.DISABLED)) {
                     sender.sendMessage(SpigotConfig.unknownCommandMessage);
                 } else spawn.perform((Player) sender);
 

@@ -10,13 +10,14 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 public class TabCompleterListener implements Listener {
+    public static final String ID = "§WS-TP";
 
     @EventHandler
     public void onResponse(TabCompleteResponseEvent e) {
         if(e.getSuggestions().isEmpty()) return;
 
-        if(e.getSuggestions().remove("§WARPSYSTEM")) {
-            String cursor = e.getSuggestions().remove(0);
+        if(e.getSuggestions().remove(ID)) {
+            String cursor = e.getSuggestions().isEmpty() ? "" : e.getSuggestions().remove(0);
 
             String cmd = cursor.split(" ")[0];
             String[] args = cursor.split(" ");

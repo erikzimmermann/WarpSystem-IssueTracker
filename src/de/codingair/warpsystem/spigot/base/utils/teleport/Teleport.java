@@ -226,7 +226,7 @@ public class Teleport {
                                 MessageAPI.sendActionBar(player, Lang.get("Teleport_Cancelled"));
                                 HandlerList.unregisterAll(this);
                                 cancel(true, false);
-                            } else if(Version.getVersion() == Version.v1_8)
+                            } else if(Version.getVersion().getId() <= 8)
                                 Bukkit.getPluginManager().callEvent(new PlayerTeleportAcceptEvent(e.getPlayer())); //1.8 doesn't contain PlayerTeleportAcceptEvent
                             else {
                                 new BukkitRunnable() {

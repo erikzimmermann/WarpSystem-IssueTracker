@@ -5,7 +5,7 @@ import de.codingair.codingapi.player.chat.SimpleMessage;
 import de.codingair.codingapi.player.gui.inventory.guis.ConfirmGUI;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
-import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
+import de.codingair.codingapi.server.commands.builder.special.MultiCommandComponent;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;

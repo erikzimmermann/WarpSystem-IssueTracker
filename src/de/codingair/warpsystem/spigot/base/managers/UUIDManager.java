@@ -5,6 +5,7 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.time.TimeMap;
 import de.codingair.warpsystem.spigot.api.events.PlayerFinalJoinEvent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestUUIDPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -14,12 +15,28 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class UUIDManager {
+    private final int CHECKS;
     private HashMap<String, UUID> uniqueIds = new HashMap<>();
     private TimeMap<String, UUID> tempIds = new TimeMap<>();
+    private TimeMap<String, PlayerFinalJoinEvent.Data> approve = new TimeMap<>();
+    private HashMap<String, Integer> checks = new HashMap<>();
+
+    public UUIDManager() {
+        int i = 1;
+        if(FeatureType.RANDOM_TELEPORTS.isActive()) i++;
+        CHECKS = i;
+    }
 
     public void downloadAll() {
         for(Player player : Bukkit.getOnlinePlayers()) {
             download(player);
+        }
+    }
+
+    public void applyReload() {
+        for(Player player : Bukkit.getOnlinePlayers()) {
+            approve.put(player.getName(), new PlayerFinalJoinEvent.Data(player));
+            checks.put(player.getName(), CHECKS);
         }
     }
 
@@ -32,17 +49,53 @@ public class UUIDManager {
             WarpSystem.getInstance().getDataHandler().send(new RequestUUIDPacket(player.getName(), new Callback<UUID>() {
                 @Override
                 public void accept(UUID uniqueId) {
-                    if(!player.isOnline() || uniqueId == null) return;
-                    if(!uniqueIds.containsKey(player.getName())) {
-                        uniqueIds.put(player.getName(), uniqueId);
+                    if(!player.isOnline() || uniqueId == null) {
+                        destroy(player);
+                        return;
+                    }
 
-                        Bukkit.getPluginManager().callEvent(new PlayerFinalJoinEvent(player, uniqueId));
-                    } else uniqueIds.replace(player.getName(), uniqueId);
+                    if(!uniqueIds.containsKey(player.getName())) uniqueIds.put(player.getName(), uniqueId);
+                    else uniqueIds.replace(player.getName(), uniqueId);
+
+                    check(player, new Callback<PlayerFinalJoinEvent.Data>() {
+                        @Override
+                        public void accept(PlayerFinalJoinEvent.Data data) {
+                            data.setId(uniqueId);
+                        }
+                    });
                 }
             }));
-        } else {
-            Bukkit.getPluginManager().callEvent(new PlayerFinalJoinEvent(player, player.getUniqueId()));
-        }
+        } else check(player, new Callback<PlayerFinalJoinEvent.Data>() {
+            @Override
+            public void accept(PlayerFinalJoinEvent.Data data) {
+                data.setId(player.getUniqueId());
+            }
+        });
+    }
+
+    private void destroy(Player player) {
+        this.uniqueIds.remove(player.getName());
+        this.tempIds.remove(player.getName());
+        this.checks.remove(player.getName());
+        this.approve.remove(player.getName());
+    }
+
+    public void check(Player player, Callback<PlayerFinalJoinEvent.Data> apply) {
+        Integer current = checks.remove(player.getName());
+
+        PlayerFinalJoinEvent.Data data;
+        if(current == null) {
+            current = 0;
+            approve.put(player.getName(), data = new PlayerFinalJoinEvent.Data(player));
+        } else data = approve.get(player.getName());
+        current++;
+
+        apply.accept(data);
+
+        if(current >= CHECKS) {
+            approve.remove(player.getName());
+            Bukkit.getPluginManager().callEvent(new PlayerFinalJoinEvent(data));
+        } else checks.put(player.getName(), current);
     }
 
     public boolean isCached(String name) {

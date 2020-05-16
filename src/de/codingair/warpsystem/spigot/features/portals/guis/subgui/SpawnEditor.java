@@ -13,7 +13,6 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.portals.guis.PortalEditor;
 import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
 import org.bukkit.entity.Player;
@@ -30,6 +29,12 @@ public class SpawnEditor extends HotbarGUI {
         this.clone = clone;
 
         initialize();
+    }
+
+    public static Number cut(double n) {
+        double d = ((double) (int) (n * 100)) / 100;
+        if(d == (int) d) return (int) d;
+        else return d;
     }
 
     @Override
@@ -80,14 +85,5 @@ public class SpawnEditor extends HotbarGUI {
                 return new ItemBuilder(XMaterial.ENDER_EYE).setName("§7" + Lang.get("Position") + ": §e" + pos).getItem();
             }
         });
-    }
-
-    public static Number cut(double n) {
-        double d = ((double) (int) (n * 100)) / 100;
-
-        if(PlayerWarpManager.getManager().isNaturalNumbers()) d = Math.ceil(d);
-
-        if(d == (int) d) return (int) d;
-        else return d;
     }
 }

@@ -3,7 +3,6 @@ package de.codingair.warpsystem.spigot.base.managers;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.codingapi.server.sounds.Sound;
-import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.utils.ImprovedDouble;
 import de.codingair.codingapi.utils.Value;
@@ -35,6 +34,98 @@ public class TeleportManager {
     public static final String NO_PERMISSION = "%NO_PERMISSION%";
     private List<Teleport> teleports = new ArrayList<>();
     private GeneralOptions options;
+
+    public static void confirmPayment(Player player, double costs, Callback<Boolean> callback) {
+        Value<Listener> listenerValue = new Value<>(null);
+
+        Callback<Boolean> confirmation = new Callback<Boolean>() {
+            @Override
+            public void accept(Boolean confirm) {
+                MessageAPI.sendTitle(player, "§e" + Lang.get("Sneak_to_confirm"), "§6" + Lang.get("Costs") + ": §7" + new ImprovedDouble(costs) + " " + Lang.get("Coins"), 0, 0, 5);
+                HandlerList.unregisterAll(listenerValue.getValue());
+
+                if(confirm) {
+                    //pay
+                    MoneyAdapterType.getActive().withdraw(player, costs);
+                } else {
+                    //deny
+                    Sound.ENTITY_ITEM_BREAK.playSound(player, 0.7F, 0.9F);
+                }
+
+                if(callback != null) callback.accept(confirm);
+            }
+        };
+
+        int timeOut = 10 * 20;
+        BukkitRunnable runnable = new BukkitRunnable() {
+            @Override
+            public void run() {
+                confirmation.accept(false);
+            }
+        };
+
+        listenerValue.setValue(new Listener() {
+            @EventHandler
+            public void onWalk(PlayerWalkEvent e) {
+                if(e.getPlayer().equals(player)) {
+                    //deny!
+                    runnable.cancel();
+                    confirmation.accept(false);
+                    HandlerList.unregisterAll(this);
+                }
+            }
+
+            @EventHandler
+            public void onToggleSneak(PlayerToggleSneakEvent e) {
+                if(e.getPlayer().equals(player) && e.isSneaking()) {
+                    //confirm!
+                    runnable.cancel();
+                    confirmation.accept(true);
+                    HandlerList.unregisterAll(this);
+                }
+            }
+        });
+        Bukkit.getPluginManager().registerEvents(listenerValue.getValue(), WarpSystem.getInstance());
+
+        runnable.runTaskLater(WarpSystem.getInstance(), timeOut + 5); //title fadeIn = 5
+        Sound.BLOCK_NOTE_BLOCK_HARP.playSound(player, 0.7F, 1.1F);
+        MessageAPI.sendTitle(player, "§e" + Lang.get("Sneak_to_confirm"), "§6" + Lang.get("Costs") + ": §7" + new ImprovedDouble(costs) + " " + Lang.get("Coins"), 5, timeOut, 5);
+    }
+
+    public static void waitWhileWalking(Player player, Callback callback) {
+        BukkitRunnable runnable = new BukkitRunnable() {
+            int notMoving = 0;
+            int shakeTicks = 0;
+            boolean shake = false;
+            Location location = player.getLocation();
+
+            @Override
+            public void run() {
+                if(location.getWorld() == player.getWorld() && location.distance(player.getLocation()) <= 0.2) {
+                    if(notMoving < 0) notMoving = 0;
+                    notMoving++;
+                } else {
+                    if(notMoving > 0) notMoving = 0;
+                    else notMoving--;
+                    location = player.getLocation();
+                    MessageAPI.sendActionBar(player, "§7» " + (shake ? " " : "") + Lang.get("Teleport_Stop_Moving") + (shake ? " " : "") + " §7«");
+
+                    if(shakeTicks == 3) {
+                        shakeTicks = 0;
+                        shake = !shake;
+                    } else shakeTicks++;
+                }
+
+                if(notMoving == 2) {
+                    MessageAPI.stopSendingActionBar(player);
+                    this.cancel();
+                    callback.accept(null);
+                }
+            }
+        };
+
+        runnable.runTaskTimer(WarpSystem.getInstance(), 2, 2);
+    }
 
     /**
      * Have to be launched after the IconManager (see WarpSign.class - fromJSONString method - need warps and categories)
@@ -206,98 +297,6 @@ public class TeleportManager {
         if(options.isWaitForTeleport() && !options.isCanMove() && finalSeconds > 0 || (options.isConfirmPayment() && options.getFinalCosts(player).doubleValue() > 0)) {
             waitWhileWalking(player, waiting);
         } else waiting.accept(null);
-    }
-
-    public static void confirmPayment(Player player, double costs, Callback<Boolean> callback) {
-        Value<Listener> listenerValue = new Value<>(null);
-
-        Callback<Boolean> confirmation = new Callback<Boolean>() {
-            @Override
-            public void accept(Boolean confirm) {
-                MessageAPI.sendTitle(player, "§e" + Lang.get("Sneak_to_confirm"), "§6" + Lang.get("Costs") + ": §7" + new ImprovedDouble(costs) + " " + Lang.get("Coins"), 0, 0, 5);
-                HandlerList.unregisterAll(listenerValue.getValue());
-
-                if(confirm) {
-                    //pay
-                    MoneyAdapterType.getActive().withdraw(player, costs);
-                } else {
-                    //deny
-                    Sound.ENTITY_ITEM_BREAK.playSound(player, 0.7F, 0.9F);
-                }
-
-                if(callback != null) callback.accept(confirm);
-            }
-        };
-
-        int timeOut = 10 * 20;
-        BukkitRunnable runnable = new BukkitRunnable() {
-            @Override
-            public void run() {
-                confirmation.accept(false);
-            }
-        };
-
-        listenerValue.setValue(new Listener() {
-            @EventHandler
-            public void onWalk(PlayerWalkEvent e) {
-                if(e.getPlayer().equals(player)) {
-                    //deny!
-                    runnable.cancel();
-                    confirmation.accept(false);
-                    HandlerList.unregisterAll(this);
-                }
-            }
-
-            @EventHandler
-            public void onToggleSneak(PlayerToggleSneakEvent e) {
-                if(e.getPlayer().equals(player) && e.isSneaking()) {
-                    //confirm!
-                    runnable.cancel();
-                    confirmation.accept(true);
-                    HandlerList.unregisterAll(this);
-                }
-            }
-        });
-        Bukkit.getPluginManager().registerEvents(listenerValue.getValue(), WarpSystem.getInstance());
-
-        runnable.runTaskLater(WarpSystem.getInstance(), timeOut + 5); //title fadeIn = 5
-        Sound.BLOCK_NOTE_BLOCK_HARP.playSound(player, 0.7F, 1.1F);
-        MessageAPI.sendTitle(player, "§e" + Lang.get("Sneak_to_confirm"), "§6" + Lang.get("Costs") + ": §7" + new ImprovedDouble(costs) + " " + Lang.get("Coins"), 5, timeOut, 5);
-    }
-
-    public static void waitWhileWalking(Player player, Callback callback) {
-        BukkitRunnable runnable = new BukkitRunnable() {
-            int notMoving = 0;
-            int shakeTicks = 0;
-            boolean shake = false;
-            Location location = player.getLocation();
-
-            @Override
-            public void run() {
-                if(location.getWorld() == player.getWorld() && location.distance(player.getLocation()) <= 0.2) {
-                    if(notMoving < 0) notMoving = 0;
-                    notMoving++;
-                } else {
-                    if(notMoving > 0) notMoving = 0;
-                    else notMoving--;
-                    location = player.getLocation();
-                    MessageAPI.sendActionBar(player, "§7» " + (shake ? " " : "") + Lang.get("Teleport_Stop_Moving") + (shake ? " " : "") + " §7«");
-
-                    if(shakeTicks == 3) {
-                        shakeTicks = 0;
-                        shake = !shake;
-                    } else shakeTicks++;
-                }
-
-                if(notMoving == 2) {
-                    MessageAPI.stopSendingActionBar(player);
-                    this.cancel();
-                    callback.accept(null);
-                }
-            }
-        };
-
-        runnable.runTaskTimer(WarpSystem.getInstance(), 2, 2);
     }
 
     public void cancelTeleport(Player p) {

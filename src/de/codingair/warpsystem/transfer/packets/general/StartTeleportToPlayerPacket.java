@@ -1,7 +1,6 @@
 package de.codingair.warpsystem.transfer.packets.general;
 
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.RequestPacket;
 
 import java.io.DataInputStream;

@@ -73,7 +73,7 @@ public class Hologram implements Serializable {
 
     public void update() {
         if(visible && this.hologram == null && this.location != null && this.text != null)
-            this.hologram = new de.codingair.codingapi.player.Hologram(location.clone().add(0, height, 0), WarpSystem.getInstance(), PortalManager.getInstance().getHologramUpdateInterval(), this.text){
+            this.hologram = new de.codingair.codingapi.player.Hologram(location.clone().add(0, height, 0), WarpSystem.getInstance(), PortalManager.getInstance().getHologramUpdateInterval(), this.text) {
                 @Override
                 public String modifyText(Player player, String text) {
                     if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {

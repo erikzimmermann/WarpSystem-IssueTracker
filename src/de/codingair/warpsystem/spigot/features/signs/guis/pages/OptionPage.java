@@ -63,8 +63,8 @@ public class OptionPage extends PageItem {
             }
         }.setOption(option).setOnlyLeftClick(true));
 
-        addButton(new CommandButton(2,2, sign).setOption(option));
-        addButton(new PermissionButton(3,2, sign).setOption(option));
-        addButton(new CostsButton(4,2, sign).setOption(option));
+        addButton(new CommandButton(2, 2, sign).setOption(option));
+        addButton(new PermissionButton(3, 2, sign).setOption(option));
+        addButton(new CostsButton(4, 2, sign).setOption(option));
     }
 }

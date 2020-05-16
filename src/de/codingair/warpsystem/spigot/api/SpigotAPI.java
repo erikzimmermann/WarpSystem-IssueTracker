@@ -18,7 +18,10 @@ public class SpigotAPI {
     }
 
     public void onEnable(JavaPlugin plugin) {
-        this.globalPacketReaderManager.register(new TeleportReader(), false);
+        try {
+            this.globalPacketReaderManager.register(new TeleportReader(), false);
+        } catch(ClassNotFoundException ignored) {
+        }
 
         Bukkit.getPluginManager().registerEvents(new RuleListener(), plugin);
         this.globalPacketReaderManager.onEnable();

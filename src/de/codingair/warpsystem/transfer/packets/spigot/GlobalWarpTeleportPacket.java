@@ -6,7 +6,6 @@ import de.codingair.warpsystem.transfer.packets.utils.RequestPacket;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Vector;
 
 public class GlobalWarpTeleportPacket extends RequestPacket<Integer> {
     private String player;

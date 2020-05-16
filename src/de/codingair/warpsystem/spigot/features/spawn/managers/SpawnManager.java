@@ -22,6 +22,10 @@ public class SpawnManager implements Manager {
     private String spawnServer = null, respawnServer = null;
     private Spawn spawn;
 
+    public static SpawnManager getInstance() {
+        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.SPAWN);
+    }
+
     @Override
     public boolean load(boolean loader) {
         ConfigFile file = WarpSystem.getInstance().getFileManager().loadFile("Teleporters", "/Memory/");
@@ -61,10 +65,6 @@ public class SpawnManager implements Manager {
     public void updateSpawn(Location location) {
         if(this.spawn == null) this.spawn = new Spawn();
         this.spawn.addAction(new WarpAction(new Destination(new LocationAdapter(location))));
-    }
-
-    public static SpawnManager getInstance() {
-        return WarpSystem.getInstance().getDataManager().getManager(FeatureType.SPAWN);
     }
 
     public String getSpawnServer() {

@@ -13,10 +13,10 @@ public class PlayerFinalJoinEvent extends PlayerEvent {
 
     private UUID uniqueId;
 
-    public PlayerFinalJoinEvent(Player player, UUID uniqueId) {
-        super(player);
-        this.uniqueId = uniqueId;
-        this.alreadyTeleported = TeleportListener.teleport.getIfPresent(player.getName()) != null;
+    public PlayerFinalJoinEvent(Data data) {
+        super(data.player);
+        this.uniqueId = data.id;
+        this.alreadyTeleported = data.isAlreadyTeleported() == null ? TeleportListener.teleport.getIfPresent(player.getName()) != null : data.isAlreadyTeleported();
     }
 
     public static HandlerList getHandlerList() {
@@ -34,5 +34,35 @@ public class PlayerFinalJoinEvent extends PlayerEvent {
 
     public boolean alreadyTeleported() {
         return alreadyTeleported;
+    }
+
+    public static class Data {
+        private Player player;
+        private UUID id;
+        private Boolean alreadyTeleported = null;
+
+        public Data(Player player) {
+            this.player = player;
+        }
+
+        public Player getPlayer() {
+            return player;
+        }
+
+        public UUID getId() {
+            return id;
+        }
+
+        public void setId(UUID id) {
+            this.id = id;
+        }
+
+        public Boolean isAlreadyTeleported() {
+            return alreadyTeleported;
+        }
+
+        public void setAlreadyTeleported(boolean alreadyTeleported) {
+            this.alreadyTeleported = alreadyTeleported;
+        }
     }
 }
