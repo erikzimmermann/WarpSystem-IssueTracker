@@ -1,8 +1,10 @@
 package de.codingair.warpsystem.spigot.features.randomteleports.utils;
 
+import de.codingair.codingapi.server.Environment;
 import de.codingair.codingapi.tools.Area;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
+import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.randomteleports.managers.RandomTeleporterManager;
@@ -20,15 +22,19 @@ import java.util.Random;
 
 public class RandomLocationCalculator implements Runnable {
     private Player player;
+    private org.bukkit.Location startLocation;
     private PermissionPlayer check;
     private Callback<Location> callback;
-    private long start;
     private long lastReaction = 0;
+    private double minRange, maxRange;
 
-    public RandomLocationCalculator(Player player, Callback<Location> callback) {
+    public RandomLocationCalculator(Player player, org.bukkit.Location location, double minRange, double maxRange, Callback<Location> callback) {
         this.player = player;
         this.check = new PermissionPlayer(player);
         this.callback = callback;
+        this.startLocation = location;
+        this.minRange = minRange;
+        this.maxRange = maxRange;
     }
 
     @Override
@@ -48,18 +54,11 @@ public class RandomLocationCalculator implements Runnable {
     }
 
     private Location calculate(Player player) throws InterruptedException {
-        start = System.currentTimeMillis();
-        Location location;
+        long start = System.currentTimeMillis();
+        Location location = new Location(startLocation);
 
-        List<World> availableWorlds = RandomTeleporterManager.getInstance().getWorldList();
-        if(!availableWorlds.isEmpty()) location = Location.getByLocation(availableWorlds.get((int) (Math.random() * availableWorlds.size())).getSpawnLocation());
-        else location = new Location(player.getLocation());
-
-        double x = player.getLocation().getX();
-        double z = player.getLocation().getZ();
-
-        double minRange = RandomTeleporterManager.getInstance().getMinRange();
-        double maxRange = RandomTeleporterManager.getInstance().getMaxRange();
+        double x = startLocation.getX();
+        double z = startLocation.getZ();
 
         Random r = new Random();
 
@@ -68,6 +67,7 @@ public class RandomLocationCalculator implements Runnable {
         if(maxTime > 5000) maxTime = 5000;
 
         do {
+            location.setY(startLocation.getY());
             lastReaction = System.currentTimeMillis();
 
             double xNext = r.nextDouble() * (maxRange - minRange) + minRange;
@@ -79,11 +79,21 @@ public class RandomLocationCalculator implements Runnable {
             location.setX(x + xNext);
             location.setZ(z + zNext);
 
-            if(start + maxTime < System.currentTimeMillis()) return null;
-            if(correct(location, false)) location.setY(calculateYCoord(location));
-        } while(!correct(location, true));
+            if(start + maxTime < System.currentTimeMillis()) {
+                return null;
+            }
 
+            if(correct(location, false)) location.setY(calculateYCoord(location));
+        } while(!checkY(location) || !correct(location, true));
         return location;
+    }
+
+    private boolean isSafeLocation(Location location) {
+        return Environment.canBeEntered(location.getBlock().getType()) && Environment.canBeEntered(location.clone().add(0, 1, 0).getBlock().getType());
+    }
+
+    private boolean checkY(Location location) {
+        return location.getY() <= getHighestY(location.getWorld()) && location.getY() > 0;
     }
 
     private int getHighestY(World w) {
@@ -102,18 +112,14 @@ public class RandomLocationCalculator implements Runnable {
         if(location.getWorld().getEnvironment() != World.Environment.NORMAL) loc.setY(getHighestY(loc.getWorld()));
 
         if(location.getWorld().getEnvironment() == World.Environment.NETHER) {
-            boolean underRoof = false;
             int free = 0;
-
             while(free < 2) {
-                if(underRoof) {
-                    if(loc.getBlock().getType() == Material.AIR) free++;
-                } else if(loc.getBlock().getType() != Material.AIR && !loc.getBlock().getType().name().contains("VOID")) underRoof = true;
+                if(loc.getBlock().getType() == Material.AIR) free++;
 
-                loc.setY(loc.getY() - (underRoof ? 1 : 5));
+                loc.setY(loc.getY() - 1);
             }
 
-            while(loc.getBlock().getType() == Material.AIR) {
+            while(loc.getBlock().getType() == Material.AIR && loc.getBlockY() > 0) {
                 loc.setY(loc.getY() - 1);
             }
 
@@ -132,12 +138,14 @@ public class RandomLocationCalculator implements Runnable {
                 loc.setY(loc.getY() + 1);
                 return loc.getBlockY();
             } else {
-                while(loc.getBlock().getType() == Material.AIR) {
+                while(loc.getBlock().getType() == Material.AIR && loc.getBlockY() > 0) {
                     loc.setY(loc.getY() - 5);
                 }
 
-                while(loc.getBlock().getType() != Material.AIR) {
-                    loc.setY(loc.getY() + 1);
+                if(loc.getBlockY() > 0) {
+                    while(loc.getBlock().getType() != Material.AIR) {
+                        loc.setY(loc.getY() + 1);
+                    }
                 }
 
                 return loc.getBlockY();
@@ -146,22 +154,23 @@ public class RandomLocationCalculator implements Runnable {
     }
 
     private boolean correct(Location location, boolean safety) throws InterruptedException {
-        if(RandomTeleporterManager.getInstance().getBiomeList() != null && !RandomTeleporterManager.getInstance().getBiomeList().contains(location.getBlock().getBiome())) return false;
+        if(RandomTeleporterManager.getInstance().getBiomeList() != null && !RandomTeleporterManager.getInstance().getBiomeList().contains(location.getWorld().getBiome(location.getBlockX(), location.getBlockZ())))
+            return false;
         if(RandomTeleporterManager.getInstance().isProtectedRegions() && isProtected(location)) return false;
         if(RandomTeleporterManager.getInstance().isWorldBorder() && !isInsideOfWorldBorder(location)) return false;
-
         if(safety) {
             Location above = location.clone();
             above.setY(above.getY() + 1);
             Location below = location.clone();
             below.setY(below.getY() - 1);
 
-            return above.getBlock().getType() == Material.AIR && isSafe(location) && isSafe(below);
+
+            return isSafeLocation(location) && isSafe(above) && isSafe(location) && isSafe(below);
         } else return true;
     }
 
     private boolean isSafe(Location location) {
-        Block b = location.clone().subtract(0, 1, 0).getBlock();
+        Block b = location.getBlock();
 
         List<String> unsafe = new ArrayList<>();
 
@@ -171,7 +180,7 @@ public class RandomLocationCalculator implements Runnable {
         unsafe.add("MAGMA");
 
         for(String s : unsafe) {
-            if(b.getType().name().toLowerCase().contains(s.toLowerCase())) return false;
+            if(b.getType().name().toUpperCase().contains(s)) return false;
         }
 
         return true;
@@ -184,9 +193,10 @@ public class RandomLocationCalculator implements Runnable {
 
     private boolean isProtected(Location location) throws InterruptedException {
         synchronized(this) {
-            BlockBreakEvent event = new BlockBreakEvent(location.getBlock(), this.check); //check is a bukkit/Player instance
-
+            Value<BlockBreakEvent> eventValue = new Value<>(null);
             Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> {
+                BlockBreakEvent event = new BlockBreakEvent(location.getBlock(), this.check); //check is a bukkit/Player instance
+                eventValue.setValue(event);
                 Bukkit.getPluginManager().callEvent(event);
 
                 synchronized(RandomLocationCalculator.this) {
@@ -195,7 +205,7 @@ public class RandomLocationCalculator implements Runnable {
             });
 
             this.wait();
-            return event.isCancelled();
+            return eventValue.getValue().isCancelled();
         }
     }
 

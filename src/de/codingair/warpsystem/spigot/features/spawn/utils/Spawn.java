@@ -1,6 +1,8 @@
 package de.codingair.warpsystem.spigot.features.spawn.utils;
 
 import de.codingair.codingapi.server.Environment;
+import de.codingair.codingapi.server.sounds.Sound;
+import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.warpsystem.spigot.api.PAPI;
 import de.codingair.warpsystem.spigot.api.events.PlayerFinalJoinEvent;
@@ -16,7 +18,6 @@ import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
 
 import java.util.ArrayList;
@@ -40,8 +41,13 @@ public class Spawn extends FeatureObject {
         displayName = "Spawn";
     }
 
+    public static String prepareBroadcastMessage(String s, Player player) {
+        return PAPI.convert(ChatColor.translateAlternateColorCodes('&', s), player).replace("\\n", "\n").replace("%player%", player.getName());
+    }
+
     public boolean isValid() {
-        return hasAction(Action.WARP) || switchServer();
+        Location l;
+        return (hasAction(Action.WARP) && (l = getLocation()) != null && l.getWorld() != null) || switchServer();
     }
 
     public Location getLocation() {
@@ -84,6 +90,7 @@ public class Spawn extends FeatureObject {
     public void firstJoin(PlayerFinalJoinEvent e) {
         TeleportOptions options = new TeleportOptions();
         options.setMessage(null);
+        options.setTeleportSound(new SoundData(Sound.AMBIENT_CAVE, 0, 0));
         options.setAfterEffects(false);
         options.setSkip(true);
 
@@ -130,10 +137,6 @@ public class Spawn extends FeatureObject {
                 Bukkit.broadcastMessage(prepareBroadcastMessage(s, player));
             }
         }
-    }
-
-    public static String prepareBroadcastMessage(String s, Player player) {
-        return PAPI.convert(ChatColor.translateAlternateColorCodes('&', s), player).replace("\\n", "\n").replace("%player%", player.getName());
     }
 
     @Override

@@ -1,6 +1,6 @@
 PlayerWarps:
   General:
-    #Will only be used if permissions are disabled (see line 9)
+    #Will only be used if permissions are disabled (see Config.yml line 8)
     Max_Warp_Amount: 5
     Support:
       #If enabled, the player can't create PlayerWarps in regions, where he cannot build

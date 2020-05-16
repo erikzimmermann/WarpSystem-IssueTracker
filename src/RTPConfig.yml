@@ -15,11 +15,23 @@ RandomTeleport:
     Max: 10000
   Worlds:
     Enabled: false
-    #If enabled: Plugin selects a random world of this list for a random teleport
+    #If enabled: Plugin chooses a random world if the command sender did not specify a target world
     List:
       - World
       - World_Nether
       - World_End
+    #Ignored values (like in "Example") will be replaced by default values
+    # Ignored start values will be replaced by spawn position of the specific world
+    # Ignored range values will be replaced by general range values at the top
+    Options:
+      - World:
+          startX: 0
+          startY: 70
+          startZ: 0
+          min_range: 1000
+          max_range: 10000
+      - Example:
+          startY: 70
   Support:
     #If enabled, the player will be teleported to a random position, which is not in a protected region
     ProtectedRegions: true

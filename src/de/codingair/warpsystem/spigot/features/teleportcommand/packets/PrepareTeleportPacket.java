@@ -66,7 +66,7 @@ public class PrepareTeleportPacket extends RequestPacket<Long> {
             //target is null
             this.recipient = in.readUTF();
         } else {
-            if((options & (1 << 1))!= 0) this.target = in.readUTF();
+            if((options & (1 << 1)) != 0) this.target = in.readUTF();
             else this.target = this.sender;
             if((options & (1 << 2)) != 0) this.recipient = in.readUTF();
         }

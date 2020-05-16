@@ -19,7 +19,8 @@ public enum BlockType {
     CUSTOM(Lang.get("Custom_Portal"), null, null, null);
 
     private String name;
-    private ItemBuilder blockMaterial;    private ItemBuilder verticalBlockMaterial;
+    private ItemBuilder blockMaterial;
+    private ItemBuilder verticalBlockMaterial;
     private ItemBuilder editMaterial;
     private Class<? extends Block> block;
 

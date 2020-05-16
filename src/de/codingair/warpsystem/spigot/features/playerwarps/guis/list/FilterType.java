@@ -5,7 +5,6 @@ import de.codingair.codingapi.utils.Node;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.filters.*;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
-import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
 import org.bukkit.entity.Player;
 
 import java.util.List;

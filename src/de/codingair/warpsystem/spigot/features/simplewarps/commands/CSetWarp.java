@@ -4,7 +4,7 @@ import de.codingair.codingapi.player.chat.ChatButton;
 import de.codingair.codingapi.player.chat.SimpleMessage;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
-import de.codingair.codingapi.server.commands.builder.MultiCommandComponent;
+import de.codingair.codingapi.server.commands.builder.special.MultiCommandComponent;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;

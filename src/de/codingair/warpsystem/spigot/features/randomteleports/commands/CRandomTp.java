@@ -14,9 +14,9 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-public class CRandomTP extends WSCommandBuilder {
-    public CRandomTP() {
-        super("RandomTP", new BaseComponent(WarpSystem.PERMISSION_USE_RANDOM_TELEPORTER) {
+public class CRandomTp extends WSCommandBuilder {
+    public CRandomTp() {
+        super("RandomTp", new BaseComponent(WarpSystem.PERMISSION_USE_RANDOM_TELEPORTER) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -143,7 +143,7 @@ public class CRandomTP extends WSCommandBuilder {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Info_Unlimited"));
                 } else {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Info")
-                            .replace("%LEFT%", (free + bought - teleports) + "")
+                            .replace("%LEFT%", Math.max(free + bought - teleports, 0) + "")
                             .replace("%ALL%", (free + bought) + ""));
 
                     if(RandomTeleporterManager.getInstance().isBuyable()) {
@@ -151,7 +151,7 @@ public class CRandomTP extends WSCommandBuilder {
                             sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Info_Buyable_Unlimited"));
                         } else {
                             sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Info_Buyable")
-                                    .replace("%LEFT%", (max - free - bought) + "")
+                                    .replace("%LEFT%", Math.max(max - free - bought, 0) + "")
                                     .replace("%ALL%", (max - free) + ""));
                         }
                     }
@@ -163,9 +163,14 @@ public class CRandomTP extends WSCommandBuilder {
         getBaseComponent().addChild(new CommandComponent("go") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
+                if(!(sender instanceof Player)) {
+                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " go §e[server-1, server-2, ...; world-1, world-2, ...] <player>");
+                    return false;
+                }
+
                 RandomTeleporterManager.getInstance().tryToTeleport((Player) sender);
                 return false;
             }
-        });
+        }.setOnlyPlayers(false).addChild(new RTP_Go_Command(WarpSystem.PERMISSION_RANDOM_TELEPORT_SELECTION_SELF)));
     }
 }

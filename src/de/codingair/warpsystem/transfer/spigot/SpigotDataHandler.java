@@ -55,6 +55,7 @@ public class SpigotDataHandler implements DataHandler {
         Bukkit.getMessenger().unregisterOutgoingPluginChannel(this.plugin, "BungeeCord");
         Bukkit.getMessenger().unregisterIncomingPluginChannel(this.plugin, GET_CHANNEL, this.listener);
 
+        this.listeners.clear();
         this.timeOut.removeListener(timeOutListener);
     }
 

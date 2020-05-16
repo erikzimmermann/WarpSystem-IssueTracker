@@ -17,7 +17,6 @@ import de.codingair.warpsystem.spigot.api.chatinput.ChatInputEvent;
 import de.codingair.warpsystem.spigot.api.chatinput.ChatInputGUI;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.portals.guis.PortalEditor;
 import de.codingair.warpsystem.spigot.features.portals.guis.subgui.animationseditor.AnimationHotBarEditor;
 import de.codingair.warpsystem.spigot.features.portals.utils.Hologram;
@@ -69,9 +68,6 @@ public class HologramEditor extends HotbarGUI {
 
     public static Number cut(double n) {
         double d = ((double) (int) (n * 100)) / 100;
-
-        if(PlayerWarpManager.getManager().isNaturalNumbers()) d = Math.ceil(d);
-
         if(d == (int) d) return (int) d;
         else return d;
     }

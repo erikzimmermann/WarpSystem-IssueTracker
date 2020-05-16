@@ -1,6 +1,5 @@
 package de.codingair.warpsystem.spigot.features.teleportcommand.listeners;
 
-import com.earth2me.essentials.Warps;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.api.players.BungeePlayer;
@@ -27,7 +26,6 @@ import de.codingair.warpsystem.transfer.packets.spigot.PrepareTeleportPlayerToPl
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
-import jdk.nashorn.internal.ir.LabelNode;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;

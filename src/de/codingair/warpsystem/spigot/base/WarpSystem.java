@@ -69,6 +69,30 @@ public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_MODIFY_PLAYER_WARPS = "WarpSystem.Modify.PlayerWarps";
     public static final String PERMISSION_MODIFY_SPAWN = "WarpSystem.Modify.Spawn";
 
+    public static final String PERMISSION_USE_TELEPORT_COMMAND = "WarpSystem.Use.TeleportCommand";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TP = PERMISSION_USE_TELEPORT_COMMAND + ".Tp";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TP_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpToggle";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpAll";
+    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA_ALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpaAll";
+    public static String PERMISSION_USE_TELEPORT_COMMAND_BACK = PERMISSION_USE_TELEPORT_COMMAND + ".Back";
+    public static String PERMISSION_USE_TELEPORT_COMMAND_BACK_DETECT_DEATHS = PERMISSION_USE_TELEPORT_COMMAND_BACK + ".Deaths";
+    public static String PERMISSION_USE_TELEPORT_COMMAND_TPA = PERMISSION_USE_TELEPORT_COMMAND + ".Tpa";
+    public static String PERMISSION_USE_TELEPORT_COMMAND_TP_ACCEPT = PERMISSION_USE_TELEPORT_COMMAND + ".TpAccept";
+    public static String PERMISSION_USE_TELEPORT_COMMAND_TP_DENY = PERMISSION_USE_TELEPORT_COMMAND + ".TpDeny";
+    public static String PERMISSION_USE_TELEPORT_COMMAND_TPA_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaToggle";
+    public static String PERMISSION_USE_TELEPORT_COMMAND_TPA_HERE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaHere";
+
+    public static final String PERMISSION_WARP_GUI_OTHER = "WarpSystem.WarpGUI.Other";
+    public static final String PERMISSION_HIDE_ALL_ICONS = "WarpGUI.HideAll";
+    public static final String PERMISSION_TELEPORT_PRELOAD_CHUNKS = "WarpSystem.Teleport.ChunkPreLoading";
+    public static final String PERMISSION_SIMPLE_WARPS_DIRECT_TELEPORT = "WarpSystem.SimpleWarp.DirectTeleport";
+    public static final String PERMISSION_GLOBAL_WARPS_DIRECT_TELEPORT = "WarpSystem.GlobalWarp.DirectTeleport";
+    public static final String PERMISSION_RANDOM_TELEPORT_SELECTION_SELF = "WarpSystem.RandomTeleporters.Selection";
+    public static final String PERMISSION_RANDOM_TELEPORT_SELECTION_OTHER = "WarpSystem.RandomTeleporters.Selection.Other";
+    public static final String PERMISSION_ByPass_Maintenance = "WarpSystem.ByPass.Maintenance";
+    public static final String PERMISSION_ByPass_Teleport_Costs = "WarpSystem.ByPass.Teleport.Costs";
+    public static final String PERMISSION_ByPass_Teleport_Delay = "WarpSystem.ByPass.Teleport.Delay";
+
     public static String PERMISSION_USE_WARP_GUI = "WarpSystem.Use.WarpGUI";
     public static String PERMISSION_USE_WARP_SIGNS = "WarpSystem.Use.WarpSigns";
     public static String PERMISSION_USE_GLOBAL_WARPS = "WarpSystem.Use.GlobalWarps";
@@ -78,30 +102,7 @@ public class WarpSystem extends JavaPlugin {
     public static String PERMISSION_USE_RANDOM_TELEPORTER = "WarpSystem.Use.RandomTeleporters";
     public static String PERMISSION_USE_SPAWN = "WarpSystem.Use.Spawn";
 
-    public static final String PERMISSION_USE_TELEPORT_COMMAND = "WarpSystem.Use.TeleportCommand";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND_TP = PERMISSION_USE_TELEPORT_COMMAND + ".Tp";
-    public static String PERMISSION_USE_TELEPORT_COMMAND_BACK = PERMISSION_USE_TELEPORT_COMMAND + ".Back";
-    public static String PERMISSION_USE_TELEPORT_COMMAND_BACK_DETECT_DEATHS = PERMISSION_USE_TELEPORT_COMMAND_BACK + ".Deaths";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND_TP_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpToggle";
-    public static String PERMISSION_USE_TELEPORT_COMMAND_TPA = PERMISSION_USE_TELEPORT_COMMAND + ".Tpa";
-    public static String PERMISSION_USE_TELEPORT_COMMAND_TP_ACCEPT = PERMISSION_USE_TELEPORT_COMMAND + ".TpAccept";
-    public static String PERMISSION_USE_TELEPORT_COMMAND_TP_DENY = PERMISSION_USE_TELEPORT_COMMAND + ".TpDeny";
-    public static String PERMISSION_USE_TELEPORT_COMMAND_TPA_TOGGLE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaToggle";
-    public static String PERMISSION_USE_TELEPORT_COMMAND_TPA_HERE = PERMISSION_USE_TELEPORT_COMMAND + ".TpaHere";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpAll";
-    public static final String PERMISSION_USE_TELEPORT_COMMAND_TPA_ALL = PERMISSION_USE_TELEPORT_COMMAND + ".TpaAll";
     public static String PERMISSION_ADMIN = "WarpSystem.Admin";
-
-    public static final String PERMISSION_WARP_GUI_OTHER = "WarpSystem.WarpGUI.Other";
-    public static final String PERMISSION_HIDE_ALL_ICONS = "WarpGUI.HideAll";
-    public static final String PERMISSION_TELEPORT_PRELOAD_CHUNKS = "WarpSystem.Teleport.ChunkPreLoading";
-    public static final String PERMISSION_SIMPLE_WARPS_DIRECT_TELEPORT = "WarpSystem.SimpleWarp.DirectTeleport";
-    public static final String PERMISSION_GLOBAL_WARPS_DIRECT_TELEPORT = "WarpSystem.GlobalWarp.DirectTeleport";
-
-    public static final String PERMISSION_ByPass_Maintenance = "WarpSystem.ByPass.Maintenance";
-    public static final String PERMISSION_ByPass_Teleport_Costs = "WarpSystem.ByPass.Teleport.Costs";
-    public static final String PERMISSION_ByPass_Teleport_Delay = "WarpSystem.ByPass.Teleport.Delay";
-
     public static boolean activated = false;
     public static boolean maintenance = false;
     private static WarpSystem instance;
@@ -127,7 +128,7 @@ public class WarpSystem extends JavaPlugin {
     private boolean ERROR = true;
     private boolean shouldSave = true;
     private SpigotDataHandler dataHandler = new SpigotDataHandler(this);
-    private UUIDManager uuidManager = new UUIDManager();
+    private UUIDManager uuidManager;
 
     public static boolean hasPermission(CommandSender sender, String permission) {
         return permission == null || sender.hasPermission(permission);
@@ -189,6 +190,7 @@ public class WarpSystem extends JavaPlugin {
 
             if(this.fileManager.getFile("Config") == null) this.fileManager.loadFile("Config", "/");
             Lang.initPreDefinedLanguages(this);
+            this.uuidManager = new UUIDManager();
 
             PERMISSION_ADMIN = this.fileManager.getFile("Config").getConfig().getString("WarpSystem.Admin.Permission", "WarpSystem.Admin");
 
@@ -229,12 +231,13 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new HeadListener(), this);
 
             this.startAutoSaver();
+            this.uuidManager.applyReload();
             afterOnEnable();
 
             timer.stop();
 
             log(" ");
-            log("Done (" + timer.getLastStoppedTime() + "s)");
+            log("Finished (" + timer.getLastStoppedTime() + "s)");
             log(" ");
             log("__________________________________________________________");
             log(" ");
@@ -470,7 +473,7 @@ public class WarpSystem extends JavaPlugin {
                     timer.stop();
 
                     log(" ");
-                    log("Done (" + timer.getLastStoppedTime() + "s)");
+                    log("Finished (" + timer.getLastStoppedTime() + "s)");
                     log(" ");
                     log("__________________________________________________________");
                     log(" ");

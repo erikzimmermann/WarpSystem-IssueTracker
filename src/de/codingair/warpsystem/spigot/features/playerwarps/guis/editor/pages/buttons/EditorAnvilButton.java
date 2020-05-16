@@ -1,7 +1,6 @@
 package de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.buttons;
 
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncAnvilGUIButton;
-import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
 import org.bukkit.entity.Player;

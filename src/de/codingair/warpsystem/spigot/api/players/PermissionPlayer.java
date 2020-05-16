@@ -1126,15 +1126,15 @@ public class PermissionPlayer implements Player {
         return false;
     }
 
+    public void setCollidable(boolean b) {
+
+    }
+
     public <T> T getMemory(MemoryKey<T> memoryKey) {
         return null;
     }
 
     public <T> void setMemory(MemoryKey<T> memoryKey, T t) {
-
-    }
-
-    public void setCollidable(boolean b) {
 
     }
 

@@ -1,7 +1,6 @@
 package de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.buttons;
 
 import de.codingair.codingapi.player.gui.anvil.*;
-import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
@@ -27,7 +26,8 @@ public class ActiveTimeButton extends EditorButton {
     @Override
     public boolean canClick(ClickType click) {
         if(editing > 0) return click == ClickType.LEFT || click == ClickType.RIGHT || click == ClickType.SHIFT_LEFT || click == ClickType.SHIFT_RIGHT;
-        else return click == ClickType.LEFT || click == ClickType.RIGHT || (click == ClickType.SHIFT_RIGHT && isEditing && original.getLeftTime() > 500 && (original.getLeftTime() > PlayerWarpManager.getManager().getMinTime() || warp.getTime() > PlayerWarpManager.getManager().getMinTime()) && Math.abs(original.getLeftTime() - warp.getTime()) >= 1000);
+        else
+            return click == ClickType.LEFT || click == ClickType.RIGHT || (click == ClickType.SHIFT_RIGHT && isEditing && original.getLeftTime() > 500 && (original.getLeftTime() > PlayerWarpManager.getManager().getMinTime() || warp.getTime() > PlayerWarpManager.getManager().getMinTime()) && Math.abs(original.getLeftTime() - warp.getTime()) >= 1000);
     }
 
     @Override
@@ -64,7 +64,8 @@ public class ActiveTimeButton extends EditorButton {
         } else {
             builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Choose"));
             builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §a" + Lang.get("Change"));
-            if(isEditing && original.getLeftTime() > 500 && (original.getLeftTime() > PlayerWarpManager.getManager().getMinTime() || warp.getTime() > PlayerWarpManager.getManager().getMinTime()) && Math.abs(original.getLeftTime() - warp.getTime()) >= 1000) builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Shift_Rightclick") + ": §c" + Lang.get("Reset"));
+            if(isEditing && original.getLeftTime() > 500 && (original.getLeftTime() > PlayerWarpManager.getManager().getMinTime() || warp.getTime() > PlayerWarpManager.getManager().getMinTime()) && Math.abs(original.getLeftTime() - warp.getTime()) >= 1000)
+                builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Shift_Rightclick") + ": §c" + Lang.get("Reset"));
         }
 
         return builder.getItem();

@@ -4,6 +4,7 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.SmartTeleport;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.DestinationAdapter;
 import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
@@ -28,9 +29,12 @@ public class PortalDestinationAdapter implements DestinationAdapter {
             return false;
         } else {
             if(silent) TeleportListener.TELEPORTS.put(player, location);
-            player.teleport(location);
-
-            if(callback != null) callback.accept(TeleportResult.TELEPORTED);
+            new SmartTeleport(player, location, new Callback<Boolean>() {
+                @Override
+                public void accept(Boolean object) {
+                    if(callback != null) callback.accept(TeleportResult.TELEPORTED);
+                }
+            }).start();
             return true;
         }
     }

@@ -20,7 +20,7 @@ public class TeleportCommandOptions {
     }
 
     public boolean isTpToggle() {
-        return (options & (1 <<3)) != 0;
+        return (options & (1 << 3)) != 0;
     }
 
     public boolean isTpa() {

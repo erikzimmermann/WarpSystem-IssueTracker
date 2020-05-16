@@ -1,5 +1,8 @@
 package de.codingair.warpsystem.transfer.packets.utils;
 
+import de.codingair.warpsystem.spigot.features.randomteleports.packets.QueueRTPUsagePacket;
+import de.codingair.warpsystem.spigot.features.randomteleports.packets.RandomTPPacket;
+import de.codingair.warpsystem.spigot.features.randomteleports.packets.RandomTPWorldsPacket;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.*;
 import de.codingair.warpsystem.transfer.packets.bungee.*;
 import de.codingair.warpsystem.transfer.packets.general.*;
@@ -49,6 +52,10 @@ public enum PacketType {
     SendPlayerWarpOptionsPacket(45, SendPlayerWarpOptionsPacket.class),
     DeletePlayerWarpPacket(46, DeletePlayerWarpPacket.class),
     PlayerWarpTeleportProcessPacket(47, PlayerWarpTeleportProcessPacket.class),
+
+    RandomTPPacket(50, RandomTPPacket.class),
+    RandomTPWorldsPacket(51, RandomTPWorldsPacket.class),
+    QueueRTPUsagePacket(52, QueueRTPUsagePacket.class),
 
     BooleanPacket(100, BooleanPacket.class),
     IntegerPacket(101, IntegerPacket.class),
