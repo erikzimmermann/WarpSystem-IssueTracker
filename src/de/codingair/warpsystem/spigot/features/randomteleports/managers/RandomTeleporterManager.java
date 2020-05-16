@@ -1,10 +1,12 @@
 package de.codingair.warpsystem.spigot.features.randomteleports.managers;
 
+import com.google.common.base.Preconditions;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.files.loader.UTFConfig;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.io.JSON.JSON;
+import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
@@ -24,6 +26,7 @@ import de.codingair.warpsystem.spigot.features.randomteleports.utils.WorldOption
 import de.codingair.warpsystem.spigot.features.randomteleports.utils.forwardcompatibility.RTPTagConverter_v4_2_2;
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
@@ -40,7 +43,7 @@ public class RandomTeleporterManager implements Manager, BungeeFeature {
     private boolean protectedRegions;
     private boolean worldBorder;
     private List<Biome> biomeList;
-    private List<World> worldList = new ArrayList<>();
+    private List<Material> materialBlackList = new ArrayList<>();
     private List<WorldOption> worldOptions = new ArrayList<>();
     private HashMap<Player, RandomLocationCalculator> searching = new HashMap<>();
 
@@ -74,10 +77,15 @@ public class RandomTeleporterManager implements Manager, BungeeFeature {
         this.netherHeight = config.getInt("RandomTeleport.Range.Highest_Y.Nether", 126);
         this.endHeight = config.getInt("RandomTeleport.Range.Highest_Y.End", 72);
 
-        if(config.getBoolean("RandomTeleport.Worlds.Enabled", false)) {
-            for(String name : config.getStringList("RandomTeleport.Worlds.List")) {
-                World w = Bukkit.getWorld(name);
-                if(w != null) this.worldList.add(w);
+        this.materialBlackList.clear();
+        if(config.getBoolean("RandomTeleport.Block_Blacklist.Enabled", false)) {
+            for(String material : config.getStringList("RandomTeleport.Block_Blacklist.List")) {
+                Optional<XMaterial> parsed = XMaterial.matchXMaterial(material.toUpperCase().replace(" ", "_"));
+                parsed.ifPresent(xMaterial -> {
+                    Material m = xMaterial.parseMaterial();
+
+                    if(!materialBlackList.contains(m)) materialBlackList.add(m);
+                });
             }
         }
 
@@ -193,13 +201,13 @@ public class RandomTeleporterManager implements Manager, BungeeFeature {
 
     @Override
     public void onDisconnect() {
-
     }
 
     @Override
     public void destroy() {
         this.interactBlocks.clear();
         if(this.biomeList != null) this.biomeList.clear();
+        this.materialBlackList.clear();
         HandlerList.unregisterAll(this.listener);
     }
 
@@ -286,7 +294,7 @@ public class RandomTeleporterManager implements Manager, BungeeFeature {
     }
 
     public void tryToTeleport(Player player) {
-        tryToTeleport(player.getName(), null, false, new Callback<Integer>() {
+        tryToTeleport(player.getName(), player.getWorld(), false, new Callback<Integer>() {
             @Override
             public void accept(Integer object) {
             }
@@ -294,40 +302,36 @@ public class RandomTeleporterManager implements Manager, BungeeFeature {
     }
 
     public void search(Player player, World target, Callback<Location> callback) {
-        if(target == null) {
-            List<World> availableWorlds = RandomTeleporterManager.getInstance().getWorldList();
-            if(!availableWorlds.isEmpty()) target = availableWorlds.get((int) (Math.random() * availableWorlds.size()));
-        }
-
+        Preconditions.checkNotNull(target);
         org.bukkit.Location start;
         double minRange;
         double maxRange;
 
-        if(target != null) {
-            WorldOption option = getOption(target);
-            start = target.getSpawnLocation();
+        WorldOption option = getOption(target);
+        start = target.getSpawnLocation();
 
-            if(option != null) {
-                start.setX(option.getStartX());
-                start.setY(option.getStartX());
-                start.setZ(option.getStartZ());
-                minRange = option.getMin();
-                maxRange = option.getMax();
-            } else {
-                minRange = getMinRange();
-                maxRange = getMaxRange();
-            }
+        if(option != null) {
+            start.setX(option.getStartX());
+            start.setY(option.getStartY());
+            start.setZ(option.getStartZ());
+            minRange = option.getMin();
+            maxRange = option.getMax();
         } else {
-            start = player.getLocation();
             minRange = getMinRange();
             maxRange = getMaxRange();
         }
 
         RandomLocationCalculator t = new RandomLocationCalculator(player, start, minRange, maxRange, new Callback<Location>() {
             @Override
-            public void accept(Location object) {
+            public void accept(Location loc) {
                 searching.remove(player);
-                callback.accept(object);
+
+                if(loc != null) {
+                    loc.setYaw(player.getLocation().getYaw());
+                    loc.setPitch(player.getLocation().getPitch());
+                }
+
+                callback.accept(loc);
             }
         });
         searching.put(player, t);
@@ -337,19 +341,8 @@ public class RandomTeleporterManager implements Manager, BungeeFeature {
     public void tryToTeleport(String targetPlayer, World target, boolean force, Callback<Integer> callback) {
         Player player = Bukkit.getPlayerExact(targetPlayer);
 
-        //check bungee
         if(player == null) {
             callback.accept(1);
-//            if(WarpSystem.getInstance().isOnBungeeCord()) {
-//                WarpSystem.getInstance().getDataHandler().send(new RandomTPPacket(new Callback<Boolean>() {
-//                    @Override
-//                    public void accept(Boolean success) {
-//                        callback.accept(success ? 0 : 3);
-//                    }
-//                }, targetPlayer, WarpSystem.getInstance().getCurrentServer(), target.getName()));
-//            } else {
-//                callback.accept(1);
-//            }
             return;
         }
 
@@ -368,11 +361,6 @@ public class RandomTeleporterManager implements Manager, BungeeFeature {
             player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_No_Teleports_Left"));
             callback.accept(4);
             return;
-        }
-
-        if(target == null) {
-            List<World> availableWorlds = RandomTeleporterManager.getInstance().getWorldList();
-            if(!availableWorlds.isEmpty()) target = availableWorlds.get((int) (Math.random() * availableWorlds.size()));
         }
 
         search(player, target, new Callback<Location>() {
@@ -480,15 +468,15 @@ public class RandomTeleporterManager implements Manager, BungeeFeature {
         return worldBorder;
     }
 
-    public List<World> getWorldList() {
-        return worldList;
-    }
-
     public int getNetherHeight() {
         return netherHeight;
     }
 
     public int getEndHeight() {
         return endHeight;
+    }
+
+    public List<Material> getMaterialBlackList() {
+        return materialBlackList;
     }
 }
