@@ -51,21 +51,22 @@ public class POptions extends PageItem {
             public ItemStack craftItem() {
                 ItemBuilder builder = new ItemBuilder(XMaterial.REDSTONE).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Spawn"));
 
-                if(WarpSystem.getInstance().isOnBungeeCord()) {
+                String add = null;
+
+                if(WarpSystem.getInstance().isOnBungeeCord() && clone.getUsage().getName().contains("/spawn")) {
                     String server = SpawnManager.getInstance().getSpawnServer();
 
                     if(server != null && !WarpSystem.getInstance().getCurrentServer().equals(server)) {
+                        builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": §a" + clone.getUsage().getName().replace("/spawn", "§c§m/spawn§7"));
                         builder.addLore(Editor.ITEM_SUB_TITLE_WARNING + Lang.get("Already_linked") + " §8(§7" + Lang.get("Server") + ": '" + server + "'§8)");
-                        builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": " + (runnable != null ? "§4" + Lang.get("Reset") + " §7(§c" + ChatColor.stripColor(Lang.get("Confirm")) + "§7)" : "§7" + Lang.get("Reset")));
-                        return builder.getItem();
+                        add = Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Shift_Rightclick") + ": " + (runnable != null ? "§7" + Lang.get("Reset") + " §7(§c" + ChatColor.stripColor(Lang.get("Confirm")) + "§7)" : "§7" + Lang.get("Reset") + " §7(/spawn)");
                     }
-                }
+                } else builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": §a" + clone.getUsage().getName());
 
-
-                builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": §a" + clone.getUsage().getName());
 
                 builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7«");
                 builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §7»");
+                builder.addLore(add);
 
                 return builder.getItem();
             }
@@ -75,7 +76,7 @@ public class POptions extends PageItem {
                 if(WarpSystem.getInstance().isOnBungeeCord()) {
                     String server = SpawnManager.getInstance().getSpawnServer();
 
-                    if(server != null && !WarpSystem.getInstance().getCurrentServer().equals(server)) {
+                    if(server != null && !WarpSystem.getInstance().getCurrentServer().equals(server) && e.getClick() == ClickType.SHIFT_RIGHT) {
                         if(runnable == null) {
                             runnable = new BukkitRunnable() {
                                 @Override
@@ -109,7 +110,7 @@ public class POptions extends PageItem {
                     String server = SpawnManager.getInstance().getSpawnServer();
 
                     if(server != null && !WarpSystem.getInstance().getCurrentServer().equals(server)) {
-                        return click == ClickType.RIGHT;
+                        return click == ClickType.LEFT || click == ClickType.RIGHT || click == ClickType.SHIFT_RIGHT;
                     }
                 }
 

@@ -42,18 +42,7 @@ public class SpawnListener implements Listener, PacketListener {
             Player player = e.getPlayer();
 
             if(spawn.getUsage() == Spawn.Usage.EVERY_JOIN || spawn.getUsage() == Spawn.Usage.LOCAL_EVERY_JOIN || spawn.getUsage() == Spawn.Usage.GLOBAL_EVERY_JOIN) {
-                if(!player.hasPlayedBefore()) {
-                    spawn.firstJoin(e);
-                } else {
-                    if(WarpSystem.getInstance().getTeleportManager().isTeleporting(e.getPlayer()) || spawn.switchServer()) return;
-
-                    TeleportOptions options = new TeleportOptions();
-                    options.setMessage(null);
-                    options.setTeleportSound(new SoundData(Sound.AMBIENT_CAVE, 0, 0));
-                    options.setAfterEffects(false);
-                    options.setSkip(true);
-                    spawn.perform(e.getPlayer(), options);
-                }
+                spawn.onJoin(e);
             } else if(spawn.getUsage() == Spawn.Usage.FIRST_JOIN || spawn.getUsage() == Spawn.Usage.LOCAL_FIRST_JOIN || spawn.getUsage() == Spawn.Usage.GLOBAL_FIRST_JOIN) {
                 if(!player.hasPlayedBefore()) {
                     spawn.firstJoin(e);
