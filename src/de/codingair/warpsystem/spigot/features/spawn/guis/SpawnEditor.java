@@ -23,6 +23,14 @@ public class SpawnEditor extends Editor<Spawn> {
         super(p, clone, new Backup<Spawn>(spawn) {
             @Override
             public void applyTo(Spawn clone) {
+                if(WarpSystem.getInstance().isOnBungeeCord() && clone.getUsage().getName().contains("/spawn")) {
+                    String server = SpawnManager.getInstance().getSpawnServer();
+
+                    if(server != null && !WarpSystem.getInstance().getCurrentServer().equals(server)) {
+                        clone.setUsage(clone.getUsage().getWithoutSpawnCommand());
+                    }
+                }
+
                 spawn.apply(clone);
 
                 if(WarpSystem.getInstance().isOnBungeeCord()) {

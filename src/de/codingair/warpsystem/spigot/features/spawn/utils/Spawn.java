@@ -87,6 +87,23 @@ public class Spawn extends FeatureObject {
         options.setDisplayName(displayName);
     }
 
+    public void onJoin(PlayerFinalJoinEvent e) {
+        if(!e.getPlayer().hasPlayedBefore()) {
+            firstJoin(e);
+            return;
+        }
+
+        if(WarpSystem.getInstance().getTeleportManager().isTeleporting(e.getPlayer())) return;
+
+        TeleportOptions options = new TeleportOptions();
+        options.setMessage(null);
+        options.setTeleportSound(new SoundData(Sound.AMBIENT_CAVE, 0, 0));
+        options.setAfterEffects(false);
+        options.setSkip(true);
+
+        super.perform(e.getPlayer(), options);
+    }
+
     public void firstJoin(PlayerFinalJoinEvent e) {
         TeleportOptions options = new TeleportOptions();
         options.setMessage(null);
@@ -248,6 +265,13 @@ public class Spawn extends FeatureObject {
             int next = id + 1;
             if(next == values().length) next = 0;
             return values()[next];
+        }
+
+        public Usage getWithoutSpawnCommand() {
+            if(this.id == 0 || this.id == 3) return DISABLED;
+            if(this.id == 1 || this.id == 4) return FIRST_JOIN;
+            if(this.id == 2 || this.id == 5) return EVERY_JOIN;
+            return this;
         }
 
         public Usage previous() {
