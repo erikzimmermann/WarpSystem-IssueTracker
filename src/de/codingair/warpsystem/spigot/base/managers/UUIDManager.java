@@ -15,17 +15,11 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class UUIDManager {
-    private final int CHECKS;
+    private final int CHECKS = 1;
     private HashMap<String, UUID> uniqueIds = new HashMap<>();
     private TimeMap<String, UUID> tempIds = new TimeMap<>();
     private TimeMap<String, PlayerFinalJoinEvent.Data> approve = new TimeMap<>();
     private HashMap<String, Integer> checks = new HashMap<>();
-
-    public UUIDManager() {
-        int i = 1;
-        if(FeatureType.RANDOM_TELEPORTS.isActive()) i++;
-        CHECKS = i;
-    }
 
     public void downloadAll() {
         for(Player player : Bukkit.getOnlinePlayers()) {
