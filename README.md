@@ -1,2 +1,2 @@
 # WarpSystem-IssueTracker
-IssueTracker for WarpSystem (v4.2.4)
+IssueTracker for WarpSystem (v4.2.5)
