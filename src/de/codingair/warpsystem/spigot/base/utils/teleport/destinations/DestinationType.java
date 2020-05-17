@@ -7,19 +7,25 @@ public enum DestinationType {
     WarpIcon(0, SimpleWarpAdapter.class),
     SimpleWarp(1, SimpleWarpAdapter.class),
     GlobalWarpIcon(2, GlobalWarpAdapter.class),
-    GlobalWarp(3, GlobalWarpAdapter.class),
-    Server(5, ServerAdapter.class),
+    GlobalWarp(3, true, GlobalWarpAdapter.class),
+    Server(5, true, ServerAdapter.class),
     Location(6, LocationAdapter.class),
-    GlobalLocation(7, GlobalLocationAdapter.class),
+    GlobalLocation(7, true, GlobalLocationAdapter.class),
     Portal(8, de.codingair.warpsystem.spigot.features.portals.utils.PortalDestinationAdapter.class),
     ;
 
     private int id;
+    private boolean bungee;
     private Class<? extends DestinationAdapter> adapter;
 
-    DestinationType(int id, Class<? extends DestinationAdapter> adapter) {
+    DestinationType(int id, boolean bungee, Class<? extends DestinationAdapter> adapter) {
         this.id = id;
+        this.bungee = bungee;
         this.adapter = adapter;
+    }
+
+    DestinationType(int id, Class<? extends DestinationAdapter> adapter) {
+        this(id, false, adapter);
     }
 
     public static DestinationType getByAdapter(DestinationAdapter adapter) {
@@ -57,5 +63,9 @@ public enum DestinationType {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public boolean isBungee() {
+        return bungee;
     }
 }
