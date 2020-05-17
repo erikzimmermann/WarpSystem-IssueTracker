@@ -4,4 +4,4 @@ version: '4.2.5-free'
 description: WarpSystem
 main: de.codingair.warpsystem.spigot.base.WarpSystem
 softdepend: [Multiverse-Core, Vault, Essentials, MultiWorld, PlaceholderAPI]
-api-version: "1.15"
+api-version: "1.13"
