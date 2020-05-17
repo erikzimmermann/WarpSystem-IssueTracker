@@ -2,6 +2,7 @@ package de.codingair.warpsystem.spigot.features.playerwarps.guis.list;
 
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
 import de.codingair.codingapi.utils.Node;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.filters.*;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
@@ -13,7 +14,7 @@ public enum FilterType {
     OWN_WARPS(OwnWarpFilter.class, Lang.get("Filter_Own_Warps"), 0, true),
     ALL_WARPS(AllWarps.class, Lang.get("Filter_All_Warps"), 1, PlayerWarpManager.getManager().isAllowPublicWarps() || PlayerWarpManager.getManager().isAllowTrustedMembers()),
     ALL_PLAYERS(AllPlayers.class, Lang.get("Filter_All_Players"), 2, PlayerWarpManager.getManager().isAllowPublicWarps() || PlayerWarpManager.getManager().isAllowTrustedMembers()),
-    CLASSES(ClassesFilter.class, Lang.get("Filter_Classes"), 3, PlayerWarpManager.getManager().isClasses());
+    CLASSES(ClassesFilter.class, Lang.get("Filter_Classes"), 3, true);
 
     private Filter instance;
     private String filterName;
@@ -32,10 +33,11 @@ public enum FilterType {
         this.enabled = enabled;
     }
 
-    public static int active() {
+    public static int active(Player player) {
         int i = 0;
         for(FilterType value : values()) {
-            if(value.isEnabled()) i++;
+            if(value == CLASSES && player != null && player.hasPermission(WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS)) i++;
+            else if(value != CLASSES && value.isEnabled()) i++;
         }
         return i;
     }
@@ -44,11 +46,11 @@ public enum FilterType {
         return instance.getListItems(maxSize, page, player, search, extra);
     }
 
-    public FilterType next() {
+    public FilterType next(Player player) {
         int next = id + 1;
         if(next >= values().length) next = 0;
 
-        while(!values()[next].isEnabled()) {
+        while(!values()[next].isEnabled() || (values()[next] == CLASSES && !player.hasPermission(WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS))) {
             next++;
             if(next >= values().length) next = 0;
         }
@@ -56,11 +58,11 @@ public enum FilterType {
         return values()[next];
     }
 
-    public FilterType previous() {
+    public FilterType previous(Player player) {
         int previous = id - 1;
         if(previous < 0) previous = values().length - 1;
 
-        while(!values()[previous].isEnabled()) {
+        while(!values()[previous].isEnabled() || (values()[previous] == CLASSES && !player.hasPermission(WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS))) {
             previous--;
             if(previous < 0) previous = values().length - 1;
         }
@@ -76,8 +78,8 @@ public enum FilterType {
         return instance.deleteExtraBeforeChangeFilter();
     }
 
-    public PWPage.FilterButton getControllButton(PWPage page, int warps) {
-        return instance.getControllButton(page, warps);
+    public PWPage.FilterButton getControllButton(PWPage page, int warps, Player player) {
+        return instance.getControllButton(page, warps, player);
     }
 
     public Object[] getStandardExtra(PWList list) {
