@@ -17,6 +17,7 @@ public class PlayerFinalJoinEvent extends PlayerEvent {
         super(data.player);
         this.uniqueId = data.id;
         this.alreadyTeleported = data.isAlreadyTeleported() == null ? TeleportListener.teleport.getIfPresent(player.getName()) != null : data.isAlreadyTeleported();
+        TeleportListener.teleport.invalidate(player.getName());
     }
 
     public static HandlerList getHandlerList() {

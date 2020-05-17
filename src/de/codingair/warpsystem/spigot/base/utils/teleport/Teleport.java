@@ -218,51 +218,57 @@ public class Teleport {
                 Location from = player.getLocation();
                 String finalMessage = message;
 
-                Bukkit.getPluginManager().registerEvents(teleportListener = new Listener() {
-                    @EventHandler(priority = EventPriority.MONITOR)
-                    public void onTeleport(PlayerTeleportEvent e) {
-                        if(player.equals(e.getPlayer())) {
-                            if(e.isCancelled()) {
-                                MessageAPI.sendActionBar(player, Lang.get("Teleport_Cancelled"));
+                if(!options.getDestination().isBungee()) {
+                    Bukkit.getPluginManager().registerEvents(teleportListener = new Listener() {
+                        private Location afterEffectLocation = from;
+
+                        @EventHandler(priority = EventPriority.MONITOR)
+                        public void onTeleport(PlayerTeleportEvent e) {
+                            if(player.equals(e.getPlayer())) {
+                                afterEffectLocation = e.getTo();
+
+                                if(e.isCancelled()) {
+                                    MessageAPI.sendActionBar(player, Lang.get("Teleport_Cancelled"));
+                                    HandlerList.unregisterAll(this);
+                                    cancel(true, false);
+                                } else if(Version.getVersion().getId() <= 8)
+                                    Bukkit.getPluginManager().callEvent(new PlayerTeleportAcceptEvent(e.getPlayer())); //1.8 doesn't contain PlayerTeleportAcceptEvent
+                                else {
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            Bukkit.getPluginManager().callEvent(new PlayerTeleportAcceptEvent(player));
+                                        }
+                                    }.runTaskLater(WarpSystem.getInstance(), 5); //safety timeout (PlayerTeleportAcceptEvent doesn't get triggered while spawning)
+                                }
+                            }
+                        }
+
+                        @EventHandler
+                        public void onTeleported(PlayerTeleportAcceptEvent e) {
+                            if(player.equals(e.getPlayer())) {
                                 HandlerList.unregisterAll(this);
-                                cancel(true, false);
-                            } else if(Version.getVersion().getId() <= 8)
-                                Bukkit.getPluginManager().callEvent(new PlayerTeleportAcceptEvent(e.getPlayer())); //1.8 doesn't contain PlayerTeleportAcceptEvent
-                            else {
-                                new BukkitRunnable() {
-                                    @Override
-                                    public void run() {
-                                        Bukkit.getPluginManager().callEvent(new PlayerTeleportAcceptEvent(player));
-                                    }
-                                }.runTaskLater(WarpSystem.getInstance(), 5); //safety timeout (PlayerTeleportAcceptEvent doesn't get triggered while spawning)
+
+                                if(player.isOnline()) {
+                                    sendLoadedChunks();
+
+                                    PlayerTeleportedEvent event = new PlayerTeleportedEvent(player, from, options.getOrigin(), options.isAfterEffects());
+                                    Bukkit.getPluginManager().callEvent(event);
+
+                                    options.getDestination().sendMessage(player, finalMessage, displayName, costs);
+                                    if(event.isRunAfterEffects()) playAfterEffects(player, afterEffectLocation);
+                                    if(teleportSound != null) teleportSound.play(player);
+                                    if(velocity != null) player.setVelocity(velocity);
+                                }
                             }
                         }
-                    }
 
-                    @EventHandler
-                    public void onTeleported(PlayerTeleportAcceptEvent e) {
-                        if(player.equals(e.getPlayer())) {
-                            HandlerList.unregisterAll(this);
-
-                            if(player.isOnline()) {
-                                sendLoadedChunks();
-
-                                PlayerTeleportedEvent event = new PlayerTeleportedEvent(player, from, options.getOrigin(), options.isAfterEffects());
-                                Bukkit.getPluginManager().callEvent(event);
-
-                                options.getDestination().sendMessage(player, finalMessage, displayName, costs);
-                                if(event.isRunAfterEffects()) playAfterEffects(player);
-                                if(teleportSound != null) teleportSound.play(player);
-                                if(velocity != null) player.setVelocity(velocity);
-                            }
+                        @EventHandler
+                        public void onQuit(PlayerQuitEvent e) {
+                            if(player.equals(e.getPlayer())) HandlerList.unregisterAll(this);
                         }
-                    }
-
-                    @EventHandler
-                    public void onQuit(PlayerQuitEvent e) {
-                        if(player.equals(e.getPlayer())) HandlerList.unregisterAll(this);
-                    }
-                }, WarpSystem.getInstance());
+                    }, WarpSystem.getInstance());
+                }
 
                 if(!options.getDestination().teleport(player, message, displayName, options.getPermission() == null, options.isSilent(), costs, new Callback<TeleportResult>() {
                     @Override
@@ -301,9 +307,9 @@ public class Teleport {
         }
     }
 
-    public void playAfterEffects(Player player) {
+    public void playAfterEffects(Player player, Location afterEffectLocation) {
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Teleport.Animation_After_Teleport.Enabled", true)) {
-            new RotatingParticleSpiral(player, player.getLocation()).runTaskTimer(WarpSystem.getInstance(), 1, 1);
+            new RotatingParticleSpiral(player, afterEffectLocation).runTaskTimer(WarpSystem.getInstance(), 1, 1);
         }
     }
 

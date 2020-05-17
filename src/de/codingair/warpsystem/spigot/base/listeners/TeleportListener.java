@@ -2,11 +2,13 @@ package de.codingair.warpsystem.spigot.base.listeners;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import de.codingair.codingapi.server.AsyncCatcher;
 import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
+import net.minecraft.server.v1_8_R3.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -33,10 +35,7 @@ public class TeleportListener implements Listener {
         teleport.put(name, options);
         if(player != null) {
             //teleport
-            Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                teleport.invalidate(name);
-                WarpSystem.getInstance().getTeleportManager().teleport(player, options);
-            }, 2L);
+            AsyncCatcher.runSync(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(player, options));
         }
     }
 

@@ -4,17 +4,21 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.codingapi.tools.io.utils.Serializable;
 import de.codingair.codingapi.utils.ImprovedDouble;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.CloneableAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.DestinationAdapter;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.GlobalLocationAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
+
+import java.util.Objects;
 
 public class Destination implements Serializable {
     private String id;
@@ -302,5 +306,9 @@ public class Destination implements Serializable {
 
     public void setMessage(boolean message) {
         this.message = message;
+    }
+
+    public boolean isBungee() {
+        return type != null && type.isBungee() && (!(adapter instanceof GlobalLocationAdapter) || !Objects.equals(((GlobalLocationAdapter) adapter).getServer(), WarpSystem.getInstance().getCurrentServer()));
     }
 }
