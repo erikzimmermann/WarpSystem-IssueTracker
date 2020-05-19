@@ -47,15 +47,17 @@ public class SpawnManager implements Manager {
 
     @Override
     public void save(boolean saver) {
-        ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
-        ConfigWriter writer = new ConfigWriter(file);
-        writer.put("Spawn", this.spawn);
-        file.saveConfig();
+        if(this.spawn != null) {
+            ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Teleporters");
+            ConfigWriter writer = new ConfigWriter(file);
+            writer.put("Spawn", this.spawn);
+            file.saveConfig();
+        }
     }
 
     @Override
     public void destroy() {
-        this.spawn.destroy();
+        if(this.spawn != null) this.spawn.destroy();
     }
 
     public Spawn getSpawn() {
