@@ -256,6 +256,12 @@ public class HologramEditor extends HotbarGUI {
                 new ChatInputGUI(player, WarpSystem.getInstance()) {
                     @Override
                     public void onEnter(ChatInputEvent e) {
+                        if(e.getText().contains("\\n")) {
+                            e.setNotifier("§7Only §6premium §7can use §e\\n\n§7Get full access with \"§6/ws upgrade§7\"");
+                            e.setClose(false);
+                            return;
+                        }
+
                         hologram.setText(e.getText());
                         hologram.update();
 
