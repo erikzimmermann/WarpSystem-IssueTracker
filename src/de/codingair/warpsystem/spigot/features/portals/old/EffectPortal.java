@@ -94,7 +94,7 @@ public class EffectPortal extends FeatureObject implements Removable {
             this.name = this.holoText = d.get("StartName");
             String destinationName = d.get("DestinationName");
             double hologramHeight = Double.parseDouble(d.get("HologramHeight") + "");
-            Sound sound = Sound.valueOf(d.get("TeleportSound"));
+            Sound sound = Sound.matchXSound(d.getString("TeleportSound")).orElse(Sound.ENTITY_ENDERMAN_TELEPORT);
             float soundVolume = Float.parseFloat(d.get("TeleportSoundVolume") + "");
             float soundPitch = Float.parseFloat(d.get("TeleportSoundPitch") + "");
             this.holoStatus = d.get("StartHoloStatus") == null || Boolean.parseBoolean(d.get("StartHoloStatus") + "");
@@ -148,7 +148,7 @@ public class EffectPortal extends FeatureObject implements Removable {
             this.holoStatus = d.get("startholostatus") == null || Boolean.parseBoolean(d.get("startholostatus") + "");
             boolean destinationHoloStatus = d.get("destinationholostatus") == null || Boolean.parseBoolean(d.get("destinationholostatus") + "");
 
-            Sound sound = Sound.valueOf(d.get("teleportsound"));
+            Sound sound = Sound.matchXSound(d.getString("teleportsound")).orElse(Sound.ENTITY_ENDERMAN_TELEPORT);
             float soundVolume = Float.parseFloat(d.get("teleportsoundvolume") + "");
             float soundPitch = Float.parseFloat(d.get("teleportsoundpitch") + "");
 
