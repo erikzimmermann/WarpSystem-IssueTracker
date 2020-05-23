@@ -40,15 +40,15 @@ public class ParticlePart implements Serializable {
 
     @Override
     public boolean read(DataWriter d) {
-        animation = AnimationType.getById(d.get("animation", 0));
-        particle = Particle.getById(d.get("particle", 26));
-        height = d.get("height", 0D);
-        radius = d.get("radius", 0D);
+        animation = AnimationType.getById(d.getInteger("animation"));
+        particle = Particle.getById(d.getInteger("particle", 26));
+        height = d.getDouble("height");
+        radius = d.getDouble("radius");
         speed = d.get("speed", CustomAnimation.MAX_SPEED);
         color = d.get("color", Color.class);
-        xRotation = d.get("xrot", 0);
-        yRotation = d.get("yrot", 0);
-        zRotation = d.get("zrot", 0);
+        xRotation = d.getInteger("xrot");
+        yRotation = d.getInteger("yrot");
+        zRotation = d.getInteger("zrot");
 
         if(color == null) color = Color.RED;
         if(speed < CustomAnimation.MIN_SPEED) speed = CustomAnimation.MAX_SPEED;
