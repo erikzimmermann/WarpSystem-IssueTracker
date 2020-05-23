@@ -62,10 +62,10 @@ public class Animation implements Serializable {
         }
 
         String[] data = d.getString("ticksound") == null ? null : d.getString("ticksound").split("#", -1);
-        tickSound = data == null ? null : new SoundData(Sound.valueOf(data[0]), Float.parseFloat(data[1]), Float.parseFloat(data[2]));
+        tickSound = data == null ? null : new SoundData(Sound.matchXSound(data[0]).orElse(null), Float.parseFloat(data[1]), Float.parseFloat(data[2]));
 
         data = d.getString("teleportsound") == null ? null : d.getString("teleportsound").split("#", -1);
-        teleportSound = data == null ? null : new SoundData(Sound.valueOf(data[0]), Float.parseFloat(data[1]), Float.parseFloat(data[2]));
+        teleportSound = data == null ? null : new SoundData(Sound.matchXSound(data[0]).orElse(null), Float.parseFloat(data[1]), Float.parseFloat(data[2]));
         return true;
     }
 

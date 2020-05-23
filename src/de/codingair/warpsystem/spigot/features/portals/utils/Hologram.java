@@ -36,8 +36,8 @@ public class Hologram implements Serializable {
     @Override
     public boolean read(DataWriter d) throws Exception {
         this.text = d.getString("text");
-        this.visible = d.getBoolean("visible", true);
-        setHeight(d.getDouble("height", 1D));
+        this.visible = d.getBoolean("visible");
+        setHeight(d.getDouble("height"));
         this.location = new Location();
         this.location.read(d);
 

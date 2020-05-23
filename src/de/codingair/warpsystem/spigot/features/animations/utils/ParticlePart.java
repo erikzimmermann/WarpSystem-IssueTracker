@@ -40,8 +40,8 @@ public class ParticlePart implements Serializable {
 
     @Override
     public boolean read(DataWriter d) {
-        animation = AnimationType.getById(d.get("animation", 0));
-        particle = Particle.getById(d.get("particle", 26));
+        animation = AnimationType.getById(d.getInteger("animation"));
+        particle = Particle.getById(d.getInteger("particle", 26));
         height = d.getDouble("height");
         radius = d.getDouble("radius");
 
