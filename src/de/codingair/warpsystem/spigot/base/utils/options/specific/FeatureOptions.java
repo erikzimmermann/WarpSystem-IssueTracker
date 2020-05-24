@@ -11,13 +11,13 @@ public class FeatureOptions extends Options {
     public FeatureOptions(Origin origin) {
         super("Config");
         this.origin = origin;
-        sendTeleportMessage = new Option<>("WarpSystem.Send.Teleport_Message." + origin.getConfigName(), true);
+        sendTeleportMessage = new Option<>("WarpSystem.Send.Teleport_Message." + origin.getConfigName());
     }
 
     public FeatureOptions(Origin origin, FeatureOptions options) {
         super(options.getFile());
         this.origin = origin;
-        sendTeleportMessage = new Option<>("WarpSystem.Send.Teleport_Message." + origin.getConfigName(), true);
+        sendTeleportMessage = new Option<>("WarpSystem.Send.Teleport_Message." + origin.getConfigName());
         apply(options);
     }
 
