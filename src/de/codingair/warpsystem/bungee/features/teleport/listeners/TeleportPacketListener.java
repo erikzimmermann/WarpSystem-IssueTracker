@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.bungee.features.teleport.listeners;
 
+import de.codingair.warpsystem.bungee.api.Players;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ToggleForceTeleportsPacket;
@@ -18,7 +19,7 @@ public class TeleportPacketListener implements PacketListener {
         if(packet.getType() == PacketType.ToggleForceTeleportsPacket) {
             ToggleForceTeleportsPacket tpPacket = (ToggleForceTeleportsPacket) packet;
 
-            ProxiedPlayer player = BungeeCord.getInstance().getPlayer(tpPacket.getPlayer());
+            ProxiedPlayer player = Players.getPlayer(tpPacket.getPlayer());
             if(player != null) {
                 TeleportManager.getInstance().setDenyForceTps(player, tpPacket.isAutoDenyTp());
                 TeleportManager.getInstance().setDenyForceTpRequests(player, tpPacket.isAutoDenyTpa());

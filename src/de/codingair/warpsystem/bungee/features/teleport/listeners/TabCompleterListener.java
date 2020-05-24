@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.bungee.features.teleport.listeners;
 
+import de.codingair.warpsystem.bungee.api.Players;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
 import de.codingair.warpsystem.bungee.features.teleport.utils.TeleportCommandOptions;
 import net.md_5.bungee.BungeeCord;
@@ -40,7 +41,7 @@ public class TabCompleterListener implements Listener {
                 int deep = args.length - 1;
 
                 if(cursor.endsWith(" ")) {
-                    if(deep == 1 && Character.isDigit(args[1].charAt(0)) && BungeeCord.getInstance().getPlayer(args[1]) == null) return;
+                    if(deep == 1 && Character.isDigit(args[1].charAt(0)) && Players.getPlayer(args[1]) == null) return;
                     if(deep == 0 || deep == 1) {
                         for(ServerInfo server : BungeeCord.getInstance().getServers().values()) {
                             for(ProxiedPlayer player : server.getPlayers()) {
