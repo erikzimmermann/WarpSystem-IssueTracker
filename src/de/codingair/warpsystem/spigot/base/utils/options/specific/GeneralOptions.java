@@ -10,11 +10,11 @@ import java.util.List;
 
 public class GeneralOptions extends Options {
     private Option<String> lang = new Option<>("WarpSystem.Language", "ENG");
-    private Option<Integer> teleportDelay = new Option<>("WarpSystem.Teleport.Delay", 5);
-    private Option<Boolean> allowMove = new Option<>("WarpSystem.Teleport.Allow_Move", false);
-    private Option<Integer> chunkPreLoadRadius = new Option<>("WarpSystem.Teleport.Chunk_Pre_Loading.Chunk_Radius", 1);
-    private Option<Boolean> chunkPreLoad = new Option<>("WarpSystem.Teleport.Chunk_Pre_Loading.Enabled", true);
-    private Option<Boolean> chunkPreLoadingLimitedByPerm = new Option<>("WarpSystem.Teleport.Chunk_Pre_Loading.Limit_by_Permission", false);
+    private Option<Integer> teleportDelay = new Option<>("WarpSystem.Teleport.Delay");
+    private Option<Boolean> allowMove = new Option<>("WarpSystem.Teleport.Allow_Move");
+    private Option<Integer> chunkPreLoadRadius = new Option<>("WarpSystem.Teleport.Chunk_Pre_Loading.Chunk_Radius");
+    private Option<Boolean> chunkPreLoad = new Option<>("WarpSystem.Teleport.Chunk_Pre_Loading.Enabled");
+    private Option<Boolean> chunkPreLoadingLimitedByPerm = new Option<>("WarpSystem.Teleport.Chunk_Pre_Loading.Limit_by_Permission");
 
     public GeneralOptions() {
         super("Config");

@@ -5,7 +5,7 @@ import de.codingair.warpsystem.spigot.base.utils.options.Options;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 
 public class PortalOptions extends FeatureOptions {
-    private Option<Boolean> enabled = new Option<>("WarpSystem.Functions.Portals", true);
+    private Option<Boolean> enabled = new Option<>("WarpSystem.Functions.Portals");
 
     public PortalOptions() {
         super(Origin.Portal);
