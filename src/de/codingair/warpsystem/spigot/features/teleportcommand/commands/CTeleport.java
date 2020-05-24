@@ -168,7 +168,7 @@ public class CTeleport extends WSCommandBuilder {
                 int deep = args.length - 1;
 
                 if(args[deep].isEmpty()) {
-                    if(deep == 1 && Character.isDigit(args[0].charAt(0)) && Bukkit.getPlayerExact(args[0]) == null) return suggestions;
+                    if(deep == 1 && Character.isDigit(args[0].charAt(0)) && Bukkit.getPlayer(args[0]) == null) return suggestions;
                     if(deep == 0 || deep == 1) {
                         for(Player player : Bukkit.getOnlinePlayers()) {
                             suggestions.add(player.getName());
@@ -197,8 +197,8 @@ public class CTeleport extends WSCommandBuilder {
     }
 
     private static void tp(String gate, String player, double x, double y, double z) {
-        Player gateP = Bukkit.getPlayerExact(gate);
-        Player playerP = Bukkit.getPlayerExact(player);
+        Player gateP = Bukkit.getPlayer(gate);
+        Player playerP = Bukkit.getPlayer(player);
 
         String destination = "x=" + cut(x) + ", y=" + cut(y) + ", z=" + cut(z);
 
@@ -242,9 +242,9 @@ public class CTeleport extends WSCommandBuilder {
     }
 
     private static void tp(String gate, String player, String target) {
-        Player gateP = Bukkit.getPlayerExact(gate);
-        Player playerP = Bukkit.getPlayerExact(player);
-        Player targetP = Bukkit.getPlayerExact(target);
+        Player gateP = Bukkit.getPlayer(gate);
+        Player playerP = Bukkit.getPlayer(player);
+        Player targetP = Bukkit.getPlayer(target);
 
         if(playerP == null || targetP == null) {
             //try on proxy

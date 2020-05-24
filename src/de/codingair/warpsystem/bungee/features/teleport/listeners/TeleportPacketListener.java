@@ -2,6 +2,7 @@ package de.codingair.warpsystem.bungee.features.teleport.listeners;
 
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.utils.Value;
+import de.codingair.warpsystem.bungee.api.Players;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.*;
@@ -27,13 +28,13 @@ public class TeleportPacketListener implements PacketListener {
 
             TeleportManager.getInstance().registerOptions(info, p.getOptions());
         } else if(PacketType.getByObject(packet) == PacketType.TeleportRequestHandledPacket) {
-            ProxiedPlayer sender = BungeeCord.getInstance().getPlayer(((TeleportRequestHandledPacket) packet).getSender());
+            ProxiedPlayer sender = Players.getPlayer(((TeleportRequestHandledPacket) packet).getSender());
             if(sender != null) WarpSystem.getInstance().getDataHandler().send(packet, sender.getServer().getInfo());
         } else if(PacketType.getByObject(packet) == PacketType.PrepareTeleportPlayerToPlayerPacket) {
             PrepareTeleportPlayerToPlayerPacket p = (PrepareTeleportPlayerToPlayerPacket) packet;
 
-            ProxiedPlayer player = BungeeCord.getInstance().getPlayer(p.getPlayer());
-            ProxiedPlayer target = BungeeCord.getInstance().getPlayer(p.getDestinationPlayer());
+            ProxiedPlayer player = Players.getPlayer(p.getPlayer());
+            ProxiedPlayer target = Players.getPlayer(p.getDestinationPlayer());
 
             IntegerPacket answer = new IntegerPacket(0);
             p.applyAsAnswer(answer);
@@ -56,7 +57,7 @@ public class TeleportPacketListener implements PacketListener {
 
         } else if(PacketType.getByObject(packet) == PacketType.StartTeleportToPlayerPacket) {
             StartTeleportToPlayerPacket tpPacket = (StartTeleportToPlayerPacket) packet;
-            ProxiedPlayer player = BungeeCord.getInstance().getPlayer(tpPacket.getPlayer());
+            ProxiedPlayer player = Players.getPlayer(tpPacket.getPlayer());
             ServerInfo origin = BungeeCord.getInstance().getServerInfo(extra);
 
             IntegerPacket answer = new IntegerPacket(0);
@@ -104,7 +105,7 @@ public class TeleportPacketListener implements PacketListener {
                 }
             } else {
                 //only recipient
-                ProxiedPlayer player = BungeeCord.getInstance().getPlayer(tpPacket.getRecipient());
+                ProxiedPlayer player = Players.getPlayer(tpPacket.getRecipient());
 
                 if(player == null || !TeleportManager.getInstance().isAccessible(player.getServer().getInfo())) {
                     //not online/accessible
@@ -131,8 +132,8 @@ public class TeleportPacketListener implements PacketListener {
             PrepareTeleportPacket tpPacket = (PrepareTeleportPacket) packet;
 
             ServerInfo origin = BungeeCord.getInstance().getServerInfo(extra);
-            ProxiedPlayer sender = BungeeCord.getInstance().getPlayer(tpPacket.getSender());
-            ProxiedPlayer targetPlayer = tpPacket.getSender().equalsIgnoreCase(tpPacket.getTarget()) ? sender : BungeeCord.getInstance().getPlayer(tpPacket.getTarget());
+            ProxiedPlayer sender = Players.getPlayer(tpPacket.getSender());
+            ProxiedPlayer targetPlayer = tpPacket.getSender().equalsIgnoreCase(tpPacket.getTarget()) ? sender : Players.getPlayer(tpPacket.getTarget());
 
             if(targetPlayer == null || !TeleportManager.getInstance().isAccessible(targetPlayer.getServer().getInfo())) {
                 LongPacket answer = new LongPacket((((long) 0) << 32));
@@ -170,7 +171,7 @@ public class TeleportPacketListener implements PacketListener {
                 WarpSystem.getInstance().getDataHandler().send(answer, origin);
             } else {
                 //only recipient
-                ProxiedPlayer player = BungeeCord.getInstance().getPlayer(tpPacket.getRecipient());
+                ProxiedPlayer player = Players.getPlayer(tpPacket.getRecipient());
 
                 if(player == null || !TeleportManager.getInstance().isAccessible(player.getServer().getInfo())) {
                     //not online/accessible
@@ -204,7 +205,7 @@ public class TeleportPacketListener implements PacketListener {
         } else if(packet.getType() == PacketType.ToggleForceTeleportsPacket) {
             ToggleForceTeleportsPacket tpPacket = (ToggleForceTeleportsPacket) packet;
 
-            ProxiedPlayer player = BungeeCord.getInstance().getPlayer(tpPacket.getPlayer());
+            ProxiedPlayer player = Players.getPlayer(tpPacket.getPlayer());
             if(player != null) {
                 TeleportManager.getInstance().setDenyForceTps(player, tpPacket.isAutoDenyTp());
                 TeleportManager.getInstance().setDenyForceTpRequests(player, tpPacket.isAutoDenyTpa());
