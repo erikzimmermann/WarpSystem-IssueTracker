@@ -5,7 +5,7 @@ import de.codingair.warpsystem.spigot.base.utils.options.Options;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 
 public class WarpSignOptions extends FeatureOptions {
-    private Option<Boolean> enabled = new Option<>("WarpSystem.Functions.WarpSigns", true);
+    private Option<Boolean> enabled = new Option<>("WarpSystem.Functions.WarpSigns");
 
     public WarpSignOptions() {
         super(Origin.WarpSign);

@@ -5,7 +5,7 @@ import de.codingair.warpsystem.spigot.base.utils.options.Options;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 
 public class WarpGUIOptions extends FeatureOptions {
-    private Option<Boolean> enabled = new Option<>("WarpSystem.Functions.Warps", true);
+    private Option<Boolean> enabled = new Option<>("WarpSystem.Functions.Warps");
     private Option<Integer> userSize = new Option<>("WarpSystem.GUI.User.Size", 54, size -> 9 <= size && size <= 54 && size % 9 == 0);
     private Option<Integer> adminSize = new Option<>("WarpSystem.GUI.Admin.Size", 54, size -> 9 <= size && size <= 54 && size % 9 == 0);
     private Option<String> userStandardTitle = new Option<>("WarpSystem.GUI.User.Title.Standard", "&c&nWarps&r");
