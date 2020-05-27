@@ -1,8 +1,5 @@
 package de.codingair.warpsystem.spigot.features.spawn.listeners;
 
-import de.codingair.codingapi.server.sounds.Sound;
-import de.codingair.codingapi.server.sounds.SoundData;
-import de.codingair.warpsystem.spigot.api.events.PlayerFinalJoinEvent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
@@ -21,6 +18,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,18 +31,22 @@ public class SpawnListener implements Listener, PacketListener {
         handle.add(e.getPlayer());
     }
 
-    @EventHandler
-    public void onJoin(PlayerFinalJoinEvent e) {
-        if(!handle.remove(e.getPlayer()) || e.alreadyTeleported()) return;
-
+    @EventHandler(priority = EventPriority.LOW)
+    public void onSpawn(PlayerSpawnLocationEvent e) {
         Spawn spawn = SpawnManager.getInstance().getSpawn();
         if(spawn != null) {
-            Player player = e.getPlayer();
-
-            if(spawn.getUsage() == Spawn.Usage.EVERY_JOIN || spawn.getUsage() == Spawn.Usage.LOCAL_EVERY_JOIN || spawn.getUsage() == Spawn.Usage.GLOBAL_EVERY_JOIN) {
+            if(spawn.getUsage() == Spawn.Usage.EVERY_JOIN || spawn.getUsage() == Spawn.Usage.LOCAL_EVERY_JOIN || spawn.getUsage() == Spawn.Usage.GLOBAL_EVERY_JOIN || spawn.getUsage() == Spawn.Usage.FIRST_JOIN || spawn.getUsage() == Spawn.Usage.LOCAL_FIRST_JOIN || spawn.getUsage() == Spawn.Usage.GLOBAL_FIRST_JOIN) {
                 spawn.onJoin(e);
-            } else if(spawn.getUsage() == Spawn.Usage.FIRST_JOIN || spawn.getUsage() == Spawn.Usage.LOCAL_FIRST_JOIN || spawn.getUsage() == Spawn.Usage.GLOBAL_FIRST_JOIN) {
-                if(!player.hasPlayedBefore()) {
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onLaterSpawn(PlayerSpawnLocationEvent e) {
+        Spawn spawn = SpawnManager.getInstance().getSpawn();
+        if(spawn != null) {
+            if(spawn.getUsage() == Spawn.Usage.EVERY_JOIN || spawn.getUsage() == Spawn.Usage.LOCAL_EVERY_JOIN || spawn.getUsage() == Spawn.Usage.GLOBAL_EVERY_JOIN || spawn.getUsage() == Spawn.Usage.FIRST_JOIN || spawn.getUsage() == Spawn.Usage.LOCAL_FIRST_JOIN || spawn.getUsage() == Spawn.Usage.GLOBAL_FIRST_JOIN) {
+                if(!e.getPlayer().hasPlayedBefore()) {
                     spawn.firstJoin(e);
                 }
             }

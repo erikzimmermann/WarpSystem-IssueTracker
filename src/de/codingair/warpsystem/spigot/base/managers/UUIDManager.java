@@ -5,7 +5,6 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.time.TimeMap;
 import de.codingair.warpsystem.spigot.api.events.PlayerFinalJoinEvent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestUUIDPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -15,11 +14,9 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class UUIDManager {
-    private final int CHECKS = 1;
     private HashMap<String, UUID> uniqueIds = new HashMap<>();
     private TimeMap<String, UUID> tempIds = new TimeMap<>();
-    private TimeMap<String, PlayerFinalJoinEvent.Data> approve = new TimeMap<>();
-    private HashMap<String, Integer> checks = new HashMap<>();
+    private long initialization = 0;
 
     public void downloadAll() {
         for(Player player : Bukkit.getOnlinePlayers()) {
@@ -27,15 +24,17 @@ public class UUIDManager {
         }
     }
 
-    public void applyReload() {
-        for(Player player : Bukkit.getOnlinePlayers()) {
-            approve.put(player.getName(), new PlayerFinalJoinEvent.Data(player));
-            checks.put(player.getName(), CHECKS);
-        }
-    }
-
     public void removeAll() {
         this.uniqueIds.clear();
+    }
+
+    public void initialize(Player player) {
+        if(isCached(player.getName())) {
+            convertFromCached(player);
+            initialization = System.currentTimeMillis();
+        } else if(get(player) == null) Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
+            download(player);
+        }, 20);
     }
 
     public void download(Player player) {
@@ -48,48 +47,22 @@ public class UUIDManager {
                         return;
                     }
 
-                    if(!uniqueIds.containsKey(player.getName())) uniqueIds.put(player.getName(), uniqueId);
-                    else uniqueIds.replace(player.getName(), uniqueId);
-
-                    check(player, new Callback<PlayerFinalJoinEvent.Data>() {
-                        @Override
-                        public void accept(PlayerFinalJoinEvent.Data data) {
-                            data.setId(uniqueId);
-                        }
-                    });
+                    injectId(player, uniqueId);
                 }
             }));
-        } else check(player, new Callback<PlayerFinalJoinEvent.Data>() {
-            @Override
-            public void accept(PlayerFinalJoinEvent.Data data) {
-                data.setId(player.getUniqueId());
-            }
-        });
+        } else injectId(player, player.getUniqueId());
+    }
+
+    private void injectId(Player player, UUID uniqueId) {
+        if(initialization == 0) initialization = System.currentTimeMillis();
+
+        if(WarpSystem.getInstance().isOnBungeeCord()) uniqueIds.put(player.getName(), uniqueId);
+        Bukkit.getPluginManager().callEvent(new PlayerFinalJoinEvent(player, uniqueId));
     }
 
     private void destroy(Player player) {
         this.uniqueIds.remove(player.getName());
         this.tempIds.remove(player.getName());
-        this.checks.remove(player.getName());
-        this.approve.remove(player.getName());
-    }
-
-    public void check(Player player, Callback<PlayerFinalJoinEvent.Data> apply) {
-        Integer current = checks.remove(player.getName());
-
-        PlayerFinalJoinEvent.Data data;
-        if(current == null) {
-            current = 0;
-            approve.put(player.getName(), data = new PlayerFinalJoinEvent.Data(player));
-        } else data = approve.get(player.getName());
-        current++;
-
-        apply.accept(data);
-
-        if(current >= CHECKS) {
-            approve.remove(player.getName());
-            Bukkit.getPluginManager().callEvent(new PlayerFinalJoinEvent(data));
-        } else checks.put(player.getName(), current);
     }
 
     public boolean isCached(String name) {
@@ -156,9 +129,16 @@ public class UUIDManager {
 
     public void remove(Player player) {
         this.uniqueIds.remove(player.getName());
+        if(isEmpty()) initialization = 0;
     }
 
     public boolean isEmpty() {
         return this.uniqueIds.isEmpty();
+    }
+
+    public boolean isRegistered(Player player) {
+        if(initialization == 0) return false;
+        if(WarpSystem.getInstance().isOnBungeeCord()) return this.uniqueIds.containsKey(player.getName());
+        else return true;
     }
 }

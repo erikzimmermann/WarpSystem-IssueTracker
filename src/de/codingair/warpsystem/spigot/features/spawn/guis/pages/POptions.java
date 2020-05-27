@@ -52,17 +52,15 @@ public class POptions extends PageItem {
                 ItemBuilder builder = new ItemBuilder(XMaterial.REDSTONE).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Spawn"));
 
                 String add = null;
+                String server = SpawnManager.getInstance().getSpawnServer();
 
-                if(WarpSystem.getInstance().isOnBungeeCord() && clone.getUsage().getName().contains("/spawn")) {
-                    String server = SpawnManager.getInstance().getSpawnServer();
-
-                    if(server != null && !WarpSystem.getInstance().getCurrentServer().equals(server)) {
+                if(server != null && WarpSystem.getInstance().isOnBungeeCord() && clone.getUsage().getName().contains("/spawn")) {
+                    if(!WarpSystem.getInstance().getCurrentServer().equals(server)) {
                         builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": §a" + clone.getUsage().getName().replace("/spawn", "§c§m/spawn§7"));
                         builder.addLore(Editor.ITEM_SUB_TITLE_WARNING + Lang.get("Already_linked") + " §8(§7" + Lang.get("Server") + ": '" + server + "'§8)");
                         add = Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Shift_Rightclick") + ": " + (runnable != null ? "§7" + Lang.get("Reset") + " §7(§c" + ChatColor.stripColor(Lang.get("Confirm")) + "§7)" : "§7" + Lang.get("Reset") + " §7(/spawn)");
                     }
                 } else builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": §a" + clone.getUsage().getName());
-
 
                 builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7«");
                 builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §7»");

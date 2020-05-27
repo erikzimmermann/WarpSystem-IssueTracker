@@ -50,6 +50,9 @@ Warp:
 SetSpawn:
   Name: setspawn
   Aliases: []
+Spawn:
+  Name: spawn
+  Aliases: []
 Back:
   Name: back
   Aliases: []

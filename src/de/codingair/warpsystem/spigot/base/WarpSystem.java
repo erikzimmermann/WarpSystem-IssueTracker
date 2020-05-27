@@ -232,7 +232,6 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new HeadListener(), this);
 
             this.startAutoSaver();
-            this.uuidManager.applyReload();
             afterOnEnable();
 
             timer.stop();

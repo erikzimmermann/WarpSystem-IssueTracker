@@ -1,9 +1,8 @@
 package de.codingair.warpsystem.bungee.features.globalwarps.listeners;
 
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.codingapi.utils.Value;
-import de.codingair.warpsystem.bungee.api.ServerSwitchAttemptEvent;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
+import de.codingair.warpsystem.bungee.base.managers.ServerManager;
 import de.codingair.warpsystem.bungee.features.FeatureType;
 import de.codingair.warpsystem.bungee.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.transfer.packets.general.BooleanPacket;
@@ -122,40 +121,18 @@ public class GlobalWarpListener implements Listener, PacketListener {
                     WarpSystem.getInstance().getDataHandler().send(answerIntegerPacket, server);
                     WarpSystem.getInstance().getDataHandler().send(out, otherServer);
                 } else {
-                    Value<Boolean> modifiedEvent = new Value<>(false);
-                    ServerSwitchAttemptEvent e = new ServerSwitchAttemptEvent(p, otherServer, new Callback() {
-                        private boolean used = false;
-
-                        @Override
-                        public void accept(Object object) {
-                            if(used) return;
-                            used = true;
-
-                            Callback<Boolean> pingCallback = new Callback<Boolean>() {
-                                @Override
-                                public void accept(Boolean online) {
-                                    if(online) {
-                                        WarpSystem.getInstance().getDataHandler().send(answerIntegerPacket, server);
-                                        WarpSystem.getInstance().getDataHandler().send(out, otherServer);
-
-                                        p.connect(otherServer, (connected, throwable) -> {
-                                        });
-                                    } else {
-                                        answerIntegerPacket.setValue(2);
-                                        WarpSystem.getInstance().getDataHandler().send(answerIntegerPacket, server);
-                                    }
-                                }
-                            };
-
-                            if(modifiedEvent.getValue()) {
-                                WarpSystem.getInstance().getServerManager().ping(otherServer, pingCallback);
-                            } else pingCallback.accept(WarpSystem.getInstance().getServerManager().isOnline(otherServer));
-                        }
-                    });
-
-                    BungeeCord.getInstance().getPluginManager().callEvent(e);
-                    if(!e.isWaitForCallback()) e.getTeleportFinisher().accept(null);
-                    else modifiedEvent.setValue(true);
+                    if(WarpSystem.getInstance().getServerManager().isOnline(otherServer)) {
+                        WarpSystem.getInstance().getDataHandler().send(answerIntegerPacket, server);
+                        ServerManager.sendPlayerTo(otherServer, p, new Callback<ServerInfo>() {
+                            @Override
+                            public void accept(ServerInfo object) {
+                                WarpSystem.getInstance().getDataHandler().send(out, otherServer);
+                            }
+                        });
+                    } else {
+                        answerIntegerPacket.setValue(2);
+                        WarpSystem.getInstance().getDataHandler().send(answerIntegerPacket, server);
+                    }
                 }
                 break;
 
