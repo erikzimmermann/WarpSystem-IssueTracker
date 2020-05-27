@@ -2,10 +2,10 @@ package de.codingair.warpsystem.bungee.features.spawn.listeners;
 
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
+import de.codingair.warpsystem.bungee.base.language.Lang;
 import de.codingair.warpsystem.bungee.base.managers.ServerManager;
 import de.codingair.warpsystem.bungee.base.utils.ServerInitializeEvent;
 import de.codingair.warpsystem.bungee.features.spawn.managers.SpawnManager;
-import de.codingair.warpsystem.bungee.base.language.Lang;
 import de.codingair.warpsystem.transfer.packets.general.SendGlobalSpawnOptionsPacket;
 import de.codingair.warpsystem.transfer.packets.general.TeleportSpawnPacket;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
