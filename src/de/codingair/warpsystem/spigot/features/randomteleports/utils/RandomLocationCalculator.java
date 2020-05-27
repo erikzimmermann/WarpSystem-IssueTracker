@@ -12,7 +12,6 @@ import de.codingair.warpsystem.spigot.features.randomteleports.managers.RandomTe
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -169,7 +168,7 @@ public class RandomLocationCalculator implements Runnable {
         if(RandomTeleporterManager.getInstance().getBiomeList() != null && !RandomTeleporterManager.getInstance().getBiomeList().contains(location.getWorld().getBiome(location.getBlockX(), location.getBlockZ())))
             return false;
         if(RandomTeleporterManager.getInstance().isProtectedRegions() && isProtected(location)) return false;
-        if(RandomTeleporterManager.getInstance().isWorldBorder() && !isInsideOfWorldBorder(location)) return false;
+
         if(safety) {
             Location above = location.clone();
             above.setY(above.getY() + 1);
@@ -196,11 +195,6 @@ public class RandomLocationCalculator implements Runnable {
         }
 
         return true;
-    }
-
-    private boolean isInsideOfWorldBorder(Location location) {
-        WorldBorder border = location.getWorld().getWorldBorder();
-        return border == null || Area.isInArea(location, border.getCenter(), border.getSize() / 2, false, 0);
     }
 
     private boolean isProtected(Location location) throws InterruptedException {
