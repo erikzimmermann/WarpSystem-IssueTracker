@@ -27,6 +27,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,46 +62,47 @@ public class SpawnListener implements Listener, PacketListener {
     @EventHandler
     public void onJoin(PlayerFinalJoinEvent e) {
         Node<World, String> node = teleporting.get(e.getPlayer().getName());
-        if(node != null) {
-            if(node.getKey() != null) {
-                RandomTeleporterManager.getInstance().search(e.getPlayer(), node.getKey(), new Callback<Location>() {
-                    @Override
-                    public void accept(Location loc) {
-                        if(loc == null) {
-                            showPlayer(e.getPlayer());
-                            uninject(e.getPlayer());
-                            teleporting.remove(e.getPlayer().getName());
-                            clearCache(e.getPlayer(), true);
-                            e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("RandomTP_No_Location_Found"));
-                        } else {
-                            WarpSystem.getInstance().getDataHandler().send(new QueueRTPUsagePacket(e.getUniqueId(), node.getValue()));
+        if(node != null) triggerRTP(e.getPlayer(), node);
+    }
 
-                            org.bukkit.Location l = e.getPlayer().getLocation();
-                            boolean discardOldChunk = !l.getWorld().equals(loc.getWorld()) || l.distance(loc) > 250;
-                            Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> {
-                                TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(loc)), "");
-                                options.setMessage(Lang.get("RandomTP_Teleported"));
-                                options.setSkip(true);
-                                options.addCallback(new Callback<TeleportResult>() {
-                                    @Override
-                                    public void accept(TeleportResult object) {
-                                        clearCache(e.getPlayer(), !discardOldChunk);
-                                        showPlayer(e.getPlayer());
-                                    }
-                                });
+    private void triggerRTP(Player player, Node<World, String> node) {
+        if(node.getKey() != null) {
+            RandomTeleporterManager.getInstance().search(player, node.getKey(), new Callback<Location>() {
+                @Override
+                public void accept(Location loc) {
+                    if(loc == null) {
+                        showPlayer(player);
+                        uninject(player);
+                        teleporting.remove(player.getName());
+                        clearCache(player, true);
+                        player.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_No_Location_Found"));
+                    } else {
+                        WarpSystem.getInstance().getDataHandler().send(new QueueRTPUsagePacket(WarpSystem.getInstance().getUUIDManager().get(player), node.getValue()));
 
-                                uninject(e.getPlayer());
-                                teleporting.remove(e.getPlayer().getName());
-
-                                WarpSystem.getInstance().getTeleportManager().teleport(e.getPlayer(), options);
+                        org.bukkit.Location l = player.getLocation();
+                        boolean discardOldChunk = !l.getWorld().equals(loc.getWorld()) || l.distance(loc) > 250;
+                        Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> {
+                            TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(loc)), "");
+                            options.setMessage(Lang.get("RandomTP_Teleported"));
+                            options.setSkip(true);
+                            options.addCallback(new Callback<TeleportResult>() {
+                                @Override
+                                public void accept(TeleportResult object) {
+                                    clearCache(player, !discardOldChunk);
+                                    showPlayer(player);
+                                }
                             });
-                        }
+
+                            uninject(player);
+                            teleporting.remove(player.getName());
+                            WarpSystem.getInstance().getTeleportManager().teleport(player, options);
+                        });
                     }
-                });
-            } else {
-                teleporting.remove(e.getPlayer().getName());
-                Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("World_Not_Exists")), 2L);
-            }
+                }
+            });
+        } else {
+            teleporting.remove(player.getName());
+            Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> player.sendMessage(Lang.getPrefix() + Lang.get("World_Not_Exists")), 2L);
         }
     }
 
@@ -127,11 +129,7 @@ public class SpawnListener implements Listener, PacketListener {
     public void onJoin(PlayerJoinEvent e) {
         inject(e.getPlayer());
 
-        if(teleporting.containsKey(e.getPlayer().getName())) {
-            Node<World, String> w = teleporting.get(e.getPlayer().getName());
-            check(e.getPlayer(), w != null && w.getKey() != null);
-            return;
-        }
+        if(teleporting.containsKey(e.getPlayer().getName())) return;
 
         Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
             if(injected(e.getPlayer()) && !teleporting.containsKey(e.getPlayer().getName())) {
@@ -139,18 +137,8 @@ public class SpawnListener implements Listener, PacketListener {
                 showPlayer(e.getPlayer());
                 uninject(e.getPlayer());
                 clearCache(e.getPlayer(), true);
-                check(e.getPlayer(), false);
             }
         }, 2L);
-    }
-
-    private void check(Player player, boolean teleporting) {
-        WarpSystem.getInstance().getUUIDManager().check(player, new Callback<PlayerFinalJoinEvent.Data>() {
-            @Override
-            public void accept(PlayerFinalJoinEvent.Data data) {
-                if(teleporting) data.setAlreadyTeleported(true);
-            }
-        });
     }
 
     private void clearCache(Player player, boolean oldChunk) {
@@ -213,12 +201,12 @@ public class SpawnListener implements Listener, PacketListener {
         if(packet.getType() == PacketType.RandomTPPacket) {
             RandomTPPacket p = (RandomTPPacket) packet;
             World w = Bukkit.getWorld(p.getWorld());
-            teleporting.put(p.getPlayer(), new Node<>(w, p.getServer()));
 
             Player player = Bukkit.getPlayer(p.getPlayer());
-            if(player != null) {
-                check(player, w != null);
-            }
+            Node<World, String> node = new Node<>(w, p.getServer());
+
+            if(player == null || !WarpSystem.getInstance().getUUIDManager().isRegistered(player)) teleporting.put(p.getPlayer(), node);
+            else triggerRTP(player, node);
         }
     }
 

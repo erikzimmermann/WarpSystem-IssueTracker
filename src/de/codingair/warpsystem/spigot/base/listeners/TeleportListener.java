@@ -24,18 +24,19 @@ import java.util.concurrent.TimeUnit;
 
 public class TeleportListener implements Listener {
     public static final HashMap<Player, org.bukkit.Location> TELEPORTS = new HashMap<>();
-    public static final Cache<String, TeleportOptions> teleport = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.SECONDS).softValues().build();
+    private static final Cache<String, TeleportOptions> teleport = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.SECONDS).softValues().build();
 
     public static void setSpawnPositionOrTeleport(String name, TeleportOptions options) {
         if(options == null) return;
         options.setSkip(true);
         Player player = Bukkit.getPlayer(name);
 
-        //save for PlayerFinalJoinEvent (detect teleports for Spawn feature)
-        teleport.put(name, options);
-        if(player != null) {
+        if(player != null && player.isOnline()) {
             //teleport
             AsyncCatcher.runSync(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(player, options));
+        } else {
+            //save for PlayerFinalJoinEvent (detect teleports for Spawn feature) //todo: discard
+            teleport.put(name, options);
         }
     }
 
@@ -49,7 +50,7 @@ public class TeleportListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onSpawn(PlayerSpawnLocationEvent e) {
         TeleportOptions options = teleport.getIfPresent(e.getPlayer().getName());
 

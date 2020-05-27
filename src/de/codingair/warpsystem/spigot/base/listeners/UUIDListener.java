@@ -10,18 +10,13 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class UUIDListener implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onJoin(PlayerJoinEvent e) {
         if(Bukkit.getOnlinePlayers().size() > 1) WarpSystem.getInstance().getUUIDManager().download(e.getPlayer());
-        else {
-            Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                if(WarpSystem.getInstance().getUUIDManager().isCached(e.getPlayer().getName())) WarpSystem.getInstance().getUUIDManager().convertFromCached(e.getPlayer());
-                else if(WarpSystem.getInstance().getUUIDManager().get(e.getPlayer()) == null) WarpSystem.getInstance().getUUIDManager().download(e.getPlayer());
-            }, 20);
-        }
+        else WarpSystem.getInstance().getUUIDManager().initialize(e.getPlayer());
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onQuit(PlayerQuitEvent e) {
         WarpSystem.getInstance().getUUIDManager().remove(e.getPlayer());
     }
