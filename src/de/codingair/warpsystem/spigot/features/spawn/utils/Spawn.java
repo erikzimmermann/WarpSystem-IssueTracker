@@ -1,17 +1,15 @@
 package de.codingair.warpsystem.spigot.features.spawn.utils;
 
 import de.codingair.codingapi.server.Environment;
-import de.codingair.codingapi.server.sounds.Sound;
-import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.warpsystem.spigot.api.PAPI;
-import de.codingair.warpsystem.spigot.api.events.PlayerFinalJoinEvent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.spawn.managers.SpawnManager;
 import de.codingair.warpsystem.transfer.packets.general.TeleportSpawnPacket;
 import org.bukkit.*;
@@ -19,6 +17,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,38 +86,18 @@ public class Spawn extends FeatureObject {
         options.setDisplayName(displayName);
     }
 
-    public void onJoin(PlayerFinalJoinEvent e) {
-        if(!e.getPlayer().hasPlayedBefore()) {
-            firstJoin(e);
-            return;
-        }
-
-        if(WarpSystem.getInstance().getTeleportManager().isTeleporting(e.getPlayer())) return;
-
-        TeleportOptions options = new TeleportOptions();
-        options.setMessage(null);
-        options.setTeleportSound(new SoundData(Sound.AMBIENT_CAVE, 0, 0));
-        options.setAfterEffects(false);
-        options.setSkip(true);
-
-        super.perform(e.getPlayer(), options);
+    public void onJoin(PlayerSpawnLocationEvent e) {
+        Destination destination = getAction(WarpAction.class).getValue();
+        e.setSpawnLocation(destination.buildLocation());
     }
 
-    public void firstJoin(PlayerFinalJoinEvent e) {
-        TeleportOptions options = new TeleportOptions();
-        options.setMessage(null);
-        options.setTeleportSound(new SoundData(Sound.AMBIENT_CAVE, 0, 0));
-        options.setAfterEffects(false);
-        options.setSkip(true);
-
-        super.perform(e.getPlayer(), options);
-        spawnFireWorks();
+    public void firstJoin(PlayerSpawnLocationEvent e) {
+        spawnFireWorks(e.getSpawnLocation());
         broadcast(e.getPlayer());
     }
 
-    private void spawnFireWorks() {
+    private void spawnFireWorks(Location l) {
         if(randomFireWorks) {
-            Location l = getLocation();
             if(l != null) {
                 Random r = new Random();
                 FireworkEffect.Type type = FireworkEffect.Type.BALL;
@@ -171,8 +150,8 @@ public class Spawn extends FeatureObject {
     public boolean read(DataWriter d) throws Exception {
         boolean success = super.read(d);
 
-        this.usage = Usage.values()[d.getInteger("usage", 0)];
-        this.respawnUsage = RespawnUsage.values()[d.getInteger("respawn", 0)];
+        this.usage = Usage.getById(d.getInteger("usage", 0));
+        this.respawnUsage = RespawnUsage.getById(d.getInteger("respawn", 0));
         this.randomFireWorks = d.getBoolean("fireworks", false);
         this.broadCastMessages = d.getList("broadcast");
         this.displayName = d.getString("displayname", "Spawn");
@@ -184,8 +163,8 @@ public class Spawn extends FeatureObject {
     public void write(DataWriter d) {
         super.write(d);
 
-        d.put("usage", this.usage.id);
-        d.put("respawn", this.respawnUsage.id);
+        d.put("usage", this.usage.ordinal());
+        d.put("respawn", this.respawnUsage.ordinal());
         d.put("fireworks", this.randomFireWorks);
         d.put("broadcast", this.broadCastMessages);
         d.put("displayname", this.displayName);
@@ -237,45 +216,47 @@ public class Spawn extends FeatureObject {
     }
 
     public enum Usage {
-        LOCAL("§b" + Lang.get("Local") + " §7(/spawn)", 0),
-        LOCAL_FIRST_JOIN("§b" + Lang.get("Local") + " §7(/spawn) §8+ " + "§7" + Lang.get("First_Join"), 1),
-        LOCAL_EVERY_JOIN("§b" + Lang.get("Local") + " §7(/spawn) §8+ " + "§7" + Lang.get("Every_Join"), 2),
-        GLOBAL("§e" + Lang.get("Global") + " §7(/spawn)", 3, true),
-        GLOBAL_FIRST_JOIN("§e" + Lang.get("Global") + " §7(/spawn) §8+ " + "§7" + Lang.get("First_Join"), 4, true),
-        GLOBAL_EVERY_JOIN("§e" + Lang.get("Global") + " §7(/spawn) §8+ " + "§7" + Lang.get("Every_Join"), 5, true),
-        EVERY_JOIN("§7" + Lang.get("Every_Join"), 6),
-        FIRST_JOIN("§7" + Lang.get("First_Join"), 7),
-        DISABLED("§c" + Lang.get("Disabled"), 8);
+        LOCAL("§b" + Lang.get("Local") + " §7(/spawn)"),
+        LOCAL_FIRST_JOIN("§b" + Lang.get("Local") + " §7(/spawn) §8+ " + "§7" + Lang.get("First_Join")),
+        LOCAL_EVERY_JOIN("§b" + Lang.get("Local") + " §7(/spawn) §8+ " + "§7" + Lang.get("Every_Join")),
+        GLOBAL("§e" + Lang.get("Global") + " §7(/spawn)", true),
+        GLOBAL_FIRST_JOIN("§e" + Lang.get("Global") + " §7(/spawn) §8+ " + "§7" + Lang.get("First_Join"), true),
+        GLOBAL_EVERY_JOIN("§e" + Lang.get("Global") + " §7(/spawn) §8+ " + "§7" + Lang.get("Every_Join"), true),
+        EVERY_JOIN("§7" + Lang.get("Every_Join")),
+        FIRST_JOIN("§7" + Lang.get("First_Join")),
+        DISABLED("§c" + Lang.get("Disabled"));
 
         private String name;
-        private int id;
         private boolean bungee;
 
-        Usage(String name, int id, boolean bungee) {
+        Usage(String name, boolean bungee) {
             this.name = name;
-            this.id = id;
             this.bungee = bungee;
         }
 
-        Usage(String name, int id) {
-            this(name, id, false);
+        Usage(String name) {
+            this(name, false);
+        }
+
+        public static Usage getById(int id) {
+            return values()[Math.max(Math.min(id, values().length - 1), 0)];
         }
 
         public Usage next() {
-            int next = id + 1;
+            int next = ordinal() + 1;
             if(next == values().length) next = 0;
             return values()[next];
         }
 
         public Usage getWithoutSpawnCommand() {
-            if(this.id == 0 || this.id == 3) return DISABLED;
-            if(this.id == 1 || this.id == 4) return FIRST_JOIN;
-            if(this.id == 2 || this.id == 5) return EVERY_JOIN;
+            if(ordinal() == 0 || ordinal() == 3) return DISABLED;
+            if(ordinal() == 1 || ordinal() == 4) return FIRST_JOIN;
+            if(ordinal() == 2 || ordinal() == 5) return EVERY_JOIN;
             return this;
         }
 
         public Usage previous() {
-            int previous = id - 1;
+            int previous = ordinal() - 1;
             if(previous < 0) previous = values().length - 1;
             return values()[previous];
         }
@@ -288,36 +269,34 @@ public class Spawn extends FeatureObject {
             return name;
         }
 
-        public int getId() {
-            return id;
-        }
-
         public boolean isBungee() {
             return bungee;
         }
     }
 
     public enum RespawnUsage {
-        DISABLED("§c" + Lang.get("Disabled"), 0),
-        LOCAL("§b" + Lang.get("Local"), 1),
-        GLOBAL("§e" + Lang.get("Global"), 2, true);
+        DISABLED("§c" + Lang.get("Disabled")),
+        LOCAL("§b" + Lang.get("Local")),
+        GLOBAL("§e" + Lang.get("Global"), true);
 
         private String name;
-        private int id;
         private boolean bungee;
 
-        RespawnUsage(String name, int id, boolean bungee) {
+        RespawnUsage(String name, boolean bungee) {
             this.name = name;
-            this.id = id;
             this.bungee = bungee;
         }
 
-        RespawnUsage(String name, int id) {
-            this(name, id, false);
+        RespawnUsage(String name) {
+            this(name, false);
+        }
+
+        public static RespawnUsage getById(int id) {
+            return values()[Math.max(Math.min(id, values().length - 1), 0)];
         }
 
         public RespawnUsage next() {
-            int next = id + 1;
+            int next = ordinal() + 1;
             if(next == values().length) next = 0;
             return values()[next];
         }
@@ -327,17 +306,13 @@ public class Spawn extends FeatureObject {
         }
 
         public RespawnUsage previous() {
-            int previous = id - 1;
+            int previous = ordinal() - 1;
             if(previous < 0) previous = values().length - 1;
             return values()[previous];
         }
 
         public String getName() {
             return name;
-        }
-
-        public int getId() {
-            return id;
         }
 
         public boolean isBungee() {

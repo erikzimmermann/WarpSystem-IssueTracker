@@ -515,3 +515,4 @@ Spawn_Name_Button_hint: '&7Hint: &eSpawn commands &7are\n&7changeable (Config.ym
 Permission_overwritten_by_config: 'Permissions are overwritten by the config'
 Play: 'Play'
 Not_Available_in_Version: '&cNot &7available in &c%VERSION%&7!'
+Hidden_command_info: '&7This command is &chidden&7 for normal players. Check the configuration %HERE%.'

@@ -5,12 +5,14 @@ import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.base.managers.ServerManager;
 import de.codingair.warpsystem.bungee.base.utils.ServerInitializeEvent;
 import de.codingair.warpsystem.bungee.features.spawn.managers.SpawnManager;
+import de.codingair.warpsystem.bungee.base.language.Lang;
 import de.codingair.warpsystem.transfer.packets.general.SendGlobalSpawnOptionsPacket;
 import de.codingair.warpsystem.transfer.packets.general.TeleportSpawnPacket;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
 import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Listener;
@@ -35,12 +37,14 @@ public class ServerListener implements Listener, PacketListener {
             ServerInfo server = BungeeCord.getInstance().getServerInfo(p.isRespawn() ? SpawnManager.getInstance().getRespawn() : SpawnManager.getInstance().getSpawn());
 
             if(player != null && server != null) {
-                ServerManager.sendPlayerTo(server, player, new Callback<ServerInfo>() {
-                    @Override
-                    public void accept(ServerInfo server) {
-                        WarpSystem.getInstance().getDataHandler().send(p, server);
-                    }
-                });
+                if(WarpSystem.getInstance().getServerManager().isOnline(server)) {
+                    ServerManager.sendPlayerTo(server, player, new Callback<ServerInfo>() {
+                        @Override
+                        public void accept(ServerInfo server) {
+                            WarpSystem.getInstance().getDataHandler().send(p, server);
+                        }
+                    });
+                } else player.sendMessage(new TextComponent(Lang.getPrefix() + Lang.get("Server_Is_Not_Online")));
             }
         }
     }
