@@ -1,9 +1,7 @@
 package de.codingair.warpsystem.transfer.packets.utils;
 
-import de.codingair.warpsystem.spigot.features.randomteleports.packets.QueueRTPUsagePacket;
-import de.codingair.warpsystem.spigot.features.randomteleports.packets.RandomTPPacket;
 import de.codingair.warpsystem.spigot.features.randomteleports.packets.RandomTPWorldsPacket;
-import de.codingair.warpsystem.spigot.features.teleportcommand.packets.*;
+import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ToggleForceTeleportsPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.*;
 import de.codingair.warpsystem.transfer.packets.general.*;
 import de.codingair.warpsystem.transfer.packets.spigot.*;
@@ -31,18 +29,11 @@ public enum PacketType {
     RequestUUIDPacket(19, RequestUUIDPacket.class),
     SendUUIDPacket(20, SendUUIDPacket.class),
     TeleportPlayerToPlayerPacket(21, TeleportPlayerToPlayerPacket.class),
-    TeleportPlayerToCoordsPacket(22, TeleportPlayerToCoordsPacket.class),
     PrepareServerSwitchPacket(23, PrepareServerSwitchPacket.class),
     PrepareLoginMessagePacket(24, PrepareLoginMessagePacket.class),
     MessagePacket(25, MessagePacket.class),
 
-    TeleportCommandOptions(30, TeleportCommandOptionsPacket.class),
-    TeleportRequestHandledPacket(31, TeleportRequestHandledPacket.class),
-    PrepareTeleportPlayerToPlayerPacket(32, PrepareTeleportPlayerToPlayerPacket.class),
-    PrepareTeleportRequestPacket(33, PrepareTeleportRequestPacket.class),
-    StartTeleportToPlayerPacket(34, StartTeleportToPlayerPacket.class),
     ToggleForceTeleportsPacket(35, ToggleForceTeleportsPacket.class),
-    PrepareTeleportPacket(36, PrepareTeleportPacket.class),
 
     SendPlayerWarpsPacket(40, SendPlayerWarpsPacket.class),
     RegisterServerForPlayerWarpsPacket(41, RegisterServerForPlayerWarpsPacket.class),
@@ -53,9 +44,12 @@ public enum PacketType {
     DeletePlayerWarpPacket(46, DeletePlayerWarpPacket.class),
     PlayerWarpTeleportProcessPacket(47, PlayerWarpTeleportProcessPacket.class),
 
-    RandomTPPacket(50, RandomTPPacket.class),
     RandomTPWorldsPacket(51, RandomTPWorldsPacket.class),
-    QueueRTPUsagePacket(52, QueueRTPUsagePacket.class),
+
+    IsOperatorPacket(60, IsOperatorPacket.class),
+    SendDisablePacket(61, SendDisablePacket.class),
+    IsOnlinePacket(62, IsOnlinePacket.class),
+    GetOnlineCountPacket(63, GetOnlineCountPacket.class),
 
     BooleanPacket(100, BooleanPacket.class),
     IntegerPacket(101, IntegerPacket.class),
