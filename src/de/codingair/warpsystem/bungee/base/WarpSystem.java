@@ -23,7 +23,7 @@ import java.nio.channels.FileChannel;
 import java.util.concurrent.TimeUnit;
 
 public class WarpSystem extends Plugin {
-    public static final String PERMISSION_MODIFY_SYSTEM = "WarpSystem.Modify.System";
+    public static final String PERMISSION_MODIFY_SYSTEM = "warpsystem.modify.system";
 
     private static WarpSystem instance;
     private BungeeDataHandler dataHandler = new BungeeDataHandler(this);
