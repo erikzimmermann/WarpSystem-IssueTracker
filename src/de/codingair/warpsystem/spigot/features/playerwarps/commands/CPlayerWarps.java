@@ -319,7 +319,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
             public void onClose(AnvilCloseEvent e) {
                 if(e.isSubmitted()) {
                     e.setPost(() -> createPlayerWarp(e.getPlayer(), e.getSubmittedText(), fallBack));
-                } else if(fallBack != null) fallBack.open();
+                } else if(fallBack != null) e.setPost(fallBack::open);
             }
         }, new ItemBuilder(XMaterial.NAME_TAG).setName(Lang.get("Name") + "...").getItem());
     }
