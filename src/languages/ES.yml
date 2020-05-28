@@ -514,3 +514,4 @@ Spawn_Name_Button_hint: '&7Pista: Los comandos de desove\n&7son cambiables (Conf
 Permission_overwritten_by_config: 'Los permisos son sobrescritos por la configuración'
 Play: 'Juega'
 Not_Available_in_Version: '&cNot &7available in &c%VERSION%&7!'
+Final_Permission: 'Permiso final'
