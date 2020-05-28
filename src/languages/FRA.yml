@@ -517,3 +517,4 @@ Spawn_Name_Button_hint: '&7Astuce : les commandes Spawn\n&7sont modifiables (Con
 Permission_overwritten_by_config: 'Les autorisations sont écrasées par la configuration'
 Play: 'Jouer à'
 Not_Available_in_Version: '&cNot &7available in &c%VERSION%&7!'
+Final_Permission: 'Permission finale'
