@@ -35,7 +35,7 @@ public class SpawnListener implements Listener, PacketListener {
     public void onSpawn(PlayerSpawnLocationEvent e) {
         Spawn spawn = SpawnManager.getInstance().getSpawn();
         if(spawn != null) {
-            if(spawn.getUsage() == Spawn.Usage.EVERY_JOIN || spawn.getUsage() == Spawn.Usage.LOCAL_EVERY_JOIN || spawn.getUsage() == Spawn.Usage.GLOBAL_EVERY_JOIN || spawn.getUsage() == Spawn.Usage.FIRST_JOIN || spawn.getUsage() == Spawn.Usage.LOCAL_FIRST_JOIN || spawn.getUsage() == Spawn.Usage.GLOBAL_FIRST_JOIN) {
+            if(spawn.getUsage() == Spawn.Usage.EVERY_JOIN || spawn.getUsage() == Spawn.Usage.LOCAL_EVERY_JOIN || spawn.getUsage() == Spawn.Usage.GLOBAL_EVERY_JOIN) {
                 spawn.onJoin(e);
             }
         }
