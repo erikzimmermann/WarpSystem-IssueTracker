@@ -77,12 +77,10 @@ public class SignListener implements Listener {
                 e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Creative_Mode_Needed"));
                 e.setCancelled(true);
             } else {
-                List<WarpSignGUI> l = API.getRemovables(WarpSignGUI.class);
-                for(WarpSignGUI gui : l) {
+                for(WarpSignGUI gui : API.getRemovables(WarpSignGUI.class)) {
                     gui.close();
                     gui.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("WarpSign_Removed"));
                 }
-                l.clear();
 
                 manager.getWarpSigns().remove(sign);
                 e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("WarpSign_Removed"));

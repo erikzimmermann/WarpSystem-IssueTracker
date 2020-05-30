@@ -58,7 +58,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
             }
         });
 
-        getComponent("delete").addChild(new MultiTextCommandComponent() {
+        getComponent("delete").addChild(new PWMultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 if(sender.hasPermission(WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS)) {

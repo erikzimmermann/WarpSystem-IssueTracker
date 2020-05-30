@@ -55,13 +55,8 @@ public class PWPage extends Page {
     }
 
     public void updateEntries() {
+        page = Math.min(Math.max(page, 0), maxPage);
         initialize(getLast().getPlayer());
-
-        if(page > maxPage) {
-            page = maxPage;
-            initialize(getLast().getPlayer());
-        }
-
         getLast().changePage(PWPage.this, true);
     }
 
@@ -114,8 +109,7 @@ public class PWPage extends Page {
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
                 page--;
-                initialize(p);
-                getLast().changePage(PWPage.this, true);
+                updateEntries();
             }
 
             @Override
@@ -143,7 +137,7 @@ public class PWPage extends Page {
             @Override
             public void onClick(InventoryClickEvent e, Player player) {
                 page++;
-                resetPage();
+                updateEntries();
             }
 
             @Override

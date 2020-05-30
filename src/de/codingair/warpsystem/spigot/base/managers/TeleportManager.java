@@ -1,10 +1,14 @@
 package de.codingair.warpsystem.spigot.base.managers;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.server.events.PlayerWalkEvent;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.codingapi.utils.ImprovedDouble;
+import de.codingair.codingapi.utils.Removable;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.api.events.PlayerGlobalWarpEvent;
 import de.codingair.warpsystem.spigot.api.events.PlayerWarpEvent;
@@ -27,12 +31,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class TeleportManager {
     public static final String NO_PERMISSION = "%NO_PERMISSION%";
-    private List<Teleport> teleports = new ArrayList<>();
+    private Cache<Player, Teleport> teleports;
     private GeneralOptions options;
 
     public static void confirmPayment(Player player, double costs, Callback<Boolean> callback) {
@@ -134,6 +139,7 @@ public class TeleportManager {
         boolean success = true;
 
         this.options = WarpSystem.getOptions(GeneralOptions.class);
+        this.teleports = CacheBuilder.newBuilder().expireAfterAccess(options.getTeleportDelay(), TimeUnit.SECONDS).build();
         return success;
     }
 
@@ -273,7 +279,7 @@ public class TeleportManager {
                             public void accept(Boolean confirm) {
                                 if(confirm) {
                                     //pay
-                                    teleports.add(teleport);
+                                    registerTeleport(teleport);
                                     if(finalSeconds == 0 || options.isSkip()) teleport.teleport();
                                     else teleport.start();
                                 } else {
@@ -285,9 +291,9 @@ public class TeleportManager {
                         return;
                     }
 
-                    teleports.add(teleport);
+                    registerTeleport(teleport);
                     MoneyAdapterType.getActive().withdraw(player, options.getFinalCosts(player).doubleValue());
-                } else teleports.add(teleport);
+                } else registerTeleport(teleport);
 
                 if(finalSeconds == 0 || options.isSkip()) teleport.teleport();
                 else teleport.start();
@@ -299,12 +305,16 @@ public class TeleportManager {
         } else waiting.accept(null);
     }
 
+    private void registerTeleport(Teleport teleport) {
+        teleports.put(teleport.getPlayer(), teleport);
+    }
+
     public void cancelTeleport(Player p) {
         if(!isTeleporting(p)) return;
 
         Teleport teleport = getTeleport(p);
         teleport.cancel(true, false);
-        this.teleports.remove(teleport);
+        this.teleports.invalidate(p);
 
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Cancel_Message", true)) {
             MessageAPI.sendActionBar(p, Lang.get("Teleport_Cancelled"));
@@ -312,19 +322,19 @@ public class TeleportManager {
     }
 
     public Teleport getTeleport(Player p) {
-        for(Teleport teleport : teleports) {
-            if(teleport.getPlayer().getName().equalsIgnoreCase(p.getName())) return teleport;
-        }
-
-        return null;
+        return teleports.getIfPresent(p);
     }
 
     public boolean isTeleporting(Player p) {
         return getTeleport(p) != null;
     }
 
-    public List<Teleport> getTeleports() {
-        return teleports;
+    public Collection<Teleport> getTeleports() {
+        return teleports.asMap().values();
+    }
+
+    public void unregister(Teleport teleport) {
+        this.teleports.invalidate(teleport.getPlayer());
     }
 
     public GeneralOptions getOptions() {

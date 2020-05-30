@@ -16,6 +16,7 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.GlobalLocationAdapter;
 import de.codingair.warpsystem.spigot.bstats.Collectible;
 import de.codingair.warpsystem.spigot.bstats.Metrics;
@@ -449,7 +450,7 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible {
         imported.clear();
 
         if(!bungeeCord) WarpSystem.log("    ...got " + size + " PlayerWarp(s)");
-        if(isEconomy()) API.addTicker(this);
+        API.addTicker(this);
 
         Bukkit.getPluginManager().registerEvents(this.listener, WarpSystem.getInstance());
 
@@ -498,20 +499,12 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible {
 
     @Override
     public void onSecond() {
-        List<PWEditor> l = API.getRemovables(PWEditor.class);
-
-        for(PWEditor pwEditor : l) {
-            pwEditor.updateTime();
-        }
-
-        l.clear();
-
         List<List<PlayerWarp>> mapCopy = new ArrayList<>(warps.values());
         for(List<PlayerWarp> value : mapCopy) {
             List<PlayerWarp> copy = new ArrayList<>(value);
 
             for(PlayerWarp warp : copy) {
-                if(warp.isBeingEdited()) continue;
+                if(!warp.isTimeDependent() || warp.isBeingEdited()) continue;
                 if(warp.isExpired()) {
                     if(-(warp.getExpireDate() - System.currentTimeMillis()) <= 1000) {
                         Player p = warp.getOwner().getPlayer();
@@ -547,11 +540,6 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible {
             copy.clear();
         }
         mapCopy.clear();
-    }
-
-    @Override
-    public Object getInstance() {
-        return this;
     }
 
     @Override
@@ -907,13 +895,9 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible {
     }
 
     public void updateGUIs() {
-        List<PWList> guis = API.getRemovables(PWList.class);
-
-        for(PWList gui : guis) {
+        for(PWList gui : API.getRemovables(PWList.class)) {
             gui.updateList();
         }
-
-        guis.clear();
     }
 
     public double calculateRefund(PlayerWarp warp) {
@@ -1171,7 +1155,7 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible {
     }
 
     public long getTimeStandardValue() {
-        return timeStandardValue;
+        return isEconomy() ? timeStandardValue : 0;
     }
 
     public boolean isForceCreateGUI() {

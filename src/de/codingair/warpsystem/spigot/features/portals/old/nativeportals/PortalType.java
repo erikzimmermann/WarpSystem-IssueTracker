@@ -11,7 +11,7 @@ public enum PortalType {
     WATER(BlockType.WATER, null, StaticWaterBlock.class, XMaterial.WATER_BUCKET.parseMaterial()),
     LAVA(BlockType.LAVA, null, StaticLavaBlock.class, XMaterial.LAVA_BUCKET.parseMaterial()),
     NETHER(BlockType.NETHER, XMaterial.NETHER_PORTAL.parseMaterial(), null, XMaterial.FLINT_AND_STEEL.parseMaterial()),
-    END(BlockType.END, XMaterial.END_PORTAL.parseMaterial(), XMaterial.END_GATEWAY.parseMaterial(true), null, XMaterial.END_PORTAL_FRAME.parseMaterial()),
+    END(BlockType.END, XMaterial.END_PORTAL.parseMaterial(), XMaterial.END_GATEWAY.parseMaterial(true, false), null, XMaterial.END_PORTAL_FRAME.parseMaterial()),
     AIR(BlockType.AIR, XMaterial.AIR.parseMaterial(), null, null, XMaterial.WHITE_STAINED_GLASS_PANE.parseMaterial()),
     EDIT(null, XMaterial.END_STONE.parseMaterial(), null, null),
     ;

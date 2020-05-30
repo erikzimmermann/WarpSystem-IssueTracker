@@ -194,7 +194,7 @@ public class Teleport {
     }
 
     public void teleport() {
-        WarpSystem.getInstance().getTeleportManager().getTeleports().remove(this);
+        WarpSystem.getInstance().getTeleportManager().unregister(this);
 
         Callback<?> teleport = new Callback<Object>() {
             private boolean used = false;
