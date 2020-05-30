@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.features.portals.listeners;
 
 import de.codingair.codingapi.API;
+import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.particles.Particle;
 import de.codingair.codingapi.player.gui.PlayerItem;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
@@ -9,10 +10,12 @@ import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.portals.guis.subgui.PortalBlockEditor;
 import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
 import de.codingair.warpsystem.spigot.features.portals.utils.BlockType;
 import org.bukkit.GameMode;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -40,7 +43,7 @@ public class EditorListener implements Listener {
                 boolean fuel = isFuel != null && (boolean) isFuel.invoke(m);
 
                 if(!m.isOccluding() && (fuel || !m.isSolid())) {
-                    String name = "§7" + ChatColor.stripColor(BlockType.CUSTOM.getName()) + ": §e" + m.name();
+                    String name = "§7" + ChatColor.stripColor(BlockType.CUSTOM.getName()) + ": §e" + m.name() + Lang.PREMIUM_LORE;
                     if(!name.equals(item.getDisplayName())) {
                         item.setDisplayName(name);
                         e.getPlayer().getInventory().setItem(7, item);
@@ -49,7 +52,7 @@ public class EditorListener implements Listener {
                 }
             }
 
-            String name = "§7" + ChatColor.stripColor(BlockType.CUSTOM.getName()) + ": §c-";
+            String name = "§7" + ChatColor.stripColor(BlockType.CUSTOM.getName()) + ": §c-" + Lang.PREMIUM_LORE;
             if(!name.equals(item.getDisplayName())) {
                 item.setDisplayName(name);
                 e.getPlayer().getInventory().setItem(7, item);
@@ -63,8 +66,14 @@ public class EditorListener implements Listener {
             BlockType type = BlockType.getByEditMaterial(e.getItemInHand());
 
             if(type == null) return;
+            PortalBlockEditor editor = PortalManager.getInstance().getEditor(e.getPlayer());
+            if(!editor.getPortal().getBlocks().isEmpty() && editor.getPortal().getBlocks().get(0).getType() != type) {
+                Lang.PREMIUM_TITLE(e.getPlayer(), "§7You cannot use §edifferent types§7");
+                e.setCancelled(true);
+                return;
+            }
 
-            PortalManager.getInstance().getEditor(e.getPlayer()).addPosition(e.getBlock().getLocation(), type);
+            editor.addPosition(e.getBlock().getLocation(), type);
             e.setCancelled(false);
         } else if(API.getRemovable(e.getPlayer(), HotbarGUI.class) != null) e.setCancelled(true);
     }
