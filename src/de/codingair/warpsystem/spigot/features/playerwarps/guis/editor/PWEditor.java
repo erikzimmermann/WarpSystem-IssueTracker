@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.features.playerwarps.guis.editor;
 
+import de.codingair.codingapi.API;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButtonOption;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.Button;
 import de.codingair.codingapi.player.gui.inventory.gui.simple.SyncButton;
@@ -9,6 +10,7 @@ import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
+import de.codingair.codingapi.utils.Ticker;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.Backup;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
@@ -35,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PWEditor extends Editor<PlayerWarp> {
+public class PWEditor extends Editor<PlayerWarp> implements Ticker {
     private PlayerWarp original;
     private PlayerWarp warp;
     private boolean creating;
@@ -51,7 +53,6 @@ public class PWEditor extends Editor<PlayerWarp> {
 
     private PWEditor(Player p, PlayerWarp warp, PlayerWarp clone) {
         super(p, clone, new Backup<PlayerWarp>(warp) {
-
                     @Override
                     public void applyTo(PlayerWarp clone) {
                         boolean isOwner = warp.isOwner(p);
@@ -109,6 +110,22 @@ public class PWEditor extends Editor<PlayerWarp> {
         setSuccessSound(music0);
 
         initControllButtons();
+        API.addTicker(this);
+    }
+
+    @Override
+    public void destroy() {
+        API.removeTicker(this);
+        super.destroy();
+    }
+
+    @Override
+    public void onTick() {
+    }
+
+    @Override
+    public void onSecond() {
+        updateTime();
     }
 
     public static String getCostsMessage(double costs, PageItem page) {

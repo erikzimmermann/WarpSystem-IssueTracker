@@ -188,7 +188,7 @@ public class PlayerWarp extends FeatureObject {
         data.setDescription(new ArrayList<>(this.description));
         data.setBorn(this.born);
         data.setStarted(this.started);
-        data.setTime(this.time);
+        if(isTimeDependent()) data.setTime(this.time);
         data.setCreatorKey(this.creatorKey);
         data.setNotify(this.notify);
         data.setPerformed(this.performed);
@@ -227,18 +227,18 @@ public class PlayerWarp extends FeatureObject {
             Optional<XMaterial> m = XMaterial.matchXMaterial(d.type, d.data == null || Version.getVersion().isBiggerThan(Version.v1_12) ? 0 : d.data);
 
             if(!m.isPresent()) {
-                throw new IllegalArgumentException("Error at loading a PlayerWarp(Owner-Name=" + (d.owner == null ? owner.getName() : d.owner.getName()) + "; Warp-Name=" + (d.name == null ? name : d.name) + "). Material is null: (" + d.type + ", " + d.data + ")");
+                throw new IllegalArgumentException("Error at loading PlayerWarp(Owner-Name=" + (d.owner == null ? owner.getName() : d.owner.getName()) + "; Warp-Name=" + (d.name == null ? name : d.name) + "). Material is null: (" + d.type + ", " + d.data + ")");
             } else {
-                this.item.setType(m.get().parseMaterial(true));
+                this.item.setType(m.get().parseMaterial(true, true, XMaterial.STONE.parseMaterial()));
                 this.item.setData(m.get().getData());
             }
         } else if(d.data != null) {
             Optional<XMaterial> m = XMaterial.matchXMaterial(item.getType().name(), Version.getVersion().isBiggerThan(Version.v1_12) ? 0 : d.data);
 
             if(!m.isPresent()) {
-                throw new IllegalArgumentException("Error at loading a PlayerWarp(Owner-Name=" + (d.owner == null ? owner.getName() : d.owner.getName()) + "; Warp-Name=" + (d.name == null ? name : d.name) + "). Material is null: (" + d.type + ", " + d.data + ")");
+                throw new IllegalArgumentException("Error at loading PlayerWarp(Owner-Name=" + (d.owner == null ? owner.getName() : d.owner.getName()) + "; Warp-Name=" + (d.name == null ? name : d.name) + "). Material is null: (" + d.type + ", " + d.data + ")");
             } else {
-                this.item.setType(m.get().parseMaterial(true));
+                this.item.setType(m.get().parseMaterial(true, true, XMaterial.STONE.parseMaterial()));
                 this.item.setData(m.get().getData());
             }
         }
@@ -337,10 +337,10 @@ public class PlayerWarp extends FeatureObject {
         this.teleportMessage = d.getString("tpmsg");
         this.item = d.getItemBuilder("item");
 
-        if(!XMaterial.isNewVersion() && this.item.getType() == XMaterial.PLAYER_HEAD.parseMaterial(false)) {
-            this.item.setType(XMaterial.PLAYER_HEAD.parseMaterial(true));
-            this.item.setDurability((byte) XMaterial.PLAYER_HEAD.getData());
-            this.item.setData((byte) XMaterial.PLAYER_HEAD.getData());
+        if(!XMaterial.isNewVersion() && this.item.getType() == XMaterial.PLAYER_HEAD.parseMaterial(false, false)) {
+            this.item.setType(XMaterial.PLAYER_HEAD.parseMaterial(true, false));
+            this.item.setDurability(XMaterial.PLAYER_HEAD.getData());
+            this.item.setData(XMaterial.PLAYER_HEAD.getData());
         }
 
         this.isPublic = d.getBoolean("public");
@@ -435,7 +435,7 @@ public class PlayerWarp extends FeatureObject {
     }
 
     public boolean isStandardItem() {
-        return this.item != null && this.item.getType() == XMaterial.PLAYER_HEAD.parseMaterial(true) && Objects.equals(this.item.getSkullId(), WarpSystem.getInstance().getHeadManager().getSkinId(this.owner.id));
+        return this.item != null && this.item.getType() == XMaterial.PLAYER_HEAD.parseMaterial(true, false) && Objects.equals(this.item.getSkullId(), WarpSystem.getInstance().getHeadManager().getSkinId(this.owner.id));
     }
 
     public PlayerWarp clone() {
@@ -586,6 +586,10 @@ public class PlayerWarp extends FeatureObject {
 
     public long getTime() {
         return time;
+    }
+
+    public boolean isTimeDependent() {
+        return this.time > 0;
     }
 
     public PlayerWarp setTime(long time) {
