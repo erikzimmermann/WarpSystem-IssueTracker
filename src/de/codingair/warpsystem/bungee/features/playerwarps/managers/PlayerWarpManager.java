@@ -110,7 +110,7 @@ public class PlayerWarpManager implements Manager {
                 List<PlayerWarpData> warps = new ArrayList<>(value);
 
                 for(PlayerWarpData warp : warps) {
-                    if(!timeDependent.contains(warp.getServer())) continue;
+                    if(!timeDependent.contains(warp.getServer()) || !warp.isTimeDependent()) continue;
 
                     Date inactive = new Date(warp.getExpireDate() + this.inactiveTime);
 

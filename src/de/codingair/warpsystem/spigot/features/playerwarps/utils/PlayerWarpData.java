@@ -140,7 +140,9 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         b |= (!born.equals(started) ? 1 : 0) << 5;
         b |= (creatorKey != null ? 1 : 0) << 6;
         b |= (teleportCosts != null ? 1 : 0) << 7;
+        o.writeByte(b);                                                 //options
 
+        b = (byte) (isTimeDependent() ? 1 : 0);
         o.writeByte(b);                                                 //options
 
         this.owner.write(o);                                            //owner
@@ -151,7 +153,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         }
         if(teleportMessage != null) o.writeUTF(teleportMessage);        //teleportMessage
 
-        o.writeUTF(type);                              //item
+        o.writeUTF(type);                                               //item
         if(data != null) o.writeByte(data);
         if(rgb != null) o.writeInt(rgb);
         if(skullId != null) o.writeUTF(skullId);
@@ -160,8 +162,8 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         o.writeByte(inactiveSales == null ? 0 : inactiveSales);         //inactive sales
         o.writeBoolean(notify);                                         //notify
         o.writeLong(born);                                              //born
-        if(!born.equals(started)) o.writeLong(started);                       //started
-        o.writeLong(time);                                              //time
+        if(!born.equals(started)) o.writeLong(started);                 //started
+        if(isTimeDependent()) o.writeLong(time);                       //time
         if(creatorKey != null) o.writeUTF(creatorKey);                  //creator key
 
         o.writeByte(trusted.size());                                    //trusted members
@@ -174,7 +176,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
             o.writeByte(c);
         }
 
-        o.writeInt(performed);                                     //feature object data values
+        o.writeInt(performed);                                          //feature object data values
         o.writeUTF(server);
         o.writeUTF(world);
         o.writeDouble(x);
@@ -196,6 +198,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         else this.description.clear();
 
         byte options = i.readByte();                                    //options
+        byte options1 = i.readByte();                                   //options
         this.isPublic = (options & 1) != 0;
         boolean skull = (options & (1 << 1)) != 0;
         boolean color = (options & (1 << 2)) != 0;
@@ -225,7 +228,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         this.notify = i.readBoolean();                                  //notify
         this.born = i.readLong();                                       //born
         if(differentStart) this.started = i.readLong();                 //start
-        this.time = i.readLong();                                       //time
+        if((options1 & 1) != 0) this.time = i.readLong();               //time
         if(hasKey) this.creatorKey = i.readUTF();                       //creator key
 
         size = i.readByte();                                            //trusted members
@@ -276,7 +279,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         d.put("tpcosts", teleportCosts);
         d.put("sales", inactiveSales);
         d.put("born", born);
-        d.put("started", started == born ? 0 : started);
+        d.put("started", Objects.equals(started, born) ? 0 : started);
         d.put("time", time);
         d.put("key", creatorKey);
         d.put("notify", notify);
@@ -316,7 +319,7 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
         this.inactiveSales = d.getByte("sales");
         this.born = d.getLong("born");
         this.started = d.getLong("started");
-        this.time = d.getLong("time");
+        this.time = d.getLong("time", null);
         this.creatorKey = d.getString("key");
         this.notify = d.getBoolean("notify");
 
@@ -515,6 +518,10 @@ public class PlayerWarpData implements Serializable, de.codingair.codingapi.tool
 
     public Long getTime() {
         return time;
+    }
+
+    public boolean isTimeDependent() {
+        return this.time != null && this.time > 0;
     }
 
     public void setTime(Long time) {

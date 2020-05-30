@@ -80,7 +80,7 @@ public class POptions extends PageItem {
 
         addButton(new TargetPositionButton(slot++, warp, original, isEditing, this, p).setOption(option));
 
-        if(PlayerWarpManager.getManager().isEconomy())
+        if(PlayerWarpManager.getManager().isEconomy() && warp.isTimeDependent())
             addButton(new ActiveTimeButton(slot++, warp, original, isEditing, this, p).setOption(option));
     }
 
