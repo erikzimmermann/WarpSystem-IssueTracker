@@ -4,6 +4,8 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import de.codingair.codingapi.server.AsyncCatcher;
 import de.codingair.codingapi.server.events.PlayerWalkEvent;
+import de.codingair.codingapi.server.sounds.Sound;
+import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -14,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
@@ -23,18 +26,20 @@ import java.util.concurrent.TimeUnit;
 
 public class TeleportListener implements Listener {
     public static final HashMap<Player, org.bukkit.Location> TELEPORTS = new HashMap<>();
-    private static final Cache<String, TeleportOptions> teleport = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.SECONDS).softValues().build();
+    private static final Cache<String, TeleportOptions> teleport = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).build();
 
     public static void setSpawnPositionOrTeleport(String name, TeleportOptions options) {
         if(options == null) return;
         options.setSkip(true);
         Player player = Bukkit.getPlayer(name);
 
+        if(options.getTeleportSound() == null) options.setTeleportSound(new SoundData(Sound.ENTITY_ENDERMAN_TELEPORT, 0.7F, 1F));
+
         if(player != null && player.isOnline()) {
             //teleport
             AsyncCatcher.runSync(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(player, options));
         } else {
-            teleport.put(name, options);
+            teleport.put(name.toLowerCase(), options);
         }
     }
 
@@ -48,13 +53,27 @@ public class TeleportListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onSpawn(PlayerSpawnLocationEvent e) {
-        TeleportOptions options = teleport.getIfPresent(e.getPlayer().getName());
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onSpawn(PlayerJoinEvent e) {
+        TeleportOptions options = teleport.getIfPresent(e.getPlayer().getName().toLowerCase());
 
         if(options != null) {
-            teleport.invalidate(e.getPlayer().getName());
+            teleport.invalidate(e.getPlayer().getName().toLowerCase());
 
+            options.setCanMove(true);
+            options.setSilent(true);
+            options.setSkip(true);
+
+            Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(e.getPlayer(), options), 2L);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onSpawn(PlayerSpawnLocationEvent e) {
+        TeleportOptions options = teleport.getIfPresent(e.getPlayer().getName().toLowerCase());
+
+        if(options != null) {
+            teleport.invalidate(e.getPlayer().getName().toLowerCase());
             org.bukkit.Location l = options.buildLocation();
             if(l == null || l.getWorld() == null) {
                 String world = l instanceof Location ? ((Location) l).getWorldName() : null;
