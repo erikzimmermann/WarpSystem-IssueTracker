@@ -1,13 +1,18 @@
 package de.codingair.warpsystem.bungee.base.managers;
 
+import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.features.FeatureType;
+import de.codingair.warpsystem.bungee.features.teleport.listeners.TabCompleterListener;
 import de.codingair.warpsystem.utils.Manager;
+import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.CommandSender;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DataManager {
     private List<Manager> managers = new ArrayList<>();
+    private List<String> oped = new ArrayList<>();
 
     public DataManager() {
         for(FeatureType.Priority value : FeatureType.Priority.values()) {
@@ -56,5 +61,13 @@ public class DataManager {
 
     public List<Manager> getManagers() {
         return managers;
+    }
+
+    public List<String> getOped() {
+        return oped;
+    }
+
+    public boolean isOp(CommandSender player) {
+        return this.oped.contains(player.getName());
     }
 }
