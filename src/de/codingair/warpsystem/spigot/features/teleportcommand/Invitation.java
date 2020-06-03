@@ -147,7 +147,7 @@ public class Invitation {
     }
 
     private void sendInvitation(String player, Callback<Long> callback) {
-        Player recipient = Bukkit.getPlayerExact(player);
+        Player recipient = Bukkit.getPlayer(player);
         if(recipient != null) {
             //on bukkit
             if(TeleportCommandManager.getInstance().deniesTpaRequests(recipient.getName())) {

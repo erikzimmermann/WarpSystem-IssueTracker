@@ -63,12 +63,6 @@ public class CTpaHere extends WSCommandBuilder {
                         builder.append(" ").append(arg);
                     }
                     suggestions.add(builder.toString());
-
-                    for(Player player : Bukkit.getOnlinePlayers()) {
-                        if(!p.canSee(player)) {
-                            suggestions.add("-" + player.getName());
-                        }
-                    }
                 } else {
                     for(Player player : Bukkit.getOnlinePlayers()) {
                         if(player.getName().equals(sender.getName()) || !p.canSee(player)) continue;
@@ -79,7 +73,8 @@ public class CTpaHere extends WSCommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                if(argument == null) {
+                Player other = Bukkit.getPlayer(argument);
+                if(other != null && !((Player) sender).canSee(other)) {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Player_is_not_online"));
                     return false;
                 }
@@ -88,8 +83,6 @@ public class CTpaHere extends WSCommandBuilder {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Cant_Teleport_Yourself"));
                     return false;
                 }
-
-                Player other = Bukkit.getPlayerExact(argument);
 
                 if(other == null && WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) {
                     WarpSystem.getInstance().getDataHandler().send(new IsOnlinePacket(new Callback<Boolean>() {

@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.bungee.features.teleport.listeners;
 
 import de.codingair.warpsystem.bungee.api.Players;
+import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.features.teleport.managers.TeleportManager;
 import de.codingair.warpsystem.bungee.features.teleport.utils.TeleportCommandOptions;
 import net.md_5.bungee.BungeeCord;
@@ -27,7 +28,6 @@ public class TabCompleterListener implements Listener {
 
             ProxiedPlayer receiver = (ProxiedPlayer) e.getReceiver();
             ServerInfo info = receiver.getServer().getInfo();
-            TeleportCommandOptions options = TeleportManager.getInstance().getOptions(info);
 
             if(cmd.equalsIgnoreCase("teleport") || cmd.equalsIgnoreCase("tp")) {
                 e.getSuggestions().clear();
@@ -66,7 +66,7 @@ public class TabCompleterListener implements Listener {
                 if(!hasAccess) {
                     for(ProxiedPlayer player : info.getPlayers()) {
                         if(player.getName().equals(receiver.getName())) continue;
-                        if(!e.getSuggestions().remove("-" + player.getName())) e.getSuggestions().add(player.getName()); //check removed player names
+                        if(!WarpSystem.getVanishManager().isVanished(player.getName())) e.getSuggestions().add(player.getName()); //check vanished player names
                     }
                     return;
                 }
@@ -77,10 +77,7 @@ public class TabCompleterListener implements Listener {
                     for(ProxiedPlayer player : server.getPlayers()) {
                         if(player.getName().equals(receiver.getName())) continue;
                         if(!cursor.endsWith(" ") && !player.getName().toLowerCase().startsWith(last.toLowerCase())) continue;
-
-                        if(!e.getSuggestions().remove("-" + player.getName())) {
-                            e.getSuggestions().add(player.getName()); //check removed player names
-                        }
+                        if(!WarpSystem.getVanishManager().isVanished(player.getName())) e.getSuggestions().add(player.getName()); //check vanished player names
                     }
                 }
             } else if(cmd.equalsIgnoreCase("tpahere")) {
@@ -88,7 +85,7 @@ public class TabCompleterListener implements Listener {
                 if(!hasAccess) {
                     for(ProxiedPlayer player : info.getPlayers()) {
                         if(player.getName().equals(receiver.getName())) continue;
-                        if(!e.getSuggestions().remove("-" + player.getName())) e.getSuggestions().add(player.getName()); //check removed player names
+                        if(!WarpSystem.getVanishManager().isVanished(player.getName())) e.getSuggestions().add(player.getName()); //check vanished player names
                     }
                     return;
                 }
@@ -98,10 +95,7 @@ public class TabCompleterListener implements Listener {
                     for(ProxiedPlayer player : server.getPlayers()) {
                         if(player.getName().equals(receiver.getName())) continue;
                         if(!cursor.endsWith(" ") && !player.getName().toLowerCase().startsWith(last.toLowerCase())) continue;
-
-                        if(!e.getSuggestions().remove("-" + player.getName())) {
-                            e.getSuggestions().add(player.getName()); //check removed player names
-                        }
+                        if(!WarpSystem.getVanishManager().isVanished(player.getName())) e.getSuggestions().add(player.getName()); //check vanished player names
                     }
                 }
             } else if(cmd.equalsIgnoreCase("tphere")) {
@@ -118,7 +112,6 @@ public class TabCompleterListener implements Listener {
                 for(ServerInfo server : BungeeCord.getInstance().getServers().values()) {
                     for(ProxiedPlayer player : server.getPlayers()) {
                         if(!cursor.endsWith(" ") && !player.getName().toLowerCase().startsWith(last.toLowerCase())) continue;
-
                         e.getSuggestions().add(player.getName());
                     }
                 }

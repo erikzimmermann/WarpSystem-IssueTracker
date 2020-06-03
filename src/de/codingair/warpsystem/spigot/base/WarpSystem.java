@@ -15,10 +15,7 @@ import de.codingair.warpsystem.spigot.api.SpigotAPI;
 import de.codingair.warpsystem.spigot.base.commands.CWarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.*;
-import de.codingair.warpsystem.spigot.base.managers.DataManager;
-import de.codingair.warpsystem.spigot.base.managers.HeadManager;
-import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
-import de.codingair.warpsystem.spigot.base.managers.UUIDManager;
+import de.codingair.warpsystem.spigot.base.managers.*;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.UpdateNotifier;
 import de.codingair.warpsystem.spigot.base.utils.options.OptionBundle;
@@ -113,22 +110,22 @@ public class WarpSystem extends JavaPlugin {
     private String bungeePluginVersion = null;
     private String server = null;
     private BungeeBukkitListener packetListener;
-    private List<BungeeFeature> bungeeFeatureList = new ArrayList<>();
+    private final List<BungeeFeature> bungeeFeatureList = new ArrayList<>();
 
-    private TeleportManager teleportManager = new TeleportManager();
-    private FileManager fileManager = new FileManager(this);
+    private final TeleportManager teleportManager = new TeleportManager();
+    private final FileManager fileManager = new FileManager(this);
     private DataManager dataManager;
-    private HeadManager headManager = new HeadManager();
+    private final HeadManager headManager = new HeadManager();
 
     private UpdateNotifier updateNotifier;
     private List<String> runningFirstTime = null;
     private List<String> newUpdate = new ArrayList<>();
 
-    private Timer timer = new Timer();
+    private final Timer timer = new Timer();
     private boolean old = false;
     private boolean ERROR = true;
     private boolean shouldSave = true;
-    private SpigotDataHandler dataHandler = new SpigotDataHandler(this);
+    private final SpigotDataHandler dataHandler = new SpigotDataHandler(this);
     private UUIDManager uuidManager;
 
     public static boolean hasPermission(CommandSender sender, String permission) {
@@ -230,6 +227,7 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new CommandListener(), this);
             Bukkit.getPluginManager().registerEvents(new UUIDListener(), this);
             Bukkit.getPluginManager().registerEvents(new HeadListener(), this);
+            getBungeeFeatureList().add(new VanishManager());
 
             this.startAutoSaver();
             afterOnEnable();
@@ -333,10 +331,7 @@ public class WarpSystem extends JavaPlugin {
         Bukkit.getScheduler().runTaskLater(this, () -> {
             //update command dispatcher for players to synchronize CommandList
             Bukkit.getScheduler().runTask(this, WarpSystem::updateCommandList);
-
-            if(this.uuidManager.isEmpty()) {
-                this.uuidManager.downloadAll();
-            }
+            if(this.uuidManager.isEmpty()) this.uuidManager.downloadAll();
         }, 20);
     }
 
