@@ -8,8 +8,7 @@ import java.util.UUID;
 
 public class PlayerFinalJoinEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
-
-    private UUID uniqueId;
+    private final UUID uniqueId;
 
     public PlayerFinalJoinEvent(Player player, UUID id) {
         super(player);

@@ -33,8 +33,6 @@ public class GlobalWarpAdapter implements DestinationAdapter {
                         break;
 
                     case SERVER_NOT_AVAILABLE:
-                        player.sendMessage(Lang.getPrefix() + Lang.get("Server_Is_Not_Online"));
-
                         if(MoneyAdapterType.getActive() != null && costs != 0) {
                             MoneyAdapterType.getActive().deposit(player, costs);
                         }
