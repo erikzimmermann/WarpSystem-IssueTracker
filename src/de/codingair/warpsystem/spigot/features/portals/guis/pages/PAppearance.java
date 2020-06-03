@@ -159,7 +159,7 @@ public class PAppearance extends PageItem {
             public ItemStack craftItem() {
                 ItemBuilder b = new ItemBuilder(XMaterial.OAK_SIGN).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Hologram"));
 
-                b.addLore("§7" + Lang.get("Line_break") + ": '§e\\n§7' §8- §7PlaceholderAPI support", "");
+                b.addLore("§7" + Lang.get("Line_break") + ": '§e\\n§7' §8- §7PlaceholderAPI support" + Lang.PREMIUM_LORE, "");
                 b.addText(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + (clone.getHologram().getText() == null ? "§c-" : "§7'§r" + ChatColor.translateAlternateColorCodes('&', clone.getHologram().getText()) + "§7'"), 100);
                 b.addText(b.getLore().size() > 3 ? "" : null, Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Status") + ": §7" + (clone.getHologram().isVisible() ? "§a" + Lang.get("Enabled") : "§c" + Lang.get("Disabled")));
 

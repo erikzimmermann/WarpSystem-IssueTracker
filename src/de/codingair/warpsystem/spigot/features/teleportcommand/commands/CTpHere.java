@@ -52,6 +52,7 @@ public class CTpHere extends WSCommandBuilder {
                 Player p = (Player) sender;
                 if(WarpSystem.getInstance().isOnBungeeCord()) {
                     suggestions.add(TabCompleterListener.ID);
+                    suggestions.add(TabCompleterListener.ACCESS);
 
                     StringBuilder builder = new StringBuilder("tpa");
                     for(String arg : args) {
