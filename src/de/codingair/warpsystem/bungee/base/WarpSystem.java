@@ -10,6 +10,7 @@ import de.codingair.warpsystem.bungee.base.language.Lang;
 import de.codingair.warpsystem.bungee.base.listeners.MainListener;
 import de.codingair.warpsystem.bungee.base.managers.DataManager;
 import de.codingair.warpsystem.bungee.base.managers.ServerManager;
+import de.codingair.warpsystem.bungee.base.managers.VanishManager;
 import de.codingair.warpsystem.transfer.bungee.BungeeDataHandler;
 import de.codingair.warpsystem.utils.Manager;
 import net.md_5.bungee.BungeeCord;
@@ -26,11 +27,12 @@ public class WarpSystem extends Plugin {
     public static final String PERMISSION_MODIFY_SYSTEM = "warpsystem.modify.system";
 
     private static WarpSystem instance;
-    private BungeeDataHandler dataHandler = new BungeeDataHandler(this);
-    private FileManager fileManager = new FileManager(this);
-    private ServerManager serverManager = new ServerManager();
-    private DataManager dataManager = new DataManager();
-    private Timer timer = new Timer();
+    private final BungeeDataHandler dataHandler = new BungeeDataHandler(this);
+    private final FileManager fileManager = new FileManager(this);
+    private final ServerManager serverManager = new ServerManager();
+    private final VanishManager vanishManager = new VanishManager();
+    private final DataManager dataManager = new DataManager();
+    private final Timer timer = new Timer();
 
     public static WarpSystem getInstance() {
         return instance;
@@ -67,7 +69,9 @@ public class WarpSystem extends Plugin {
         this.dataHandler.onEnable();
         MainListener listener = new MainListener();
         BungeeCord.getInstance().getPluginManager().registerListener(this, listener);
+        BungeeCord.getInstance().getPluginManager().registerListener(this, vanishManager);
         this.dataHandler.register(listener);
+        this.dataHandler.register(vanishManager);
         this.serverManager.run();
 
         new ChatInputManager();
@@ -211,5 +215,9 @@ public class WarpSystem extends Plugin {
 
     public DataManager getDataManager() {
         return dataManager;
+    }
+
+    public static VanishManager getVanishManager() {
+        return getInstance().vanishManager;
     }
 }

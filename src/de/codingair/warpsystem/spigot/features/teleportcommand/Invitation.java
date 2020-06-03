@@ -55,7 +55,7 @@ public class Invitation {
 
     public void handle(String recipient) {
         handled.add(recipient);
-        if(WarpSystem.getInstance().isOnBungeeCord() && Bukkit.getPlayerExact(sender) == null) WarpSystem.getInstance().getDataHandler().send(new TeleportRequestHandledPacket(sender, recipient));
+        if(WarpSystem.getInstance().isOnBungeeCord() && Bukkit.getPlayer(sender) == null) WarpSystem.getInstance().getDataHandler().send(new TeleportRequestHandledPacket(sender, recipient));
         TeleportCommandManager.getInstance().checkDestructionOf(this);
     }
 
@@ -218,7 +218,7 @@ public class Invitation {
     }
 
     private void sendInvitation(String player, Callback<Long> callback) {
-        Player recipient = Bukkit.getPlayerExact(player);
+        Player recipient = Bukkit.getPlayer(player);
         if(recipient != null) {
             //on bukkit
             if(TeleportCommandManager.getInstance().deniesTpaRequests(recipient.getName())) {

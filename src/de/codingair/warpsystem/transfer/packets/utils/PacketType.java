@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.transfer.packets.utils;
 
+import de.codingair.warpsystem.bungee.base.utils.PacketVanishInfo;
 import de.codingair.warpsystem.spigot.features.randomteleports.packets.QueueRTPUsagePacket;
 import de.codingair.warpsystem.spigot.features.randomteleports.packets.RandomTPPacket;
 import de.codingair.warpsystem.spigot.features.randomteleports.packets.RandomTPWorldsPacket;
@@ -18,6 +19,7 @@ public enum PacketType {
     ChatInputGUITogglePacket(6, ChatInputGUITogglePacket.class),
     SendGlobalSpawnOptionsPacket(7, SendGlobalSpawnOptionsPacket.class),
     TeleportSpawnPacket(8, TeleportSpawnPacket.class),
+    PacketVanishInfo(9, PacketVanishInfo.class),
 
     PublishGlobalWarpPacket(10, PublishGlobalWarpPacket.class),
     GlobalWarpTeleportPacket(11, GlobalWarpTeleportPacket.class),
