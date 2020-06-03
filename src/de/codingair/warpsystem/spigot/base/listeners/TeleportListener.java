@@ -34,7 +34,6 @@ public class TeleportListener implements Listener {
             //teleport
             AsyncCatcher.runSync(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(player, options));
         } else {
-            //save for PlayerFinalJoinEvent (detect teleports for Spawn feature) //todo: discard
             teleport.put(name, options);
         }
     }
@@ -54,6 +53,8 @@ public class TeleportListener implements Listener {
         TeleportOptions options = teleport.getIfPresent(e.getPlayer().getName());
 
         if(options != null) {
+            teleport.invalidate(e.getPlayer().getName());
+
             org.bukkit.Location l = options.buildLocation();
             if(l == null || l.getWorld() == null) {
                 String world = l instanceof Location ? ((Location) l).getWorldName() : null;
