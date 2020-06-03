@@ -107,7 +107,7 @@ public class TeleportPacketListener implements PacketListener {
                 //only recipient
                 ProxiedPlayer player = Players.getPlayer(tpPacket.getRecipient());
 
-                if(player == null || !TeleportManager.getInstance().isAccessible(player.getServer().getInfo())) {
+                if(player == null || !TeleportManager.getInstance().isAccessible(player.getServer().getInfo()) || WarpSystem.getVanishManager().isVanished(player.getName())) {
                     //not online/accessible
                     LongPacket answer = new LongPacket(0);
                     tpPacket.applyAsAnswer(answer);
