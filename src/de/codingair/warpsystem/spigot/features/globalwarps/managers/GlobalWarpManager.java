@@ -1,6 +1,5 @@
 package de.codingair.warpsystem.spigot.features.globalwarps.managers;
 
-import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
@@ -20,15 +19,11 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class GlobalWarpManager implements Manager, BungeeFeature {
     //              Name,   Server
-    private HashMap<String, String> globalWarps = new HashMap<>();
-    private GlobalWarpListener listener;
-    private List<CommandBuilder> commandExecutorList = new ArrayList<>();
+    private final HashMap<String, String> globalWarps = new HashMap<>();
 
     public static GlobalWarpManager getInstance() {
         return WarpSystem.getInstance().getDataManager().getManager(FeatureType.GLOBAL_WARPS);
@@ -96,11 +91,11 @@ public class GlobalWarpManager implements Manager, BungeeFeature {
     @Override
     public boolean load(boolean loader) {
         this.globalWarps.clear();
-        this.commandExecutorList.clear();
 
         WarpSystem.getInstance().getBungeeFeatureList().add(this);
 
-        WarpSystem.getInstance().getDataHandler().register(listener = new GlobalWarpListener());
+        GlobalWarpListener listener = new GlobalWarpListener();
+        WarpSystem.getInstance().getDataHandler().register(listener);
         Bukkit.getPluginManager().registerEvents(listener, WarpSystem.getInstance());
 
         new CGlobalWarp().register(WarpSystem.getInstance());
@@ -115,7 +110,6 @@ public class GlobalWarpManager implements Manager, BungeeFeature {
     @Override
     public void destroy() {
         this.globalWarps.clear();
-        this.commandExecutorList.clear();
     }
 
     @Override
