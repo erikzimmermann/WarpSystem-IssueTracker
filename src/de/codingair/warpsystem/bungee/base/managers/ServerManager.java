@@ -11,11 +11,13 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Listener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class ServerManager implements Listener {
     private List<ServerInfo> onlineServer = new ArrayList<>();
+    private HashMap<ServerInfo, List<Callback<ServerInfo>>> waiting = new HashMap<>();
 
     public static void sendPlayerTo(ServerInfo server, ProxiedPlayer player, Callback<ServerInfo> c) {
         Preconditions.checkNotNull(server);
@@ -24,15 +26,15 @@ public class ServerManager implements Listener {
         if(player.getServer().getInfo().equals(server)) {
             c.accept(server);
         } else {
-            if(server.getPlayers().isEmpty()) {
-                player.connect(server, (connected, throwable) -> {
-                    if(connected) c.accept(server);
-                });
-            } else {
-                c.accept(server);
-                player.connect(server);
-            }
+            if(server.getPlayers().isEmpty()) addCallbackTo(server, c);
+            else c.accept(server);
+            player.connect(server);
         }
+    }
+
+    private static void addCallbackTo(ServerInfo info, Callback<ServerInfo> c) {
+        List<Callback<ServerInfo>> l = WarpSystem.getInstance().getServerManager().waiting.computeIfAbsent(info, k -> new ArrayList<>());
+        l.add(c);
     }
 
     public List<ServerInfo> getOnlineServer() {
@@ -61,6 +63,12 @@ public class ServerManager implements Listener {
     public void sendInitialPacket(ServerInfo server) {
         WarpSystem.getInstance().getDataHandler().send(new InitialPacket(WarpSystem.getInstance().getDescription().getVersion(), server.getName()), server);
         BungeeCord.getInstance().getPluginManager().callEvent(new ServerInitializeEvent(server));
+
+        List<Callback<ServerInfo>> l = WarpSystem.getInstance().getServerManager().waiting.remove(server);
+        if(l != null) {
+            l.forEach(c -> c.accept(server));
+            l.clear();
+        }
     }
 
     public void setStatus(ServerInfo info, boolean online) {

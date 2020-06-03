@@ -20,11 +20,11 @@ import java.util.UUID;
 
 public class SpigotDataHandler implements DataHandler {
     private final List<PacketListener> listeners = new ArrayList<>();
-    private JavaPlugin plugin;
-    private ChannelListener listener = new ChannelListener(this);
-    private SpigotPacketHandler packetHandler = new SpigotPacketHandler(this);
-    private HashMap<UUID, Callback> callbacks = new HashMap<>();
-    private TimeList<UUID> timeOut = new TimeList<>();
+    private final JavaPlugin plugin;
+    private final ChannelListener listener = new ChannelListener(this);
+    private final SpigotPacketHandler packetHandler = new SpigotPacketHandler(this);
+    private final HashMap<UUID, Callback<?>> callbacks = new HashMap<>();
+    private final TimeList<UUID> timeOut = new TimeList<>();
     private TimeListener<UUID> timeOutListener;
 
     public SpigotDataHandler(JavaPlugin plugin) {
@@ -39,7 +39,7 @@ public class SpigotDataHandler implements DataHandler {
         timeOut.addListener(timeOutListener = new TimeListener<UUID>() {
             @Override
             public void onRemove(UUID item) {
-                Callback callback = callbacks.remove(item);
+                Callback<?> callback = callbacks.remove(item);
                 if(callback != null) callback.accept(null);
             }
 
