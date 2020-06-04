@@ -56,7 +56,9 @@ public class VanishManager implements BungeeFeature {
 
     @Override
     public void onDisconnect() {
-        runnable.cancel();
-        this.runnable = null;
+        if(runnable != null) {
+            runnable.cancel();
+            this.runnable = null;
+        }
     }
 }
