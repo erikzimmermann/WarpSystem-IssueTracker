@@ -5,7 +5,6 @@ import de.codingair.warpsystem.spigot.base.utils.options.Options;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 
 public class WarpGUIOptions extends FeatureOptions {
-    private Option<Boolean> enabled = new Option<>("WarpSystem.Functions.Warps");
     private Option<Integer> userSize = new Option<>("WarpSystem.GUI.User.Size", 54, size -> 9 <= size && size <= 54 && size % 9 == 0);
     private Option<Integer> adminSize = new Option<>("WarpSystem.GUI.Admin.Size", 54, size -> 9 <= size && size <= 54 && size % 9 == 0);
     private Option<String> userStandardTitle = new Option<>("WarpSystem.GUI.User.Title.Standard", "&c&nWarps&r");
@@ -24,7 +23,6 @@ public class WarpGUIOptions extends FeatureOptions {
 
     @Override
     public void write() {
-        set(enabled);
         set(userSize);
         set(adminSize);
         set(userStandardTitle);
@@ -37,7 +35,6 @@ public class WarpGUIOptions extends FeatureOptions {
 
     @Override
     public void read() {
-        get(enabled);
         get(userSize);
         get(adminSize);
         get(userStandardTitle);
@@ -53,7 +50,6 @@ public class WarpGUIOptions extends FeatureOptions {
         if(options instanceof WarpGUIOptions) {
             WarpGUIOptions o = (WarpGUIOptions) options;
 
-            this.enabled = o.enabled.clone();
             this.userSize = o.userSize.clone();
             this.adminSize = o.adminSize.clone();
             this.userStandardTitle = o.userStandardTitle.clone();
@@ -67,10 +63,6 @@ public class WarpGUIOptions extends FeatureOptions {
     @Override
     public WarpGUIOptions clone() {
         return new WarpGUIOptions(this);
-    }
-
-    public Option<Boolean> getEnabled() {
-        return enabled;
     }
 
     public Option<Integer> getUserSize() {
