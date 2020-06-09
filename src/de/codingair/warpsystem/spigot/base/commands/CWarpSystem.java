@@ -52,12 +52,20 @@ public class CWarpSystem extends WSCommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, options, animations>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, upgrade, reload, import, news, report, options, animations>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, options, animations>");
+                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, upgrade, reload, import, news, report, options, animations>");
+                return false;
+            }
+        });
+
+        getBaseComponent().addChild(new CommandComponent("upgrade") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                Lang.PREMIUM_CHAT_UPGRADE(sender);
                 return false;
             }
         });
@@ -81,30 +89,7 @@ public class CWarpSystem extends WSCommandBuilder {
         getComponent("animations").addChild(new CommandComponent("activate") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations activate §e<name>");
-                return false;
-            }
-        });
-
-        getComponent("animations", "activate").addChild(new MultiCommandComponent() {
-            @Override
-            public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
-                for(Animation animation : AnimationManager.getInstance().getAnimationList()) {
-                    suggestions.add(animation.getName());
-                }
-            }
-
-            @Override
-            public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
-                Animation animation = AnimationManager.getInstance().getAnimation(argument);
-
-                if(animation == null) {
-                    sender.sendMessage(Lang.getPrefix() + Lang.get("Animation_does_not_exist"));
-                    return false;
-                }
-
-                AnimationManager.getInstance().setActive(animation);
-                sender.sendMessage(Lang.getPrefix() + "§a" + Lang.get("Changes_have_been_saved"));
+                Lang.PREMIUM_CHAT(sender);
                 return false;
             }
         });
@@ -304,7 +289,7 @@ public class CWarpSystem extends WSCommandBuilder {
                         link = new TextComponent("§chere");
                         base1 = new TextComponent("§7« to report the bug to the §6SpigotMc-Forum§7.");
 
-                        link.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/threads/Premium-WarpSystem.369986/page-9999"));
+                        link.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/threads/Free-WarpSystem.182037/page-9999"));
                         link.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
 
                         base.addExtra(link);
@@ -525,13 +510,15 @@ public class CWarpSystem extends WSCommandBuilder {
 
     private static void sendInfoMessage(CommandSender sender) {
         boolean line = sender instanceof Player;
+        String version = WarpSystem.getInstance().getDescription().getVersion();
+        if(version.contains("-free")) version = version.replace("-free", "");
 
         sender.sendMessage(new String[] {
                 "",
                 "§7§m" + (line ? "               " : "---------------") + "§7< §6WarpSystem §7>§m" + (line ? "               " : "---------------") + "§7",
                 "",
                 "     §3Author: §bCodingAir",
-                "     §3Version: §bv" + WarpSystem.getInstance().getDescription().getVersion() + " §7[" + "§6Premium" + "§7]",
+                "     §3Version: §bv" + WarpSystem.getInstance().getDescription().getVersion() + " §7[§bFree§7]",
                 "",
                 "     §eAvailable on SpigotMc!",
                 ""

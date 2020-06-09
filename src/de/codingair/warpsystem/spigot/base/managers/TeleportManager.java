@@ -188,7 +188,7 @@ public class TeleportManager {
         int seconds = this.options.getTeleportDelay();
         Callback<TeleportResult> resultCallback;
 
-        if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) seconds = 0;
+        if(!options.isNoDelayByPass() && player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) seconds = 0;
         String message = options.getFinalMessage(player);
 
         //Call events

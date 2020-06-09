@@ -18,9 +18,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destinati
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.randomteleports.commands.CRandomTp;
-import de.codingair.warpsystem.spigot.features.randomteleports.listeners.BungeePacketListener;
 import de.codingair.warpsystem.spigot.features.randomteleports.listeners.InteractListener;
-import de.codingair.warpsystem.spigot.features.randomteleports.listeners.SpawnListener;
 import de.codingair.warpsystem.spigot.features.randomteleports.packets.RandomTPWorldsPacket;
 import de.codingair.warpsystem.spigot.features.randomteleports.utils.RandomLocationCalculator;
 import de.codingair.warpsystem.spigot.features.randomteleports.utils.WorldOption;
@@ -41,7 +39,6 @@ public class RandomTeleporterManager implements Manager, BungeeFeature {
     private boolean buyable;
     private double costs;
     private boolean protectedRegions;
-    private boolean worldBorder;
     private List<Biome> biomeList;
     private final List<Material> materialBlackList = new ArrayList<>();
     private final List<WorldOption> worldOptions = new ArrayList<>();
@@ -96,7 +93,6 @@ public class RandomTeleporterManager implements Manager, BungeeFeature {
         }
 
         this.protectedRegions = config.getBoolean("RandomTeleport.Support.ProtectedRegions", true);
-        this.worldBorder = config.getBoolean("RandomTeleport.Support.WorldBorder", true);
         if(config.getBoolean("RandomTeleport.Support.Biome.Enabled", true)) {
             List<String> configBiomes = config.getStringList("RandomTeleport.Support.Biome.BiomeList");
             biomeList = new ArrayList<>();
@@ -117,11 +113,6 @@ public class RandomTeleporterManager implements Manager, BungeeFeature {
                 }
             }
         }
-
-        SpawnListener listener = new SpawnListener();
-        Bukkit.getPluginManager().registerEvents(listener, WarpSystem.getInstance());
-        WarpSystem.getInstance().getDataHandler().register(listener);
-        WarpSystem.getInstance().getDataHandler().register(new BungeePacketListener());
 
         boolean success = true;
         worldOptions.clear();
@@ -450,10 +441,6 @@ public class RandomTeleporterManager implements Manager, BungeeFeature {
 
     public boolean isBuyable() {
         return buyable && MoneyAdapterType.canEnable();
-    }
-
-    public boolean isWorldBorder() {
-        return worldBorder;
     }
 
     public int getNetherHeight() {
