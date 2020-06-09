@@ -4,63 +4,74 @@ import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.codingapi.tools.io.utils.Serializable;
 import de.codingair.warpsystem.spigot.features.randomteleports.managers.RandomTeleporterManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class WorldOption implements Serializable {
-    private String worldName;
-    private World world;
+    private final String worldName;
+    private final World world;
     private double startX, startY, startZ, min, max;
+    private List<String> target;
 
     public WorldOption(String worldName) {
         this.worldName = worldName;
         world = Bukkit.getWorld(worldName);
     }
 
-    public WorldOption(String worldName, double startX, double startY, double startZ, int min, int max) {
-        this(worldName);
-        this.startX = startX;
-        this.startY = startY;
-        this.startZ = startZ;
-        this.min = min;
-        this.max = max;
-    }
-
     @Override
-    public boolean read(DataWriter d) throws Exception {
+    public boolean read(DataWriter d) {
+        if(target != null) target.clear();
+
         this.startX = d.getDouble("startX", world == null ? 0 : world.getSpawnLocation().getX());
         this.startY = d.getDouble("startY", world == null ? 0 : world.getSpawnLocation().getY());
         this.startZ = d.getDouble("startZ", world == null ? 0 : world.getSpawnLocation().getZ());
-        this.min = d.getDouble("min_range", RandomTeleporterManager.getInstance().getMinRange());
-        this.max = d.getDouble("max_range", RandomTeleporterManager.getInstance().getMaxRange());
+        this.min = d.getDouble("min_range", RandomTeleporterManager.getInstance().getDefValues().min);
+        this.max = d.getDouble("max_range", RandomTeleporterManager.getInstance().getDefValues().max);
+        this.target = d.getList("target_worlds");
         return true;
     }
 
     @Override
     public String toString() {
         return "WorldOption{" +
-                "worldName='" + worldName + '\'' +
+                "worldName=" + (worldName == null ? "null" : "'" + worldName + "'") +
                 ", world=" + world +
                 ", startX=" + startX +
                 ", startY=" + startY +
                 ", startZ=" + startZ +
                 ", min=" + min +
                 ", max=" + max +
+                ", target_worlds=" + (this.target == null ? "null" : Arrays.toString(this.target.toArray(new String[0]))) +
                 '}';
     }
 
     @Override
     public void write(DataWriter d) {
-        //world value will be added in manager class
-        d.put("startX", this.startX);
-        d.put("startY", this.startY);
-        d.put("startZ", this.startZ);
-        d.put("min_range", this.min);
-        d.put("max_range", this.max);
+        throw new IllegalStateException("WorldOption data will not be saved.");
     }
 
     @Override
     public void destroy() {
+        if(this.target != null) this.target.clear();
+    }
 
+    public void prepareStart(Location l, World execution) {
+        l.setWorld(getRandomWorld(execution));
+
+        if(usesWorldSpawn()) {
+            Location spawn = execution.getSpawnLocation();
+            l.setX(spawn.getX());
+            l.setY(spawn.getY());
+            l.setZ(spawn.getZ());
+        } else {
+            l.setX(getStartX());
+            l.setY(getStartY());
+            l.setZ(getStartZ());
+        }
     }
 
     public String getWorldName() {
@@ -71,39 +82,45 @@ public class WorldOption implements Serializable {
         return startX;
     }
 
-    public void setStartX(double startX) {
-        this.startX = startX;
-    }
-
     public double getStartY() {
         return startY;
-    }
-
-    public void setStartY(double startY) {
-        this.startY = startY;
     }
 
     public double getStartZ() {
         return startZ;
     }
 
-    public void setStartZ(double startZ) {
-        this.startZ = startZ;
-    }
-
     public double getMin() {
         return min;
-    }
-
-    public void setMin(double min) {
-        this.min = min;
     }
 
     public double getMax() {
         return max;
     }
 
-    public void setMax(double max) {
-        this.max = max;
+    public World getWorld() {
+        return world;
+    }
+
+    private boolean usesWorldSpawn() {
+        return startX == -1 && startY == -1 && startZ == -1;
+    }
+
+    private List<World> prepare() {
+        List<World> l = new ArrayList<>();
+        for(String s : this.target) {
+            World w = Bukkit.getWorld(s);
+            if(w != null) l.add(w);
+        }
+        return l;
+    }
+
+    public World getRandomWorld(World execution) {
+        List<World> l = prepare();
+        if(l.isEmpty()) return execution;
+
+        execution = l.get((int) (Math.random() * l.size()));
+        l.clear();
+        return execution;
     }
 }
