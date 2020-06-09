@@ -11,13 +11,20 @@ RandomTeleport:
     Highest_Y:
       Nether: 126
       End: 80
-    Min: 1000
-    Max: 10000
   Worlds:
     #Ignored values (like in "Example") will be replaced by default values
-    # Ignored start values will be replaced by spawn position of the specific world
+    # Ignored start values will be replaced by default values. World spawn will be used if startX=-1, startY=-1 & startZ=-1
     # Ignored range values will be replaced by general range values at the top
-    # Values: startX, startY, startZ, min_range, max_range
+    # Values: startX, startY, startZ, min_range, max_range, target_worlds
+    Default:
+      startX: 0
+      startY: 70
+      startZ: 0
+      min_range: 1000
+      max_range: 10000
+      target_worlds:
+        - "ExampleWorld-01"
+        - "ExampleWorld-02"
     Options:
       - World:
           startX: 0

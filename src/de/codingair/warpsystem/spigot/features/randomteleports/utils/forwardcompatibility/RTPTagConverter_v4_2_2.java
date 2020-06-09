@@ -14,8 +14,7 @@ public class RTPTagConverter_v4_2_2 extends TagConverter {
             }
         }
 
-        convert();
-        to.saveConfig();
+        if(convert()) to.saveConfig();
         WarpSystem.getInstance().getFileManager().unloadFile(super.from);
         WarpSystem.getInstance().getFileManager().unloadFile(super.to);
     }

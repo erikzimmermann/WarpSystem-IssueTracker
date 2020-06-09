@@ -19,7 +19,7 @@ public class UpdateNotifier {
     private UpdateCheckerAdapter adapter;
 
     public UpdateNotifier() {
-        this.adapter = WarpSystem.getInstance().isPremium() ? new PremiumUpdateChecker() : new FreeUpdateChecker();
+        this.adapter = new FreeUpdateChecker();
     }
 
     public boolean read() {

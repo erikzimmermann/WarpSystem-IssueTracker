@@ -50,9 +50,6 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class WarpSystem extends JavaPlugin {
-    public static final int PREMIUM_THREAD_ID = 369986;
-    public static final int FREE_THREAD_ID = 182037;
-
     public static final String PERMISSION_NOTIFY = "warpsystem.notify";
     public static final String PERMISSION_MODIFY = "warpsystem.modify";
 
@@ -192,8 +189,9 @@ public class WarpSystem extends JavaPlugin {
 
             PERMISSION_ADMIN = this.fileManager.getFile("Config").getConfig().getString("WarpSystem.Admin.Permission", "WarpSystem.Admin");
 
-            this.runningFirstTime = fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "0").equals("0") ? new ArrayList<>() : null;
-            if(this.runningFirstTime()) createBackup();
+            String version = fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "0");
+            this.runningFirstTime = version.equals("0") ? new ArrayList<>() : null;
+            if(!version.equals(getDescription().getVersion())) createBackup();
 
             //check permission before loading features
             checkPermissions();
@@ -215,7 +213,7 @@ public class WarpSystem extends JavaPlugin {
                 log(" ");
                 log(" ");
                 log("Loading with errors > Create backup...");
-                if(!this.runningFirstTime()) createBackup();
+                if(version.equals(getDescription().getVersion())) createBackup();
                 log("Backup successfully created");
                 log(" ");
             }
@@ -671,10 +669,6 @@ public class WarpSystem extends JavaPlugin {
 
     public HeadManager getHeadManager() {
         return headManager;
-    }
-
-    public final boolean isPremium() {
-        return false;
     }
 
     public OptionBundle getOptions() {

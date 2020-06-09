@@ -62,15 +62,6 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
 
     @Override
     public void collectOptionStatistics(Map<String, Integer> entry) {
-        if(tp != null) entry.put("Tp", 1);
-        if(tpHere != null) entry.put("TpHere", 1);
-        if(tpToggle != null) entry.put("TpToggle", 1);
-        if(tpa != null) entry.put("Tpa", 1);
-        if(tpaHere != null) entry.put("TpaHere", 1);
-        if(tpaToggle != null) entry.put("TpaToggle", 1);
-        if(tpaAll != null) entry.put("TpaAll", 1);
-        if(tpAll != null) entry.put("TpAll", 1);
-        if(back != null) entry.put("Back", 1);
     }
 
     @Override
