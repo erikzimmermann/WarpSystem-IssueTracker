@@ -304,7 +304,7 @@ public class CWarpSystem extends WSCommandBuilder {
                         link = new TextComponent("§chere");
                         base1 = new TextComponent("§7« to report the bug to the §6SpigotMc-Forum§7.");
 
-                        link.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/threads/" + (WarpSystem.getInstance().isPremium() ? "Premium" : "Free") + "-WarpSystem." + (WarpSystem.getInstance().isPremium() ? WarpSystem.PREMIUM_THREAD_ID : WarpSystem.FREE_THREAD_ID) + "/page-9999"));
+                        link.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/threads/Premium-WarpSystem.369986/page-9999"));
                         link.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
 
                         base.addExtra(link);
@@ -531,7 +531,7 @@ public class CWarpSystem extends WSCommandBuilder {
                 "§7§m" + (line ? "               " : "---------------") + "§7< §6WarpSystem §7>§m" + (line ? "               " : "---------------") + "§7",
                 "",
                 "     §3Author: §bCodingAir",
-                "     §3Version: §bv" + WarpSystem.getInstance().getDescription().getVersion() + " §7[" + (WarpSystem.getInstance().isPremium() ? "§6Premium" : "§bFree") + "§7]",
+                "     §3Version: §bv" + WarpSystem.getInstance().getDescription().getVersion() + " §7[" + "§6Premium" + "§7]",
                 "",
                 "     §eAvailable on SpigotMc!",
                 ""
