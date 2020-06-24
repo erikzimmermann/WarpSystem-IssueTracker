@@ -16,8 +16,9 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.guis.options.OptionsGUI;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.setupassistant.utils.NavigationCommand;
+import de.codingair.warpsystem.spigot.base.setupassistant.utils.SetupAssistant;
 import de.codingair.warpsystem.spigot.features.animations.AnimationManager;
 import de.codingair.warpsystem.spigot.features.animations.guis.editor.*;
 import de.codingair.warpsystem.spigot.features.animations.utils.Animation;
@@ -69,6 +70,20 @@ public class CWarpSystem extends WSCommandBuilder {
                 return false;
             }
         });
+
+        getBaseComponent().addChild(new CommandComponent("setupassistant") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                SetupAssistant a = WarpSystem.getInstance().getSetupAssistantManager().getAssistant();
+                if(a != null) {
+                    sender.sendMessage(Lang.getPrefix() + "&7The setup assistant is §calready used §7by §e" + a.getPlayer().getName() + "§7.");
+                    return false;
+                }
+
+                WarpSystem.getInstance().getSetupAssistantManager().startAssistant((Player) sender, true);
+                return false;
+            }
+        }.setOnlyPlayers(true).addChild(new NavigationCommand()));
 
         getBaseComponent().addChild(new CommandComponent("shortcut") {
             @Override
@@ -215,7 +230,7 @@ public class CWarpSystem extends WSCommandBuilder {
         getBaseComponent().addChild(new CommandComponent("options") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                new OptionsGUI((Player) sender).open();
+                getComponent("setupassistant").runCommand(sender, label, args);
                 return false;
             }
         }.setOnlyPlayers(true));
@@ -356,7 +371,7 @@ public class CWarpSystem extends WSCommandBuilder {
                     return false;
                 }
 
-                boolean save = argument.equalsIgnoreCase("true");
+                boolean save = Boolean.parseBoolean(argument);
                 sender.sendMessage(Lang.getPrefix() + Lang.get("Plugin_Reloading"));
                 WarpSystem.getInstance().reload(save);
                 if(save)

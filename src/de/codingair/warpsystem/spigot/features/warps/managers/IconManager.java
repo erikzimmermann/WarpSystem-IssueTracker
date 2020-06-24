@@ -11,6 +11,8 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.setupassistant.annotations.AvailableForSetupAssistant;
+import de.codingair.warpsystem.spigot.base.setupassistant.annotations.Function;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.BoundAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
@@ -52,8 +54,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@AvailableForSetupAssistant(type = "WarpGUI", config = "Config")
+@Function(name = "Enabled", defaultValue = "true", configPath = "WarpSystem.Functions.WarpGUI", clazz = Boolean.class)
+@Function(name = "Teleport message", defaultValue = "true", configPath = "WarpSystem.Send.Teleport_Message.WarpGUI", clazz = Boolean.class)
+@Function(name = "Different GUI for each world", defaultValue = "false", configPath = "WarpSystem.GUI.Bound_to_world", clazz = Boolean.class)
+@Function(name = "Use /warp for WarpGUI", defaultValue = "false", configPath = "WarpSystem.Commands.Warp.GUI", clazz = Boolean.class)
 public class IconManager implements Manager {
-    private List<Icon> icons = new ArrayList<>();
+    private final List<Icon> icons = new ArrayList<>();
     private ItemStack background = null;
 
     private static ItemBuilder STANDARD_ITEM() {
@@ -290,9 +297,9 @@ public class IconManager implements Manager {
         }
 
         ActionIconHelper.load = false;
-        new CWarps().register(WarpSystem.getInstance());
+        new CWarps().register();
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false) && !FeatureType.SIMPLE_WARPS.isActive()) {
-            new CWarp().register(WarpSystem.getInstance());
+            new CWarp().register();
         }
 
         if(!success) {

@@ -83,19 +83,6 @@ public class TempWarp {
         }
     }
 
-    public boolean hasAccess(Player player) {
-        return isPublic || isOwner(player);
-    }
-
-    public boolean isOwner(Player player) {
-        Player owner;
-        return (owner = getOnlineOwner()) != null && owner.getName().equals(player.getName());
-    }
-
-    public Player getOnlineOwner() {
-        return WarpSystem.getInstance().getUUIDManager().getPlayerBy(getOwner());
-    }
-
     public boolean isExpired() {
         boolean expired = isExpired(new Date());
         if(expired && expireDate == null) this.expireDate = new Date();

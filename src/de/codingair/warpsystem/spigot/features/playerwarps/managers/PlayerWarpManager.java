@@ -16,7 +16,6 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.GlobalLocationAdapter;
 import de.codingair.warpsystem.spigot.bstats.Collectible;
 import de.codingair.warpsystem.spigot.bstats.Metrics;
@@ -24,7 +23,6 @@ import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarp;
 import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarpReference;
 import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarps;
-import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.PWList;
 import de.codingair.warpsystem.spigot.features.playerwarps.listeners.PlayerWarpListener;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.Category;
@@ -49,12 +47,12 @@ import java.util.regex.Pattern;
 public class PlayerWarpManager implements Manager, Ticker, Collectible {
     private ConfigFile playerWarpsData = null;
     private ConfigFile config = null;
-    private HashMap<UUID, List<PlayerWarp>> warps = new HashMap<>();
-    private HashMap<String, UUID> names = new HashMap<>();
-    private List<Category> warpCategories = new ArrayList<>();
-    private List<String> nameBlacklist = new ArrayList<>();
+    private final HashMap<UUID, List<PlayerWarp>> warps = new HashMap<>();
+    private final HashMap<String, UUID> names = new HashMap<>();
+    private final List<Category> warpCategories = new ArrayList<>();
+    private final List<String> nameBlacklist = new ArrayList<>();
     private boolean bungeeCord;
-    private PlayerWarpListener listener = new PlayerWarpListener();
+    private final PlayerWarpListener listener = new PlayerWarpListener();
     private int maxAmount = 0;
     private long minTime;
     private long maxTime;
@@ -428,11 +426,11 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible {
             add(playerWarp);
         }
 
-        new CPlayerWarp(config.getStringList("PlayerWarps.General.PlayerWarp_Command_Aliases")).register(WarpSystem.getInstance());
-        new CPlayerWarps(config.getStringList("PlayerWarps.General.PlayerWarps_Command_Aliases")).register(WarpSystem.getInstance());
+        new CPlayerWarp(config.getStringList("PlayerWarps.General.PlayerWarp_Command_Aliases")).register();
+        new CPlayerWarps(config.getStringList("PlayerWarps.General.PlayerWarps_Command_Aliases")).register();
 
         List<String> aliases = config.getStringList("PlayerWarps.General.Command_References");
-        if(!aliases.isEmpty()) new CPlayerWarpReference(aliases.remove(0), aliases.toArray(new String[0])).register(WarpSystem.getInstance());
+        if(!aliases.isEmpty()) new CPlayerWarpReference(aliases.remove(0), aliases.toArray(new String[0])).register();
 
         WarpSystem.log("    ...got " + warpCategories.size() + " Class(es)");
         if(!imported.isEmpty()) WarpSystem.log("    ...got " + imported.size() + " imported TempWarp(s)");

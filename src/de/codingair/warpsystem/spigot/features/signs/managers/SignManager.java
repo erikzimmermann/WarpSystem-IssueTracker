@@ -4,6 +4,8 @@ import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.setupassistant.annotations.AvailableForSetupAssistant;
+import de.codingair.warpsystem.spigot.base.setupassistant.annotations.Function;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.signs.listeners.SignListener;
 import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
@@ -16,8 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@AvailableForSetupAssistant(type = "WarpSigns", config = "Config")
+@Function(name = "Enabled", defaultValue = "true", config = "Config", configPath = "WarpSystem.Functions.WarpSigns", clazz = Boolean.class)
+@Function(name = "Teleport message", defaultValue = "true", config = "Config", configPath = "WarpSystem.Send.Teleport_Message.WarpSigns", clazz = Boolean.class)
 public class SignManager implements Manager {
-    private List<WarpSign> warpSigns = new ArrayList<>();
+    private final List<WarpSign> warpSigns = new ArrayList<>();
 
     public static SignManager getInstance() {
         return ((SignManager) WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIGNS));

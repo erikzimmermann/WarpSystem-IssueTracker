@@ -71,10 +71,10 @@ public class SimpleWarpManager implements Manager {
         ConfigFile configFile = WarpSystem.getInstance().getFileManager().getFile("Config");
         this.overwritePermissions = configFile.getConfig().getBoolean("WarpSystem.SimpleWarps.Overwrite_Permissions", false);
 
-        new CWarp().register(WarpSystem.getInstance());
-        new CSetWarp().register(WarpSystem.getInstance());
-        new CEditWarp().register(WarpSystem.getInstance());
-        new CDeleteWarp().register(WarpSystem.getInstance());
+        new CWarp().register();
+        new CSetWarp().register();
+        new CEditWarp().register();
+        new CDeleteWarp().register();
 
         return !errors;
     }

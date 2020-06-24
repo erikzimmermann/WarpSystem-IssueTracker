@@ -23,7 +23,7 @@ import java.util.logging.Level;
 
 public class BungeeBukkitListener implements PacketListener, Listener {
     private String[] notice = null;
-    private TimeMap<String, String> loginMessage = new TimeMap<>();
+    private final TimeMap<String, String> loginMessage = new TimeMap<>();
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
@@ -75,6 +75,11 @@ public class BungeeBukkitListener implements PacketListener, Listener {
                 WarpSystem.getInstance().setCurrentServer(((InitialPacket) packet).getServerName());
 
                 String version = ((InitialPacket) packet).getVersion();
+                if(!Bukkit.spigot().getConfig().getBoolean("settings.bungeecord", false)) {
+                    WarpSystem.getInstance().getLogger().log(Level.WARNING, "Found DataCenter (BungeeCord) but bungeecord is disabled in spigot.yml! Please turn this option to true otherwise you will get uuid issues!");
+                    return;
+                }
+
                 if(version.equals(WarpSystem.getInstance().getDescription().getVersion())) {
                     if(WarpSystem.getInstance().getBungeePluginVersion() == null || !WarpSystem.getInstance().getBungeePluginVersion().equals(version)) {
                         WarpSystem.getInstance().getLogger().log(Level.INFO, "Found a valid DataCenter > Init BungeeFeatures");

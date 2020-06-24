@@ -1,12 +1,10 @@
 package de.codingair.warpsystem.spigot.base;
 
 import de.codingair.codingapi.API;
-import de.codingair.codingapi.bungeecord.BungeeCordHelper;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.files.FileManager;
+import de.codingair.codingapi.player.gui.inventory.gui.Interface;
 import de.codingair.codingapi.server.Version;
-import de.codingair.codingapi.server.fancymessages.FancyMessage;
-import de.codingair.codingapi.server.fancymessages.MessageTypes;
 import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
@@ -16,6 +14,8 @@ import de.codingair.warpsystem.spigot.base.commands.CWarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.*;
 import de.codingair.warpsystem.spigot.base.managers.*;
+import de.codingair.warpsystem.spigot.base.setupassistant.SetupAssistantManager;
+import de.codingair.warpsystem.spigot.base.setupassistant.utils.SetupAssistantListener;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.UpdateNotifier;
 import de.codingair.warpsystem.spigot.base.utils.options.OptionBundle;
@@ -113,17 +113,18 @@ public class WarpSystem extends JavaPlugin {
     private final FileManager fileManager = new FileManager(this);
     private DataManager dataManager;
     private final HeadManager headManager = new HeadManager();
+    private final SetupAssistantManager setupAssistantManager = new SetupAssistantManager();
 
     private UpdateNotifier updateNotifier;
-    private List<String> runningFirstTime = null;
-    private List<String> newUpdate = new ArrayList<>();
 
     private final Timer timer = new Timer();
     private boolean old = false;
     private boolean ERROR = true;
     private boolean shouldSave = true;
+    private String oldVersion = null;
     private final SpigotDataHandler dataHandler = new SpigotDataHandler(this);
-    private UUIDManager uuidManager;
+    private final UUIDManager uuidManager = new UUIDManager();
+    private final List<String> newUpdate = new ArrayList<>();
 
     public static boolean hasPermission(CommandSender sender, String permission) {
         return permission == null || sender.hasPermission(permission);
@@ -185,23 +186,20 @@ public class WarpSystem extends JavaPlugin {
 
             if(this.fileManager.getFile("Config") == null) this.fileManager.loadFile("Config", "/");
             Lang.initPreDefinedLanguages(this);
-            this.uuidManager = new UUIDManager();
 
             PERMISSION_ADMIN = this.fileManager.getFile("Config").getConfig().getString("WarpSystem.Admin.Permission", "WarpSystem.Admin");
 
-            String version = fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "0");
-            this.runningFirstTime = version.equals("0") ? new ArrayList<>() : null;
-            if(!version.equals(getDescription().getVersion())) createBackup();
+            oldVersion = fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "0");
+            if(!oldVersion.equals(getDescription().getVersion())) createBackup();
 
             //check permission before loading features
             checkPermissions();
 
             log("Loading features");
-            this.fileManager.loadAll();
             this.dataManager.removeDisabled();
 
             CWarpSystem cWarpSystem = new CWarpSystem();
-            cWarpSystem.register(this);
+            cWarpSystem.register();
 
             boolean createBackup = false;
             if(!this.dataManager.load()) createBackup = true;
@@ -213,7 +211,7 @@ public class WarpSystem extends JavaPlugin {
                 log(" ");
                 log(" ");
                 log("Loading with errors > Create backup...");
-                if(version.equals(getDescription().getVersion())) createBackup();
+                if(oldVersion.equals(getDescription().getVersion())) createBackup();
                 log("Backup successfully created");
                 log(" ");
             }
@@ -223,8 +221,13 @@ public class WarpSystem extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new TeleportListener(), this);
             Bukkit.getPluginManager().registerEvents(new NotifyListener(), this);
             Bukkit.getPluginManager().registerEvents(new CommandListener(), this);
-            Bukkit.getPluginManager().registerEvents(new UUIDListener(), this);
+
+            UUIDManager.UUIDListener uuidListener = uuidManager.listener();
+            Bukkit.getPluginManager().registerEvents(uuidListener, this);
+            dataHandler.register(uuidListener);
+
             Bukkit.getPluginManager().registerEvents(new HeadListener(), this);
+            Bukkit.getPluginManager().registerEvents(new SetupAssistantListener(), this);
             getBungeeFeatureList().add(new VanishManager());
 
             this.startAutoSaver();
@@ -251,8 +254,6 @@ public class WarpSystem extends JavaPlugin {
             ConfigFile config = fileManager.getFile("Config");
             if(config.getConfig().getBoolean("WarpSystem.Functions.CommandBlocks", true))
                 Bukkit.getPluginManager().registerEvents(new CommandBlockListener(), this);
-
-            if(runningFirstTime()) Bukkit.getScheduler().runTaskLater(this, () -> notifyPlayers(null), 100L);
         } catch(Throwable ex) {
             //make error-report
 
@@ -329,7 +330,6 @@ public class WarpSystem extends JavaPlugin {
         Bukkit.getScheduler().runTaskLater(this, () -> {
             //update command dispatcher for players to synchronize CommandList
             Bukkit.getScheduler().runTask(this, WarpSystem::updateCommandList);
-            if(this.uuidManager.isEmpty()) this.uuidManager.downloadAll();
         }, 20);
     }
 
@@ -354,7 +354,6 @@ public class WarpSystem extends JavaPlugin {
         old = false;
         ERROR = true;
         shouldSave = true;
-        BungeeCordHelper.bungeeMessenger = null;
 
         HandlerList.unregisterAll(this);
 
@@ -363,8 +362,6 @@ public class WarpSystem extends JavaPlugin {
 
         this.dataHandler.onDisable();
         if(this.packetListener != null) this.dataHandler.unregister(this.packetListener);
-        if(this.runningFirstTime != null) this.runningFirstTime.clear();
-        this.newUpdate.clear();
 
         destroy();
         this.uuidManager.removeAll();
@@ -427,6 +424,7 @@ public class WarpSystem extends JavaPlugin {
     private void destroy() {
         if(dataManager != null) this.dataManager.getManagers().forEach(Manager::destroy);
         this.bungeeFeatureList.clear();
+        this.fileManager.destroy();
     }
 
     private void save(boolean saver) {
@@ -579,24 +577,6 @@ public class WarpSystem extends JavaPlugin {
                 player.sendMessage("");
             }
 
-            if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && this.runningFirstTime() && !this.runningFirstTime.contains(player.getName())) {
-                this.runningFirstTime.add(player.getName());
-
-                FancyMessage message = new FancyMessage(player, MessageTypes.INFO_MESSAGE, true);
-                message.addMessages("                         §c§l§n" + getDescription().getName() + " §c- §l" + getDescription().getVersion());
-                message.addMessages("");
-                message.addMessages("    §7Hey there,");
-                message.addMessages("    §7This is the first time for this server running my §l" + getDescription().getVersion() + "§7!");
-                message.addMessages("    §7If you're struggling with all the §cnew stuff§7, run");
-                message.addMessages("    §7\"§c/WarpSystem news§7\". And if you'll find some new §cbugs§7,");
-                message.addMessages("    §7please run \"§c/WarpSystem report§7\" to report the bug!");
-                message.addMessages("");
-                message.addMessages("    §7Thank you for using my plugin!");
-                message.addMessages("");
-                message.addMessages("    §bCodingAir");
-                message.send();
-            }
-
             ConfigFile file = fileManager.getFile("Config");
             if(!file.getConfig().getString("Do_Not_Edit.Last_Version").equals(getDescription().getVersion())) {
                 file.getConfig().set("Do_Not_Edit.Last_Version", getDescription().getVersion());
@@ -616,7 +596,6 @@ public class WarpSystem extends JavaPlugin {
     public void setOnBungeeCord(boolean onBungeeCord) {
         this.onBungeeCord = onBungeeCord;
         if(onBungeeCord) {
-            this.uuidManager.downloadAll();
             this.bungeeFeatureList.forEach(BungeeFeature::onConnect);
         } else {
             this.bungeeFeatureList.forEach(BungeeFeature::onDisconnect);
@@ -675,7 +654,11 @@ public class WarpSystem extends JavaPlugin {
         return options;
     }
 
-    private boolean runningFirstTime() {
-        return runningFirstTime != null;
+    public SetupAssistantManager getSetupAssistantManager() {
+        return setupAssistantManager;
+    }
+
+    public String getOldVersion() {
+        return oldVersion;
     }
 }

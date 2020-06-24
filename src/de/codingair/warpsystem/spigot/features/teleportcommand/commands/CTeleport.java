@@ -141,8 +141,6 @@ public class CTeleport extends WSCommandBuilder {
             }
         }.setOnlyPlayers(true));
 
-        setHighestPriority(true);
-
         setOwnTabCompleter((commandSender, command, s, args) -> {
             if(!WarpSystem.hasPermission(commandSender, WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) {
                 return new ArrayList<>();

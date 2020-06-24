@@ -68,12 +68,6 @@ public class CWarp extends WSCommandBuilder {
         IconManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.WARP_GUI);
         CWarpHook hook = new CWarpHook();
 
-        try {
-            setHighestPriority(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Dominate_In_Commands.Highest_Priority.Warp", true));
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {

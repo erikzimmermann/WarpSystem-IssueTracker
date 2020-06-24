@@ -55,7 +55,5 @@ public class CTpaAll extends WSCommandBuilder {
                 return false;
             }
         }.setOnlyPlayers(true));
-
-        setHighestPriority(true);
     }
 }

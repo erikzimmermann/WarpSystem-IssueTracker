@@ -9,10 +9,12 @@ import java.util.UUID;
 public class PlayerFinalJoinEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
     private final UUID uniqueId;
+    private final boolean joined;
 
-    public PlayerFinalJoinEvent(Player player, UUID id) {
+    public PlayerFinalJoinEvent(Player player, UUID id, boolean joined) {
         super(player);
         this.uniqueId = id;
+        this.joined = joined;
     }
 
     public static HandlerList getHandlerList() {
@@ -26,5 +28,9 @@ public class PlayerFinalJoinEvent extends PlayerEvent {
     @Override
     public HandlerList getHandlers() {
         return getHandlerList();
+    }
+
+    public boolean joined() {
+        return joined;
     }
 }

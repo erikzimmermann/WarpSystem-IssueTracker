@@ -53,6 +53,8 @@ public enum PacketType {
     IsOnlinePacket(62, IsOnlinePacket.class),
     GetOnlineCountPacket(63, GetOnlineCountPacket.class),
 
+    ApplyUUIDPacket(75, ApplyUUIDPacket.class),
+
     BooleanPacket(100, BooleanPacket.class),
     IntegerPacket(101, IntegerPacket.class),
     LongPacket(102, LongPacket.class),

@@ -31,6 +31,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -330,7 +331,7 @@ public class TeleportManager {
     }
 
     public Collection<Teleport> getTeleports() {
-        return teleports.asMap().values();
+        return teleports == null ? new ArrayList<>() : teleports.asMap().values();
     }
 
     public void unregister(Teleport teleport) {

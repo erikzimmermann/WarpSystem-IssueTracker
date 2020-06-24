@@ -10,6 +10,8 @@ import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.setupassistant.annotations.AvailableForSetupAssistant;
+import de.codingair.warpsystem.spigot.base.setupassistant.annotations.Function;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
@@ -35,6 +37,12 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.*;
 
+@AvailableForSetupAssistant(type = "Random teleports", config = "RTPConfig")
+@Function(name = "Enabled", defaultValue = "true", config = "Config", configPath = "WarpSystem.Functions.RandomTeleports", clazz = Boolean.class)
+@Function(name = "Protected regions", defaultValue = "true", configPath = "RandomTeleport.Support.ProtectedRegions", clazz = Boolean.class)
+@Function(name = "World border", defaultValue = "true", configPath = "RandomTeleport.Support.WorldBorder", clazz = Boolean.class)
+@Function(name = "Block blacklist", defaultValue = "true", configPath = "RandomTeleport.Block_Blacklist.Enabled", description = "§eBlocks §7» §6RTPConfig.yml", clazz = Boolean.class)
+@Function(name = "Biome filter", defaultValue = "false", configPath = "RandomTeleport.Support.Biome.Enabled", description = "§eBiomes §7» §6RTPConfig.yml", clazz = Boolean.class)
 public class RandomTeleporterManager implements Manager, BungeeFeature {
     private boolean buyable;
     private double costs;
@@ -158,7 +166,7 @@ public class RandomTeleporterManager implements Manager, BungeeFeature {
             }
 
         Bukkit.getPluginManager().registerEvents(this.listener, WarpSystem.getInstance());
-        new CRandomTp().register(WarpSystem.getInstance());
+        new CRandomTp().register();
 
         WarpSystem.log("    ...got " + this.interactBlocks.size() + " InteractBlock(s)");
         WarpSystem.getInstance().getBungeeFeatureList().add(this);

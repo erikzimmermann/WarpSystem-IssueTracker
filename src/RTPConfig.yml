@@ -17,9 +17,9 @@ RandomTeleport:
     # Ignored range values will be replaced by general range values at the top
     # Values: startX, startY, startZ, min_range, max_range, target_worlds
     Default:
-      startX: 0
-      startY: 70
-      startZ: 0
+      startX: -1
+      startY: -1
+      startZ: -1
       min_range: 1000
       max_range: 10000
       target_worlds:

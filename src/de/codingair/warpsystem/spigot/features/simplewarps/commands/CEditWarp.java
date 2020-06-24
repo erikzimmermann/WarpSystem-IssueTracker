@@ -40,8 +40,6 @@ public class CEditWarp extends WSCommandBuilder {
             }
         });
 
-        setHighestPriority(true);
-
         SimpleWarpManager m = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIMPLE_WARPS);
 
         getBaseComponent().addChild(new MultiCommandComponent() {

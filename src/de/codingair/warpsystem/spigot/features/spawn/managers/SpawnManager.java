@@ -3,6 +3,8 @@ package de.codingair.warpsystem.spigot.features.spawn.managers;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.tools.io.ConfigWriter;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.setupassistant.annotations.AvailableForSetupAssistant;
+import de.codingair.warpsystem.spigot.base.setupassistant.annotations.Function;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
@@ -18,6 +20,9 @@ import org.bukkit.Location;
 
 import java.util.Objects;
 
+@AvailableForSetupAssistant(type = "Spawn", config = "Config")
+@Function(name = "Enabled", defaultValue = "false", config = "Config", configPath = "WarpSystem.Functions.Spawn", clazz = Boolean.class)
+@Function(name = "Teleport message", defaultValue = "true", config = "Config", configPath = "WarpSystem.Send.Teleport_Message.Spawn", clazz = Boolean.class)
 public class SpawnManager implements Manager {
     private String spawnServer = null, respawnServer = null;
     private Spawn spawn;
@@ -40,8 +45,8 @@ public class SpawnManager implements Manager {
         Bukkit.getPluginManager().registerEvents(listener, WarpSystem.getInstance());
         WarpSystem.getInstance().getDataHandler().register(listener);
 
-        new CSetSpawn().register(WarpSystem.getInstance());
-        new CSpawn().register(WarpSystem.getInstance());
+        new CSetSpawn().register();
+        new CSpawn().register();
         return true;
     }
 
