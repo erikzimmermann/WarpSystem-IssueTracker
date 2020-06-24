@@ -40,21 +40,21 @@ import org.bukkit.util.Vector;
 import java.util.List;
 
 public class Teleport {
-    private Player player;
+    private final Player player;
     private AnimationPlayer animation;
     private BukkitRunnable runnable;
 
-    private TeleportOptions options;
-    private String displayName;
-    private int seconds;
+    private final TeleportOptions options;
+    private final String displayName;
+    private final int seconds;
     private double costs;
     private SoundData teleportSound;
 
-    private Sound cancelSound = Sound.ENTITY_ITEM_BREAK;
+    private final Sound cancelSound = Sound.ENTITY_ITEM_BREAK;
 
     private long startTime = 0;
 
-    private Callback<TeleportResult> callback;
+    private final Callback<TeleportResult> callback;
     private List<Chunk> preLoadedChunks = null;
     private Vector velocity = null;
     private Listener teleportListener;
@@ -102,7 +102,7 @@ public class Teleport {
             if(options.isTeleportAnimation()) this.animation.setRunning(true);
             this.runnable = new BukkitRunnable() {
                 private int left = seconds;
-                private String msg = Lang.get("Teleporting_Info");
+                private final String msg = Lang.get("Teleporting_Info");
 
                 @Override
                 public void run() {

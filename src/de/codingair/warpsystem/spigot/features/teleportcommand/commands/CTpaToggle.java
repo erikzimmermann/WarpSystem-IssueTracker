@@ -35,7 +35,5 @@ public class CTpaToggle extends WSCommandBuilder {
                 return false;
             }
         }.setOnlyPlayers(true));
-
-        setHighestPriority(true);
     }
 }

@@ -41,8 +41,6 @@ public class CTpa extends WSCommandBuilder {
             }
         }.setOnlyPlayers(true));
 
-        setHighestPriority(true);
-
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
             public boolean matchTabComplete(CommandSender sender, String suggestion, String argument) {

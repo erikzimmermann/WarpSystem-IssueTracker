@@ -46,8 +46,6 @@ public class CSetWarp extends WSCommandBuilder {
             }
         });
 
-        setHighestPriority(true);
-
         getBaseComponent().addChild(new MultiCommandComponent() {
             @Override
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {

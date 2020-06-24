@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 
 public class CPlayerWarpReference extends CommandBuilder {
     public CPlayerWarpReference(String main, String[] aliases) {
-        super(main, "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_PLAYER_WARPS) {
+        super(WarpSystem.getInstance(), main, "A WarpSystem-Command", new BaseComponent(WarpSystem.PERMISSION_USE_PLAYER_WARPS) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));

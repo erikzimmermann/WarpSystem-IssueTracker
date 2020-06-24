@@ -3,6 +3,7 @@ package de.codingair.warpsystem.bungee.base.listeners;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.bungee.base.WarpSystem;
 import de.codingair.warpsystem.bungee.base.managers.ServerManager;
+import de.codingair.warpsystem.transfer.packets.bungee.ApplyUUIDPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.PrepareLoginMessagePacket;
 import de.codingair.warpsystem.transfer.packets.general.BooleanPacket;
 import de.codingair.warpsystem.transfer.packets.general.IntegerPacket;
@@ -30,6 +31,8 @@ public class MainListener implements Listener, PacketListener {
             //Update it
             WarpSystem.getInstance().getServerManager().sendInitialPacket(e.getServer().getInfo());
         }
+
+        WarpSystem.getInstance().getDataHandler().send(new ApplyUUIDPacket(e.getPlayer().getName(), e.getPlayer().getUniqueId(), true), e.getServer().getInfo());
     }
 
     @Override
@@ -39,6 +42,10 @@ public class MainListener implements Listener, PacketListener {
         switch(PacketType.getByObject(packet)) {
             case RequestInitialPacket: {
                 WarpSystem.getInstance().getServerManager().sendInitialPacket(server);
+
+                for(ProxiedPlayer player : server.getPlayers()) {
+                    WarpSystem.getInstance().getDataHandler().send(new ApplyUUIDPacket(player.getName(), player.getUniqueId(), false), server);
+                }
                 break;
             }
 

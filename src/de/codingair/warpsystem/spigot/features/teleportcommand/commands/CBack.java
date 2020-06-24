@@ -32,7 +32,5 @@ public class CBack extends WSCommandBuilder {
                 return false;
             }
         }.setOnlyPlayers(true));
-
-        setHighestPriority(true);
     }
 }

@@ -9,9 +9,7 @@ public class WSCommandBuilder extends CommandBuilder {
     private static FileConfiguration config = null;
 
     public WSCommandBuilder(String name, BaseComponent baseComponent) {
-        super(c().getString(name + "." + "Name", name.toLowerCase()), "A WarpSystem-Command", baseComponent, true, c().getStringList(name + "." + "Aliases").toArray(new String[0]));
-
-        setHighestPriority(true);
+        super(WarpSystem.getInstance(), c().getString(name + "." + "Name", name.toLowerCase()), "A WarpSystem-Command", baseComponent, true, c().getStringList(name + "." + "Aliases").toArray(new String[0]));
     }
 
     public static FileConfiguration c() {

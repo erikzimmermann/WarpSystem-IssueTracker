@@ -14,7 +14,6 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.StandardButtonOption;
-import de.codingair.warpsystem.spigot.base.guis.options.OptionsGUI;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.BoundAction;
@@ -59,10 +58,10 @@ public class GWarps extends GUI {
     private boolean showMenu = true;
     private int emptySlots = 0;
 
-    private GUIListener listener;
-    private boolean canEdit;
-    private String world;
-    private List<Class<? extends Icon>> hide;
+    private final GUIListener listener;
+    private final boolean canEdit;
+    private final String world;
+    private final List<Class<? extends Icon>> hide;
 
     public GWarps(Player p, Icon page, boolean editing) {
         this(p, page, editing, null);
@@ -144,6 +143,15 @@ public class GWarps extends GUI {
             @Override
             public void onInvCloseEvent(InventoryCloseEvent e) {
                 e.getView().setCursor(new ItemStack(Material.AIR));
+
+                if(!showMenu) {
+                    showMenu = true;
+                    reinitialize();
+                    setTitle(getTitle(GWarps.this.page, GWarps.this.listener, getPlayer()));
+                    Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> open());
+                    return;
+                }
+
                 if(listener != null) HandlerList.unregisterAll(listener);
                 if(isClosingForGUI() || isClosingByButton()) return;
                 if(GWarps.this.listener != null) GWarps.this.listener.onClose();
@@ -202,8 +210,7 @@ public class GWarps extends GUI {
             }
             builder.addLore("§3" + Lang.get("Shift_Leftclick") + ": §b" + Lang.get("Set_Background"));
             builder.addLore("");
-            builder.addLore("§3" + Lang.get("Rightclick") + ": §b" + Lang.get("Options"));
-            builder.addLore("§3" + Lang.get("Shift_Rightclick") + ": §b" + Lang.get("Show_Icon"));
+            builder.addLore("§3" + Lang.get("Rightclick") + ": §b" + Lang.get("Show_Icon"));
 
             builder.addEnchantment(Enchantment.DAMAGE_ALL, 1);
             builder.setHideEnchantments(true);
@@ -220,13 +227,10 @@ public class GWarps extends GUI {
                         reinitialize();
                         setTitle(getTitle(GWarps.this.page, listener, getPlayer()));
                     } else {
-                        if(e.isShiftClick()) {
-                            showMenu = !showMenu;
+                        if(!e.isShiftClick()) {
+                            showMenu = false;
                             reinitialize();
                             setTitle(getTitle(GWarps.this.page, listener, getPlayer()));
-                        } else {
-                            setClosingForGUI(true);
-                            new OptionsGUI(getPlayer()).open();
                         }
                     }
                 }

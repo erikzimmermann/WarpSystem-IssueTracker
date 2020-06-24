@@ -27,8 +27,8 @@ WarpSystem:
   Economy:
     #Priority list for economy systems
     priority:
-    - Essentials
-    - Vault
+      - Essentials
+      - Vault
 
   Teleport:
     Chunk_Pre_Loading:
@@ -46,6 +46,7 @@ WarpSystem:
       WarpGUI: true
       SimpleWarps: true
       GlobalWarps: true
+      Shortcuts: true
       Portals: true
       WarpSigns: true
       CommandBlocks: true
@@ -66,7 +67,7 @@ WarpSystem:
     RandomTeleports: true
     TeleportCommand: true
     PlayerWarps: true
-    Spawn: true
+    Spawn: false
 
   #'TeleportCommand' in 'Functions' (above) have to be toggled to true as well, if you want to use this feature.
   TeleportCommands:

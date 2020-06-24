@@ -5,6 +5,8 @@ import de.codingair.codingapi.player.chat.ChatButtonManager;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.setupassistant.annotations.AvailableForSetupAssistant;
+import de.codingair.warpsystem.spigot.base.setupassistant.annotations.Function;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
@@ -29,14 +31,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@AvailableForSetupAssistant(type = "TeleportCommands", config = "Config")
+@Function(name = "Enabled", defaultValue = "true", configPath = "WarpSystem.Functions.TeleportCommand", clazz = Boolean.class)
+@Function(name = "BungeeCord", defaultValue = "true", configPath = "WarpSystem.TeleportCommands.BungeeCord", clazz = Boolean.class)
+@Function(name = "Teleport requests costs", defaultValue = "0", configPath = "WarpSystem.TeleportCommands.TeleportRequests.Teleport_Costs", clazz = Double.class)
+@Function(name = "Teleport requests expire delay (seconds)", defaultValue = "30", configPath = "WarpSystem.TeleportCommands.TeleportRequests.ExpireDelay", clazz = Integer.class)
+@Function(name = "Back", defaultValue = "true", configPath = "WarpSystem.TeleportCommands.Back.Enabled", clazz = Boolean.class)
+@Function(name = "Tp", defaultValue = "true", configPath = "WarpSystem.TeleportCommands.Tp", clazz = Boolean.class)
+@Function(name = "TpAll", defaultValue = "true", configPath = "WarpSystem.TeleportCommands.TpAll", clazz = Boolean.class)
+@Function(name = "TpToggle", defaultValue = "true", configPath = "WarpSystem.TeleportCommands.TpToggle", clazz = Boolean.class)
+@Function(name = "Tpa", defaultValue = "true", configPath = "WarpSystem.TeleportCommands.Tpa", clazz = Boolean.class)
+@Function(name = "TpaHere", defaultValue = "true", configPath = "WarpSystem.TeleportCommands.TpaHere", clazz = Boolean.class)
+@Function(name = "TpaAll", defaultValue = "true", configPath = "WarpSystem.TeleportCommands.TpaAll", clazz = Boolean.class)
+@Function(name = "TpaToggle", defaultValue = "true", configPath = "WarpSystem.TeleportCommands.TpaToggle", clazz = Boolean.class)
 public class TeleportCommandManager implements Manager, BungeeFeature, Collectible {
-    private HashMap<String, List<Invitation>> invites = new HashMap<>();
+    private final HashMap<String, List<Invitation>> invites = new HashMap<>();
 
-    private List<String> denyTpa = new ArrayList<>();
-    private List<String> denyForceTps = new ArrayList<>();
+    private final List<String> denyTpa = new ArrayList<>();
+    private final List<String> denyForceTps = new ArrayList<>();
 
-    private HashMap<String, List<Location>> backHistory = new HashMap<>();
-    private List<String> usingBackCommand = new ArrayList<>();
+    private final HashMap<String, List<Location>> backHistory = new HashMap<>();
+    private final List<String> usingBackCommand = new ArrayList<>();
 
     private TeleportPacketListener packetListener;
 
@@ -88,26 +103,26 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
             bungeeCord = file.getConfig().getBoolean("WarpSystem.TeleportCommands.BungeeCord", true);
 
             if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Tp", true)) {
-                (tp = new CTeleport()).register(WarpSystem.getInstance());
-                (tpHere = new CTpHere(tp)).register(WarpSystem.getInstance());
+                (tp = new CTeleport()).register();
+                (tpHere = new CTpHere(tp)).register();
             }
 
-            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpToggle", true)) (tpToggle = new CTpToggle()).register(WarpSystem.getInstance());
+            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpToggle", true)) (tpToggle = new CTpToggle()).register();
             if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Tpa", true)) {
-                (tpa = new CTpa()).register(WarpSystem.getInstance());
-                (tpAccept = new CTpAccept()).register(WarpSystem.getInstance());
-                (tpDeny = new CTpDeny()).register(WarpSystem.getInstance());
+                (tpa = new CTpa()).register();
+                (tpAccept = new CTpAccept()).register();
+                (tpDeny = new CTpDeny()).register();
             }
             if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaHere", true)) {
-                (tpaHere = new CTpaHere()).register(WarpSystem.getInstance());
-                if(tpAccept == null) (tpAccept = new CTpAccept()).register(WarpSystem.getInstance());
-                if(tpDeny == null) (tpDeny = new CTpDeny()).register(WarpSystem.getInstance());
+                (tpaHere = new CTpaHere()).register();
+                if(tpAccept == null) (tpAccept = new CTpAccept()).register();
+                if(tpDeny == null) (tpDeny = new CTpDeny()).register();
             }
-            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaToggle", true)) (tpaToggle = new CTpaToggle()).register(WarpSystem.getInstance());
-            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaAll", true)) (tpaAll = new CTpaAll()).register(WarpSystem.getInstance());
-            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpAll", true)) (tpAll = new CTpAll()).register(WarpSystem.getInstance());
+            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaToggle", true)) (tpaToggle = new CTpaToggle()).register();
+            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpaAll", true)) (tpaAll = new CTpaAll()).register();
+            if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.TpAll", true)) (tpAll = new CTpAll()).register();
             if(file.getConfig().getBoolean("WarpSystem.TeleportCommands.Back.Enabled", true)) {
-                (back = new CBack()).register(WarpSystem.getInstance());
+                (back = new CBack()).register();
                 this.backHistorySize = file.getConfig().getInt("WarpSystem.TeleportCommands.Back.History_Size", 3);
                 if(backHistorySize < 1) {
                     backHistorySize = 1;
