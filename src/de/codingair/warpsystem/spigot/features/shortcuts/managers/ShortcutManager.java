@@ -4,6 +4,8 @@ import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.setupassistant.annotations.AvailableForSetupAssistant;
+import de.codingair.warpsystem.spigot.base.setupassistant.annotations.Function;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
@@ -24,9 +26,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@AvailableForSetupAssistant(type = "Shortcuts", config = "Config")
+@Function(name = "Enabled", defaultValue = "true", configPath = "WarpSystem.Functions.Shortcuts", clazz = Boolean.class)
+@Function(name = "Teleport message", defaultValue = "true", configPath = "WarpSystem.Send.Teleport_Message.Shortcuts", clazz = Boolean.class)
 public class ShortcutManager implements Manager, BungeeFeature {
-    private List<Shortcut> shortcuts = new ArrayList<>();
-    private HashMap<Shortcut, ShortcutExecutor> executors = new HashMap<>();
+    private final List<Shortcut> shortcuts = new ArrayList<>();
+    private final HashMap<Shortcut, ShortcutExecutor> executors = new HashMap<>();
     private ShortcutPacketListener listener;
 
     public static ShortcutManager getInstance() {
@@ -92,7 +97,7 @@ public class ShortcutManager implements Manager, BungeeFeature {
                 }
             }
 
-        new CShortcuts().register(WarpSystem.getInstance());
+        new CShortcuts().register();
 
         for(Shortcut s : this.shortcuts) {
             //create Command
@@ -163,11 +168,11 @@ public class ShortcutManager implements Manager, BungeeFeature {
     public void reloadCommand(Shortcut s, boolean force) {
         ShortcutExecutor executor = executors.remove(s);
         boolean reload;
-        if(reload = (executor != null)) executor.unregister(WarpSystem.getInstance());
+        if(reload = (executor != null)) executor.unregister();
 
         executor = new ShortcutExecutor(s);
         executors.put(s, executor);
-        executor.register(WarpSystem.getInstance());
+        executor.register();
 
         if(reload || force) WarpSystem.updateCommandList();
     }
@@ -186,7 +191,7 @@ public class ShortcutManager implements Manager, BungeeFeature {
     public void remove(Shortcut s, boolean forceUpdate) {
         this.shortcuts.remove(s);
         ShortcutExecutor executor = executors.remove(s);
-        if(executor != null) executor.unregister(WarpSystem.getInstance());
+        if(executor != null) executor.unregister();
 
         if(forceUpdate) WarpSystem.updateCommandList();
     }

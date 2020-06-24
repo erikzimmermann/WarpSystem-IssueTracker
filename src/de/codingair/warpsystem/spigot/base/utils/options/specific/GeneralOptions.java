@@ -15,6 +15,7 @@ public class GeneralOptions extends Options {
     private Option<Integer> chunkPreLoadRadius = new Option<>("WarpSystem.Teleport.Chunk_Pre_Loading.Chunk_Radius");
     private Option<Boolean> chunkPreLoad = new Option<>("WarpSystem.Teleport.Chunk_Pre_Loading.Enabled");
     private Option<Boolean> chunkPreLoadingLimitedByPerm = new Option<>("WarpSystem.Teleport.Chunk_Pre_Loading.Limit_by_Permission");
+    private Option<Boolean> afterEffects = new Option<>("WarpSystem.Teleport.Animation_After_Teleport.Enabled");
 
     public GeneralOptions() {
         super("Config");
@@ -33,6 +34,7 @@ public class GeneralOptions extends Options {
         set(chunkPreLoadRadius);
         set(chunkPreLoad);
         set(chunkPreLoadingLimitedByPerm);
+        set(afterEffects);
         save();
     }
 
@@ -44,6 +46,7 @@ public class GeneralOptions extends Options {
         get(chunkPreLoadRadius);
         get(chunkPreLoad);
         get(chunkPreLoadingLimitedByPerm);
+        get(afterEffects);
     }
 
     @Override
@@ -57,10 +60,11 @@ public class GeneralOptions extends Options {
             this.chunkPreLoadRadius = o.chunkPreLoadRadius.clone();
             this.chunkPreLoad = o.chunkPreLoad.clone();
             this.chunkPreLoadingLimitedByPerm = o.chunkPreLoadingLimitedByPerm.clone();
+            this.afterEffects = o.afterEffects.clone();
         }
     }
 
-    public List<String> getLanguages() {
+    public static List<String> getLanguages() {
         File file = new File(WarpSystem.getInstance().getDataFolder().getPath() + "/Languages/");
         List<String> languages = new ArrayList<>();
 
@@ -124,5 +128,13 @@ public class GeneralOptions extends Options {
 
     public void setChunkPreLoadingLimitedByPerm(boolean limited) {
         chunkPreLoadingLimitedByPerm.setValue(limited);
+    }
+
+    public boolean isAfterEffects() {
+        return afterEffects.getValue();
+    }
+
+    public void setAfterEffects(boolean afterEffects) {
+        this.afterEffects.setValue(afterEffects);
     }
 }

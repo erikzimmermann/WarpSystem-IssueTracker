@@ -177,8 +177,8 @@ TempWarp_Delete: '&cTemp Warps &7- &cLöschen'
 Set_Name: Name setzen
 Duration: Dauer
 Private: Privat
-Teleport_Message: Teleportationsnachricht
-Teleport_Costs: Teleportationskosten
+Teleport_Message: Teleport-Nachricht
+Teleport_Costs: Teleport-Kosten
 Message: Nachricht
 World_Not_Exists: '&7Die angeforderte Welt &cexistiert nicht&7.'
 GlobalWarp_Not_Exists: '&7Der GlobalWarp "&b%GLOBAL_WARP%&7" &cexistiert nicht&7.'
@@ -428,7 +428,7 @@ Player_Warps: 'PlayerWarps'
 Player_Warp: 'PlayerWarp'
 Warp_no_access: '&cDu hast keinen Zugriff zu diesen warp.'
 Trusted_members: 'Vertrauenswürdige(s) Mitglied(er)'
-Enter_Amount_between: '&7Bitte gib eine Zahl zwischen §c%X%§7 und §c%Y%§7 ein.'
+Enter_Amount_between: '&7Bitte gib eine Zahl zwischen &c%X%&7 und &c%Y%&7 ein.'
 Target_Position: 'Ziel-Position'
 World: 'Welt'
 Direction: 'Richtung'
@@ -457,7 +457,7 @@ Earned: 'Verdient'
 Warp_Draw_Money_Info: '&7Du hast mit deinem Warp "&b%NAME%&7" &a%AMOUNT% Coin(s)&7 verdient!'
 Create_Protected: '&cDu kannst hier kein Warp erstellen!'
 Protected_Area: 'Geschützter Bereich'
-Enter_Something_between: '&7Bitte gib etwas zwischen §c%X%§7 und §c%Y%§7 ein.'
+Enter_Something_between: '&7Bitte gib etwas zwischen &c%X%&7 und &c%Y%&7 ein.'
 Free: 'Frei'
 Characters: 'Buchstabe(n)'
 PlayerWarp_Trusted_Benefits:
@@ -517,3 +517,20 @@ Permission_overwritten_by_config: 'Berechtigungen werden durch die Config übers
 Play: 'Abspielen'
 Not_Available_in_Version: '&7In &c%VERSION% nicht &7unterstützt!'
 Final_Permission: 'Finale Berechtigung'
+Menu: 'Menü'
+Changes_Auto_Save: '&7Änderungen werden &aautomatisch &7gespeichert.'
+Next_Version: 'Nächste Version'
+Previous_Version: 'Vorherige Version'
+Add_Filter: '&7Benutze &eFilter'
+Since: 'Seit'
+Reset_Filter: 'Filter zurücksetzen'
+Comparing_To: 'Vergleiche mit'
+All: 'Alle'
+New: 'Neu'
+Requires_Plugin_Reload: 'Benötigt Plugin-Reload'
+No_Page_Available: 'Keine Seite vorhanden'
+No_Values_Available: 'Keine Werte verfügbar'
+SetupAssistant_Closed: '&7Der SetupAssistant wurde &abeendet&7.'
+SetupAssistant_Wrong_Format: '&cFalsches Format&7! Bitte &cSyntax überprüfen&7.'
+SetupAssistant_Still_Active: '&7Der SetupAssistant ist &cimmernoch aktiv&7!'
+Start: 'Start'

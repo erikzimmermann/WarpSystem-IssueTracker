@@ -59,6 +59,8 @@ public enum PacketType {
     RandomTPWorldsPacket(51, RandomTPWorldsPacket.class),
     QueueRTPUsagePacket(52, QueueRTPUsagePacket.class),
 
+    ApplyUUIDPacket(75, ApplyUUIDPacket.class),
+
     BooleanPacket(100, BooleanPacket.class),
     IntegerPacket(101, IntegerPacket.class),
     LongPacket(102, LongPacket.class),

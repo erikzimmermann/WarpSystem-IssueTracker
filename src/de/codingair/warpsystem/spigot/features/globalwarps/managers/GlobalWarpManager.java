@@ -98,8 +98,8 @@ public class GlobalWarpManager implements Manager, BungeeFeature {
         WarpSystem.getInstance().getDataHandler().register(listener);
         Bukkit.getPluginManager().registerEvents(listener, WarpSystem.getInstance());
 
-        new CGlobalWarp().register(WarpSystem.getInstance());
-        new CGlobalWarps().register(WarpSystem.getInstance());
+        new CGlobalWarp().register();
+        new CGlobalWarps().register();
         return true;
     }
 

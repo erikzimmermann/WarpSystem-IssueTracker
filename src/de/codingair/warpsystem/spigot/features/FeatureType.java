@@ -34,9 +34,9 @@ public enum FeatureType {
     SPAWN(SpawnManager.class, Priority.LOW, "Spawn"),
     ;
 
-    private Class<? extends Manager> managerClass;
-    private Priority priority;
-    private String name;
+    private final Class<? extends Manager> managerClass;
+    private final Priority priority;
+    private final String name;
 
     FeatureType(Class<? extends Manager> managerClass, Priority priority, String name) {
         this.managerClass = managerClass;

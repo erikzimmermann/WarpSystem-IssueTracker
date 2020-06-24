@@ -9,6 +9,8 @@ import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.setupassistant.annotations.AvailableForSetupAssistant;
+import de.codingair.warpsystem.spigot.base.setupassistant.annotations.Function;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Teleport;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
@@ -30,11 +32,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@AvailableForSetupAssistant(type = "Portals", config = "Config")
+@Function(name = "Enabled", defaultValue = "true", configPath = "WarpSystem.Functions.Portals", clazz = Boolean.class)
+@Function(name = "Teleport message", defaultValue = "true", configPath = "WarpSystem.Send.Teleport_Message.Portals", clazz = Boolean.class)
+@Function(name = "Particle distance", defaultValue = "64", configPath = "WarpSystem.Portals.ParticleDistance", clazz = Integer.class)
+@Function(name = "Hologram update interval", defaultValue = "1m", configPath = "WarpSystem.Portals.HologramUpdateInterval", clazz = String.class)
 public class PortalManager implements Manager {
-    private List<Portal> portals = new ArrayList<>();
-    private List<Player> noTeleport = new ArrayList<>();
-    private TimeList<String> goingToDelete = new TimeList<>();
-    private TimeList<String> goingToEdit = new TimeList<>();
+    private final List<Portal> portals = new ArrayList<>();
+    private final List<Player> noTeleport = new ArrayList<>();
+    private final TimeList<String> goingToDelete = new TimeList<>();
+    private final TimeList<String> goingToEdit = new TimeList<>();
 
     private double maxParticleDistance;
     private long hologramUpdateInterval;
@@ -54,7 +61,7 @@ public class PortalManager implements Manager {
         this.maxParticleDistance = file.getConfig().getDouble("WarpSystem.Portals.ParticleDistance", 70);
         this.hologramUpdateInterval = PlayerWarpManager.convertFromTimeFormat(file.getConfig().getString("WarpSystem.Portals.HologramUpdateInterval", "1m"));
 
-        new CPortals().register(WarpSystem.getInstance());
+        new CPortals().register();
 
         this.portals.forEach(p -> {
             p.setVisible(false);

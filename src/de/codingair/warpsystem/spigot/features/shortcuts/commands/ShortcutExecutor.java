@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.features.shortcuts.commands;
 import de.codingair.codingapi.server.commands.builder.BaseComponent;
 import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import org.bukkit.command.CommandSender;
@@ -10,7 +11,7 @@ import org.bukkit.entity.Player;
 
 public class ShortcutExecutor extends CommandBuilder {
     public ShortcutExecutor(Shortcut shortcut) {
-        super(shortcut.getDisplayName().toLowerCase(), "A WarpSystem-Command", new BaseComponent(shortcut.getPermission()) {
+        super(WarpSystem.getInstance(), shortcut.getDisplayName().toLowerCase(), "A WarpSystem-Command", new BaseComponent(shortcut.getPermission()) {
             @Override
             public void noPermission(CommandSender sender, String label, CommandComponent child) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permission"));
@@ -31,8 +32,5 @@ public class ShortcutExecutor extends CommandBuilder {
                 return false;
             }
         }.setOnlyPlayers(true), false);
-
-        setTemporarily(true);
-        setHighestPriority(true);
     }
 }

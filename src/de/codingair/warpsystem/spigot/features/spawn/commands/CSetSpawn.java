@@ -47,8 +47,6 @@ public class CSetSpawn extends WSCommandBuilder {
             }
         }.setOnlyPlayers(true));
 
-        setHighestPriority(true);
-
         getBaseComponent().addChild(new CommandComponent("edit") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {

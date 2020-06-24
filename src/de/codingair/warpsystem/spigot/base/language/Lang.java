@@ -1,5 +1,7 @@
 package de.codingair.warpsystem.spigot.base.language;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import org.bukkit.ChatColor;
@@ -9,8 +11,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Lang {
+    private static final Cache<String, Boolean> EXIST = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
+    private static ConfigFile config = null;
+
     public static void initPreDefinedLanguages(JavaPlugin plugin) throws IOException {
         List<String> languages = new ArrayList<>();
         languages.add("ENG.yml");
@@ -57,16 +63,25 @@ public class Lang {
             }
 
             to.write(buf, 0, r);
-            total += (long) r;
+            total += r;
         }
     }
 
-    public static String getCurrentLanguage() {
-        return getConfig().getString("WarpSystem.Language", "ENG");
+    private static boolean exist(String tag) {
+        Boolean b = EXIST.getIfPresent(tag);
+
+        if(b == null) {
+            b = new File(WarpSystem.getInstance().getDataFolder(), "/Languages/" + tag + ".yml").exists();
+            EXIST.put(tag, b);
+        }
+
+        return b;
     }
 
-    public static void setCurrentLanguage(String lang) {
-        save(() -> getConfig().set("WarpSystem.Language", lang.toUpperCase()));
+    public static String getCurrentLanguage() {
+        String s = getConfig().getString("WarpSystem.Language", "ENG");
+        if(exist(s)) return s;
+        return "ENG";
     }
 
     public static String getPrefix() {
@@ -107,22 +122,21 @@ public class Lang {
     }
 
     private static FileConfiguration getConfig() {
-        try {
-            ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
-            return file.getConfig();
-        } catch(Exception e) {
-            e.printStackTrace();
-            return null;
+        if(config == null) {
+            try {
+                config = WarpSystem.getInstance().getFileManager().getFile("Config");
+            } catch(Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
+
+        return config.getConfig();
     }
 
     private static FileConfiguration getLanguageFile(String langTag) {
         try {
-            ConfigFile file = WarpSystem.getInstance().getFileManager().getFile(langTag);
-            if(file == null) {
-                WarpSystem.getInstance().getFileManager().loadFile(langTag, "/Languages/", "languages/");
-                return getLanguageFile(langTag);
-            }
+            ConfigFile file = WarpSystem.getInstance().getFileManager().loadFile(langTag, "/Languages/", "languages/");
             return file.getConfig();
         } catch(Exception e) {
             e.printStackTrace();
