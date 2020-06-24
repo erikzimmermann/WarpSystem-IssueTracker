@@ -4,12 +4,12 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
-import de.codingair.warpsystem.spigot.base.utils.teleport.SmartTeleport;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
 public class SimpleWarpAdapter implements DestinationAdapter {
@@ -38,12 +38,8 @@ public class SimpleWarpAdapter implements DestinationAdapter {
 
             if(silent) TeleportListener.TELEPORTS.put(player, finalLoc);
             warp.increaseTeleports();
-            new SmartTeleport(player, finalLoc, new Callback<Boolean>() {
-                @Override
-                public void accept(Boolean object) {
-                    if(callback != null) callback.accept(TeleportResult.TELEPORTED);
-                }
-            }).start();
+            player.teleport(finalLoc, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            if(callback != null) callback.accept(TeleportResult.TELEPORTED);
             return true;
         }
     }
