@@ -91,7 +91,7 @@ public class PWEditor extends Editor<PlayerWarp> implements Ticker {
                 new PAppearance(p, clone, warp, !warp.isOwner(p) || PlayerWarpManager.getManager().existsOwn(p, warp.getName())),
                 (PlayerWarpManager.getManager().isAllowPublicWarps() ? new POptions(p, clone, warp, !warp.isOwner(p) || PlayerWarpManager.getManager().existsOwn(p, warp.getName())) : null),
                 (PlayerWarpManager.getManager().isAllowTrustedMembers() ? new PTrusted(p, clone, warp) : null),
-                (PlayerWarpManager.getManager().isClasses() ? new PClasses(p, clone, warp) : null)
+                (p.hasPermission(WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS) ? new PClasses(p, clone, warp) : null)
         );
 
         this.original = warp;
