@@ -23,21 +23,13 @@ public class SpawnListener implements Listener, PacketListener {
     public void onSpawn(PlayerSpawnLocationEvent e) {
         Spawn spawn = SpawnManager.getInstance().getSpawn();
         if(spawn != null) {
-            if(spawn.getUsage() == Spawn.Usage.EVERY_JOIN || spawn.getUsage() == Spawn.Usage.LOCAL_EVERY_JOIN || spawn.getUsage() == Spawn.Usage.GLOBAL_EVERY_JOIN) {
-                spawn.onJoin(e);
-            }
-        }
-    }
+            boolean b = spawn.getUsage() == Spawn.Usage.EVERY_JOIN || spawn.getUsage() == Spawn.Usage.LOCAL_EVERY_JOIN || spawn.getUsage() == Spawn.Usage.GLOBAL_EVERY_JOIN;
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onLaterSpawn(PlayerSpawnLocationEvent e) {
-        Spawn spawn = SpawnManager.getInstance().getSpawn();
-        if(spawn != null) {
-            if(spawn.getUsage() == Spawn.Usage.EVERY_JOIN || spawn.getUsage() == Spawn.Usage.LOCAL_EVERY_JOIN || spawn.getUsage() == Spawn.Usage.GLOBAL_EVERY_JOIN || spawn.getUsage() == Spawn.Usage.FIRST_JOIN || spawn.getUsage() == Spawn.Usage.LOCAL_FIRST_JOIN || spawn.getUsage() == Spawn.Usage.GLOBAL_FIRST_JOIN) {
-                if(!e.getPlayer().hasPlayedBefore()) {
-                    spawn.firstJoin(e);
+            if(!e.getPlayer().hasPlayedBefore()) {
+                if(b || spawn.getUsage() == Spawn.Usage.FIRST_JOIN || spawn.getUsage() == Spawn.Usage.LOCAL_FIRST_JOIN || spawn.getUsage() == Spawn.Usage.GLOBAL_FIRST_JOIN) {
+                    spawn.onJoin(e, true);
                 }
-            }
+            } else if(b) spawn.onJoin(e, false);
         }
     }
 

@@ -86,13 +86,17 @@ public class Spawn extends FeatureObject {
         options.setDisplayName(displayName);
     }
 
-    public void onJoin(PlayerSpawnLocationEvent e) {
+    public void onJoin(PlayerSpawnLocationEvent e, boolean firstJoin) {
         Destination destination = getAction(WarpAction.class).getValue();
         Location l = destination.buildLocation();
-        if(l != null && l.getWorld() != null) e.setSpawnLocation(l);
+
+        if(l != null && l.getWorld() != null) {
+            e.setSpawnLocation(l);
+            if(firstJoin) Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> firstJoin(e), 1L);
+        }
     }
 
-    public void firstJoin(PlayerSpawnLocationEvent e) {
+    private void firstJoin(PlayerSpawnLocationEvent e) {
         spawnFireWorks(e.getSpawnLocation());
         broadcast(e.getPlayer());
     }
