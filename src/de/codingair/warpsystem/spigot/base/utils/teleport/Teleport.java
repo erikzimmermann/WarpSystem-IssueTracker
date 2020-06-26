@@ -153,26 +153,29 @@ public class Teleport {
             IReflection.MethodAccessor getHandle = IReflection.getMethod(craftChunkClazz, "getHandle", chunkClazz, new Class[] {});
 
             if(Version.getVersion().isBiggerThan(Version.v1_9)) {
-                IReflection.ConstructorAccessor con = IReflection.getConstructor(packetClazz, chunkClazz, int.class);
-
-                for(Chunk chunk : preLoadedChunks) {
-                    Object packet = con.newInstance(getHandle.invoke(craftChunkClazz.cast(chunk)), 65535);
-                    PacketUtils.sendPacket(getPlayer(), packet);
+                if(Version.getVersion().isBiggerThan(15)) {
+                    IReflection.ConstructorAccessor con = IReflection.getConstructor(packetClazz, chunkClazz, int.class, boolean.class);
+                    for(Chunk chunk : preLoadedChunks) {
+                        Object packet = con.newInstance(getHandle.invoke(craftChunkClazz.cast(chunk)), 65535, true);
+                        PacketUtils.sendPacket(getPlayer(), packet);
+                    }
+                } else {
+                    IReflection.ConstructorAccessor con = IReflection.getConstructor(packetClazz, chunkClazz, int.class);
+                    for(Chunk chunk : preLoadedChunks) {
+                        Object packet = con.newInstance(getHandle.invoke(craftChunkClazz.cast(chunk)), 65535);
+                        PacketUtils.sendPacket(getPlayer(), packet);
+                    }
                 }
-
-                preLoadedChunks.clear();
-                preLoadedChunks = null;
             } else {
                 IReflection.ConstructorAccessor con = IReflection.getConstructor(packetClazz, chunkClazz, boolean.class, int.class);
-
                 for(Chunk chunk : preLoadedChunks) {
                     Object packet = con.newInstance(getHandle.invoke(craftChunkClazz.cast(chunk)), true, 65535);
                     PacketUtils.sendPacket(getPlayer(), packet);
                 }
-
-                preLoadedChunks.clear();
-                preLoadedChunks = null;
             }
+
+            preLoadedChunks.clear();
+            preLoadedChunks = null;
         }
     }
 
