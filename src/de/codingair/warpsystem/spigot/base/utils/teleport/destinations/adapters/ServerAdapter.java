@@ -22,7 +22,7 @@ public class ServerAdapter implements DestinationAdapter {
             @Override
             public void accept(Integer result) {
                 if(callback != null) {
-                    if(result == 0) callback.accept(TeleportResult.TELEPORTED);
+                    if(result == 0) callback.accept(TeleportResult.SUCCESS);
                     else if(result == 1) callback.accept(TeleportResult.SERVER_NOT_AVAILABLE);
                     else if(result == 2) callback.accept(TeleportResult.ALREADY_ON_TARGET_SERVER);
                     else if(result == 3) callback.accept(TeleportResult.SERVER_NOT_AVAILABLE);
@@ -42,7 +42,7 @@ public class ServerAdapter implements DestinationAdapter {
         if(!WarpSystem.getInstance().isOnBungeeCord())
             return new SimulatedTeleportResult(null, TeleportResult.NOT_ON_BUNGEE_CORD);
 
-        return new SimulatedTeleportResult(null, TeleportResult.TELEPORTED);
+        return new SimulatedTeleportResult(null, TeleportResult.SUCCESS);
     }
 
     @Override

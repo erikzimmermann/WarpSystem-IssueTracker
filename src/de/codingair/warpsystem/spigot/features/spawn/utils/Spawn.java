@@ -88,7 +88,8 @@ public class Spawn extends FeatureObject {
 
     public void onJoin(PlayerSpawnLocationEvent e) {
         Destination destination = getAction(WarpAction.class).getValue();
-        e.setSpawnLocation(destination.buildLocation());
+        Location l = destination.buildLocation();
+        if(l != null && l.getWorld() != null) e.setSpawnLocation(l);
     }
 
     public void firstJoin(PlayerSpawnLocationEvent e) {
@@ -226,8 +227,8 @@ public class Spawn extends FeatureObject {
         FIRST_JOIN("§7" + Lang.get("First_Join")),
         DISABLED("§c" + Lang.get("Disabled"));
 
-        private String name;
-        private boolean bungee;
+        private final String name;
+        private final boolean bungee;
 
         Usage(String name, boolean bungee) {
             this.name = name;
@@ -279,8 +280,8 @@ public class Spawn extends FeatureObject {
         LOCAL("§b" + Lang.get("Local")),
         GLOBAL("§e" + Lang.get("Global"), true);
 
-        private String name;
-        private boolean bungee;
+        private final String name;
+        private final boolean bungee;
 
         RespawnUsage(String name, boolean bungee) {
             this.name = name;

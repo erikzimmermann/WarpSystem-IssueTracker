@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class AnimationManager implements Manager {
     private static AnimationManager instance = null;
-    private List<Animation> animationList = new ArrayList<>();
+    private final List<Animation> animationList = new ArrayList<>();
     private Animation active = null;
 
     public static AnimationManager getInstance() {

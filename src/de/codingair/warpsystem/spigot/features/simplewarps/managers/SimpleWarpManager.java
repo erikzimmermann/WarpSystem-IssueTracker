@@ -20,8 +20,8 @@ import java.util.Map;
 public class SimpleWarpManager implements Manager {
     public static final String PERMISSION = "WarpSystem.SimpleWarp.%WARP%";
     private static SimpleWarpManager instance = null;
-    private HashMap<String, SimpleWarp> warps = new HashMap<>();
-    private List<String> reservedNames = new ArrayList<>();
+    private final HashMap<String, SimpleWarp> warps = new HashMap<>();
+    private final List<String> reservedNames = new ArrayList<>();
     private ConfigFile file;
 
     private boolean overwritePermissions = false;

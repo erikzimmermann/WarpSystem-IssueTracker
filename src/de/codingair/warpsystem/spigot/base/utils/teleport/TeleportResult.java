@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport;
 
 public enum TeleportResult {
-    TELEPORTED,
+    SUCCESS,
     CANCELLED,
     DESTINATION_DOES_NOT_EXIST,
     WORLD_DOES_NOT_EXIST,

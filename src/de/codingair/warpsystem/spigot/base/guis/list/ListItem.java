@@ -4,8 +4,8 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class ListItem<E> {
-    private E value;
-    private ItemStack item;
+    private final E value;
+    private final ItemStack item;
 
     public ListItem(E value) {
         this.value = value;

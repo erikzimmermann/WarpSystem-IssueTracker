@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PageData {
-    private String name, permission;
-    private List<WarpData> warps = new ArrayList<>();
+    private final String name;
+    private final String permission;
+    private final List<WarpData> warps = new ArrayList<>();
 
     public PageData(String name, String permission) {
         this.name = name;

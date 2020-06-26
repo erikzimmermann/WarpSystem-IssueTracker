@@ -97,7 +97,7 @@ public class FeatureObject implements Serializable {
             options.addCallback(new Callback<TeleportResult>() {
                 @Override
                 public void accept(TeleportResult result) {
-                    if(result == TeleportResult.TELEPORTED) {
+                    if(result == TeleportResult.SUCCESS) {
                         Player p = Bukkit.getPlayer(player);
                         if(p == null) return;
 
@@ -116,7 +116,11 @@ public class FeatureObject implements Serializable {
 
         prepareTeleportOptions(player.getName(), options);
 
-        if(hasAction(Action.WARP)) WarpSystem.getInstance().getTeleportManager().teleport(player, options);
+        if(hasAction(Action.WARP)) {
+            WarpSystem.getInstance().getTeleportManager().teleport(player, options);
+            performed++;
+            return this;
+        }
         else if(hasAction(Action.COSTS)) {
             TeleportManager.confirmPayment(player, getAction(CostsAction.class).getValue(), new Callback<Boolean>() {
                 @Override
@@ -139,6 +143,8 @@ public class FeatureObject implements Serializable {
                 action.perform(player);
             }
         }
+
+        options.runCallbacks(TeleportResult.SUCCESS);
 
         performed++;
         return this;

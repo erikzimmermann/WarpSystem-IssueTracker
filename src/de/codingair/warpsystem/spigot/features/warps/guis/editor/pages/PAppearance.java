@@ -22,8 +22,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class PAppearance extends PageItem {
-    private String startName;
-    private Icon icon;
+    private final String startName;
+    private final Icon icon;
 
     public PAppearance(Player p, Icon icon) {
         super(p, Editor.TITLE_COLOR + Lang.get("Item_Editing"), new ItemBuilder(XMaterial.ITEM_FRAME).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Appearance")).getItem(), false);

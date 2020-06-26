@@ -15,8 +15,8 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.entity.Player;
 
 public class Sounds extends HotbarGUI {
-    private Menu menu;
-    private Sound[] sounds = Sound.values();
+    private final Menu menu;
+    private final Sound[] sounds = Sound.values();
 
     public Sounds(Player player, Menu menu) {
         super(player, WarpSystem.getInstance(), 2);

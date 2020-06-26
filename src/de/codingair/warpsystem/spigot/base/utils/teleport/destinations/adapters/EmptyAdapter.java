@@ -14,14 +14,14 @@ public class EmptyAdapter implements DestinationAdapter {
 
     @Override
     public boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
-        if(callback != null) callback.accept(TeleportResult.TELEPORTED);
+        if(callback != null) callback.accept(TeleportResult.SUCCESS);
         Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> Bukkit.getPluginManager().callEvent(new PlayerTeleportAcceptEvent(player)), 1L);
         return true;
     }
 
     @Override
     public SimulatedTeleportResult simulate(Player player, String id, boolean checkPermission) {
-        return new SimulatedTeleportResult(null, TeleportResult.TELEPORTED);
+        return new SimulatedTeleportResult(null, TeleportResult.SUCCESS);
     }
 
     @Override

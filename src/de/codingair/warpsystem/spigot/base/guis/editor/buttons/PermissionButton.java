@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PermissionButton extends SyncAnvilGUIButton {
-    private FeatureObject object;
+    private final FeatureObject object;
 
     public PermissionButton(int x, int y, FeatureObject object) {
         super(x, y, ClickType.LEFT);
@@ -57,7 +57,7 @@ public class PermissionButton extends SyncAnvilGUIButton {
 
         return new ItemBuilder(XMaterial.ENDER_EYE)
                 .setName("§6§n" + Lang.get("Permission"))
-                .addLore("§3" + Lang.get("Final_Permission") + ": " + (permission == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + permission + "§7'"))
+                .addLore("§3" + Lang.get("Final_Permission") + ": " + (permission == null ? "§c" + Lang.get("Not_Set") : "§7'§f" + permission + "§7'"))
                 .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + (permission == null ? Lang.get("Set") : Lang.get("Change")))
                 .addLore(lore)
                 .getItem();

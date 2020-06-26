@@ -2,6 +2,7 @@ package de.codingair.warpsystem.spigot.features.portals.listeners;
 
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.server.events.PlayerWalkEvent;
+import de.codingair.warpsystem.spigot.api.blocks.listeners.RuleListener;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.portals.guis.PortalEditor;
 import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
@@ -46,6 +47,8 @@ public class PortalListener implements Listener {
             if(!portal.isVisible() || portal.isEditMode()) continue;
 
             int test = portal.enteredPortal(e.getPlayer(), e.getFrom(), e.getTo());
+
+            if(test != 0) RuleListener.noDamageTo(e.getPlayer());
 
             if(test == 1) {
                 //entered

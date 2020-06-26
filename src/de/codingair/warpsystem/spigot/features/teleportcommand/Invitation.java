@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Invitation {
-    private String sender;
-    private String recipient; //notify if receiver != null | if recipient == null ? ALL
+    private final String sender;
+    private final String recipient; //notify if receiver != null | if recipient == null ? ALL
     private int recipients = 1;
-    private boolean toSender; //only send if receiver.length == 1
-    private List<String> handled = new ArrayList<>();
-    private boolean bukkitOnly;
+    private final boolean toSender; //only send if receiver.length == 1
+    private final List<String> handled = new ArrayList<>();
+    private final boolean bukkitOnly;
 
     protected Invitation(String sender, boolean bukkitOnly) {
         this.sender = sender;

@@ -1,7 +1,5 @@
 package de.codingair.warpsystem.spigot.features.portals.guis.subgui.animationseditor;
 
-import de.codingair.codingapi.particles.Particle;
-import de.codingair.codingapi.particles.utils.Color;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.hotbar.ClickType;
 import de.codingair.codingapi.player.gui.hotbar.HotbarGUI;
@@ -17,10 +15,10 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.animations.utils.ParticlePart;
 import org.bukkit.entity.Player;
 
-public class ParticleOptions extends HotbarGUI {
+public class ParticleRotation extends HotbarGUI {
     private final AnimationHotBarEditor main;
 
-    public ParticleOptions(Player player, AnimationHotBarEditor main) {
+    public ParticleRotation(Player player, AnimationHotBarEditor main) {
         super(player, WarpSystem.getInstance(), 2);
 
         setOpenSound(new SoundData(Sound.ENTITY_PLAYER_LEVELUP, 0.5F, 1F));
@@ -32,7 +30,6 @@ public class ParticleOptions extends HotbarGUI {
 
     @Override
     public void open(boolean sound) {
-        updateDisplayName(getItem(3), "§7" + Lang.get("Animation_Height") + ": §e" + getHeight());
         super.open(sound);
         setStartSlot(2);
     }
@@ -55,88 +52,29 @@ public class ParticleOptions extends HotbarGUI {
             }
         }).setLink(this.main), false);
         setItem(1, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
-
-        setItem(2, new ItemComponent(new ItemBuilder(XMaterial.BEACON).setName("§7" + Lang.get("Animation_Type") + ": '§e" + getAnimationName() + "§7'").getItem(), new ItemListener() {
+        setItem(2, new ItemComponent(new ItemBuilder(XMaterial.BLAZE_ROD).setName("§7" + Lang.get("Rotation") + " (X): '§e" + getXRotation() + "§7'").getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 if(clickType == ClickType.LEFT_CLICK) {
-                    getPart().setAnimation(getPart().getAnimation().previous());
+                    getPart().setxRotation(getPart().getxRotation() - 5);
+                } else if(clickType == ClickType.SHIFT_LEFT_CLICK) {
+                    getPart().setxRotation(getPart().getxRotation() - 45);
                 } else if(clickType == ClickType.RIGHT_CLICK) {
-                    getPart().setAnimation(getPart().getAnimation().next());
-                } else return;
+                    getPart().setxRotation(getPart().getxRotation() + 5);
+                } else if(clickType == ClickType.SHIFT_RIGHT_CLICK) {
+                    getPart().setxRotation(getPart().getxRotation() + 45);
+                }
+
+                if(getPart().getxRotation() >= 360) getPart().setxRotation(getPart().getxRotation() - 360);
+                else if(getPart().getxRotation() < 0) getPart().setxRotation(getPart().getxRotation() + 360);
 
                 main.getAnimation().update();
-                updateDisplayName(ic, "§7" + Lang.get("Animation_Type") + ": '§e" + getAnimationName() + "§7'");
+                updateDisplayName(ic, "§7" + Lang.get("Rotation") + " (X): '§e" + getXRotation() + "§7'");
             }
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), AnimationHotBarEditor.PREVIOUS_NEXT(Lang.get("Animation_Type")), WarpSystem.getInstance(), Integer.MAX_VALUE);
-            }
-
-            @Override
-            public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
-                MessageAPI.stopSendingActionBar(getPlayer());
-            }
-        }));
-
-        setItem(3, new ItemComponent(new ItemBuilder(XMaterial.STICK).setName("§7" + Lang.get("Animation_Height") + ": §e" + getHeight()).getItem(), new ItemListener() {
-            @Override
-            public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-                if(clickType == ClickType.LEFT_CLICK) {
-                    getPart().setHeight(getPart().getHeight() - 0.1);
-                } else if(clickType == ClickType.RIGHT_CLICK) {
-                    getPart().setHeight(getPart().getHeight() + 0.1);
-                } else return;
-
-                main.getAnimation().update();
-                updateDisplayName(ic, "§7" + Lang.get("Animation_Height") + ": §e" + getHeight());
-            }
-
-            @Override
-            public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), AnimationHotBarEditor.MINUS_PLUS(Lang.get("Animation_Height")), WarpSystem.getInstance(), Integer.MAX_VALUE);
-            }
-
-            @Override
-            public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
-                MessageAPI.stopSendingActionBar(getPlayer());
-            }
-        }));
-
-        setItem(4, new ItemComponent(new ItemBuilder(XMaterial.STRING).setName("§7" + Lang.get("Animation_Radius") + ": §e" + getRadius()).getItem(), new ItemListener() {
-            @Override
-            public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-                if(clickType == ClickType.LEFT_CLICK) {
-                    getPart().setRadius(getPart().getRadius() - 0.1);
-                } else if(clickType == ClickType.RIGHT_CLICK) {
-                    getPart().setRadius(getPart().getRadius() + 0.1);
-                } else return;
-
-                main.getAnimation().update();
-                updateDisplayName(ic, "§7" + Lang.get("Animation_Radius") + ": §e" + getRadius());
-            }
-
-            @Override
-            public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(getPlayer(), AnimationHotBarEditor.MINUS_PLUS(Lang.get("Animation_Radius")), WarpSystem.getInstance(), Integer.MAX_VALUE);
-            }
-
-            @Override
-            public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
-                MessageAPI.stopSendingActionBar(getPlayer());
-            }
-        }));
-
-        setItem(5, new ItemComponent(new ItemBuilder(XMaterial.SUGAR).setName("§7" + Lang.get("Animation_Speed") + ": §e" + getSpeed()).getItem(), new ItemListener() {
-            @Override
-            public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-                Lang.PREMIUM_CHAT(player);
-            }
-
-            @Override
-            public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(player, Lang.PREMIUM_HOTBAR, WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), AnimationHotBarEditor.MINUS_PLUS_SHIFT(Lang.get("Rotation") + " (X)"), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -145,15 +83,29 @@ public class ParticleOptions extends HotbarGUI {
             }
         }));
 
-        setItem(6, new ItemComponent(new ItemBuilder(XMaterial.CYAN_DYE).setName("§7" + Lang.get("Color") + ": §e" + (getColor() == null || !getPart().getParticle().isColorable() ? "§c-" : getColorName())).getItem(), new ItemListener() {
+        setItem(3, new ItemComponent(new ItemBuilder(XMaterial.BLAZE_ROD).setName("§7" + Lang.get("Rotation") + " (Y): '§e" + getYRotation() + "§7'").getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
-                Lang.PREMIUM_CHAT(player);
+                if(clickType == ClickType.LEFT_CLICK) {
+                    getPart().setyRotation(getPart().getyRotation() - 5);
+                } else if(clickType == ClickType.SHIFT_LEFT_CLICK) {
+                    getPart().setyRotation(getPart().getyRotation() - 45);
+                } else if(clickType == ClickType.RIGHT_CLICK) {
+                    getPart().setyRotation(getPart().getyRotation() + 5);
+                } else if(clickType == ClickType.SHIFT_RIGHT_CLICK) {
+                    getPart().setyRotation(getPart().getyRotation() + 45);
+                }
+
+                if(getPart().getyRotation() >= 360) getPart().setyRotation(getPart().getyRotation() - 360);
+                else if(getPart().getyRotation() < 0) getPart().setyRotation(getPart().getyRotation() + 360);
+
+                main.getAnimation().update();
+                updateDisplayName(ic, "§7" + Lang.get("Rotation") + " (Y): '§e" + getYRotation() + "§7'");
             }
 
             @Override
             public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
-                MessageAPI.sendActionBar(player, Lang.PREMIUM_HOTBAR, WarpSystem.getInstance(), Integer.MAX_VALUE);
+                MessageAPI.sendActionBar(getPlayer(), AnimationHotBarEditor.MINUS_PLUS_SHIFT(Lang.get("Rotation") + " (Y)"), WarpSystem.getInstance(), Integer.MAX_VALUE);
             }
 
             @Override
@@ -161,14 +113,63 @@ public class ParticleOptions extends HotbarGUI {
                 MessageAPI.stopSendingActionBar(player);
             }
         }));
-    }
 
-    private Color getColor() {
-        return getPart() == null ? null : getPart().getColor();
-    }
+        setItem(4, new ItemComponent(new ItemBuilder(XMaterial.BLAZE_ROD).setName("§7" + Lang.get("Rotation") + " (Z): '§e" + getZRotation() + "§7'").getItem(), new ItemListener() {
+            @Override
+            public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
+                if(clickType == ClickType.LEFT_CLICK) {
+                    getPart().setzRotation(getPart().getzRotation() - 5);
+                } else if(clickType == ClickType.SHIFT_LEFT_CLICK) {
+                    getPart().setzRotation(getPart().getzRotation() - 45);
+                } else if(clickType == ClickType.RIGHT_CLICK) {
+                    getPart().setzRotation(getPart().getzRotation() + 5);
+                } else if(clickType == ClickType.SHIFT_RIGHT_CLICK) {
+                    getPart().setzRotation(getPart().getzRotation() + 45);
+                }
 
-    private String getColorName() {
-        return getPart() == null ? null : getPart().getParticle() != Particle.NOTE ? getPart().getColor().getName() : getPart().getColor().getNoteName();
+                if(getPart().getzRotation() >= 360) getPart().setzRotation(getPart().getzRotation() - 360);
+                else if(getPart().getzRotation() < 0) getPart().setzRotation(getPart().getzRotation() + 360);
+
+                main.getAnimation().update();
+                updateDisplayName(ic, "§7" + Lang.get("Rotation") + " (Z): '§e" + getZRotation() + "§7'");
+            }
+
+            @Override
+            public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
+                MessageAPI.sendActionBar(getPlayer(), AnimationHotBarEditor.MINUS_PLUS_SHIFT(Lang.get("Rotation") + " (Z)"), WarpSystem.getInstance(), Integer.MAX_VALUE);
+            }
+
+            @Override
+            public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
+                MessageAPI.stopSendingActionBar(player);
+            }
+        }));
+
+        setItem(6, new ItemComponent(new ItemBuilder(XMaterial.BARRIER).setName("§7" + Lang.get("Leftclick") + ": §c" + Lang.get("Reset")).getItem(), new ItemListener() {
+            @Override
+            public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
+                if(clickType == ClickType.LEFT_CLICK) {
+                    getPart().setxRotation(0);
+                    getPart().setyRotation(0);
+                    getPart().setzRotation(0);
+
+                    main.getAnimation().update();
+                    updateDisplayName(getItem(2), "§7" + Lang.get("Rotation") + " (X): '§e" + getXRotation() + "§7'");
+                    updateDisplayName(getItem(3), "§7" + Lang.get("Rotation") + " (Y): '§e" + getYRotation() + "§7'");
+                    updateDisplayName(getItem(4), "§7" + Lang.get("Rotation") + " (Z): '§e" + getZRotation() + "§7'");
+                }
+            }
+
+            @Override
+            public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
+
+            }
+
+            @Override
+            public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
+
+            }
+        }));
     }
 
     private int getXRotation() {
@@ -187,19 +188,4 @@ public class ParticleOptions extends HotbarGUI {
         return main.getPart();
     }
 
-    private double getRadius() {
-        return getPart() == null ? null : getPart().getRadius();
-    }
-
-    private double getSpeed() {
-        return getPart() == null ? null : getPart().getSpeed();
-    }
-
-    private double getHeight() {
-        return getPart() == null ? null : getPart().getHeight();
-    }
-
-    private String getAnimationName() {
-        return getPart() == null ? null : getPart().getAnimation() == null ? null : getPart().getAnimation().getDisplayName();
-    }
 }

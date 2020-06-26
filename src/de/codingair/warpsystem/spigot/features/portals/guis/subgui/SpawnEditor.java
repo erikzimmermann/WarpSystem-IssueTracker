@@ -19,8 +19,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class SpawnEditor extends HotbarGUI {
-    private PortalEditor fallBack;
-    private Portal clone;
+    private final PortalEditor fallBack;
+    private final Portal clone;
 
     public SpawnEditor(Player player, PortalEditor fallBack, Portal clone) {
         super(player, WarpSystem.getInstance(), 2);

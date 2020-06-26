@@ -23,7 +23,7 @@ public class WarpSignGUI extends Editor<WarpSign> {
 
     public WarpSignGUI(Player p, WarpSign sign, WarpSign clone) {
         super(p, clone, new Backup<WarpSign>(sign) {
-            private String[] backupLines = ((Sign) sign.getLocation().getBlock().getState()).getLines();
+            private final String[] backupLines = ((Sign) sign.getLocation().getBlock().getState()).getLines();
 
             @Override
             public void applyTo(WarpSign clone) {
@@ -75,7 +75,7 @@ public class WarpSignGUI extends Editor<WarpSign> {
             ItemBuilder builder = new ItemBuilder(XMaterial.OAK_SIGN);
 
             for(String line : lines) {
-                builder.addText("§7'§r" + ChatColor.translateAlternateColorCodes('&', line) + "§7'");
+                builder.addText("§7'§f" + ChatColor.translateAlternateColorCodes('&', line) + "§7'");
             }
 
             return builder.getItem();

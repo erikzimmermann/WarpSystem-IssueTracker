@@ -30,9 +30,9 @@ public class PList<E> extends Page {
     private List<ListItem<E>> items;
     private List<ListItem<E>> backup;
 
-    private boolean searchable;
-    private String title;
-    private Player player;
+    private final boolean searchable;
+    private final String title;
+    private final Player player;
 
     private int page = 0;
     private String searching = null;

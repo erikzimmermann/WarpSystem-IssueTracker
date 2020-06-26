@@ -17,8 +17,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
 public class BuffPart extends HotbarGUI {
-    private Menu menu;
-    private int slot;
+    private final Menu menu;
+    private final int slot;
 
     public BuffPart(Player player, int slot, Menu menu) {
         super(player, WarpSystem.getInstance(), 2);

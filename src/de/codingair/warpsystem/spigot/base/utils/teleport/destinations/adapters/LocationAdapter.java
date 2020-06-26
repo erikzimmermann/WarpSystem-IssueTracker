@@ -47,7 +47,7 @@ public class LocationAdapter implements DestinationAdapter, CloneableAdapter {
             Location finalLoc = location.clone().add(randomOffset);
             if(silent) TeleportListener.TELEPORTS.put(player, finalLoc);
             player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
-            if(callback != null) callback.accept(TeleportResult.TELEPORTED);
+            if(callback != null) callback.accept(TeleportResult.SUCCESS);
             return true;
         }
     }
@@ -62,7 +62,7 @@ public class LocationAdapter implements DestinationAdapter, CloneableAdapter {
 
         if(location.getWorld() == null) {
             return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("World_Not_Exists"), TeleportResult.WORLD_DOES_NOT_EXIST);
-        } else return new SimulatedTeleportResult(null, TeleportResult.TELEPORTED);
+        } else return new SimulatedTeleportResult(null, TeleportResult.SUCCESS);
     }
 
     @Override

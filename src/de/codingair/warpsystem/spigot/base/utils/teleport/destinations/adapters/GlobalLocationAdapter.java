@@ -65,7 +65,7 @@ public class GlobalLocationAdapter extends LocationAdapter implements Serializab
                 Location finalLoc = location.clone().add(randomOffset);
                 if(silent) TeleportListener.TELEPORTS.put(player, finalLoc);
                 player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                if(callback != null) callback.accept(TeleportResult.TELEPORTED);
+                if(callback != null) callback.accept(TeleportResult.SUCCESS);
                 return true;
             }
         } else {
@@ -75,7 +75,7 @@ public class GlobalLocationAdapter extends LocationAdapter implements Serializab
                     if(callback == null) return;
                     switch(result) {
                         case 0:
-                            callback.accept(TeleportResult.TELEPORTED);
+                            callback.accept(TeleportResult.SUCCESS);
                             break;
                         case 1:
                             callback.accept(TeleportResult.SERVER_NOT_AVAILABLE);
@@ -105,9 +105,9 @@ public class GlobalLocationAdapter extends LocationAdapter implements Serializab
         if(server == null || server.equals(WarpSystem.getInstance().getCurrentServer())) {
             if(location.getWorld() == null) {
                 return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("World_Not_Exists"), TeleportResult.WORLD_DOES_NOT_EXIST);
-            } else return new SimulatedTeleportResult(null, TeleportResult.TELEPORTED);
+            } else return new SimulatedTeleportResult(null, TeleportResult.SUCCESS);
         } else {
-            return new SimulatedTeleportResult(null, TeleportResult.TELEPORTED);
+            return new SimulatedTeleportResult(null, TeleportResult.SUCCESS);
         }
     }
 

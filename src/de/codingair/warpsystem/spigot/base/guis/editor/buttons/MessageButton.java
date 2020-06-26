@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MessageButton extends SyncAnvilGUIButton {
-    private FeatureObject object;
+    private final FeatureObject object;
 
     public MessageButton(int x, int y, FeatureObject object) {
         super(x, y, ClickType.LEFT);
@@ -38,7 +38,7 @@ public class MessageButton extends SyncAnvilGUIButton {
 
         if(messages != null) {
             for(String msg : messages) {
-                messageInfo.add("§7- '§r" + msg + "§7'");
+                messageInfo.add("§7- '§f" + msg + "§7'");
             }
         }
 

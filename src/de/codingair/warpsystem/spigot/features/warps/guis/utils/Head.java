@@ -20,7 +20,7 @@ public enum Head {
     GRAY_ARROW_DOWN("be9ae7a4be65fcbaee65181389a2f7d47e2e326db59ea3eb789a92c85ea46"),
     GRAY_PLUS("10c97e4b68aaaae8472e341b1d872b93b36d4eb6ea89ecec26a66e6c4e178");
 
-    private String data;
+    private final String data;
 
     Head(String data) {
         this.data = data;

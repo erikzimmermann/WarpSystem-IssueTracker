@@ -34,11 +34,11 @@ public abstract class PortalList extends GUIList<Portal> {
             listItems.add(new ListItem<Portal>(portal) {
                 @Override
                 public ItemStack buildItem() {
-                    String pos = "§7x=§r" + cut(portal.getSpawn().getX()) + "§7, y=§r" + cut(portal.getSpawn().getY()) + "§7, z=§r" + cut(portal.getSpawn().getZ());
+                    String pos = "§7x=§f" + cut(portal.getSpawn().getX()) + "§7, y=§f" + cut(portal.getSpawn().getY()) + "§7, z=§f" + cut(portal.getSpawn().getZ());
 
                     ItemBuilder builder = new ItemBuilder(XMaterial.ENDER_PEARL)
-                            .setName(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Name") + ": §7'§r" + ChatColor.translateAlternateColorCodes('&', ChatColor.highlight(portal.getDisplayName(), getSearched(), "§e§n", "§7", true)) + "§7'")
-                            .addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("World") + ": §7'§r" + ChatColor.highlight(portal.getSpawn().getWorldName(), getSearched(), "§e§n", "§7", true) + "§7'",
+                            .setName(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Name") + ": §7'§f" + ChatColor.translateAlternateColorCodes('&', ChatColor.highlight(portal.getDisplayName(), getSearched(), "§e§n", "§7", true)) + "§7'")
+                            .addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("World") + ": §7'§f" + ChatColor.highlight(portal.getSpawn().getWorldName(), getSearched(), "§e§n", "§7", true) + "§7'",
                                     Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Position") + ": " + pos);
 
                     buildItemDescription(builder.getLore());

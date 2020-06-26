@@ -8,7 +8,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class PageItem extends Page {
-    private ItemStack pageItem;
+    private final ItemStack pageItem;
 
     public PageItem(Player p, String title, ItemStack pageItem, boolean preInitialize) {
         super(p, title, false);

@@ -19,7 +19,7 @@ public class GlobalWarpAdapter implements DestinationAdapter {
             public void accept(GlobalWarpTeleportPacket.Result result) {
                 switch(result) {
                     case TELEPORTED:
-                        if(callback != null) callback.accept(TeleportResult.TELEPORTED);
+                        if(callback != null) callback.accept(TeleportResult.SUCCESS);
                         break;
 
                     case WARP_NOT_EXISTS:
@@ -48,7 +48,7 @@ public class GlobalWarpAdapter implements DestinationAdapter {
 
     @Override
     public SimulatedTeleportResult simulate(Player player, String id, boolean checkPermission) {
-        return new SimulatedTeleportResult(null, TeleportResult.TELEPORTED);
+        return new SimulatedTeleportResult(null, TeleportResult.SUCCESS);
     }
 
     @Override

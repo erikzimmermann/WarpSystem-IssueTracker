@@ -30,10 +30,10 @@ public class Editor<C> extends SimpleGUI {
     public static final String ITEM_SUB_TITLE_WARNING = "§c";
 
     private SoundData successSound = null;
-    private PageItem[] pages;
-    private C clone;
-    private Backup<C> backup;
-    private ShowIcon showIcon;
+    private final PageItem[] pages;
+    private final C clone;
+    private final Backup<C> backup;
+    private final ShowIcon showIcon;
 
     public Editor(Player p, C clone, Backup<C> backup, ShowIcon showIcon, PageItem... pages) {
         super(p, new Layout(), pages[0], WarpSystem.getInstance());

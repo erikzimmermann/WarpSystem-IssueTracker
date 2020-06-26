@@ -20,7 +20,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class POptions extends PageItem {
-    private Portal clone;
+    private final Portal clone;
 
     public POptions(Player p, Portal clone) {
         super(p, PortalEditor.getMainTitle(), new ItemBuilder(XMaterial.COMMAND_BLOCK).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Options")).getItem(), false);

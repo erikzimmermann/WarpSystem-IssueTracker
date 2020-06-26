@@ -12,25 +12,13 @@ import de.codingair.warpsystem.transfer.packets.utils.PacketType;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class SpawnListener implements Listener, PacketListener {
-    private List<Player> handle = new ArrayList<>();
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        handle.add(e.getPlayer());
-    }
-
     @EventHandler(priority = EventPriority.LOW)
     public void onSpawn(PlayerSpawnLocationEvent e) {
         Spawn spawn = SpawnManager.getInstance().getSpawn();

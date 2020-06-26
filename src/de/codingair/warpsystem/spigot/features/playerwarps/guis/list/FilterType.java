@@ -17,9 +17,9 @@ public enum FilterType {
     CLASSES(ClassesFilter.class, Lang.get("Filter_Classes"), 3, true);
 
     private Filter instance;
-    private String filterName;
-    private int id;
-    private boolean enabled;
+    private final String filterName;
+    private final int id;
+    private final boolean enabled;
 
     FilterType(Class<? extends Filter> clazz, String filterName, int id, boolean enabled) {
         try {

@@ -21,7 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class GChooseIconType extends GUI {
-    private Callback<Boolean> callback;
+    private final Callback<Boolean> callback;
     private boolean set = false;
     private Icon page;
 

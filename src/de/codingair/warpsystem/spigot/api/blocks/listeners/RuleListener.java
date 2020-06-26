@@ -1,16 +1,19 @@
 package de.codingair.warpsystem.spigot.api.blocks.listeners;
 
 import de.codingair.codingapi.API;
+import de.codingair.codingapi.tools.TimeList;
 import de.codingair.warpsystem.spigot.api.blocks.StaticLavaBlock;
 import de.codingair.warpsystem.spigot.api.blocks.utils.StaticBlock;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.util.Vector;
@@ -19,6 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RuleListener implements Listener {
+    private static TimeList<Entity> NO_DAMAGE;
+
+    public RuleListener() {
+        if(NO_DAMAGE == null) NO_DAMAGE = new TimeList<>();
+    }
+
+    public static void noDamageTo(Entity entity) {
+        if(NO_DAMAGE != null) NO_DAMAGE.add(entity, 1);
+    }
 
     @EventHandler
     public void onChange(BlockPhysicsEvent e) {
@@ -63,13 +75,34 @@ public class RuleListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
+    public void onHit(EntityCombustEvent e) {
+        if(NO_DAMAGE.contains(e.getEntity())) {
+            e.setCancelled(true);
+            e.setDuration(0);
+            e.getEntity().setFireTicks(-200);
+            return;
+        }
+
+        if(!touchesKnownStaticBlocks(e.getEntity())) return;
+
+        e.setDuration(0);
+        e.getEntity().setFireTicks(-200);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onHit(EntityDamageEvent e) {
+        if(NO_DAMAGE.contains(e.getEntity())) {
+            e.setCancelled(true);
+            e.getEntity().setFireTicks(-200);
+            return;
+        }
+
         if((e instanceof EntityDamageByBlockEvent && e.getCause().equals(EntityDamageByBlockEvent.DamageCause.LAVA)) || e.getCause() == EntityDamageEvent.DamageCause.FIRE || e.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || e.getCause() == EntityDamageEvent.DamageCause.DROWNING) {
             if(!touchesKnownStaticBlocks(e.getEntity())) return;
 
             e.setCancelled(true);
             e.setDamage(0);
-            e.getEntity().setFireTicks(0);
+            e.getEntity().setFireTicks(-200);
         }
     }
 
