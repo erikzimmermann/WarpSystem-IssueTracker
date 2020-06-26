@@ -15,8 +15,8 @@ import java.util.Map;
 public class Animation implements Serializable {
     private String name = null;
     private Location teleportLoc = null;
-    private List<Buff> buffList = new ArrayList<>();
-    private List<ParticlePart> particleParts = new ArrayList<>();
+    private final List<Buff> buffList = new ArrayList<>();
+    private final List<ParticlePart> particleParts = new ArrayList<>();
     private SoundData tickSound = new SoundData(Sound.BLOCK_NOTE_BLOCK_HARP, 1F, 0.5F);
     private SoundData teleportSound = new SoundData(Sound.ENTITY_ENDERMAN_TELEPORT, 1F, 1F);
 

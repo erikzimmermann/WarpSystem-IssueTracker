@@ -16,11 +16,11 @@ public enum PortalType {
     EDIT(null, XMaterial.END_STONE.parseMaterial(), null, null),
     ;
 
-    private BlockType type;
-    private Material blockMaterial;
-    private Material verticalBlockMaterial;
-    private Class<? extends Block> block;
-    private Material item;
+    private final BlockType type;
+    private final Material blockMaterial;
+    private final Material verticalBlockMaterial;
+    private final Class<? extends Block> block;
+    private final Material item;
 
     PortalType(BlockType type, Material blockMaterial, Class<? extends Block> block, Material item) {
         this.type = type;

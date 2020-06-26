@@ -19,7 +19,7 @@ public class TempWarp {
     private Location location;
     private String name;
 
-    private Date bornDate;
+    private final Date bornDate;
     private Date startDate;
     private Date endDate;
     private Date expireDate;

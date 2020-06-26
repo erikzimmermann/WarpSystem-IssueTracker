@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TeleportSoundPage extends PageItem {
-    private SoundData soundData;
-    private Sound[] sounds = Sound.values();
+    private final SoundData soundData;
+    private final Sound[] sounds = Sound.values();
 
     public TeleportSoundPage(Player player, String title, SoundData soundData) {
         super(player, title, new ItemBuilder(XMaterial.NOTE_BLOCK).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Teleport_Sound")).getItem(), false);
@@ -46,7 +46,7 @@ public class TeleportSoundPage extends PageItem {
         ItemButtonOption option = new StandardButtonOption();
 
         addButton(new SyncAnvilGUIButton(1, 2, ClickType.SHIFT_LEFT) {
-            private List<Sound> searched = new ArrayList<>();
+            private final List<Sound> searched = new ArrayList<>();
             private String searchingFor = null;
             private int id = 0;
 
@@ -184,7 +184,7 @@ public class TeleportSoundPage extends PageItem {
             public ItemStack craftItem() {
                 return new ItemBuilder(XMaterial.NOTE_BLOCK)
                         .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Volume"))
-                        .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": §r" + soundData.getVolume())
+                        .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": §f" + soundData.getVolume())
                         .addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7-")
                         .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §7+")
                         .getItem();
@@ -212,7 +212,7 @@ public class TeleportSoundPage extends PageItem {
             public ItemStack craftItem() {
                 return new ItemBuilder(XMaterial.BLAZE_ROD)
                         .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Pitch"))
-                        .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": §r" + soundData.getPitch())
+                        .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": §f" + soundData.getPitch())
                         .addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7-")
                         .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §7+")
                         .getItem();

@@ -23,9 +23,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class Particles extends HotbarGUI {
-    private Menu menu;
-    private List<ParticlePart> parts;
-    private AnimationPart[] animations = new AnimationPart[5];
+    private final Menu menu;
+    private final List<ParticlePart> parts;
+    private final AnimationPart[] animations = new AnimationPart[5];
 
     public Particles(Player player, Menu menu) {
         super(player, WarpSystem.getInstance(), 2);

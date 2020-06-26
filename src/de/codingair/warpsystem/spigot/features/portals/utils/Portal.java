@@ -2,18 +2,22 @@ package de.codingair.warpsystem.spigot.features.portals.utils;
 
 import de.codingair.codingapi.server.blocks.utils.Axis;
 import de.codingair.codingapi.tools.Area;
+import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.HitBox;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.lib.JSONArray;
 import de.codingair.codingapi.tools.io.utils.DataWriter;
+import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.pages.TeleportSoundPage;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.TeleportSoundAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
@@ -31,7 +35,7 @@ public class Portal extends FeatureObject {
     private List<PortalBlock> blocks;
     private List<Animation> animations;
     private boolean visible = false;
-    private List<PortalListener> listeners = new ArrayList<>();
+    private final List<PortalListener> listeners = new ArrayList<>();
 
     private Hologram hologram = new Hologram();
 

@@ -87,7 +87,7 @@ public class PlayerWarp extends FeatureObject {
         options.addCallback(new Callback<TeleportResult>() {
             @Override
             public void accept(TeleportResult res) {
-                if(res == TeleportResult.TELEPORTED) {
+                if(res == TeleportResult.SUCCESS) {
                     PlayerWarpTeleportProcessPacket packet = PlayerWarpManager.getManager().checkBungeeCord() ? new PlayerWarpTeleportProcessPacket(name, owner.getId()) : null;
                     if(packet != null && !isOwner(player) && !isTrusted(player)) packet.setIncreasePerformed(true);
 
@@ -718,7 +718,7 @@ public class PlayerWarp extends FeatureObject {
     }
 
     public static class User implements Serializable, de.codingair.warpsystem.transfer.serializeable.Serializable {
-        private String jsonPrefix;
+        private final String jsonPrefix;
         private String name;
         private UUID id;
 

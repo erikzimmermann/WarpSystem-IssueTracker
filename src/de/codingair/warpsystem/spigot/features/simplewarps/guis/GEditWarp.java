@@ -61,8 +61,8 @@ public class GEditWarp extends SimpleGUI {
     }
 
     private static class GPage extends Page {
-        private SimpleWarp warp;
-        private SimpleWarp clone;
+        private final SimpleWarp warp;
+        private final SimpleWarp clone;
         private boolean saved = false;
 
         public GPage(Player p, SimpleWarp warp) {
@@ -128,7 +128,7 @@ public class GEditWarp extends SimpleGUI {
                             .setName("§6§n" + Lang.get("Permission"))
                             .setLore(perm ? null : "§8» " + Lang.get("Permission_Notice"))
                             .addLore(perm ? "§7" + Lang.get("Permission_overwritten_by_config") : null)
-                            .addLore("§3" + Lang.get("Current") + ": " + (permission == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + permission + "§7'"))
+                            .addLore("§3" + Lang.get("Current") + ": " + (permission == null ? "§c" + Lang.get("Not_Set") : "§7'§f" + permission + "§7'"))
                             .addLore(perm ? null : "", perm ? null : "§3" + Lang.get("Leftclick") + ": §a" + (permission == null ? Lang.get("Set") : Lang.get("Change")))
                             .addLore(lore)
                             .getItem();

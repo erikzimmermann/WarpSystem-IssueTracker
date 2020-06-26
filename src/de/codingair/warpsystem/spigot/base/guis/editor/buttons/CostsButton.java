@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CostsButton extends SyncAnvilGUIButton {
-    private FeatureObject object;
+    private final FeatureObject object;
 
     public CostsButton(int x, int y, FeatureObject object) {
         super(x, y, ClickType.LEFT);

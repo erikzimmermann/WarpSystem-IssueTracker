@@ -22,11 +22,13 @@ import java.util.List;
 import java.util.Random;
 
 public class RandomLocationCalculator implements Runnable {
-    private org.bukkit.Location startLocation;
-    private PermissionPlayer check;
-    private Callback<Location> callback;
+    private final org.bukkit.Location startLocation;
+    private final PermissionPlayer check;
+    private final Callback<Location> callback;
     private long lastReaction = 0;
-    private double minRange, maxRange, diffRange;
+    private final double minRange;
+    private final double maxRange;
+    private final double diffRange;
 
     public RandomLocationCalculator(Player player, org.bukkit.Location location, double minRange, double maxRange, Callback<Location> callback) {
         this.check = new PermissionPlayer(player);

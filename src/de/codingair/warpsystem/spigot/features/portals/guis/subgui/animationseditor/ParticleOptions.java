@@ -18,7 +18,7 @@ import de.codingair.warpsystem.spigot.features.animations.utils.ParticlePart;
 import org.bukkit.entity.Player;
 
 public class ParticleOptions extends HotbarGUI {
-    private AnimationHotBarEditor main;
+    private final AnimationHotBarEditor main;
 
     public ParticleOptions(Player player, AnimationHotBarEditor main) {
         super(player, WarpSystem.getInstance(), 2);

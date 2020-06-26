@@ -27,17 +27,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class Menu extends HotbarGUI {
-    private Animation animation;
-    private Animation clone;
-    private AnimationPlayer animPlayer;
-    private MovableMid mid;
+    private final Animation animation;
+    private final Animation clone;
+    private final AnimationPlayer animPlayer;
+    private final MovableMid mid;
 
-    private MenuParts[] menuParts;
-    private MenuHook hook;
-    private Particles particles;
-    private Buffs buffs;
-    private Sounds sounds;
-    private HotbarGUI link;
+    private final MenuParts[] menuParts;
+    private final MenuHook hook;
+    private final Particles particles;
+    private final Buffs buffs;
+    private final Sounds sounds;
+    private final HotbarGUI link;
 
     public Menu(Player player, String name) {
         this(player, new Animation(name));
@@ -133,7 +133,7 @@ public class Menu extends HotbarGUI {
         getPlayer().getInventory().setHeldItemSlot(0);
 
         setItem(0, new ItemComponent(new ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).setHideName(true).getItem()));
-        setItem(1, new ItemComponent(new ItemBuilder(XMaterial.NAME_TAG).setName("§7" + Lang.get("Name") + ": '§r" + clone.getName() + "§7'").getItem(), new ItemListener() {
+        setItem(1, new ItemComponent(new ItemBuilder(XMaterial.NAME_TAG).setName("§7" + Lang.get("Name") + ": '§f" + clone.getName() + "§7'").getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 AnvilGUI.openAnvil(WarpSystem.getInstance(), player, new AnvilListener() {
@@ -152,7 +152,7 @@ public class Menu extends HotbarGUI {
                         }
 
                         clone.setName(input);
-                        updateDisplayName(ic, "§7" + Lang.get("Name") + ": '§r" + clone.getName() + "§7'");
+                        updateDisplayName(ic, "§7" + Lang.get("Name") + ": '§f" + clone.getName() + "§7'");
                         e.setClose(true);
                     }
 
@@ -275,8 +275,8 @@ public class Menu extends HotbarGUI {
         SOUNDS(Sounds.class, new ItemBuilder(XMaterial.NOTE_BLOCK).setName("§7» §e" + Lang.get("Sounds") + "§7 «").getItem()),
         ;
 
-        private Class<?> clazz;
-        private ItemStack item;
+        private final Class<?> clazz;
+        private final ItemStack item;
 
         MenuParts(Class<?> clazz, ItemStack item) {
             this.clazz = clazz;

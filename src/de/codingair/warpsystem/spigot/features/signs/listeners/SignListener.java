@@ -34,7 +34,7 @@ public class SignListener implements Listener {
             SignManager manager = WarpSystem.getInstance().getDataManager().getManager(FeatureType.SIGNS);
             WarpSign sign = manager.getByLocation(s.getLocation());
             if(sign != null) {
-                if(e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_WARP_SIGNS) && e.getPlayer().getItemInHand().getType().name().toLowerCase().contains("sign")) {
+                if(!e.getPlayer().isSneaking() && e.getPlayer().hasPermission(WarpSystem.PERMISSION_MODIFY_WARP_SIGNS) && e.getPlayer().getItemInHand().getType().name().toLowerCase().contains("sign")) {
                     String[] lines = s.getLines();
                     for(int i = 0; i < 4; i++) {
                         lines[i] = lines[i].replace("§", "&");

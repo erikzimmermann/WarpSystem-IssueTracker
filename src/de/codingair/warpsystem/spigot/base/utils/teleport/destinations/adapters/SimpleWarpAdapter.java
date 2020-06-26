@@ -39,7 +39,7 @@ public class SimpleWarpAdapter implements DestinationAdapter {
             if(silent) TeleportListener.TELEPORTS.put(player, finalLoc);
             warp.increaseTeleports();
             player.teleport(finalLoc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-            if(callback != null) callback.accept(TeleportResult.TELEPORTED);
+            if(callback != null) callback.accept(TeleportResult.SUCCESS);
             return true;
         }
     }
@@ -59,7 +59,7 @@ public class SimpleWarpAdapter implements DestinationAdapter {
                 return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"), TeleportResult.NO_PERMISSION);
             }
 
-            return new SimulatedTeleportResult(null, TeleportResult.TELEPORTED);
+            return new SimulatedTeleportResult(null, TeleportResult.SUCCESS);
         }
     }
 

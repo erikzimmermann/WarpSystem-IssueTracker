@@ -26,7 +26,9 @@ public class PWPage extends Page {
     protected FilterType filter;
     protected Object[] extra;
     protected String search;
-    private int size, maxPage = 0, page = 0;
+    private final int size;
+    private int maxPage = 0;
+    private int page = 0;
 
     public PWPage(Player p, int size) {
         super(p, "§c" + Lang.get("Player_Warps"), false);

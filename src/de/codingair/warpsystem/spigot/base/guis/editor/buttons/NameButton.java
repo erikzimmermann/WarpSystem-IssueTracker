@@ -16,8 +16,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class NameButton extends SyncAnvilGUIButton {
-    private Value<String> name;
-    private boolean acceptNull;
+    private final Value<String> name;
+    private final boolean acceptNull;
 
     public NameButton(int x, int y, boolean acceptNull, Value<String> name) {
         super(x, y, ClickType.LEFT);
@@ -38,7 +38,7 @@ public abstract class NameButton extends SyncAnvilGUIButton {
 
         return new ItemBuilder(XMaterial.NAME_TAG)
                 .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Name"))
-                .setLore("§3" + Lang.get("Current") + ": " + (name.getValue() == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + ChatColor.translateAlternateColorCodes('&', name.getValue()) + "§7'"),
+                .setLore("§3" + Lang.get("Current") + ": " + (name.getValue() == null ? "§c" + Lang.get("Not_Set") : "§7'§f" + ChatColor.translateAlternateColorCodes('&', name.getValue()) + "§7'"),
                         "", (name.getValue() == null ? "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Set_Name") : "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Name")),
                         (name.getValue() == null || !acceptNull ? null : "§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove")))
                 .getItem();

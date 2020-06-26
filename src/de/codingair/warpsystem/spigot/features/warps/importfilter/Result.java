@@ -6,7 +6,7 @@ public enum Result {
     UNAVAILABLE_NAME(true),
     MISSING_FILE(false);
 
-    private boolean finished;
+    private final boolean finished;
 
     Result(boolean finished) {
         this.finished = finished;

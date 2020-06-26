@@ -10,7 +10,7 @@ public enum ImportType {
     ESSENTIALS(new EssentialsFilter()),
     CATEGORY_WARPS(new CategoryWarpsFilter());
 
-    private Filter filter;
+    private final Filter filter;
 
     ImportType(Filter filter) {
         this.filter = filter;

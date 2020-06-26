@@ -115,7 +115,7 @@ public class PAppearance extends PageItem {
                 return new ItemBuilder(XMaterial.NAME_TAG)
                         .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Name"))
                         .setLore(PWEditor.getCostsMessage(editing && !original.getName().equals(warp.getName()) ? PlayerWarpManager.getManager().getNameChangeCosts() : 0, PAppearance.this))
-                        .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + "§7'§r" + org.bukkit.ChatColor.translateAlternateColorCodes('&', warp.getName()) + "§7'")
+                        .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + "§7'§f" + org.bukkit.ChatColor.translateAlternateColorCodes('&', warp.getName()) + "§7'")
                         .addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Name"),
                                 (warp.getName().equals(original.getName()) ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §c" + Lang.get("Reset")))
                         .getItem();
@@ -232,7 +232,7 @@ public class PAppearance extends PageItem {
                 if(loreOfItem == null) lore = null;
                 else {
                     for(String s : loreOfItem) {
-                        lore.add("§7- '§r" + s + "§7'");
+                        lore.add("§7- '§f" + s + "§7'");
                     }
                 }
 

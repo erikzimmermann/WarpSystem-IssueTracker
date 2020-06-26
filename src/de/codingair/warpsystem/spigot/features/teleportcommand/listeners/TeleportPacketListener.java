@@ -97,7 +97,7 @@ public class TeleportPacketListener implements Listener, PacketListener {
                     @Override
                     public void accept(TeleportResult result) {
                         //move
-                        if(result == TeleportResult.TELEPORTED) {
+                        if(result == TeleportResult.SUCCESS) {
                             WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportPlayerToPlayerPacket(player.getName(), tpPacket.getTo(), new Callback<Integer>() {
                                 @Override
                                 public void accept(Integer result) {

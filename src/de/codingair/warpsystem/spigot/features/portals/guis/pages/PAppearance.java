@@ -37,7 +37,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class PAppearance extends PageItem {
-    private Portal clone;
+    private final Portal clone;
 
     public PAppearance(Player p, Portal clone) {
         super(p, PortalEditor.getMainTitle(), new ItemBuilder(XMaterial.ITEM_FRAME).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Appearance")).getItem(), false);
@@ -160,7 +160,7 @@ public class PAppearance extends PageItem {
                 ItemBuilder b = new ItemBuilder(XMaterial.OAK_SIGN).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Hologram"));
 
                 b.addLore("§7" + Lang.get("Line_break") + ": '§e\\n§7' §8- §7PlaceholderAPI support", "");
-                b.addText(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + (clone.getHologram().getText() == null ? "§c-" : "§7'§r" + ChatColor.translateAlternateColorCodes('&', clone.getHologram().getText()) + "§7'"), 100);
+                b.addText(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + (clone.getHologram().getText() == null ? "§c-" : "§7'§f" + ChatColor.translateAlternateColorCodes('&', clone.getHologram().getText()) + "§7'"), 100);
                 b.addText(b.getLore().size() > 3 ? "" : null, Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Status") + ": §7" + (clone.getHologram().isVisible() ? "§a" + Lang.get("Enabled") : "§c" + Lang.get("Disabled")));
 
                 b.addText("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §7" + Lang.get("Change"));
@@ -184,7 +184,7 @@ public class PAppearance extends PageItem {
             public ItemStack craftItem() {
                 return new ItemBuilder(XMaterial.PAPER)
                         .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Teleport_Name"))
-                        .setLore("§3" + Lang.get("Current") + ": " + (clone.getTeleportName() == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + org.bukkit.ChatColor.translateAlternateColorCodes('&', clone.getTeleportName()) + "§7'"),
+                        .setLore("§3" + Lang.get("Current") + ": " + (clone.getTeleportName() == null ? "§c" + Lang.get("Not_Set") : "§7'§f" + org.bukkit.ChatColor.translateAlternateColorCodes('&', clone.getTeleportName()) + "§7'"),
                                 "", (clone.getTeleportName() == null ? "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Set_Name") : "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Name")),
                                 (clone.getTeleportName() == null ? null : "§3" + Lang.get("Rightclick") + ": §c" + Lang.get("Remove")))
                         .getItem();

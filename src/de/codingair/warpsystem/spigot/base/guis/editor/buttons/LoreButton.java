@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class LoreButton extends SyncAnvilGUIButton {
-    private ItemBuilder toChange;
+    private final ItemBuilder toChange;
 
     public LoreButton(int x, int y, ItemBuilder toChange) {
         super(x, y, ClickType.LEFT);
@@ -37,7 +37,7 @@ public abstract class LoreButton extends SyncAnvilGUIButton {
         if(loreOfItem == null) lore = null;
         else {
             for(String s : loreOfItem) {
-                lore.add("§7- '§r" + s + "§7'");
+                lore.add("§7- '§f" + s + "§7'");
             }
         }
 
