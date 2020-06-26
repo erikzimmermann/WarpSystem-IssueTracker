@@ -11,7 +11,7 @@ public enum IconType {
     DECORATION(DecoIcon.class),
     GLOBAL_WARP(GlobalWarp.class);
 
-    private Class<?> clazz;
+    private final Class<?> clazz;
 
     IconType(Class<?> clazz) {
         this.clazz = clazz;

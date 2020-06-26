@@ -30,14 +30,14 @@ public class PortalDestinationAdapter implements DestinationAdapter {
         } else {
             if(silent) TeleportListener.TELEPORTS.put(player, location);
             player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
-            if(callback != null) callback.accept(TeleportResult.TELEPORTED);
+            if(callback != null) callback.accept(TeleportResult.SUCCESS);
             return true;
         }
     }
 
     @Override
     public SimulatedTeleportResult simulate(Player player, String id, boolean checkPermission) {
-        return new SimulatedTeleportResult(null, TeleportResult.TELEPORTED);
+        return new SimulatedTeleportResult(null, TeleportResult.SUCCESS);
     }
 
     @Override

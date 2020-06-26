@@ -11,7 +11,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class StatusButton extends SyncButton {
-    private FeatureObject object;
+    private final FeatureObject object;
 
     public StatusButton(int x, int y, FeatureObject object) {
         super(x, y);

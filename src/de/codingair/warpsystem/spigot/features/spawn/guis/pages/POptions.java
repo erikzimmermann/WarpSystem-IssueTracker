@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class POptions extends PageItem {
-    private Spawn clone;
+    private final Spawn clone;
 
     public POptions(Player p, Spawn clone) {
         super(p, SpawnEditor.getMainTitle(), new ItemBuilder(XMaterial.COMMAND_BLOCK).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Options")).getItem(), false);
@@ -204,7 +204,7 @@ public class POptions extends PageItem {
                 return new ItemBuilder(XMaterial.NAME_TAG)
                         .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Teleport_Name"))
                         .setLore(Lang.get("Spawn_Name_Button_hint"))
-                        .addLore("", "§3" + Lang.get("Current") + ": " + "§7'§r" + org.bukkit.ChatColor.translateAlternateColorCodes('&', clone.getDisplayName()) + "§7'",
+                        .addLore("", "§3" + Lang.get("Current") + ": " + "§7'§f" + org.bukkit.ChatColor.translateAlternateColorCodes('&', clone.getDisplayName()) + "§7'",
                                 "", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Change_Name"))
                         .getItem();
             }
@@ -259,7 +259,7 @@ public class POptions extends PageItem {
             public ItemStack craftItem() {
                 List<String> lore = new ArrayList<>();
                 for(String s : clone.getBroadCastMessages()) {
-                    lore.addAll(TextAlignment.lineBreak("§7- '§r" + Spawn.prepareBroadcastMessage(s, p) + "§7'", 100));
+                    lore.addAll(TextAlignment.lineBreak("§7- '§f" + Spawn.prepareBroadcastMessage(s, p) + "§7'", 100));
                 }
 
                 return new ItemBuilder(XMaterial.PAPER)

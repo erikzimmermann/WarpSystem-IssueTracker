@@ -37,12 +37,12 @@ import java.util.List;
 import java.util.Set;
 
 public class HologramEditor extends HotbarGUI {
-    private PortalEditor fallBack;
-    private Hologram hologram;
+    private final PortalEditor fallBack;
+    private final Hologram hologram;
 
     private BukkitRunnable alignRunnable;
-    private List<Location> alignTo = new ArrayList<>();
-    private boolean show = true;
+    private final List<Location> alignTo = new ArrayList<>();
+    private final boolean show = true;
 
     public HologramEditor(Player player, PortalEditor fallBack, Hologram hologram) {
         super(player, WarpSystem.getInstance(), 2);
@@ -237,8 +237,8 @@ public class HologramEditor extends HotbarGUI {
         }));
 
         String text = hologram.getText();
-        if(text != null && text.length() > 60) text = text.substring(0, 60) + "§r...";
-        setItem(3, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Hologram_Text") + ": " + (hologram.getText() == null ? "§c-" : "'§r" + ChatColor.translateAlternateColorCodes('&', text) + "§7'")).getItem(), new ItemListener() {
+        if(text != null && text.length() > 60) text = text.substring(0, 60) + "§f...";
+        setItem(3, new ItemComponent(new ItemBuilder(Material.NAME_TAG).setName("§7" + Lang.get("Hologram_Text") + ": " + (hologram.getText() == null ? "§c-" : "'§f" + ChatColor.translateAlternateColorCodes('&', text) + "§7'")).getItem(), new ItemListener() {
             @Override
             public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
                 if(clickType != ClickType.LEFT_CLICK) return;
@@ -260,8 +260,8 @@ public class HologramEditor extends HotbarGUI {
                         hologram.update();
 
                         String text = e.getText();
-                        if(text.length() > 60) text = text.substring(0, 60) + "§r...";
-                        updateDisplayName(ic, "§7" + Lang.get("Hologram_Text") + ": '§r" + ChatColor.translateAlternateColorCodes('&', text) + "§7'");
+                        if(text.length() > 60) text = text.substring(0, 60) + "§f...";
+                        updateDisplayName(ic, "§7" + Lang.get("Hologram_Text") + ": '§f" + ChatColor.translateAlternateColorCodes('&', text) + "§7'");
                     }
 
                     @Override

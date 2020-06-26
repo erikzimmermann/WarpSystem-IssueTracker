@@ -21,9 +21,9 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.List;
 
 public class Buffs extends HotbarGUI {
-    private Menu menu;
-    private List<Buff> parts;
-    private BuffPart[] buffs = new BuffPart[5];
+    private final Menu menu;
+    private final List<Buff> parts;
+    private final BuffPart[] buffs = new BuffPart[5];
 
     public Buffs(Player player, Menu menu) {
         super(player, WarpSystem.getInstance(), 2);

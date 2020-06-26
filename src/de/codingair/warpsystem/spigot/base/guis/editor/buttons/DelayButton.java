@@ -13,7 +13,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class DelayButton extends SyncButton {
-    private FeatureObject object;
+    private final FeatureObject object;
 
     public DelayButton(int x, int y, FeatureObject object) {
         super(x, y);

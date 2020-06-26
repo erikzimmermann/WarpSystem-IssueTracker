@@ -27,7 +27,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PAnimations extends PageItem {
-    private Portal clone;
+    private final Portal clone;
 
     public PAnimations(Player p, Portal clone) {
         super(p, PortalEditor.getMainTitle(), new ItemBuilder(XMaterial.BLAZE_POWDER).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Animations")).getItem(), false);

@@ -18,19 +18,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AnimationPlayer {
-    private Player player;
-    private Animation animation;
-    private MovableMid animMid;
+    private final Player player;
+    private final Animation animation;
+    private final MovableMid animMid;
 
     private boolean loop = false;
-    private int seconds;
+    private final int seconds;
     private boolean running = false;
     private BukkitRunnable runnable;
-    private List<CustomAnimation> animations = new ArrayList<>();
-    private List<PotionEffect> buffBackup = new ArrayList<>();
-    private Location destination;
+    private final List<CustomAnimation> animations = new ArrayList<>();
+    private final List<PotionEffect> buffBackup = new ArrayList<>();
+    private final Location destination;
     private double maxDistance = 70;
-    private boolean sounds;
+    private final boolean sounds;
     private boolean teleportSound;
 
     private HitBox hitBox = null;
@@ -103,7 +103,7 @@ public class AnimationPlayer {
     private void buildRunnable() {
         this.runnable = new BukkitRunnable() {
             private int left = seconds;
-            private String msg = Lang.get("Teleporting_Info");
+            private final String msg = Lang.get("Teleporting_Info");
 
             @Override
             public void run() {

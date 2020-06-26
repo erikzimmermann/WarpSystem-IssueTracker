@@ -18,11 +18,11 @@ public enum BlockType {
     AIR(Lang.get("Air_Portal"), new ItemBuilder(XMaterial.AIR), new ItemBuilder(XMaterial.WHITE_STAINED_GLASS), null),
     CUSTOM(Lang.get("Custom_Portal"), null, null, null);
 
-    private String name;
-    private ItemBuilder blockMaterial;
-    private ItemBuilder verticalBlockMaterial;
-    private ItemBuilder editMaterial;
-    private Class<? extends Block> block;
+    private final String name;
+    private final ItemBuilder blockMaterial;
+    private final ItemBuilder verticalBlockMaterial;
+    private final ItemBuilder editMaterial;
+    private final Class<? extends Block> block;
 
     BlockType(String name, ItemBuilder blockMaterial, ItemBuilder editMaterial, Class<? extends Block> block) {
         this.name = name;

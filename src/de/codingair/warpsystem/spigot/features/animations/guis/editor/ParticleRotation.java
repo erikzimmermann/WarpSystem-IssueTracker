@@ -16,8 +16,8 @@ import de.codingair.warpsystem.spigot.features.animations.utils.ParticlePart;
 import org.bukkit.entity.Player;
 
 public class ParticleRotation extends HotbarGUI {
-    private Menu menu;
-    private int slot;
+    private final Menu menu;
+    private final int slot;
 
     public ParticleRotation(Player player, int slot, Menu menu) {
         super(player, WarpSystem.getInstance(), 2);

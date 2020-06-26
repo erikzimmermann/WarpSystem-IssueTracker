@@ -38,9 +38,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PWEditor extends Editor<PlayerWarp> implements Ticker {
-    private PlayerWarp original;
-    private PlayerWarp warp;
-    private boolean creating;
+    private final PlayerWarp original;
+    private final PlayerWarp warp;
+    private final boolean creating;
     private Number paid = 0;
 
     public PWEditor(Player p, String name) {

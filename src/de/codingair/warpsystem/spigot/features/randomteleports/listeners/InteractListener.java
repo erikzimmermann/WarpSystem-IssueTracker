@@ -15,8 +15,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class InteractListener implements Listener {
-    private TimeList<Player> blocked = new TimeList<>();
-    private TimeList<Player> addingNewBlock = new TimeList<>();
+    private final TimeList<Player> blocked = new TimeList<>();
+    private final TimeList<Player> addingNewBlock = new TimeList<>();
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {

@@ -203,7 +203,7 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
         options.addCallback(new Callback<TeleportResult>() {
             @Override
             public void accept(TeleportResult result) {
-                if(result != TeleportResult.TELEPORTED) {
+                if(result != TeleportResult.SUCCESS) {
                     locations.add(0, l);
                 } else if(locations.isEmpty()) backHistory.remove(player.getName());
 

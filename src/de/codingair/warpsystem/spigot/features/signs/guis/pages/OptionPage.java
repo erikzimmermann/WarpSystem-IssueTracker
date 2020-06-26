@@ -20,8 +20,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class OptionPage extends PageItem {
-    private WarpSign sign;
-    private Sign s;
+    private final WarpSign sign;
+    private final Sign s;
 
     public OptionPage(Player p, WarpSign sign) {
         super(p, WarpSignGUI.getMainTitle(), new ItemBuilder(XMaterial.COMMAND_BLOCK).setName(Editor.ITEM_TITLE_COLOR + Lang.get("Options")).getItem(), false);
@@ -54,7 +54,7 @@ public class OptionPage extends PageItem {
                 builder.setLore("§3" + Lang.get("Current") + ":");
 
                 for(String line : lines == null ? s.getLines() : lines) {
-                    builder.addLore("§7- '§r" + (line == null ? "" : ChatColor.translateAlternateColorCodes('&', line)) + "§7'");
+                    builder.addLore("§7- '§f" + (line == null ? "" : ChatColor.translateAlternateColorCodes('&', line)) + "§7'");
                 }
 
                 builder.addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Edit"));

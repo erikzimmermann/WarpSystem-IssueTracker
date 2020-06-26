@@ -1,9 +1,15 @@
 package de.codingair.warpsystem.spigot.features.warps.importfilter;
 
 public class WarpData {
-    private String name, category, permission, world;
-    private double x, y, z;
-    private float yaw, pitch;
+    private final String name;
+    private final String category;
+    private final String permission;
+    private final String world;
+    private final double x;
+    private final double y;
+    private final double z;
+    private final float yaw;
+    private final float pitch;
 
     public WarpData(String name, String category, String permission, String world, double x, double y, double z, float yaw, float pitch) {
         this.name = name;

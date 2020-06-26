@@ -32,13 +32,13 @@ import java.util.List;
 import java.util.Set;
 
 public class AnimationHotBarEditor extends HotbarGUI {
-    private PortalEditor fallBack;
-    private Animation animation;
-    private ParticleRotation rotation;
-    private ParticleOptions options;
+    private final PortalEditor fallBack;
+    private final Animation animation;
+    private final ParticleRotation rotation;
+    private final ParticleOptions options;
 
     private BukkitRunnable alignRunnable;
-    private List<Location> alignTo = new ArrayList<>();
+    private final List<Location> alignTo = new ArrayList<>();
     private boolean show = true;
 
     public AnimationHotBarEditor(Player player, PortalEditor fallBack, Animation animation) {

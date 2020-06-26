@@ -12,9 +12,9 @@ public enum Action {
     BOUND_TO_WORLD(5, String.class, Priority.LOW),
     ;
 
-    private int id;
-    private Class<?> clazz;
-    private Priority priority;
+    private final int id;
+    private final Class<?> clazz;
+    private final Priority priority;
 
     Action(int id, Class<?> clazz, Priority priority) {
         this.id = id;

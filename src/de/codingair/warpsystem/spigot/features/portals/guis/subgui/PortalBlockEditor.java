@@ -32,12 +32,12 @@ import java.util.UUID;
 public class PortalBlockEditor implements Removable {
     private final UUID uniqueId = UUID.randomUUID();
     private boolean ended = false;
-    private Player player;
-    private Portal portal;
+    private final Player player;
+    private final Portal portal;
     private ItemStack[] old;
 
     private BukkitRunnable alignRunnable;
-    private List<Block> alignTo = new ArrayList<>();
+    private final List<Block> alignTo = new ArrayList<>();
     private boolean show = true;
 
     public PortalBlockEditor(Player player, Portal portal) {

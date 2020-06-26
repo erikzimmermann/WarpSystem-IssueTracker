@@ -33,7 +33,7 @@ import java.util.List;
 
 public class PortalEditor extends Editor<Portal> {
     public static final HashMap<String, PortalEditor> EDITORS = new HashMap<>();
-    private Portal clone;
+    private final Portal clone;
 
     public PortalEditor(Player p, Portal portal) {
         this(p, portal.setEditMode(false), portal.clone().setEditMode(true).createDestinationIfAbsent().createTeleportSoundIfAbsent());
@@ -85,7 +85,7 @@ public class PortalEditor extends Editor<Portal> {
 
                 ItemBuilder builder = new ItemBuilder(XMaterial.END_PORTAL_FRAME)
                         .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Portals"))
-                        .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + (target == null ? "§c" + Lang.get("Not_Set") : "§7'§r" + ChatColor.translateAlternateColorCodes('&', target.getDisplayName()) + "§7'"));
+                        .addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + (target == null ? "§c" + Lang.get("Not_Set") : "§7'§f" + ChatColor.translateAlternateColorCodes('&', target.getDisplayName()) + "§7'"));
 
                 builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + (target == null ? Lang.get("Set") : Lang.get("Change")));
                 if(target != null) builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §c" + Lang.get("Remove"));

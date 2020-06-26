@@ -31,7 +31,7 @@ public abstract class GSimpleWarpList extends GUIList<SimpleWarp> {
                     double z = round(value.getLocation().getZ());
 
                     return new ItemBuilder(XMaterial.ENDER_PEARL)
-                            .setName("§7\"§r" + ChatColor.highlight(value.getFormattedName(), getSearched(), "§e§n", "§r", true) + "§7\"")
+                            .setName("§7\"§f" + ChatColor.highlight(value.getFormattedName(), getSearched(), "§e§n", "§f", true) + "§7\"")
                             .setLore("§7(\"" + ChatColor.highlight(world, getSearched(), "§e§n", "§7", true) + "\", x=" + x + ", y=" + y + ", z=" + z + ")")
                             .getItem();
                 }

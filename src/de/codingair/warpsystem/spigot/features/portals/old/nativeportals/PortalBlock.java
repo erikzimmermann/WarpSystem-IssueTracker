@@ -3,7 +3,7 @@ package de.codingair.warpsystem.spigot.features.portals.old.nativeportals;
 import de.codingair.codingapi.tools.Location;
 
 public class PortalBlock {
-    private Location loc;
+    private final Location loc;
 
     public PortalBlock(Location loc) {
         this.loc = loc.clone();
