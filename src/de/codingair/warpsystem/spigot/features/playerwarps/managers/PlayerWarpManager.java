@@ -14,6 +14,8 @@ import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.setupassistant.annotations.AvailableForSetupAssistant;
+import de.codingair.warpsystem.spigot.base.setupassistant.annotations.Function;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.GlobalLocationAdapter;
@@ -44,6 +46,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@AvailableForSetupAssistant(type = "PlayerWarps", config = "PlayerWarpConfig")
+@Function(name = "Enabled", defaultValue = "true", config = "Config", configPath = "WarpSystem.Functions.PlayerWarps", clazz = Boolean.class)
+@Function(name = "Teleport message", defaultValue = "true", config = "Config", configPath = "WarpSystem.Send.Teleport_Message.PlayerWarps", clazz = Boolean.class)
+@Function(name = "Protected regions", defaultValue = "true", configPath = "PlayerWarps.General.Support.ProtectedRegions", clazz = Boolean.class)
+@Function(name = "Force create GUI", defaultValue = "false", configPath = "PlayerWarps.General.Force_Create_GUI", clazz = Boolean.class)
+@Function(name = "Public as create state", defaultValue = "false", configPath = "PlayerWarps.General.Public_as_create_state", clazz = Boolean.class)
+@Function(name = "Allow public warps", defaultValue = "true", configPath = "PlayerWarps.General.Allow_Public_Warps", clazz = Boolean.class)
+@Function(name = "Allow trusted members", defaultValue = "true", configPath = "PlayerWarps.General.Allow_Trusted_Members", clazz = Boolean.class)
+@Function(name = "Standard time value", defaultValue = "1h", configPath = "PlayerWarps.Time.Standard_Value", clazz = String.class)
+@Function(name = "Min. time value", defaultValue = "0d, 0h, 5m", configPath = "PlayerWarps.Time.Min_Time", clazz = String.class)
+@Function(name = "Max. time value", defaultValue = "30d, 0h, 0m", configPath = "PlayerWarps.Time.Max_Time", clazz = String.class)
 public class PlayerWarpManager implements Manager, Ticker, Collectible {
     private ConfigFile playerWarpsData = null;
     private ConfigFile config = null;
