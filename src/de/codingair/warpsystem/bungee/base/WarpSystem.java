@@ -8,6 +8,7 @@ import de.codingair.warpsystem.bungee.api.chatinput.ChatInputManager;
 import de.codingair.warpsystem.bungee.base.commands.CWarpSystem;
 import de.codingair.warpsystem.bungee.base.language.Lang;
 import de.codingair.warpsystem.bungee.base.listeners.MainListener;
+import de.codingair.warpsystem.bungee.base.listeners.SetupAssistantListener;
 import de.codingair.warpsystem.bungee.base.managers.DataManager;
 import de.codingair.warpsystem.bungee.base.managers.ServerManager;
 import de.codingair.warpsystem.bungee.base.managers.VanishManager;
@@ -72,6 +73,11 @@ public class WarpSystem extends Plugin {
         BungeeCord.getInstance().getPluginManager().registerListener(this, vanishManager);
         this.dataHandler.register(listener);
         this.dataHandler.register(vanishManager);
+
+        SetupAssistantListener l = new SetupAssistantListener();
+        BungeeCord.getInstance().getPluginManager().registerListener(this, l);
+        this.dataHandler.register(l);
+
         this.serverManager.run();
 
         new ChatInputManager();

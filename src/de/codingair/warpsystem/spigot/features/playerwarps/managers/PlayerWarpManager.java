@@ -51,7 +51,7 @@ import java.util.regex.Pattern;
 @AvailableForSetupAssistant(type = "PlayerWarps", config = "PlayerWarpConfig")
 @Function(name = "Enabled", defaultValue = "true", config = "Config", configPath = "WarpSystem.Functions.PlayerWarps", clazz = Boolean.class)
 @Function(name = "Teleport message", defaultValue = "true", config = "Config", configPath = "WarpSystem.Send.Teleport_Message.PlayerWarps", clazz = Boolean.class)
-@Function(name = "Max warp amount", defaultValue = "5", configPath = "PlayerWarps.General.Max_Warp_Amount", description = "§7If permissions are §cdisabled", clazz = Boolean.class)
+@Function(name = "Max warp amount", defaultValue = "5", configPath = "PlayerWarps.General.Max_Warp_Amount", description = "§7If permissions are §cdisabled", clazz = Integer.class)
 @Function(name = "Protected regions", defaultValue = "true", configPath = "PlayerWarps.General.Support.ProtectedRegions", clazz = Boolean.class)
 @Function(name = "BungeeCord", defaultValue = "true", configPath = "PlayerWarps.General.BungeeCord", clazz = Boolean.class)
 @Function(name = "Economy", defaultValue = "false", configPath = "PlayerWarps.General.Economy", clazz = Boolean.class)
