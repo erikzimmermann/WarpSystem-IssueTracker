@@ -64,7 +64,7 @@ public class Lang {
     }
 
     public static void PREMIUM_CHAT(TextComponent base, CommandSender sender) {
-        PREMIUM_CHAT(base, sender, false);
+        PREMIUM_CHAT(base, sender, true);
     }
 
     public static void PREMIUM_CHAT(TextComponent base, CommandSender sender, boolean chat) {
@@ -91,7 +91,7 @@ public class Lang {
                 ((Player) sender).spigot().sendMessage(base);
             } else sender.sendMessage(base.getText());
 
-            premiumMessage.add(sender, 2);
+            premiumMessage.add(sender, 5);
         }
     }
 

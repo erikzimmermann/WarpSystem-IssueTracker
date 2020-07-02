@@ -1,5 +1,7 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters;
 
-public interface CloneableAdapter extends DestinationAdapter {
-    CloneableAdapter clone();
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationAdapter;
+
+public abstract class CloneableAdapter extends DestinationAdapter {
+    public abstract CloneableAdapter clone();
 }

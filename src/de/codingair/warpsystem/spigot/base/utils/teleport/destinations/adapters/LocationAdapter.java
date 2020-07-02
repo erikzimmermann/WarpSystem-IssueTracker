@@ -6,11 +6,12 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationAdapter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
-public class LocationAdapter implements DestinationAdapter, CloneableAdapter {
+public class LocationAdapter extends CloneableAdapter {
     protected Location location;
 
     public LocationAdapter() {
@@ -44,7 +45,8 @@ public class LocationAdapter implements DestinationAdapter, CloneableAdapter {
             if(callback != null) callback.accept(TeleportResult.WORLD_DOES_NOT_EXIST);
             return false;
         } else {
-            Location finalLoc = location.clone().add(randomOffset);
+            org.bukkit.Location finalLoc = prepare(player, location.clone());
+
             if(silent) TeleportListener.TELEPORTS.put(player, finalLoc);
             player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
             if(callback != null) callback.accept(TeleportResult.SUCCESS);

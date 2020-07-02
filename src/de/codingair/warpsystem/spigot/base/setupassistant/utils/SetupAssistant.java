@@ -186,7 +186,7 @@ public class SetupAssistant {
         //identifier: §§§§
         SimpleMessage m = new SimpleMessage("§§§§", WarpSystem.getInstance());
 
-        m.add("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n§8§m--------------------------------------\n  §6§n§lSetup-Assistant");
+        m.add("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n§8§m                                            §r\n  §6§n§lSetup-Assistant");
         if(general) m.add("§8 - §e" + Lang.get("All"));
         else m.add("§8 - §e" + Lang.get("New"));
 
@@ -267,7 +267,7 @@ public class SetupAssistant {
         });
         m.add("§7 | §e" + (nav.isEmpty() && l == null ? Lang.get("Menu") : arg) + "\n\n\n\n\n  §8- §7" + Lang.get("Requires_Plugin_Reload") + ": " + (requiresReload() ? "§c" + Lang.get("Yes") : "§a" + Lang.get("No")) + "\n\n");
 
-        m.add("§8§m-----------");
+        m.add("§8§m           ");
         //prev
         m.add(new WSChatButton(((l == null ? typePage : page) == 0 ? "§7" : "§e") + " « ", ((l == null ? typePage : page) == 0 ? "§7" + Lang.get("No_Page_Available") : "§7» §e" + Lang.get("Previous_Page"))) {
             @Override
@@ -302,7 +302,7 @@ public class SetupAssistant {
                 return (l == null ? typePage : page) < maxPage;
             }
         });
-        m.add("§8§m-----------\n\n");
+        m.add("§8§m           \n\n");
 
         if(l == null) {
             //menu
@@ -365,7 +365,7 @@ public class SetupAssistant {
             m.add("\n");
         }
 
-        m.add((warning == null ? "\n" : "") + "§8§m--------------------------------------");
+        m.add((warning == null ? "\n" : "") + "§8§m                                            ");
         if(warning != null) m.add("\n" + warning);
 
         m.send(player);

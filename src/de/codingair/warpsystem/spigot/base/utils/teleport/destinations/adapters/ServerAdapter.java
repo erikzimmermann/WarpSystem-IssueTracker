@@ -6,11 +6,12 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationAdapter;
 import de.codingair.warpsystem.transfer.packets.spigot.PrepareServerSwitchPacket;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-public class ServerAdapter implements DestinationAdapter {
+public class ServerAdapter extends DestinationAdapter {
     @Override
     public boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
         if(!WarpSystem.getInstance().isOnBungeeCord()) {
