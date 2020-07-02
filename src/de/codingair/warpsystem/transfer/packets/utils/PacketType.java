@@ -1,6 +1,8 @@
 package de.codingair.warpsystem.transfer.packets.utils;
 
 import de.codingair.warpsystem.bungee.base.utils.PacketVanishInfo;
+import de.codingair.warpsystem.spigot.base.setupassistant.bungee.SetupAssistantStorePacket;
+import de.codingair.warpsystem.spigot.base.setupassistant.bungee.ToggleSetupAssistantPacket;
 import de.codingair.warpsystem.spigot.features.randomteleports.packets.RandomTPWorldsPacket;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ToggleForceTeleportsPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.*;
@@ -47,7 +49,9 @@ public enum PacketType {
     PlayerWarpTeleportProcessPacket(47, PlayerWarpTeleportProcessPacket.class),
 
     RandomTPWorldsPacket(51, RandomTPWorldsPacket.class),
-
+    ToggleSetupAssistantPacket(53, ToggleSetupAssistantPacket.class),
+    SetupAssistantStorePacket(54, SetupAssistantStorePacket.class),
+  
     IsOperatorPacket(60, IsOperatorPacket.class),
     SendDisablePacket(61, SendDisablePacket.class),
     IsOnlinePacket(62, IsOnlinePacket.class),

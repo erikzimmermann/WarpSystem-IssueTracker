@@ -91,6 +91,12 @@ public class SetupAssistantManager {
         }
     }
 
+    public void onDisable() {
+        if(this.assistant != null){
+            this.assistant.onQuit();
+        }
+    }
+
     public void clearAssistant() {
         this.assistant = null;
     }
