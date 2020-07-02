@@ -4,12 +4,12 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.codingapi.tools.io.utils.Serializable;
 import de.codingair.codingapi.utils.ImprovedDouble;
+import de.codingair.warpsystem.spigot.api.PAPI;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.CloneableAdapter;
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.DestinationAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.GlobalLocationAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import org.bukkit.ChatColor;
@@ -22,22 +22,23 @@ import java.util.Objects;
 
 public class Destination implements Serializable {
     private String id;
+    private final Options customOptions;
     private DestinationType type;
     private DestinationAdapter adapter;
     private double offsetX, offsetY, offsetZ;
-    private int signedX, signedY = 1, signedZ;
-    private boolean message = true;
 
     public Destination() {
         id = null;
         type = DestinationType.UNKNOWN;
         adapter = null;
+        this.customOptions = new Options();
     }
 
     public Destination(String id, DestinationType type) {
         this.id = id;
         this.type = type;
-        this.adapter = type.getInstance();
+        this.adapter = type.getInstance().dest(this);
+        this.customOptions = new Options();
     }
 
     public Destination(String id, DestinationAdapter adapter) {
@@ -49,6 +50,8 @@ public class Destination implements Serializable {
         this.id = null;
         this.type = DestinationType.getByAdapter(adapter);
         this.adapter = adapter;
+        this.adapter.destination = this;
+        this.customOptions = new Options();
     }
 
     @Deprecated
@@ -58,15 +61,13 @@ public class Destination implements Serializable {
 
             this.type = json.get(0) == null ? null : DestinationType.valueOf((String) json.get(0));
             this.id = json.get(1) == null ? null : (String) json.get(1);
-            this.adapter = type == null ? null : type.getInstance();
+            this.adapter = type == null ? null : type.getInstance().dest(this);
             if(json.size() > 2) {
                 offsetX = Double.parseDouble(json.get(2) + "");
                 offsetY = Double.parseDouble(json.get(3) + "");
                 offsetZ = Double.parseDouble(json.get(4) + "");
-                signedX = Integer.parseInt(json.get(5) + "");
-                signedY = Integer.parseInt(json.get(6) + "");
-                signedZ = Integer.parseInt(json.get(7) + "");
             }
+            this.customOptions = new Options();
         } catch(Exception ex) {
             throw new IllegalArgumentException("Wrong serialized data!", ex);
         }
@@ -80,57 +81,64 @@ public class Destination implements Serializable {
             this.offsetX = 0;
             this.offsetY = 0;
             this.offsetZ = 0;
-            this.signedX = 0;
-            this.signedY = 0;
-            this.signedZ = 0;
-            this.message = true;
+            this.customOptions.destroy();
             return this;
         }
 
         this.id = destination.id;
         this.adapter = destination.adapter instanceof CloneableAdapter ? ((CloneableAdapter) destination.adapter).clone() : destination.adapter == null ? null : destination.type.getInstance();
+        this.adapter.destination = this;
         this.type = destination.type;
         this.offsetX = destination.offsetX;
         this.offsetY = destination.offsetY;
         this.offsetZ = destination.offsetZ;
-        this.signedX = destination.signedX;
-        this.signedY = destination.signedY;
-        this.signedZ = destination.signedZ;
-        this.message = destination.message;
+        this.customOptions.apply(destination.customOptions);
         return this;
     }
 
     public boolean teleport(Player player, String message, String displayName, boolean checkPermission, boolean silent, double costs, Callback<TeleportResult> callback) {
         if(adapter == null) return false;
         player.setFallDistance(0F);
-        if(!isMessage()) message = null;
+
+        message = this.customOptions.buildMessage(message);
+        if(!customOptions.sendMessage()) message = null;
+        else message = PAPI.convert(message, player);
+
         return adapter.teleport(player, id, buildRandomOffset(), displayName, checkPermission, message, silent, costs, callback);
     }
 
     public void sendMessage(Player player, String message, String displayName, double costs) {
-        if(adapter == null || message == null || !this.message || type == DestinationType.GlobalWarp) return;
+        if(adapter == null || message == null || !customOptions.sendMessage() || type == DestinationType.GlobalWarp) return;
         player.sendMessage(getMessage(player, message, displayName, costs));
     }
 
     public String getMessage(Player player, String message, String displayName, double costs) {
+        message = this.customOptions.buildMessage(message);
         if(adapter == null || message == null) return null;
-        return (message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", new ImprovedDouble(costs).toString()).replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName));
+        message = (message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", new ImprovedDouble(costs).toString()).replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName));
+        message = PAPI.convert(message, player).replace("%player%", player.getName()).replace("%PLAYER%", player.getName());
+        return message;
+    }
+
+    public void adjustLocation(Player player, org.bukkit.Location location) {
+        location.add(buildRandomOffset());
+        if(!customOptions.isRotation()) {
+            org.bukkit.Location p = player.getLocation();
+            location.setYaw(p.getYaw());
+            location.setPitch(p.getPitch());
+        }
     }
 
     public org.bukkit.Location buildLocation() {
         if(offsetX != 0 || offsetY != 0 || offsetZ != 0) {
-            double offsetX = signedX == 1 ? Math.random() * this.offsetX : signedX == -1 ? Math.random() * -this.offsetX : Math.random() * 2 * this.offsetX - this.offsetX;
-            double offsetY = signedY == 1 ? Math.random() * this.offsetY : signedY == -1 ? Math.random() * -this.offsetY : Math.random() * 2 * this.offsetY - this.offsetY;
-            double offsetZ = signedZ == 1 ? Math.random() * this.offsetZ : signedZ == -1 ? Math.random() * -this.offsetZ : Math.random() * 2 * this.offsetZ - this.offsetZ;
-
-            return adapter.buildLocation(id).add(offsetX, offsetY, offsetZ);
+            return adapter.buildLocation(id).add(buildRandomOffset());
         } else return adapter.buildLocation(id);
     }
 
     public Vector buildRandomOffset() {
-        double offsetX = signedX == 1 ? Math.random() * this.offsetX : signedX == -1 ? Math.random() * -this.offsetX : Math.random() * 2 * this.offsetX - this.offsetX;
-        double offsetY = signedY == 1 ? Math.random() * this.offsetY : signedY == -1 ? Math.random() * -this.offsetY : Math.random() * 2 * this.offsetY - this.offsetY;
-        double offsetZ = signedZ == 1 ? Math.random() * this.offsetZ : signedZ == -1 ? Math.random() * -this.offsetZ : Math.random() * 2 * this.offsetZ - this.offsetZ;
+        double offsetX = Math.random() * 2 * this.offsetX - this.offsetX;
+        double offsetY = Math.random() * this.offsetY;
+        double offsetZ = Math.random() * 2 * this.offsetZ - this.offsetZ;
 
         return new Vector(offsetX, offsetY, offsetZ);
     }
@@ -178,6 +186,7 @@ public class Destination implements Serializable {
     public boolean read(DataWriter d) throws Exception {
         this.type = DestinationType.getById(d.getInteger("type"));
         this.adapter = type.getInstance();
+        this.adapter.destination = this;
 
         if(adapter != null && adapter instanceof Serializable) {
             ((Serializable) adapter).read(d);
@@ -190,10 +199,9 @@ public class Destination implements Serializable {
         this.offsetX = d.getDouble("oX");
         this.offsetY = d.getDouble("oY");
         this.offsetZ = d.getDouble("oZ");
-        this.signedX = d.getInteger("sX");
-        this.signedY = d.getInteger("sY");
-        this.signedZ = d.getInteger("sZ");
-        this.message = !d.getBoolean("message", false);
+        Boolean message = d.getBoolean("message", null); //old
+        d.getSerializable("options", customOptions);
+        if(message != null) customOptions.setMessage(!message);
         return true;
     }
 
@@ -214,10 +222,7 @@ public class Destination implements Serializable {
         d.put("oX", offsetX);
         d.put("oY", offsetY);
         d.put("oZ", offsetZ);
-        d.put("sX", signedX);
-        d.put("sY", signedY);
-        d.put("sZ", signedZ);
-        d.put("message", !message);
+        d.put("options", customOptions);
     }
 
     @Override
@@ -228,10 +233,7 @@ public class Destination implements Serializable {
         this.offsetX = 0;
         this.offsetY = 0;
         this.offsetZ = 0;
-        this.signedX = 0;
-        this.signedY = 0;
-        this.signedZ = 0;
-        this.message = true;
+        customOptions.destroy();
     }
 
     @Override
@@ -245,10 +247,7 @@ public class Destination implements Serializable {
                 && offsetX == that.offsetX
                 && offsetY == that.offsetY
                 && offsetZ == that.offsetZ
-                && signedX == that.signedX
-                && signedY == that.signedY
-                && signedZ == that.signedZ
-                && message == that.message;
+                && customOptions.equals(that.customOptions);
     }
 
     public Destination clone() {
@@ -286,39 +285,11 @@ public class Destination implements Serializable {
         this.offsetZ = offsetZ;
     }
 
-    public int getSignedX() {
-        return signedX;
-    }
-
-    public void setSignedX(int signedX) {
-        this.signedX = signedX;
-    }
-
-    public int getSignedY() {
-        return signedY;
-    }
-
-    public void setSignedY(int signedY) {
-        this.signedY = signedY;
-    }
-
-    public int getSignedZ() {
-        return signedZ;
-    }
-
-    public void setSignedZ(int signedZ) {
-        this.signedZ = signedZ;
-    }
-
-    public boolean isMessage() {
-        return message;
-    }
-
-    public void setMessage(boolean message) {
-        this.message = message;
-    }
-
     public boolean isBungee() {
         return type != null && type.isBungee() && (!(adapter instanceof GlobalLocationAdapter) || !Objects.equals(((GlobalLocationAdapter) adapter).getServer(), WarpSystem.getInstance().getCurrentServer()));
+    }
+
+    public Options getCustomOptions() {
+        return customOptions;
     }
 }

@@ -5,6 +5,7 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationAdapter;
 import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import org.bukkit.Location;
@@ -12,7 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
-public class SimpleWarpAdapter implements DestinationAdapter {
+public class SimpleWarpAdapter extends DestinationAdapter {
     @Override
     public boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
         SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(id);
@@ -34,7 +35,7 @@ public class SimpleWarpAdapter implements DestinationAdapter {
                 return false;
             }
 
-            Location finalLoc = warp.getLocation().clone().add(randomOffset);
+            Location finalLoc = prepare(player, warp.getLocation().clone());
 
             if(silent) TeleportListener.TELEPORTS.put(player, finalLoc);
             warp.increaseTeleports();

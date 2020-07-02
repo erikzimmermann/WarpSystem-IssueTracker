@@ -1,7 +1,5 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport.destinations;
 
-import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.DestinationAdapter;
-
 public class UnmodifiableDestination extends Destination {
     public UnmodifiableDestination(Destination d) {
         super();
@@ -40,21 +38,6 @@ public class UnmodifiableDestination extends Destination {
 
     @Override
     public void setOffsetZ(double offsetZ) {
-        throw new IllegalStateException("Field cannot be modified!");
-    }
-
-    @Override
-    public void setSignedX(int signedX) {
-        throw new IllegalStateException("Field cannot be modified!");
-    }
-
-    @Override
-    public void setSignedY(int signedY) {
-        throw new IllegalStateException("Field cannot be modified!");
-    }
-
-    @Override
-    public void setSignedZ(int signedZ) {
         throw new IllegalStateException("Field cannot be modified!");
     }
 }

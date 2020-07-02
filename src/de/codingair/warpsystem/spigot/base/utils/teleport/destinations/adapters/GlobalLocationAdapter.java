@@ -62,7 +62,8 @@ public class GlobalLocationAdapter extends LocationAdapter implements Serializab
                 if(callback != null) callback.accept(TeleportResult.WORLD_DOES_NOT_EXIST);
                 return false;
             } else {
-                Location finalLoc = location.clone().add(randomOffset);
+                org.bukkit.Location finalLoc = prepare(player, location.clone());
+
                 if(silent) TeleportListener.TELEPORTS.put(player, finalLoc);
                 player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
                 if(callback != null) callback.accept(TeleportResult.SUCCESS);
