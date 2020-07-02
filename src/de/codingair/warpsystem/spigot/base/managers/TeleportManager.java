@@ -186,7 +186,7 @@ public class TeleportManager {
             return;
         }
 
-        int seconds = this.options.getTeleportDelay();
+        int seconds = options.getDestination().getCustomOptions().getDelay(this.options.getTeleportDelay());
         Callback<TeleportResult> resultCallback;
 
         if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay)) seconds = 0;
@@ -232,7 +232,7 @@ public class TeleportManager {
             seconds = event.getSeconds();
         }
 
-        final int finalSeconds = seconds;
+        final int finalSeconds = Math.max(seconds, 0);
         Callback<TeleportResult> finalResultCallback = resultCallback;
         Callback<?> waiting = new Callback() {
             @Override
