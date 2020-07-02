@@ -322,13 +322,6 @@ public class HologramEditor extends HotbarGUI {
                 if(clickType != ClickType.LEFT_CLICK) return;
                 hologram.setVisible(!hologram.isVisible());
                 hologram.update();
-
-                ItemBuilder builder = new ItemBuilder(hologram.isVisible() ? XMaterial.LIME_TERRACOTTA : XMaterial.RED_TERRACOTTA);
-                builder.setName(ChatColor.GRAY + Lang.get("Status") + ": " +
-                        (hologram.isVisible() ? ChatColor.GREEN + Lang.get("Enabled") :
-                                ChatColor.RED + Lang.get("Disabled")));
-
-                setItem(5, new ItemComponent(builder.getItem(), this), false);
                 updateSingle(5);
             }
 
