@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.base;
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.files.FileManager;
+import de.codingair.codingapi.player.gui.inventory.gui.Interface;
 import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.time.TimeFetcher;
@@ -123,6 +124,7 @@ public class WarpSystem extends JavaPlugin {
     private String oldVersion = null;
     private final SpigotDataHandler dataHandler = new SpigotDataHandler(this);
     private final UUIDManager uuidManager = new UUIDManager();
+    private final List<String> newUpdate = new ArrayList<>();
 
     public static boolean hasPermission(CommandSender sender, String permission) {
         return permission == null || sender.hasPermission(permission);
@@ -422,7 +424,7 @@ public class WarpSystem extends JavaPlugin {
     }
 
     private void destroy() {
-        this.dataManager.getManagers().forEach(Manager::destroy);
+        if(dataManager != null) this.dataManager.getManagers().forEach(Manager::destroy);
         this.bungeeFeatureList.clear();
         this.fileManager.destroy();
     }
@@ -555,7 +557,8 @@ public class WarpSystem extends JavaPlugin {
                 notifyPlayers(p);
             }
         } else {
-            if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && WarpSystem.updateAvailable) {
+            if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && WarpSystem.updateAvailable && !newUpdate.contains(player.getName())) {
+                newUpdate.add(player.getName());
                 String v = updateNotifier.getVersion();
                 if(!v.startsWith("v")) v = "v" + v;
 

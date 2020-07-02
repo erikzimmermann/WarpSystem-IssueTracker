@@ -34,7 +34,6 @@ import java.util.Set;
 public class AnimationHotBarEditor extends HotbarGUI {
     private final PortalEditor fallBack;
     private final Animation animation;
-    private final ParticleRotation rotation;
     private final ParticleOptions options;
 
     private BukkitRunnable alignRunnable;
@@ -50,7 +49,6 @@ public class AnimationHotBarEditor extends HotbarGUI {
         this.animation = animation;
         this.animation.setVisible(true);
         this.fallBack = fallBack;
-        rotation = new ParticleRotation(player, this);
         options = new ParticleOptions(player, this);
 
         this.alignRunnable = new BukkitRunnable() {
@@ -288,9 +286,23 @@ public class AnimationHotBarEditor extends HotbarGUI {
         }));
 
         setItem(4, new ItemComponent(new ItemBuilder(XMaterial.COMMAND_BLOCK).setName("§7» §c" + Lang.get("Options") + "§7 «").getItem()).setLink(this.options), false);
-        setItem(5, new ItemComponent(new ItemBuilder(XMaterial.BLAZE_ROD).setName("§7» §c" + Lang.get("Rotation") + "§7 «").getItem()).setLink(this.rotation), false);
+        setItem(5, new ItemComponent(new ItemBuilder(XMaterial.BLAZE_ROD).setName("§7» §c" + Lang.get("Rotation") + "§7 «").getItem(), new ItemListener() {
+            @Override
+            public void onClick(HotbarGUI gui, ItemComponent ic, Player player, ClickType clickType) {
+                Lang.PREMIUM_CHAT(player);
+            }
 
-        this.rotation.initialize();
+            @Override
+            public void onHover(HotbarGUI gui, ItemComponent old, ItemComponent current, Player player) {
+                MessageAPI.sendActionBar(player, Lang.PREMIUM_HOTBAR, WarpSystem.getInstance(), Integer.MAX_VALUE);
+            }
+
+            @Override
+            public void onUnhover(HotbarGUI gui, ItemComponent current, ItemComponent newItem, Player player) {
+                MessageAPI.stopSendingActionBar(player);
+            }
+        }), false);
+
         this.options.initialize();
     }
 
