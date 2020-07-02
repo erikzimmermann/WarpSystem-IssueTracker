@@ -9,6 +9,7 @@ import de.codingair.codingapi.utils.TextAlignment;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.setupassistant.SetupAssistantManager;
+import de.codingair.warpsystem.spigot.base.setupassistant.bungee.ToggleSetupAssistantPacket;
 import de.codingair.warpsystem.spigot.base.utils.PluginVersion;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -41,6 +42,11 @@ public class SetupAssistant {
         this.general = general;
         buildHierarchy();
 
+        if(WarpSystem.getInstance().isOnBungeeCord()) {
+            //send setup assistant packet
+            WarpSystem.getInstance().getDataHandler().send(new ToggleSetupAssistantPacket(player.getName()));
+        }
+
         Class<?> oPacketClass = IReflection.getClass(IReflection.ServerPacket.MINECRAFT_PACKAGE, "PacketPlayOutChat");
         Class<?> iPacketClass = IReflection.getClass(IReflection.ServerPacket.MINECRAFT_PACKAGE, "PacketPlayInChat");
         IReflection.FieldAccessor<BaseComponent[]> components = IReflection.getField(oPacketClass, "components");
@@ -52,6 +58,10 @@ public class SetupAssistant {
                 if(packet.getClass().equals(iPacketClass)) {
                     onChat(a.get(packet));
                     return true;
+                } else if(packet.getClass().equals(oPacketClass)) { //got output message from bungee
+                    //queue for later
+                    System.out.println("SETUP_ASSISTANT: got packet!");
+                    queue.add(packet);
                 }
                 return false;
             }
@@ -70,7 +80,7 @@ public class SetupAssistant {
                     }
 
                     //queue for later
-                    queue.add(packet);
+                    queue(packet);
                     return true;
                 } else return false;
             }
@@ -78,6 +88,10 @@ public class SetupAssistant {
         reader.inject();
 
         process("");
+    }
+
+    public void queue(Object packet) {
+        queue.add(packet);
     }
 
     private void buildHierarchy() {
@@ -113,6 +127,11 @@ public class SetupAssistant {
 
     private void quit(boolean sendMessage) {
         if(reader == null) return;
+
+        if(WarpSystem.getInstance().isOnBungeeCord()) {
+            //send setup assistant packet
+            WarpSystem.getInstance().getDataHandler().send(new ToggleSetupAssistantPacket());
+        }
 
         reader.unInject();
         reader = null;

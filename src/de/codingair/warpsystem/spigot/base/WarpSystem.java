@@ -225,7 +225,9 @@ public class WarpSystem extends JavaPlugin {
             dataHandler.register(uuidListener);
 
             Bukkit.getPluginManager().registerEvents(new HeadListener(), this);
-            Bukkit.getPluginManager().registerEvents(new SetupAssistantListener(), this);
+            SetupAssistantListener l = new SetupAssistantListener();
+            Bukkit.getPluginManager().registerEvents(l, this);
+            dataHandler.register(l);
             getBungeeFeatureList().add(new VanishManager());
 
             this.startAutoSaver();
