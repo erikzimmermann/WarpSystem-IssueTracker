@@ -29,12 +29,12 @@ public class TeleportSoundAction extends ActionObject<SoundData> {
 
     @Override
     public boolean usable() {
-        return getValue() != null && getValue().getSound() != null && getValue().getVolume() > 0;
+        return getValue() != null && getValue().getSound() != null;
     }
 
     @Override
     public boolean read(DataWriter d) throws Exception {
-        setValue(new SoundData(Sound.valueOf(d.getString("sound", "ENDERMAN_TELEPORT")), d.getFloat("volume", 1F), d.getFloat("pitch", 1F)));
+        setValue(new SoundData(Sound.valueOf(d.getString("sound", "ENDERMAN_TELEPORT")), d.getFloat("volume"), d.getFloat("pitch")));
         return true;
     }
 
