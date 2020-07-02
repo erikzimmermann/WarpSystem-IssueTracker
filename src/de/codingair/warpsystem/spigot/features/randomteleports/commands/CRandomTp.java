@@ -41,9 +41,9 @@ public class CRandomTp extends WSCommandBuilder {
                         sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<blocks, info, go>");
                 } else {
                     if(RandomTeleporterManager.getInstance().isBuyable())
-                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<buy, info, go>");
+                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<buy, info>");
                     else {
-                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, go>");
+                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info>");
                     }
                 }
                 return false;
