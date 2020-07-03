@@ -68,7 +68,7 @@ public class TeleportListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onSpawn(PlayerSpawnLocationEvent e) {
         TeleportOptions options = teleport.getIfPresent(e.getPlayer().getName().toLowerCase());
 
