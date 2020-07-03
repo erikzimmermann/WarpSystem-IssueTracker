@@ -67,20 +67,12 @@ public class AnimationManager implements Manager {
                 }
             }
 
-        active = getAnimation(config.getString("Active", null));
-        if(active == null) active = createStandard();
+        active = new Animation("§Standard§", new ParticlePart(AnimationType.CIRCLE, Particle.FIREWORKS_SPARK, 1, 1, CustomAnimation.MAX_SPEED));
+        active.setTickSound(new SoundData(Sound.BLOCK_NOTE_BLOCK_PLING, 0.8F, 1F));
 
         WarpSystem.log("    ...got " + animationList.size() + " animation(s)");
 
         return success;
-    }
-
-    private Animation createStandard() {
-        Animation anim = new Animation("§Standard§", new ParticlePart(AnimationType.CIRCLE, Particle.FIREWORKS_SPARK, 1, 1, CustomAnimation.MAX_SPEED));
-
-        anim.setTickSound(new SoundData(Sound.BLOCK_NOTE_BLOCK_PLING, 0.8F, 1F));
-
-        return anim;
     }
 
     @Override
@@ -96,7 +88,6 @@ public class AnimationManager implements Manager {
         }
 
         file.getConfig().set("Animations", dataList);
-        file.getConfig().set("Active", active == null ? null : active.getName().equals("§Standard§") ? null : active.getName());
         file.saveConfig();
 
         if(!saver) WarpSystem.log("    ...saved " + animationList.size() + " animation(s)");
@@ -125,10 +116,6 @@ public class AnimationManager implements Manager {
 
     public boolean removeAnimation(Animation animation) {
         if(!this.animationList.remove(animation)) return false;
-
-        if(this.active == animation) {
-            this.active = createStandard();
-        }
         return true;
     }
 
