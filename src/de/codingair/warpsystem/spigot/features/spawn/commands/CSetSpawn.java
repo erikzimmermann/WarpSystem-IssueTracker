@@ -60,5 +60,15 @@ public class CSetSpawn extends WSCommandBuilder {
                 return false;
             }
         });
+
+        getBaseComponent().addChild(new CommandComponent("firstjoin") {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                Spawn spawn = SpawnManager.getInstance().getSpawn();
+                spawn.setFirstJoin(((Player) sender).getLocation());
+                sender.sendMessage(Lang.getPrefix() + "§a" + Lang.get("Changes_have_been_saved"));
+                return false;
+            }
+        });
     }
 }
