@@ -29,6 +29,7 @@ public class Spawn extends FeatureObject {
     //first join actions
     private List<String> broadCastMessages;
     private boolean randomFireWorks;
+    private de.codingair.codingapi.tools.Location firstJoin;
 
     private String displayName;
 
@@ -38,6 +39,7 @@ public class Spawn extends FeatureObject {
         randomFireWorks = false;
         respawnUsage = RespawnUsage.DISABLED;
         displayName = "Spawn";
+        firstJoin = null;
     }
 
     public static String prepareBroadcastMessage(String s, Player player) {
@@ -77,6 +79,7 @@ public class Spawn extends FeatureObject {
             this.randomFireWorks = other.randomFireWorks;
             this.respawnUsage = other.respawnUsage;
             this.displayName = other.displayName;
+            this.firstJoin = other.firstJoin.clone();
         }
     }
 
@@ -90,13 +93,16 @@ public class Spawn extends FeatureObject {
         Location l = getLocation();
         if(l != null && l.getWorld() != null) {
             e.setSpawnLocation(l);
-            if(firstJoin) Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> firstJoin(e), 1L);
+            if(firstJoin) firstJoin(e);
         }
     }
 
     private void firstJoin(PlayerSpawnLocationEvent e) {
-        spawnFireWorks(e.getSpawnLocation());
-        broadcast(e.getPlayer());
+        if(firstJoin != null && firstJoin.getWorld() != null) e.setSpawnLocation(firstJoin);
+        Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
+            spawnFireWorks(e.getSpawnLocation());
+            broadcast(e.getPlayer());
+        }, 1L);
     }
 
     private void spawnFireWorks(Location l) {
@@ -158,6 +164,7 @@ public class Spawn extends FeatureObject {
         this.randomFireWorks = d.getBoolean("fireworks", false);
         this.broadCastMessages = d.getList("broadcast");
         this.displayName = d.getString("displayname", "Spawn");
+        this.firstJoin = d.getLocation("firstjoin");
 
         return success;
     }
@@ -171,6 +178,7 @@ public class Spawn extends FeatureObject {
         d.put("fireworks", this.randomFireWorks);
         d.put("broadcast", this.broadCastMessages);
         d.put("displayname", this.displayName);
+        d.put("firstjoin", this.firstJoin);
     }
 
     public String getDisplayName() {
@@ -216,6 +224,14 @@ public class Spawn extends FeatureObject {
 
     public void setRespawnUsage(RespawnUsage respawnUsage) {
         this.respawnUsage = respawnUsage;
+    }
+
+    public de.codingair.codingapi.tools.Location getFirstJoin() {
+        return firstJoin;
+    }
+
+    public void setFirstJoin(Location firstJoin) {
+        this.firstJoin = new de.codingair.codingapi.tools.Location(firstJoin);
     }
 
     public enum Usage {

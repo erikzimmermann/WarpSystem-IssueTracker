@@ -19,7 +19,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 public class SpawnListener implements Listener, PacketListener {
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onSpawn(PlayerSpawnLocationEvent e) {
         Spawn spawn = SpawnManager.getInstance().getSpawn();
         if(spawn != null) {
