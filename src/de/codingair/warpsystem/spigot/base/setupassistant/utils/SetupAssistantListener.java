@@ -54,7 +54,8 @@ public class SetupAssistantListener implements Listener, PacketListener {
     public void onReceive(Packet packet, String extra) {
         if(packet.getType() == PacketType.SetupAssistantStorePacket) {
             String message = ((SetupAssistantStorePacket) packet).getMessage();
-            SetupAssistantManager.getInstance().getAssistant().queue(buildComponent(message));
+            SetupAssistant assistant = SetupAssistantManager.getInstance().getAssistant();
+            if(assistant != null) assistant.queue(buildComponent(message));
         }
     }
 
