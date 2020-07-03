@@ -57,9 +57,9 @@ Back:
   Name: back
   Aliases: []
 Teleport:
-  Name: teleport
+  Name: tp
   Aliases:
-    - tp
+    - teleport
 Tpa:
   Name: tpa
   Aliases: []

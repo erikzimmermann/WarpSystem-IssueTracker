@@ -32,6 +32,7 @@ public class TeleportOptions {
     private boolean silent;
     private SoundData teleportSound;
     private boolean afterEffects;
+    private boolean publicAnimations;
     private boolean teleportAnimation = true;
     private final List<Callback<TeleportResult>> callback = new ArrayList<>();
     private Vector velocity = null;
@@ -59,6 +60,7 @@ public class TeleportOptions {
         this.silent = false;
         this.teleportSound = null;
         this.afterEffects = WarpSystem.getInstance().getTeleportManager().getOptions().isAfterEffects();
+        this.publicAnimations = WarpSystem.getInstance().getTeleportManager().getOptions().isPublicAnimations();
     }
 
     public Location buildLocation() {
@@ -236,5 +238,13 @@ public class TeleportOptions {
 
     public void setServerNotOnline(String serverNotOnline) {
         this.serverNotOnline = serverNotOnline;
+    }
+
+    public boolean isPublicAnimations() {
+        return publicAnimations;
+    }
+
+    public void setPublicAnimations(boolean publicAnimations) {
+        this.publicAnimations = publicAnimations;
     }
 }
