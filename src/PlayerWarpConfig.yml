@@ -29,7 +29,10 @@ PlayerWarps:
     - twarps
     - tempwarp
     - twarp
+    #Listed names will be blocked
     Name_Blacklist: []
+    #Listed worlds will be blocked
+    World_Blacklist: []
     #PREMIUM
     Categories:
       Enabled: false
