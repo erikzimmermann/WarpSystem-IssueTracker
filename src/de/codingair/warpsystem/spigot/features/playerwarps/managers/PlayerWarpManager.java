@@ -73,6 +73,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
     private final HashMap<String, UUID> names = new HashMap<>();
     private final List<Category> warpCategories = new ArrayList<>();
     private final List<String> nameBlacklist = new ArrayList<>();
+    private final List<String> worldBlacklist = new ArrayList<>();
     private boolean bungeeCord;
     private final PlayerWarpListener listener = new PlayerWarpListener();
     private int maxAmount = 0;
@@ -246,9 +247,14 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
     }
 
     public static boolean isProtected(Player player) {
+        String w = player.getLocation().getWorld().getName().toLowerCase();
+        for(String s : getManager().worldBlacklist) {
+            if(w.equals(s.toLowerCase())) return true;
+        }
+
         if(!getManager().isProtectedRegions()) return false;
 
-        PermissionPlayer check = /*new PermissionPlayer(player);*/null;
+        PermissionPlayer check = null;
         try {
             check = PermissionPlayer.class.getConstructor(Player.class).newInstance(player);
         } catch(InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
@@ -309,6 +315,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         this.warps.clear();
         this.warpCategories.clear();
         this.nameBlacklist.clear();
+        this.worldBlacklist.clear();
 
         this.playerWarpsData = WarpSystem.getInstance().getFileManager().loadFile("PlayerWarps", "/Memory/");
         this.config = WarpSystem.getInstance().getFileManager().loadFile("PlayerWarpConfig", "/");
@@ -340,6 +347,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         this.maxAmount = config.getInt("PlayerWarps.General.Max_Warp_Amount", 5);
         this.protectedRegions = config.getBoolean("PlayerWarps.General.Support.ProtectedRegions", true);
         this.nameBlacklist.addAll(config.getStringList("PlayerWarps.General.Name_Blacklist"));
+        this.worldBlacklist.addAll(config.getStringList("PlayerWarps.General.World_Blacklist"));
         this.createCosts = config.getDouble("PlayerWarps.Costs.Create", 200);
         this.editCosts = config.getDouble("PlayerWarps.Costs.Edit", 200);
         this.naturalNumbers = config.getBoolean("PlayerWarps.Costs.Round_costs_to_natural_numbers", false);
@@ -761,19 +769,6 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
     public List<PlayerWarp> getOwnWarps(UUID id) {
         List l = warps.get(id);
         return l == null ? new ArrayList<>() : l;
-    }
-
-    private void addModifiedBlacklistNames(List<String> blacklist) {
-        int size = blacklist.size();
-        for(int i = 0; i < size; i++) {
-            String s = blacklist.get(i);
-
-            StringBuilder mod = new StringBuilder();
-            for(char c : s.toLowerCase().toCharArray()) {
-                if(c == 'a') mod.append(4);
-                else mod.append(c);
-            }
-        }
     }
 
     public String checkSymbols(String name, String highlighter, String reset) {
@@ -1285,5 +1280,9 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
     public boolean isAllowTrustedMembers() {
         return allowTrustedMembers;
+    }
+
+    public List<String> getWorldBlacklist() {
+        return worldBlacklist;
     }
 }

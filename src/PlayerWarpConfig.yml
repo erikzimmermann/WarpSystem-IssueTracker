@@ -26,7 +26,10 @@ PlayerWarps:
     - twarps
     - tempwarp
     - twarp
+    #Listed names will be blocked
     Name_Blacklist: []
+    #Listed worlds will be blocked
+    World_Blacklist: []
     Categories:
       Enabled: true
       Min: 0
