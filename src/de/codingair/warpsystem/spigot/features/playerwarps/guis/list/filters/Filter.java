@@ -17,7 +17,7 @@ public interface Filter {
 
     Object[] getStandardExtra(PWList list);
 
-    PWPage.FilterButton getControllButton(PWPage page, int warps);
+    PWPage.FilterButton getControllButton(PWPage page, int warps, Player player);
 
     boolean searchable(PWPage page);
 }

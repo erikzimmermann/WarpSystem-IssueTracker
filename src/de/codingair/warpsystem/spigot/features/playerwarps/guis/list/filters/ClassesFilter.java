@@ -142,10 +142,10 @@ public class ClassesFilter implements Filter {
     }
 
     @Override
-    public PWPage.FilterButton getControllButton(PWPage page, int warps) {
+    public PWPage.FilterButton getControllButton(PWPage page, int warps, Player player) {
         if(page.getExtra() == null) return null;
 
-        return new ExtendedFilterButton(page, warps);
+        return new ExtendedFilterButton(page, warps, player);
     }
 
     @Override
@@ -156,8 +156,8 @@ public class ClassesFilter implements Filter {
     public static class ExtendedFilterButton extends PWPage.FilterButton {
         private int warps = -1;
 
-        public ExtendedFilterButton(PWPage page, int warps) {
-            super(page);
+        public ExtendedFilterButton(PWPage page, int warps, Player player) {
+            super(page, player);
             this.warps = warps;
             update(false);
         }
@@ -169,8 +169,8 @@ public class ClassesFilter implements Filter {
             Object[] extra = page.getExtra();
 
             return (extra.length == 1 ? Head.CYAN_PLUS : Head.RED_PLUS).getItemBuilder()
-                    .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Filter") + ":§7 " + FilterType.CLASSES.getFilterName())
-                    .setLore(page.getSearch() == null || !page.getFilter().searchable(page) ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Search_Short") + ": §7'§f" + page.getSearch() + "§7'",
+                    .setName(Editor.ITEM_TITLE_COLOR + Lang.get("Filter") + ":§7 " + FilterType.CLASSES.getFilterName() + Lang.PREMIUM_LORE)
+                    .setLore("§8Only admins see this page.", page.getSearch() == null || !page.getFilter().searchable(page) ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Search_Short") + ": §7'§f" + page.getSearch() + "§7'",
                             extra.length == 1 ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Warps") + ": §f" + warps,
                             "",
                             extra.length == 1 ? Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": " + "§a" + Lang.get("Accept") : null,
