@@ -36,6 +36,8 @@ WarpSystem:
       Limit_by_Permission: false
       Enabled: true
       Chunk_Radius: 1
+    #Animations are only visible for players who see the teleporting player
+    Public_Animations: false
     Animation_After_Teleport:
       Enabled: true
     Delay: 3

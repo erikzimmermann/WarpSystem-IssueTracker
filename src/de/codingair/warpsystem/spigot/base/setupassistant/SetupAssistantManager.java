@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 @Function(name = "Walking in teleports", configPath = "WarpSystem.Teleport.Allow_Move", defaultValue = "false", clazz = Boolean.class)
 @Function(name = "Teleport Delay", configPath = "WarpSystem.Teleport.Delay", defaultValue = "3", clazz = Integer.class)
 @Function(name = "Animation after teleports", configPath = "WarpSystem.Teleport.Animation_After_Teleport.Enabled", defaultValue = "true", clazz = Boolean.class)
+@Function(name = "Public animations", configPath = "WarpSystem.Teleport.Public_Animations", defaultValue = "false", clazz = Boolean.class)
 public class SetupAssistantManager {
     private SetupAssistant assistant = null;
     private List<Value> cachedFunctions = null;
