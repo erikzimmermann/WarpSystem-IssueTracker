@@ -33,6 +33,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -140,10 +141,7 @@ public class PWEditor extends Editor<PlayerWarp> implements Ticker {
     }
 
     public static Number cut(double n) {
-        double d = ((double) (int) (n * 100)) / 100;
-
-        if(PlayerWarpManager.getManager().isNaturalNumbers()) d = Math.ceil(d);
-
+        double d = Double.parseDouble(new DecimalFormat("#.##").format(n).replace(",", "."));
         if(d == (int) d) return (int) d;
         else return d;
     }

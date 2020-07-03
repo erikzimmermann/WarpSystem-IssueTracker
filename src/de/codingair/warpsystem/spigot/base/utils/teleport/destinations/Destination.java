@@ -87,7 +87,7 @@ public class Destination implements Serializable {
 
         this.id = destination.id;
         this.adapter = destination.adapter instanceof CloneableAdapter ? ((CloneableAdapter) destination.adapter).clone() : destination.adapter == null ? null : destination.type.getInstance();
-        this.adapter.destination = this;
+        if(this.adapter != null) this.adapter.destination = this;
         this.type = destination.type;
         this.offsetX = destination.offsetX;
         this.offsetY = destination.offsetY;
@@ -180,6 +180,7 @@ public class Destination implements Serializable {
 
     public void setAdapter(DestinationAdapter adapter) {
         this.adapter = adapter;
+        if(this.adapter != null) this.adapter.destination = this;
     }
 
     @Override

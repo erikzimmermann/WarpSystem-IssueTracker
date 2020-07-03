@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public abstract class PortalList extends GUIList<Portal> {
@@ -21,7 +22,7 @@ public abstract class PortalList extends GUIList<Portal> {
     }
 
     public static Number cut(double n) {
-        double d = ((double) (int) (n * 100)) / 100;
+        double d = Double.parseDouble(new DecimalFormat("#.##").format(n).replace(",", "."));
         if(d == (int) d) return (int) d;
         else return d;
     }

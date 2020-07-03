@@ -36,6 +36,8 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
+
 public class PAppearance extends PageItem {
     private final Portal clone;
 
@@ -47,7 +49,7 @@ public class PAppearance extends PageItem {
     }
 
     public static Number cut(double n) {
-        double d = ((double) (int) (n * 100)) / 100;
+        double d = Double.parseDouble(new DecimalFormat("#.##").format(n).replace(",", "."));
         if(d == (int) d) return (int) d;
         else return d;
     }

@@ -19,6 +19,8 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
+
 public class TargetPositionButton extends EditorButton {
     public TargetPositionButton(int x, PlayerWarp warp, PlayerWarp original, boolean isEditing, PageItem page, Player player) {
         super(x, warp, original, isEditing, page, player);
@@ -102,7 +104,9 @@ public class TargetPositionButton extends EditorButton {
         return l.equals(l1);
     }
 
-    private float cut(float f) {
-        return ((float) (int) (f * 10F)) / 10F;
+    public static Number cut(float n) {
+        double d = Double.parseDouble(new DecimalFormat("#.##").format(n).replace(",", "."));
+        if(d == (int) d) return (int) d;
+        else return d;
     }
 }
