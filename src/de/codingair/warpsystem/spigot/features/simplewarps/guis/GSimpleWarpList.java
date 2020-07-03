@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public abstract class GSimpleWarpList extends GUIList<SimpleWarp> {
@@ -26,9 +27,9 @@ public abstract class GSimpleWarpList extends GUIList<SimpleWarp> {
                 @Override
                 public ItemStack buildItem() {
                     String world = value.getLocation().getWorldName();
-                    double x = round(value.getLocation().getX());
-                    double y = round(value.getLocation().getY());
-                    double z = round(value.getLocation().getZ());
+                    Number x = round(value.getLocation().getX());
+                    Number y = round(value.getLocation().getY());
+                    Number z = round(value.getLocation().getZ());
 
                     return new ItemBuilder(XMaterial.ENDER_PEARL)
                             .setName("§7\"§f" + ChatColor.highlight(value.getFormattedName(), getSearched(), "§e§n", "§f", true) + "§7\"")
@@ -49,7 +50,9 @@ public abstract class GSimpleWarpList extends GUIList<SimpleWarp> {
         }
     }
 
-    private double round(double d) {
-        return ((double) (int) (d * 100)) / 100;
+    public Number round(double n) {
+        double d = Double.parseDouble(new DecimalFormat("#.##").format(n).replace(",", "."));
+        if(d == (int) d) return (int) d;
+        else return d;
     }
 }
