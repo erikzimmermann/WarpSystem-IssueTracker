@@ -1,5 +1,6 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport;
 
+import de.codingair.codingapi.particles.animations.movables.PlayerMid;
 import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.server.Environment;
 import de.codingair.codingapi.server.Version;
@@ -76,7 +77,7 @@ public class Teleport {
         if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) this.costs = 0;
 
         if(options.isTeleportAnimation()) {
-            this.animation = new AnimationPlayer(player, AnimationManager.getInstance().getActive(), seconds, this.options.getDestination().buildLocation());
+            this.animation = new AnimationPlayer(player, new PlayerMid(player), AnimationManager.getInstance().getActive(), seconds, true, options.isPublicAnimations());
             this.animation.setTeleportSound(false);
         }
     }
@@ -312,7 +313,7 @@ public class Teleport {
 
     public void playAfterEffects(Player player, Location afterEffectLocation) {
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Teleport.Animation_After_Teleport.Enabled", true)) {
-            new RotatingParticleSpiral(player, afterEffectLocation).runTaskTimer(WarpSystem.getInstance(), 1, 1);
+            new RotatingParticleSpiral(player, afterEffectLocation, options.isPublicAnimations()).runTaskTimer(WarpSystem.getInstance(), 1, 1);
         }
     }
 

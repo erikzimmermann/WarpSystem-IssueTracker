@@ -8,9 +8,11 @@ import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.tools.HitBox;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -28,19 +30,15 @@ public class AnimationPlayer {
     private BukkitRunnable runnable;
     private final List<CustomAnimation> animations = new ArrayList<>();
     private final List<PotionEffect> buffBackup = new ArrayList<>();
-    private final Location destination;
     private double maxDistance = 70;
     private final boolean sounds;
     private boolean teleportSound;
+    private final Player[] viewers;
 
     private HitBox hitBox = null;
 
     public AnimationPlayer(Player player, Animation animation, int seconds) {
-        this(player, new PlayerMid(player), animation, seconds, null);
-    }
-
-    public AnimationPlayer(Player player, Animation animation, int seconds, Location destination) {
-        this(player, new PlayerMid(player), animation, seconds, destination);
+        this(player, new PlayerMid(player), animation, seconds);
     }
 
     public AnimationPlayer(Location location, Animation animation) {
@@ -48,39 +46,49 @@ public class AnimationPlayer {
     }
 
     public AnimationPlayer(Location location, Animation animation, int seconds) {
-        this(null, new LocationMid(location), animation, seconds, null);
+        this(null, new LocationMid(location), animation, seconds);
     }
 
-    public AnimationPlayer(Player player, MovableMid location, Animation animation, int seconds, Location destination) {
-        this(player, location, animation, seconds, destination, true);
+    public AnimationPlayer(Player player, MovableMid location, Animation animation, int seconds) {
+        this(player, location, animation, seconds, true, false);
     }
 
-    public AnimationPlayer(Player player, MovableMid location, Animation animation, int seconds, Location destination, boolean sounds) {
+    public AnimationPlayer(Player player, MovableMid location, Animation animation, int seconds, boolean sounds, boolean viewers) {
         this.player = player;
         this.animMid = location;
         this.animation = animation;
         this.seconds = seconds;
-        this.destination = destination;
         this.sounds = sounds;
         this.teleportSound = sounds;
+
+        if(viewers && player != null && !player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+            List<Player> players = new ArrayList<>();
+            players.add(player);
+
+            Bukkit.getOnlinePlayers().forEach(p -> {
+                if(!p.equals(player) && p.getWorld().equals(player.getWorld()) && p.canSee(player)) players.add(p);
+            });
+
+            this.viewers = players.toArray(new Player[0]);
+        } else this.viewers = player == null ? new Player[0] : new Player[] {player};
     }
 
     private void buildBuffBackup() {
-        if(player == null) return;
+        if(player == null || animation.getBuffList().isEmpty()) return;
         for(PotionEffect p : player.getActivePotionEffects()) {
             buffBackup.add(new PotionEffect(p.getType(), p.getDuration(), p.getAmplifier(), p.isAmbient(), p.hasParticles()));
         }
     }
 
     private void removeActivePotionEffects() {
-        if(player == null) return;
+        if(player == null || animation.getBuffList().isEmpty()) return;
         for(PotionEffect p : player.getActivePotionEffects()) {
             player.removePotionEffect(p.getType());
         }
     }
 
     private void restoreBuffs() {
-        if(player == null) return;
+        if(player == null || animation.getBuffList().isEmpty()) return;
         for(PotionEffect potionEffect : this.buffBackup) {
             player.addPotionEffect(potionEffect);
         }
@@ -89,7 +97,7 @@ public class AnimationPlayer {
     private void buildAnimations() {
         for(ParticlePart particlePart : this.animation.getParticleParts()) {
             try {
-                CustomAnimation anim = particlePart.build(player, animMid);
+                CustomAnimation anim = particlePart.build(viewers, animMid);
                 if(anim != null) {
                     this.animations.add(anim);
                     anim.setMaxDistance(maxDistance);
@@ -256,5 +264,9 @@ public class AnimationPlayer {
 
     public void setTeleportSound(boolean teleportSound) {
         this.teleportSound = teleportSound;
+    }
+
+    public Player[] getViewers() {
+        return viewers;
     }
 }

@@ -62,8 +62,8 @@ public class ParticlePart implements Serializable {
     public void destroy() {
     }
 
-    public CustomAnimation build(Player player, MovableMid mid) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        return animation == null ? null : animation.build(particle, player, mid, radius, height, speed).setXRotation(xRotation).setYRotation(yRotation).setZRotation(zRotation).setColor(color);
+    public CustomAnimation build(Player[] players, MovableMid mid) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        return animation == null ? null : animation.build(particle, players, mid, radius, height, speed).setXRotation(xRotation).setYRotation(yRotation).setZRotation(zRotation).setColor(color);
     }
 
     public AnimationType getAnimation() {

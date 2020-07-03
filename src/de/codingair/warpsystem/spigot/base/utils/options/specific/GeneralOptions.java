@@ -1,12 +1,7 @@
 package de.codingair.warpsystem.spigot.base.utils.options.specific;
 
-import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.options.Option;
 import de.codingair.warpsystem.spigot.base.utils.options.Options;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GeneralOptions extends Options {
     private Option<String> lang = new Option<>("WarpSystem.Language", "ENG");
@@ -16,6 +11,7 @@ public class GeneralOptions extends Options {
     private Option<Boolean> chunkPreLoad = new Option<>("WarpSystem.Teleport.Chunk_Pre_Loading.Enabled");
     private Option<Boolean> chunkPreLoadingLimitedByPerm = new Option<>("WarpSystem.Teleport.Chunk_Pre_Loading.Limit_by_Permission");
     private Option<Boolean> afterEffects = new Option<>("WarpSystem.Teleport.Animation_After_Teleport.Enabled");
+    private Option<Boolean> publicAnimations = new Option<>("WarpSystem.Teleport.Public_Animations");
 
     public GeneralOptions() {
         super("Config");
@@ -35,6 +31,7 @@ public class GeneralOptions extends Options {
         set(chunkPreLoad);
         set(chunkPreLoadingLimitedByPerm);
         set(afterEffects);
+        set(publicAnimations);
         save();
     }
 
@@ -47,6 +44,7 @@ public class GeneralOptions extends Options {
         get(chunkPreLoad);
         get(chunkPreLoadingLimitedByPerm);
         get(afterEffects);
+        get(publicAnimations);
     }
 
     @Override
@@ -61,20 +59,8 @@ public class GeneralOptions extends Options {
             this.chunkPreLoad = o.chunkPreLoad.clone();
             this.chunkPreLoadingLimitedByPerm = o.chunkPreLoadingLimitedByPerm.clone();
             this.afterEffects = o.afterEffects.clone();
+            this.publicAnimations = o.publicAnimations.clone();
         }
-    }
-
-    public static List<String> getLanguages() {
-        File file = new File(WarpSystem.getInstance().getDataFolder().getPath() + "/Languages/");
-        List<String> languages = new ArrayList<>();
-
-        for(File listFile : file.listFiles()) {
-            if(listFile.getName().endsWith(".yml")) {
-                languages.add(listFile.getName().replace(".yml", ""));
-            }
-        }
-
-        return languages;
     }
 
     @Override
@@ -136,5 +122,13 @@ public class GeneralOptions extends Options {
 
     public void setAfterEffects(boolean afterEffects) {
         this.afterEffects.setValue(afterEffects);
+    }
+
+    public boolean isPublicAnimations() {
+        return publicAnimations.getValue();
+    }
+
+    public void setPublicAnimations(boolean publicAnimations) {
+        this.publicAnimations.setValue(publicAnimations);
     }
 }

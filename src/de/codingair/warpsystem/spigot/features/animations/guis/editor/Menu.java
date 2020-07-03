@@ -97,7 +97,7 @@ public class Menu extends HotbarGUI {
             }
         }
 
-        this.animPlayer = new AnimationPlayer(player, mid, clone, 5, null, sound);
+        this.animPlayer = new AnimationPlayer(player, mid, clone, 5, sound, false);
 
         particles = new Particles(getPlayer(), this);
         buffs = new Buffs(getPlayer(), this);
