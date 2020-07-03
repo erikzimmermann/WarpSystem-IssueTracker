@@ -17,7 +17,11 @@ import de.codingair.warpsystem.transfer.packets.general.SendGlobalSpawnOptionsPa
 import de.codingair.warpsystem.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.util.Objects;
 
 @AvailableForSetupAssistant(type = "Spawn", config = "Config")
@@ -41,6 +45,13 @@ public class SpawnManager implements Manager {
             reader.getSerializable("Spawn", this.spawn);
         }
 
+        if(spawn.getLocation() == null) {
+            //import spawn
+            Location l = readEssentialsSpawn();
+            if(l != null) this.spawn.addAction(new WarpAction(new Destination(new LocationAdapter(l))));
+            else this.spawn.addAction(new WarpAction(new Destination(new LocationAdapter(Bukkit.getWorlds().get(0).getSpawnLocation()))));
+        }
+
         SpawnListener listener = new SpawnListener();
         Bukkit.getPluginManager().registerEvents(listener, WarpSystem.getInstance());
         WarpSystem.getInstance().getDataHandler().register(listener);
@@ -48,6 +59,23 @@ public class SpawnManager implements Manager {
         new CSetSpawn().register();
         new CSpawn().register();
         return true;
+    }
+
+    private Location readEssentialsSpawn() {
+        File target = new File(WarpSystem.getInstance().getDataFolder().getParent() + "/Essentials/spawn.yml");
+        if(!target.exists()) return null;
+
+        FileConfiguration config = YamlConfiguration.loadConfiguration(target);
+        String world = config.getString("spawns.default.world");
+        if(world == null) return null;
+
+        return new de.codingair.codingapi.tools.Location(world,
+                config.getDouble("spawns.default.x"),
+                config.getDouble("spawns.default.y"),
+                config.getDouble("spawns.default.z"),
+                (float) config.getDouble("spawns.default.yaw"),
+                (float) config.getDouble("spawns.default.pitch")
+        );
     }
 
     @Override
