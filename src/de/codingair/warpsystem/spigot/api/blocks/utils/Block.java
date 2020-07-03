@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public abstract class Block implements Removable {
     private final UUID uniqueId = UUID.randomUUID();
-    private Location location;
+    private final Location location;
 
     public Block(Location location) {
         this.location = location;
@@ -24,7 +24,7 @@ public abstract class Block implements Removable {
     @Override
     public void destroy() {
         API.removeRemovable(this);
-        location.getBlock().setType(Material.AIR);
+        if(location.getWorld() != null) location.getBlock().setType(Material.AIR);
     }
 
     @Override

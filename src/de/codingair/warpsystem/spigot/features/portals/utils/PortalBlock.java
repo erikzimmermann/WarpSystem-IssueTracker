@@ -17,7 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 public class PortalBlock implements Serializable {
     private Location location;
     private BlockType type;
-    private boolean valid = true;
     private de.codingair.warpsystem.spigot.api.blocks.utils.Block instance = null;
 
     public PortalBlock() {
@@ -27,12 +26,6 @@ public class PortalBlock implements Serializable {
         this.location = location.clone();
         this.location.trim(0);
         this.type = type;
-
-        try {
-            this.location.getBlock();
-        } catch(Throwable t) {
-            valid = false;
-        }
     }
 
     @Override
@@ -40,12 +33,6 @@ public class PortalBlock implements Serializable {
         this.location = new Location();
         this.location.read(d);
         this.location.trim(0);
-
-        try {
-            this.location.getBlock();
-        } catch(Throwable t) {
-            valid = false;
-        }
 
         try {
             this.type = BlockType.valueOf(d.getString("type"));
@@ -68,12 +55,13 @@ public class PortalBlock implements Serializable {
     }
 
     public void updateBlock(Portal portal) {
+        if(location.getWorld() == null) return;
+
         if(instance != null) {
             instance.destroy();
             instance = null;
         }
 
-        if(!isValid()) return;
         if(portal.isVisible()) {
             if(portal.isEditMode()) {
                 if(type.hasEditMaterial()) setEditData(location.getBlock());
@@ -115,11 +103,7 @@ public class PortalBlock implements Serializable {
     }
 
     public boolean touches(LivingEntity e, org.bukkit.Location target) {
-        return isValid() && Area.isInBlock(e, target, location.getBlock());
-    }
-
-    public boolean isValid() {
-        return valid;
+        return location.getWorld() != null && Area.isInBlock(e, target, location.getBlock());
     }
 
     public Location getLocation() {
