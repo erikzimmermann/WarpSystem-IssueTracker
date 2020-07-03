@@ -194,6 +194,7 @@ public class WarpSystem extends JavaPlugin {
 
             //check permission before loading features
             checkPermissions();
+            new PostWorldManager();
 
             log("Loading features");
             this.dataManager.removeDisabled();

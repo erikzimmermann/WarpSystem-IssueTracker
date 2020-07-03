@@ -8,16 +8,14 @@ import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.lib.JSONArray;
 import de.codingair.codingapi.tools.io.utils.DataWriter;
-import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.pages.TeleportSoundPage;
+import de.codingair.warpsystem.spigot.base.managers.PostWorldManager;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.TeleportSoundAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
-import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
@@ -44,6 +42,7 @@ public class Portal extends FeatureObject {
 
     private String displayName;
     private String teleportName;
+    private boolean waitingForWorld = false;
 
     public Portal() {
         this.blocks = new ArrayList<>();
@@ -88,15 +87,7 @@ public class Portal extends FeatureObject {
 
                     PortalBlock block = new PortalBlock();
                     block.read(json);
-
                     if(block.getType() != BlockType.CUSTOM) blocks.add(block);
-                }
-            }
-
-            for(PortalBlock block : blocks) {
-                if(block.getLocation().getWorld() == null) {
-                    destroy();
-                    return false;
                 }
             }
         }
@@ -111,12 +102,6 @@ public class Portal extends FeatureObject {
 
                     Animation animation = new Animation();
                     animation.read(json);
-
-                    if(animation.getLocation() == null || animation.getLocation().getWorld() == null) {
-                        destroy();
-                        return false;
-                    }
-
                     animations.add(animation);
                 }
             }
@@ -262,6 +247,8 @@ public class Portal extends FeatureObject {
         if(entity == null || from == null) return 0;
 
         Location[] edges = getCachedEdges();
+        if(edges == null || edges[0].getWorld() == null) return 0;
+
         int blockResult = 0, animationResult = 0;
         boolean inBlock = false, inAnimation = false;
 
@@ -397,12 +384,36 @@ public class Portal extends FeatureObject {
     }
 
     public void update() {
+        if(waitingForWorld) return;
+        String waitForWorld = null;
+
         for(PortalBlock block : this.blocks) {
+            if(block.getLocation().getWorld() == null) {
+                waitForWorld = block.getLocation().getWorldName();
+                break;
+            }
             block.updateBlock(this);
         }
 
-        for(Animation animation : this.animations) {
-            animation.setVisible(this.visible);
+        if(waitForWorld == null)
+            for(Animation animation : this.animations) {
+                if(animation.getLocation().getWorld() == null) {
+                    waitForWorld = animation.getLocation().getWorldName();
+                    break;
+                }
+                animation.setVisible(this.visible);
+            }
+
+        if(waitForWorld != null) {
+            waitingForWorld = true;
+            PostWorldManager.callback(waitForWorld, new Callback<World>() {
+                @Override
+                public void accept(World object) {
+                    waitingForWorld = false;
+                    update();
+                }
+            });
+            return;
         }
 
         if(visible) this.hologram.update();
