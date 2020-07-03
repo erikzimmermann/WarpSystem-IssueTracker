@@ -16,6 +16,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
+import java.text.DecimalFormat;
+
 public class TeleportPacketListener implements Listener, PacketListener {
 
     @Override
@@ -54,8 +56,8 @@ public class TeleportPacketListener implements Listener, PacketListener {
         }
     }
 
-    private Number cut(double n) {
-        double d = ((double) (int) (n * 100)) / 100;
+    public static Number cut(double n) {
+        double d = Double.parseDouble(new DecimalFormat("#.##").format(n).replace(",", "."));
         if(d == (int) d) return (int) d;
         else return d;
     }

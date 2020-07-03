@@ -18,6 +18,8 @@ import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
+
 public class SpawnEditor extends HotbarGUI {
     private final PortalEditor fallBack;
     private final Portal clone;
@@ -32,7 +34,7 @@ public class SpawnEditor extends HotbarGUI {
     }
 
     public static Number cut(double n) {
-        double d = ((double) (int) (n * 100)) / 100;
+        double d = Double.parseDouble(new DecimalFormat("#.##").format(n).replace(",", "."));
         if(d == (int) d) return (int) d;
         else return d;
     }

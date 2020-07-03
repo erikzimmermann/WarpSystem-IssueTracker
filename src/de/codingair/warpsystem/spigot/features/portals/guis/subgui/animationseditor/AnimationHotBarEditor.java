@@ -27,6 +27,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -87,7 +88,7 @@ public class AnimationHotBarEditor extends HotbarGUI {
     }
 
     public static Number cut(double n) {
-        double d = ((double) (int) (n * 100)) / 100;
+        double d = Double.parseDouble(new DecimalFormat("#.##").format(n).replace(",", "."));
         if(d == (int) d) return (int) d;
         else return d;
     }
