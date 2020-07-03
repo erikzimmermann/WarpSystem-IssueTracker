@@ -58,17 +58,7 @@ public class SignManager implements Manager {
                     }
                 }
 
-                try {
-                    if(warpSign.getLocation().getBlock().getState() instanceof Sign) {
-                        this.warpSigns.add(warpSign);
-                    } else {
-                        WarpSystem.log("    > Loaded WarpSign at location without sign! (Skip)");
-                        success = false;
-                    }
-                } catch(Throwable t) {
-                    WarpSystem.log("    > Loaded WarpSign with missing world! (Skip)");
-                    success = false;
-                }
+                this.warpSigns.add(warpSign);
             }
         }
 
@@ -105,6 +95,7 @@ public class SignManager implements Manager {
 
     public WarpSign getByLocation(Location location) {
         for(WarpSign warpSign : this.warpSigns) {
+            if(warpSign.getLocation().getWorld() == null) continue;
             if(warpSign.getLocation().getBlock().getLocation().equals(location.getBlock().getLocation())) return warpSign;
         }
 

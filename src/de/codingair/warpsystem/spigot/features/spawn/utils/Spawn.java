@@ -87,9 +87,7 @@ public class Spawn extends FeatureObject {
     }
 
     public void onJoin(PlayerSpawnLocationEvent e, boolean firstJoin) {
-        Destination destination = getAction(WarpAction.class).getValue();
-        Location l = destination.buildLocation();
-
+        Location l = getLocation();
         if(l != null && l.getWorld() != null) {
             e.setSpawnLocation(l);
             if(firstJoin) Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> firstJoin(e), 1L);

@@ -287,7 +287,7 @@ public class Destination implements Serializable {
     }
 
     public boolean isBungee() {
-        return type != null && type.isBungee() && (!(adapter instanceof GlobalLocationAdapter) || !Objects.equals(((GlobalLocationAdapter) adapter).getServer(), WarpSystem.getInstance().getCurrentServer()));
+        return type != null && type.isBungee() && (!(adapter instanceof GlobalLocationAdapter) || (((GlobalLocationAdapter) adapter).getServer() != null && !Objects.equals(((GlobalLocationAdapter) adapter).getServer(), WarpSystem.getInstance().getCurrentServer())));
     }
 
     public Options getCustomOptions() {
