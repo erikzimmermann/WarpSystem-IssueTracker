@@ -194,7 +194,7 @@ public class HologramEditor extends HotbarGUI {
 
                     updateSingle(5);
 
-                    String pos = "x=" + cut(hologram.getLocation().getX()) + ", y=" + cut(hologram.getLocation().getY()) + "z=" + cut(hologram.getLocation().getZ());
+                    String pos = "x=" + cut(hologram.getLocation().getX()) + ", y=" + cut(hologram.getLocation().getY()) + ", z=" + cut(hologram.getLocation().getZ());
                     updateDisplayName(getItem(2), "§7" + Lang.get("Position") + ": §e" + pos);
                 } else if(clickType == ClickType.RIGHT_CLICK || clickType == ClickType.SHIFT_RIGHT_CLICK) {
                     Block b = player.getTargetBlock((Set<Material>) null, 10);
