@@ -1,13 +1,12 @@
 package de.codingair.warpsystem.spigot.base.utils;
 
-import com.earth2me.essentials.Trade;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 
 public enum PluginVersion {
     UNKNOWN,
-    v4_2_5,
     v4_2_6,
     v4_2_7,
+    v4_2_8,
     ;
 
     public static final PluginVersion[] values = values();

@@ -1,6 +1,7 @@
 package de.codingair.warpsystem.spigot.features.spawn.commands;
 
 import de.codingair.codingapi.player.chat.SimpleMessage;
+import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -48,5 +49,15 @@ public class CSpawn extends WSCommandBuilder {
                 return false;
             }
         }.setOnlyPlayers(true));
+
+        getBaseComponent().addChild(new CommandComponent("firstjoin", WarpSystem.PERMISSION_MODIFY_SPAWN) {
+            @Override
+            public boolean runCommand(CommandSender sender, String label, String[] args) {
+                Spawn spawn = SpawnManager.getInstance().getSpawn();
+                if(spawn == null || spawn.getFirstJoin() == null || spawn.getFirstJoin().getWorld() == null) getBaseComponent().runCommand(sender, label, args);
+                else spawn.teleportToFirstJoin((Player) sender);
+                return false;
+            }
+        });
     }
 }

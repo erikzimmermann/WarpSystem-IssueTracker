@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.base.setupassistant.utils;
 import com.google.common.collect.EvictingQueue;
 import de.codingair.codingapi.player.chat.SimpleMessage;
 import de.codingair.codingapi.player.data.PacketReader;
+import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.server.reflections.PacketUtils;
 import de.codingair.codingapi.utils.TextAlignment;
@@ -18,6 +19,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -347,7 +349,13 @@ public class SetupAssistant {
                 Object v = value.getCurrentValue();
                 m.add("  §7- ");
 
-                TextComponent info = new TextComponent((value.getDescription().isEmpty() ? "§e" : "§e§o") + value.getName());
+                TextComponent info = new TextComponent(value.getName());
+                if(value.getDescription().isEmpty()) info.setColor(net.md_5.bungee.api.ChatColor.YELLOW);
+                else {
+                    info.setItalic(true);
+                    if(Version.getVersion().isBiggerThan(15)) info.setColor(net.md_5.bungee.api.ChatColor.of(new Color(252, 227, 3)));
+                    else info.setColor(net.md_5.bungee.api.ChatColor.YELLOW);
+                }
                 if(!value.getDescription().isEmpty()) {
                     List<String> description = TextAlignment.lineBreak(value.getDescription(), 200);
                     BaseComponent[] components = new BaseComponent[description.size()];

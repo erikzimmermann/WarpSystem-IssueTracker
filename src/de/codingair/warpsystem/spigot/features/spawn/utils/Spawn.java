@@ -1,6 +1,8 @@
 package de.codingair.warpsystem.spigot.features.spawn.utils;
 
 import de.codingair.codingapi.server.Environment;
+import de.codingair.codingapi.server.sounds.Sound;
+import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.warpsystem.spigot.api.PAPI;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
@@ -10,6 +12,7 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.spawn.managers.SpawnManager;
 import de.codingair.warpsystem.transfer.packets.general.TeleportSpawnPacket;
 import org.bukkit.*;
@@ -87,6 +90,15 @@ public class Spawn extends FeatureObject {
     public void prepareTeleportOptions(String player, TeleportOptions options) {
         super.prepareTeleportOptions(player, options);
         options.setDisplayName(displayName);
+    }
+
+    public FeatureObject teleportToFirstJoin(Player player) {
+        if(this.firstJoin == null || this.firstJoin.getWorld() == null) return this;
+
+        TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(this.firstJoin)), displayName);
+        options.setSkip(true);
+
+        return super.perform(player, options);
     }
 
     public void onJoin(PlayerSpawnLocationEvent e, boolean firstJoin) {
