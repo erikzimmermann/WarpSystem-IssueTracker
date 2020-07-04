@@ -9,10 +9,24 @@ public class WSCommandBuilder extends CommandBuilder {
     private static FileConfiguration config = null;
 
     public WSCommandBuilder(String name, BaseComponent baseComponent) {
-        super(WarpSystem.getInstance(), c().getString(name + "." + "Name", name.toLowerCase()), "A WarpSystem-Command", baseComponent, true, c().getStringList(name + "." + "Aliases").toArray(new String[0]));
+        this(name, baseComponent, false);
     }
 
-    public static FileConfiguration c() {
+    public WSCommandBuilder(String name, BaseComponent baseComponent, boolean important) {
+        super(WarpSystem.getInstance(), c().getString(name + "." + "Name", name.toLowerCase()), "A WarpSystem-Command", baseComponent, true, important(name, important), normal(name, important));
+    }
+
+    private static String[] important(String name, boolean important) {
+        if(!important) return null;
+        return c().getStringList(name + "." + "Aliases").toArray(new String[0]);
+    }
+
+    private static String[] normal(String name, boolean important) {
+        if(important) return null;
+        return c().getStringList(name + "." + "Aliases").toArray(new String[0]);
+    }
+
+    private static FileConfiguration c() {
         if(config == null) config = WarpSystem.getInstance().getFileManager().loadFile("Commands", "/").getConfig();
         return config;
     }

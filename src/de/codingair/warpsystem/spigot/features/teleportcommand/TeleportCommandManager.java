@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.features.teleportcommand;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.player.chat.ChatButtonManager;
 import de.codingair.codingapi.tools.Callback;
+import de.codingair.warpsystem.bungee.features.teleport.utils.TeleportCommandOptions;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.setupassistant.annotations.AvailableForSetupAssistant;
@@ -166,8 +167,9 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
         WarpSystem.getInstance().getDataHandler().register(this.packetListener);
         Bukkit.getPluginManager().registerEvents(this.packetListener, WarpSystem.getInstance());
 
-        if(bungeeCord)
+        if(bungeeCord) {
             WarpSystem.getInstance().getDataHandler().send(new TeleportCommandOptionsPacket(back != null, tp != null, tpAll != null, tpToggle != null, tpa != null, tpaHere != null, tpaAll != null, tpaToggle != null));
+        }
     }
 
     @Override
