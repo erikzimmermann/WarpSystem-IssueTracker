@@ -22,6 +22,7 @@ public class TeleportOptions {
     private String permission;
     private double costs;
     private Boolean skip;
+    private boolean noDelayByPass = false;
     private boolean canMove;
     private boolean waitForTeleport; //Waiting for walking teleports
     private boolean confirmPayment = true;
@@ -246,5 +247,13 @@ public class TeleportOptions {
 
     public void setPublicAnimations(boolean publicAnimations) {
         this.publicAnimations = publicAnimations;
+    }
+
+    public boolean isNoDelayByPass() {
+        return noDelayByPass;
+    }
+
+    public void setNoDelayByPass(boolean noDelayByPass) {
+        this.noDelayByPass = noDelayByPass;
     }
 }

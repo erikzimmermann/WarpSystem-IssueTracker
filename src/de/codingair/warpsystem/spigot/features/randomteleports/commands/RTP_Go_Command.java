@@ -6,7 +6,6 @@ import de.codingair.warpsystem.bungee.features.randomtp.RandomTPListener;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.randomteleports.managers.RandomTeleporterManager;
-import de.codingair.warpsystem.spigot.features.randomteleports.packets.RandomTPPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -125,14 +124,7 @@ public class RTP_Go_Command extends NaturalCommandComponent {
                 targetWorld = data[1];
 
                 if(!targetServer.equalsIgnoreCase(WarpSystem.getInstance().getCurrentServer())) {
-                    WarpSystem.getInstance().getDataHandler().send(new RandomTPPacket(new Callback<Boolean>() {
-                        @Override
-                        public void accept(Boolean success) {
-                            if(success) {
-                                if(!finalPlayer.equalsIgnoreCase(sender.getName())) sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Teleported_Other").replace("%PLAYER%", finalPlayer));
-                            } else sender.sendMessage(Lang.getPrefix() + Lang.get("Server_Is_Not_Online"));
-                        }
-                    }, player, targetServer, targetWorld));
+                    Lang.PREMIUM_CHAT(sender);
                     return false;
                 }
 
