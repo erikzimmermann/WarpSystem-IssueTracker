@@ -82,17 +82,19 @@ public class BungeeBukkitListener implements PacketListener, Listener {
 
                 if(version.equals(WarpSystem.getInstance().getDescription().getVersion())) {
                     if(WarpSystem.getInstance().getBungeePluginVersion() == null || !WarpSystem.getInstance().getBungeePluginVersion().equals(version)) {
-                        WarpSystem.getInstance().getLogger().log(Level.INFO, "Found a valid DataCenter > Init BungeeFeatures");
+                        WarpSystem.getInstance().getLogger().log(Level.INFO, "Found a valid DataCenter > Init BungeeFeatures (Server: '" + WarpSystem.getInstance().getCurrentServer() + "')");
                     }
 
                     this.notice = null;
-                    WarpSystem.getInstance().setOnBungeeCord(true);
 
-                    for(Player player : Bukkit.getOnlinePlayers()) {
-                        if(!player.isOp()) continue;
-                        WarpSystem.getInstance().getDataHandler().send(new IsOperatorPacket(player.getName(), player.isOp()));
-                    }
+                    Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
+                        WarpSystem.getInstance().setOnBungeeCord(true);
 
+                        for(Player player : Bukkit.getOnlinePlayers()) {
+                            if(!player.isOp()) continue;
+                            WarpSystem.getInstance().getDataHandler().send(new IsOperatorPacket(player.getName(), player.isOp()));
+                        }
+                    }, 2L);
                 } else if(WarpSystem.getInstance().getBungeePluginVersion() == null || WarpSystem.getInstance().getBungeePluginVersion().equals(WarpSystem.getInstance().getDescription().getVersion())) {
                     this.notice = new String[] {
                             "",

@@ -53,7 +53,7 @@ public class CTpa extends WSCommandBuilder {
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 Player p = (Player) sender;
                 if(WarpSystem.getInstance().isOnBungeeCord()) {
-                    suggestions.add(TabCompleterListener.ID);
+                    suggestions.add(TabCompleterListener.ID_TPA);
                     if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) suggestions.add(TabCompleterListener.ACCESS);
 
                     StringBuilder builder = new StringBuilder("tpa");

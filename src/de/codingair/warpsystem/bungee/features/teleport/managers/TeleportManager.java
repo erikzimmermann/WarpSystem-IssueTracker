@@ -16,9 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public class TeleportManager implements Manager {
-    private HashMap<ServerInfo, TeleportCommandOptions> commandOptions = new HashMap<>();
-    private List<String> denyForceTpRequests = new ArrayList<>();
-    private List<String> denyForceTps = new ArrayList<>();
+    private final HashMap<ServerInfo, TeleportCommandOptions> commandOptions = new HashMap<>();
+    private final List<String> denyForceTpRequests = new ArrayList<>();
+    private final List<String> denyForceTps = new ArrayList<>();
 
     public static TeleportManager getInstance() {
         return WarpSystem.getInstance().getDataManager().getManager(FeatureType.TELEPORT);
@@ -49,7 +49,8 @@ public class TeleportManager implements Manager {
 
     public void registerOptions(ServerInfo info, int options) {
         removeOptions(info);
-        this.commandOptions.put(info, new TeleportCommandOptions(options));
+        TeleportCommandOptions o;
+        this.commandOptions.put(info, o = new TeleportCommandOptions(options));
     }
 
     public TeleportCommandOptions getOptions(ServerInfo info) {

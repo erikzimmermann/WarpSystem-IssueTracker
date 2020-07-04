@@ -74,7 +74,7 @@ public class SetupAssistantListener implements Listener, PacketListener {
             }
 
             //forward
-            backup.sendPacket(definedPacket);
+            if(backup != null) backup.sendPacket(definedPacket);
         });
     }
 

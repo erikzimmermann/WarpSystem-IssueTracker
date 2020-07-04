@@ -247,7 +247,8 @@ public class TeleportOptions {
 
     public void setPublicAnimations(boolean publicAnimations) {
         this.publicAnimations = publicAnimations;
-      
+    }
+
     public boolean isNoDelayByPass() {
         return noDelayByPass;
     }
