@@ -51,7 +51,7 @@ public class CTpa extends WSCommandBuilder {
             public void addArguments(CommandSender sender, String[] args, List<String> suggestions) {
                 Player p = (Player) sender;
                 if(WarpSystem.getInstance().isOnBungeeCord()) {
-                    suggestions.add(TabCompleterListener.ID);
+                    suggestions.add(TabCompleterListener.ID_TPA);
 
                     StringBuilder builder = new StringBuilder("tpa");
                     for(String arg : args) {

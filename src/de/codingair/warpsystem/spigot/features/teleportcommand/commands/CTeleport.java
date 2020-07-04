@@ -138,7 +138,7 @@ public class CTeleport extends WSCommandBuilder {
 
                 return false;
             }
-        }.setOnlyPlayers(true));
+        }.setOnlyPlayers(true), true);
 
         setOwnTabCompleter((commandSender, command, s, args) -> {
             if(!WarpSystem.hasPermission(commandSender, WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) {
@@ -156,7 +156,7 @@ public class CTeleport extends WSCommandBuilder {
             List<String> suggestions = new ArrayList<>();
 
             if(WarpSystem.getInstance().isOnBungeeCord()) {
-                suggestions.add(TabCompleterListener.ID);
+                suggestions.add(TabCompleterListener.ID_TP);
 
                 StringBuilder builder = new StringBuilder(s);
                 for(String arg : args) {

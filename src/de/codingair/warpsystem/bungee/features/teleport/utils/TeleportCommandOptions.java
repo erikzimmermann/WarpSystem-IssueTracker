@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.bungee.features.teleport.utils;
 
 public class TeleportCommandOptions {
-    private int options;
+    private final int options;
 
     public TeleportCommandOptions(int options) {
         this.options = options;
@@ -37,5 +37,20 @@ public class TeleportCommandOptions {
 
     public boolean isTpaToggle() {
         return (options & (1 << 7)) != 0;
+    }
+
+    @Override
+    public String toString() {
+        return "TeleportCommandOptions{" +
+                "options=" + options +
+                ", isBack=" + isBack() +
+                ", isTp=" + isTp() +
+                ", isTpAll=" + isTpAll() +
+                ", isTpToggle=" + isTpToggle() +
+                ", isTpa=" + isTpa() +
+                ", isTpaHere=" + isTpaHere() +
+                ", isTpaAll=" + isTpaAll() +
+                ", isTpaToggle=" + isTpaToggle() +
+                '}';
     }
 }

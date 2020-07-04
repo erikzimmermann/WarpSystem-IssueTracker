@@ -12,24 +12,30 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 public class TabCompleterListener implements Listener {
-    public static final String ID = "§WS-TP";
+    public static final String ID_TP = "§§WS-TP";
+    public static final String ID_TPA = "§§WS-TPA";
+    public static final String ID_TPA_HERE = "§§WS-TPA-HERE";
+    public static final String ID_TP_HERE = "§§WS-TP-HERE";
+
+    private void finish(TabCompleteResponseEvent e) {
+        if(e.getSuggestions().isEmpty()) e.setCancelled(true); //important to avoid error message on client
+    }
 
     @EventHandler
     public void onResponse(TabCompleteResponseEvent e) {
-        if(e.getSuggestions().isEmpty()) return;
+        if(e.getSuggestions().size() != 2) return;
 
-        if(e.getSuggestions().remove(ID)) {
-            String cursor = e.getSuggestions().isEmpty() ? "" : e.getSuggestions().remove(0);
+        boolean tp = false, tpa = false, tpaHere = false, tpHere = false;
+        if((tp = e.getSuggestions().remove(ID_TP)) || (tpa = e.getSuggestions().remove(ID_TPA)) || (tpaHere = e.getSuggestions().remove(ID_TPA_HERE)) || (tpHere = e.getSuggestions().remove(ID_TP_HERE))) {
+            String cursor = e.getSuggestions().remove(0);
 
-            String cmd = cursor.split(" ")[0];
             String[] args = cursor.split(" ");
 
             ProxiedPlayer receiver = (ProxiedPlayer) e.getReceiver();
             ServerInfo info = receiver.getServer().getInfo();
             TeleportCommandOptions options = TeleportManager.getInstance().getOptions(info);
 
-            if(cmd.equalsIgnoreCase("teleport") || cmd.equalsIgnoreCase("tp")) {
-                e.getSuggestions().clear();
+            if(tp) {
                 if(options == null || !options.isTp()) {
                     for(ProxiedPlayer player : info.getPlayers()) {
                         e.getSuggestions().add(player.getName());
@@ -40,7 +46,10 @@ public class TabCompleterListener implements Listener {
                 int deep = args.length - 1;
 
                 if(cursor.endsWith(" ")) {
-                    if(deep == 1 && Character.isDigit(args[1].charAt(0)) && Players.getPlayer(args[1]) == null) return;
+                    if(deep == 1 && Character.isDigit(args[1].charAt(0)) && Players.getPlayer(args[1]) == null) {
+                        finish(e);
+                        return;
+                    }
                     if(deep == 0 || deep == 1) {
                         for(ServerInfo server : BungeeCord.getInstance().getServers().values()) {
                             TeleportCommandOptions access = TeleportManager.getInstance().getOptions(server);
@@ -66,13 +75,13 @@ public class TabCompleterListener implements Listener {
                         }
                     }
                 }
-            } else if(cmd.equalsIgnoreCase("tpa")) {
-                e.getSuggestions().clear();
+            } else if(tpa) {
                 if(options == null || !options.isTpa()) {
                     for(ProxiedPlayer player : info.getPlayers()) {
                         if(player.getName().equals(receiver.getName())) continue;
                         if(!WarpSystem.getVanishManager().isVanished(player.getName())) e.getSuggestions().add(player.getName()); //check vanished player names
                     }
+                    finish(e);
                     return;
                 }
 
@@ -89,13 +98,13 @@ public class TabCompleterListener implements Listener {
                         }
                     }
                 }
-            } else if(cmd.equalsIgnoreCase("tpahere")) {
-                e.getSuggestions().clear();
+            } else if(tpaHere) {
                 if(options == null || !options.isTpaHere()) {
                     for(ProxiedPlayer player : info.getPlayers()) {
                         if(player.getName().equals(receiver.getName())) continue;
                         if(!WarpSystem.getVanishManager().isVanished(player.getName())) e.getSuggestions().add(player.getName()); //check vanished player names
                     }
+                    finish(e);
                     return;
                 }
                 String last = args[args.length - 1];
@@ -111,12 +120,12 @@ public class TabCompleterListener implements Listener {
                         }
                     }
                 }
-            } else if(cmd.equalsIgnoreCase("tphere")) {
-                e.getSuggestions().clear();
+            } else if(tpHere) {
                 if(options == null || !options.isTp()) {
                     for(ProxiedPlayer player : info.getPlayers()) {
                         e.getSuggestions().add(player.getName());
                     }
+                    finish(e);
                     return;
                 }
 
@@ -133,6 +142,8 @@ public class TabCompleterListener implements Listener {
                     }
                 }
             }
+
+            finish(e);
         }
     }
 }

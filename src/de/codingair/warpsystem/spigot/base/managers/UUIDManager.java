@@ -25,12 +25,12 @@ public class UUIDManager {
         this.uniqueIds.clear();
     }
 
-    protected void injectId(Player player, UUID uniqueId, boolean joined) {
-        if(WarpSystem.getInstance().isOnBungeeCord()) uniqueIds.put(player.getName(), uniqueId);
-        Bukkit.getPluginManager().callEvent(new PlayerFinalJoinEvent(player, uniqueId, joined));
+    protected void injectId(String player, UUID uniqueId) {
+        if(WarpSystem.getInstance().isOnBungeeCord()) uniqueIds.put(player, uniqueId);
     }
 
     public UUID get(Player player) {
+        if(player == null) return null;
         if(bungee()) return this.uniqueIds.get(player.getName());
         else return player.getUniqueId();
     }
@@ -63,7 +63,9 @@ public class UUIDManager {
 
         @EventHandler(priority = EventPriority.LOWEST)
         public void onJoin(PlayerJoinEvent e) {
-            if(!bungee()) Bukkit.getPluginManager().callEvent(new PlayerFinalJoinEvent(e.getPlayer(), e.getPlayer().getUniqueId(), true));
+            UUID id = get(e.getPlayer());
+            if(id != null) Bukkit.getPluginManager().callEvent(new PlayerFinalJoinEvent(e.getPlayer(), id, true));
+            else if(!bungee()) Bukkit.getPluginManager().callEvent(new PlayerFinalJoinEvent(e.getPlayer(), e.getPlayer().getUniqueId(), true));
         }
 
         @EventHandler(priority = EventPriority.HIGHEST)
@@ -75,8 +77,10 @@ public class UUIDManager {
         public void onReceive(Packet packet, String extra) {
             if(bungee() && packet.getType() == PacketType.ApplyUUIDPacket) {
                 ApplyUUIDPacket p = (ApplyUUIDPacket) packet;
+                injectId(p.getName(), p.getId());
                 Player player = Bukkit.getPlayer(p.getName());
-                injectId(player, p.getId(), p.isJoined());
+                if(player != null)
+                    Bukkit.getPluginManager().callEvent(new PlayerFinalJoinEvent(player, p.getId(), p.isJoined()));
             }
         }
 
