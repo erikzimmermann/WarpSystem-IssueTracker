@@ -1,18 +1,9 @@
 package de.codingair.warpsystem.bungee.features.randomtp;
 
-import de.codingair.codingapi.tools.Callback;
-import de.codingair.warpsystem.bungee.base.WarpSystem;
-import de.codingair.warpsystem.bungee.base.managers.ServerManager;
-import de.codingair.warpsystem.bungee.base.utils.ServerInitializeEvent;
-import de.codingair.warpsystem.spigot.features.randomteleports.packets.QueueRTPUsagePacket;
-import de.codingair.warpsystem.spigot.features.randomteleports.packets.RandomTPPacket;
 import de.codingair.warpsystem.spigot.features.randomteleports.packets.RandomTPWorldsPacket;
-import de.codingair.warpsystem.transfer.packets.general.BooleanPacket;
 import de.codingair.warpsystem.transfer.packets.utils.Packet;
 import de.codingair.warpsystem.transfer.packets.utils.PacketType;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
-import net.md_5.bungee.BungeeCord;
-import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.TabCompleteResponseEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -36,11 +27,6 @@ public class RandomTPListener implements PacketListener, Listener {
             if(c1 == c) i++;
         }
         return i;
-    }
-
-    @EventHandler
-    public void onInitialize(ServerInitializeEvent e) {
-        RandomTPManager.getInstance().updateQueue(e.getInfo());
     }
 
     @EventHandler
@@ -132,40 +118,7 @@ public class RandomTPListener implements PacketListener, Listener {
 
     @Override
     public void onReceive(Packet packet, String extra) {
-        ServerInfo origin = BungeeCord.getInstance().getServerInfo(extra);
-
-        if(packet.getType() == PacketType.RandomTPPacket) {
-            RandomTPPacket p = (RandomTPPacket) packet;
-            ProxiedPlayer pp = BungeeCord.getInstance().getPlayer(p.getPlayer());
-            ServerInfo target = BungeeCord.getInstance().getServerInfo(p.getServer());
-
-            BooleanPacket answer = new BooleanPacket(true);
-            p.applyAsAnswer(answer);
-
-            if(target == null || !WarpSystem.getInstance().getServerManager().isOnline(target)) {
-                answer.setValue(false);
-                WarpSystem.getInstance().getDataHandler().send(answer, origin);
-                return;
-            }
-
-            if(pp != null) {
-                WarpSystem.getInstance().getDataHandler().send(answer, origin);
-                p.setServer(extra);
-                ServerManager.sendPlayerTo(target, pp, new Callback<ServerInfo>() {
-                    @Override
-                    public void accept(ServerInfo server) {
-                        WarpSystem.getInstance().getDataHandler().send(p, server);
-                    }
-                });
-            }
-        } else if(packet.getType() == PacketType.QueueRTPUsagePacket) {
-            QueueRTPUsagePacket p = (QueueRTPUsagePacket) packet;
-
-            ServerInfo server = BungeeCord.getInstance().getServerInfo(p.getServer());
-            if(!server.getPlayers().isEmpty()) WarpSystem.getInstance().getDataHandler().send(p, server);
-            else RandomTPManager.getInstance().addQueueEntry(p.getIdOnce(), p.getServer());
-
-        } else if(packet.getType() == PacketType.RandomTPWorldsPacket) {
+        if(packet.getType() == PacketType.RandomTPWorldsPacket) {
             RandomTPWorldsPacket p = (RandomTPWorldsPacket) packet;
             RandomTPManager.getInstance().addWorldData(extra, p.getWorlds());
         }
