@@ -6,9 +6,8 @@ import de.codingair.codingapi.tools.io.utils.Serializable;
 import de.codingair.codingapi.utils.ImprovedDouble;
 import de.codingair.warpsystem.spigot.api.PAPI;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
-import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
-import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.CloneableAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.GlobalLocationAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
@@ -96,7 +95,7 @@ public class Destination implements Serializable {
         return this;
     }
 
-    public boolean teleport(Player player, String message, String displayName, boolean checkPermission, boolean silent, double costs, Callback<TeleportResult> callback) {
+    public boolean teleport(Player player, String message, String displayName, boolean checkPermission, boolean silent, double costs, Callback<Result> callback) {
         if(adapter == null) return false;
         player.setFallDistance(0F);
 
@@ -115,14 +114,14 @@ public class Destination implements Serializable {
     public String getMessage(Player player, String message, String displayName, double costs) {
         message = this.customOptions.buildMessage(message);
         if(adapter == null || message == null) return null;
-        message = (message.startsWith(Lang.getPrefix()) ? "" : Lang.getPrefix()) + message.replace("%AMOUNT%", new ImprovedDouble(costs).toString()).replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName));
+        message = message.replace("%AMOUNT%", new ImprovedDouble(costs).toString()).replace("%warp%", ChatColor.translateAlternateColorCodes('&', displayName));
         message = PAPI.convert(message, player).replace("%player%", player.getName()).replace("%PLAYER%", player.getName());
         return message;
     }
 
     public void adjustLocation(Player player, org.bukkit.Location location) {
         location.add(buildRandomOffset());
-        if(!customOptions.isRotation()) {
+        if(!customOptions.isRotation() || (location.getYaw() == -420 && location.getPitch() == -420)) {
             org.bukkit.Location p = player.getLocation();
             location.setYaw(p.getYaw());
             location.setPitch(p.getPitch());
@@ -148,7 +147,7 @@ public class Destination implements Serializable {
     }
 
     public SimulatedTeleportResult simulate(Player player, boolean checkPermission) {
-        if(adapter == null) return new SimulatedTeleportResult(null, TeleportResult.NO_ADAPTER);
+        if(adapter == null) return new SimulatedTeleportResult(null, Result.NO_ADAPTER);
         return adapter.simulate(player, this.id, checkPermission);
     }
 

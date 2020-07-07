@@ -1,10 +1,17 @@
 package de.codingair.warpsystem.spigot.features.warps.nextlevel.utils;
 
 import de.codingair.codingapi.server.Color;
+import de.codingair.codingapi.tools.Callback;
+import de.codingair.codingapi.tools.TimeMap;
 import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.codingapi.tools.items.ItemBuilder;
+import de.codingair.codingapi.utils.ImprovedDouble;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
+import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject;
+import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
@@ -16,6 +23,12 @@ import java.util.List;
 import java.util.Objects;
 
 public class Icon extends FeatureObject {
+    private final TimeMap<Player, PaymentConfirmation> confirm = new TimeMap<Player, PaymentConfirmation>(){
+        @Override
+        public void timeout(Player key, PaymentConfirmation value) {
+            value.getCallback().accept(Result.ERROR);
+        }
+    };
     private String name;
     private ItemStack item;
     private int slot;
@@ -49,6 +62,36 @@ public class Icon extends FeatureObject {
         this.item = item;
         this.page = page;
         this.slot = slot;
+    }
+
+    @Override
+    public FeatureObject perform(Player player) {
+        PaymentConfirmation pc = confirm.remove(player);
+
+        if(pc != null) {
+            //confirm
+            if(MoneyAdapterType.getActive().getMoney(player) < pc.getCosts()) {
+                pc.getCallback().accept(Result.NOT_ENOUGH_MONEY);
+            } else {
+                MoneyAdapterType.getActive().withdraw(player, pc.getCosts());
+                pc.getCallback().accept(Result.SUCCESS);
+            }
+
+            return this;
+        }
+
+        return super.perform(player);
+    }
+
+    @Override
+    protected void confirmPayment(Player player, double costs, Callback<Result> callback) {
+        if(MoneyAdapterType.getActive().getMoney(player) < costs) {
+            callback.accept(Result.NOT_ENOUGH_MONEY);
+            return;
+        }
+
+        confirm.put(player, new PaymentConfirmation(callback, costs), 2);
+        player.sendMessage(Lang.getPrefix() + Lang.get("Icon_Costs_Confirm").replace("%AMOUNT%", new ImprovedDouble(costs).toString()));
     }
 
     public Icon clone() {
@@ -103,6 +146,7 @@ public class Icon extends FeatureObject {
             this.page = d.get("page") == null ? null : IconManager.getInstance().getPage(d.get("page"));
         }
 
+        if(isPage()) removeAction(Action.COSTS);
         return true;
     }
 
@@ -217,5 +261,23 @@ public class Icon extends FeatureObject {
 
     public void setPage(boolean category) {
         isPage = category;
+    }
+
+    private class PaymentConfirmation {
+        private final Callback<Result> callback;
+        private final double costs;
+
+        public PaymentConfirmation(Callback<Result> callback, double costs) {
+            this.callback = callback;
+            this.costs = costs;
+        }
+
+        public Callback<Result> getCallback() {
+            return callback;
+        }
+
+        public double getCosts() {
+            return costs;
+        }
     }
 }

@@ -1,6 +1,5 @@
 WarpSystem:
   Language: ENG
-  Maintenance: false
   Admin:
     Permission: WarpSystem.Admin
   #If set to false, all players can use every user feature (admin tools still need op or modify permissions)

@@ -222,14 +222,12 @@ public class Portal extends FeatureObject {
     }
 
     @Override
-    public FeatureObject perform(Player player) {
-        TeleportOptions options = new TeleportOptions();
+    public void prepareTeleportOptions(String player, TeleportOptions options) {
+        super.prepareTeleportOptions(player, options);
 
         if(!this.animations.isEmpty()) options.setTeleportAnimation(false);
         options.setCanMove(true);
         if(this.teleportName != null) options.setDisplayName(ChatColor.translateAlternateColorCodes('&', this.teleportName));
-
-        return perform(player, options);
     }
 
     public int enteredPortal(LivingEntity entity, org.bukkit.Location from) {
@@ -447,13 +445,12 @@ public class Portal extends FeatureObject {
         this.cachedAxis = null;
     }
 
-    public boolean removePortalBlock(org.bukkit.Location l) {
+    public void removePortalBlock(org.bukkit.Location l) {
         PortalBlock block = getBlock(l);
 
         if(block != null) {
             this.blocks.remove(block);
-            return true;
-        } else return false;
+        }
     }
 
     public PortalBlock getBlock(org.bukkit.Location l) {

@@ -3,14 +3,14 @@ package de.codingair.warpsystem.spigot.base.utils.teleport.destinations;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
-import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public abstract class DestinationAdapter {
     Destination destination;
 
-    public abstract boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback);
+    public abstract boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<Result> callback);
 
     public abstract SimulatedTeleportResult simulate(Player player, String id, boolean checkPermission);
 

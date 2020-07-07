@@ -27,7 +27,6 @@ Teleported_To: '&7Du wurdest zu "&b%warp%&7" teleportiert.'
 Teleported_To_By: '&7Du wurdest von "&b%gate%&7" zu "&b%warp%&7" teleportiert.'
 Teleported_Player_Info: '&7Du hast "&b%player%&7" zu "&b%warp%&7" teleportiert.'
 Config: Konfiguration
-Maintenance: Wartung
 Language: Sprache
 Animation: Animation
 Animations: Animationen
@@ -39,8 +38,6 @@ Teleport_Delay: Teleportations-Zeit
 Reduce: 'Verringern'
 Enlarge: 'Vergrößern'
 Success_Changed_Lang: '&aDie Sprache wurde auf "%lang%" geändert.'
-Success_Maintenance_Enabled: '&4Der Wartungs-Modus wurde aktiviert.'
-Success_Maintenance_Disabled: '&4Der Wartungs-Modus wurde deaktiviert.'
 Success_Changed_Animation: '&aDie Animation wurde auf "%anim%" geändert.'
 Success_Walking_Enabled: '&7Laufen beim Teleport ist nun &aerlaubt&7.'
 Success_Walking_Disabled: '&7Laufen beim Teleport ist nun &cnicht mehr erlaubt&7.'
@@ -193,8 +190,6 @@ Change_Permission: 'Berechtigung ändern'
 Portal_Insufficient_Permissions: '&cDu hast nicht genug Berechtigungen, um dich mit diesem Portal zu teleportieren.'
 Enter_Correct_Name_Underline: '&cBitte benutze keine "_"-Zeichen.'
 Player_Cannot_Use_Page: '&cSie dürfen diese Seite nicht öffnen!'
-Warning_Maintenance: '&cDas WarpSystem ist momentan im Wartungs-Modus, bitte versuche es später erneut.'
-Not_Enough_Money: '&7Du brauchst mindestens &c%AMOUNT% Coin(s)&7, um dich dorthin zu teleportieren!'
 GlobalWarps_Not_Available: '&cEs existieren keine GlobalWarps, die verknüpft werden können!'
 Move_To_Open_Editor: '&cBewegen um den &nEditor&c wieder zu öffnen'
 No_Item_In_Hand: '&cDu musst ein Item halten!'
@@ -535,3 +530,4 @@ SetupAssistant_Wrong_Format: '&cFalsches Format&7! Bitte &cSyntax überprüfen&7
 SetupAssistant_Still_Active: '&7Der SetupAssistant ist &cimmernoch aktiv&7!'
 Start: 'Start'
 Default: 'Standard'
+Icon_Costs_Confirm: '&7Klicken Sie erneut auf dieses Symbol, um die Zahlung von &c%AMOUNT% Coin(s) &7zu bestätigen.'

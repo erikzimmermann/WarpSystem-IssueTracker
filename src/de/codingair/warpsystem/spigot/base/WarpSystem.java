@@ -23,6 +23,7 @@ import de.codingair.warpsystem.spigot.base.utils.options.specific.GeneralOptions
 import de.codingair.warpsystem.spigot.base.utils.options.specific.PortalOptions;
 import de.codingair.warpsystem.spigot.base.utils.options.specific.WarpGUIOptions;
 import de.codingair.warpsystem.spigot.base.utils.options.specific.WarpSignOptions;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.transfer.packets.spigot.RequestInitialPacket;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
 import de.codingair.warpsystem.utils.Manager;
@@ -97,7 +98,6 @@ public class WarpSystem extends JavaPlugin {
 
     public static String PERMISSION_ADMIN = "warpsystem.admin";
     public static boolean activated = false;
-    public static boolean maintenance = false;
     private static WarpSystem instance;
     private static boolean updateAvailable = false;
     private OptionBundle options;
@@ -108,7 +108,7 @@ public class WarpSystem extends JavaPlugin {
     private BungeeBukkitListener packetListener;
     private final List<BungeeFeature> bungeeFeatureList = new ArrayList<>();
 
-    private final TeleportManager teleportManager = new TeleportManager();
+    private final TeleportManager teleportManager = TeleportManager.getInstance();
     private final FileManager fileManager = new FileManager(this);
     private DataManager dataManager;
     private final HeadManager headManager = new HeadManager();
@@ -214,8 +214,6 @@ public class WarpSystem extends JavaPlugin {
                 log("Backup successfully created");
                 log(" ");
             }
-
-            maintenance = fileManager.getFile("Config").getConfig().getBoolean("WarpSystem.Maintenance", false);
 
             Bukkit.getPluginManager().registerEvents(new TeleportListener(), this);
             Bukkit.getPluginManager().registerEvents(new NotifyListener(), this);
@@ -344,11 +342,11 @@ public class WarpSystem extends JavaPlugin {
         }
 
         save(false);
-        teleportManager.getTeleports().forEach(t -> t.cancel(false, false));
+        teleportManager.getTeleports().forEach(t -> t.cancel(Result.CANCELLED_BY_SYSTEM));
+        teleportManager.clear();
 
         //Disable all functions
         activated = false;
-        maintenance = false;
         onBungeeCord = false;
         server = null;
         updateAvailable = false;
@@ -452,7 +450,6 @@ public class WarpSystem extends JavaPlugin {
 
                 if(!saver) log("Saving options");
                 fileManager.getFile("Config").loadConfig();
-                fileManager.getFile("Config").getConfig().set("WarpSystem.Maintenance", maintenance);
                 this.options.write();
 
                 if(!saver) log("Saving features");

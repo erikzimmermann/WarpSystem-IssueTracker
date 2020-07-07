@@ -8,7 +8,7 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
-import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.EmptyAdapter;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
@@ -51,7 +51,7 @@ public class TeleportPacketListener implements Listener, PacketListener {
                 options.setSkip(true);
                 options.setConfirmPayment(false);
                 options.setOrigin(Origin.TeleportCommand);
-                options.setMessage(gate == player ? Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", gate.getName()));
+                options.setMessage(Lang.getPrefix() + (gate == player ? Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", gate.getName())));
 
                 if(gate != null && gate != player && tpPacket.isMessageToGate())
                     gate.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", tpPacket.getPlayer()).replace("%warp%", other.getName()));
@@ -95,11 +95,11 @@ public class TeleportPacketListener implements Listener, PacketListener {
                 options.setMessage(null);
                 options.setPayMessage(null);
                 options.setCosts(TeleportCommandManager.getInstance().getTpaCosts());
-                options.addCallback(new Callback<TeleportResult>() {
+                options.addCallback(new Callback<Result>() {
                     @Override
-                    public void accept(TeleportResult result) {
+                    public void accept(Result result) {
                         //move
-                        if(result == TeleportResult.SUCCESS) {
+                        if(result == Result.SUCCESS) {
                             WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportPlayerToPlayerPacket(player.getName(), tpPacket.getTo(), new Callback<Integer>() {
                                 @Override
                                 public void accept(Integer result) {
@@ -150,8 +150,8 @@ public class TeleportPacketListener implements Listener, PacketListener {
                         end.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", tpPacket.getPlayer()).replace("%warp%", "x=" + cut(x) + ", y=" + cut(y) + ", z=" + cut(z)));
                     }
 
-                    options.setMessage(tpPacket.getGate().equals(tpPacket.getPlayer()) ? Lang.get("Teleported_To") :
-                            Lang.get("Teleported_To_By").replace("%gate%", tpPacket.getGate()));
+                    options.setMessage(Lang.getPrefix() + (tpPacket.getGate().equals(tpPacket.getPlayer()) ? Lang.get("Teleported_To") :
+                            Lang.get("Teleported_To_By").replace("%gate%", tpPacket.getGate())));
                 }
 
                 if(tpPacket.getDestinationName() == null) options.setOrigin(Origin.TeleportCommand);

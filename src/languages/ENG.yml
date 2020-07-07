@@ -26,7 +26,6 @@ Teleported_To: '&7You were teleported to ''&b%warp%&7''.'
 Teleported_To_By: '&7You were teleported to ''&b%warp%&7'' by ''&b%gate%&7''.'
 Teleported_Player_Info: '&7You teleported ''&b%player%&7'' to ''&b%warp%&7''.'
 Config: Config
-Maintenance: Maintenance
 Language: Language
 Animation: Animation
 Animations: Animations
@@ -38,8 +37,6 @@ Teleport_Delay: Teleport delay
 Reduce: 'Reduce'
 Enlarge: 'Enlarge'
 Success_Changed_Lang: '&aThe language was changed to "%lang%".'
-Success_Maintenance_Enabled: '&4The Maintenance-Mode was enabled.'
-Success_Maintenance_Disabled: '&4The Maintenance-Mode was disabled.'
 Success_Changed_Animation: '&aThe animation was changed to "%anim%".'
 Success_Walking_Enabled: '&7Walking during a teleport is &aallowed &7now.'
 Success_Walking_Disabled: '&7Walking during a teleport is &cdisallowed &7now.'
@@ -192,8 +189,6 @@ Change_Permission: 'Change permission'
 Portal_Insufficient_Permissions: '&cYou have insufficient permissions to teleport with this portal.'
 Enter_Correct_Name_Underline: '&cPlease don''t use "_"-Symbols.'
 Player_Cannot_Use_Page: '&cYou are not allowed to open this page!'
-Warning_Maintenance: '&cThe WarpSystem is currently in maintenance mode, please try it later again.'
-Not_Enough_Money: '&7You need at least &c%AMOUNT% coin(s)&7, to teleport to that position!'
 GlobalWarps_Not_Available: '&cThere are no GlobalWarps, which can be linked!'
 Move_To_Open_Editor: '&cMove to open the &nconfig-editor&r'
 No_Item_In_Hand: '&cYou have to hold an item!'
@@ -535,3 +530,4 @@ SetupAssistant_Wrong_Format: '&cWrong format&7! &7Please use the &cproposed synt
 SetupAssistant_Still_Active: '&7The setup assistant is &cstill active&7!'
 Start: 'Start'
 Default: 'Default'
+Icon_Costs_Confirm: '&7Click on this icon again to &cconfirm&7 you payment of &c%AMOUNT% Coin(s)&7.'

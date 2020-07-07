@@ -26,7 +26,6 @@ Teleported_To: '&7Has sido enviado a ''&b%warp%&7''.'
 Teleported_To_By: '&7Has sido enviado a ''&b%warp%&7'' por ''&b%gate%&7''.'
 Teleported_Player_Info: '&7Has enviado a ''&b%player%&7'' a ''&b%warp%&7''.'
 Config: Configuracion
-Maintenance: Mantenimiento
 Language: Idioma
 Animation: Animacion
 Animations: Animaciones
@@ -38,8 +37,6 @@ Teleport_Delay: Retraso del Teleport.
 Reduce: 'Reducir'
 Enlarge: 'Agrandar'
 Success_Changed_Lang: '&aEl idioma ha sido cambiado a "%lang%".'
-Success_Maintenance_Enabled: '&4El Modo Mantenimiento ha sido habilitado.'
-Success_Maintenance_Disabled: '&4El Modo Mantenimiento ha sido deshabilitado.'
 Success_Changed_Animation: '&aLa Animacion ha sido cambiada a "%anim%".'
 Success_Walking_Enabled: '&7Andar mientras te teletransportas esta &apermitido &7ahora.'
 Success_Walking_Disabled: '&7Andar mientras te teletransportas &cno esta permitido &7ahora.'
@@ -191,8 +188,6 @@ Change_Permission: 'Cambiar permiso'
 Portal_Insufficient_Permissions: '&cNo tienes suficientes permisos para ir a este portal.'
 Enter_Correct_Name_Underline: '&cNo uses "_" simbolos.'
 Player_Cannot_Use_Page: '&c¡No tienes permiso para abrir esta pagina!'
-Warning_Maintenance: '&cEl Sistema de Warps esta actualmente en mantenimiento, porfavor prueba mas tarde.'
-Not_Enough_Money: '&7Necesitas al menos &c%AMOUNT% moneda(s)&7, para transportate a ese warp!'
 GlobalWarps_Not_Available: '&cNo hay WarpGlobales, que puedan ser enlazados!'
 Move_To_Open_Editor: '&cMuevete para abrir la &nconfiguracion&r'
 No_Item_In_Hand: '&c¡Tienes que tener un objeto en la mano!'
@@ -533,3 +528,4 @@ SetupAssistant_Wrong_Format: '&cFormato erróneo&7! &7Por favor, use la &sintaxi
 SetupAssistant_Still_Active: '&7El asistente de configuración está &sigue activo&7!'
 Start: 'Inicie'
 Default: 'Default'
+Icon_Costs_Confirm: '&7Pulsa en este icono de nuevo para &confirmar &7tu pago de &c%AMOUNT% Coin(s)&7.'

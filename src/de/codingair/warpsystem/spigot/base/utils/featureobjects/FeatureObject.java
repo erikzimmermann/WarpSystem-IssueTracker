@@ -21,9 +21,11 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.Co
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.TeleportSoundAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
-import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.v2.ConfirmPayment;
+import de.codingair.warpsystem.spigot.base.utils.teleport.v2.WaitForTeleport;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.exceptions.IconReadException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -93,10 +95,10 @@ public class FeatureObject implements Serializable {
             options.setPermission(this.permission == null ? TeleportManager.NO_PERMISSION : permission);
             if(!origin.sendTeleportMessage()) options.setMessage(null);
 
-            options.addCallback(new Callback<TeleportResult>() {
+            options.addCallback(new Callback<Result>() {
                 @Override
-                public void accept(TeleportResult result) {
-                    if(result == TeleportResult.SUCCESS) {
+                public void accept(Result result) {
+                    if(result == Result.SUCCESS) {
                         Player p = Bukkit.getPlayer(player);
                         if(p == null) return;
 
@@ -110,30 +112,56 @@ public class FeatureObject implements Serializable {
         }
     }
 
+    protected void confirmPayment(Player player, double costs, Callback<Result> callback) {
+        ConfirmPayment.confirm(player, costs, new Callback<Result>() {
+            @Override
+            public void accept(Result result) {
+                callback.accept(result);
+            }
+        });
+    }
+
     public FeatureObject perform(Player player, TeleportOptions options) {
         if(this.actions == null) return this;
 
         prepareTeleportOptions(player.getName(), options);
+        double costs = options.getCosts(player);
+
+        options.addCallback(new Callback<Result>() {
+            @Override
+            public void accept(Result result) {
+                if(result == Result.SUCCESS) performed++;
+            }
+        });
 
         if(hasAction(Action.WARP)) {
             WarpSystem.getInstance().getTeleportManager().teleport(player, options);
-            performed++;
             return this;
-        }
-        else if(hasAction(Action.COSTS)) {
-            TeleportManager.confirmPayment(player, getAction(CostsAction.class).getValue(), new Callback<Boolean>() {
+        } else if(costs > 0) {
+            WaitForTeleport.wait(player, new Callback<Result>() {
                 @Override
-                public void accept(Boolean confirm) {
-                    if(confirm) {
-                        for(ActionObject<?> action : actions) {
-                            if(action.getType() == Action.WARP || action.getType() == Action.COSTS) continue;
-                            action.perform(player);
-                        }
+                public void accept(Result result) {
+                    if(result != Result.SUCCESS) return;
 
-                        player.sendMessage(Lang.getPrefix() + Lang.get("Money_Paid_Use").replace("%AMOUNT%", new ImprovedDouble(getAction(CostsAction.class).getValue()).toString()));
-                    } else {
-                        if(options.getPaymentDeniedMessage(player) != null) player.sendMessage(options.getPaymentDeniedMessage(player));
-                    }
+                    confirmPayment(player, costs, new Callback<Result>() {
+                        @Override
+                        public void accept(Result result) {
+                            if(result == Result.SUCCESS) {
+                                for(ActionObject<?> action : actions) {
+                                    if(action.getType() == Action.WARP || action.getType() == Action.COSTS) continue;
+                                    action.perform(player);
+                                }
+
+                                player.sendMessage(Lang.getPrefix() + Lang.get("Money_Paid_Use").replace("%AMOUNT%", new ImprovedDouble(getAction(CostsAction.class).getValue()).toString()));
+                            } else if(result == Result.NOT_ENOUGH_MONEY) {
+                                player.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money").replace("%AMOUNT%", options.getFinalCosts(player).toString()));
+                            } else if(result == Result.DENIED_PAYMENT) {
+                                if(options.getPaymentDeniedMessage(player) != null) player.sendMessage(options.getPaymentDeniedMessage(player));
+                            }
+
+                            options.fireCallbacks(result);
+                        }
+                    });
                 }
             });
         } else {
@@ -141,11 +169,9 @@ public class FeatureObject implements Serializable {
                 if(action.getType() == Action.WARP || action.getType() == Action.COSTS) continue;
                 action.perform(player);
             }
+
+            options.fireCallbacks(Result.SUCCESS);
         }
-
-        options.runCallbacks(TeleportResult.SUCCESS);
-
-        performed++;
         return this;
     }
 

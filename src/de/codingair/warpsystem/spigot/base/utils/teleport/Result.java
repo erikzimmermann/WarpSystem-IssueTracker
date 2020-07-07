@@ -1,6 +1,6 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport;
 
-public enum TeleportResult {
+public enum Result {
     SUCCESS,
     CANCELLED,
     DESTINATION_DOES_NOT_EXIST,
@@ -13,5 +13,6 @@ public enum TeleportResult {
     ERROR,
     ALREADY_ON_TARGET_SERVER,
     NO_ADAPTER,
-    DENIED_PAYMENT
+    DENIED_PAYMENT,
+    DISCONNECT
 }

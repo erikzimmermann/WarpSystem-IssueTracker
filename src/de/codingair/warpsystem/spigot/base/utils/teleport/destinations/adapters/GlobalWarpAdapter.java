@@ -5,7 +5,7 @@ import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
-import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationAdapter;
 import de.codingair.warpsystem.spigot.features.globalwarps.managers.GlobalWarpManager;
 import de.codingair.warpsystem.transfer.packets.spigot.GlobalWarpTeleportPacket;
@@ -14,13 +14,13 @@ import org.bukkit.util.Vector;
 
 public class GlobalWarpAdapter extends DestinationAdapter {
     @Override
-    public boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
+    public boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<Result> callback) {
         GlobalWarpManager.getInstance().teleport(player, id, randomOffset, displayName, message, costs, new Callback<GlobalWarpTeleportPacket.Result>() {
             @Override
             public void accept(GlobalWarpTeleportPacket.Result result) {
                 switch(result) {
                     case TELEPORTED:
-                        if(callback != null) callback.accept(TeleportResult.SUCCESS);
+                        if(callback != null) callback.accept(Result.SUCCESS);
                         break;
 
                     case WARP_NOT_EXISTS:
@@ -30,7 +30,7 @@ public class GlobalWarpAdapter extends DestinationAdapter {
                             MoneyAdapterType.getActive().deposit(player, costs);
                         }
 
-                        if(callback != null) callback.accept(TeleportResult.DESTINATION_DOES_NOT_EXIST);
+                        if(callback != null) callback.accept(Result.DESTINATION_DOES_NOT_EXIST);
                         break;
 
                     case SERVER_NOT_AVAILABLE:
@@ -38,7 +38,7 @@ public class GlobalWarpAdapter extends DestinationAdapter {
                             MoneyAdapterType.getActive().deposit(player, costs);
                         }
 
-                        if(callback != null) callback.accept(TeleportResult.SERVER_NOT_AVAILABLE);
+                        if(callback != null) callback.accept(Result.SERVER_NOT_AVAILABLE);
                         break;
                 }
             }
@@ -49,7 +49,7 @@ public class GlobalWarpAdapter extends DestinationAdapter {
 
     @Override
     public SimulatedTeleportResult simulate(Player player, String id, boolean checkPermission) {
-        return new SimulatedTeleportResult(null, TeleportResult.SUCCESS);
+        return new SimulatedTeleportResult(null, Result.SUCCESS);
     }
 
     @Override

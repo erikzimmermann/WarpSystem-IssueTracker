@@ -9,7 +9,7 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
-import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.EmptyAdapter;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.PrepareTeleportRequestPacket;
@@ -94,11 +94,11 @@ public class Invitation {
                     options.setCosts(TeleportCommandManager.getInstance().getTpaCosts());
                     options.setPaymentDeniedMessage(null);
                     options.setAfterEffects(false);
-                    options.addCallback(new Callback<TeleportResult>() {
+                    options.addCallback(new Callback<Result>() {
                         @Override
-                        public void accept(TeleportResult result) {
+                        public void accept(Result result) {
                             //move
-                            if(result == TeleportResult.SUCCESS) {
+                            if(result == Result.SUCCESS) {
                                 WarpSystem.getInstance().getDataHandler().send(new PrepareTeleportPlayerToPlayerPacket(player.getName(), sender.getName(), new Callback<Integer>() {
                                     @Override
                                     public void accept(Integer result) {

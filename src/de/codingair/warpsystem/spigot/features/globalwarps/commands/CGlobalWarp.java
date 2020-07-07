@@ -92,7 +92,7 @@ public class CGlobalWarp extends WSCommandBuilder implements BungeeFeature {
                     String dest = GlobalWarpManager.getInstance().getCaseCorrectlyName(args[0]);
                     TeleportOptions options = new TeleportOptions(new Destination(args[0], DestinationType.GlobalWarp), dest);
                     options.setOrigin(Origin.GlobalWarp);
-                    options.setMessage(Lang.get("Teleported_To_By").replace("%gate%", sender.getName()));
+                    options.setMessage(Lang.getPrefix() + Lang.get("Teleported_To_By").replace("%gate%", sender.getName()));
                     options.setPermission(TeleportManager.NO_PERMISSION);
                     options.setAfterEffects(false);
 
