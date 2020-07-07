@@ -235,7 +235,7 @@ public class CTeleport extends WSCommandBuilder {
         TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(location)), destination);
         options.setOrigin(Origin.TeleportCommand);
         options.setSkip(true);
-        options.setMessage(gateP == playerP ? Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", gateP.getName()));
+        options.setMessage(Lang.getPrefix() + (gateP == playerP ? Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", gateP.getName())));
 
         WarpSystem.getInstance().getTeleportManager().teleport(playerP, options);
     }
@@ -272,7 +272,7 @@ public class CTeleport extends WSCommandBuilder {
         TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(targetP.getLocation())), targetP.getName());
         options.setOrigin(Origin.TeleportCommand);
         options.setSkip(true);
-        options.setMessage(gateP == playerP ? Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", gateP.getName()));
+        options.setMessage(Lang.getPrefix() + (gateP == playerP ? Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", gateP.getName())));
 
         WarpSystem.getInstance().getTeleportManager().teleport(playerP, options);
     }

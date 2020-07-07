@@ -11,8 +11,8 @@ import de.codingair.codingapi.utils.Node;
 import de.codingair.warpsystem.spigot.api.events.PlayerFinalJoinEvent;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
-import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.randomteleports.managers.RandomTeleporterManager;
@@ -94,11 +94,11 @@ public class SpawnListener implements Listener, PacketListener {
                         boolean discardOldChunk = !l.getWorld().equals(loc.getWorld()) || l.distance(loc) > 250;
                         AsyncCatcher.runSync(WarpSystem.getInstance(), () -> {
                             TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(loc)), "");
-                            options.setMessage(Lang.get("RandomTP_Teleported"));
+                            options.setMessage(Lang.getPrefix() + Lang.get("RandomTP_Teleported"));
                             options.setSkip(true);
-                            options.addCallback(new Callback<TeleportResult>() {
+                            options.addCallback(new Callback<Result>() {
                                 @Override
-                                public void accept(TeleportResult object) {
+                                public void accept(Result object) {
                                     clearCache(player, !discardOldChunk);
                                     Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
                                         showPlayer(player);

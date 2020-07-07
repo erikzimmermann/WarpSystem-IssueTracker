@@ -13,21 +13,24 @@ public class GlobalWarpTeleportPacket extends RequestPacket<Integer> {
     private String displayName;
     private double costs, randomOffsetX, randomOffsetY, randomOffsetZ;
     private String message;
+    private boolean keepRotation;
 
     public GlobalWarpTeleportPacket() {
     }
 
-    public GlobalWarpTeleportPacket(String player, String id, double randomOffsetX, double randomOffsetY, double randomOffsetZ, String displayName, String message, double costs, Callback<Integer> callback) {
+    public GlobalWarpTeleportPacket(String player, String id, double randomOffsetX, double randomOffsetY, double randomOffsetZ, String displayName, String message, double costs, boolean keepRotation, Callback<Integer> callback) {
         super(callback);
         this.player = player;
         this.id = id;
 
-        this.displayName = displayName;
-        this.costs = costs;
         this.randomOffsetX = randomOffsetX;
         this.randomOffsetY = randomOffsetY;
         this.randomOffsetZ = randomOffsetZ;
+
+        this.displayName = displayName;
         this.message = message;
+        this.costs = costs;
+        this.keepRotation = keepRotation;
     }
 
     @Override
@@ -38,6 +41,7 @@ public class GlobalWarpTeleportPacket extends RequestPacket<Integer> {
         options |= (randomOffsetY > 0 ? 1 : 0) << 3;
         options |= (randomOffsetZ > 0 ? 1 : 0) << 4;
         options |= (message != null ? 1 : 0) << 5;
+        options |= (keepRotation ? 1 : 0) << 6;
         out.writeByte(options);
 
         out.writeUTF(this.player);
@@ -66,6 +70,7 @@ public class GlobalWarpTeleportPacket extends RequestPacket<Integer> {
         if((options & (1 << 3)) != 0) this.randomOffsetY = in.readDouble();
         if((options & (1 << 4)) != 0) this.randomOffsetZ = in.readDouble();
         if((options & (1 << 5)) != 0) this.message = in.readUTF();
+        this.keepRotation = (options & (1 << 6)) != 0;
 
         super.read(in);
     }
@@ -102,6 +107,10 @@ public class GlobalWarpTeleportPacket extends RequestPacket<Integer> {
         return message;
     }
 
+    public boolean isKeepRotation() {
+        return keepRotation;
+    }
+
     public enum Result {
         TELEPORTED(0),
         WARP_NOT_EXISTS(1),
@@ -109,7 +118,7 @@ public class GlobalWarpTeleportPacket extends RequestPacket<Integer> {
         PLAYER_ALREADY_ON_SERVER(3),
         ;
 
-        private int id;
+        private final int id;
 
         Result(int id) {
             this.id = id;

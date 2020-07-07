@@ -4,12 +4,14 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import de.codingair.codingapi.server.AsyncCatcher;
 import de.codingair.codingapi.server.events.PlayerWalkEvent;
-import de.codingair.codingapi.server.sounds.Sound;
-import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
+import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.EmptyAdapter;
+import de.codingair.warpsystem.spigot.base.utils.teleport.v2.Teleport;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -33,7 +35,7 @@ public class TeleportListener implements Listener {
         options.setSkip(true);
         Player player = Bukkit.getPlayer(name);
 
-        if(options.getTeleportSound() == null) options.setTeleportSound(new SoundData(Sound.ENTITY_ENDERMAN_TELEPORT, 0.7F, 1F));
+        options.setSkip(true);
 
         if(player != null && player.isOnline()) {
             //teleport
@@ -75,6 +77,13 @@ public class TeleportListener implements Listener {
         if(options != null) {
             teleport.invalidate(e.getPlayer().getName().toLowerCase());
             org.bukkit.Location l = options.buildLocation();
+
+            if(l.getYaw() == -420 && l.getPitch() == -420) {
+                org.bukkit.Location p = e.getPlayer().getLocation();
+                l.setYaw(p.getYaw());
+                l.setPitch(p.getPitch());
+            }
+
             if(l == null || l.getWorld() == null) {
                 String world = l instanceof Location ? ((Location) l).getWorldName() : null;
                 Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> e.getPlayer().sendMessage(new String[] {" ", Lang.getPrefix() + "§4World " + (world == null ? "" : "'" + world + "' ") + "is missing. Please contact an admin!", " "}), 2L);
@@ -86,6 +95,7 @@ public class TeleportListener implements Listener {
             options.setCanMove(true);
             options.setSilent(true);
             options.setSkip(true);
+            options.setDestination(new Destination(new EmptyAdapter()));
 
             Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> WarpSystem.getInstance().getTeleportManager().teleport(e.getPlayer(), options), 2L);
         }
@@ -95,7 +105,8 @@ public class TeleportListener implements Listener {
     public void onMove(PlayerWalkEvent e) {
         Player p = e.getPlayer();
 
-        if(!WarpSystem.getInstance().getTeleportManager().isTeleporting(p) || WarpSystem.getInstance().getTeleportManager().getTeleport(e.getPlayer()).isCanMove()) return;
+        Teleport t = TeleportManager.getInstance().getTeleport(p);
+        if(t == null || t.isCanMove()) return;
 
         Block exact = p.getLocation().getBlock();
         Block below = p.getLocation().subtract(0, 0.5, 0).getBlock();
