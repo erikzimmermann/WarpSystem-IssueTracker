@@ -4,6 +4,7 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
@@ -37,7 +38,7 @@ public class TeleportPacketListener implements Listener, PacketListener {
                 options.setSkip(true);
                 options.setConfirmPayment(false);
                 options.setOrigin(Origin.TeleportCommand);
-                options.setMessage(gate == player ? Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", gate.getName()));
+                options.setMessage(Lang.getPrefix() + (gate == player ? Lang.get("Teleported_To") : Lang.get("Teleported_To_By").replace("%gate%", gate.getName())));
 
                 if(gate != null && gate != player && tpPacket.isMessageToGate())
                     gate.sendMessage(Lang.getPrefix() + Lang.get("Teleported_Player_Info").replace("%player%", tpPacket.getPlayer()).replace("%warp%", other.getName()));

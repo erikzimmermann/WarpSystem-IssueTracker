@@ -109,11 +109,6 @@ public class CWarps extends WSCommandBuilder {
 
         if(!WarpSystem.activated) return;
 
-        if(WarpSystem.maintenance && !p.hasPermission(WarpSystem.PERMISSION_ByPass_Maintenance)) {
-            p.sendMessage(Lang.getPrefix() + Lang.get("Warning_Maintenance"));
-            return;
-        }
-
         new GWarps(p, category, false).open();
         Sound.ENTITY_PLAYER_LEVELUP.playSound(p);
     }

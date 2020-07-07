@@ -33,12 +33,12 @@ public class PFunctions extends PageItem {
         ItemButtonOption option = new ItemButtonOption();
         option.setClickSound(new SoundData(Sound.UI_BUTTON_CLICK, 0.7F, 1F));
 
-        addButton(new StatusButton(1, 2, icon).setOption(option));
-        addButton(new CommandButton(2, 2, icon).setOption(option));
-        addButton(new PermissionButton(3, 2, icon).setOption(option));
-        addButton(new CostsButton(4, 2, icon).setOption(option));
-
-        addButton(new SyncButton(5, 2) {
+        int slot = 1;
+        addButton(new StatusButton(slot++, 2, icon).setOption(option));
+        addButton(new CommandButton(slot++, 2, icon).setOption(option));
+        addButton(new PermissionButton(slot++, 2, icon).setOption(option));
+        if(!icon.isPage()) addButton(new CostsButton(slot++, 2, icon).setOption(option));
+        addButton(new SyncButton(slot++, 2) {
             @Override
             public ItemStack craftItem() {
                 return new ItemBuilder(XMaterial.BOOK)

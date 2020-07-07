@@ -4,7 +4,7 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
-import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationAdapter;
 import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
@@ -15,23 +15,23 @@ import org.bukkit.util.Vector;
 
 public class SimpleWarpAdapter extends DestinationAdapter {
     @Override
-    public boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
+    public boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<Result> callback) {
         SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(id);
 
         if(warp == null) {
             player.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
-            if(callback != null) callback.accept(TeleportResult.DESTINATION_DOES_NOT_EXIST);
+            if(callback != null) callback.accept(Result.DESTINATION_DOES_NOT_EXIST);
             return false;
         }
 
         if(warp.getLocation().getWorld() == null) {
             player.sendMessage(Lang.getPrefix() + Lang.get("World_Not_Exists"));
-            if(callback != null) callback.accept(TeleportResult.WORLD_DOES_NOT_EXIST);
+            if(callback != null) callback.accept(Result.WORLD_DOES_NOT_EXIST);
             return false;
         } else {
             if(checkPermission && warp.hasPermission() && !player.hasPermission(warp.getPermission())) {
                 player.sendMessage(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"));
-                if(callback != null) callback.accept(TeleportResult.NO_PERMISSION);
+                if(callback != null) callback.accept(Result.NO_PERMISSION);
                 return false;
             }
 
@@ -40,7 +40,7 @@ public class SimpleWarpAdapter extends DestinationAdapter {
             if(silent) TeleportListener.TELEPORTS.put(player, finalLoc);
             warp.increaseTeleports();
             player.teleport(finalLoc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-            if(callback != null) callback.accept(TeleportResult.SUCCESS);
+            if(callback != null) callback.accept(Result.SUCCESS);
             return true;
         }
     }
@@ -50,17 +50,17 @@ public class SimpleWarpAdapter extends DestinationAdapter {
         SimpleWarp warp = SimpleWarpManager.getInstance().getWarp(id);
 
         if(warp == null) {
-            return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"), TeleportResult.DESTINATION_DOES_NOT_EXIST);
+            return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"), Result.DESTINATION_DOES_NOT_EXIST);
         }
 
         if(warp.getLocation().getWorld() == null) {
-            return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("World_Not_Exists"), TeleportResult.WORLD_DOES_NOT_EXIST);
+            return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("World_Not_Exists"), Result.WORLD_DOES_NOT_EXIST);
         } else {
             if(checkPermission && warp.hasPermission() && !player.hasPermission(warp.getPermission())) {
-                return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"), TeleportResult.NO_PERMISSION);
+                return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("Player_Cannot_Use_Warp"), Result.NO_PERMISSION);
             }
 
-            return new SimulatedTeleportResult(null, TeleportResult.SUCCESS);
+            return new SimulatedTeleportResult(null, Result.SUCCESS);
         }
     }
 

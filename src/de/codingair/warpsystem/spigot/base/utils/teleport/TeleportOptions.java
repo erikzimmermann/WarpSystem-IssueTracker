@@ -1,42 +1,51 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport;
 
+import de.codingair.codingapi.server.sounds.Sound;
 import de.codingair.codingapi.server.sounds.SoundData;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.utils.ImprovedDouble;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.guis.editor.pages.TeleportSoundPage;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
+import de.codingair.warpsystem.spigot.features.animations.AnimationManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TeleportOptions {
+    private final List<Callback<Result>> callback = new ArrayList<>();
     private Origin origin;
     private Destination destination;
+    
     private String displayName;
     private String permission;
     private double costs;
+    private int delay;
+    
     private Boolean skip;
     private boolean noDelayByPass = false;
     private boolean canMove;
     private boolean waitForTeleport; //Waiting for walking teleports
     private boolean confirmPayment = true;
+    private boolean silent;
+    
     private String payMessage;
     private String paymentDeniedMessage;
     private String message;
     private String serverNotOnline;
-    private boolean silent;
+    
     private SoundData teleportSound;
+    private SoundData cancelSound;
+    
     private boolean afterEffects;
     private boolean publicAnimations;
     private boolean teleportAnimation = true;
-    private final List<Callback<TeleportResult>> callback = new ArrayList<>();
-    private Vector velocity = null;
 
     public TeleportOptions() {
         this((Destination) null, null);
@@ -49,19 +58,21 @@ public class TeleportOptions {
     public TeleportOptions(Destination destination, String displayName) {
         this.origin = Origin.Custom;
         this.destination = destination;
-        this.displayName = displayName;
+        setDisplayName(displayName);
         this.permission = null;
         this.costs = 0;
-        this.canMove = WarpSystem.getInstance().getTeleportManager().getOptions().isAllowMove();
+        this.delay = TeleportManager.getInstance().getOptions().getTeleportDelay();
+        this.canMove = TeleportManager.getInstance().getOptions().isAllowMove();
         this.waitForTeleport = false;
-        this.payMessage = Lang.getPrefix() + (displayName == null ? Lang.get("Money_Paid") : Lang.get("Money_Paid"));
+        this.payMessage = Lang.getPrefix() + Lang.get("Money_Paid");
         this.paymentDeniedMessage = Lang.getPrefix() + Lang.get("Payment_denied");
         this.message = Lang.getPrefix() + (displayName == null ? Lang.get("Teleported_To") : Lang.get("Teleported_To"));
         this.serverNotOnline = Lang.getPrefix() + Lang.get("Server_Is_Not_Online");
         this.silent = false;
         this.teleportSound = null;
-        this.afterEffects = WarpSystem.getInstance().getTeleportManager().getOptions().isAfterEffects();
-        this.publicAnimations = WarpSystem.getInstance().getTeleportManager().getOptions().isPublicAnimations();
+        this.cancelSound = new SoundData(Sound.ENTITY_ITEM_BREAK, 0.7F, 1F);
+        this.afterEffects = TeleportManager.getInstance().getOptions().isAfterEffects();
+        this.publicAnimations = TeleportManager.getInstance().getOptions().isPublicAnimations();
     }
 
     public Location buildLocation() {
@@ -93,7 +104,7 @@ public class TeleportOptions {
     }
 
     public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+        this.displayName = displayName == null ? null : displayName.replace("_", " ");
     }
 
     public String getPermission() {
@@ -104,7 +115,8 @@ public class TeleportOptions {
         this.permission = permission;
     }
 
-    public double getCosts() {
+    public double getCosts(Player player) {
+        if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs)) return 0;
         return costs;
     }
 
@@ -162,6 +174,8 @@ public class TeleportOptions {
     }
 
     public SoundData getTeleportSound() {
+        if(teleportSound == null) teleportSound = AnimationManager.getInstance().getActive().getTeleportSound();
+        if(this.teleportSound == null) this.teleportSound = TeleportSoundPage.createStandard();
         return teleportSound;
     }
 
@@ -177,13 +191,19 @@ public class TeleportOptions {
         this.afterEffects = afterEffects;
     }
 
-    public void runCallbacks(TeleportResult result) {
-        for(Callback<TeleportResult> teleportResultCallback : this.callback) {
+    public void fireCallbacks(Result result) {
+        for(Callback<Result> teleportResultCallback : this.callback) {
             teleportResultCallback.accept(result);
         }
+
+        this.callback.clear();
     }
 
-    public void addCallback(Callback<TeleportResult> callback) {
+    public boolean expired() {
+        return this.callback.isEmpty();
+    }
+
+    public void addCallback(Callback<Result> callback) {
         if(callback == null) return;
         this.callback.add(callback);
     }
@@ -206,14 +226,6 @@ public class TeleportOptions {
 
     public void setConfirmPayment(boolean confirmPayment) {
         this.confirmPayment = confirmPayment;
-    }
-
-    public Vector getVelocity() {
-        return velocity;
-    }
-
-    public void setVelocity(Vector velocity) {
-        this.velocity = velocity;
     }
 
     public String getPaymentDeniedMessage(Player player) {
@@ -255,5 +267,23 @@ public class TeleportOptions {
 
     public void setNoDelayByPass(boolean noDelayByPass) {
         this.noDelayByPass = noDelayByPass;
+    }
+
+    public SoundData getCancelSound() {
+        return cancelSound;
+    }
+
+    public void setCancelSound(SoundData cancelSound) {
+        this.cancelSound = cancelSound;
+    }
+
+    public int getDelay(Player player) {
+        if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay) || skip) return 0;
+        if(destination != null) return destination.getCustomOptions().getDelay(delay);
+        return delay;
+    }
+
+    public void setDelay(int delay) {
+        this.delay = delay;
     }
 }

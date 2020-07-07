@@ -20,7 +20,7 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.Wa
 import de.codingair.warpsystem.spigot.base.utils.money.Adapter;
 import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
-import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.GlobalLocationAdapter;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
@@ -84,10 +84,10 @@ public class PlayerWarp extends FeatureObject {
     public FeatureObject perform(Player player) {
         TeleportOptions options = new TeleportOptions((Destination) null, this.name);
 
-        options.addCallback(new Callback<TeleportResult>() {
+        options.addCallback(new Callback<Result>() {
             @Override
-            public void accept(TeleportResult res) {
-                if(res == TeleportResult.SUCCESS) {
+            public void accept(Result res) {
+                if(res == Result.SUCCESS) {
                     PlayerWarpTeleportProcessPacket packet = PlayerWarpManager.getManager().checkBungeeCord() ? new PlayerWarpTeleportProcessPacket(name, owner.getId()) : null;
                     if(packet != null && !isOwner(player) && !isTrusted(player)) packet.setIncreasePerformed(true);
 
@@ -106,7 +106,7 @@ public class PlayerWarp extends FeatureObject {
             }
         });
 
-        if(this.teleportMessage != null) options.setMessage(ChatColor.translateAlternateColorCodes('&', this.teleportMessage));
+        if(this.teleportMessage != null) options.setMessage(Lang.getPrefix() + ChatColor.translateAlternateColorCodes('&', this.teleportMessage));
 
         if(isOwner(player) || isTrusted(player)) performed--;
         else {

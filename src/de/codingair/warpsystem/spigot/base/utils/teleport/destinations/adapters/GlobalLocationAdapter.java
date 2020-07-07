@@ -8,7 +8,7 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.listeners.TeleportListener;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
-import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.transfer.packets.general.PrepareCoordinationTeleportPacket;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -49,24 +49,24 @@ public class GlobalLocationAdapter extends LocationAdapter implements Serializab
     }
 
     @Override
-    public boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<TeleportResult> callback) {
+    public boolean teleport(Player player, String id, Vector randomOffset, String displayName, boolean checkPermission, String message, boolean silent, double costs, Callback<Result> callback) {
         if(location == null) {
             player.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
-            if(callback != null) callback.accept(TeleportResult.DESTINATION_DOES_NOT_EXIST);
+            if(callback != null) callback.accept(Result.DESTINATION_DOES_NOT_EXIST);
             return false;
         }
 
         if(server == null || server.equals(WarpSystem.getInstance().getCurrentServer())) {
             if(location.getWorld() == null) {
                 player.sendMessage(Lang.getPrefix() + Lang.get("World_Not_Exists"));
-                if(callback != null) callback.accept(TeleportResult.WORLD_DOES_NOT_EXIST);
+                if(callback != null) callback.accept(Result.WORLD_DOES_NOT_EXIST);
                 return false;
             } else {
                 org.bukkit.Location finalLoc = prepare(player, location.clone());
 
                 if(silent) TeleportListener.TELEPORTS.put(player, finalLoc);
                 player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                if(callback != null) callback.accept(TeleportResult.SUCCESS);
+                if(callback != null) callback.accept(Result.SUCCESS);
                 return true;
             }
         } else {
@@ -76,16 +76,16 @@ public class GlobalLocationAdapter extends LocationAdapter implements Serializab
                     if(callback == null) return;
                     switch(result) {
                         case 0:
-                            callback.accept(TeleportResult.SUCCESS);
+                            callback.accept(Result.SUCCESS);
                             break;
                         case 1:
-                            callback.accept(TeleportResult.SERVER_NOT_AVAILABLE);
+                            callback.accept(Result.SERVER_NOT_AVAILABLE);
                             break;
                         case 2:
-                            callback.accept(TeleportResult.WORLD_DOES_NOT_EXIST);
+                            callback.accept(Result.WORLD_DOES_NOT_EXIST);
                             break;
                         default:
-                            callback.accept(TeleportResult.CANCELLED);
+                            callback.accept(Result.CANCELLED);
                     }
                 }
             });
@@ -100,15 +100,15 @@ public class GlobalLocationAdapter extends LocationAdapter implements Serializab
         Location location = buildLocation(id);
 
         if(location == null) {
-            return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"), TeleportResult.DESTINATION_DOES_NOT_EXIST);
+            return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"), Result.DESTINATION_DOES_NOT_EXIST);
         }
 
         if(server == null || server.equals(WarpSystem.getInstance().getCurrentServer())) {
             if(location.getWorld() == null) {
-                return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("World_Not_Exists"), TeleportResult.WORLD_DOES_NOT_EXIST);
-            } else return new SimulatedTeleportResult(null, TeleportResult.SUCCESS);
+                return new SimulatedTeleportResult(Lang.getPrefix() + Lang.get("World_Not_Exists"), Result.WORLD_DOES_NOT_EXIST);
+            } else return new SimulatedTeleportResult(null, Result.SUCCESS);
         } else {
-            return new SimulatedTeleportResult(null, TeleportResult.SUCCESS);
+            return new SimulatedTeleportResult(null, Result.SUCCESS);
         }
     }
 

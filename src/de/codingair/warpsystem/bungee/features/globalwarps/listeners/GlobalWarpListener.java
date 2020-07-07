@@ -115,7 +115,8 @@ public class GlobalWarpListener implements Listener, PacketListener {
 
                 teleportPacket.applyAsAnswer(answerIntegerPacket);
 
-                PrepareCoordinationTeleportPacket out = new PrepareCoordinationTeleportPacket(p.getName(), null, warp.getLoc().getWorld(), teleportDisplayName, teleportPacket.getMessage() == null ? PrepareCoordinationTeleportPacket.NO_MESSAGE : teleportPacket.getMessage(), warp.getLoc().getX(), warp.getLoc().getY(), warp.getLoc().getZ(), warp.getLoc().getYaw(), warp.getLoc().getPitch(), teleportPacket.getCosts(), null);
+                PrepareCoordinationTeleportPacket out = new PrepareCoordinationTeleportPacket(p.getName(), null, warp.getLoc().getWorld(), teleportDisplayName, teleportPacket.getMessage() == null ? PrepareCoordinationTeleportPacket.NO_MESSAGE : teleportPacket.getMessage(), warp.getLoc().getX(), warp.getLoc().getY(), warp.getLoc().getZ(),
+                        teleportPacket.isKeepRotation() ? -420 : warp.getLoc().getYaw(), teleportPacket.isKeepRotation() ? -420 : warp.getLoc().getPitch(), teleportPacket.getCosts(), null);
 
                 if(p.getServer().getInfo().equals(otherServer)) {
                     WarpSystem.getInstance().getDataHandler().send(answerIntegerPacket, server);

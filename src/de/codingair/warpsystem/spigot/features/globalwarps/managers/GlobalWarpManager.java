@@ -2,7 +2,9 @@ package de.codingair.warpsystem.spigot.features.globalwarps.managers;
 
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
+import de.codingair.warpsystem.spigot.base.utils.teleport.v2.Teleport;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.globalwarps.commands.CGlobalWarp;
 import de.codingair.warpsystem.spigot.features.globalwarps.commands.CGlobalWarps;
@@ -80,7 +82,11 @@ public class GlobalWarpManager implements Manager, BungeeFeature {
             z = randomOffset.getZ();
         }
 
-        WarpSystem.getInstance().getDataHandler().send(new GlobalWarpTeleportPacket(player.getName(), id, x, y, z, displayName, message, costs, new Callback<Integer>() {
+        Teleport t = TeleportManager.getInstance().getTeleport(player);
+        boolean keepRotation = false;
+        if(t != null) keepRotation = !t.getDestination().getCustomOptions().isRotation();
+
+        WarpSystem.getInstance().getDataHandler().send(new GlobalWarpTeleportPacket(player.getName(), id, x, y, z, displayName, message, costs, keepRotation, new Callback<Integer>() {
             @Override
             public void accept(Integer object) {
                 callback.accept(GlobalWarpTeleportPacket.Result.getById(object));

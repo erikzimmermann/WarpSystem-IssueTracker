@@ -3,14 +3,13 @@ package de.codingair.warpsystem.spigot.features.teleportcommand;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.player.chat.ChatButtonManager;
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.warpsystem.bungee.features.teleport.utils.TeleportCommandOptions;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.setupassistant.annotations.AvailableForSetupAssistant;
 import de.codingair.warpsystem.spigot.base.setupassistant.annotations.Function;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
-import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.bstats.Collectible;
@@ -183,10 +182,10 @@ public class TeleportCommandManager implements Manager, BungeeFeature, Collectib
         Location l = locations.remove(0);
 
         TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(l)), Lang.get("Last_Position"));
-        options.addCallback(new Callback<TeleportResult>() {
+        options.addCallback(new Callback<Result>() {
             @Override
-            public void accept(TeleportResult result) {
-                if(result != TeleportResult.SUCCESS) {
+            public void accept(Result result) {
+                if(result != Result.SUCCESS) {
                     locations.add(0, l);
                 } else if(locations.isEmpty()) backHistory.remove(player.getName());
 
