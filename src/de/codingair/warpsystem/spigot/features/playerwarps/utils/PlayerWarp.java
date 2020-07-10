@@ -18,7 +18,7 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.money.Adapter;
-import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.Bank;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
@@ -702,7 +702,7 @@ public class PlayerWarp extends FeatureObject {
     public double collectInactiveSales(Player player) {
         double money = getInactiveSales() * teleportCosts;
 
-        Adapter a = MoneyAdapterType.getActive();
+        Adapter a = Bank.adapter();
         if(a != null) {
             resetInactiveSales();
 

@@ -1,9 +1,7 @@
 package de.codingair.warpsystem.spigot.features.warps.managers;
 
 import de.codingair.codingapi.files.ConfigFile;
-import de.codingair.codingapi.serializable.SerializableLocation;
 import de.codingair.codingapi.server.Color;
-import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.io.ConfigWriter;
 import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.JSON.JSONParser;
@@ -13,24 +11,14 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.setupassistant.annotations.AvailableForSetupAssistant;
 import de.codingair.warpsystem.spigot.base.setupassistant.annotations.Function;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.BoundAction;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CommandAction;
-import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.features.FeatureType;
-import de.codingair.warpsystem.spigot.features.globalwarps.guis.affiliations.GlobalWarp;
 import de.codingair.warpsystem.spigot.features.simplewarps.SimpleWarp;
 import de.codingair.warpsystem.spigot.features.simplewarps.commands.CWarp;
 import de.codingair.warpsystem.spigot.features.simplewarps.managers.SimpleWarpManager;
 import de.codingair.warpsystem.spigot.features.warps.commands.CWarps;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Category;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.DecoIcon;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.Warp;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.Action;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionIconHelper;
-import de.codingair.warpsystem.spigot.features.warps.guis.affiliations.utils.ActionObject;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.PageData;
 import de.codingair.warpsystem.spigot.features.warps.importfilter.WarpData;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.exceptions.IconReadException;
@@ -78,7 +66,6 @@ public class IconManager implements Manager {
         boolean success = true;
 
         WarpSystem.log("  > Loading Icons");
-        ActionIconHelper.load = true;
 
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("ActionIcons");
         FileConfiguration config = file.getConfig();
@@ -131,172 +118,6 @@ public class IconManager implements Manager {
                 }
             }
 
-//        WarpSystem.log("    > Loading Categories");
-        List<Category> categories = new ArrayList<>();
-        List<String> categoryList = config.getStringList("Categories");
-        for(String s : categoryList) {
-            Category category = ActionIconHelper.fromString(s);
-
-            if(category != null) {
-                if(category.getName().contains("@")) category.setName(category.getName().replace("@", "(at)"));
-                categories.add(category);
-            } else success = false;
-        }
-
-//        WarpSystem.log("      ...got " + categoryList.size() + " " + (categoryList.size() == 1 ? "Category" : "Categories"));
-
-//        WarpSystem.log("    > Loading Warps");
-        List<Warp> warps = new ArrayList<>();
-        List<String> warpList = config.getStringList("Warps");
-        for(String s : warpList) {
-            Warp warp = ActionIconHelper.fromString(s);
-
-            if(warp != null) {
-                if(warp.getName().contains("@")) warp.setName(warp.getName().replace("@", "(at)"));
-                warps.add(warp);
-            } else success = false;
-        }
-
-//        WarpSystem.log("      ...got " + warpList.size() + " Warp(s)");
-
-//        WarpSystem.log("      > Check each Category of all Warps");
-        for(Warp warp : warps) {
-            if(warp.getCategory() == null) continue;
-            if(!existsPage(warp.getCategory().getName())) {
-                categories.add(warp.getCategory());
-            }
-        }
-
-//        WarpSystem.log("    > Loading GlobalWarps");
-        List<GlobalWarp> globalWarps = new ArrayList<>();
-        List<String> gWarps = config.getStringList("GlobalWarps");
-        for(String s : gWarps) {
-            GlobalWarp warp = ActionIconHelper.fromString(s);
-
-            if(warp != null) {
-                if(warp.getName().contains("@")) warp.setName(warp.getName().replace("@", "(at)"));
-                globalWarps.add(warp);
-            } else success = false;
-        }
-
-//        WarpSystem.log("      ...got " + globalWarps.size() + " GlobalWarp(s)");
-
-//        WarpSystem.log("    > Loading Deco");
-        List<DecoIcon> decoIcons = new ArrayList<>();
-        List<String> decoIconList = config.getStringList("DecoIcons");
-        for(String s : decoIconList) {
-            DecoIcon deco = ActionIconHelper.fromString(s);
-
-            if(deco != null) decoIcons.add(deco);
-            else success = false;
-        }
-//        WarpSystem.log("      ...got " + decoIconList.size() + " DecoIcon(s)");
-
-        for(Warp icon : warps)
-            if(icon.getName() != null && icon.getName().contains("_")) {
-                icon.setName(icon.getName().replace("_", " "));
-            }
-        for(Category icon : categories)
-            if(icon.getName() != null && icon.getName().contains("_")) {
-                icon.setName(icon.getName().replace("_", " "));
-            }
-        for(GlobalWarp icon : globalWarps)
-            if(icon.getName() != null && icon.getName().contains("_")) {
-                icon.setName(icon.getName().replace("_", " "));
-            }
-        for(DecoIcon icon : decoIcons)
-            if(icon.getName() != null && icon.getName().contains("_")) {
-                icon.setName(icon.getName().replace("_", " "));
-            }
-
-        //translate
-        for(Category c : categories) {
-            ActionObject command = c.getAction(Action.RUN_COMMAND);
-            String s = command == null ? null : command.getValue();
-
-            ActionObject bound = c.getAction(Action.BOUND_TO_WORLD);
-            String world = bound == null ? null : bound.getValue();
-
-            List<de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject<?>> actions = new ArrayList<>();
-            if(s != null) actions.add(new CommandAction(s));
-            if(world != null) actions.add(new BoundAction(world));
-
-            Icon icon;
-            this.icons.add(icon = new Icon(c.getName(), c.getItem(), null, c.getSlot(), c.getPermission(), actions));
-            icon.setPage(true);
-        }
-
-        for(Warp c : warps) {
-            ActionObject warpAction = c.getAction(Action.TELEPORT_TO_WARP);
-            SerializableLocation loc = warpAction.getValue();
-            boolean created = false;
-            if(SimpleWarpManager.getInstance().getWarp(c.getIdentifier()) == null) {
-                Location dest = (Location) loc.getLocation();
-                SimpleWarpManager.getInstance().addWarp(
-                        new SimpleWarp(new WarpData(c.getIdentifier().replace(" ", "_"), null, c.getPermission(), dest.getWorldName(), dest.getX(), dest.getY(), dest.getZ(), dest.getYaw(), dest.getPitch()))
-                );
-                created = true;
-            }
-
-            ActionObject command = c.getAction(Action.RUN_COMMAND);
-            String s = command == null ? null : command.getValue();
-
-            ActionObject costs = c.getAction(Action.PAY_MONEY);
-            double amount = costs == null ? 0 : costs.getValue();
-
-            ActionObject bound = c.getAction(Action.BOUND_TO_WORLD);
-            String world = bound == null ? null : bound.getValue();
-
-            List<de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject<?>> actions = new ArrayList<>();
-            if(created) actions.add(new WarpAction(new Destination(c.getIdentifier().replace(" ", "_"), DestinationType.SimpleWarp)));
-            if(s != null) actions.add(new CommandAction(s));
-            if(world != null) actions.add(new BoundAction(world));
-            if(amount > 0) actions.add(new CostsAction(amount));
-
-            this.icons.add(new Icon(c.getName(), c.getItem(), c.getCategory() == null ? null : getPage(c.getCategory().getName()), c.getSlot(), c.getPermission(), actions));
-        }
-
-        for(GlobalWarp c : globalWarps) {
-            ActionObject switchServer = c.getAction(Action.SWITCH_SERVER);
-            String gWarp = switchServer.getValue();
-
-            ActionObject command = c.getAction(Action.RUN_COMMAND);
-            String s = command == null ? null : command.getValue();
-
-            ActionObject costs = c.getAction(Action.PAY_MONEY);
-            double amount = costs == null ? 0 : costs.getValue();
-
-            ActionObject bound = c.getAction(Action.BOUND_TO_WORLD);
-            String world = bound == null ? null : bound.getValue();
-
-            List<de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject<?>> actions = new ArrayList<>();
-            actions.add(new WarpAction(new Destination(gWarp, DestinationType.GlobalWarp)));
-            if(s != null) actions.add(new CommandAction(s));
-            if(world != null) actions.add(new BoundAction(world));
-            if(amount > 0) actions.add(new CostsAction(amount));
-
-            this.icons.add(new Icon(c.getName(), c.getItem(), c.getCategory() == null ? null : getPage(c.getCategory().getName()), c.getSlot(), c.getPermission(), actions));
-        }
-
-        for(DecoIcon c : decoIcons) {
-            ActionObject command = c.getAction(Action.RUN_COMMAND);
-            String s = command == null ? null : command.getValue();
-
-            ActionObject costs = c.getAction(Action.PAY_MONEY);
-            double amount = costs == null ? 0 : costs.getValue();
-
-            ActionObject bound = c.getAction(Action.BOUND_TO_WORLD);
-            String world = bound == null ? null : bound.getValue();
-
-            List<de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject<?>> actions = new ArrayList<>();
-            if(s != null) actions.add(new CommandAction(s));
-            if(world != null) actions.add(new BoundAction(world));
-            if(amount > 0) actions.add(new CostsAction(amount));
-
-            this.icons.add(new Icon(c.getName(), c.getItem(), c.getCategory() == null ? null : getPage(c.getCategory().getName()), c.getSlot(), c.getPermission(), actions));
-        }
-
-        ActionIconHelper.load = false;
         new CWarps().register();
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Commands.Warp.GUI", false) && !FeatureType.SIMPLE_WARPS.isActive()) {
             new CWarp().register();

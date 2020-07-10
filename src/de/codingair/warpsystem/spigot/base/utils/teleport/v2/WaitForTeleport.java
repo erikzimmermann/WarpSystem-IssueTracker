@@ -49,7 +49,7 @@ public class WaitForTeleport extends TeleportStage {
                     return;
                 }
 
-                if(location.distance(player.getLocation()) <= 0.2) notMoving++;
+                if(location.distance(player.getLocation()) <= 0.01) notMoving++;
                 else {
                     notMoving = 0;
                     location = player.getLocation();
