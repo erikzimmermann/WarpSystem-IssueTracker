@@ -532,3 +532,6 @@ SetupAssistant_Still_Active: '&7L''assistant d''installation est &continuellemen
 Start: 'Démarrage'
 Default: 'Défaut'
 Icon_Costs_Confirm: '&7Cliquez à nouveau sur cette icône pour &cconfirmer &7votre paiement de &c%AMOUNT% Coin(s)&7.'
+Fast_Editing: 'Fast-Editing'
+Blocks_removed: '&7Removiendo &e%AMOUNT% bloque/bloques&7.'
+Blocks_added: '&7Ajouter &e%AMOUNT% block(s)&7.'

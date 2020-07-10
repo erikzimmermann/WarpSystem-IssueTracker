@@ -17,7 +17,7 @@ import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpMa
 import de.codingair.warpsystem.spigot.features.portals.commands.CPortals;
 import de.codingair.warpsystem.spigot.features.portals.guis.DeleteGUI;
 import de.codingair.warpsystem.spigot.features.portals.guis.PortalEditor;
-import de.codingair.warpsystem.spigot.features.portals.guis.subgui.PortalBlockEditor;
+import de.codingair.warpsystem.spigot.features.portals.guis.subgui.blockeditor.PortalBlockEditor;
 import de.codingair.warpsystem.spigot.features.portals.listeners.EditorListener;
 import de.codingair.warpsystem.spigot.features.portals.old.EffectPortal;
 import de.codingair.warpsystem.spigot.features.portals.old.nativeportals.NativePortal;
@@ -201,14 +201,7 @@ public class PortalManager implements Manager {
                         player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.5));
 
                         Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), () -> {
-                            portal.setVisible(false);
-                            Portal clone = portal.clone();
-                            clone.createDestinationIfAbsent().createTeleportSoundIfAbsent();
-                            portal.setEditMode(true);
-                            clone.setEditMode(true);
-                            clone.setVisible(true);
-
-                            new PortalEditor(player, portal, clone).open();
+                            new PortalEditor(player, portal).open();
                             noTeleport.remove(player);
                         }, 4L);
                         return;

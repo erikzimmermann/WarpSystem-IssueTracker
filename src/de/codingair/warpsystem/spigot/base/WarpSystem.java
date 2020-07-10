@@ -419,7 +419,7 @@ public class WarpSystem extends JavaPlugin {
 
     private void startAutoSaver() {
         WarpSystem.log("Starting AutoSaver");
-        Bukkit.getScheduler().scheduleAsyncRepeatingTask(WarpSystem.getInstance(), () -> save(true), 10 * 60 * 20, 10 * 60 * 20);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(WarpSystem.getInstance(), () -> save(true), 10 * 60 * 20, 10 * 60 * 20);
     }
 
     private void destroy() {

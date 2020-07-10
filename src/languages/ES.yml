@@ -529,3 +529,6 @@ SetupAssistant_Still_Active: '&7El asistente de configuración está &sigue acti
 Start: 'Inicie'
 Default: 'Default'
 Icon_Costs_Confirm: '&7Pulsa en este icono de nuevo para &confirmar &7tu pago de &c%AMOUNT% Coin(s)&7.'
+Fast_Editing: 'Fast-Editing'
+Blocks_removed: '&7Removing &e%AMOUNT% block(s)&7.'
+Blocks_added: '&7Adding &e%AMOUNT% block(s)&7.'

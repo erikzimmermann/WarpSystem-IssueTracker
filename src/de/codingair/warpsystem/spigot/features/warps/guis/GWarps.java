@@ -489,7 +489,7 @@ public class GWarps extends GUI {
                                 if(e.isShiftClick()) {
                                     cursorIcon = icon;
                                     cursor = e.getCurrentItem().clone();
-                                    e.setCursor(cursor.clone());
+                                    e.getView().setCursor(cursor.clone());
                                     e.setCurrentItem(new ItemStack(Material.AIR));
                                     setMoving(true, e.getSlot());
                                 } else {

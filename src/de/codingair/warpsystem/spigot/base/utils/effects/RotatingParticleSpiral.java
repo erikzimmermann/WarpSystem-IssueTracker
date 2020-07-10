@@ -2,6 +2,7 @@ package de.codingair.warpsystem.spigot.base.utils.effects;
 
 import de.codingair.codingapi.particles.Particle;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
@@ -25,7 +26,7 @@ public class RotatingParticleSpiral extends BukkitRunnable {
         List<Player> players = new ArrayList<>();
         players.add(player);
 
-        if(forVisiblePlayers && !player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+        if(forVisiblePlayers && !player.hasPotionEffect(PotionEffectType.INVISIBILITY) && player.getGameMode() != GameMode.SPECTATOR) {
             Bukkit.getOnlinePlayers().forEach(p -> {
                 if(!p.equals(player) && p.getWorld().equals(player.getWorld()) && p.canSee(player)) players.add(p);
             });
