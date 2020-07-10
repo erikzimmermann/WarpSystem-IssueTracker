@@ -82,7 +82,7 @@ public class Spawn extends FeatureObject {
             this.randomFireWorks = other.randomFireWorks;
             this.respawnUsage = other.respawnUsage;
             this.displayName = other.displayName;
-            this.firstJoin = other.firstJoin.clone();
+            this.firstJoin = other.firstJoin == null ? null : other.firstJoin.clone();
         }
     }
 
