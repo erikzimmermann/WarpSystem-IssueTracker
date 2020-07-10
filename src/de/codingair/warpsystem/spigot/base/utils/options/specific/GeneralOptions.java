@@ -1,18 +1,19 @@
 package de.codingair.warpsystem.spigot.base.utils.options.specific;
 
-import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.utils.options.Option;
 import de.codingair.warpsystem.spigot.base.utils.options.Options;
+import org.bukkit.ChatColor;
+
+import java.util.function.IntPredicate;
 
 public class GeneralOptions extends Options {
     private Option<String> lang = new Option<>("WarpSystem.Language", "ENG");
     private Option<Integer> teleportDelay = new Option<>("WarpSystem.Teleport.Delay");
     private Option<Boolean> allowMove = new Option<>("WarpSystem.Teleport.Allow_Move");
-    private Option<Integer> chunkPreLoadRadius = new Option<>("WarpSystem.Teleport.Chunk_Pre_Loading.Chunk_Radius");
-    private Option<Boolean> chunkPreLoad = new Option<>("WarpSystem.Teleport.Chunk_Pre_Loading.Enabled");
-    private Option<Boolean> chunkPreLoadingLimitedByPerm = new Option<>("WarpSystem.Teleport.Chunk_Pre_Loading.Limit_by_Permission");
     private Option<Boolean> afterEffects = new Option<>("WarpSystem.Teleport.Animation_After_Teleport.Enabled");
     private Option<Boolean> publicAnimations = new Option<>("WarpSystem.Teleport.Public_Animations");
+    private Option<String> cmdSugColor = new Option<>("WarpSystem.Command_Suggestions.Color", "&7");
+    private Option<String> cmdArgColor = new Option<>("WarpSystem.Command_Suggestions.Argument", "&e");
 
     public GeneralOptions() {
         super("Config");
@@ -28,11 +29,10 @@ public class GeneralOptions extends Options {
         set(lang);
         set(teleportDelay);
         set(allowMove);
-        set(chunkPreLoadRadius);
-        set(chunkPreLoad);
-        set(chunkPreLoadingLimitedByPerm);
         set(afterEffects);
         set(publicAnimations);
+        set(cmdSugColor);
+        set(cmdArgColor);
         save();
     }
 
@@ -41,11 +41,37 @@ public class GeneralOptions extends Options {
         get(lang);
         get(teleportDelay);
         get(allowMove);
-        get(chunkPreLoadRadius);
-        get(chunkPreLoad);
-        get(chunkPreLoadingLimitedByPerm);
         get(afterEffects);
         get(publicAnimations);
+        get(cmdSugColor);
+        get(cmdArgColor);
+
+        IntPredicate test = new IntPredicate() {
+            private boolean color = false;
+
+            @Override
+            public boolean test(int value) {
+                char c = (char) value;
+
+                if(color) color = false;
+                else if(c == '&') color = true;
+                else return false;
+
+                return true;
+            }
+        };
+
+        StringBuilder s = new StringBuilder();
+        for(int c : cmdSugColor.getValue().trim().chars().filter(test).toArray()) {
+            s.append((char) c);
+        }
+        cmdSugColor.setValue(s.toString());
+
+        s = new StringBuilder();
+        for(int c : cmdArgColor.getValue().trim().chars().filter(test).toArray()) {
+            s.append((char) c);
+        }
+        cmdArgColor.setValue(s.toString());
     }
 
     @Override
@@ -56,11 +82,10 @@ public class GeneralOptions extends Options {
             this.lang = o.lang.clone();
             this.teleportDelay = o.teleportDelay.clone();
             this.allowMove = o.allowMove.clone();
-            this.chunkPreLoadRadius = o.chunkPreLoadRadius.clone();
-            this.chunkPreLoad = o.chunkPreLoad.clone();
-            this.chunkPreLoadingLimitedByPerm = o.chunkPreLoadingLimitedByPerm.clone();
             this.afterEffects = o.afterEffects.clone();
             this.publicAnimations = o.publicAnimations.clone();
+            this.cmdSugColor = o.cmdSugColor.clone();
+            this.cmdArgColor = o.cmdArgColor.clone();
         }
     }
 
@@ -81,55 +106,23 @@ public class GeneralOptions extends Options {
         return teleportDelay.getValue();
     }
 
-    public void setTeleportDelay(int teleportDelay) {
-        this.teleportDelay.setValue(teleportDelay);
-    }
-
     public boolean isAllowMove() {
         return allowMove.getValue();
-    }
-
-    public void setAllowMove(boolean allowMove) {
-        this.allowMove.setValue(allowMove);
-    }
-
-    public int getChunkPreLoadRadius() {
-        return chunkPreLoadRadius.getValue();
-    }
-
-    public void setChunkPreLoadRadius(int radius) {
-        chunkPreLoadRadius.setValue(radius);
-    }
-
-    public boolean isChunkPreLoadEnabled() {
-        return chunkPreLoad.getValue();
-    }
-
-    public void setChunkPreLoad(boolean enabled) {
-        chunkPreLoad.setValue(enabled);
-    }
-
-    public boolean isChunkPreLoadingLimitedByPerm() {
-        return chunkPreLoadingLimitedByPerm.getValue();
-    }
-
-    public void setChunkPreLoadingLimitedByPerm(boolean limited) {
-        chunkPreLoadingLimitedByPerm.setValue(limited);
     }
 
     public boolean isAfterEffects() {
         return afterEffects.getValue();
     }
 
-    public void setAfterEffects(boolean afterEffects) {
-        this.afterEffects.setValue(afterEffects);
-    }
-
     public boolean isPublicAnimations() {
         return publicAnimations.getValue();
     }
 
-    public void setPublicAnimations(boolean publicAnimations) {
-        this.publicAnimations.setValue(publicAnimations);
+    public String cmdSug() {
+        return ChatColor.translateAlternateColorCodes('&', cmdSugColor.getValue());
+    }
+
+    public String cmdArg() {
+        return ChatColor.translateAlternateColorCodes('&', cmdArgColor.getValue());
     }
 }

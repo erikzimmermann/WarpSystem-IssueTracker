@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class OptionBundle {
-    private List<Options> options;
+    private final List<Options> options;
 
     public OptionBundle(List<Options> options) {
         this.options = options;

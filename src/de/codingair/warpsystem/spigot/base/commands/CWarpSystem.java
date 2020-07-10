@@ -53,12 +53,12 @@ public class CWarpSystem extends WSCommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, options, animations>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " " + WarpSystem.opt().cmdArg() + "<info, reload, import, news, report, options, animations>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, reload, import, news, report, options, animations>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " " + WarpSystem.opt().cmdArg() + "<info, reload, import, news, report, options, animations>");
                 return false;
             }
         });
@@ -68,7 +68,7 @@ public class CWarpSystem extends WSCommandBuilder {
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 SetupAssistant a = WarpSystem.getInstance().getSetupAssistantManager().getAssistant();
                 if(a != null) {
-                    sender.sendMessage(Lang.getPrefix() + "&7The setup assistant is §calready used §7by §e" + a.getPlayer().getName() + "§7.");
+                    sender.sendMessage(Lang.getPrefix() + "§7The setup assistant is §calready used §7by §e" + a.getPlayer().getName() + "§7.");
                     return false;
                 }
 
@@ -80,7 +80,7 @@ public class CWarpSystem extends WSCommandBuilder {
         getBaseComponent().addChild(new CommandComponent("shortcut") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /shortcuts");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /shortcuts");
                 return false;
             }
         });
@@ -88,7 +88,7 @@ public class CWarpSystem extends WSCommandBuilder {
         getBaseComponent().addChild(new CommandComponent("animations") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations §e<activate, add, edit, remove>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " animations " + WarpSystem.opt().cmdArg() + "<activate, add, edit, remove>");
                 return false;
             }
         });
@@ -96,7 +96,7 @@ public class CWarpSystem extends WSCommandBuilder {
         getComponent("animations").addChild(new CommandComponent("activate") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations activate §e<name>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " animations activate " + WarpSystem.opt().cmdArg() + "<name>");
                 return false;
             }
         });
@@ -127,7 +127,7 @@ public class CWarpSystem extends WSCommandBuilder {
         getComponent("animations").addChild(new CommandComponent("add") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations add §e<name>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " animations add " + WarpSystem.opt().cmdArg() + "<name>");
                 return false;
             }
         }.setOnlyPlayers(true));
@@ -168,7 +168,7 @@ public class CWarpSystem extends WSCommandBuilder {
         getComponent("animations").addChild(new CommandComponent("edit") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations edit §e<name>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " animations edit " + WarpSystem.opt().cmdArg() + "<name>");
                 return false;
             }
         }.setOnlyPlayers(true));
@@ -214,7 +214,7 @@ public class CWarpSystem extends WSCommandBuilder {
         getComponent("animations").addChild(new CommandComponent("remove") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " animations remove §e<name>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " animations remove " + WarpSystem.opt().cmdArg() + "<name>");
                 return false;
             }
         });
@@ -284,7 +284,7 @@ public class CWarpSystem extends WSCommandBuilder {
         getBaseComponent().addChild(new CommandComponent("report") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " report §e<GitHub, Spigot-Forum, Direct>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " report " + WarpSystem.opt().cmdArg() + "<GitHub, Spigot-Forum, Direct>");
                 return false;
             }
         });
@@ -343,7 +343,7 @@ public class CWarpSystem extends WSCommandBuilder {
                         break;
 
                     default:
-                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " report <GitHub, Spigot-Forum>");
+                        sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " report <GitHub, Spigot-Forum>");
                         break;
                 }
                 return false;
@@ -365,7 +365,7 @@ public class CWarpSystem extends WSCommandBuilder {
                         ex.printStackTrace();
                     }
                 } else {
-                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Unsaved_Changes"));
+                    sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Unsaved_Changes"));
                     confirm.add(sender, 10);
                 }
                 return false;
@@ -382,7 +382,7 @@ public class CWarpSystem extends WSCommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String argument, String[] args) {
                 if(argument == null || (!argument.equalsIgnoreCase("true") && !argument.equalsIgnoreCase("false"))) {
-                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " reload §e<true, false>");
+                    sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " reload " + WarpSystem.opt().cmdArg() + "<true, false>");
                     return false;
                 }
 
@@ -400,7 +400,7 @@ public class CWarpSystem extends WSCommandBuilder {
         getBaseComponent().addChild(new CommandComponent("import") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " import §e<CategoryWarps, Essentials> [Warp]");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " import " + WarpSystem.opt().cmdArg() + "<CategoryWarps, Essentials> [Warp]");
                 return false;
             }
         });
@@ -429,7 +429,7 @@ public class CWarpSystem extends WSCommandBuilder {
                 }
 
                 if(type == null) {
-                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " import §e<CategoryWarps, Essentials> [Warp]");
+                    sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " import " + WarpSystem.opt().cmdArg() + "<CategoryWarps, Essentials> [Warp]");
                 } else {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("Import_Start"));
 

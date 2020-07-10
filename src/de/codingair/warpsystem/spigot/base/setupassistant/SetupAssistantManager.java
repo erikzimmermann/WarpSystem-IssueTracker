@@ -25,11 +25,13 @@ import java.util.concurrent.TimeUnit;
 @Function(name = "Teleport Delay", configPath = "WarpSystem.Teleport.Delay", defaultValue = "3", clazz = Integer.class)
 @Function(name = "Animation after teleports", configPath = "WarpSystem.Teleport.Animation_After_Teleport.Enabled", defaultValue = "true", clazz = Boolean.class)
 @Function(name = "Public animations", description = "§7Only visible for players who\n§esee you §8(§7Vanish§8)", configPath = "WarpSystem.Teleport.Public_Animations", defaultValue = "true", clazz = Boolean.class)
+@Function(name = "CMD suggestion color", configPath = "WarpSystem.Command_Suggestions.Color", defaultValue = "&7", clazz = String.class, since = "v4.2.8")
+@Function(name = "CMD argument color", configPath = "WarpSystem.Command_Suggestions.Argument", defaultValue = "&e", clazz = String.class, since = "v4.2.8")
 public class SetupAssistantManager {
     private SetupAssistant assistant = null;
     private List<Value> cachedFunctions = null;
     private List<Value> cachedNews = null;
-    private final Cache<PluginVersion, List<Value>> cache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
+    private final Cache<PluginVersion, List<Value>> cache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
 
     private List<Value> cachedNews() {
         if(cachedNews == null) cachedNews = PluginVersion.getOld() == PluginVersion.getCurrent() ? new ArrayList<>() : listFunctions(PluginVersion.getCurrent());

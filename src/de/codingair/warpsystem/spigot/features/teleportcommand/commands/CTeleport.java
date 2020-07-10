@@ -41,7 +41,7 @@ public class CTeleport extends WSCommandBuilder {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tp <§eplayer§7> [§eplayer§7] §c" + Lang.get("Or") + " §7/tp [§eplayer§7] <§ex§7> <§ey§7> <§ez§7>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /tp <" + WarpSystem.opt().cmdArg() + "player" + WarpSystem.opt().cmdSug() + "> [" + WarpSystem.opt().cmdArg() + "player" + WarpSystem.opt().cmdSug() + "] §c" + Lang.get("Or") + " " + WarpSystem.opt().cmdSug() + "/tp [" + WarpSystem.opt().cmdArg() + "player" + WarpSystem.opt().cmdSug() + "] <" + WarpSystem.opt().cmdArg() + "x" + WarpSystem.opt().cmdSug() + "> <" + WarpSystem.opt().cmdArg() + "y" + WarpSystem.opt().cmdSug() + "> <" + WarpSystem.opt().cmdArg() + "z" + WarpSystem.opt().cmdSug() + ">");
             }
 
             @Override
@@ -53,7 +53,7 @@ public class CTeleport extends WSCommandBuilder {
                 try {
                     if(args.length == 1 && args[0].equals("/" + label)) {
                         //HELP
-                        p.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tp <§eplayer§7> [§eplayer§7] §c" + Lang.get("Or") + " §7/tp [§eplayer§7] <§ex§7> <§ey§7> <§ez§7>");
+                        p.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /tp <" + WarpSystem.opt().cmdArg() + "player" + WarpSystem.opt().cmdSug() + "> [" + WarpSystem.opt().cmdArg() + "player" + WarpSystem.opt().cmdSug() + "] §c" + Lang.get("Or") + " " + WarpSystem.opt().cmdSug() + "/tp [" + WarpSystem.opt().cmdArg() + "player" + WarpSystem.opt().cmdSug() + "] <" + WarpSystem.opt().cmdArg() + "x" + WarpSystem.opt().cmdSug() + "> <" + WarpSystem.opt().cmdArg() + "y" + WarpSystem.opt().cmdSug() + "> <" + WarpSystem.opt().cmdArg() + "z" + WarpSystem.opt().cmdSug() + ">");
                     } else if((args.length == 1 && !args[0].isEmpty()) || (args.length == 2 && !args[1].isEmpty())) {
                         //player [to player]
                         if(args.length == 1) {
@@ -129,11 +129,11 @@ public class CTeleport extends WSCommandBuilder {
                         }
                     } else {
                         //HELP
-                        p.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tp <§eplayer§7> [§eplayer§7] §c" + Lang.get("Or") + " §7/tp [§eplayer§7] <§ex§7> <§ey§7> <§ez§7>");
+                        p.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /tp <" + WarpSystem.opt().cmdArg() + "player" + WarpSystem.opt().cmdSug() + "> [" + WarpSystem.opt().cmdArg() + "player" + WarpSystem.opt().cmdSug() + "] §c" + Lang.get("Or") + " " + WarpSystem.opt().cmdSug() + "/tp [" + WarpSystem.opt().cmdArg() + "player" + WarpSystem.opt().cmdSug() + "] <" + WarpSystem.opt().cmdArg() + "x" + WarpSystem.opt().cmdSug() + "> <" + WarpSystem.opt().cmdArg() + "y" + WarpSystem.opt().cmdSug() + "> <" + WarpSystem.opt().cmdArg() + "z" + WarpSystem.opt().cmdSug() + ">");
                     }
                 } catch(NumberFormatException ex) {
                     //HELP
-                    p.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /tp <§eplayer§7> [§eplayer§7] §c" + Lang.get("Or") + " §7/tp [§eplayer§7] <§ex§7> <§ey§7> <§ez§7>");
+                    p.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /tp <" + WarpSystem.opt().cmdArg() + "player" + WarpSystem.opt().cmdSug() + "> [" + WarpSystem.opt().cmdArg() + "player" + WarpSystem.opt().cmdSug() + "] §c" + Lang.get("Or") + " " + WarpSystem.opt().cmdSug() + "/tp [" + WarpSystem.opt().cmdArg() + "player" + WarpSystem.opt().cmdSug() + "] <" + WarpSystem.opt().cmdArg() + "x" + WarpSystem.opt().cmdSug() + "> <" + WarpSystem.opt().cmdArg() + "y" + WarpSystem.opt().cmdSug() + "> <" + WarpSystem.opt().cmdArg() + "z" + WarpSystem.opt().cmdSug() + ">");
                 }
 
                 return false;

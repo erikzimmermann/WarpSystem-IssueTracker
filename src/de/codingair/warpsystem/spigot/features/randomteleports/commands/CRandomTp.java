@@ -36,14 +36,14 @@ public class CRandomTp extends WSCommandBuilder {
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 if(sender.hasPermission(WarpSystem.PERMISSION_MODIFY_RANDOM_TELEPORTER)) {
                     if(RandomTeleporterManager.getInstance().isBuyable())
-                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<buy, blocks, info, go>");
+                        sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " " + WarpSystem.opt().cmdArg() + "<buy, blocks, info, go>");
                     else
-                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<blocks, info, go>");
+                        sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " " + WarpSystem.opt().cmdArg() + "<blocks, info, go>");
                 } else {
                     if(RandomTeleporterManager.getInstance().isBuyable())
-                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<buy, info, go>");
+                        sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " " + WarpSystem.opt().cmdArg() + "<buy, info, go>");
                     else {
-                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<info, go>");
+                        sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " " + WarpSystem.opt().cmdArg() + "<info, go>");
                     }
                 }
                 return false;
@@ -108,7 +108,7 @@ public class CRandomTp extends WSCommandBuilder {
         getBaseComponent().addChild(new CommandComponent("blocks", WarpSystem.PERMISSION_MODIFY_RANDOM_TELEPORTER) {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " blocks §e<add>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " blocks " + WarpSystem.opt().cmdArg() + "<add>");
                 return false;
             }
         });
@@ -164,7 +164,7 @@ public class CRandomTp extends WSCommandBuilder {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
                 if(!(sender instanceof Player)) {
-                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " go §e[server-1, server-2, ...; world-1, world-2, ...] <player>");
+                    sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " go §e[server-1, server-2, ...; world-1, world-2, ...] <player>");
                     return false;
                 }
 

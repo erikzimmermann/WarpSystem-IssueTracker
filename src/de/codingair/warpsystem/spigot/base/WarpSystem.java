@@ -146,11 +146,15 @@ public class WarpSystem extends JavaPlugin {
     public static <E extends Options> E getOptions(Class<? extends E> clazz) {
         if(instance == null) return null;
 
-        for(Options option : getInstance().getOptions().getOptions()) {
+        for(Options option : getInstance().options.getOptions()) {
             if(option.getClass().equals(clazz)) return (E) option;
         }
 
         return null;
+    }
+
+    public static GeneralOptions opt() {
+        return TeleportManager.getInstance().getOptions();
     }
 
     @Override
@@ -623,10 +627,6 @@ public class WarpSystem extends JavaPlugin {
 
     public HeadManager getHeadManager() {
         return headManager;
-    }
-
-    public OptionBundle getOptions() {
-        return options;
     }
 
     public SetupAssistantManager getSetupAssistantManager() {
