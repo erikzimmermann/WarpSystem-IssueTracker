@@ -295,39 +295,45 @@ public class Portal extends FeatureObject {
                     }
                 }
 
-                if(to == null) return blockTest0 ? 1 : 0;
-
-                if(Area.isInArea(entity, to, edges[0], edges[1])) {
-                    for(BlockHierarchy mergedBlock : getMergedBlocks()) {
-                        if(Area.isInArea(entity, to, mergedBlock.getMin().toLocation(w), mergedBlock.getMax().toLocation(w).add(0.999999, 0.999999, 0.999999))) {
-                            blockTest1 = true;
-                            break;
+                if(to == null) {
+                    if(blockTest0) return 1;
+                } else {
+                    if(Area.isInArea(entity, to, edges[0], edges[1])) {
+                        for(BlockHierarchy mergedBlock : getMergedBlocks()) {
+                            if(Area.isInArea(entity, to, mergedBlock.getMin().toLocation(w), mergedBlock.getMax().toLocation(w).add(0.999999, 0.999999, 0.999999))) {
+                                blockTest1 = true;
+                                break;
+                            }
                         }
                     }
-                }
 
-                if(!blockTest0 && blockTest1) blockResult = 1;
-                else if(blockTest0 && !blockTest1) blockResult = -1;
-                else if(blockTest0 && blockTest1) inBlock = true;
+                    if(!blockTest0 && blockTest1) blockResult = 1;
+                    else if(blockTest0 && !blockTest1) blockResult = -1;
+                    else if(blockTest0 && blockTest1) inBlock = true;
+                }
             }
         }
 
         if(trigger == 0 || trigger == 2 || this.blocks.isEmpty()) {
             double height = entity instanceof LivingEntity ? entity.getEyeHeight() : 0.7;
             HitBox hFrom = new HitBox(from, 0.1, height);
-            HitBox move = new HitBox(to, 0.1, height);
 
             boolean animationTest0 = touchesAnimation(entity.getWorld(), hFrom);
-            boolean animationTest1 = touchesAnimation(entity.getWorld(), move);
 
-            if(!animationTest0 && animationTest1) animationResult = 1;
-            else if(animationTest0 && !animationTest1) animationResult = -1;
-            else if(animationTest0 && animationTest1) inAnimation = true;
-            else if(!animationTest0 && !animationTest1) {
+            if(to == null) {
+                if(animationTest0) return 1;
+            } else {
+                HitBox move = new HitBox(to, 0.1, height);
+                boolean animationTest1 = touchesAnimation(entity.getWorld(), move);
 
-                move = new HitBox(to, 0.1, height);
-                move.addProperty(new HitBox(from, 0.1, height));
-                if(touchesAnimation(entity.getWorld(), move)) return 2;
+                if(!animationTest0 && animationTest1) animationResult = 1;
+                else if(animationTest0 && !animationTest1) animationResult = -1;
+                else if(animationTest0 && animationTest1) inAnimation = true;
+                else if(!animationTest0 && !animationTest1) {
+                    move = new HitBox(to, 0.1, height);
+                    move.addProperty(new HitBox(from, 0.1, height));
+                    if(touchesAnimation(entity.getWorld(), move)) return 2;
+                }
             }
         }
 
