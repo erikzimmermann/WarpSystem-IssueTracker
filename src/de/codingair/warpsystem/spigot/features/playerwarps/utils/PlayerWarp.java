@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.spigot.features.playerwarps.utils;
 
 import de.codingair.codingapi.API;
-import de.codingair.codingapi.server.Version;
+import de.codingair.codingapi.server.specification.Version;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.codingapi.tools.io.JSON.JSON;
@@ -224,7 +224,7 @@ public class PlayerWarp extends FeatureObject {
         if(this.item == null) this.item = new ItemBuilder();
         if(d.data != null) this.item.setData(d.data);
         if(d.type != null) {
-            Optional<XMaterial> m = XMaterial.matchXMaterial(d.type, d.data == null || Version.getVersion().isBiggerThan(Version.v1_12) ? 0 : d.data);
+            Optional<XMaterial> m = XMaterial.matchXMaterial(d.type, d.data == null || Version.get().isBiggerThan(Version.v1_12) ? 0 : d.data);
 
             if(!m.isPresent()) {
                 throw new IllegalArgumentException("Error at loading PlayerWarp(Owner-Name=" + (d.owner == null ? owner.getName() : d.owner.getName()) + "; Warp-Name=" + (d.name == null ? name : d.name) + "). Material is null: (" + d.type + ", " + d.data + ")");
@@ -233,7 +233,7 @@ public class PlayerWarp extends FeatureObject {
                 this.item.setData(m.get().getData());
             }
         } else if(d.data != null) {
-            Optional<XMaterial> m = XMaterial.matchXMaterial(item.getType().name(), Version.getVersion().isBiggerThan(Version.v1_12) ? 0 : d.data);
+            Optional<XMaterial> m = XMaterial.matchXMaterial(item.getType().name(), Version.get().isBiggerThan(Version.v1_12) ? 0 : d.data);
 
             if(!m.isPresent()) {
                 throw new IllegalArgumentException("Error at loading PlayerWarp(Owner-Name=" + (d.owner == null ? owner.getName() : d.owner.getName()) + "; Warp-Name=" + (d.name == null ? name : d.name) + "). Material is null: (" + d.type + ", " + d.data + ")");

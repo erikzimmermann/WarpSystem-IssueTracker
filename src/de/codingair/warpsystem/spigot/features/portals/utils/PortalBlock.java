@@ -1,6 +1,6 @@
 package de.codingair.warpsystem.spigot.features.portals.utils;
 
-import de.codingair.codingapi.server.Version;
+import de.codingair.codingapi.server.specification.Version;
 import de.codingair.codingapi.server.blocks.ModernBlock;
 import de.codingair.codingapi.server.blocks.data.Orientable;
 import de.codingair.codingapi.tools.Area;
@@ -89,7 +89,7 @@ public class PortalBlock implements Serializable {
     }
 
     private void setEditData(Block b) {
-        if(Version.getVersion().isBiggerThan(Version.v1_12)) {
+        if(Version.get().isBiggerThan(Version.v1_12)) {
             b.setType(type.getExactEditMaterial(), false);
         } else {
             ItemBuilder builder = type.getEditMaterial();

@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.spigot.base.utils.teleport.v2;
 
 import de.codingair.codingapi.player.MessageAPI;
-import de.codingair.codingapi.server.Version;
+import de.codingair.codingapi.server.specification.Version;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.utils.ImprovedDouble;
 import de.codingair.codingapi.utils.Value;
@@ -59,7 +59,7 @@ public class PlayerTeleport extends TeleportStage {
                             HandlerList.unregisterAll(this);
 
                             cancel(Result.CANCELLED);
-                        } else if(Version.getVersion().getId() <= 8)
+                        } else if(Version.get().getId() <= 8)
                             Bukkit.getPluginManager().callEvent(new PlayerTeleportAcceptEvent(e.getPlayer())); //1.8 doesn't contain PlayerTeleportAcceptEvent
                         else {
                             new BukkitRunnable() {
