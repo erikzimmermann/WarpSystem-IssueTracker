@@ -9,6 +9,7 @@ import de.codingair.codingapi.tools.HitBox;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -61,7 +62,7 @@ public class AnimationPlayer {
         this.sounds = sounds;
         this.teleportSound = sounds;
 
-        if(viewers && player != null && !player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+        if(viewers && player != null && !player.hasPotionEffect(PotionEffectType.INVISIBILITY) && player.getGameMode() != GameMode.SPECTATOR) {
             List<Player> players = new ArrayList<>();
             players.add(player);
 

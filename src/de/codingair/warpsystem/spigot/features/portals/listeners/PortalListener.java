@@ -109,7 +109,7 @@ public class PortalListener implements Listener {
             if(portal == null) continue;
             if(!portal.isVisible() || portal.isEditMode()) continue;
 
-            if(portal.isAround(e.getBlock().getLocation(), 1, false)) {
+            if(portal.isAround(e.getBlock().getLocation(), 1)) {
                 Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), portal::update, 1);
             }
         }
@@ -121,7 +121,7 @@ public class PortalListener implements Listener {
             if(portal == null) continue;
             if(!portal.isVisible() || portal.isEditMode()) continue;
 
-            if(portal.isAround(e.getBlockClicked().getLocation(), 0, true)) {
+            if(portal.isAround(e.getBlockClicked().getLocation(), 0)) {
                 e.setCancelled(true);
                 Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), portal::update, 1);
             }
@@ -134,13 +134,13 @@ public class PortalListener implements Listener {
             if(portal == null) continue;
 
             if(portal.isEditMode() && portal.getEditing() != null) {
-                if(portal.getEditing().isAround(e.getBlock().getLocation(), 0, false)) {
+                if(portal.getEditing().isAround(e.getBlock().getLocation(), 0)) {
                     e.setCancelled(true);
                 }
             } else if(portal.isVisible()) {
-                if(portal.isAround(e.getBlock().getLocation(), 0, false))
+                if(portal.isAround(e.getBlock().getLocation(), 0))
                     e.setCancelled(true);
-                else if(portal.isAround(e.getBlock().getLocation(), 1, false)) {
+                else if(portal.isAround(e.getBlock().getLocation(), 1)) {
                     Bukkit.getScheduler().runTaskLater(WarpSystem.getInstance(), portal::update, 1);
                 }
             }

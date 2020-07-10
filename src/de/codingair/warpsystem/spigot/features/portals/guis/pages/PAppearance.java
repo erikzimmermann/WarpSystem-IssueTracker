@@ -19,7 +19,7 @@ import de.codingair.warpsystem.spigot.base.guis.editor.buttons.NameButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.portals.guis.PortalEditor;
 import de.codingair.warpsystem.spigot.features.portals.guis.subgui.HologramEditor;
-import de.codingair.warpsystem.spigot.features.portals.guis.subgui.PortalBlockEditor;
+import de.codingair.warpsystem.spigot.features.portals.guis.subgui.blockeditor.PortalBlockEditor;
 import de.codingair.warpsystem.spigot.features.portals.guis.subgui.SpawnEditor;
 import de.codingair.warpsystem.spigot.features.portals.managers.PortalManager;
 import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
@@ -109,8 +109,6 @@ public class PAppearance extends PageItem {
 
                 PortalBlockEditor editor = new PortalBlockEditor(player, clone);
                 editor.init();
-
-                MessageAPI.sendActionBar(player, Lang.get("Drop_To_Leave"), WarpSystem.getInstance(), Integer.MAX_VALUE);
 
                 Bukkit.getPluginManager().registerEvents(new Listener() {
                     @EventHandler

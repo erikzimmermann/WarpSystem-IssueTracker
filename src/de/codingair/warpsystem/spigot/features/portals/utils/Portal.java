@@ -37,6 +37,7 @@ public class Portal extends FeatureObject {
 
     private Hologram hologram = new Hologram();
 
+    private final List<BlockHierarchy> merged = new ArrayList<>();
     private Location[] cachedEdges = null;
     private Axis cachedAxis = null;
 
@@ -78,6 +79,8 @@ public class Portal extends FeatureObject {
         this.displayName = d.getString("name");
         this.teleportName = d.getString("displayname");
 
+        String world = d.getString("world");
+
         this.blocks = new ArrayList<>();
         JSONArray jsonArray = d.getList("blocks");
         if(jsonArray != null) {
@@ -92,6 +95,20 @@ public class Portal extends FeatureObject {
             }
         }
 
+        if(!blocks.isEmpty()) world = blocks.get(0).getLocation().getWorldName();
+
+        jsonArray = d.getList("packedblocks");
+        if(jsonArray != null) {
+            for(Object o : jsonArray) {
+                if(o instanceof Map) {
+                    JSON json = new JSON((Map<?, ?>) o);
+
+                    BlockHierarchy b = new BlockHierarchy(world);
+                    b.read(json);
+                    blocks.addAll(b.getBlocks());
+                }
+            }
+        }
 
         this.animations = new ArrayList<>();
         jsonArray = d.getList("animations");
@@ -114,6 +131,7 @@ public class Portal extends FeatureObject {
         this.spawn = d.getSerializable("spawn", this.spawn);
         if(this.spawn.isEmpty()) this.spawn = null;
 
+        mergeBlocks();
         return true;
     }
 
@@ -123,16 +141,19 @@ public class Portal extends FeatureObject {
 
         d.put("name", displayName);
         d.put("displayname", teleportName);
+        d.put("world", blocks.isEmpty() ? null : blocks.get(0).getLocation().getWorldName());
 
         List<JSON> data = new ArrayList<>();
 
-        for(PortalBlock block : this.blocks) {
+        List<BlockHierarchy> hierarchies = new ArrayList<>();
+        MergeAlgorithm.mergeByType(hierarchies, this.blocks);
+
+        for(BlockHierarchy b : hierarchies) {
             JSON json = new JSON();
-            block.write(json);
+            b.write(json);
             data.add(json);
         }
-
-        d.put("blocks", data);
+        d.put("packedblocks", data);
 
         data = new ArrayList<>();
 
@@ -154,6 +175,7 @@ public class Portal extends FeatureObject {
         setVisible(false, true);
         this.cachedEdges = null;
         this.cachedAxis = null;
+        this.merged.clear();
         if(this.blocks != null) this.blocks.clear();
         if(this.animations != null) {
             for(Animation animation : this.animations) {
@@ -179,6 +201,8 @@ public class Portal extends FeatureObject {
 
         this.cachedEdges = null;
         this.cachedAxis = null;
+        this.merged.clear();
+
         this.blocks.clear();
         this.blocks.addAll(portal.getBlocks());
 
@@ -200,6 +224,15 @@ public class Portal extends FeatureObject {
         setSpawn(portal.spawn);
 
         if(visible) setVisible(true);
+    }
+
+    public void mergeBlocks() {
+        if(merged.isEmpty()) MergeAlgorithm.merge(this.merged, this.blocks);
+    }
+
+    public List<BlockHierarchy> getMergedBlocks() {
+        mergeBlocks();
+        return merged;
     }
 
     public void updatePlayer(Player player) {
@@ -245,37 +278,38 @@ public class Portal extends FeatureObject {
         if(entity == null || from == null) return 0;
 
         Location[] edges = getCachedEdges();
-        if(edges == null || edges[0].getWorld() == null) return 0;
-
         int blockResult = 0, animationResult = 0;
         boolean inBlock = false, inAnimation = false;
 
-        if(trigger == 0 || trigger == 1 || to == null || this.animations.isEmpty()) {
-            boolean blockTest0 = false, blockTest1 = false;
+        World w;
+        if(edges != null && (w = edges[0].getWorld()) != null) {
+            if(trigger == 0 || trigger == 1 || to == null || this.animations.isEmpty()) {
+                boolean blockTest0 = false, blockTest1 = false;
 
-            if(Area.isInArea(entity, from, edges[0], edges[1])) {
-                for(PortalBlock block : getBlocks()) {
-                    if(block.touches(entity, from)) {
-                        blockTest0 = true;
-                        break;
+                if(Area.isInArea(entity, from, edges[0], edges[1])) {
+                    for(BlockHierarchy mergedBlock : getMergedBlocks()) {
+                        if(Area.isInArea(entity, from, mergedBlock.getMin().toLocation(w), mergedBlock.getMax().toLocation(w).add(0.999999, 0.999999, 0.999999))) {
+                            blockTest0 = true;
+                            break;
+                        }
                     }
                 }
-            }
 
-            if(to == null) return blockTest0 ? 1 : 0;
+                if(to == null) return blockTest0 ? 1 : 0;
 
-            if(Area.isInArea(entity, to, edges[0], edges[1])) {
-                for(PortalBlock block : getBlocks()) {
-                    if(block.touches(entity, to)) {
-                        blockTest1 = true;
-                        break;
+                if(Area.isInArea(entity, to, edges[0], edges[1])) {
+                    for(BlockHierarchy mergedBlock : getMergedBlocks()) {
+                        if(Area.isInArea(entity, to, mergedBlock.getMin().toLocation(w), mergedBlock.getMax().toLocation(w).add(0.999999, 0.999999, 0.999999))) {
+                            blockTest1 = true;
+                            break;
+                        }
                     }
                 }
-            }
 
-            if(!blockTest0 && blockTest1) blockResult = 1;
-            else if(blockTest0 && !blockTest1) blockResult = -1;
-            else if(blockTest0 && blockTest1) inBlock = true;
+                if(!blockTest0 && blockTest1) blockResult = 1;
+                else if(blockTest0 && !blockTest1) blockResult = -1;
+                else if(blockTest0 && blockTest1) inBlock = true;
+            }
         }
 
         if(trigger == 0 || trigger == 2 || this.blocks.isEmpty()) {
@@ -301,11 +335,14 @@ public class Portal extends FeatureObject {
         return Math.max(Math.min(blockResult + animationResult, 1), -1);
     }
 
-    public boolean isAround(org.bukkit.Location location, double distance, boolean isExact) {
-        if(Area.isInArea(location, getCachedEdges()[0], getCachedEdges()[1], true, distance)) {
-            for(PortalBlock block : blocks) {
-                if(isExact && block.getLocation().distance(location) == distance) return true;
-                else if(!isExact && block.getLocation().distance(location) <= distance) return true;
+    public boolean isAround(org.bukkit.Location location, double distance) {
+        if(getCachedEdges() == null) return false;
+        Location l = new Location(location);
+        if(Area.isInArea(location, getCachedEdges()[0].clone().subtract(distance, distance, distance), getCachedEdges()[1].clone().add(distance, distance, distance), true, distance)) {
+            for(BlockHierarchy mergedBlock : getMergedBlocks()) {
+                if(Area.isInArea(l, mergedBlock.getMin().toLocation(location.getWorld()), mergedBlock.getMax().toLocation(location.getWorld()).add(0.999999, 0.999999, 0.999999), true, distance)) {
+                    return true;
+                }
             }
         }
 
@@ -314,7 +351,7 @@ public class Portal extends FeatureObject {
 
     private boolean touchesAnimation(World world, HitBox entity) {
         for(Animation animation : this.animations) {
-            if(!world.getName().equals(animation.getLocation().getWorld().getName())) continue;
+            if(!world.equals(animation.getLocation().getWorld())) continue;
 
             HitBox box = animation.getHitBox();
             if(box == null) return false;
@@ -342,38 +379,18 @@ public class Portal extends FeatureObject {
 
     public Location[] getCachedEdges() {
         if(cachedEdges != null) return cachedEdges;
+        if(blocks.isEmpty()) return null;
+        mergeBlocks();
 
-        int x0 = 0, y0 = 0, z0 = 0, x1 = 0, y1 = 0, z1 = 0;
-        World world = null;
+        World world = blocks.get(0).getLocation().getWorld();
+        BlockHierarchy.Bounds bounds = merged.get(0).getBounds().clone();
 
-        boolean first = true;
-        for(PortalBlock block : this.blocks) {
-            if(first) {
-                first = false;
-
-                world = block.getLocation().getWorld();
-
-                x0 = block.getLocation().getBlockX();
-                y0 = block.getLocation().getBlockY();
-                z0 = block.getLocation().getBlockZ();
-
-                x1 = block.getLocation().getBlockX();
-                y1 = block.getLocation().getBlockY();
-                z1 = block.getLocation().getBlockZ();
-
-                continue;
-            }
-
-            if(x0 > block.getLocation().getBlockX()) x0 = block.getLocation().getBlockX();
-            else if(x1 < block.getLocation().getBlockX()) x1 = block.getLocation().getBlockX();
-            if(y0 > block.getLocation().getBlockY()) y0 = block.getLocation().getBlockY();
-            else if(y1 < block.getLocation().getBlockY()) y1 = block.getLocation().getBlockY();
-            if(z0 > block.getLocation().getBlockZ()) z0 = block.getLocation().getBlockZ();
-            else if(z1 < block.getLocation().getBlockZ()) z1 = block.getLocation().getBlockZ();
+        for(int i = 1; i < merged.size(); i++) {
+            BlockHierarchy b = merged.get(i);
+            bounds.merge(b.getBounds());
         }
 
-        double diff = 0.0;
-        return cachedEdges = new Location[] {new Location(world, x0 - diff, y0 - diff, z0 - diff), new Location(world, x1 + 0.999999 + diff, y1 + 0.999999 + diff, z1 + 0.999999 + diff)};
+        return cachedEdges = new Location[] {bounds.getMin().toLocation(world), bounds.getMax().toLocation(world).add(0.999999, 0.999999, 0.999999)};
     }
 
     public boolean isVertically() {
@@ -422,8 +439,9 @@ public class Portal extends FeatureObject {
         return visible;
     }
 
-    public void setVisible(boolean visible) {
+    public Portal setVisible(boolean visible) {
         setVisible(visible, false);
+        return this;
     }
 
     public void setVisible(boolean visible, boolean force) {
@@ -435,12 +453,14 @@ public class Portal extends FeatureObject {
 
     public void addPortalBlock(PortalBlock block) {
         this.blocks.add(block);
+        this.merged.clear();
         this.cachedEdges = null;
         this.cachedAxis = null;
     }
 
     public void removePortalBlock(PortalBlock block) {
         this.blocks.remove(block);
+        this.merged.clear();
         this.cachedEdges = null;
         this.cachedAxis = null;
     }
@@ -450,6 +470,7 @@ public class Portal extends FeatureObject {
 
         if(block != null) {
             this.blocks.remove(block);
+            this.merged.clear();
         }
     }
 

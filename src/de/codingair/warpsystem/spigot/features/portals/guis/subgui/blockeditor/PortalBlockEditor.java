@@ -1,7 +1,8 @@
-package de.codingair.warpsystem.spigot.features.portals.guis.subgui;
+package de.codingair.warpsystem.spigot.features.portals.guis.subgui.blockeditor;
 
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.particles.Particle;
+import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.PlayerItem;
 import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.server.reflections.IReflection;
@@ -9,7 +10,9 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Removable;
+import de.codingair.warpsystem.spigot.api.StringFormatter;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.portals.utils.BlockType;
 import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
 import de.codingair.warpsystem.spigot.features.portals.utils.PortalBlock;
@@ -39,11 +42,13 @@ public class PortalBlockEditor implements Removable {
     private BukkitRunnable alignRunnable;
     private final List<Block> alignTo = new ArrayList<>();
     private boolean show = true;
+    private final FastEditingTool fastEditingTool;
 
     public PortalBlockEditor(Player player, Portal portal) {
         this.player = player;
         API.addRemovable(this);
         this.portal = portal;
+        this.fastEditingTool = new FastEditingTool(this, player);
 
         this.alignRunnable = new BukkitRunnable() {
             @Override
@@ -64,6 +69,10 @@ public class PortalBlockEditor implements Removable {
         this.end();
     }
 
+    public FastEditingTool getFastEditingTool() {
+        return fastEditingTool;
+    }
+
     @Override
     public UUID getUniqueId() {
         return this.uniqueId;
@@ -82,7 +91,9 @@ public class PortalBlockEditor implements Removable {
             this.player.getInventory().setItem(i, new ItemStack(Material.AIR));
         }
 
-        int slot = 1;
+        this.player.getInventory().setItem(0, fastEditingTool);
+
+        int slot = 2;
         for(BlockType value : BlockType.values()) {
             if(value == BlockType.CUSTOM) continue;
             this.player.getInventory().setItem(slot++, value.getEditMaterial().setName(value.getName()).getItem());
@@ -95,15 +106,15 @@ public class PortalBlockEditor implements Removable {
         }
 
         PlayerItem item;
-        this.player.getInventory().setItem(++slot, item = new PlayerItem(WarpSystem.getInstance(), player, new ItemBuilder(XMaterial.GHAST_TEAR).setName("§7" + ChatColor.stripColor(BlockType.CUSTOM.getName()) + ": §c-").getItem()) {
+        this.player.getInventory().setItem(8, item = new PlayerItem(WarpSystem.getInstance(), player, new ItemBuilder(XMaterial.GHAST_TEAR).setName("§7" + ChatColor.stripColor(BlockType.CUSTOM.getName()) + ": §c-").getItem()) {
             private long last = 0;
 
             @Override
             public void onInteract(PlayerInteractEvent e) {
+                e.setCancelled(true);
                 if(System.currentTimeMillis() - last < 50) return;
                 else last = System.currentTimeMillis();
 
-                e.setCancelled(true);
                 Block b = player.getTargetBlock((Set<Material>) null, 10);
                 if(b != null && b.getType() != XMaterial.AIR.parseMaterial() && b.getType() != XMaterial.VOID_AIR.parseMaterial() && b.getType() != XMaterial.CAVE_AIR.parseMaterial() && b.getType() != XMaterial.CHEST.parseMaterial() && b.getType() != XMaterial.TRAPPED_CHEST.parseMaterial()) {
                     Material m = b.getType();
@@ -157,18 +168,23 @@ public class PortalBlockEditor implements Removable {
             }
         }.setFreezed(true));
 
-        if(this.player.getInventory().getHeldItemSlot() == 0 || this.player.getInventory().getHeldItemSlot() == 6 || this.player.getInventory().getHeldItemSlot() == 8) {
-            this.player.getInventory().setHeldItemSlot(1);
-        } else if(this.player.getInventory().getHeldItemSlot() == 7) {
+        if(this.player.getInventory().getHeldItemSlot() == 0) {
+            fastEditingTool.onHover(null);
+        } else {
+            MessageAPI.sendActionBar(player, Lang.get("Drop_To_Leave"), WarpSystem.getInstance(), Integer.MAX_VALUE);
+        }
+
+        if(this.player.getInventory().getHeldItemSlot() == 8) {
             item.onHover(null);
         }
     }
 
     public void update() {
-        int slot = 1;
+        int slot = 2;
+        boolean fastEditing = fastEditingTool.locationsSet();
         for(BlockType value : BlockType.values()) {
             if(value == BlockType.CUSTOM) continue;
-            this.player.getInventory().setItem(slot++, value.getEditMaterial().setName(value.getName()).getItem());
+            this.player.getInventory().setItem(slot++, value.getEditMaterial().setName(value.getName() + (fastEditing ? "§8 (§e" + Lang.get("Fast_Editing") + "§8)" : "")).getItem());
         }
     }
 
@@ -200,9 +216,11 @@ public class PortalBlockEditor implements Removable {
         return portal;
     }
 
-    public void addPosition(Location location, BlockType type) {
-        this.portal.addPortalBlock(new PortalBlock(new de.codingair.codingapi.tools.Location(location), type));
+    public PortalBlock addPosition(Location location, BlockType type) {
+        PortalBlock block = new PortalBlock(new de.codingair.codingapi.tools.Location(location), type);
+        this.portal.addPortalBlock(block);
         update();
+        return block;
     }
 
     public boolean removePosition(Location location) {

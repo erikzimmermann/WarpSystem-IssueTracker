@@ -269,7 +269,7 @@ public class TeleportOptions {
     }
 
     public int getDelay(Player player) {
-        if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay) || skip) return 0;
+        if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Delay) || (skip != null && skip)) return 0;
         if(destination != null) return destination.getCustomOptions().getDelay(delay);
         return delay;
     }
