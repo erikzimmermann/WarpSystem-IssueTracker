@@ -44,7 +44,7 @@ public class Bank {
     }
 
     public static String name() {
-        return instance.displayName;
+        return getInstance().displayName;
     }
 
     public static double getMoney(Player player) {
