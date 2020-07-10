@@ -61,11 +61,6 @@ public class Destination implements Serializable {
             this.type = json.get(0) == null ? null : DestinationType.valueOf((String) json.get(0));
             this.id = json.get(1) == null ? null : (String) json.get(1);
             this.adapter = type == null ? null : type.getInstance().dest(this);
-            if(json.size() > 2) {
-                offsetX = Double.parseDouble(json.get(2) + "");
-                offsetY = Double.parseDouble(json.get(3) + "");
-                offsetZ = Double.parseDouble(json.get(4) + "");
-            }
             this.customOptions = new Options();
         } catch(Exception ex) {
             throw new IllegalArgumentException("Wrong serialized data!", ex);
