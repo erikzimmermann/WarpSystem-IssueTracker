@@ -76,7 +76,7 @@ public class AllWarps implements Filter {
     }
 
     @Override
-    public PWPage.FilterButton getControllButton(PWPage page, int warps) {
+    public PWPage.FilterButton getControllButton(PWPage page, int warps, Player player) {
         return null;
     }
 
