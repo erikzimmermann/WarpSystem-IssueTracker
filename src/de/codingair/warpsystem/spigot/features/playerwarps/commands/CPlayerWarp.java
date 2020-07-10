@@ -23,7 +23,22 @@ public class CPlayerWarp extends WarpSystemCommandBuilder {
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                new PWList((Player) sender).open();
+                List<PlayerWarp> warps = PlayerWarpManager.getManager().getOwnWarps((Player) sender);
+
+                if(warps.size() == 1) {
+                    PlayerWarp warp = warps.get(0);
+
+                    if(PlayerWarpManager.getManager().isEconomy() && warp.isExpired()) {
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_is_expired"));
+                        return false;
+                    }
+
+                    if(warp.canTeleport((Player) sender)) {
+                        warp.perform((Player) sender);
+                    } else {
+                        sender.sendMessage(Lang.getPrefix() + Lang.get("Warp_is_private"));
+                    }
+                } else new PWList((Player) sender).open();
                 return false;
             }
         }.setOnlyPlayers(true), aliases.toArray(new String[0]));

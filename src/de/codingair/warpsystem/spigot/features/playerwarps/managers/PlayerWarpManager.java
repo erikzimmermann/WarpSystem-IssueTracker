@@ -664,7 +664,7 @@ public class PlayerWarpManager implements Manager, Ticker, Collectible {
     }
 
     public List<PlayerWarp> getOwnWarps(UUID id) {
-        List l = warps.get(id);
+        List<PlayerWarp> l = warps.get(id);
         return l == null ? new ArrayList<>() : l;
     }
 
