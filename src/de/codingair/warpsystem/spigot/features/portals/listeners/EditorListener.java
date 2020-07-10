@@ -45,7 +45,7 @@ public class EditorListener implements Listener {
                 boolean fuel = isFuel != null && (boolean) isFuel.invoke(m);
 
                 if(!m.isOccluding() && (fuel || !m.isSolid())) {
-                    String name = "§7" + ChatColor.stripColor(BlockType.CUSTOM.getName()) + ": §e" + m.name();
+                    String name = "§7" + ChatColor.stripColor(BlockType.CUSTOM.getName()) + ": §e" + m.name() + Lang.PREMIUM_LORE;
                     if(!name.equals(item.getDisplayName())) {
                         item.setDisplayName(name);
                         e.getPlayer().getInventory().setItem(7, item);
@@ -54,7 +54,7 @@ public class EditorListener implements Listener {
                 }
             }
 
-            String name = "§7" + ChatColor.stripColor(BlockType.CUSTOM.getName()) + ": §c-";
+            String name = "§7" + ChatColor.stripColor(BlockType.CUSTOM.getName()) + ": §c-" + Lang.PREMIUM_LORE;
             if(!name.equals(item.getDisplayName())) {
                 item.setDisplayName(name);
                 e.getPlayer().getInventory().setItem(8, item);
@@ -69,8 +69,13 @@ public class EditorListener implements Listener {
             BlockType type = BlockType.getByEditMaterial(e.getItemInHand());
 
             if(type == null) return;
+            if(!editor.getPortal().getBlocks().isEmpty() && editor.getPortal().getBlocks().get(0).getType() != type) {
+                Lang.PREMIUM_TITLE(e.getPlayer(), "§7You cannot use §edifferent types§7");
+                e.setCancelled(true);
+                return;
+            }
 
-            PortalManager.getInstance().getEditor(e.getPlayer()).addPosition(e.getBlock().getLocation(), type);
+            editor.addPosition(e.getBlock().getLocation(), type);
             e.setCancelled(false);
         } else if(API.getRemovable(e.getPlayer(), HotbarGUI.class) != null) e.setCancelled(true);
     }
@@ -83,7 +88,14 @@ public class EditorListener implements Listener {
             if(editor.getFastEditingTool().locationsSet() && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR)) {
                 e.setCancelled(true);
 
-                //fill area
+                BlockType type = BlockType.getByEditMaterial(e.getPlayer().getItemInHand());
+                if(type == null) return;
+                if(!editor.getPortal().getBlocks().isEmpty() && editor.getPortal().getBlocks().get(0).getType() != type) {
+                    Lang.PREMIUM_TITLE(e.getPlayer(), "§7You cannot use §edifferent types§7");
+                    e.setCancelled(true);
+                    return;
+                }
+
                 Location first = editor.getFastEditingTool().getFirst();
                 Location second = editor.getFastEditingTool().getSecond();
                 int minX = Math.min(first.getBlockX(), second.getBlockX());
@@ -93,7 +105,6 @@ public class EditorListener implements Listener {
                 int maxY = Math.max(first.getBlockY(), second.getBlockY());
                 int maxZ = Math.max(first.getBlockZ(), second.getBlockZ());
 
-                BlockType type = BlockType.getByEditMaterial(e.getPlayer().getItemInHand());
                 int i = 0;
 
                 for(int x = minX; x <= maxX; x++) {
