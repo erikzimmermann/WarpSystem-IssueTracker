@@ -27,10 +27,16 @@ WarpSystem:
         In_Category: '&c&nWarps&r &c@%PAGE%'
 
   Economy:
+    Enabled: true
+    Name: 'Coin(s)'
     #Priority list for economy systems
+    #Available values: EXP, Essentials, Vault, GemsEconomy, PlayerPoints
     priority:
       - Essentials
       - Vault
+      - GemsEconomy
+      - PlayerPoints
+      - EXP
 
   Teleport:
     Chunk_Pre_Loading:

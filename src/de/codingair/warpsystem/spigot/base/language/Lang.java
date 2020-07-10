@@ -4,6 +4,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.utils.money.Bank;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -115,10 +116,14 @@ public class Lang {
             throw new IllegalStateException("Unknown translation key: '" + key + "' >> Check " + getCurrentLanguage() + ".yml at '" + key + "'");
         }
 
-        text = text.replace("\\n", "\n");
+        return prepare(text);
+    }
 
-        text = ChatColor.translateAlternateColorCodes('&', text);
-        return text;
+    private static String prepare(String s) {
+        s = s.replace("\\n", "\n");
+        s = ChatColor.translateAlternateColorCodes('&', s);
+        s = s.replace("%CURRENCY%", Bank.name());
+        return s;
     }
 
     private static FileConfiguration getConfig() {

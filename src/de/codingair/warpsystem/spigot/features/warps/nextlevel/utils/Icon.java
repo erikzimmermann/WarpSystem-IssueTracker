@@ -10,7 +10,7 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionObject;
-import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.Bank;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -70,10 +70,10 @@ public class Icon extends FeatureObject {
 
         if(pc != null) {
             //confirm
-            if(MoneyAdapterType.getActive().getMoney(player) < pc.getCosts()) {
+            if(Bank.adapter().getMoney(player) < pc.getCosts()) {
                 pc.getCallback().accept(Result.NOT_ENOUGH_MONEY);
             } else {
-                MoneyAdapterType.getActive().withdraw(player, pc.getCosts());
+                Bank.adapter().withdraw(player, pc.getCosts());
                 pc.getCallback().accept(Result.SUCCESS);
             }
 
@@ -85,7 +85,7 @@ public class Icon extends FeatureObject {
 
     @Override
     protected void confirmPayment(Player player, double costs, Callback<Result> callback) {
-        if(MoneyAdapterType.getActive().getMoney(player) < costs) {
+        if(Bank.adapter().getMoney(player) < costs) {
             callback.accept(Result.NOT_ENOUGH_MONEY);
             return;
         }

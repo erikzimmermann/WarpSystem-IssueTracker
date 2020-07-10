@@ -8,7 +8,7 @@ import de.codingair.codingapi.utils.ImprovedDouble;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.Bank;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -44,7 +44,7 @@ public class ConfirmPayment extends TeleportStage {
             return;
         }
 
-        if(!MoneyAdapterType.canEnable() || MoneyAdapterType.getActive().getMoney(player) < costs) {
+        if(!Bank.isReady() || Bank.adapter().getMoney(player) < costs) {
             callback.accept(Result.NOT_ENOUGH_MONEY);
             return;
         }
@@ -57,11 +57,11 @@ public class ConfirmPayment extends TeleportStage {
                 MessageAPI.sendTitle(player, "§e" + Lang.get("Sneak_to_confirm"), "§6" + Lang.get("Costs") + ": §7" + new ImprovedDouble(costs) + " " + Lang.get("Coins"), 0, 0, 5);
                 HandlerList.unregisterAll(listenerValue.getValue());
 
-                if(MoneyAdapterType.getActive().getMoney(player) < costs) result = Result.NOT_ENOUGH_MONEY;
+                if(Bank.adapter().getMoney(player) < costs) result = Result.NOT_ENOUGH_MONEY;
 
                 if(result == Result.SUCCESS) {
                     //pay
-                    MoneyAdapterType.getActive().withdraw(player, costs);
+                    Bank.adapter().withdraw(player, costs);
                 } else {
                     //deny
                     Sound.ENTITY_ITEM_BREAK.playSound(player, 0.7F, 0.9F);

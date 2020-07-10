@@ -3,7 +3,7 @@ package de.codingair.warpsystem.spigot.base.utils.teleport.v2;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.Bank;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
@@ -29,10 +29,10 @@ public class Teleport {
         options.addCallback(new Callback<Result>() {
             @Override
             public void accept(Result result) {
-                if(stage != null && result != Result.SUCCESS && stage.active().isBefore(ConfirmPayment.class) && MoneyAdapterType.getActive() != null) {
+                if(stage != null && result != Result.SUCCESS && stage.active().isBefore(ConfirmPayment.class) && Bank.adapter() != null) {
                     //payback
                     double costs = options.getCosts(player);
-                    if(costs > 0) MoneyAdapterType.getActive().deposit(player, costs);
+                    if(costs > 0) Bank.adapter().deposit(player, costs);
                 }
             }
         });

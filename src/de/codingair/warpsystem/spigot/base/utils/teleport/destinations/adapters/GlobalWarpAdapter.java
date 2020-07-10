@@ -3,7 +3,7 @@ package de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.Location;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.Bank;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationAdapter;
@@ -26,16 +26,16 @@ public class GlobalWarpAdapter extends DestinationAdapter {
                     case WARP_NOT_EXISTS:
                         player.sendMessage(Lang.getPrefix() + Lang.get("GlobalWarp_Not_Exists").replace("%GLOBAL_WARP%", id));
 
-                        if(MoneyAdapterType.getActive() != null && costs != 0) {
-                            MoneyAdapterType.getActive().deposit(player, costs);
+                        if(Bank.adapter() != null && costs != 0) {
+                            Bank.adapter().deposit(player, costs);
                         }
 
                         if(callback != null) callback.accept(Result.DESTINATION_DOES_NOT_EXIST);
                         break;
 
                     case SERVER_NOT_AVAILABLE:
-                        if(MoneyAdapterType.getActive() != null && costs != 0) {
-                            MoneyAdapterType.getActive().deposit(player, costs);
+                        if(Bank.adapter() != null && costs != 0) {
+                            Bank.adapter().deposit(player, costs);
                         }
 
                         if(callback != null) callback.accept(Result.SERVER_NOT_AVAILABLE);

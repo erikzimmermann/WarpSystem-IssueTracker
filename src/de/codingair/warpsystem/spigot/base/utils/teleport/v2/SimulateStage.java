@@ -2,7 +2,7 @@ package de.codingair.warpsystem.spigot.base.utils.teleport.v2;
 
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
-import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.Bank;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.SimulatedTeleportResult;
 
@@ -33,7 +33,7 @@ public class SimulateStage extends TeleportStage {
         }
 
         double costs = options.getCosts(player);
-        if(costs > 0 && (!MoneyAdapterType.canEnable() || MoneyAdapterType.getActive().getMoney(player) < costs)) {
+        if(costs > 0 && (!Bank.isReady() || Bank.adapter().getMoney(player) < costs)) {
             cancel(Result.NOT_ENOUGH_MONEY);
             return;
         }
