@@ -36,10 +36,10 @@ public class PortalEditor extends Editor<Portal> {
     private final Portal clone;
 
     public PortalEditor(Player p, Portal portal) {
-        this(p, portal.setEditMode(false), portal.clone().setEditMode(true).createDestinationIfAbsent().createTeleportSoundIfAbsent());
+        this(p, portal.setVisible(false).setEditMode(true), portal.clone().setEditMode(true).setVisible(true).createDestinationIfAbsent().createTeleportSoundIfAbsent());
     }
 
-    public PortalEditor(Player p, Portal portal, Portal clone) {
+    private PortalEditor(Player p, Portal portal, Portal clone) {
         super(p, clone, new Backup<Portal>(portal) {
             @Override
             public void applyTo(Portal value) {
@@ -52,6 +52,7 @@ public class PortalEditor extends Editor<Portal> {
                 portal.apply(clone);
                 clone.destroy();
 
+                portal.mergeBlocks();
                 portal.setEditMode(false);
                 portal.setVisible(true);
 
