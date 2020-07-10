@@ -20,6 +20,7 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.ActionOb
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.TeleportSoundAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
+import de.codingair.warpsystem.spigot.base.utils.money.Bank;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
@@ -139,6 +140,11 @@ public class FeatureObject implements Serializable {
             WarpSystem.getInstance().getTeleportManager().teleport(player, options);
             return this;
         } else if(costs > 0) {
+            if(!Bank.isReady() || Bank.adapter().getMoney(player) < costs) {
+                player.sendMessage(Lang.getPrefix() + Lang.get("Not_Enough_Money").replace("%AMOUNT%", options.getFinalCosts(player).toString()));
+                return this;
+            }
+
             WaitForTeleport.wait(player, new Callback<Result>() {
                 @Override
                 public void accept(Result result) {

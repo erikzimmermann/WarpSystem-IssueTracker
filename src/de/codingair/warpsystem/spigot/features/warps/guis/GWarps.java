@@ -2,6 +2,7 @@ package de.codingair.warpsystem.spigot.features.warps.guis;
 
 import de.codingair.codingapi.player.gui.anvil.*;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
+import de.codingair.codingapi.player.gui.inventory.gui.GUIListener;
 import de.codingair.codingapi.player.gui.inventory.gui.InterfaceListener;
 import de.codingair.codingapi.player.gui.inventory.gui.Skull;
 import de.codingair.codingapi.player.gui.inventory.gui.itembutton.ItemButton;
@@ -19,13 +20,11 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.BoundAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.CostsAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
-import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.Bank;
 import de.codingair.warpsystem.spigot.base.utils.options.specific.WarpGUIOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.features.FeatureType;
 import de.codingair.warpsystem.spigot.features.warps.guis.editor.GEditor;
-import de.codingair.warpsystem.spigot.features.warps.guis.utils.GUIListener;
-import de.codingair.warpsystem.spigot.features.warps.guis.utils.Task;
 import de.codingair.warpsystem.spigot.features.warps.managers.IconManager;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.utils.Icon;
 import org.bukkit.Bukkit;
@@ -57,26 +56,24 @@ public class GWarps extends GUI {
     private Icon cursorIcon = null;
     private boolean showMenu = true;
 
-    private final GUIListener listener;
     private final boolean canEdit;
     private final String world;
     private final List<Class<? extends Icon>> hide;
 
     public GWarps(Player p, Icon page, boolean editing) {
-        this(p, page, editing, null);
+        this(p, page, editing, (Class<? extends Icon>[]) null);
     }
 
-    public GWarps(Player p, Icon page, boolean editing, GUIListener guiListener, Class<? extends Icon>... without) {
-        this(p, page, editing, guiListener, true, without);
+    public GWarps(Player p, Icon page, boolean editing, Class<? extends Icon>... without) {
+        this(p, page, editing, true, without);
     }
 
-    public GWarps(Player p, Icon page, boolean editing, GUIListener guiListener, boolean canEdit, Class<? extends Icon>... without) {
-        this(p, page, editing, guiListener, canEdit, p.getLocation().getWorld().getName(), without);
+    public GWarps(Player p, Icon page, boolean editing, boolean canEdit, Class<? extends Icon>... without) {
+        this(p, page, editing, canEdit, p.getLocation().getWorld().getName(), without);
     }
 
-    public GWarps(Player p, Icon page, boolean editing, GUIListener guiListener, boolean canEdit, String world, Class<? extends Icon>... without) {
-        super(p, getTitle(page, guiListener, p), getSize(p), WarpSystem.getInstance(), false);
-        this.listener = guiListener;
+    public GWarps(Player p, Icon page, boolean editing, boolean canEdit, String world, Class<? extends Icon>... without) {
+        super(p, getTitle(page, p), getSize(p), WarpSystem.getInstance(), false);
         this.page = page;
         this.editing = editing;
         this.canEdit = canEdit;
@@ -138,14 +135,12 @@ public class GWarps extends GUI {
                 if(!showMenu) {
                     showMenu = true;
                     reinitialize();
-                    setTitle(getTitle(GWarps.this.page, GWarps.this.listener, getPlayer()));
+                    setTitle(getTitle(GWarps.this.page, getPlayer()));
                     Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> open());
                     return;
                 }
 
                 if(listener != null) HandlerList.unregisterAll(listener);
-                if(isClosingForGUI() || isClosingByButton()) return;
-                if(GWarps.this.listener != null) GWarps.this.listener.onClose();
             }
 
             @Override
@@ -157,15 +152,13 @@ public class GWarps extends GUI {
         initialize(p);
     }
 
-    private static String getTitle(Icon page, GUIListener listener, Player player) {
+    private static String getTitle(Icon page, Player player) {
         FileConfiguration config = WarpSystem.getInstance().getFileManager().getFile("Config").getConfig();
         String key = player.hasPermission(WarpSystem.PERMISSION_ADMIN) ? "Admin" : "User";
 
-        return listener == null || listener.getTitle() == null ?
-                ChatColor.translateAlternateColorCodes('&', (page == null || page.getName() == null ?
-                        config.getString("WarpSystem.GUI." + key + ".Title.Standard", "&c&nWarps&r") :
-                        config.getString("WarpSystem.GUI." + key + ".Title.In_Category", "&c&nWarps&r &c@%PAGE%").replace("%PAGE%", page.getNameWithoutColor()).replace("%CATEGORY%", page.getNameWithoutColor())))
-                : listener.getTitle();
+        return ChatColor.translateAlternateColorCodes('&', (page == null || page.getName() == null ?
+                config.getString("WarpSystem.GUI." + key + ".Title.Standard", "&c&nWarps&r") :
+                config.getString("WarpSystem.GUI." + key + ".Title.In_Category", "&c&nWarps&r &c@%PAGE%").replace("%PAGE%", page.getNameWithoutColor()).replace("%CATEGORY%", page.getNameWithoutColor())));
     }
 
     private static int getSize(Player player) {
@@ -216,12 +209,12 @@ public class GWarps extends GUI {
                         else editing = !editing;
 
                         reinitialize();
-                        setTitle(getTitle(GWarps.this.page, listener, getPlayer()));
+                        setTitle(getTitle(GWarps.this.page, getPlayer()));
                     } else {
                         if(!e.isShiftClick()) {
                             showMenu = false;
                             reinitialize();
-                            setTitle(getTitle(GWarps.this.page, listener, getPlayer()));
+                            setTitle(getTitle(GWarps.this.page, getPlayer()));
                         }
                     }
                 }
@@ -235,7 +228,7 @@ public class GWarps extends GUI {
                 public void onClick(InventoryClickEvent e) {
                     GWarps.this.page = e.isShiftClick() ? null : page.getPage();
                     reinitialize();
-                    setTitle(getTitle(GWarps.this.page, listener, getPlayer()));
+                    setTitle(getTitle(GWarps.this.page, getPlayer()));
                 }
             }.setOption(option));
         }
@@ -433,7 +426,7 @@ public class GWarps extends GUI {
                         iconBuilder.addText("§7" + Lang.get("Commands") + ": " + (commandInfo.isEmpty() ? "-" : ""));
                         iconBuilder.addText(commandInfo);
                         iconBuilder.addText("§7" + Lang.get("Permission") + ": " + permission);
-                        if(MoneyAdapterType.canEnable()) iconBuilder.addText("§7" + Lang.get("Costs") + ": " + costs);
+                        if(Bank.isReady()) iconBuilder.addText("§7" + Lang.get("Costs") + ": " + costs);
                         iconBuilder.addText("§8------------");
                         iconBuilder.addText("§3" + Lang.get("Leftclick") + ": §7" + Lang.get("Edit"));
                         iconBuilder.addText("§3" + Lang.get("Shift_Leftclick") + ": §7" + Lang.get("Move"));
@@ -461,15 +454,6 @@ public class GWarps extends GUI {
 
                 @Override
                 public void onClick(InventoryClickEvent e, Player player) {
-                    if(listener != null) {
-                        Task task = listener.onClickOnIcon(icon, editing);
-
-                        if(task != null) {
-                            task.runTask(p, editing);
-                            return;
-                        }
-                    }
-
                     if(editing) {
                         if(e.isLeftClick()) {
                             if(moving) {
@@ -503,7 +487,7 @@ public class GWarps extends GUI {
                                 if(icon.isPage() && !cursorIcon.isPage()) {
                                     GWarps.this.page = icon;
                                     reinitialize();
-                                    setTitle(getTitle(GWarps.this.page, listener, getPlayer()));
+                                    setTitle(getTitle(GWarps.this.page, getPlayer()));
                                 }
                             } else {
                                 if(e.isShiftClick()) {
@@ -536,16 +520,7 @@ public class GWarps extends GUI {
                         if(icon.isPage()) {
                             GWarps.this.page = icon;
                             reinitialize();
-                            setTitle(getTitle(GWarps.this.page, listener, getPlayer()));
-                        } else {
-                            if(listener != null) {
-                                Task task = listener.onClickOnIcon(icon, editing);
-
-                                if(task != null) {
-                                    task.runTask(p, editing);
-                                    return;
-                                }
-                            }
+                            setTitle(getTitle(GWarps.this.page, getPlayer()));
                         }
 
                         icon.perform(p);
@@ -579,7 +554,7 @@ public class GWarps extends GUI {
             cursor = null;
             cursorIcon = null;
             reinitialize();
-            setTitle(getTitle(GWarps.this.page, listener, getPlayer()));
+            setTitle(getTitle(GWarps.this.page, getPlayer()));
         }
 
         this.moving = moving;

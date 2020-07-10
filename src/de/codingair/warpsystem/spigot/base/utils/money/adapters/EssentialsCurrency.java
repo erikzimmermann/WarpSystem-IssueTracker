@@ -9,9 +9,10 @@ import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
 
-public class Essentials implements Adapter {
+public class EssentialsCurrency implements Adapter {
+
     @Override
-    public double getMoney(Player player) {
+    public synchronized double getMoney(Player player) {
         if(check(player)) return 0;
 
         try {
@@ -23,8 +24,10 @@ public class Essentials implements Adapter {
     }
 
     @Override
-    public void withdraw(Player player, double amount) {
+    public synchronized void withdraw(Player player, double amount) {
         if(check(player)) return;
+
+
 
         try {
             Economy.substract(player.getName(), new BigDecimal(amount));
@@ -34,7 +37,7 @@ public class Essentials implements Adapter {
     }
 
     @Override
-    public void deposit(Player player, double amount) {
+    public synchronized void deposit(Player player, double amount) {
         if(check(player)) return;
 
         try {
@@ -49,10 +52,5 @@ public class Essentials implements Adapter {
 
         if(!Economy.playerExists(player.getName())) Economy.createNPC(player.getName());
         return false;
-    }
-
-    @Override
-    public boolean isReady() {
-        return Bukkit.getPluginManager().isPluginEnabled("Essentials");
     }
 }

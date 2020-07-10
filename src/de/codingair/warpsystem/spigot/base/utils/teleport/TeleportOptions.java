@@ -8,7 +8,7 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.pages.TeleportSoundPage;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.managers.TeleportManager;
-import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.Bank;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.LocationAdapter;
 import de.codingair.warpsystem.spigot.features.animations.AnimationManager;
@@ -125,7 +125,7 @@ public class TeleportOptions {
     }
 
     public Number getFinalCosts(Player player) {
-        return new ImprovedDouble(costs > 0 && MoneyAdapterType.getActive() != null && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs) ? costs : 0).get();
+        return new ImprovedDouble(costs > 0 && Bank.adapter() != null && !player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Costs) ? costs : 0).get();
     }
 
     public boolean isSkip() {

@@ -12,7 +12,7 @@ import de.codingair.codingapi.utils.Node;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.Bank;
 import de.codingair.warpsystem.spigot.features.playerwarps.commands.CPlayerWarps;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.list.PWList;
@@ -70,7 +70,7 @@ public class OwnWarpFilter implements Filter {
                         if(refund == -1) return;
 
                         if(refund > 0 && PlayerWarpManager.getManager().isEconomy() && w.isOwner(player)) {
-                            MoneyAdapterType.getActive().deposit(player, refund);
+                            Bank.adapter().deposit(player, refund);
                             player.sendMessage(Lang.getPrefix() + Lang.get("Warp_Deleted_Info").replace("%NAME%", w.getName(true)).replace("%PRICE%", CPlayerWarps.cut(refund) + ""));
                         } else player.sendMessage(Lang.getPrefix() + Lang.get("Warp_was_deleted").replace("%NAME%", w.getName(true)));
 

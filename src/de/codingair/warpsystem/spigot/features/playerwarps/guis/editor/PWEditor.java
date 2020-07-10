@@ -17,7 +17,7 @@ import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
-import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.Bank;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.PAppearance;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.PClasses;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.POptions;
@@ -59,7 +59,7 @@ public class PWEditor extends Editor<PlayerWarp> implements Ticker {
                         boolean isOwner = warp.isOwner(p);
                         boolean creating = isOwner && !PlayerWarpManager.getManager().existsOwn(p, warp.getName());
                         Number costs = calculateCosts(creating, warp, isOwner ? clone : null);
-                        if(MoneyAdapterType.canEnable() && PlayerWarpManager.getManager().isEconomy() && costs.doubleValue() > 0) MoneyAdapterType.getActive().withdraw(p, costs.doubleValue());
+                        if(Bank.isReady() && PlayerWarpManager.getManager().isEconomy() && costs.doubleValue() > 0) Bank.adapter().withdraw(p, costs.doubleValue());
 
                         clone.setStarted(System.currentTimeMillis());
 
@@ -240,7 +240,7 @@ public class PWEditor extends Editor<PlayerWarp> implements Ticker {
     }
 
     public static boolean canPay(Player player, double costs) {
-        return !PlayerWarpManager.getManager().isEconomy() || !MoneyAdapterType.canEnable() || MoneyAdapterType.getActive().getMoney(player) >= costs;
+        return !PlayerWarpManager.getManager().isEconomy() || !Bank.isReady() || Bank.adapter().getMoney(player) >= costs;
     }
 
     public static String getMainTitle() {

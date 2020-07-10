@@ -7,7 +7,7 @@ import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.Bank;
 import de.codingair.warpsystem.spigot.features.randomteleports.managers.RandomTeleporterManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -64,7 +64,7 @@ public class CRandomTp extends WSCommandBuilder {
                         return false;
                     }
 
-                    double bank = MoneyAdapterType.getActive().getMoney((Player) sender);
+                    double bank = Bank.adapter().getMoney((Player) sender);
                     double costs = RandomTeleporterManager.getInstance().getCosts();
 
                     if(bank >= costs) {
@@ -75,10 +75,10 @@ public class CRandomTp extends WSCommandBuilder {
                             public void onClick(Player player) {
                                 sm.destroy();
 
-                                double bank = MoneyAdapterType.getActive().getMoney((Player) sender);
+                                double bank = Bank.adapter().getMoney((Player) sender);
 
                                 if(bank >= costs) {
-                                    MoneyAdapterType.getActive().withdraw(player, costs);
+                                    Bank.adapter().withdraw(player, costs);
                                     UUID u = WarpSystem.getInstance().getUUIDManager().get((Player) sender);
                                     RandomTeleporterManager.getInstance().setBoughtTeleports(u, RandomTeleporterManager.getInstance().getBoughtTeleports(u) + 1);
                                     sender.sendMessage(Lang.getPrefix() + Lang.get("RandomTP_Buy_Finished").replace("%AMOUNT%", (costs + "").endsWith(".0") ? (costs + "").substring(0, (costs + "").length() - 2) : (costs + "")));

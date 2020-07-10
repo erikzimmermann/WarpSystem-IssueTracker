@@ -13,7 +13,7 @@ import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.setupassistant.annotations.AvailableForSetupAssistant;
 import de.codingair.warpsystem.spigot.base.setupassistant.annotations.Function;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
-import de.codingair.warpsystem.spigot.base.utils.money.MoneyAdapterType;
+import de.codingair.warpsystem.spigot.base.utils.money.Bank;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
@@ -448,7 +448,7 @@ public class RandomTeleporterManager implements Manager, BungeeFeature {
     }
 
     public boolean isBuyable() {
-        return buyable && MoneyAdapterType.canEnable();
+        return buyable && Bank.isReady();
     }
 
     public int getNetherHeight() {

@@ -8,6 +8,7 @@ import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.player.gui.inventory.gui.GUI;
 import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
+import de.codingair.warpsystem.spigot.base.utils.money.Bank;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -216,10 +217,14 @@ public class Lang {
             throw new IllegalStateException("Unknown translation key: '" + key + "' >> Check " + getCurrentLanguage() + ".yml at '" + key + "'");
         }
 
-        text = text.replace("\\n", "\n");
+        return prepare(text);
+    }
 
-        text = ChatColor.translateAlternateColorCodes('&', text);
-        return text;
+    private static String prepare(String s) {
+        s = s.replace("\\n", "\n");
+        s = ChatColor.translateAlternateColorCodes('&', s);
+        s = s.replace("%CURRENCY%", Bank.name());
+        return s;
     }
 
     private static FileConfiguration getConfig() {
