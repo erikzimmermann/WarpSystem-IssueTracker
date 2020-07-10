@@ -44,7 +44,7 @@ public class CWarp extends WSCommandBuilder {
                     } else noPermission(sender, label, this);
                 } else {
                     if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_SIMPLE_WARPS)) {
-                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp>");
+                        sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " " + WarpSystem.opt().cmdArg() + "<warp>");
                     } else noPermission(sender, label, this);
                 }
             }
@@ -57,7 +57,7 @@ public class CWarp extends WSCommandBuilder {
                     } else noPermission(sender, label, this);
                 } else {
                     if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_SIMPLE_WARPS)) {
-                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp>");
+                        sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " " + WarpSystem.opt().cmdArg() + "<warp>");
                     } else noPermission(sender, label, this);
                 }
 
@@ -100,14 +100,14 @@ public class CWarp extends WSCommandBuilder {
                 } else {
                     if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_SIMPLE_WARPS)) {
                         if(args.length == 0 || argument == null || argument.isEmpty()) {
-                            sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<warp>");
+                            sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " " + WarpSystem.opt().cmdArg() + "<warp>");
                             return false;
                         }
 
                         if(hook.runCommand(sender, label, argument, args)) return false;
                         sender.sendMessage(Lang.getPrefix() + Lang.get("WARP_DOES_NOT_EXISTS"));
                     } else if(sender.hasPermission(WarpSystem.PERMISSION_SIMPLE_WARPS_DIRECT_TELEPORT)) {
-                        sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " <warp> §e<player>");
+                        sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " <warp> " + WarpSystem.opt().cmdArg() + "<player>");
                     } else getBaseComponent().noPermission(sender, label, this);
                 }
                 return false;

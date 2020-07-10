@@ -4,7 +4,6 @@ import de.codingair.warpsystem.spigot.base.WarpSystem;
 
 public enum PluginVersion {
     UNKNOWN,
-    v4_2_6,
     v4_2_7,
     v4_2_8,
     v4_2_9,

@@ -49,7 +49,7 @@ public class RTP_Go_Command extends NaturalCommandComponent {
             }
 
             if(player == null && !(sender instanceof Player)) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " go §e[server-1, server-2, ...; world-1, world-2, ...] <player>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " go " + WarpSystem.opt().cmdArg() + "[server-1, server-2, ...; world-1, world-2, ...] <player>");
                 return false;
             }
 
@@ -59,7 +59,7 @@ public class RTP_Go_Command extends NaturalCommandComponent {
             String cmd = builder.toString().trim();
 
             if(!cmd.startsWith("[") || !cmd.endsWith("]")) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " go §e[server-1, server-2, ...; world-1, world-2, ...]" + (checkOther(sender) ? " [player]" : ""));
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " go " + WarpSystem.opt().cmdArg() + "[server-1, server-2, ...; world-1, world-2, ...]" + (checkOther(sender) ? " [player]" : ""));
                 return false;
             } else cmd = cmd.substring(1, cmd.length() - 1).replace(" ", "").toLowerCase();
 
@@ -113,7 +113,7 @@ public class RTP_Go_Command extends NaturalCommandComponent {
             } else if(data.length == 2) {
                 //on server
                 if(!WarpSystem.getInstance().isOnBungeeCord()) {
-                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " go §e[world-1, world-2, ...] [player]");
+                    sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " go " + WarpSystem.opt().cmdArg() + "[world-1, world-2, ...] [player]");
                     return false;
                 }
 

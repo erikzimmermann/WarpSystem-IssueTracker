@@ -327,7 +327,7 @@ public class SetupAssistant {
 
         if(l == null) {
             //menu
-            if(filter == PluginVersion.getUpcoming()) {
+            if(filter != null && filter.ordinal() >= PluginVersion.getUpcoming().ordinal() && SetupAssistantManager.getInstance().getFunction(filter).isEmpty()) {
                 m.add("  §7- §cComing soon...\n");
             } else if(priority.isEmpty()) {
                 m.add("  §7- §c" + Lang.get("No_Values_Available") + "\n");

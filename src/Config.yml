@@ -5,6 +5,9 @@ WarpSystem:
   #If set to false, all players can use every user feature (admin tools still need op or modify permissions)
   #If set to true, all players must have certain user permissions such as 'WarpSystem.Use.WarpGUI'
   Permissions: true
+  Command_Suggestions:
+    Color: '&7'
+    Argument: '&e'
 
   GUI:
     #false: The WarpGUI is identical on the entire server in all worlds
