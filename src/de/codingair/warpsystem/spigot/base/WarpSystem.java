@@ -3,9 +3,9 @@ package de.codingair.warpsystem.spigot.base;
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.files.ConfigFile;
 import de.codingair.codingapi.files.FileManager;
-import de.codingair.codingapi.player.gui.inventory.gui.Interface;
-import de.codingair.codingapi.server.Version;
 import de.codingair.codingapi.server.reflections.IReflection;
+import de.codingair.codingapi.server.specification.Type;
+import de.codingair.codingapi.server.specification.Version;
 import de.codingair.codingapi.time.TimeFetcher;
 import de.codingair.codingapi.time.Timer;
 import de.codingair.codingapi.utils.Value;
@@ -17,6 +17,7 @@ import de.codingair.warpsystem.spigot.base.managers.*;
 import de.codingair.warpsystem.spigot.base.setupassistant.SetupAssistantManager;
 import de.codingair.warpsystem.spigot.base.setupassistant.utils.SetupAssistantListener;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
+import de.codingair.warpsystem.spigot.base.utils.Notifier;
 import de.codingair.warpsystem.spigot.base.utils.UpdateNotifier;
 import de.codingair.warpsystem.spigot.base.utils.options.OptionBundle;
 import de.codingair.warpsystem.spigot.base.utils.options.Options;
@@ -29,10 +30,6 @@ import de.codingair.warpsystem.transfer.packets.spigot.RequestInitialPacket;
 import de.codingair.warpsystem.transfer.spigot.SpigotDataHandler;
 import de.codingair.warpsystem.utils.Manager;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -100,7 +97,7 @@ public class WarpSystem extends JavaPlugin {
     public static String PERMISSION_ADMIN = "warpsystem.admin";
     public static boolean activated = false;
     private static WarpSystem instance;
-    private static boolean updateAvailable = false;
+    public static boolean updateAvailable = false;
     private OptionBundle options;
 
     private boolean onBungeeCord = false;
@@ -124,14 +121,13 @@ public class WarpSystem extends JavaPlugin {
     private String oldVersion = null;
     private final SpigotDataHandler dataHandler = new SpigotDataHandler(this);
     private final UUIDManager uuidManager = new UUIDManager();
-    private final List<String> newUpdate = new ArrayList<>();
 
     public static boolean hasPermission(CommandSender sender, String permission) {
         return permission == null || sender.hasPermission(permission);
     }
 
     public static void updateCommandList() {
-        if(Version.getVersion().isBiggerThan(Version.v1_12)) {
+        if(Version.get().isBiggerThan(Version.v1_12)) {
             for(Player player : Bukkit.getOnlinePlayers()) {
                 IReflection.MethodAccessor updateCommands = IReflection.getMethod(Player.class, "updateCommands");
                 updateCommands.invoke(player);
@@ -159,6 +155,9 @@ public class WarpSystem extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        Version.load();
+        if(!checkSpigot()) return;
+
         timer.start();
 
         instance = this;
@@ -181,7 +180,7 @@ public class WarpSystem extends JavaPlugin {
             log(" ");
             log("Status:");
             log(" ");
-            log("MC-Version: " + Version.getVersion().getVersionName());
+            log("MC-Version: " + Version.get().fullVersion());
             log(" ");
 
             if(this.fileManager.getFile("Config") == null) this.fileManager.loadFile("Config", "/");
@@ -336,6 +335,8 @@ public class WarpSystem extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if(Version.type() == Type.BUKKIT) return;
+
         API.getInstance().onDisable(this);
         SpigotAPI.getInstance().onDisable(this);
 
@@ -368,21 +369,31 @@ public class WarpSystem extends JavaPlugin {
         this.uuidManager.removeAll();
     }
 
+    private boolean checkSpigot() {
+        if(Version.type() == Type.BUKKIT) {
+            shouldSave = false;
+            log(" ");
+            log(" ");
+            log(" ");
+            getLogger().log(Level.SEVERE, "This plugin requires a Spigot server!");
+            getLogger().log(Level.SEVERE, "A fork like PaperMc does also work.");
+            log(" ");
+            log(" ");
+            log(" ");
+            Bukkit.getPluginManager().disablePlugin(this);
+
+            return false;
+        }
+
+        return true;
+    }
+
     private void loadOptions() {
         if(this.options == null) this.options = new OptionBundle(new GeneralOptions(), new WarpGUIOptions(), new WarpSignOptions(), new PortalOptions());
         this.options.read();
         for(Options option : this.options.getOptions()) {
             option.write();
         }
-    }
-
-    public void reloadOptions(boolean save) {
-        if(save) this.options.write();
-        this.options.read();
-    }
-
-    public void saveOptions() {
-        this.options.write();
     }
 
     private void startUpdateNotifier() {
@@ -399,7 +410,7 @@ public class WarpSystem extends JavaPlugin {
                 log("Download it on\n\n" + updateNotifier.getDownload() + "\n");
                 log("------------------------");
 
-                WarpSystem.getInstance().notifyPlayers(null);
+                Notifier.notifyPlayers(null);
                 task.getValue().cancel();
             }
         };
@@ -446,7 +457,7 @@ public class WarpSystem extends JavaPlugin {
                     log(" ");
                     log("Status:");
                     log(" ");
-                    log("MC-Version: " + Version.getVersion().name());
+                    log("MC-Version: " + Version.get().name());
                     log(" ");
                 }
 
@@ -546,42 +557,6 @@ public class WarpSystem extends JavaPlugin {
         } finally {
             inputChannel.close();
             outputChannel.close();
-        }
-    }
-
-    public void notifyPlayers(Player player) {
-        if(player == null) {
-            for(Player p : Bukkit.getOnlinePlayers()) {
-                notifyPlayers(p);
-            }
-        } else {
-            if(player.hasPermission(WarpSystem.PERMISSION_NOTIFY) && WarpSystem.updateAvailable && !newUpdate.contains(player.getName())) {
-                newUpdate.add(player.getName());
-                String v = updateNotifier.getVersion();
-                if(!v.startsWith("v")) v = "v" + v;
-
-                TextComponent tc0 = new TextComponent(Lang.getPrefix() + "§7A new update is available §8[§b" + v + "§8 - §b" + WarpSystem.getInstance().updateNotifier.getUpdateInfo() + "§8]§7. Download it §7»");
-                TextComponent click = new TextComponent("§chere");
-                TextComponent tc1 = new TextComponent("§7«!");
-
-                click.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, getUpdateNotifier().getDownload()));
-                click.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.BaseComponent[] {new TextComponent("§7»Click«")}));
-
-                tc0.addExtra(click);
-                tc0.addExtra(tc1);
-                tc0.setColor(ChatColor.GRAY);
-
-                player.sendMessage("");
-                player.sendMessage("");
-                player.spigot().sendMessage(tc0);
-                player.sendMessage("");
-            }
-
-            ConfigFile file = fileManager.getFile("Config");
-            if(!file.getConfig().getString("Do_Not_Edit.Last_Version").equals(getDescription().getVersion())) {
-                file.getConfig().set("Do_Not_Edit.Last_Version", getDescription().getVersion());
-                file.saveConfig();
-            }
         }
     }
 
