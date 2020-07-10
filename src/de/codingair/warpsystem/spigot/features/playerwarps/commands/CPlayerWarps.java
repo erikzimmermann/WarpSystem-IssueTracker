@@ -36,9 +36,9 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
                 if(WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS))
-                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, edit, delete, list, import>");
+                    sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " " + WarpSystem.opt().cmdArg() + "<create, edit, delete, list, import>");
                 else
-                    sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, edit, delete, list>");
+                    sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " " + WarpSystem.opt().cmdArg() + "<create, edit, delete, list>");
             }
 
             @Override
@@ -53,7 +53,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
         getBaseComponent().addChild(new CommandComponent("delete") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " delete §e<warp>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " delete " + WarpSystem.opt().cmdArg() + "<warp>");
                 return false;
             }
         });
@@ -129,7 +129,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
         getBaseComponent().addChild(new CommandComponent("edit") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " edit §e<warp>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " edit " + WarpSystem.opt().cmdArg() + "<warp>");
                 return false;
             }
         });
@@ -231,7 +231,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
         getBaseComponent().addChild(new CommandComponent("import", WarpSystem.PERMISSION_MODIFY_PLAYER_WARPS) {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " import §e<essentials>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " import " + WarpSystem.opt().cmdArg() + "<essentials>");
                 return false;
             }
         });
@@ -265,7 +265,7 @@ public class CPlayerWarps extends WarpSystemCommandBuilder {
                     return false;
                 }
 
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " import §e<essentials>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " import " + WarpSystem.opt().cmdArg() + "<essentials>");
                 return false;
             }
         });

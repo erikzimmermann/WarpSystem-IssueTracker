@@ -39,12 +39,12 @@ public class CGlobalWarps extends WSCommandBuilder implements BungeeFeature {
 
             @Override
             public void unknownSubCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, list>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " " + WarpSystem.opt().cmdArg() + "<create, delete, list>");
             }
 
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                if(WarpSystem.getInstance().isOnBungeeCord()) sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " §e<create, delete, list>");
+                if(WarpSystem.getInstance().isOnBungeeCord()) sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " " + WarpSystem.opt().cmdArg() + "<create, delete, list>");
                 else sender.sendMessage(Lang.getPrefix() + Lang.get("Connect_BungeeCord"));
                 return false;
             }
@@ -58,7 +58,7 @@ public class CGlobalWarps extends WSCommandBuilder implements BungeeFeature {
         getBaseComponent().addChild(new CommandComponent("create") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " create §e<name>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " create " + WarpSystem.opt().cmdArg() + "<name>");
                 return false;
             }
         });
@@ -145,7 +145,7 @@ public class CGlobalWarps extends WSCommandBuilder implements BungeeFeature {
         getBaseComponent().addChild(new CommandComponent("delete") {
             @Override
             public boolean runCommand(CommandSender sender, String label, String[] args) {
-                sender.sendMessage(Lang.getPrefix() + "§7" + Lang.get("Use") + ": /" + label + " delete §e<name>");
+                sender.sendMessage(Lang.getPrefix() + WarpSystem.opt().cmdSug() + Lang.get("Use") + ": /" + label + " delete " + WarpSystem.opt().cmdArg() + "<name>");
                 return false;
             }
         });
