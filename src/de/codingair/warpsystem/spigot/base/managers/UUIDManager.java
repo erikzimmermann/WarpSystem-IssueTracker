@@ -26,7 +26,7 @@ public class UUIDManager {
     }
 
     protected void injectId(String player, UUID uniqueId) {
-        if(WarpSystem.getInstance().isOnBungeeCord()) uniqueIds.put(player, uniqueId);
+        if(bungee()) uniqueIds.put(player, uniqueId);
     }
 
     public UUID get(Player player) {

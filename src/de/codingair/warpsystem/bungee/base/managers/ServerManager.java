@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class ServerManager implements Listener {
-    private List<ServerInfo> onlineServer = new ArrayList<>();
-    private HashMap<ServerInfo, List<Callback<ServerInfo>>> waiting = new HashMap<>();
+    private final List<ServerInfo> onlineServer = new ArrayList<>();
+    private final HashMap<ServerInfo, List<Callback<ServerInfo>>> waiting = new HashMap<>();
 
     public static void sendPlayerTo(ServerInfo server, ProxiedPlayer player, Callback<ServerInfo> c) {
         Preconditions.checkNotNull(server);
@@ -52,13 +52,6 @@ public class ServerManager implements Listener {
                 info.ping((serverPing, error) -> setStatus(info, error == null));
             }
         }, 0, 5, TimeUnit.SECONDS);
-    }
-
-    public void ping(ServerInfo info, Callback<Boolean> callback) {
-        info.ping((serverPing, error) -> {
-            setStatus(info, error == null);
-            callback.accept(error == null);
-        });
     }
 
     public void sendInitialPacket(ServerInfo server) {
