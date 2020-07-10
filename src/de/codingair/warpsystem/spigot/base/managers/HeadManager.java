@@ -12,10 +12,7 @@ public class HeadManager {
     private ConfigFile file = null;
 
     private void checkFile() {
-        if(this.file == null) {
-            WarpSystem.getInstance().getFileManager().loadFile("PlayerSkins", "Memory/");
-            this.file = WarpSystem.getInstance().getFileManager().getFile("PlayerSkins");
-        }
+        if(this.file == null) this.file = WarpSystem.getInstance().getFileManager().loadFile("PlayerSkins", "Memory/");
     }
 
     public Head getHead(UUID uuid) {
