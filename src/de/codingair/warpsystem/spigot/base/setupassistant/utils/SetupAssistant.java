@@ -3,7 +3,7 @@ package de.codingair.warpsystem.spigot.base.setupassistant.utils;
 import com.google.common.collect.EvictingQueue;
 import de.codingair.codingapi.player.chat.SimpleMessage;
 import de.codingair.codingapi.player.data.PacketReader;
-import de.codingair.codingapi.server.Version;
+import de.codingair.codingapi.server.specification.Version;
 import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.server.reflections.PacketUtils;
 import de.codingair.codingapi.utils.TextAlignment;
@@ -353,7 +353,7 @@ public class SetupAssistant {
                 if(value.getDescription().isEmpty()) info.setColor(net.md_5.bungee.api.ChatColor.YELLOW);
                 else {
                     info.setItalic(true);
-                    if(Version.getVersion().isBiggerThan(15)) info.setColor(net.md_5.bungee.api.ChatColor.of(new Color(252, 227, 3)));
+                    if(Version.get().isBiggerThan(15)) info.setColor(net.md_5.bungee.api.ChatColor.of(new Color(252, 227, 3)));
                     else info.setColor(net.md_5.bungee.api.ChatColor.YELLOW);
                 }
                 if(!value.getDescription().isEmpty()) {

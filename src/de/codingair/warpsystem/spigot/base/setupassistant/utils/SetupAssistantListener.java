@@ -1,6 +1,6 @@
 package de.codingair.warpsystem.spigot.base.setupassistant.utils;
 
-import de.codingair.codingapi.server.Version;
+import de.codingair.codingapi.server.specification.Version;
 import de.codingair.codingapi.server.reflections.IReflection;
 import de.codingair.codingapi.server.reflections.PacketUtils;
 import de.codingair.warpsystem.spigot.api.events.PlayerFinalJoinEvent;
@@ -36,7 +36,7 @@ public class SetupAssistantListener implements Listener, PacketListener {
         if(chatPacket == null) {
             Class<?> packet = IReflection.getClass(IReflection.ServerPacket.MINECRAFT_PACKAGE, "PacketPlayOutChat");
 
-            if(Version.getVersion().isBiggerThan(15)) {
+            if(Version.get().isBiggerThan(15)) {
                 Class<?> type = IReflection.getClass(IReflection.ServerPacket.MINECRAFT_PACKAGE, "ChatMessageType");
                 this.type = type.getEnumConstants()[0];
                 chatPacket = IReflection.getConstructor(packet, PacketUtils.IChatBaseComponentClass, type, UUID.class);
@@ -45,7 +45,7 @@ public class SetupAssistantListener implements Listener, PacketListener {
             }
         }
         
-        if(Version.getVersion().isBiggerThan(15)) {
+        if(Version.get().isBiggerThan(15)) {
             return chatPacket.newInstance(PacketUtils.getRawIChatBaseComponent(message), type, UUID.randomUUID());
         } else return chatPacket.newInstance(PacketUtils.getRawIChatBaseComponent(message));
     }
