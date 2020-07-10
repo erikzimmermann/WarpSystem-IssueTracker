@@ -24,7 +24,6 @@ public class Bank {
         for(String s : config.getStringList("WarpSystem.Economy.priority")) {
             PreDefined preDefined = PreDefined.getByName(s);
             if(preDefined != null && preDefined.getAdapter() != null) {
-                System.out.println("Activating " + preDefined.name());
                 adapter = preDefined.getAdapter();
                 break;
             }
