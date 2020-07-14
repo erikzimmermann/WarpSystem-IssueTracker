@@ -80,7 +80,7 @@ public class BungeeBukkitListener implements PacketListener, Listener {
 
                 if(Bukkit.getPlayer(p.getPlayer()) != null) {
                     Bukkit.getPlayer(p.getPlayer()).sendMessage(p.getMessage());
-                } else loginMessage.put(p.getPlayer(), p.getMessage(), 10);
+                } else loginMessage.put(p.getPlayer(), p.getMessage(), 10000);
                 break;
             }
 

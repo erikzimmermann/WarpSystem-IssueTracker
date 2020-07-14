@@ -9,6 +9,7 @@ import de.codingair.warpsystem.bungee.features.teleport.listeners.TabCompleterLi
 import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -78,6 +79,8 @@ public class CTpa extends WSCommandBuilder {
                     sender.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_Cant_Teleport_Yourself"));
                     return false;
                 }
+
+                if(WarpSystem.cooldown().checkPlayer((Player) sender, Origin.TeleportRequest)) return false;
 
                 TeleportCommandManager.getInstance().invite(sender.getName(), false, new Callback<Long>() {
                     @Override

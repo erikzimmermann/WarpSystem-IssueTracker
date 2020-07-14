@@ -2,9 +2,9 @@ package de.codingair.warpsystem.spigot.features.warps.nextlevel.utils;
 
 import de.codingair.codingapi.server.Color;
 import de.codingair.codingapi.tools.Callback;
-import de.codingair.codingapi.tools.TimeMap;
 import de.codingair.codingapi.tools.io.utils.DataWriter;
 import de.codingair.codingapi.tools.items.ItemBuilder;
+import de.codingair.codingapi.tools.time.TimeMap;
 import de.codingair.codingapi.utils.ImprovedDouble;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
@@ -25,8 +25,8 @@ import java.util.Objects;
 public class Icon extends FeatureObject {
     private final TimeMap<Player, PaymentConfirmation> confirm = new TimeMap<Player, PaymentConfirmation>(){
         @Override
-        public void timeout(Player key, PaymentConfirmation value) {
-            value.getCallback().accept(Result.ERROR);
+        public void timeout(Player key) {
+            get(key).getCallback().accept(Result.ERROR);
         }
     };
     private String name;
@@ -90,7 +90,7 @@ public class Icon extends FeatureObject {
             return;
         }
 
-        confirm.put(player, new PaymentConfirmation(callback, costs), 2);
+        confirm.put(player, new PaymentConfirmation(callback, costs), 2000);
         player.sendMessage(Lang.getPrefix() + Lang.get("Icon_Costs_Confirm").replace("%AMOUNT%", new ImprovedDouble(costs).toString()));
     }
 
@@ -171,6 +171,11 @@ public class Icon extends FeatureObject {
                 Objects.equals(getNameWithoutColor(), icon.getNameWithoutColor()) &&
                 item.equals(icon.item) &&
                 Objects.equals(page, icon.page);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, slot, page, isPage);
     }
 
     public String getName() {

@@ -534,3 +534,6 @@ Icon_Costs_Confirm: '&7Klicken Sie erneut auf dieses Symbol, um die Zahlung von 
 Fast_Editing: 'Fast-Editing'
 Blocks_removed: '&7Entferne &e%AMOUNT% Block/Blöcke&7.'
 Blocks_added: '&7Füge &e%AMOUNT% block(s) &7 hinzu.'
+Cooldown_Info: '&7Sie müssen noch &e%TIME% &7warten, bevor Sie dies wieder benutzen können.'
+Cooldown: Cooldown
+Syntax_info: '&7Bitte nutze folgende Syntax: &e%SYNTAX%'

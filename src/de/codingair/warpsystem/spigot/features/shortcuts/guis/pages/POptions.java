@@ -8,10 +8,7 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
-import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CommandButton;
-import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CostsButton;
-import de.codingair.warpsystem.spigot.base.guis.editor.buttons.NameButton;
-import de.codingair.warpsystem.spigot.base.guis.editor.buttons.PermissionButton;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.*;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.shortcuts.managers.ShortcutManager;
 import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
@@ -59,6 +56,7 @@ public class POptions extends PageItem {
         }.setOption(option));
 
         addButton(new PermissionButton(3, 2, shortcut).setOption(option));
-        addButton(new CostsButton(4, 2, shortcut).setOption(option));
+        addButton(new CooldownButton(4, 2, shortcut).setOption(option));
+        addButton(new CostsButton(5, 2, shortcut).setOption(option));
     }
 }

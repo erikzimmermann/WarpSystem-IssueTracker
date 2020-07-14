@@ -50,6 +50,7 @@ import java.util.logging.Level;
 public class WarpSystem extends JavaPlugin {
     public static final String PERMISSION_NOTIFY = "warpsystem.notify";
     public static final String PERMISSION_MODIFY = "warpsystem.modify";
+    public static String PERMISSION_ADMIN = "warpsystem.admin"; //will be set after removing all non-final permission (if permissions are disabled)
 
     public static final String PERMISSION_MODIFY_WARP_GUI = "warpsystem.modify.warpgui";
     public static final String PERMISSION_MODIFY_SHORTCUTS = "warpsystem.modify.shortcuts";
@@ -76,14 +77,14 @@ public class WarpSystem extends JavaPlugin {
 
     public static final String PERMISSION_WARP_GUI_OTHER = "warpsystem.warpgui.other";
     public static final String PERMISSION_HIDE_ALL_ICONS = "warpgui.hideall";
-    public static final String PERMISSION_TELEPORT_PRELOAD_CHUNKS = "warpsystem.teleport.chunkpreloading";
     public static final String PERMISSION_SIMPLE_WARPS_DIRECT_TELEPORT = "warpsystem.simplewarp.directteleport";
     public static final String PERMISSION_GLOBAL_WARPS_DIRECT_TELEPORT = "warpsystem.globalwarp.directteleport";
     public static final String PERMISSION_RANDOM_TELEPORT_SELECTION_SELF = "warpsystem.randomteleporters.selection";
     public static final String PERMISSION_RANDOM_TELEPORT_SELECTION_OTHER = "warpsystem.randomteleporters.selection.other";
-    public static final String PERMISSION_ByPass_Maintenance = "warpsystem.bypass.maintenance";
+
     public static final String PERMISSION_ByPass_Teleport_Costs = "warpsystem.bypass.teleport.costs";
     public static final String PERMISSION_ByPass_Teleport_Delay = "warpsystem.bypass.teleport.delay";
+    public static final String PERMISSION_ByPass_Teleport_Cooldown = "warpsystem.bypass.cooldown";
 
     public static String PERMISSION_USE_WARP_GUI = "warpsystem.use.warpgui";
     public static String PERMISSION_USE_WARP_SIGNS = "warpsystem.use.warpsigns";
@@ -94,11 +95,11 @@ public class WarpSystem extends JavaPlugin {
     public static String PERMISSION_USE_RANDOM_TELEPORTER = "warpsystem.use.randomteleporters";
     public static String PERMISSION_USE_SPAWN = "warpsystem.use.spawn";
 
-    public static String PERMISSION_ADMIN = "warpsystem.admin";
     public static boolean activated = false;
     private static WarpSystem instance;
     public static boolean updateAvailable = false;
     private OptionBundle options;
+    private GeneralOptions generalOptions;
 
     private boolean onBungeeCord = false;
     private String bungeePluginVersion = null;
@@ -111,6 +112,7 @@ public class WarpSystem extends JavaPlugin {
     private DataManager dataManager;
     private final HeadManager headManager = new HeadManager();
     private final SetupAssistantManager setupAssistantManager = new SetupAssistantManager();
+    private final CooldownManager cooldownManager = new CooldownManager();
 
     private UpdateNotifier updateNotifier;
 
@@ -154,7 +156,7 @@ public class WarpSystem extends JavaPlugin {
     }
 
     public static GeneralOptions opt() {
-        return TeleportManager.getInstance().getOptions();
+        return getInstance().generalOptions;
     }
 
     @Override
@@ -190,13 +192,17 @@ public class WarpSystem extends JavaPlugin {
             if(this.fileManager.getFile("Config") == null) this.fileManager.loadFile("Config", "/");
             Lang.initPreDefinedLanguages(this);
 
-            PERMISSION_ADMIN = this.fileManager.getFile("Config").getConfig().getString("WarpSystem.Admin.Permission", "WarpSystem.Admin");
-
             oldVersion = fileManager.getFile("Config").getConfig().getString("Do_Not_Edit.Last_Version", "0");
             if(!oldVersion.equals(getDescription().getVersion())) createBackup();
 
+            //load cooldown list
+            cooldownManager.load();
+            dataHandler.register(cooldownManager);
+
             //check permission before loading features
             checkPermissions();
+            PERMISSION_ADMIN = this.fileManager.getFile("Config").getConfig().getString("WarpSystem.Admin.Permission", "WarpSystem.Admin");
+
             new PostWorldManager();
 
             log("Loading features");
@@ -393,7 +399,7 @@ public class WarpSystem extends JavaPlugin {
     }
 
     private void loadOptions() {
-        if(this.options == null) this.options = new OptionBundle(new GeneralOptions(), new WarpGUIOptions(), new WarpSignOptions(), new PortalOptions());
+        if(this.options == null) this.options = new OptionBundle(generalOptions = new GeneralOptions(), new WarpGUIOptions(), new WarpSignOptions(), new PortalOptions());
         this.options.read();
         for(Options option : this.options.getOptions()) {
             option.write();
@@ -464,6 +470,9 @@ public class WarpSystem extends JavaPlugin {
                     log("MC-Version: " + Version.get().name());
                     log(" ");
                 }
+
+                //save cooldown list
+                cooldownManager.save();
 
                 if(!saver) log("Saving options");
                 fileManager.getFile("Config").loadConfig();
@@ -635,5 +644,9 @@ public class WarpSystem extends JavaPlugin {
 
     public String getOldVersion() {
         return oldVersion;
+    }
+
+    public static CooldownManager cooldown() {
+        return getInstance().cooldownManager;
     }
 }

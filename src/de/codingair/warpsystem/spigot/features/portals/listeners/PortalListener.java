@@ -2,6 +2,7 @@ package de.codingair.warpsystem.spigot.features.portals.listeners;
 
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.server.events.PlayerWalkEvent;
+import de.codingair.codingapi.utils.Ticker;
 import de.codingair.warpsystem.spigot.api.blocks.listeners.RuleListener;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.features.portals.guis.PortalEditor;
@@ -22,9 +23,61 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
-public class PortalListener implements Listener {
+public class PortalListener implements Listener, Ticker {
+    private static PortalListener instance;
+    private final HashMap<Player, Portal> waiting = new HashMap<>();
+    private final ReentrantLock lock = new ReentrantLock();
+
+    public PortalListener() {
+        instance = this;
+        API.addTicker(this);
+    }
+
+    @Override
+    public void onTick() {
+
+    }
+
+    @Override
+    public void onSecond() {
+        try {
+            lock.tryLock(100, TimeUnit.MILLISECONDS);
+            try {
+                waiting.entrySet().removeIf(entry -> {
+                    if(entry.getValue().enteredPortal(entry.getKey(), entry.getKey().getLocation()) == 1) {
+                        entry.getValue().perform(entry.getKey());
+                        return false;
+                    } else return true;
+                });
+            } finally {
+                lock.unlock();
+            }
+        } catch(InterruptedException ignored) {
+        }
+    }
+
+    public static void waiting(Player player, Portal portal) {
+        instance.lock.lock();
+        try {
+            instance.waiting.putIfAbsent(player, portal);
+        } finally {
+            instance.lock.unlock();
+        }
+    }
+
+    public static void done(Player player) {
+        instance.lock.lock();
+        try {
+            instance.waiting.remove(player);
+        } finally {
+            instance.lock.unlock();
+        }
+    }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onJoin(PlayerJoinEvent e) {
@@ -48,7 +101,7 @@ public class PortalListener implements Listener {
 
             int test = portal.enteredPortal(e.getPlayer(), e.getFrom(), e.getTo());
 
-            if(test != 0) RuleListener.noDamageTo(e.getPlayer());
+            if(test == 1) RuleListener.noDamageTo(e.getPlayer());
 
             if(test == 1) {
                 //entered
@@ -60,6 +113,8 @@ public class PortalListener implements Listener {
                 for(de.codingair.warpsystem.spigot.features.portals.utils.PortalListener l : portal.getListeners()) {
                     l.onLeave(e.getPlayer());
                 }
+
+                done(e.getPlayer());
             } else if(test == 2) {
                 //entered and left
                 if(portal.isSkip()) {

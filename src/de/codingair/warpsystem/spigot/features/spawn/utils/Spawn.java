@@ -24,6 +24,7 @@ import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class Spawn extends FeatureObject {
@@ -84,6 +85,21 @@ public class Spawn extends FeatureObject {
             this.displayName = other.displayName;
             this.firstJoin = other.firstJoin == null ? null : other.firstJoin.clone();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        if(!super.equals(o)) return false;
+        Spawn spawn = (Spawn) o;
+        return usage == spawn.usage &&
+                respawnUsage == spawn.respawnUsage;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(usage, respawnUsage);
     }
 
     @Override

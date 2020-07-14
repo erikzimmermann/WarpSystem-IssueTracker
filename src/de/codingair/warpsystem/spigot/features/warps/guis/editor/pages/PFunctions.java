@@ -30,6 +30,7 @@ public class PFunctions extends PageItem {
         int slot = 1;
         addButton(new StatusButton(slot++, 2, icon).setOption(option));
         addButton(new CommandButton(slot++, 2, icon).setOption(option));
+        if(!icon.isPage()) addButton(new CooldownButton(slot++, 2, icon).setOption(option));
         addButton(new PermissionButton(slot++, 2, icon).setOption(option));
         if(!icon.isPage()) addButton(new CostsButton(slot++, 2, icon).setOption(option));
         addButton(new MessageButton(slot++, 2, icon).setOption(option));

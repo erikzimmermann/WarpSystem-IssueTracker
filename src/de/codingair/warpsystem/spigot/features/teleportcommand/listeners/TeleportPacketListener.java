@@ -90,7 +90,7 @@ public class TeleportPacketListener implements Listener, PacketListener {
                 WarpSystem.getInstance().getDataHandler().send(answer);
 
                 TeleportOptions options = new TeleportOptions(new Destination(new EmptyAdapter()), tpPacket.getToDisplayName());
-                options.setOrigin(Origin.CustomTeleportCommands);
+                options.setOrigin(Origin.TeleportRequest);
                 options.setWaitForTeleport(true);
                 options.setMessage(null);
                 options.setPayMessage(null);
@@ -123,7 +123,7 @@ public class TeleportPacketListener implements Listener, PacketListener {
 
                 Invitation invitation = TeleportCommandManager.getInstance().getInvitation(tpPacket.getSender(), tpPacket.getRecipient());
                 if(invitation != null) {
-                    invitation.handle(tpPacket.getRecipient());
+                    invitation.handle(tpPacket.getRecipient(), tpPacket.isAccepted());
                 }
                 break;
             }

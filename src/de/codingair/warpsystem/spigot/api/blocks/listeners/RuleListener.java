@@ -1,12 +1,11 @@
 package de.codingair.warpsystem.spigot.api.blocks.listeners;
 
 import de.codingair.codingapi.API;
-import de.codingair.codingapi.tools.TimeList;
+import de.codingair.codingapi.tools.time.TimeSet;
 import de.codingair.warpsystem.spigot.api.blocks.StaticLavaBlock;
 import de.codingair.warpsystem.spigot.api.blocks.utils.StaticBlock;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -22,10 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RuleListener implements Listener {
-    private static TimeList<Entity> NO_DAMAGE;
+    private static TimeSet<Entity> NO_DAMAGE;
 
     public RuleListener() {
-        if(NO_DAMAGE == null) NO_DAMAGE = new TimeList<>();
+        if(NO_DAMAGE == null) NO_DAMAGE = new TimeSet<>();
     }
 
     public static void noDamageTo(Entity entity) {
@@ -79,7 +78,6 @@ public class RuleListener implements Listener {
         if(NO_DAMAGE.contains(e.getEntity())) {
             e.setCancelled(true);
             e.setDuration(0);
-            e.getEntity().setFireTicks(-200);
             return;
         }
 
@@ -93,7 +91,6 @@ public class RuleListener implements Listener {
     public void onHit(EntityDamageEvent e) {
         if(NO_DAMAGE.contains(e.getEntity())) {
             e.setCancelled(true);
-            e.getEntity().setFireTicks(-200);
             return;
         }
 

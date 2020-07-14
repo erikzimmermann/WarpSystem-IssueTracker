@@ -10,6 +10,7 @@ import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.codingapi.utils.Ticker;
+import de.codingair.warpsystem.spigot.api.StringFormatter;
 import de.codingair.warpsystem.spigot.api.players.PermissionPlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -162,86 +163,6 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         } else return getManager().maxAmount;
     }
 
-    public static String convertInTimeFormat(long time) {
-        return convertInTimeFormat(time, 0, "", "");
-    }
-
-    public static String convertInTimeFormat(long time, int highlight, String highlighter, String reset) {
-        long days = 0, hours = 0, min = 0, sec = 0;
-
-        if(time > 0) {
-            days = Math.max(TimeUnit.DAYS.convert(time, TimeUnit.MILLISECONDS), 0);
-            time -= TimeUnit.MILLISECONDS.convert(days, TimeUnit.DAYS);
-            hours = Math.max(TimeUnit.HOURS.convert(time, TimeUnit.MILLISECONDS), 0);
-            time -= TimeUnit.MILLISECONDS.convert(hours, TimeUnit.HOURS);
-            min = Math.max(TimeUnit.MINUTES.convert(time, TimeUnit.MILLISECONDS), 0);
-            time -= TimeUnit.MILLISECONDS.convert(min, TimeUnit.MINUTES);
-            sec = Math.max(TimeUnit.SECONDS.convert(time, TimeUnit.MILLISECONDS), 0);
-            time -= TimeUnit.MILLISECONDS.convert(sec, TimeUnit.SECONDS);
-        }
-
-        StringBuilder builder = new StringBuilder();
-
-        if(days > 0 || highlight > 0) {
-            if(!builder.toString().isEmpty()) builder.append(", ");
-            if(highlight == 1) builder.append(highlighter).append("»");
-            builder.append(days).append("d");
-            if(highlight == 1) builder.append(highlighter).append("«").append(reset);
-        }
-
-        if(hours > 0 || highlight > 0) {
-            if(!builder.toString().isEmpty()) builder.append(", ");
-            if(highlight == 2) builder.append(highlighter).append("»");
-            builder.append(hours).append("h");
-            if(highlight == 2) builder.append(highlighter).append("«").append(reset);
-        }
-
-        if(min > 0 || highlight > 0) {
-            if(!builder.toString().isEmpty()) builder.append(", ");
-            if(highlight == 3) builder.append(highlighter).append("»");
-            builder.append(min).append("m");
-            if(highlight == 3) builder.append(highlighter).append("«").append(reset);
-        }
-
-        if((days + hours + min + sec == 0) || highlight == 5 || sec > 0) {
-            if(!builder.toString().isEmpty()) builder.append(", ");
-            builder.append(sec).append("s");
-        }
-
-//        if(!builder.toString().isEmpty()) builder.append(", ");
-//        builder.append(time).append("ms");
-
-        return builder.toString();
-    }
-
-    public static long convertFromTimeFormat(String text) throws NumberFormatException {
-        long d = 0, h = 0, m = 0, s = 0;
-
-        text = text.trim().toLowerCase();
-
-        if(text.contains("d")) {
-            String[] a = text.split("d")[0].split(" ");
-            d = Long.parseLong(a[a.length - 1]);
-        }
-
-        if(text.contains("h")) {
-            String[] a = text.split("h")[0].split(" ");
-            h = Long.parseLong(a[a.length - 1]);
-        }
-
-        if(text.contains("m")) {
-            String[] a = text.split("m")[0].split(" ");
-            m = Long.parseLong(a[a.length - 1]);
-        }
-
-        if(text.contains("s")) {
-            String[] a = text.split("s")[0].split(" ");
-            s = Long.parseLong(a[a.length - 1]);
-        }
-
-        return TimeUnit.MILLISECONDS.convert(d, TimeUnit.DAYS) + TimeUnit.MILLISECONDS.convert(h, TimeUnit.HOURS) + TimeUnit.MILLISECONDS.convert(m, TimeUnit.MINUTES) + TimeUnit.MILLISECONDS.convert(s, TimeUnit.SECONDS);
-    }
-
     public static PlayerWarpManager getManager() {
         return WarpSystem.getInstance().getDataManager().getManager(FeatureType.PLAYER_WARS);
     }
@@ -328,8 +249,8 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         WarpSystem.log("  > Loading PlayerWarps [Bungee: " + bungeeCord + "; TimeDependent: " + economy + "]");
 
         // Timings
-        this.minTime = convertFromTimeFormat(config.getString("PlayerWarps.Time.Min_Time", null), 300000);
-        this.maxTime = convertFromTimeFormat(config.getString("PlayerWarps.Time.Max_Time", null), 2592000000L);
+        this.minTime = StringFormatter.convertFromTimeFormat(config.getString("PlayerWarps.Time.Min_Time", null), 300000);
+        this.maxTime = StringFormatter.convertFromTimeFormat(config.getString("PlayerWarps.Time.Max_Time", null), 2592000000L);
 
         List<String> reminds = config.getStringList("Inactive.Reminds");
         this.inactiveReminds = new ArrayList<>();
@@ -337,11 +258,11 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         for(int i = 0; i < reminds.size(); i++) {
             String data = i < reminds.size() ? reminds.get(i) : null;
 
-            long time = convertFromTimeFormat(data);
+            long time = StringFormatter.convertFromTimeFormat(data);
             if(time > 0) inactiveReminds.add(time);
         }
 
-        this.inactiveTime = convertFromTimeFormat(config.getString("PlayerWarps.Inactive.Time_After_Expiration", null), 2592000000L);
+        this.inactiveTime = StringFormatter.convertFromTimeFormat(config.getString("PlayerWarps.Inactive.Time_After_Expiration", null), 2592000000L);
 
         //Costs - Generally
         this.maxAmount = config.getInt("PlayerWarps.General.Max_Warp_Amount", 5);
@@ -354,7 +275,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         this.internalRefundFactor = config.getBoolean("PlayerWarps.Costs.Internal_Refund_Factor", false);
         this.forcePlayerHead = config.getBoolean("PlayerWarps.General.Force_Player_Head", false);
         this.customTeleportCosts = config.getBoolean("PlayerWarps.General.Custom_teleport_costs", true);
-        this.timeStandardValue = convertFromTimeFormat(config.getString("PlayerWarps.Time.Standard_Value", "1h"));
+        this.timeStandardValue = StringFormatter.convertFromTimeFormat(config.getString("PlayerWarps.Time.Standard_Value", "1h"));
         this.forceCreateGUI = config.getBoolean("PlayerWarps.General.Force_Create_GUI", false);
         this.allowPublicWarps = config.getBoolean("PlayerWarps.General.Allow_Public_Warps", true);
         this.allowTrustedMembers = config.getBoolean("PlayerWarps.General.Allow_Trusted_Members", true);
@@ -620,7 +541,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
                     if(-(warp.getExpireDate() - System.currentTimeMillis()) <= 1000) {
                         Player p = warp.getOwner().getPlayer();
                         if(p != null)
-                            p.sendMessage(Lang.getPrefix() + Lang.get("Warp_expiring").replace("%NAME%", warp.getName()).replace("%TIME_LEFT%", convertInTimeFormat(inactiveTime, 0, "", "")));
+                            p.sendMessage(Lang.getPrefix() + Lang.get("Warp_expiring").replace("%NAME%", warp.getName()).replace("%TIME_LEFT%", StringFormatter.convertInTimeFormat(inactiveTime, 0, "", "")));
                         else
                             warp.setNotify(true);
                     }
@@ -632,7 +553,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
                         if(warp.getLeftTime() >= time - 1050L && warp.getLeftTime() < time) {
                             Player p = warp.getOwner().getPlayer();
                             if(p != null)
-                                p.sendMessage(Lang.getPrefix() + Lang.get("Warp_Deletion_In").replace("%NAME%", warp.getName()).replace("%TIME_LEFT%", convertInTimeFormat(remind, 0, "", "")));
+                                p.sendMessage(Lang.getPrefix() + Lang.get("Warp_Deletion_In").replace("%NAME%", warp.getName()).replace("%TIME_LEFT%", StringFormatter.convertInTimeFormat(remind, 0, "", "")));
                         }
                     }
 
@@ -668,16 +589,6 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         }
 
         warps.clear();
-    }
-
-    private long convertFromTimeFormat(String s, long def) {
-        if(s == null || (!s.contains("d") && !s.contains("h") && !s.contains("m") && !s.contains("s"))) return def;
-
-        try {
-            return convertFromTimeFormat(s);
-        } catch(NumberFormatException ex) {
-            return def;
-        }
     }
 
     private TimeUnit getTimeUnitOfString(String s) {
