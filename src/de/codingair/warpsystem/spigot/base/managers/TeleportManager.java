@@ -21,7 +21,6 @@ public class TeleportManager {
     private static TeleportManager instance;
     public static final String NO_PERMISSION = "%NO_PERMISSION%";
     private Cache<String, Teleport> teleports;
-    private GeneralOptions options;
 
     private TeleportManager() {
     }
@@ -31,9 +30,7 @@ public class TeleportManager {
      */
     public boolean load() {
         boolean success = true;
-
-        this.options = WarpSystem.getOptions(GeneralOptions.class);
-        this.teleports = CacheBuilder.newBuilder().expireAfterAccess(options.getTeleportDelay(), TimeUnit.SECONDS).build();
+        this.teleports = CacheBuilder.newBuilder().expireAfterAccess(WarpSystem.opt().getTeleportDelay(), TimeUnit.SECONDS).build();
         return success;
     }
 
@@ -98,10 +95,6 @@ public class TeleportManager {
 
     public void clear() {
         if(this.teleports != null) this.teleports.invalidateAll();
-    }
-
-    public GeneralOptions getOptions() {
-        return options;
     }
 
     public static TeleportManager getInstance() {

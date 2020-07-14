@@ -3,6 +3,7 @@ package de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.bu
 import de.codingair.codingapi.player.gui.anvil.*;
 import de.codingair.codingapi.tools.items.ItemBuilder;
 import de.codingair.codingapi.tools.items.XMaterial;
+import de.codingair.warpsystem.spigot.api.StringFormatter;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -44,16 +45,16 @@ public class ActiveTimeButton extends EditorButton {
             builder.addLore(PWEditor.getCostsMessage(diff / 60000D * PlayerWarpManager.getManager().getActiveTimeCosts(), page));
 
             if(editing == 0) {
-                builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": §7" + PlayerWarpManager.convertInTimeFormat(original.getLeftTime(), 0, "", ""));
+                builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": §7" + StringFormatter.convertInTimeFormat(original.getLeftTime(), 0, "", ""));
             } else {
-                builder.addLore("§7   " + PlayerWarpManager.convertInTimeFormat(original.getLeftTime(), 0, "", ""));
+                builder.addLore("§7   " + StringFormatter.convertInTimeFormat(original.getLeftTime(), 0, "", ""));
             }
 
-            builder.addLore((diff >= 0 ? "§2+ " : "§4- ") + PlayerWarpManager.convertInTimeFormat(Math.abs(diff), 0, "", ""));
-            builder.addLore("§7= " + (editing == 0 ? "§e" : "§7") + PlayerWarpManager.convertInTimeFormat(warp.getTime(), editing, "§e", "§7"));
+            builder.addLore((diff >= 0 ? "§2+ " : "§4- ") + StringFormatter.convertInTimeFormat(Math.abs(diff), 0, "", ""));
+            builder.addLore("§7= " + (editing == 0 ? "§e" : "§7") + StringFormatter.convertInTimeFormat(warp.getTime(), editing, "§e", "§7"));
         } else {
             builder.addLore(PWEditor.getCostsMessage(warp.getTime() / 60000D * PlayerWarpManager.getManager().getActiveTimeCosts(), page));
-            builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + (editing == 0 ? "§e" : "§7") + PlayerWarpManager.convertInTimeFormat(isEditing ? warp.getTime() : warp.getLeftTime(), editing, "§e", "§7"));
+            builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + (editing == 0 ? "§e" : "§7") + StringFormatter.convertInTimeFormat(isEditing ? warp.getTime() : warp.getLeftTime(), editing, "§e", "§7"));
         }
 
         builder.addLore("");
@@ -125,7 +126,7 @@ public class ActiveTimeButton extends EditorButton {
 
                     long time;
                     try {
-                        time = PlayerWarpManager.convertFromTimeFormat(e.getInput());
+                        time = StringFormatter.convertFromTimeFormat(e.getInput());
                     } catch(Exception ex) {
                         time = -1;
                     }
@@ -137,8 +138,8 @@ public class ActiveTimeButton extends EditorButton {
 
                     if(time < min || time > max) {
                         player.sendMessage(Lang.getPrefix() + Lang.get("Enter_Something_between")
-                                .replace("%X%", PlayerWarpManager.convertInTimeFormat(PlayerWarpManager.getManager().getMinTime(), 10, "", ""))
-                                .replace("%Y%", PlayerWarpManager.convertInTimeFormat(PlayerWarpManager.getManager().getMaxTime(), 10, "", ""))
+                                .replace("%X%", StringFormatter.convertInTimeFormat(PlayerWarpManager.getManager().getMinTime(), 10, "", ""))
+                                .replace("%Y%", StringFormatter.convertInTimeFormat(PlayerWarpManager.getManager().getMaxTime(), 10, "", ""))
                         );
                         return;
                     }
@@ -157,7 +158,7 @@ public class ActiveTimeButton extends EditorButton {
                         getInterface().setClosingForGUI(false);
                     }
                 }
-            }, new ItemBuilder(XMaterial.PAPER).setName(PlayerWarpManager.convertInTimeFormat(warp.getTime(), 10, "", "")).getItem());
+            }, new ItemBuilder(XMaterial.PAPER).setName(StringFormatter.convertInTimeFormat(warp.getTime(), 10, "", "")).getItem());
         }
     }
 

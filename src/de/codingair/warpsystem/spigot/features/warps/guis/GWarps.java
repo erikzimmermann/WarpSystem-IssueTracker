@@ -87,22 +87,9 @@ public class GWarps extends GUI {
         Bukkit.getPluginManager().registerEvents(listener = new Listener() {
             @EventHandler
             public void onClick(InventoryClickEvent e) {
-                if(e.getClickedInventory() == e.getView().getBottomInventory() && cloning && cursorIcon == null) {
+                if(e.getClickedInventory() == e.getView().getBottomInventory() && cursorIcon == null) {
                     //fast deleting
                     e.setCancelled(true);
-                }
-            }
-            
-            @EventHandler
-            public void onClick(InventoryDragEvent e) {
-                if(cloning && cursorIcon == null) {
-                    //fast deleting
-                    for(Integer rawSlot : e.getRawSlots()) {
-                        if(rawSlot > 53) {
-                            e.setCancelled(true);
-                            return;
-                        }
-                    }
                 }
             }
 

@@ -35,12 +35,14 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
-public class FeatureObject implements Serializable {
+public abstract class FeatureObject implements Serializable {
     protected int performed = 0;
     private List<ActionObject<?>> actions;
     private String permission = null;
+    private long cooldown = 0;
     private boolean disabled = false;
     private boolean skip = false;
+    private Origin origin = null;
 
     public FeatureObject() {
         this.actions = new ArrayList<>();
@@ -61,6 +63,7 @@ public class FeatureObject implements Serializable {
     public FeatureObject(FeatureObject featureObject) {
         this.actions = featureObject.getCopyOfActions();
         this.permission = featureObject.permission;
+        this.cooldown = featureObject.cooldown;
         this.disabled = featureObject.disabled;
         this.skip = featureObject.skip;
         this.performed = featureObject.performed;
@@ -80,6 +83,11 @@ public class FeatureObject implements Serializable {
         return perform(player, options);
     }
 
+    public Origin getOrigin() {
+        if(origin == null) origin = Origin.getByClass(this);
+        return origin;
+    }
+
     public void prepareTeleportOptions(String player, TeleportOptions options) {
         if(options.getDestination() == null) options.setDestination(hasAction(Action.WARP) ? getAction(WarpAction.class).getValue() : null);
         if(options.getDisplayName() == null) options.setDisplayName(hasAction(Action.WARP) ? getAction(WarpAction.class).getValue().getId() : null);
@@ -89,13 +97,12 @@ public class FeatureObject implements Serializable {
 
         if(options.getSkip() == null) options.setSkip(isSkip());
 
-        Origin origin = Origin.getByClass(this);
-        options.setOrigin(origin);
+        options.setOrigin(getOrigin());
         if(getAction(CostsAction.class) != null) options.setCosts(getAction(CostsAction.class).getValue());
 
         if(hasAction(Action.WARP)) {
             options.setPermission(this.permission == null ? TeleportManager.NO_PERMISSION : permission);
-            if(!origin.sendTeleportMessage()) options.setMessage(null);
+            if(!getOrigin().sendTeleportMessage()) options.setMessage(null);
 
             options.addCallback(new Callback<Result>() {
                 @Override
@@ -126,13 +133,23 @@ public class FeatureObject implements Serializable {
     public FeatureObject perform(Player player, TeleportOptions options) {
         if(this.actions == null) return this;
 
+        if(WarpSystem.cooldown().checkPlayer(player, buildHashCode())) {
+            options.fireCallbacks(Result.REMAINING_COOLDOWN);
+            return this;
+        }
+
         prepareTeleportOptions(player.getName(), options);
         double costs = options.getCosts(player);
 
         options.addCallback(new Callback<Result>() {
             @Override
             public void accept(Result result) {
-                if(result == Result.SUCCESS) performed++;
+                if(result == Result.SUCCESS) {
+                    performed++;
+
+                    //check cooldown
+                    if(FeatureObject.this.cooldown > 0) WarpSystem.cooldown().register(player, FeatureObject.this.cooldown, buildHashCode());
+                }
             }
         });
 
@@ -188,6 +205,7 @@ public class FeatureObject implements Serializable {
 
         this.disabled = d.getBoolean("disabled");
         this.permission = d.getString("permission");
+        this.cooldown = d.getLong("cooldown");
         if(this.permission != null) this.permission = ChatColor.stripColor(CharMatcher.whitespace().trimFrom(this.permission));
 
         this.skip = d.getBoolean("skip");
@@ -255,6 +273,7 @@ public class FeatureObject implements Serializable {
     public void write(DataWriter d) {
         d.put("disabled", this.disabled);
         d.put("permission", this.permission);
+        d.put("cooldown", this.cooldown);
         d.put("skip", this.skip);
         d.put("performed", this.performed);
 
@@ -275,6 +294,7 @@ public class FeatureObject implements Serializable {
     public void destroy() {
         this.disabled = false;
         this.permission = null;
+        this.cooldown = 0;
 
         if(this.actions != null) {
             this.actions.forEach(ActionObject::destroy);
@@ -289,6 +309,7 @@ public class FeatureObject implements Serializable {
         this.disabled = object.disabled;
         this.permission = object.permission;
         this.performed = object.performed;
+        this.cooldown = object.cooldown;
         this.actions = object.getCopyOfActions();
         checkActionList();
     }
@@ -312,7 +333,17 @@ public class FeatureObject implements Serializable {
         FeatureObject object = (FeatureObject) o;
         return disabled == object.disabled &&
                 Objects.equals(permission, object.permission) &&
-                actions.equals(object.actions);
+                actions.equals(object.actions) &&
+                cooldown == object.cooldown;
+    }
+
+    private int buildHashCode() {
+        return Objects.hash(getOrigin().ordinal(), hashCode());
+    }
+
+    @Override
+    public int hashCode() {
+        throw new IllegalStateException("Outdated feature object");
     }
 
     public <T extends ActionObject<?>> T getAction(Action action) {
@@ -403,5 +434,13 @@ public class FeatureObject implements Serializable {
 
     public int getPerformed() {
         return performed;
+    }
+
+    public long getCooldown() {
+        return cooldown;
+    }
+
+    public void setCooldown(long cooldown) {
+        this.cooldown = cooldown;
     }
 }

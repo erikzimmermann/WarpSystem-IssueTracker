@@ -3,6 +3,8 @@ package de.codingair.warpsystem.transfer.packets.utils;
 import de.codingair.warpsystem.bungee.base.utils.PacketVanishInfo;
 import de.codingair.warpsystem.spigot.base.setupassistant.bungee.SetupAssistantStorePacket;
 import de.codingair.warpsystem.spigot.base.setupassistant.bungee.ToggleSetupAssistantPacket;
+import de.codingair.warpsystem.spigot.base.utils.cooldown.CooldownDataPacket;
+import de.codingair.warpsystem.spigot.base.utils.cooldown.CooldownPacket;
 import de.codingair.warpsystem.spigot.features.randomteleports.packets.RandomTPWorldsPacket;
 import de.codingair.warpsystem.spigot.features.teleportcommand.packets.ToggleForceTeleportsPacket;
 import de.codingair.warpsystem.transfer.packets.bungee.*;
@@ -36,6 +38,8 @@ public enum PacketType {
     PrepareServerSwitchPacket(23, PrepareServerSwitchPacket.class),
     PrepareLoginMessagePacket(24, PrepareLoginMessagePacket.class),
     MessagePacket(25, MessagePacket.class),
+    CooldownPacket(26, CooldownPacket.class),
+    CooldownDataPacket(27, CooldownDataPacket.class),
 
     ToggleForceTeleportsPacket(35, ToggleForceTeleportsPacket.class),
 

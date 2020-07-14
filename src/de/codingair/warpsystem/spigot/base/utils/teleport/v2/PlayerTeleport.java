@@ -60,7 +60,7 @@ public class PlayerTeleport extends TeleportStage {
 
                             cancel(Result.CANCELLED);
                         } else if(Version.get().getId() <= 8)
-                            Bukkit.getPluginManager().callEvent(new PlayerTeleportAcceptEvent(e.getPlayer())); //1.8 doesn't contain PlayerTeleportAcceptEvent
+                            Bukkit.getPluginManager().callEvent(new PlayerTeleportAcceptEvent(e.getPlayer())); //1.8 doesn't provide a packet based PlayerTeleportAcceptEvent
                         else {
                             new BukkitRunnable() {
                                 @Override

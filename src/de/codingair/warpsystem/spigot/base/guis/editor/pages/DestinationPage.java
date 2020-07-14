@@ -224,7 +224,7 @@ public class DestinationPage extends PageItem {
                 public ItemStack craftItem() {
                     ItemBuilder builder = new ItemBuilder(XMaterial.CLOCK).setName("§6§n" + Lang.get("Teleport_Delay") + Lang.PREMIUM_LORE);
 
-                    builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + (destination.getCustomOptions().getDelay(-1) == -1 ? "§7" + WarpSystem.getInstance().getTeleportManager().getOptions().getTeleportDelay() + " §8(§e" + Lang.get("Default") + "§8)" : "§7" + destination.getCustomOptions().getDelay(-1)));
+                    builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + (destination.getCustomOptions().getDelay(-1) == -1 ? "§7" + WarpSystem.opt().getTeleportDelay() + " §8(§e" + Lang.get("Default") + "§8)" : "§7" + destination.getCustomOptions().getDelay(-1)));
                     builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §c- §8(§7" + Lang.get("Shift") + "§8)");
                     builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §a+ §8(§7" + Lang.get("Shift") + "§8)");
                     return builder.getItem();

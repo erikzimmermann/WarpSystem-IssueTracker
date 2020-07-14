@@ -30,7 +30,6 @@ public class UUIDManager {
     }
 
     public UUID get(Player player) {
-        if(player == null) return null;
         if(bungee()) return this.uniqueIds.get(player.getName());
         else return player.getUniqueId();
     }

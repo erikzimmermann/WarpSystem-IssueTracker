@@ -1,7 +1,9 @@
 package de.codingair.warpsystem.spigot.base.utils.options.specific;
 
+import de.codingair.warpsystem.spigot.api.StringFormatter;
 import de.codingair.warpsystem.spigot.base.utils.options.Option;
 import de.codingair.warpsystem.spigot.base.utils.options.Options;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import org.bukkit.ChatColor;
 
 import java.util.function.IntPredicate;
@@ -124,5 +126,9 @@ public class GeneralOptions extends Options {
 
     public String cmdArg() {
         return ChatColor.translateAlternateColorCodes('&', cmdArgColor.getValue());
+    }
+
+    public long getCooldown(Origin origin) {
+        return 0;
     }
 }

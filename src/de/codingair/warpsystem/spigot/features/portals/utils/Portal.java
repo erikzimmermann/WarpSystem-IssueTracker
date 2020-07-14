@@ -14,6 +14,7 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.FeatureObject;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.TeleportSoundAction;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import org.bukkit.ChatColor;
@@ -23,6 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Portal extends FeatureObject {
     private boolean editMode = false;
@@ -50,6 +52,11 @@ public class Portal extends FeatureObject {
         this.animations = new ArrayList<>();
     }
 
+    public Portal(String displayName) {
+        this(new Destination(), displayName, new ArrayList<>(), new ArrayList<>());
+        getDestination().getCustomOptions().setDelay(0);
+    }
+
     public Portal(Portal portal) {
         super(portal);
 
@@ -64,17 +71,35 @@ public class Portal extends FeatureObject {
         this.animations = animations;
     }
 
-    public Portal(Destination destination, String displayName, List<PortalBlock> blocks, List<Animation> animations) {
+    private Portal(Destination destination, String displayName, List<PortalBlock> blocks, List<Animation> animations) {
         super(null, false, new WarpAction(destination));
         this.displayName = displayName;
         this.blocks = blocks;
         this.animations = animations;
-        setSkip(true);
+    }
+
+    @Override
+    public FeatureObject perform(Player player, TeleportOptions options) {
+        options.addCallback(new Callback<Result>() {
+            @Override
+            public void accept(Result result) {
+                if(result == Result.REMAINING_COOLDOWN) {
+                    de.codingair.warpsystem.spigot.features.portals.listeners.PortalListener.waiting(player, Portal.this);
+                } else de.codingair.warpsystem.spigot.features.portals.listeners.PortalListener.done(player);
+            }
+        });
+        return super.perform(player, options);
     }
 
     @Override
     public boolean read(DataWriter d) throws Exception {
         super.read(d);
+
+        if(d.getBoolean("skip")) {
+            Destination dest = getDestination();
+            if(dest != null) dest.getCustomOptions().setDelay(0);
+            setSkip(false);
+        }
 
         this.displayName = d.getString("name");
         this.teleportName = d.getString("displayname");
@@ -252,6 +277,11 @@ public class Portal extends FeatureObject {
                 Objects.equals(this.displayName, portal.displayName) &&
                 Objects.equals(this.teleportName, portal.teleportName) &&
                 listeners.equals(portal.listeners);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(displayName);
     }
 
     @Override

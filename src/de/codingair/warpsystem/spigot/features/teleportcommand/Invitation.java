@@ -8,6 +8,7 @@ import de.codingair.warpsystem.spigot.api.players.BungeePlayer;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -46,7 +47,14 @@ public class Invitation {
         return !sender.equalsIgnoreCase(player) && (recipient == null || recipient.equalsIgnoreCase(player));
     }
 
-    public void handle(String recipient) {
+    public void handle(String recipient, boolean accepted) {
+        //check cooldown
+        Player sender = Bukkit.getPlayer(this.sender);
+
+        if(accepted && sender != null) {
+            WarpSystem.cooldown().register(sender, Origin.TeleportRequest);
+        }
+
         handled.add(recipient);
         TeleportCommandManager.getInstance().checkDestructionOf(this);
     }
@@ -54,8 +62,6 @@ public class Invitation {
     public void accept(Player player) {
         if(!isRecipient(player.getName())) return;
         //to sender
-        handle(player.getName());
-
         BungeePlayer sender = new BungeePlayer(this.sender);
 
         if(WarpSystem.getInstance().getTeleportManager().isTeleporting(player)) {
@@ -68,11 +74,20 @@ public class Invitation {
                     player.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_accepted_other").replace("%PLAYER%", ChatColor.stripColor(sender.getName())));
 
                     TeleportOptions options = new TeleportOptions(toSender ? sender.getSpigotPlayer().getLocation() : player.getLocation(), toSender ? sender.getName() : player.getName());
-                    options.setOrigin(Origin.CustomTeleportCommands);
+                    options.setOrigin(Origin.TeleportRequest);
                     options.setWaitForTeleport(true);
                     options.setCosts(TeleportCommandManager.getInstance().getTpaCosts());
 
+                    options.addCallback(new Callback<Result>() {
+                        @Override
+                        public void accept(Result result) {
+                            if(result == Result.SUCCESS) handle(player.getName(), true);
+                            else handle(player.getName(), false);
+                        }
+                    });
+
                     WarpSystem.getInstance().getTeleportManager().teleport(toSender ? player : sender.getSpigotPlayer(), options);
+                    return;
                 } else {
                     player.sendMessage(Lang.getPrefix() + Lang.get("TeleportRequest_not_valid").replace("%PLAYER%", ChatColor.stripColor(sender.getName())));
                 }
@@ -83,7 +98,7 @@ public class Invitation {
     public void deny(Player player) {
         if(!isRecipient(player.getName())) return;
         //to sender
-        handle(player.getName());
+        handle(player.getName(), false);
 
         BungeePlayer sender = new BungeePlayer(this.sender);
 
@@ -93,7 +108,7 @@ public class Invitation {
 
     public void timeOut(String player) {
         if(!isRecipient(player)) return;
-        handle(player);
+        handle(player, false);
     }
 
     public boolean canBeDestroyed() {

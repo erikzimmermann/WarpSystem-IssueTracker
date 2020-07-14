@@ -10,6 +10,7 @@ import de.codingair.codingapi.utils.Value;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CommandButton;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CooldownButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CostsButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.NameButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -79,7 +80,9 @@ public class POptions extends PageItem {
             }
         }.setOption(option).setOnlyLeftClick(true));
 
-        addButton(new SyncButton(4, 2) {
+        addButton(new CooldownButton(4, 2, shortcut).setOption(option));
+
+        addButton(new SyncButton(5, 2) {
             @Override
             public ItemStack craftItem() {
                 return new ItemBuilder(XMaterial.GOLD_NUGGET)

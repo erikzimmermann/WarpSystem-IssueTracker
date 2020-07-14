@@ -10,6 +10,7 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CooldownButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.signs.guis.WarpSignGUI;
 import de.codingair.warpsystem.spigot.features.signs.utils.WarpSign;
@@ -94,7 +95,9 @@ public class OptionPage extends PageItem {
             }
         }.setOption(option).setOnlyLeftClick(true));
 
-        addButton(new SyncButton(4, 2) {
+        addButton(new CooldownButton(4, 2, sign).setOption(option));
+
+        addButton(new SyncButton(5, 2) {
             @Override
             public ItemStack craftItem() {
                 return new ItemBuilder(XMaterial.GOLD_NUGGET)

@@ -39,17 +39,21 @@ WarpSystem:
       - EXP
 
   Teleport:
-    Chunk_Pre_Loading:
-      #If enabled, only players with the "WarpSystem.Teleport.ChunkPreLoading" will preload chunks!
-      Limit_by_Permission: false
-      Enabled: true
-      Chunk_Radius: 1
     #Animations are only visible for players who see the teleporting player
     Public_Animations: true
     Animation_After_Teleport:
       Enabled: true
     Delay: 3
     Allow_Move: false
+
+  #PREMIUM
+  #ByPass: warpsystem.bypass.cooldown
+  #Time format: "0d, 0h, 0m, 0s" - Unnecessary values can be removed (examples: "1d, 5m"; "10s"; "5h")!
+  Cooldown:
+    #Tpa + TpaHere
+    Tpa: 5m
+    Back: 0s
+    RandomTP: 5m
 
   Send:
     Teleport_Message:
@@ -62,6 +66,7 @@ WarpSystem:
       CommandBlocks: true
       PlayerWarps: true
       Spawn: true
+      RandomTp: true
     Teleport_Cancel_Message: true
 
   Functions:

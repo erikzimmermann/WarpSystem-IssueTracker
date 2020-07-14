@@ -73,7 +73,7 @@ public class CPortals extends WSCommandBuilder {
                         if(e.isSubmitted()) {
                             String name = e.getSubmittedText();
 
-                            Portal portal = new Portal(new Destination(), name, new ArrayList<>(), new ArrayList<>());
+                            Portal portal = new Portal(name);
                             portal.setSpawn(new Location(((Player) sender).getLocation()));
                             e.setPost(() -> new PortalEditor((Player) sender, portal).open());
                         }
@@ -96,7 +96,7 @@ public class CPortals extends WSCommandBuilder {
                     return false;
                 }
 
-                Portal portal = new Portal(new Destination(), argument, new ArrayList<>(), new ArrayList<>());
+                Portal portal = new Portal(argument);
                 portal.setSpawn(new Location(((Player) sender).getLocation()));
                 new PortalEditor((Player) sender, portal).open();
                 return false;

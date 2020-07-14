@@ -61,8 +61,8 @@ public class TeleportOptions {
         setDisplayName(displayName);
         this.permission = null;
         this.costs = 0;
-        this.delay = TeleportManager.getInstance().getOptions().getTeleportDelay();
-        this.canMove = TeleportManager.getInstance().getOptions().isAllowMove();
+        this.delay = WarpSystem.opt().getTeleportDelay();
+        this.canMove = WarpSystem.opt().isAllowMove();
         this.waitForTeleport = false;
         this.payMessage = Lang.getPrefix() + Lang.get("Money_Paid");
         this.paymentDeniedMessage = Lang.getPrefix() + Lang.get("Payment_denied");
@@ -71,8 +71,8 @@ public class TeleportOptions {
         this.silent = false;
         this.teleportSound = null;
         this.cancelSound = new SoundData(Sound.ENTITY_ITEM_BREAK, 0.7F, 1F);
-        this.afterEffects = TeleportManager.getInstance().getOptions().isAfterEffects();
-        this.publicAnimations = TeleportManager.getInstance().getOptions().isPublicAnimations();
+        this.afterEffects = WarpSystem.opt().isAfterEffects();
+        this.publicAnimations = WarpSystem.opt().isPublicAnimations();
     }
 
     public Location buildLocation() {

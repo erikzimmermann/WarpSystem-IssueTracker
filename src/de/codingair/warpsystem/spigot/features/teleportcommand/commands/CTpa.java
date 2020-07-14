@@ -9,6 +9,7 @@ import de.codingair.warpsystem.bungee.features.teleport.listeners.TabCompleterLi
 import de.codingair.warpsystem.spigot.api.WSCommandBuilder;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.features.teleportcommand.TeleportCommandManager;
 import de.codingair.warpsystem.transfer.packets.spigot.IsOnlinePacket;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -82,7 +83,9 @@ public class CTpa extends WSCommandBuilder {
                     return false;
                 }
 
-                if(other == null && WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) {
+                if(WarpSystem.cooldown().checkPlayer((Player) sender, Origin.TeleportRequest)) return false;
+                
+		if(other == null && WarpSystem.hasPermission(sender, WarpSystem.PERMISSION_USE_TELEPORT_COMMAND_TP)) {
                     WarpSystem.getInstance().getDataHandler().send(new IsOnlinePacket(new Callback<Boolean>() {
                         @Override
                         public void accept(Boolean online) {

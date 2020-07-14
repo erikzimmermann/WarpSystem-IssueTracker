@@ -1,7 +1,7 @@
 package de.codingair.warpsystem.spigot.features.randomteleports.listeners;
 
 import de.codingair.codingapi.tools.Location;
-import de.codingair.codingapi.tools.TimeList;
+import de.codingair.codingapi.tools.time.TimeList;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.randomteleports.managers.RandomTeleporterManager;

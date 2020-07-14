@@ -8,6 +8,8 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.Wa
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 
+import java.util.Objects;
+
 public class Shortcut extends FeatureObject {
     private String displayName;
 
@@ -72,5 +74,19 @@ public class Shortcut extends FeatureObject {
 
     public Shortcut clone() {
         return new Shortcut(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        if(!super.equals(o)) return false;
+        Shortcut shortcut = (Shortcut) o;
+        return displayName.equals(shortcut.displayName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(displayName);
     }
 }

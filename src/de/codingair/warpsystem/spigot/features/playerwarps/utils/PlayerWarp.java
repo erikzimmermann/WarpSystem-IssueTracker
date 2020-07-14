@@ -437,6 +437,21 @@ public class PlayerWarp extends FeatureObject {
         return this.item != null && this.item.getType() == XMaterial.PLAYER_HEAD.parseMaterial(true, false) && Objects.equals(this.item.getSkullId(), WarpSystem.getInstance().getHeadManager().getSkinId(this.owner.id));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        if(!super.equals(o)) return false;
+        PlayerWarp warp = (PlayerWarp) o;
+        return owner.equals(warp.owner) &&
+                name.equals(warp.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(owner, name);
+    }
+
     public PlayerWarp clone() {
         return new PlayerWarp(this);
     }
@@ -775,7 +790,6 @@ public class PlayerWarp extends FeatureObject {
 
         @Override
         public void destroy() {
-
         }
 
         @Override
@@ -783,14 +797,12 @@ public class PlayerWarp extends FeatureObject {
             if(this == o) return true;
             if(o == null || getClass() != o.getClass()) return false;
             User user = (User) o;
-            return Objects.equals(jsonPrefix, user.jsonPrefix) &&
-                    name.equals(user.name) &&
-                    id.equals(user.id);
+            return id.equals(user.id);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(jsonPrefix, name, id);
+            return Objects.hash(id);
         }
 
         public String getName() {

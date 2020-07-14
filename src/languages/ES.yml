@@ -532,3 +532,6 @@ Icon_Costs_Confirm: '&7Pulsa en este icono de nuevo para &confirmar &7tu pago de
 Fast_Editing: 'Fast-Editing'
 Blocks_removed: '&7Removing &e%AMOUNT% block(s)&7.'
 Blocks_added: '&7Adding &e%AMOUNT% block(s)&7.'
+Cooldown_Info: '&7Tienes que esperar &e%TIME% &7antes de poder usar esto de nuevo.'
+Cooldown: Cooldown
+Syntax_info: '&7Por favor, use la siguiente sintaxis: %SYNTAX%'

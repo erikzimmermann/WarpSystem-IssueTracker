@@ -7,6 +7,7 @@ import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.io.JSON.JSON;
 import de.codingair.codingapi.tools.io.JSON.JSONParser;
 import de.codingair.codingapi.tools.time.TimeList;
+import de.codingair.warpsystem.spigot.api.StringFormatter;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.base.setupassistant.annotations.AvailableForSetupAssistant;
@@ -59,7 +60,7 @@ public class PortalManager implements Manager {
 
         ConfigFile file = WarpSystem.getInstance().getFileManager().getFile("Config");
         this.maxParticleDistance = file.getConfig().getDouble("WarpSystem.Portals.ParticleDistance", 70);
-        this.hologramUpdateInterval = PlayerWarpManager.convertFromTimeFormat(file.getConfig().getString("WarpSystem.Portals.HologramUpdateInterval", "1m"));
+        this.hologramUpdateInterval = StringFormatter.convertFromTimeFormat(file.getConfig().getString("WarpSystem.Portals.HologramUpdateInterval", "1m"));
 
         new CPortals().register();
 
