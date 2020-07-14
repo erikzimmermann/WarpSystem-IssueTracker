@@ -10,6 +10,7 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CommandButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CooldownButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.signs.guis.WarpSignGUI;
@@ -63,21 +64,7 @@ public class OptionPage extends PageItem {
             }
         }.setOption(option).setOnlyLeftClick(true));
 
-        addButton(new SyncButton(2, 2) {
-            @Override
-            public ItemStack craftItem() {
-                return new ItemBuilder(XMaterial.REDSTONE)
-                        .setName("§6§n" + Lang.get("Command") + Lang.PREMIUM_LORE)
-                        .addLore("§3" + Lang.get("Current") + ": " + "§c" + Lang.get("Not_Set"))
-                        .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Set"))
-                        .getItem();
-            }
-
-            @Override
-            public void onClick(InventoryClickEvent e, Player player) {
-                Lang.PREMIUM_CHAT(player);
-            }
-        }.setOption(option).setOnlyLeftClick(true));
+        addButton(new CommandButton(2, 2, sign).setOption(option));
 
         addButton(new SyncButton(3, 2) {
             @Override
