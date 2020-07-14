@@ -61,6 +61,8 @@ public class PortalEditor extends Editor<Portal> {
                 } else {
                     if(!oldName.equals(newName)) {
                         for(Portal p : PortalManager.getInstance().getPortals()) {
+                            if(p.getDestination() == null) continue;
+                            
                             if(p.getDestination().getType() == DestinationType.Portal) {
                                 if(p.getDestination().getId().equals(oldName)) {
                                     p.getDestination().setId(newName);
