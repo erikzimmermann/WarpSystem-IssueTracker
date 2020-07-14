@@ -235,10 +235,8 @@ public abstract class FeatureObject implements Serializable {
                 Action a = Action.getById(id);
 
                 if(this instanceof Shortcut) {
-                    switch(a) {
-                        case COSTS:
-                        case COMMAND:
-                            continue;
+                    if(a == Action.COSTS) {
+                        continue;
                     }
                 }
 

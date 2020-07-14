@@ -58,27 +58,7 @@ public class POptions extends PageItem {
             }
         }.setOption(option));
 
-        addButton(new SyncButton(2, 2) {
-            @Override
-            public ItemStack craftItem() {
-                return new ItemBuilder(XMaterial.REDSTONE)
-                        .setName("§6§n" + Lang.get("Command") + Lang.PREMIUM_LORE)
-                        .setLore("§3" + Lang.get("Current") + ": " + "§c" + Lang.get("Not_Set"))
-                        .addLore("", "§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Add"))
-                        .getItem();
-            }
-
-            @Override
-            public void onClick(InventoryClickEvent e, Player player) {
-                Lang.PREMIUM_CHAT(player);
-            }
-
-            @Override
-            public boolean canClick(ClickType click) {
-                return click == ClickType.LEFT;
-            }
-        }.setOption(option));
-
+        addButton(new CommandButton(2, 2, clone).setOption(option));
         addButton(new CooldownButton(3, 2, clone).setOption(option));
 
         addButton(new SyncButton(4, 2) {
