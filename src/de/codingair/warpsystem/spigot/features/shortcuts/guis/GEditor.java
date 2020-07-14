@@ -34,21 +34,6 @@ public class GEditor extends Editor<Shortcut> {
             @Override
             public void cancel(Shortcut value) {
             }
-        }, new ShowIcon() {
-            @Override
-            public ItemStack buildIcon() {
-                return new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setHideName(true).getItem();
-            }
-        }, new POptions(p, clone), new DestinationPage(p, Editor.TITLE_COLOR + Lang.get("Shortcuts"), clone.getDestination(), Origin.ShortCut));
-    }
-
-    @Override
-    public boolean canFinish() {
-        return getClone().hasAction(Action.WARP) && getClone().getDestination().getId() != null;
-    }
-
-    @Override
-    public String finishButtonNameAddition() {
-        return canFinish() ? "" : "§7 (§c" + Lang.get("Destination") + "§7)";
+        }, () -> new ItemBuilder(XMaterial.GRAY_STAINED_GLASS_PANE).setHideName(true).getItem(), new POptions(p, clone), new DestinationPage(p, Editor.TITLE_COLOR + Lang.get("Shortcuts"), clone.getDestination(), Origin.ShortCut));
     }
 }
