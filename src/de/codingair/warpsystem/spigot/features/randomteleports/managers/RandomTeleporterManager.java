@@ -14,6 +14,7 @@ import de.codingair.warpsystem.spigot.base.setupassistant.annotations.AvailableF
 import de.codingair.warpsystem.spigot.base.setupassistant.annotations.Function;
 import de.codingair.warpsystem.spigot.base.utils.BungeeFeature;
 import de.codingair.warpsystem.spigot.base.utils.money.Bank;
+import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
 import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
@@ -377,6 +378,7 @@ public class RandomTeleporterManager implements Manager, BungeeFeature {
 
                     Bukkit.getScheduler().runTask(WarpSystem.getInstance(), () -> {
                         TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(loc)), "");
+                        options.setOrigin(Origin.RandomTP);
                         options.setMessage(Lang.getPrefix() + Lang.get("RandomTP_Teleported"));
                         options.setSkip(true);
                         options.addCallback(new Callback<Result>() {

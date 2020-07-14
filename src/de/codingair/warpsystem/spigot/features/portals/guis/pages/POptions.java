@@ -7,10 +7,7 @@ import de.codingair.codingapi.tools.items.XMaterial;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.guis.editor.StandardButtonOption;
-import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CommandButton;
-import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CostsButton;
-import de.codingair.warpsystem.spigot.base.guis.editor.buttons.DelayButton;
-import de.codingair.warpsystem.spigot.base.guis.editor.buttons.PermissionButton;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.*;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.portals.guis.PortalEditor;
 import de.codingair.warpsystem.spigot.features.portals.utils.Portal;
@@ -42,7 +39,7 @@ public class POptions extends PageItem {
 
         addButton(new PermissionButton(1, 2, clone).setOption(option));
         addButton(new CommandButton(2, 2, clone).setOption(option));
-        addButton(new DelayButton(3, 2, clone).setOption(option));
+        addButton(new CooldownButton(3, 2, clone).setOption(option));
         addButton(new CostsButton(4, 2, clone).setOption(option));
 
         addButton(new SyncButton(5, 2) {

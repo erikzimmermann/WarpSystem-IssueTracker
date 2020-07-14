@@ -233,7 +233,7 @@ public class DestinationPage extends PageItem {
                 public ItemStack craftItem() {
                     ItemBuilder builder = new ItemBuilder(XMaterial.CLOCK).setName("§6§n" + Lang.get("Teleport_Delay"));
 
-                    builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + (destination.getCustomOptions().getDelay(-1) == -1 ? "§7" + WarpSystem.getInstance().getTeleportManager().getOptions().getTeleportDelay() + " §8(§e" + Lang.get("Default") + "§8)" : "§7" + destination.getCustomOptions().getDelay(-1)));
+                    builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + (destination.getCustomOptions().getDelay(-1) == -1 ? "§7" + WarpSystem.opt().getTeleportDelay() + " §8(§e" + Lang.get("Default") + "§8)" : "§7" + destination.getCustomOptions().getDelay(-1)));
                     builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §c- §8(§7" + Lang.get("Shift") + "§8)");
                     builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §a+ §8(§7" + Lang.get("Shift") + "§8)");
                     return builder.getItem();
@@ -241,7 +241,7 @@ public class DestinationPage extends PageItem {
 
                 @Override
                 public boolean canClick(ClickType click) {
-                    int sys = WarpSystem.getInstance().getTeleportManager().getOptions().getTeleportDelay();
+                    int sys = WarpSystem.opt().getTeleportDelay();
                     Integer i = destination.getCustomOptions().getDelay(sys);
                     if(click == ClickType.LEFT) i--;
                     else if(click == ClickType.SHIFT_LEFT) i -= 5;
@@ -253,7 +253,7 @@ public class DestinationPage extends PageItem {
 
                 @Override
                 public void onClick(InventoryClickEvent e, Player player) {
-                    int sys = WarpSystem.getInstance().getTeleportManager().getOptions().getTeleportDelay();
+                    int sys = WarpSystem.opt().getTeleportDelay();
                     Integer i = destination.getCustomOptions().getDelay(sys);
                     if(e.getClick() == ClickType.LEFT) i--;
                     else if(e.getClick() == ClickType.SHIFT_LEFT) i -= 5;

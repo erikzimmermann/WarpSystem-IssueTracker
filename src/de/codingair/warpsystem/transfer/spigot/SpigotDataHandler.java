@@ -2,7 +2,6 @@ package de.codingair.warpsystem.transfer.spigot;
 
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.codingapi.tools.time.TimeList;
-import de.codingair.codingapi.tools.time.TimeListener;
 import de.codingair.warpsystem.transfer.DataHandler;
 import de.codingair.warpsystem.transfer.packets.utils.*;
 import de.codingair.warpsystem.transfer.utils.PacketListener;
@@ -24,8 +23,13 @@ public class SpigotDataHandler implements DataHandler {
     private final ChannelListener listener = new ChannelListener(this);
     private final SpigotPacketHandler packetHandler = new SpigotPacketHandler(this);
     private final HashMap<UUID, Callback<?>> callbacks = new HashMap<>();
-    private final TimeList<UUID> timeOut = new TimeList<>();
-    private TimeListener<UUID> timeOutListener;
+    private final TimeList<UUID> timeOut = new TimeList<UUID>() {
+        @Override
+        public void timeout(UUID item) {
+            Callback<?> callback = callbacks.remove(item);
+            if(callback != null) callback.accept(null);
+        }
+    };
 
     public SpigotDataHandler(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -35,19 +39,6 @@ public class SpigotDataHandler implements DataHandler {
     public void onEnable() {
         Bukkit.getMessenger().registerOutgoingPluginChannel(this.plugin, "BungeeCord");
         Bukkit.getMessenger().registerIncomingPluginChannel(this.plugin, GET_CHANNEL, this.listener);
-
-        timeOut.addListener(timeOutListener = new TimeListener<UUID>() {
-            @Override
-            public void onRemove(UUID item) {
-                Callback<?> callback = callbacks.remove(item);
-                if(callback != null) callback.accept(null);
-            }
-
-            @Override
-            public void onTick(UUID item, int timeLeft) {
-
-            }
-        });
     }
 
     @Override
@@ -56,7 +47,6 @@ public class SpigotDataHandler implements DataHandler {
         Bukkit.getMessenger().unregisterIncomingPluginChannel(this.plugin, GET_CHANNEL, this.listener);
 
         this.listeners.clear();
-        this.timeOut.removeListener(timeOutListener);
     }
 
     public void send(Packet packet) {

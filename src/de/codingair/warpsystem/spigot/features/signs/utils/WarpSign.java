@@ -101,9 +101,16 @@ public class WarpSign extends FeatureObject {
 
     @Override
     public boolean equals(Object o) {
-        return super.equals(o) &&
-                o instanceof WarpSign &&
-                Objects.equals(this.location, ((WarpSign) o).location);
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        if(!super.equals(o)) return false;
+        WarpSign warpSign = (WarpSign) o;
+        return location.equals(warpSign.location);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(location);
     }
 
     public WarpSign clone() {

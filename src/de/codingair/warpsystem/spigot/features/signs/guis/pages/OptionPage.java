@@ -10,6 +10,7 @@ import de.codingair.codingapi.utils.ChatColor;
 import de.codingair.warpsystem.spigot.base.guis.editor.Editor;
 import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CommandButton;
+import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CooldownButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.CostsButton;
 import de.codingair.warpsystem.spigot.base.guis.editor.buttons.PermissionButton;
 import de.codingair.warpsystem.spigot.base.language.Lang;
@@ -64,7 +65,8 @@ public class OptionPage extends PageItem {
         }.setOption(option).setOnlyLeftClick(true));
 
         addButton(new CommandButton(2, 2, sign).setOption(option));
-        addButton(new PermissionButton(3, 2, sign).setOption(option));
-        addButton(new CostsButton(4, 2, sign).setOption(option));
+        addButton(new CooldownButton(3, 2, sign).setOption(option));
+        addButton(new PermissionButton(4, 2, sign).setOption(option));
+        addButton(new CostsButton(5, 2, sign).setOption(option));
     }
 }

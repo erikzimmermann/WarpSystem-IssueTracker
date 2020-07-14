@@ -44,7 +44,7 @@ public class CTpAll extends WSCommandBuilder {
                     if(TeleportCommandManager.getInstance().deniesForceTps(player)) continue;
 
                     TeleportOptions options = new TeleportOptions(new Destination(new LocationAdapter(((Player) sender).getLocation())), sender.getName());
-                    options.setOrigin(Origin.CustomTeleportCommands);
+                    options.setOrigin(Origin.TeleportRequest);
                     options.setSkip(true);
 
                     WarpSystem.getInstance().getTeleportManager().teleport(player, options);
