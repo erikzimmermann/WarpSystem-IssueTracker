@@ -46,6 +46,7 @@ WarpSystem:
     Delay: 3
     Allow_Move: false
 
+  #PREMIUM
   #ByPass: warpsystem.bypass.cooldown
   #Time format: "0d, 0h, 0m, 0s" - Unnecessary values can be removed (examples: "1d, 5m"; "10s"; "5h")!
   Cooldown:
@@ -99,7 +100,8 @@ WarpSystem:
     TpaToggle: true
     #Tpa, TpaHere& TpaAll: |true: Players on this server can receive/send teleport requests from/to other servers. |false: Players can only send TeleportRequests to players on this server
     #TpAll: Only players from servers with 'BungeeCord: true' will be teleported to you.
-    BungeeCord: true
+    #PREMIUM
+    BungeeCord: false
     TeleportRequests:
       #Teleport costs for a transportation via tpa or tpaHere; The teleported player has to pay
       Teleport_Costs: 0

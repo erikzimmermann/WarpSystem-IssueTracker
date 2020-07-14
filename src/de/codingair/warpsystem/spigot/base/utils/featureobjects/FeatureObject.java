@@ -27,6 +27,7 @@ import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.v2.ConfirmPayment;
 import de.codingair.warpsystem.spigot.base.utils.teleport.v2.WaitForTeleport;
+import de.codingair.warpsystem.spigot.features.shortcuts.utils.Shortcut;
 import de.codingair.warpsystem.spigot.features.warps.nextlevel.exceptions.IconReadException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -232,6 +233,15 @@ public abstract class FeatureObject implements Serializable {
                 Object validData = j.getRaw("value");
 
                 Action a = Action.getById(id);
+
+                if(this instanceof Shortcut) {
+                    switch(a) {
+                        case COSTS:
+                        case COMMAND:
+                            continue;
+                    }
+                }
+
                 if(a != null) {
                     ActionObject<?> ao;
                     try {
@@ -255,6 +265,7 @@ public abstract class FeatureObject implements Serializable {
             }
         }
 
+        checkActionList();
         return true;
     }
 
