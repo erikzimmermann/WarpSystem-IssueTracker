@@ -20,7 +20,7 @@ import java.util.*;
 
 public class CooldownManager implements PacketListener {
     //expired cooldown will be removed on access (get, save)
-    private final HashMap<UUID, HashMap<Integer, Cooldown>> cache = new HashMap<>();
+    private final HashMap<UUID, HashMap<Integer, Long>> cache = new HashMap<>();
     private static final TimeMap<Player, Integer> COOLDOWN_MESSAGE_BUFFER = new TimeMap<>();
     private ConfigFile file;
 
@@ -71,17 +71,17 @@ public class CooldownManager implements PacketListener {
 
         cache.entrySet().removeIf(entry -> {
             List<JSON> configData = new ArrayList<>();
-            HashMap<Integer, Cooldown> data = entry.getValue();
+            HashMap<Integer, Long> data = entry.getValue();
 
             data.entrySet().removeIf(sub -> {
-                Cooldown cooldown = sub.getValue();
+                long cooldown = sub.getValue();
 
-                if(cooldown.getRemainingTime() == 0) return true;
-
-                if(originList.contains(cooldown.getHashId())) return false;
+                if(cooldown < System.currentTimeMillis()) return true;
+                if(originList.contains(sub.getKey())) return false;
 
                 JSON json = new JSON();
-                cooldown.write(json, time);
+                json.put("end", cooldown - time);
+                json.put("hash", sub.getKey());
                 configData.add(json);
                 return false;
             });
@@ -95,18 +95,21 @@ public class CooldownManager implements PacketListener {
         file.saveConfig();
     }
 
-    public Cooldown getCooldown(UUID uuid, int hashCode) {
-        HashMap<Integer, Cooldown> data = cache.get(uuid);
-        if(data == null) return null;
+    public long getCooldown(UUID uuid, int hashCode) {
+        HashMap<Integer, Long> data = cache.get(uuid);
+        if(data == null) return 0;
 
-        Cooldown cooldown = data.get(hashCode);
-        if(cooldown != null && cooldown.getRemainingTime() == 0) {
+        Long cooldown = data.get(hashCode);
+        System.out.println("cooldown: " + cooldown);
+        if(cooldown != null && cooldown < System.currentTimeMillis()) {
             data.remove(cooldown);
             if(data.isEmpty()) cache.remove(uuid);
             cooldown = null;
         }
 
-        return cooldown;
+        System.out.println("cooldown2: " + cooldown);
+
+        return cooldown == null ? 0 : cooldown;
     }
 
     public void register(Player player, Origin origin) {
@@ -123,11 +126,12 @@ public class CooldownManager implements PacketListener {
 
     public void register(Player player, long time, int hash) {
         if(player.hasPermission(WarpSystem.PERMISSION_ByPass_Teleport_Cooldown) || time == 0) return;
+        System.out.println("registering");
         add(new Cooldown(WarpSystem.getInstance().getUUIDManager().get(player), System.currentTimeMillis() + time, hash));
     }
 
     private void add(Cooldown cooldown) {
-        if(cooldown.getRemainingTime() != 0) cache.computeIfAbsent(cooldown.getPlayer(), k -> new HashMap<>()).put(cooldown.getHashId(), cooldown);
+        if(cooldown.getRemainingTime() != 0) cache.computeIfAbsent(cooldown.getPlayer(), k -> new HashMap<>()).put(cooldown.getHashId(), cooldown.getEnd());
     }
 
     public long getRemainingCooldown(Player player, int hashCode) {
@@ -139,9 +143,8 @@ public class CooldownManager implements PacketListener {
     }
 
     public long getRemainingCooldown(UUID uuid, int hashCode) {
-        Cooldown c = getCooldown(uuid, hashCode);
-        if(c == null) return 0;
-        else return c.getRemainingTime();
+        long c = getCooldown(uuid, hashCode);
+        return Math.max(c - System.currentTimeMillis(), 0);
     }
 
     public boolean checkPlayer(Player player, Origin origin) {
