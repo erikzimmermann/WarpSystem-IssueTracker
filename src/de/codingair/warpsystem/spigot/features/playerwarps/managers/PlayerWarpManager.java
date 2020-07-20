@@ -373,7 +373,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         imported.clear();
 
         if(!bungeeCord) WarpSystem.log("    ...got " + size + " PlayerWarp(s)");
-        API.addTicker(this);
+        if(economy) API.addTicker(this);
 
         WarpSystem.getInstance().getBungeeFeatureList().add(this);
         Bukkit.getPluginManager().registerEvents(this.listener, WarpSystem.getInstance());
@@ -612,6 +612,8 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
         for(int i = 0; i < warps.size(); i++) {
             PlayerWarp pw = warps.get(i);
+            if(pw.isExpired()) continue;
+
             List<Category> categories = pw.getClasses();
             boolean match = false;
 
@@ -728,6 +730,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         List<PlayerWarp> warps = new ArrayList<>();
 
         for(PlayerWarp warp : getOwnWarps(id)) {
+            if(warp.isExpired()) continue;
             if(warp.isOwner(toTeleport) || (allowPublicWarps && warp.isPublic()) || (allowTrustedMembers && warp.isTrusted(toTeleport))) warps.add(warp);
         }
 
@@ -762,6 +765,7 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
         for(List<PlayerWarp> ws : this.warps.values()) {
             for(PlayerWarp warp : ws) {
+                if(warp.isExpired()) continue;
                 if(warp.isOwner(player) || (allowPublicWarps && warp.isPublic()) || (allowTrustedMembers && warp.isTrusted(player))) warps.add(warp);
             }
         }
