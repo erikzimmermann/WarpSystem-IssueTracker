@@ -595,7 +595,7 @@ public class PlayerWarp extends FeatureObject {
     }
 
     public boolean isExpired() {
-        return started > 0 && started + time < System.currentTimeMillis();
+        return started > 0 && time > 0 && started + time < System.currentTimeMillis();
     }
 
     public long getTime() {

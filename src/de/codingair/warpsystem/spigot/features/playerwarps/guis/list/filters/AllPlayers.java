@@ -19,10 +19,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class AllPlayers implements Filter {
     @Override
@@ -30,7 +27,22 @@ public class AllPlayers implements Filter {
         UUID special = null;
         if(extra != null && extra.length == 1 && extra[0] instanceof UUID) special = (UUID) extra[0];
 
-        List<UUID> uuids = special == null ? new ArrayList<>(PlayerWarpManager.getManager().getUUIDs()) : null;
+        HashMap<UUID, List<PlayerWarp>> data = null;
+        List<UUID> uuids = null;
+        if(special == null) {
+            data = new HashMap<>(PlayerWarpManager.getManager().getWarps());
+
+            data.values().removeIf(l -> {
+                for(PlayerWarp warp : l) {
+                    if(!warp.isExpired()) return false;
+                }
+
+                return true;
+            });
+
+            uuids = new ArrayList<>(data.keySet());
+        }
+
         List<PlayerWarp> publicWarps = special != null ? PlayerWarpManager.getManager().getUsableWarpsOf(special, player) : null;
 
         if(uuids != null) {

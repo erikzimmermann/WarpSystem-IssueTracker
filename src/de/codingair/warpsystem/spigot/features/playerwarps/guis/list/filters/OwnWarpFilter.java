@@ -42,7 +42,7 @@ public class OwnWarpFilter implements Filter {
             public ItemStack craftItem() {
                 return w.getItem(highlight)
                         .addLore(w.getInactiveSales() == 0 ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Earned") + ": §7" + cut(w.getInactiveSales() * w.getTeleportCosts()) + " " + Lang.get("Coins"))
-                        .addLore("§8§m                         ", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Teleport"),
+                        .addLore("§8§m                         ", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": " + (w.isExpired() ? "§7" + Lang.get("Teleport") + " §8(§c" + Lang.get("Expired") + "§8)" : "§a" + Lang.get("Teleport")),
                                 Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §7" + Lang.get("Edit"),
                                 "", w.getInactiveSales() == 0 ? null : Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Shift_Leftclick") + ": §a" + Lang.get("Draw_Money"),
                                 Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Shift_Rightclick") + ": " + (runnable != null ? "§4" : "§7") + ChatColor.stripColor(Lang.get("Delete")) + (runnable != null ? " §7(§c" + ChatColor.stripColor(Lang.get("Confirm")) + "§7)" : ""))
@@ -94,7 +94,7 @@ public class OwnWarpFilter implements Filter {
 
             @Override
             public boolean canClick(ClickType click) {
-                return click == ClickType.LEFT || click == ClickType.RIGHT || click == ClickType.SHIFT_RIGHT || (click == ClickType.SHIFT_LEFT && w.getInactiveSales() > 0);
+                return (click == ClickType.LEFT && !w.isExpired()) || click == ClickType.RIGHT || click == ClickType.SHIFT_RIGHT || (click == ClickType.SHIFT_LEFT && w.getInactiveSales() > 0);
             }
         };
     }
