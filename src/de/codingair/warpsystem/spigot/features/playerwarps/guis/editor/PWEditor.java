@@ -49,7 +49,7 @@ public class PWEditor extends Editor<PlayerWarp> implements Ticker {
     }
 
     public PWEditor(Player p, PlayerWarp warp) {
-        this(p, warp, warp.clone().setTime(warp.getLeftTime()).setStarted(0));
+        this(p, warp, warp.clone().setTime(Math.max(warp.getLeftTime(), warp.isTimeDependent() ? 1 : 0)).setStarted(0));
     }
 
     private PWEditor(Player p, PlayerWarp warp, PlayerWarp clone) {
@@ -98,7 +98,8 @@ public class PWEditor extends Editor<PlayerWarp> implements Ticker {
         this.original = warp;
         this.warp = clone;
 
-        if(clone.getLeftTime() < PlayerWarpManager.getManager().getMinTime()) clone.setTime(PlayerWarpManager.getManager().getMinTime());
+        if(clone.getTime() == 1) clone.setTime(PlayerWarpManager.getManager().getTimeStandardValue());
+        else if(clone.getLeftTime() < PlayerWarpManager.getManager().getMinTime()) clone.setTime(PlayerWarpManager.getManager().getMinTime());
 
         this.creating = warp.isOwner(getPlayer()) && !PlayerWarpManager.getManager().existsOwn(p, warp.getName());
 
