@@ -123,6 +123,8 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
     private boolean forceCreateGUI;
     private boolean allowPublicWarps;
     private boolean allowTrustedMembers;
+    private boolean allowTeleportMessage;
+    private boolean allowDescription;
 
     public static boolean hasPermission(Player player) {
         if(player.isOp()) return true;
@@ -279,6 +281,8 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
         this.forceCreateGUI = config.getBoolean("PlayerWarps.General.Force_Create_GUI", false);
         this.allowPublicWarps = config.getBoolean("PlayerWarps.General.Allow_Public_Warps", true);
         this.allowTrustedMembers = config.getBoolean("PlayerWarps.General.Allow_Trusted_Members", true);
+        this.allowTeleportMessage = config.getBoolean("PlayerWarps.General.Allow_Teleport_Messages", true);
+        this.allowDescription = config.getBoolean("PlayerWarps.General.Allow_Description", true);
 
         //Costs - Editing
         this.nameChangeCosts = config.getDouble("PlayerWarps.Costs.Editing.Name", 400);
@@ -1199,5 +1203,13 @@ public class PlayerWarpManager implements Manager, Ticker, BungeeFeature, Collec
 
     public List<String> getWorldBlacklist() {
         return worldBlacklist;
+    }
+
+    public boolean isAllowTeleportMessage() {
+        return allowTeleportMessage;
+    }
+
+    public boolean isAllowDescription() {
+        return allowDescription;
     }
 }
