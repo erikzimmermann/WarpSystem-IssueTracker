@@ -45,6 +45,8 @@ WarpSystem:
       Enabled: true
     Delay: 3
     Allow_Move: false
+    #Values: ACTION_BAR, TITLE (separate lines with '\n')
+    Delay_Display: ACTION_BAR
 
   #ByPass: warpsystem.bypass.cooldown
   #Time format: "0d, 0h, 0m, 0s" - Unnecessary values can be removed (examples: "1d, 5m"; "10s"; "5h")!

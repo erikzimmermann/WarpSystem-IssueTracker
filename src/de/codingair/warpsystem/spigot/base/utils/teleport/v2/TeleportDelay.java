@@ -21,12 +21,12 @@ public class TeleportDelay extends TeleportStage {
             this.animation.setRunning(false);
             this.animation = null;
         }
-        
+
         if(this.runnable != null) {
             this.runnable.cancel();
             this.runnable = null;
         }
-        
+
         MessageAPI.sendActionBar(player, null);
     }
 
@@ -38,17 +38,30 @@ public class TeleportDelay extends TeleportStage {
             end();
             return;
         }
-        
+
         boolean hasAnimation;
         if(hasAnimation = teleport.getOptions().isTeleportAnimation()) {
             this.animation = new AnimationPlayer(player, new PlayerMid(player), AnimationManager.getInstance().getActive(), delay, true, teleport.getOptions().isPublicAnimations());
             this.animation.setTeleportSound(false);
             this.animation.setRunning(true);
         }
-        
+
+        Display d = WarpSystem.opt().getDelayDisplay();
+
+        String[] text = new String[] {"", ""};
+        String msg = Lang.get("Teleporting_Info");
+
+        if(d == Display.TITLE) {
+            MessageAPI.sendTitle(player, " ", " ", 0, 1, 0);
+            int i = msg.indexOf("\n");
+            if(i != -1) {
+                text[0] = msg.substring(0, i);
+                text[1] = msg.substring(i + 2);
+            } else text[0] = msg;
+        }
+
         this.runnable = new BukkitRunnable() {
             private int left = delay;
-            private final String msg = Lang.get("Teleporting_Info");
 
             @Override
             public void run() {
@@ -58,11 +71,17 @@ public class TeleportDelay extends TeleportStage {
                 }
 
                 if(!hasAnimation && AnimationManager.getInstance().getActive().getTickSound() != null) AnimationManager.getInstance().getActive().getTickSound().play(player);
-                MessageAPI.sendActionBar(player, msg.replace("%seconds%", left + ""));
+
+                if(d == Display.ACTION_BAR) MessageAPI.sendActionBar(player, msg.replace("%seconds%", left + ""));
+                else if(d == TeleportDelay.Display.TITLE) {
+                    int fadeIn = left == delay ? 5 : 0;
+                    int fadeOut = left == 1 ? 5 : 0;
+                    MessageAPI.sendTitle(player, text[0].replace("%seconds%", left + ""), text[1].replace("%seconds%", left + ""), fadeIn, 25 - fadeOut, fadeOut, false, false, false);
+                }
                 left--;
             }
         };
-        
+
         this.runnable.runTaskTimer(WarpSystem.getInstance(), 0L, 20L);
     }
 
@@ -70,5 +89,10 @@ public class TeleportDelay extends TeleportStage {
     public void end() {
         teleport.motionRestricted = false;
         super.end();
+    }
+
+    public static enum Display {
+        ACTION_BAR,
+        TITLE;
     }
 }
