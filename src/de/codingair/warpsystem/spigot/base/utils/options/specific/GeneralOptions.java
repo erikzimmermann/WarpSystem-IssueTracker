@@ -4,6 +4,7 @@ import de.codingair.warpsystem.spigot.api.StringFormatter;
 import de.codingair.warpsystem.spigot.base.utils.options.Option;
 import de.codingair.warpsystem.spigot.base.utils.options.Options;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.v2.TeleportDelay;
 import org.bukkit.ChatColor;
 
 import java.util.function.IntPredicate;
@@ -19,6 +20,7 @@ public class GeneralOptions extends Options {
     private Option<String> cooldownTpa = new Option<>("WarpSystem.Cooldown.Tpa", "5m");
     private Option<String> cooldownBack = new Option<>("WarpSystem.Cooldown.Back", "0s");
     private Option<String> cooldownRandomTP = new Option<>("WarpSystem.Cooldown.Tpa", "5m");
+    private Option<String> delayDisplay = new Option<>("WarpSystem.Teleport.Delay_Display", "ACTION_BAR");
 
     public GeneralOptions() {
         super("Config");
@@ -41,6 +43,7 @@ public class GeneralOptions extends Options {
         set(cooldownTpa);
         set(cooldownBack);
         set(cooldownRandomTP);
+        set(delayDisplay);
         save();
     }
 
@@ -56,6 +59,7 @@ public class GeneralOptions extends Options {
         get(cooldownTpa);
         get(cooldownBack);
         get(cooldownRandomTP);
+        get(delayDisplay);
 
         IntPredicate test = new IntPredicate() {
             private boolean color = false;
@@ -100,6 +104,7 @@ public class GeneralOptions extends Options {
             this.cooldownTpa = o.cooldownTpa.clone();
             this.cooldownBack = o.cooldownBack.clone();
             this.cooldownRandomTP = o.cooldownRandomTP.clone();
+            this.delayDisplay = o.delayDisplay.clone();
         }
     }
 
@@ -138,6 +143,14 @@ public class GeneralOptions extends Options {
 
     public String cmdArg() {
         return ChatColor.translateAlternateColorCodes('&', cmdArgColor.getValue());
+    }
+
+    public TeleportDelay.Display getDelayDisplay() {
+        try {
+            return TeleportDelay.Display.valueOf(delayDisplay.getValue());
+        } catch(Exception ex) {
+            return TeleportDelay.Display.ACTION_BAR;
+        }
     }
 
     public long getCooldownTpa() {
