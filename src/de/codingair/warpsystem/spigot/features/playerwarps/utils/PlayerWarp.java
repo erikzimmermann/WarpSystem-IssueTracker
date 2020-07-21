@@ -19,8 +19,8 @@ import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.Action;
 import de.codingair.warpsystem.spigot.base.utils.featureobjects.actions.types.WarpAction;
 import de.codingair.warpsystem.spigot.base.utils.money.Adapter;
 import de.codingair.warpsystem.spigot.base.utils.money.Bank;
-import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.Destination;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.adapters.GlobalLocationAdapter;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
@@ -533,11 +533,15 @@ public class PlayerWarp extends FeatureObject {
 
     public ItemBuilder getItem(String highlight) {
         ItemBuilder b = item.clone()
-                .setName(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Name") + ": §f" + (highlight == null ? name : ChatColor.highlight(name, highlight, "§e§n", "§f", true)).replace("_", " "))
-                .setLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Description") + ":" + (description.isEmpty() ? " §c-" : ""))
-                .addLore(getPreparedDescription());
+                .setName(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Name") + ": §f" + (highlight == null ? name : ChatColor.highlight(name, highlight, "§e§n", "§f", true)).replace("_", " "));
 
-        b.addLore("");
+        if(PlayerWarpManager.getManager().isAllowDescription()) {
+            b.setLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Description") + ":" + (description.isEmpty() ? " §c-" : ""))
+                    .addLore(getPreparedDescription());
+
+            b.addLore("");
+        }
+
         b.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Owner") + ": §7" + owner.getName());
 
         b.setHideStandardLore(true);
@@ -603,7 +607,13 @@ public class PlayerWarp extends FeatureObject {
     }
 
     public boolean isTimeDependent() {
-        return this.time > 0;
+        return this.time > 0 || ((getServer() == null || Objects.deepEquals(WarpSystem.getInstance().getCurrentServer(), getServer())) && PlayerWarpManager.getManager().isEconomy());
+    }
+
+    public String getServer() {
+        WarpAction a = getAction(WarpAction.class);
+        if(a == null) return null;
+        return ((GlobalLocationAdapter) a.getValue().getAdapter()).getServer();
     }
 
     public PlayerWarp setTime(long time) {

@@ -11,6 +11,7 @@ import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.buttons.ActiveTimeButton;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.buttons.StatusButton;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.buttons.TargetPositionButton;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.buttons.TeleportCostsButton;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
@@ -39,41 +40,7 @@ public class POptions extends PageItem {
         option.setClickSound(new SoundData(Sound.UI_BUTTON_CLICK, 0.7F, 1F));
         int slot = 1;
 
-        if(PlayerWarpManager.getManager().isAllowPublicWarps()) {
-            addButton(new SyncButton(slot++, 2) {
-                @Override
-                public void onClick(InventoryClickEvent e, Player player) {
-                    warp.setPublic(!warp.isPublic());
-                    updateCosts();
-                    update();
-                }
-
-                @Override
-                public boolean canClick(ClickType click) {
-                    return click == ClickType.LEFT;
-                }
-
-                @Override
-                public ItemStack craftItem() {
-                    ItemBuilder builder = new ItemBuilder(warp.isPublic() ? XMaterial.BIRCH_DOOR : XMaterial.DARK_OAK_DOOR);
-
-                    builder.setName(Editor.ITEM_TITLE_COLOR + Lang.get("Status"));
-
-                    if(original.isPublic() && !warp.isPublic()) builder.addLore(PWEditor.getFreeMessage(Lang.get("Public"), POptions.this));
-                    else if(!original.isPublic() && warp.isPublic()) builder.addLore(PWEditor.getCostsMessage(PlayerWarpManager.getManager().getPublicCosts(), POptions.this));
-
-                    builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " +
-                            (warp.isPublic() ?
-                                    "§a" + Lang.get("Public") :
-                                    "§e" + Lang.get("Private")
-                            ));
-
-                    builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": " + (warp.isPublic() == original.isPublic() ? "§a" + Lang.get("Toggle") : "§c" + Lang.get("Reset")));
-
-                    return builder.getItem();
-                }
-            }.setOption(option));
-        }
+        if(PlayerWarpManager.getManager().isAllowPublicWarps()) addButton(new StatusButton(slot++, warp, original, isEditing, this, p).setOption(option));
 
         if(PlayerWarpManager.getManager().isEconomy() && PlayerWarpManager.getManager().isCustomTeleportCosts() && PlayerWarpManager.getManager().isAllowPublicWarps())
             addButton(new TeleportCostsButton(slot++, warp, original, isEditing, this, p).setOption(option));
@@ -84,7 +51,10 @@ public class POptions extends PageItem {
             addButton(new ActiveTimeButton(slot++, warp, original, isEditing, this, p).setOption(option));
     }
 
-    public void updateCosts() {
-        getLast().initControllButtons();
+    public static int count(PlayerWarp warp) {
+        return (PlayerWarpManager.getManager().isAllowPublicWarps() ? 1 : 0)
+                + (PlayerWarpManager.getManager().isEconomy() && PlayerWarpManager.getManager().isCustomTeleportCosts() && PlayerWarpManager.getManager().isAllowPublicWarps() ? 1 : 0)
+                + 1
+                + (PlayerWarpManager.getManager().isEconomy() && warp.isTimeDependent() ? 1 : 0);
     }
 }

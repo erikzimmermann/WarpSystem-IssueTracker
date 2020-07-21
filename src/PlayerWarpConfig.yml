@@ -20,6 +20,8 @@ PlayerWarps:
     Public_as_create_state: false
     Allow_Public_Warps: true
     Allow_Trusted_Members: true
+    Allow_Teleport_Messages: true
+    Allow_Description: true
     PlayerWarps_Command_Aliases:
     - pwarps
     PlayerWarp_Command_Aliases:

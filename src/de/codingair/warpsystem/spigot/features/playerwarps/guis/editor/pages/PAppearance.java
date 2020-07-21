@@ -16,7 +16,9 @@ import de.codingair.warpsystem.spigot.base.guis.editor.PageItem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.PWEditor;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.buttons.ActiveTimeButton;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.buttons.StatusButton;
 import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.buttons.TargetPositionButton;
+import de.codingair.warpsystem.spigot.features.playerwarps.guis.editor.pages.buttons.TeleportCostsButton;
 import de.codingair.warpsystem.spigot.features.playerwarps.managers.PlayerWarpManager;
 import de.codingair.warpsystem.spigot.features.playerwarps.utils.PlayerWarp;
 import org.bukkit.Material;
@@ -32,13 +34,19 @@ import java.util.Objects;
 public class PAppearance extends PageItem {
     private final PlayerWarp warp, original;
     private final boolean editing;
+    private final boolean options;
 
     public PAppearance(Player p, PlayerWarp warp, PlayerWarp original, boolean editing) {
-        super(p, PWEditor.getMainTitle(), new ItemBuilder(PlayerWarpManager.getManager().isAllowPublicWarps() ? XMaterial.PAINTING : XMaterial.COMMAND_BLOCK).setName(Editor.ITEM_TITLE_COLOR + (PlayerWarpManager.getManager().isAllowPublicWarps() ? Lang.get("Appearance") : Lang.get("Options"))).getItem(), false);
+        this(p, warp, original, editing, PAppearance.count() + POptions.count(warp) > 5);
+    }
+
+    private PAppearance(Player p, PlayerWarp warp, PlayerWarp original, boolean editing, boolean appearance) {
+        super(p, PWEditor.getMainTitle(), new ItemBuilder(appearance ? XMaterial.PAINTING : XMaterial.COMMAND_BLOCK).setName(Editor.ITEM_TITLE_COLOR + (appearance ? Lang.get("Appearance") : Lang.get("Options"))).getItem(), false);
 
         this.warp = warp;
         this.original = original;
         this.editing = editing;
+        this.options = !appearance;
         initialize(p);
     }
 
@@ -124,203 +132,218 @@ public class PAppearance extends PageItem {
             }
         }.setOption(option));
 
-        if(!PlayerWarpManager.getManager().isAllowPublicWarps()) {
-            if(PlayerWarpManager.getManager().isEconomy())
-                addButton(new ActiveTimeButton(slot++, warp, original, editing, this, p).setOption(option));
-
-            addButton(new TargetPositionButton(slot++, warp, original, editing, this, p).setOption(option));
-        }
-
-        addButton(new SyncAnvilGUIButton(slot++, 2, ClickType.LEFT) {
-            @Override
-            public void onClose(AnvilCloseEvent e) {
-            }
-
-            @Override
-            public ItemStack craftAnvilItem(ClickType trigger) {
-                return new ItemBuilder(Material.PAPER).setName(Lang.get("Line") + "...").getItem();
-            }
-
-            @Override
-            public boolean canClick(ClickType click) {
-                if(click == ClickType.LEFT) {
-                    return warp.getDescription() == null || warp.getDescription().size() < PlayerWarpManager.getManager().getDescriptionMaxLines();
-                } else if(click == ClickType.RIGHT) {
-                    boolean empty0 = warp.getDescription() == null || warp.getDescription().isEmpty();
-                    boolean empty1 = original.getDescription() == null || original.getDescription().isEmpty();
-                    return !empty0 || !empty1;
+        if(PlayerWarpManager.getManager().isAllowDescription()) {
+            addButton(new SyncAnvilGUIButton(slot++, 2, ClickType.LEFT) {
+                @Override
+                public void onClose(AnvilCloseEvent e) {
                 }
 
-                return false;
-            }
+                @Override
+                public ItemStack craftAnvilItem(ClickType trigger) {
+                    return new ItemBuilder(Material.PAPER).setName(Lang.get("Line") + "...").getItem();
+                }
 
-            @Override
-            public void onOtherClick(InventoryClickEvent e) {
-                if(e.getClick() == ClickType.RIGHT) {
-                    if(!warp.getDescription().isEmpty()) {
-                        warp.getDescription().remove(warp.getDescription().size() - 1);
-                    } else warp.setDescription(new ArrayList<>(original.getDescription()));
+                @Override
+                public boolean canClick(ClickType click) {
+                    if(click == ClickType.LEFT) {
+                        return warp.getDescription() == null || warp.getDescription().size() < PlayerWarpManager.getManager().getDescriptionMaxLines();
+                    } else if(click == ClickType.RIGHT) {
+                        boolean empty0 = warp.getDescription() == null || warp.getDescription().isEmpty();
+                        boolean empty1 = original.getDescription() == null || original.getDescription().isEmpty();
+                        return !empty0 || !empty1;
+                    }
 
+                    return false;
+                }
+
+                @Override
+                public void onOtherClick(InventoryClickEvent e) {
+                    if(e.getClick() == ClickType.RIGHT) {
+                        if(!warp.getDescription().isEmpty()) {
+                            warp.getDescription().remove(warp.getDescription().size() - 1);
+                        } else warp.setDescription(new ArrayList<>(original.getDescription()));
+
+                        updatingLore(warp.getItem());
+                        update();
+                    }
+                }
+
+                @Override
+                public ItemStack craftItem() {
+                    List<String> loreOfItem = warp.getDescription();
+                    List<String> lore = new ArrayList<>();
+                    if(loreOfItem == null) lore = null;
+                    else {
+                        for(String s : loreOfItem) {
+                            lore.add("§7- '§f" + s + "§7'");
+                        }
+                    }
+
+                    int length = 0;
+                    if(original.getDescription() != null)
+                        for(String s : original.getDescription()) {
+                            length += s.replaceFirst("§f", "").length();
+                        }
+
+                    length = -length;
+                    if(warp.getDescription() != null) {
+                        for(String s : warp.getDescription()) {
+                            length += s.replaceFirst("§f", "").length();
+                        }
+                    }
+
+                    ItemBuilder builder = new ItemBuilder(XMaterial.PAPER).setName("§6§n" + Lang.get("Description"));
+
+                    if(length < 0) builder.addLore(PWEditor.getFreeMessage(-length + " " + Lang.get("Characters"), PAppearance.this));
+                    else builder.setLore(PWEditor.getCostsMessage(PlayerWarpManager.getManager().getDescriptionCosts() * length, PAppearance.this));
+
+                    builder.addLore("§3" + Lang.get("Current") + ": " + (lore == null || lore.isEmpty() ? "§c" + Lang.get("Not_Set") : ""))
+                            .addLore(lore).addLore("");
+
+                    if(lore == null || lore.size() < PlayerWarpManager.getManager().getDescriptionMaxLines())
+                        builder.addLore("§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Add_Line"));
+
+                    boolean empty0 = warp.getDescription() == null || warp.getDescription().isEmpty();
+                    boolean empty1 = original.getDescription() == null || original.getDescription().isEmpty();
+
+                    if(!empty0 || !empty1)
+                        builder.addLore("§3" + Lang.get("Rightclick") + ": §c" + (!empty0 ? Lang.get("Remove") : Lang.get("Reset")));
+
+                    return builder.getItem();
+                }
+
+                @Override
+                public void onClick(AnvilClickEvent e) {
+                    if(!e.getSlot().equals(AnvilSlot.OUTPUT)) return;
+
+                    String input = e.getInput();
+
+                    if(input == null) {
+                        e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Lore"));
+                        return;
+                    }
+
+                    if(input.length() < PlayerWarpManager.getManager().getDescriptionLineMinLength() || input.length() > PlayerWarpManager.getManager().getDescriptionLineMaxLength()) {
+                        p.sendMessage(Lang.getPrefix() +
+                                Lang.get("Message_Too_Long_Too_Short")
+                                        .replace("%MIN%", PlayerWarpManager.getManager().getDescriptionLineMinLength() + "")
+                                        .replace("%MAX%", PlayerWarpManager.getManager().getDescriptionLineMaxLength() + "")
+                        );
+                        return;
+                    }
+
+                    e.setClose(true);
+
+                    warp.addDescription(org.bukkit.ChatColor.WHITE + org.bukkit.ChatColor.translateAlternateColorCodes('&', input));
                     updatingLore(warp.getItem());
                     update();
                 }
-            }
 
-            @Override
-            public ItemStack craftItem() {
-                List<String> loreOfItem = warp.getDescription();
-                List<String> lore = new ArrayList<>();
-                if(loreOfItem == null) lore = null;
-                else {
-                    for(String s : loreOfItem) {
-                        lore.add("§7- '§f" + s + "§7'");
-                    }
+                @Override
+                public boolean canTrigger(InventoryClickEvent e, ClickType trigger, Player player) {
+                    return warp.getDescription() == null || warp.getDescription().size() < PlayerWarpManager.getManager().getDescriptionMaxLines();
                 }
 
-                int length = 0;
-                if(original.getDescription() != null)
-                    for(String s : original.getDescription()) {
-                        length += s.replaceFirst("§f", "").length();
-                    }
-
-                length = -length;
-                if(warp.getDescription() != null) {
-                    for(String s : warp.getDescription()) {
-                        length += s.replaceFirst("§f", "").length();
-                    }
-                }
-
-                ItemBuilder builder = new ItemBuilder(XMaterial.PAPER).setName("§6§n" + Lang.get("Description"));
-
-                if(length < 0) builder.addLore(PWEditor.getFreeMessage(-length + " " + Lang.get("Characters"), PAppearance.this));
-                else builder.setLore(PWEditor.getCostsMessage(PlayerWarpManager.getManager().getDescriptionCosts() * length, PAppearance.this));
-
-                builder.addLore("§3" + Lang.get("Current") + ": " + (lore == null || lore.isEmpty() ? "§c" + Lang.get("Not_Set") : ""))
-                        .addLore(lore).addLore("");
-
-                if(lore == null || lore.size() < PlayerWarpManager.getManager().getDescriptionMaxLines())
-                    builder.addLore("§3" + Lang.get("Leftclick") + ": §a" + Lang.get("Add_Line"));
-
-                boolean empty0 = warp.getDescription() == null || warp.getDescription().isEmpty();
-                boolean empty1 = original.getDescription() == null || original.getDescription().isEmpty();
-
-                if(!empty0 || !empty1)
-                    builder.addLore("§3" + Lang.get("Rightclick") + ": §c" + (!empty0 ? Lang.get("Remove") : Lang.get("Reset")));
-
-                return builder.getItem();
-            }
-
-            @Override
-            public void onClick(AnvilClickEvent e) {
-                if(!e.getSlot().equals(AnvilSlot.OUTPUT)) return;
-
-                String input = e.getInput();
-
-                if(input == null) {
-                    e.getPlayer().sendMessage(Lang.getPrefix() + Lang.get("Enter_Lore"));
-                    return;
-                }
-
-                if(input.length() < PlayerWarpManager.getManager().getDescriptionLineMinLength() || input.length() > PlayerWarpManager.getManager().getDescriptionLineMaxLength()) {
-                    p.sendMessage(Lang.getPrefix() +
-                            Lang.get("Message_Too_Long_Too_Short")
-                                    .replace("%MIN%", PlayerWarpManager.getManager().getDescriptionLineMinLength() + "")
-                                    .replace("%MAX%", PlayerWarpManager.getManager().getDescriptionLineMaxLength() + "")
-                    );
-                    return;
-                }
-
-                e.setClose(true);
-
-                warp.addDescription(org.bukkit.ChatColor.WHITE + org.bukkit.ChatColor.translateAlternateColorCodes('&', input));
-                updatingLore(warp.getItem());
-                update();
-            }
-
-            @Override
-            public boolean canTrigger(InventoryClickEvent e, ClickType trigger, Player player) {
-                return warp.getDescription() == null || warp.getDescription().size() < PlayerWarpManager.getManager().getDescriptionMaxLines();
-            }
-
-            public void updatingLore(ItemBuilder toChange) {
-                getLast().updateShowIcon();
-                updateCosts();
-            }
-        }.setOption(option));
-
-        addButton(new SyncAnvilGUIButton(slot++, 2, ClickType.LEFT) {
-            @Override
-            public boolean canClick(ClickType click) {
-                if(click == ClickType.RIGHT) {
-                    return warp.getTeleportMessage() != null || !Objects.equals(warp.getTeleportMessage(), original.getTeleportMessage());
-                }
-
-                return click == ClickType.LEFT;
-            }
-
-            @Override
-            public ItemStack craftItem() {
-                ItemBuilder builder = new ItemBuilder(XMaterial.ENDER_EYE).setName("§6§n" + Lang.get("Teleport_Message"));
-
-                List<String> msg = TextAlignment.lineBreak((warp.getTeleportMessage() == null ? "§c" + Lang.get("Not_Set") : "§7\"§f" + ChatColor.translateAlternateColorCodes('&', warp.getTeleportMessage()) + "§7\""), 100);
-
-                int length = (warp.getTeleportMessage() == null ? 0 : warp.getTeleportMessage().length()) - (original.getTeleportMessage() == null ? 0 : original.getTeleportMessage().length());
-                if(length < 0) builder.addLore(PWEditor.getFreeMessage(-length + " " + Lang.get("Characters"), PAppearance.this));
-                else builder.addLore(PWEditor.getCostsMessage(length * PlayerWarpManager.getManager().getMessageCosts(), PAppearance.this));
-
-                builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + msg.remove(0));
-                if(!msg.isEmpty()) builder.addLore(msg);
-
-                builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Change"));
-                if(warp.getTeleportMessage() != null || !Objects.equals(warp.getTeleportMessage(), original.getTeleportMessage()))
-                    builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §c" + (Objects.equals(warp.getTeleportMessage(), original.getTeleportMessage()) ? Lang.get("Remove") : Lang.get("Reset")));
-
-                return builder.getItem();
-            }
-
-            @Override
-            public void onClick(AnvilClickEvent e) {
-                String input = e.getInput();
-
-                if(input == null || input.length() < PlayerWarpManager.getManager().getMessageMinLength() || input.length() > PlayerWarpManager.getManager().getMessageMaxLength()) {
-                    p.sendMessage(Lang.getPrefix() +
-                            Lang.get("Message_Too_Long_Too_Short")
-                                    .replace("%MIN%", PlayerWarpManager.getManager().getMessageMinLength() + "")
-                                    .replace("%MAX%", PlayerWarpManager.getManager().getMessageMaxLength() + "")
-                    );
-                    return;
-                }
-
-                warp.setTeleportMessage(input);
-
-                updateCosts();
-                e.setClose(true);
-            }
-
-            @Override
-            public void onClose(AnvilCloseEvent e) {
-                updatePage();
-            }
-
-            @Override
-            public ItemStack craftAnvilItem(ClickType trigger) {
-                return new ItemBuilder(XMaterial.PAPER)
-                        .setName(warp.getTeleportMessage() == null ? (Lang.get("Message") + "...") : warp.getTeleportMessage())
-                        .getItem();
-            }
-
-            @Override
-            public void onOtherClick(InventoryClickEvent e) {
-                if(e.getClick() == ClickType.RIGHT) {
-                    if(!Objects.equals(warp.getTeleportMessage(), original.getTeleportMessage())) {
-                        warp.setTeleportMessage(original.getTeleportMessage());
-                    } else warp.setTeleportMessage(null);
-
-                    update();
+                public void updatingLore(ItemBuilder toChange) {
+                    getLast().updateShowIcon();
                     updateCosts();
                 }
-            }
-        }.setOption(option));
+            }.setOption(option));
+        }
+
+        if(PlayerWarpManager.getManager().isAllowTeleportMessage()) {
+            addButton(new SyncAnvilGUIButton(slot++, 2, ClickType.LEFT) {
+                @Override
+                public boolean canClick(ClickType click) {
+                    if(click == ClickType.RIGHT) {
+                        return warp.getTeleportMessage() != null || !Objects.equals(warp.getTeleportMessage(), original.getTeleportMessage());
+                    }
+
+                    return click == ClickType.LEFT;
+                }
+
+                @Override
+                public ItemStack craftItem() {
+                    ItemBuilder builder = new ItemBuilder(XMaterial.ENDER_EYE).setName("§6§n" + Lang.get("Teleport_Message"));
+
+                    List<String> msg = TextAlignment.lineBreak((warp.getTeleportMessage() == null ? "§c" + Lang.get("Not_Set") : "§7\"§f" + ChatColor.translateAlternateColorCodes('&', warp.getTeleportMessage()) + "§7\""), 100);
+
+                    int length = (warp.getTeleportMessage() == null ? 0 : warp.getTeleportMessage().length()) - (original.getTeleportMessage() == null ? 0 : original.getTeleportMessage().length());
+                    if(length < 0) builder.addLore(PWEditor.getFreeMessage(-length + " " + Lang.get("Characters"), PAppearance.this));
+                    else builder.addLore(PWEditor.getCostsMessage(length * PlayerWarpManager.getManager().getMessageCosts(), PAppearance.this));
+
+                    builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Current") + ": " + msg.remove(0));
+                    if(!msg.isEmpty()) builder.addLore(msg);
+
+                    builder.addLore("", Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Leftclick") + ": §a" + Lang.get("Change"));
+                    if(warp.getTeleportMessage() != null || !Objects.equals(warp.getTeleportMessage(), original.getTeleportMessage()))
+                        builder.addLore(Editor.ITEM_SUB_TITLE_COLOR + Lang.get("Rightclick") + ": §c" + (Objects.equals(warp.getTeleportMessage(), original.getTeleportMessage()) ? Lang.get("Remove") : Lang.get("Reset")));
+
+                    return builder.getItem();
+                }
+
+                @Override
+                public void onClick(AnvilClickEvent e) {
+                    String input = e.getInput();
+
+                    if(input == null || input.length() < PlayerWarpManager.getManager().getMessageMinLength() || input.length() > PlayerWarpManager.getManager().getMessageMaxLength()) {
+                        p.sendMessage(Lang.getPrefix() +
+                                Lang.get("Message_Too_Long_Too_Short")
+                                        .replace("%MIN%", PlayerWarpManager.getManager().getMessageMinLength() + "")
+                                        .replace("%MAX%", PlayerWarpManager.getManager().getMessageMaxLength() + "")
+                        );
+                        return;
+                    }
+
+                    warp.setTeleportMessage(input);
+
+                    updateCosts();
+                    e.setClose(true);
+                }
+
+                @Override
+                public void onClose(AnvilCloseEvent e) {
+                    updatePage();
+                }
+
+                @Override
+                public ItemStack craftAnvilItem(ClickType trigger) {
+                    return new ItemBuilder(XMaterial.PAPER)
+                            .setName(warp.getTeleportMessage() == null ? (Lang.get("Message") + "...") : warp.getTeleportMessage())
+                            .getItem();
+                }
+
+                @Override
+                public void onOtherClick(InventoryClickEvent e) {
+                    if(e.getClick() == ClickType.RIGHT) {
+                        if(!Objects.equals(warp.getTeleportMessage(), original.getTeleportMessage())) {
+                            warp.setTeleportMessage(original.getTeleportMessage());
+                        } else warp.setTeleportMessage(null);
+
+                        update();
+                        updateCosts();
+                    }
+                }
+            }.setOption(option));
+        }
+
+        if(options) {
+            if(PlayerWarpManager.getManager().isAllowPublicWarps()) addButton(new StatusButton(slot++, warp, original, editing, this, p).setOption(option));
+
+            if(PlayerWarpManager.getManager().isEconomy() && PlayerWarpManager.getManager().isCustomTeleportCosts() && PlayerWarpManager.getManager().isAllowPublicWarps())
+                addButton(new TeleportCostsButton(slot++, warp, original, editing, this, p).setOption(option));
+
+            addButton(new TargetPositionButton(slot++, warp, original, editing, this, p).setOption(option));
+
+            if(PlayerWarpManager.getManager().isEconomy() && warp.isTimeDependent()) addButton(new ActiveTimeButton(slot++, warp, original, editing, this, p).setOption(option));
+        }
+    }
+
+    public static int count() {
+        return (!PlayerWarpManager.getManager().isForcePlayerHead() ? 1 : 0)
+                + (PlayerWarpManager.getManager().isAllowDescription() ? 1 : 0)
+                + (PlayerWarpManager.getManager().isAllowTeleportMessage() ? 1 : 0)
+                + 1;
     }
 
     public void updateCosts() {
