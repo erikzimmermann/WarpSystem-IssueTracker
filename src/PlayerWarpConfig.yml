@@ -1,15 +1,18 @@
+#PREMIUM marked values cannot be changed. Any changes will be ignored.
 PlayerWarps:
   General:
-    #Will only be used if permissions are disabled (see Config.yml line 8)
-    Max_Warp_Amount: 5
+    #PREMIUM | Will only be used if permissions are disabled (see Config.yml line 8)
+    Max_Warp_Amount: 3
     Support:
       #If enabled, the player can't create PlayerWarps in regions, where he cannot build
       ProtectedRegions: true
-    BungeeCord: true
-    #Disables all types of costs, active time selector, teleport costs
-    Economy: false
-    #The item of PlayerWarp is automatically the head of its owner and cannot be changed
-    Force_Player_Head: false
+    #PREMIUM
+    BungeeCord: false
+    #PREMIUM | Disables all types of costs, active time selector, teleport costs
+    Economy: true
+    #PREMIUM | The item of PlayerWarp is automatically the head of its owner and cannot be changed
+    Force_Player_Head: true
+    #PREMIUM
     Custom_teleport_costs: true
     #If disabled, the player can create playerwarps just with "/pwarps create <name>" without any create GUI
     Force_Create_GUI: false
@@ -30,49 +33,11 @@ PlayerWarps:
     Name_Blacklist: []
     #Listed worlds will be blocked
     World_Blacklist: []
+    #PREMIUM
     Categories:
-      Enabled: true
-      Min: 0
-      Max: 2
-      #The IDs must be identical on every Spigot server.
-      Classes:
-        - Type: EMERALD
-          Lore:
-            - '&7This class marks a warp'
-            - '&7as a &aShop&7!'
-          Name: '&a&lShop'
-          id: 1
-        - Type: OAK_DOOR
-          Lore:
-            - '&7This class marks a warp'
-            - '&7as a &cHome&7!'
-          Name: '&c&lHome'
-          id: 2
-        - Type: FARMLAND
-          Lore:
-            - '&7This class marks a warp'
-            - '&7as a &9Farm&7!'
-          Name: '&9&lFarm'
-          id: 3
-        - Type: IRON_SWORD
-          Lore:
-            - '&7This class marks a warp'
-            - '&7as a &ePvP-Zone&7!'
-          Name: '&e&lPvP-Zone'
-          id: 4
-        - Type: BOW
-          Lore:
-            - '&7This class marks a warp'
-            - '&7as a &bHunting-Area&7!'
-          Name: '&b&lHunting-Area'
-          id: 5
-        - Type: ENDER_EYE
-          Lore:
-            - '&7This class marks a warp'
-            - '&7as a &3miscellaneous &7warp!'
-          Name: '&3&lMiscellaneous'
-          id: 6
-  #Time format: "0d, 0h, 0m, 0s" - Unnecessary values can be removed (examples: "1d, 5m"; "10s"; "5h")!
+      Enabled: false
+      Classes: []
+  #Time format: "0d, 0h, 0m, 0s" - Unnecessary values can be removed (examples: "1d, 5m", "10s", "5h")!
   Time:
     Standard_Value: 1h
     Min_Time: 0d, 0h, 5m
@@ -138,3 +103,5 @@ PlayerWarps:
     Teleport_Fee: 0.5
     Active_Time: 1
     Trusted_Member: 0.5
+  #Info that every player can only create max 3 warps
+  Hide_Limit_Info: false
