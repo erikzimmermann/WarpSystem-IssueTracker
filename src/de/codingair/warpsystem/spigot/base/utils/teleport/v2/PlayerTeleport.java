@@ -38,7 +38,8 @@ public class PlayerTeleport extends TeleportStage {
 
     @Override
     public void start() {
-        MessageAPI.stopSendingActionBar(player);
+        TeleportDelay.Display d = WarpSystem.opt().getDelayDisplay();
+        if(d == TeleportDelay.Display.ACTION_BAR) MessageAPI.stopSendingActionBar(player);
 
         String message = options.getFinalMessage(player);
         if(message != null) {
@@ -55,7 +56,19 @@ public class PlayerTeleport extends TeleportStage {
                         afterEffectPosition.setValue(e.getTo());
 
                         if(e.isCancelled()) {
-                            MessageAPI.sendActionBar(player, Lang.get("Teleport_Cancelled"));
+                            String[] text = new String[2];
+                            String msg = Lang.get("Teleporting_Info");
+
+                            if(d == TeleportDelay.Display.TITLE) {
+                                int i = msg.indexOf("\n");
+                                if(i != -1) {
+                                    text[0] = msg.substring(0, i);
+                                    text[1] = msg.substring(i + 2);
+                                } else text[0] = msg;
+                            }
+
+                            if(d == TeleportDelay.Display.ACTION_BAR) MessageAPI.sendActionBar(player, Lang.get("Teleport_Cancelled"));
+                            else if(d == TeleportDelay.Display.TITLE) MessageAPI.sendTitle(player, text[0], text[1], 2, 10, 2);
                             HandlerList.unregisterAll(this);
 
                             cancel(Result.CANCELLED);

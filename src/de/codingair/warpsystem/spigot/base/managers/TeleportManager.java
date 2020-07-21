@@ -6,11 +6,11 @@ import de.codingair.codingapi.player.MessageAPI;
 import de.codingair.codingapi.tools.Callback;
 import de.codingair.warpsystem.spigot.base.WarpSystem;
 import de.codingair.warpsystem.spigot.base.language.Lang;
-import de.codingair.warpsystem.spigot.base.utils.options.specific.GeneralOptions;
-import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Result;
+import de.codingair.warpsystem.spigot.base.utils.teleport.TeleportOptions;
 import de.codingair.warpsystem.spigot.base.utils.teleport.destinations.DestinationType;
 import de.codingair.warpsystem.spigot.base.utils.teleport.v2.Teleport;
+import de.codingair.warpsystem.spigot.base.utils.teleport.v2.TeleportDelay;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -76,6 +76,7 @@ public class TeleportManager {
         this.teleports.invalidate(player.getName());
 
         if(WarpSystem.getInstance().getFileManager().getFile("Config").getConfig().getBoolean("WarpSystem.Send.Teleport_Cancel_Message", true)) {
+            if(WarpSystem.opt().getDelayDisplay() == TeleportDelay.Display.TITLE) MessageAPI.sendTitle(player, " ", " ", 0, 1, 0);
             MessageAPI.sendActionBar(player, Lang.get("Teleport_Cancelled"));
         }
     }

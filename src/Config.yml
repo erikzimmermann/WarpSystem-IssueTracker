@@ -45,6 +45,8 @@ WarpSystem:
       Enabled: true
     Delay: 3
     Allow_Move: false
+    #Values: ACTION_BAR, TITLE (separate lines with '\n')
+    Delay_Display: ACTION_BAR
 
   #PREMIUM
   #ByPass: warpsystem.bypass.cooldown

@@ -126,12 +126,9 @@ public class AnimationPlayer {
                     }
 
                     if(sounds && animation.getTickSound() != null && player != null) animation.getTickSound().play(player);
-                    if(!loop && player != null) MessageAPI.sendActionBar(player, msg.replace("%seconds%", left + ""));
                     if(seconds == -1) return;
                 } else if(left == 0) {
                     if(!loop) {
-                        if(player != null) MessageAPI.sendActionBar(player, null);
-
                         for(CustomAnimation anim : animations) {
                             anim.setRunning(false);
                         }

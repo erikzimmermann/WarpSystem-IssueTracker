@@ -4,6 +4,7 @@ import de.codingair.warpsystem.spigot.api.StringFormatter;
 import de.codingair.warpsystem.spigot.base.utils.options.Option;
 import de.codingair.warpsystem.spigot.base.utils.options.Options;
 import de.codingair.warpsystem.spigot.base.utils.teleport.Origin;
+import de.codingair.warpsystem.spigot.base.utils.teleport.v2.TeleportDelay;
 import org.bukkit.ChatColor;
 
 import java.util.function.IntPredicate;
@@ -16,6 +17,7 @@ public class GeneralOptions extends Options {
     private Option<Boolean> publicAnimations = new Option<>("WarpSystem.Teleport.Public_Animations");
     private Option<String> cmdSugColor = new Option<>("WarpSystem.Command_Suggestions.Color", "&7");
     private Option<String> cmdArgColor = new Option<>("WarpSystem.Command_Suggestions.Argument", "&e");
+    private Option<String> delayDisplay = new Option<>("WarpSystem.Teleport.Delay_Display", "ACTION_BAR");
 
     public GeneralOptions() {
         super("Config");
@@ -35,6 +37,7 @@ public class GeneralOptions extends Options {
         set(publicAnimations);
         set(cmdSugColor);
         set(cmdArgColor);
+        set(delayDisplay);
         save();
     }
 
@@ -47,6 +50,7 @@ public class GeneralOptions extends Options {
         get(publicAnimations);
         get(cmdSugColor);
         get(cmdArgColor);
+        get(delayDisplay);
 
         IntPredicate test = new IntPredicate() {
             private boolean color = false;
@@ -88,6 +92,7 @@ public class GeneralOptions extends Options {
             this.publicAnimations = o.publicAnimations.clone();
             this.cmdSugColor = o.cmdSugColor.clone();
             this.cmdArgColor = o.cmdArgColor.clone();
+            this.delayDisplay = o.delayDisplay.clone();
         }
     }
 
@@ -127,7 +132,15 @@ public class GeneralOptions extends Options {
     public String cmdArg() {
         return ChatColor.translateAlternateColorCodes('&', cmdArgColor.getValue());
     }
-
+  
+    public TeleportDelay.Display getDelayDisplay() {
+        try {
+            return TeleportDelay.Display.valueOf(delayDisplay.getValue());
+        } catch(Exception ex) {
+            return TeleportDelay.Display.ACTION_BAR;
+        }
+    }
+  
     public long getCooldown(Origin origin) {
         return 0;
     }
