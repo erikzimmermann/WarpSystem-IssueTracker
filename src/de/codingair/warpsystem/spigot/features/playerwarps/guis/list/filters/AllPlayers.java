@@ -159,9 +159,9 @@ public class AllPlayers implements Filter {
     }
 
     @Override
-    public PWPage.FilterButton getControllButton(PWPage page, int warps) {
+    public PWPage.FilterButton getControllButton(PWPage page, int warps, Player player) {
         if(page.getExtra() == null) return null;
-        return new ExtendedFilterButton(page);
+        return new ExtendedFilterButton(page, player);
     }
 
     @Override
@@ -170,8 +170,8 @@ public class AllPlayers implements Filter {
     }
 
     public static class ExtendedFilterButton extends PWPage.FilterButton {
-        public ExtendedFilterButton(PWPage page) {
-            super(page);
+        public ExtendedFilterButton(PWPage page, Player player) {
+            super(page, player);
         }
 
         @Override

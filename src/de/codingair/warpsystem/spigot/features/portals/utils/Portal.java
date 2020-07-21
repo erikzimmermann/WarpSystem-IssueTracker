@@ -115,7 +115,7 @@ public class Portal extends FeatureObject {
 
                     PortalBlock block = new PortalBlock();
                     block.read(json);
-                    blocks.add(block);
+                    if(block.getType() != BlockType.CUSTOM) blocks.add(block);
                 }
             }
         }
