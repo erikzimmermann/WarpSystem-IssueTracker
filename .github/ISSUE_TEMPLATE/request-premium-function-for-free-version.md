@@ -12,3 +12,5 @@ A clear and concise description why you want this function to be free.
 
 **Describe alternatives you've considered**
 A clear and concise description of any alternative solutions you've considered.
+
+**Discord contact**: <name>#<id>
